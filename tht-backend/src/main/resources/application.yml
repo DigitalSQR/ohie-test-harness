@@ -43,5 +43,5 @@ logging:
   level:
     org.springframework.http: INFO
     org.springframework.web: INFO
-    com.testing.harness.tool: INFO
+    com.argusoft.path.tht: INFO
     org.flywaydb.core: INFO

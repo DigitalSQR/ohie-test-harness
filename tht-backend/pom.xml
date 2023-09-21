@@ -8,7 +8,7 @@
         <version>2.7.15</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.testing.harness.tool</groupId>
+    <groupId>com.argusoft.path.tht</groupId>
     <artifactId>testing-harness-tool</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
