@@ -1,0 +1,47 @@
+
+# ===============================
+# ALL PROFILES
+# ===============================
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  main:
+    allow-circular-references: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testing_harness_tool
+    username: postgres
+    password: argusadmin
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob.non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+      generate-ddl: true
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
+    schemas:
+      - public
+    table: tht_schema_history
+    baseline-version: 0.1
+    out-of-order: true
+    locations:
+      - classpath:db/migration
+server:
+  servlet:
+    context-path: /api
+
+# ===============================
+# LOGGING
+# ===============================
+logging:
+  level:
+    org.springframework.http: INFO
+    org.springframework.web: INFO
+    com.testing.harness.tool: INFO
+    org.flywaydb.core: INFO
