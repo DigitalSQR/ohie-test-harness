@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import Land from './components/Landing';
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
             path="/dashboard"
             element={store.getState().auth.token ? <Dashboard /> : <Navigate to="/login" />} // Use Navigate instead of Redirect
           />
+          <Route
+          path='/landing' element={<Land/>}/>
           {/* Additional secured routes can be added here */}
         </Routes>
       </Router>
