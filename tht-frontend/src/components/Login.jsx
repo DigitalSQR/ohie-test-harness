@@ -1,84 +1,48 @@
 import React, { useState,Fragment } from 'react';
 import { useDispatch } from 'react-redux';
-import { loginSuccess } from '../api/authActions';
+import { loginSuccess, loginFailure } from '../api/authActions';
 import axios from 'axios';
 import "../styles/Login.css";
 import openhie_logo from "../styles/img/openhie-logo.png";
-import {NavLink} from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
+import api, { setAuthToken } from '../api/auth';
+import { useHistory } from 'react-router';
 
-// const Login = () => {
-  // const [username, setUsername] = useState('');
-  // const [password, setPassword] = useState('');
-//   const dispatch = useDispatch();
-
-  // const handleLogin = async () => {
-  //   try {
-  //     // Make a request to your authentication endpoint
-  //     const response = await axios.post('/auth/login', {
-  //       username,
-  //       password,
-  //     });
-
-  //     const { accessToken } = response.data;
-
-  //     // Dispatch the loginSuccess action to store the token in Redux
-  //     dispatch(loginSuccess(accessToken));
-
-  //     // Redirect or navigate to the secured dashboard
-  //   } catch (error) {
-  //     console.error('Login failed:', error);
-  //   }
-  // };
-
-//   return (
-//     <div>
-//       <h1>Login</h1>
-//       <div>
-//         <input
-//           type="text"
-//           placeholder="Username"
-//           value={username}
-//           onChange={(e) => setUsername(e.target.value)}
-//         />
-//       </div>
-//       <div>
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//         />
-//       </div>
-//       <div>
-//         <button onClick={handleLogin}>Login</button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
+  const [error, setError] = useState(''); // Initialize error state
+  
+    const [formData, setFormData] = useState({
+      username: '',
+      password: '',
+      grant_type: 'password', // Assuming 'password' grant type
+    });
+    const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setFormData({ ...formData, [name]: value });
+    };
   const handleLogin = async () => {
     try {
-      // Make a request to your authentication endpoint
-      const response = await axios.post('/auth/login', {
-        username,
-        password,
-      });
 
-      const { accessToken } = response.data;
+      console.log("formData=",formData);      
+      const response = await api.post(
+        '/oauth/token',
+        new URLSearchParams(formData)
+      );
+      console.log('API Response:', response);
 
-      // Dispatch the loginSuccess action to store the token in Redux
+      const { access_token: accessToken } = response.data;
+        console.log("access_token=",accessToken);
       dispatch(loginSuccess(accessToken));
-
-      // Redirect or navigate to the secured dashboard
+      // Redirect to the dashboard if authentication is successful
+      navigate('/dashboard');
+      
     } catch (error) {
-      console.error('Login failed:', error);
+     // dispatch(loginFailure('Invalid username or password'));
+      setError('Invalid username or password');
     }
   };
 
@@ -93,7 +57,9 @@ export default function Login() {
             hei="true"
           />
           <div className="openhie-form row">
+          {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message if it exists */}
             <div className="col-12 mb-2">
+            {/* {error && <p style={{ color: 'red' }}>{error}</p>} */}
               <div className="mb-3">
                 <label
                   htmlFor="exampleFormControlInput1"
@@ -108,7 +74,8 @@ export default function Login() {
                   id="exampleFormControlInput1"
                   placeholder="username"
                   autoComplete="off"
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={formData.username}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
@@ -128,7 +95,8 @@ export default function Login() {
                   id="exampleFormControlInput2"
                   placeholder="password"
                   autoComplete="off"
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
@@ -150,16 +118,15 @@ export default function Login() {
                 Forgot Password?
               </a>
             </div>
-            <div className="col-12">
-              <NavLink to="/landing">
+            <div className="col-12">            
                 <button
                   className="btn openhie-primary w-100"
                   id="submit"
                   onClick={handleLogin}
                 >
                   Submit
-                </button>
-              </NavLink>
+              </button>
+            
             </div>
           </div>
         </div>

@@ -2,8 +2,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://api.example.com', // Replace with your API endpoint
+  baseURL: 'http://localhost:8080/api', // Replace with your API endpoint
 });
+api.defaults.headers.common['Authorization'] = `Basic dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==`;
 
 // Function to set the authentication token in the request headers
 export const setAuthToken = (token) => {

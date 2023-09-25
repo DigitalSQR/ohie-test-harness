@@ -1,32 +1,29 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'; // Import the necessary components and hooks
 import { Provider } from 'react-redux';
 import store from './store/store';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Land from './components/Landing';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'; // Import necessary components
+
+const PrivateRoute = ({ element }) => {
+  const isAuthenticated = !!store.getState().auth.token;
+  console.log(store.getState().auth.token);
+  console.log(store.getState());
+  return isAuthenticated ? element : <Navigate to="/login" />;
+};
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
-        <Routes> {/* Use Routes instead of Route */}
-        <Route
-            path="/"
-            element={<Login />} // Use Navigate instead of Redirect
-          />
-          <Route
-            path="/login"
-            element={store.getState().auth.token ? <Navigate to="/dashboard" /> : <Login />} // Use Navigate instead of Redirect
-          />
-          <Route
-            path="/dashboard"
-            element={store.getState().auth.token ? <Dashboard /> : <Navigate to="/login" />} // Use Navigate instead of Redirect
-          />
-          <Route
-          path='/landing' element={<Land/>}/>
-          {/* Additional secured routes can be added here */}
-        </Routes>
+        <div className="App">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
+            <Route index element={<Navigate to="/login" />} />
+          </Routes>
+        </div>
       </Router>
     </Provider>
   );
