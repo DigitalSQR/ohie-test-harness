@@ -5,6 +5,7 @@ import api, { setAuthToken } from '../api/auth';
 import {useNavigate } from 'react-router-dom';
 import { logout } from "../api/authActions";
 import { useDispatch } from 'react-redux';
+import { log_out } from "../api/authReducer";
 export default function Dashboard() {
  
   const dispatch = useDispatch();
@@ -16,7 +17,8 @@ export default function Dashboard() {
         '/users/logout'
       );
       console.log('API Response:', response);
-      dispatch(logout());
+      // dispatch(logout());
+      dispatch(log_out)
       navigate('/login');
       
     } catch (error) {

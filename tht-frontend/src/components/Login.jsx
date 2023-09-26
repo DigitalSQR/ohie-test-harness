@@ -7,6 +7,7 @@ import openhie_logo from "../styles/img/openhie-logo.png";
 import {useNavigate } from 'react-router-dom';
 import api, { setAuthToken } from '../api/auth';
 import { useHistory } from 'react-router';
+import { login_success } from '../api/authReducer';
 
 
 export default function Login() {
@@ -36,7 +37,8 @@ export default function Login() {
 
       const { access_token: accessToken } = response.data;
         console.log("access_token=",accessToken);
-      dispatch(loginSuccess(accessToken));
+      // dispatch(loginSuccess(accessToken));
+      dispatch(login_success(accessToken));
       // Redirect to the dashboard if authentication is successful
       navigate('/dashboard');
       
