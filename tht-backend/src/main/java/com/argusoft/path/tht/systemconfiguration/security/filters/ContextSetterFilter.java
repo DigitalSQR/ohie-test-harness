@@ -68,7 +68,6 @@ public class ContextSetterFilter extends OncePerRequestFilter {
         }
 
         contextInfo.setCurrentDate(Calendar.getInstance().getTime());
-
         request.setAttribute("contextInfo", contextInfo);
         chain.doFilter(request, response);
     }

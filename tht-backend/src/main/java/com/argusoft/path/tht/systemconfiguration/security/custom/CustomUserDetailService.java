@@ -55,6 +55,9 @@ public class CustomUserDetailService implements UserDetailsService {
                     throw new UsernameNotFoundException("Invalid credentials.");
                 }
                 UserEntity user = usersPage.getContent().get(0);
+                if(!Objects.equals(user.getPassword(), password)) {
+                    throw new UsernameNotFoundException("Invalid credentials.");
+                }
                 Collection<GrantedAuthority> authorities = new ArrayList<>();
 
                 return new ContextInfo(
@@ -69,7 +72,7 @@ public class CustomUserDetailService implements UserDetailsService {
                         authorities);
 
             } catch (OperationFailedException | NumberFormatException | UsernameNotFoundException e) {
-                throw new UsernameNotFoundException("Credintial are "
+                throw new UsernameNotFoundException("Credential are "
                         + "incorrect.") {
                 };
             }

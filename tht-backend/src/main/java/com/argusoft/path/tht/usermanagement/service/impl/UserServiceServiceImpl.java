@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * This UserServiceDaoImpl contains DAO implementation for User service.
+ * This UserServiceServiceImpl contains implementation for User service.
  *
  * @author dhruv
  * @since 2023-09-13
@@ -147,6 +147,7 @@ public class UserServiceServiceImpl implements UserService {
             MissingParameterException,
             PermissionDeniedException,
             InvalidParameterException {
+
         Page<UserEntity> users = userRepository.advanceUserSearch(
             userSearchFilter,
             pageable);

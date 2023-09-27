@@ -144,14 +144,4 @@ public class ContextInfo extends User implements Serializable {
     public Collection<GrantedAuthority> getAuthorities() {
         return super.getAuthorities();
     }
-
-    @Override
-    public String toString() {
-        return "ContextInfo{"
-                + "currentDate=" + currentDate
-                + ", accessToken=" + accessToken
-                + ", email=" + email
-                + ", principalId=" + principalId
-                + '}';
-    }
 }

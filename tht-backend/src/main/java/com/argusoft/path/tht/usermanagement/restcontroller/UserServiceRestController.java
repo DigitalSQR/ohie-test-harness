@@ -5,6 +5,8 @@
  */
 package com.argusoft.path.tht.usermanagement.restcontroller;
 
+import com.argusoft.path.tht.specificationtestmanagement.openhie.automation.workflow.cr.CRWF3TestCases;
+import com.argusoft.path.tht.specificationtestmanagement.openhie.automation.workflow.cr.CRWF4TestCases;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -182,6 +184,23 @@ public class UserServiceRestController {
         UserEntity userById = userService.getUserById(userId, contextInfo);
         return userMapper.modelToDto(userById);
     }
+
+    @GetMapping("/print")
+    public void printPatient(@RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException,
+            OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException {
+        //http://hapi.fhir.org/baseR4
+        //https://hapi.fhir.org/baseDstu2
+        //https://hapi.fhir.org/baseDstu3
+        //http://hapi.fhir.org/search?serverId=home_r4&pretty=true&_summary=&resource=Patient&param.0.0=&param.0.1=&param.0.2=&param.0.3=&param.0.name=birthdate&param.0.type=date&sort_by=&sort_direction=&resource-search-limit=
+        //http://localhost:8080/fhir
+        CRWF3TestCases.testCRWF3("https://hapi.fhir.org/baseDstu3", contextInfo);
+        CRWF4TestCases.testCRWF4("https://hapi.fhir.org/baseDstu3", contextInfo);
+    }
+
 
     /**
      * {@inheritdoc}
