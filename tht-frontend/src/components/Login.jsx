@@ -1,51 +1,44 @@
-import React, { useState,Fragment } from 'react';
-import { useDispatch } from 'react-redux';
-import { loginSuccess, loginFailure } from '../api/authActions';
-import axios from 'axios';
+import React, { useState, Fragment } from "react";
+import { useDispatch } from "react-redux";
 import "../styles/Login.css";
 import openhie_logo from "../styles/img/openhie-logo.png";
-import {useNavigate } from 'react-router-dom';
-import api, { setAuthToken } from '../api/auth';
-import { useHistory } from 'react-router';
-import { login_success } from '../api/authReducer';
-
+import { useNavigate } from "react-router-dom";
+import { login_success } from "../reducers/authReducer";
+import { AuthenticationAPI } from "../api/AuthenticationAPI";
+import { notification } from "antd";
 
 export default function Login() {
-  
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState(''); // Initialize error state
-  
-    const [formData, setFormData] = useState({
-      username: '',
-      password: '',
-      grant_type: 'password', // Assuming 'password' grant type
-    });
-    const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setFormData({ ...formData, [name]: value });
-    };
+  const [error, setError] = useState(""); // Initialize error state
+
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    grant_type: "password", // Assuming 'password' grant type
+  });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
   const handleLogin = async () => {
-    try {
+   
+      console.log("formData=", formData);
 
-      console.log("formData=",formData);      
-      const response = await api.post(
-        '/oauth/token',
-        new URLSearchParams(formData)
-      );
-      console.log('API Response:', response);
+      AuthenticationAPI.doLogin(new URLSearchParams(formData))
+        .then((response) => {
+          dispatch(login_success(response));
+          navigate("/dashboard");
+        })
+        .catch((error) => {
+          // Handle the error here
 
-      const { access_token: accessToken } = response.data;
-        console.log("access_token=",accessToken);
-      // dispatch(loginSuccess(accessToken));
-      dispatch(login_success(accessToken));
-      // Redirect to the dashboard if authentication is successful
-      navigate('/dashboard');
-      
-    } catch (error) {
-     // dispatch(loginFailure('Invalid username or password'));
-      setError('Invalid username or password');
-    }
+          notification.error({
+            placement: "bottomRight",
+            description: "Invalid username or password",
+          });
+        })   
+   
   };
 
   return (
@@ -59,9 +52,10 @@ export default function Login() {
             hei="true"
           />
           <div className="openhie-form row">
-          {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message if it exists */}
+            {error && <p style={{ color: "red" }}>{error}</p>}{" "}
+            {/* Display error message if it exists */}
             <div className="col-12 mb-2">
-            {/* {error && <p style={{ color: 'red' }}>{error}</p>} */}
+              {/* {error && <p style={{ color: 'red' }}>{error}</p>} */}
               <div className="mb-3">
                 <label
                   htmlFor="exampleFormControlInput1"
@@ -120,15 +114,14 @@ export default function Login() {
                 Forgot Password?
               </a>
             </div>
-            <div className="col-12">            
-                <button
-                  className="btn openhie-primary w-100"
-                  id="submit"
-                  onClick={handleLogin}
-                >
-                  Submit
+            <div className="col-12">
+              <button
+                className="btn openhie-primary w-100"
+                id="submit"
+                onClick={handleLogin}
+              >
+                Submit
               </button>
-            
             </div>
           </div>
         </div>

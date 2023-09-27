@@ -1,31 +1,15 @@
 import { Fragment } from "react";
 import openhie_logo from "../styles/img/openhie-logo.png";
 import "../styles/Landing.css";
-import api, { setAuthToken } from '../api/auth';
 import {useNavigate } from 'react-router-dom';
-import { logout } from "../api/authActions";
 import { useDispatch } from 'react-redux';
-import { log_out } from "../api/authReducer";
+import { log_out } from "../reducers/authReducer";
 export default function Dashboard() {
  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = async () => {
-    try {
-
-      const response = await api.post(
-        '/users/logout'
-      );
-      console.log('API Response:', response);
-      // dispatch(logout());
-      dispatch(log_out)
-      navigate('/login');
-      
-    } catch (error) {
-      console.log("error=",error);
-     // dispatch(loginFailure('Invalid username or password'));
-     // setError('Invalid username or password');
-    }
+   
   };
   return (
     <Fragment>

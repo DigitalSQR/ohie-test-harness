@@ -4,9 +4,9 @@ import Dashboard from "../components/Dashboard";
 import { useSelector } from "react-redux";
 
 const PrivateRoute = () => {
-  const token = useSelector(state=>state.authSlice.token);
-  console.log(token)
-  const isAuthenticated = !!token;
+  const access_token = useSelector(state=>state.authSlice.access_token);
+  console.log(access_token)
+  const isAuthenticated = !!access_token;
   return isAuthenticated ? <Dashboard /> : <Navigate to="/login" />;
 };
 
