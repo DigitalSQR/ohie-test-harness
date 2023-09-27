@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { login_success } from "../reducers/authReducer";
 import { AuthenticationAPI } from "../api/AuthenticationAPI";
 import { notification } from "antd";
+import { setAuthToken } from '../api/configs/axiosConfigs'
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ export default function Login() {
       AuthenticationAPI.doLogin(new URLSearchParams(formData))
         .then((response) => {
           dispatch(login_success(response));
+          setAuthToken(response.access_token);
           navigate("/dashboard");
         })
         .catch((error) => {
