@@ -29,8 +29,25 @@ const authSlice = createSlice({
       state.access_token = null;
       state.error = null;
     },
+    refreshTokenSuccess: (state, action) => {
+      const payload = action.payload;
+      state.token = payload.token;
+      state.access_token = payload.access_token;
+      state.expires_in = payload.expires_in;
+      state.refresh_token = payload.refresh_token;
+      state.scope = payload.scope;
+      state.token_type = payload.token_type;
+    },
+    // Action for token refresh failure
+    refreshTokenFailure: (state) => {
+      state.access_token = null;
+      state.expires_in = null;
+      state.refresh_token = null;
+      state.scope = null;
+      state.token_type = null;
+    }
   },
 });
 const authreducers = authSlice.reducer;
 export default authreducers;
-export const { login_success, login_failure, log_out } = authSlice.actions;
+export const { login_success, login_failure, log_out,refreshTokenSuccess,refreshTokenFailure } = authSlice.actions;

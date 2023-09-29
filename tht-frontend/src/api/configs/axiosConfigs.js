@@ -1,19 +1,65 @@
-import axios from 'axios';
-
-
+import axios from "axios";
+import {
+  refreshTokenSuccess,
+  refreshTokenFailure,
+} from "../../reducers/authReducer";
+import store from '../../store/store';
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api', // Replace with your API endpoint
+  baseURL: "http://localhost:8080/api", // Replace with your API endpoint
 });
-api.defaults.headers.common['Authorization'] = `Basic dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==`;
+const defaultToken = `Basic dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==`;
+api.defaults.headers.common["Authorization"] = defaultToken;
+
+const setDefaultToken = () => {
+  api.defaults.headers.common["Authorization"] = defaultToken;
+}
 
 // Function to set the authentication token in the request headers
 export const setAuthToken = (token) => {
   if (token) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   } else {
-    delete api.defaults.headers.common['Authorization'];
+    delete api.defaults.headers.common["Authorization"];
   }
 };
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response.status == 401 && error.response.data.error == 'invalid_token') {
+      error.config._retry = true;
+      try {
+        const refresh_token = store.getState().authSlice.refresh_token; // Use the correct reducer name
+        if (refresh_token != null) {
+          const refreshTokenModel = {
+            refresh_token: refresh_token+'',
+            grant_type: "refresh_token", 
+          };
+          setDefaultToken();
+          const response = await api.request({
+            url: `/oauth/token`,
+            method: "POST",
+            data: new URLSearchParams(refreshTokenModel),
+          });
+          store.dispatch(refreshTokenSuccess(response.data));
+          setAuthToken(response.data.access_token);
+          console.log("Error COfig=",error.config);
+          error.config.headers['Authorization'] = `Bearer ${response.data.access_token}`;
+          return api.request(error.config);          
+        } else {
+          store.dispatch(refreshTokenFailure());
+          window.location.href = "/login";
+        }
+      } catch (refreshError) {
+        store.dispatch(refreshTokenFailure());
+        window.location.href = "/login";
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 // defining a custom error handler for all APIs
 /*const errorHandler = (error) => {
     const statusCode = error.response?.status

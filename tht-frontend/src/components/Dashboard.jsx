@@ -4,12 +4,31 @@ import "../styles/Landing.css";
 import {useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { log_out } from "../reducers/authReducer";
+import { AuthenticationAPI } from "../api/AuthenticationAPI";
 export default function Dashboard() {
  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = async () => {
    
+  };
+  const viewUser = async () => {
+      console.log("View User called..");
+      AuthenticationAPI.viewUser("argus")
+      .then((response) => {
+        console.log("view user responses=",response);
+       // dispatch(login_success(response));
+       // setAuthToken(response.access_token);
+       // navigate("/dashboard");
+      })
+      .catch((error) => {
+        // Handle the error here
+
+      /*  notification.error({
+          placement: "bottomRight",
+          description: "Invalid username or password",
+        });*/
+      })   
   };
   return (
     <Fragment>
@@ -48,6 +67,12 @@ export default function Dashboard() {
               <a href="#" class="nav-link link-dark">
                 <span class="settings w-30"></span>
                 Settings
+              </a>
+            </li>
+            <li>
+              <a  onClick={viewUser} class="nav-link link-dark">
+                <span class="settings w-30"></span>
+                View User
               </a>
             </li>
             <li>
