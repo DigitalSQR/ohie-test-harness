@@ -1,18 +1,13 @@
 package com.argusoft.path.tht.specificationtestmanagement.openhie.automation.workflow.cr;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.IQueryParameterType;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import org.hl7.fhir.dstu3.model.Patient;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -29,6 +24,7 @@ public class CRWF4TestCases {
         public static CompletableFuture<ValidationResultInfo> test(IGenericClient client, ContextInfo contextInfo) {
 
             return CompletableFuture.supplyAsync(() -> {
+                System.out.println("Started CRWF4TestCases");
                 //code to add entry that started process for CRWF4 testing
                 List<CompletableFuture<ValidationResultInfo>> testCases = new ArrayList<>();
                 testCases.add(CRWF4TestCases.testCRWF4Case1(client, contextInfo));
@@ -49,7 +45,11 @@ public class CRWF4TestCases {
                     }).get();
 
                     //make entry for whole CRWF4 and return response.
-                    return new ValidationResultInfo("testCRWF4", ErrorLevel.OK,"Passed");
+                    if (ValidationUtils.containsErrors(allTestCasesResults, ErrorLevel.ERROR)) {
+                        return new ValidationResultInfo("testCRWF4", ErrorLevel.OK,"Failed");
+                    } else {
+                        return new ValidationResultInfo("testCRWF4", ErrorLevel.OK,"Passed");
+                    }
                 } catch (InterruptedException | ExecutionException e) {
                     //create error validation response.
                     return new ValidationResultInfo("testCRWF4", ErrorLevel.ERROR,e.getMessage());
@@ -59,6 +59,7 @@ public class CRWF4TestCases {
 
         private static CompletableFuture<ValidationResultInfo> testCRWF4Case1(IGenericClient client, ContextInfo contextInfo) {
             return CompletableFuture.supplyAsync(() -> {
+                System.out.println("Started testCRWF4Case1");
                 try {
         //            UriDt uriDt = new UriDt();
         //            Map<String, List<IQueryParameterType>> stringListMap = new HashMap<>();
@@ -76,6 +77,7 @@ public class CRWF4TestCases {
                     return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, ex.getMessage());
                 }
             }).thenApply(validationResultInfo -> {
+                System.out.println("Finished testCRWF4Case1");
                 //add entry for separate testcase.
                 return validationResultInfo;
             });

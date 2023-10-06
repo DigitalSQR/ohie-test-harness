@@ -20,7 +20,8 @@ public class MetricsUtil {
     public void initMetricsReports(Map<String, ByteArrayOutputStream> map)
             throws UnsupportedEncodingException {
         addRegistry("CustomUserDetailService", map);
-        addRegistry("UserServiceRestController", map);
+        addRegistry("UserRestController", map);
+        addRegistry("AutomationTestProcessRestController", map);
     }
 
     private void addRegistry(

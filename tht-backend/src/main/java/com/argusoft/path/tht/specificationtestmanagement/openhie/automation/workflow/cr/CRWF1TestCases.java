@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import org.hl7.fhir.dstu3.model.Patient;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class CRWF1TestCases {
 
         public static CompletableFuture<ValidationResultInfo> test(IGenericClient client, ContextInfo contextInfo) {
             return CompletableFuture.supplyAsync(() -> {
+                System.out.println("Started CRWF1TestCases");
                 //code to add entry that started process for CRWF1 testing.
 
                 List<CompletableFuture<ValidationResultInfo>> testCases = new ArrayList<>();
@@ -44,9 +46,12 @@ public class CRWF1TestCases {
                     List<ValidationResultInfo> allTestCasesResults = allTestCasesJoins.thenApply(validationResultInfos -> {
                         return validationResultInfos;
                     }).get();
-
                     //make entry for whole CRWF1 and return response.
-                    return new ValidationResultInfo("testCRWF1", ErrorLevel.OK,"Passed");
+                    if (ValidationUtils.containsErrors(allTestCasesResults, ErrorLevel.ERROR)) {
+                        return new ValidationResultInfo("testCRWF1", ErrorLevel.OK,"Failed");
+                    } else {
+                        return new ValidationResultInfo("testCRWF1", ErrorLevel.OK,"Passed");
+                    }
                 } catch (InterruptedException|ExecutionException e) {
                     //create error validation response.
                     return new ValidationResultInfo("testCRWF1", ErrorLevel.ERROR, e.getMessage());
@@ -57,12 +62,14 @@ public class CRWF1TestCases {
         private static CompletableFuture<ValidationResultInfo> testCRWF1Case1(IGenericClient client, ContextInfo contextInfo) {
 
             return CompletableFuture.supplyAsync(() -> {
+                System.out.println("Started testCRWF1Case1");
                 try {
                     return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.OK,"Passed");
                 } catch (Exception ex) {
                     return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.ERROR, ex.getMessage());
                 }
         }).thenApply(validationResultInfo -> {
+            System.out.println("Finished testCRWF1Case1");
             //add entry for separate testcase.
             return validationResultInfo;
         });
@@ -71,6 +78,7 @@ public class CRWF1TestCases {
     private static CompletableFuture<ValidationResultInfo> testCRWF1Case2(IGenericClient client, ContextInfo contextInfo) {
 
         return CompletableFuture.supplyAsync(() -> {
+            System.out.println("Started testCRWF1Case2");
             try {
                 Patient patient = new Patient();
                 //Create Mock data for the patient
@@ -78,6 +86,7 @@ public class CRWF1TestCases {
                         .resource(patient)
                         .execute();
 
+                System.out.println("=>" + outcome.getId());
                 if (Boolean.FALSE.equals(outcome.getCreated())) {
                     return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Not able to create patient");
                 }
@@ -92,6 +101,7 @@ public class CRWF1TestCases {
                 return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, ex.getMessage());
              }
         }).thenApply(validationResultInfo -> {
+            System.out.println("Finished testCRWF1Case2");
             //add entry for separate testcase.
             return validationResultInfo;
         });
