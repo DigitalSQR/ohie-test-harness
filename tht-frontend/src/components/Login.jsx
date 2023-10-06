@@ -7,6 +7,7 @@ import { login_success } from "../reducers/authReducer";
 import { AuthenticationAPI } from "../api/AuthenticationAPI";
 import { notification } from "antd";
 import { setAuthToken } from '../api/configs/axiosConfigs'
+import { setDefaultToken } from '../api/configs/axiosConfigs'
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -18,13 +19,13 @@ export default function Login() {
     password: "",
     grant_type: "password", // Assuming 'password' grant type
   });
+  setDefaultToken();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
   const handleLogin = async () => {
    
-      console.log("formData=", formData);
 
       AuthenticationAPI.doLogin(new URLSearchParams(formData))
         .then((response) => {

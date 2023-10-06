@@ -5,21 +5,28 @@ import {useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { log_out } from "../reducers/authReducer";
 import { AuthenticationAPI } from "../api/AuthenticationAPI";
+import { clearAuthInfo } from '../api/configs/axiosConfigs'
 export default function Dashboard() {
  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = async () => {
-   
+    
+    AuthenticationAPI.doLogout()
+      .then((response) => {
+        dispatch(log_out());
+        navigate("/login");
+        clearAuthInfo();        
+      })
+      .catch((error) => {
+        
+      })   
+
   };
   const viewUser = async () => {
-      console.log("View User called..");
       AuthenticationAPI.viewUser("argus")
       .then((response) => {
-        console.log("view user responses=",response);
-       // dispatch(login_success(response));
-       // setAuthToken(response.access_token);
-       // navigate("/dashboard");
+      
       })
       .catch((error) => {
         // Handle the error here

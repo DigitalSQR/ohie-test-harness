@@ -27,7 +27,10 @@ const authSlice = createSlice({
     },
     log_out: (state) => {
       state.access_token = null;
-      state.error = null;
+      state.expires_in = null;
+      state.refresh_token = null;
+      state.scope = null;
+      state.token_type = null;
     },
     refreshTokenSuccess: (state, action) => {
       const payload = action.payload;

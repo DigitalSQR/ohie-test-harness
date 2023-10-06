@@ -3,15 +3,26 @@ import {
   refreshTokenSuccess,
   refreshTokenFailure,
 } from "../../reducers/authReducer";
-import store from '../../store/store';
+import { persistor, store } from '../../store/store';
 const api = axios.create({
   baseURL: "http://localhost:8080/api", // Replace with your API endpoint
 });
 const defaultToken = `Basic dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==`;
 api.defaults.headers.common["Authorization"] = defaultToken;
 
-const setDefaultToken = () => {
+export const setDefaultToken = () => {
   api.defaults.headers.common["Authorization"] = defaultToken;
+}
+
+export const clearAuthInfo = () => {
+  setDefaultToken();
+  persistor.purge()
+  .then(() => {
+    console.log('Local storage purged successfully');
+  })
+  .catch(error => {
+    console.error('Error purging local storage:', error);
+  });
 }
 
 // Function to set the authentication token in the request headers
@@ -43,7 +54,6 @@ api.interceptors.response.use(
           });
           store.dispatch(refreshTokenSuccess(response.data));
           setAuthToken(response.data.access_token);
-          console.log("Error COfig=",error.config);
           error.config.headers['Authorization'] = `Bearer ${response.data.access_token}`;
           return api.request(error.config);          
         } else {
