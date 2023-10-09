@@ -1,31 +1,38 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import "../styles/Login.css";
 import openhie_logo from "../styles/img/openhie-logo.png";
 import { useNavigate } from "react-router-dom";
-import { login_success } from "../reducers/authReducer";
+import { login_success,setIsKeepLoginState } from "../reducers/authReducer";
 import { AuthenticationAPI } from "../api/AuthenticationAPI";
 import { notification } from "antd";
 import { setAuthToken } from '../api/configs/axiosConfigs'
 import { setDefaultToken } from '../api/configs/axiosConfigs'
-
+import { useSelector } from "react-redux";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState(""); // Initialize error state
+  const [error, setError] = useState("");
+  const isKeepFromState = useSelector((state) => state.authSlice.isKeepLogin);
+  const [isKeepLogin, setIsKeepLogin] = useState(false);
+ // Initialize error state
+  //const isKeepLogin = useSelector((state) => state.authSlice.isKeepLogin);
 
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     grant_type: "password", // Assuming 'password' grant type
   });
-  setDefaultToken();
+
+  useEffect(() => {
+    setDefaultToken();
+    setKeepMeLoginFromState();
+  }, []); 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  const handleLogin = async () => {
-   
+  const handleLogin = async () => {    
 
       AuthenticationAPI.doLogin(new URLSearchParams(formData))
         .then((response) => {
@@ -43,7 +50,31 @@ export default function Login() {
         })   
    
   };
+  
+  const setOrUnsetKeepMeLogin = (event) => {
+    const { checked } = event.target;
+    console.log("checked=",checked);
+    setIsKeepLogin(checked);
+    dispatch(setIsKeepLoginState(checked));
+  };
 
+  const setKeepMeLoginFromState = () => {  
+    if(isKeepFromState && isKeepFromState === true){
+      setIsKeepLogin(true);
+    }else {
+      setIsKeepLogin(false);
+    }
+    console.log("isKeepLoginisKeepLogin=",isKeepLogin)
+    dispatch(setIsKeepLoginState(isKeepLogin));
+  //  const { checked } = event.target;
+  //  console.log("checked=",checked);
+   // setIsKeepLogin(checked);
+   /* if(isKeepLogin && isKeepLogin === true){
+      console.log("CHecked ");
+    }else {
+      console.log("Unchecked");
+    }*/
+  }
   return (
     <Fragment>
       <div className="full-page-wrapper">
@@ -105,7 +136,8 @@ export default function Login() {
                   className="form-check-input"
                   type="checkbox"
                   id="inlineCheckbox1"
-                  value="option1"
+                  checked={isKeepLogin}
+                  onChange={setOrUnsetKeepMeLogin}
                 />
                 <label className="form-check-label" htmlFor="inlineCheckbox1">
                   Keep me signed in

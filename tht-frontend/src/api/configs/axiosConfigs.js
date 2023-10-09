@@ -41,7 +41,8 @@ api.interceptors.response.use(
       error.config._retry = true;
       try {
         const refresh_token = store.getState().authSlice.refresh_token; // Use the correct reducer name
-        if (refresh_token != null) {
+        const isKeepMeLogin = store.getState().authSlice.isKeepLogin;
+        if (refresh_token != null && isKeepMeLogin === true) {
           const refreshTokenModel = {
             refresh_token: refresh_token+'',
             grant_type: "refresh_token", 
@@ -58,11 +59,15 @@ api.interceptors.response.use(
           return api.request(error.config);          
         } else {
           store.dispatch(refreshTokenFailure());
+          return Promise.reject(error);
           window.location.href = "/login";
+       //   return Promise.reject(error);
         }
       } catch (refreshError) {
         store.dispatch(refreshTokenFailure());
+        return Promise.reject(error);
         window.location.href = "/login";
+      //  return Promise.reject(error);
       }
     }
 

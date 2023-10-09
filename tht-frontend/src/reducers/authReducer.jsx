@@ -7,6 +7,7 @@ const initialState = {
   refresh_token: null,
   scope: null,
   token_type: null,
+  isKeepLogin: null
 };
 
 const authSlice = createSlice({
@@ -48,9 +49,14 @@ const authSlice = createSlice({
       state.refresh_token = null;
       state.scope = null;
       state.token_type = null;
+    },
+    setIsKeepLoginState:(state,action) => {
+      console.log("State=",state);
+      console.log("isKeepLogin=",action);
+      state.isKeepLogin = action.payload;
     }
   },
 });
 const authreducers = authSlice.reducer;
 export default authreducers;
-export const { login_success, login_failure, log_out,refreshTokenSuccess,refreshTokenFailure } = authSlice.actions;
+export const { login_success, login_failure, log_out,refreshTokenSuccess,refreshTokenFailure,setIsKeepLoginState } = authSlice.actions;

@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { persistor, store } from './store/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
-import { setAuthToken } from '../src/api/configs/axiosConfigs'
+import { setAuthToken,clearAuthInfo } from '../src/api/configs/axiosConfigs'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const persistedStateJSON = localStorage.getItem('persist:root');
 
@@ -14,8 +14,11 @@ if (persistedStateJSON) {
   const persistedState = JSON.parse(persistedStateJSON);
  
   const authSlice = JSON.parse(persistedState.authSlice);
-  if (authSlice) {
+  const isKeepMeLogin = authSlice.isKeepLogin;
+  if (authSlice){// && isKeepMeLogin && isKeepMeLogin === true) {
     setAuthToken(authSlice.access_token);
+  }else {
+    clearAuthInfo();
   }
 }
 root.render(
