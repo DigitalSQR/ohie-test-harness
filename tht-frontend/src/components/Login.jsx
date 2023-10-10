@@ -3,19 +3,21 @@ import { useDispatch } from "react-redux";
 import "../styles/Login.css";
 import openhie_logo from "../styles/img/openhie-logo.png";
 import { useNavigate } from "react-router-dom";
-import { login_success,setIsKeepLoginState } from "../reducers/authReducer";
+import { login_success, setIsKeepLoginState } from "../reducers/authReducer";
 import { AuthenticationAPI } from "../api/AuthenticationAPI";
 import { notification } from "antd";
-import { setAuthToken } from '../api/configs/axiosConfigs'
-import { setDefaultToken } from '../api/configs/axiosConfigs'
+import { setAuthToken } from "../api/configs/axiosConfigs";
+import { setDefaultToken } from "../api/configs/axiosConfigs";
 import { useSelector } from "react-redux";
+import { useLoader } from "../components/loader/LoaderContext";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const isKeepFromState = useSelector((state) => state.authSlice.isKeepLogin);
   const [isKeepLogin, setIsKeepLogin] = useState(false);
- // Initialize error state
+
+  // Initialize error state
   //const isKeepLogin = useSelector((state) => state.authSlice.isKeepLogin);
 
   const [formData, setFormData] = useState({
@@ -23,58 +25,50 @@ export default function Login() {
     password: "",
     grant_type: "password", // Assuming 'password' grant type
   });
+  const { showLoader, hideLoader } = useLoader();
 
   useEffect(() => {
     setDefaultToken();
     setKeepMeLoginFromState();
-  }, []); 
+  }, []);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  const handleLogin = async () => {    
+  const handleLogin = async () => {
+    showLoader();
+    AuthenticationAPI.doLogin(new URLSearchParams(formData))
+      .then((response) => {
+        dispatch(login_success(response));
+        setAuthToken(response.access_token);
 
-      AuthenticationAPI.doLogin(new URLSearchParams(formData))
-        .then((response) => {
-          dispatch(login_success(response));
-          setAuthToken(response.access_token);
-          navigate("/dashboard");
-        })
-        .catch((error) => {
-          // Handle the error here
-
-          notification.error({
-            placement: "bottomRight",
-            description: "Invalid username or password",
-          });
-        })   
-   
+        hideLoader();
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        // Handle the error here
+        hideLoader();
+        notification.error({
+          placement: "bottomRight",
+          description: "Invalid username or password",
+        });
+      });
   };
-  
+
   const setOrUnsetKeepMeLogin = (event) => {
     const { checked } = event.target;
-    console.log("checked=",checked);
     setIsKeepLogin(checked);
     dispatch(setIsKeepLoginState(checked));
   };
 
-  const setKeepMeLoginFromState = () => {  
-    if(isKeepFromState && isKeepFromState === true){
+  const setKeepMeLoginFromState = () => {
+    if (isKeepFromState && isKeepFromState === true) {
       setIsKeepLogin(true);
-    }else {
+    } else {
       setIsKeepLogin(false);
     }
-    console.log("isKeepLoginisKeepLogin=",isKeepLogin)
-    dispatch(setIsKeepLoginState(isKeepLogin));
-  //  const { checked } = event.target;
-  //  console.log("checked=",checked);
-   // setIsKeepLogin(checked);
-   /* if(isKeepLogin && isKeepLogin === true){
-      console.log("CHecked ");
-    }else {
-      console.log("Unchecked");
-    }*/
-  }
+    dispatch(setIsKeepLoginState(isKeepLogin));    
+  };
   return (
     <Fragment>
       <div className="full-page-wrapper">

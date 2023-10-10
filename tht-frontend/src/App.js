@@ -3,12 +3,14 @@ import { Provider } from 'react-redux';
 import { persistor, store } from './store/store';
 import { BrowserRouter as Router, Route, Routes, Navigate, RouterProvider } from 'react-router-dom'; // Import necessary components
 import routes from './routes/routes';
-
-
+import { LoaderProvider } from './components/loader/LoaderContext';
+import Loader from './components/loader/Loader';
 function App() {
   return (
+    <LoaderProvider>
     <Provider store={store}>
       <RouterProvider router={routes}></RouterProvider>
+      <Loader />
       {/* <Router>
         <div className="App">
           <Routes>
@@ -19,6 +21,7 @@ function App() {
         </div> */}
       {/* </Router> */}
     </Provider>
+    </LoaderProvider>
   );
 }
 
