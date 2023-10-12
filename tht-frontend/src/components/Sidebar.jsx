@@ -6,6 +6,7 @@ import { log_out } from "../reducers/authReducer";
 import { AuthenticationAPI } from "../api/AuthenticationAPI";
 import { clearAuthInfo } from '../api/configs/axiosConfigs'
 
+
 export default function Sidebar({onComponentClick}){
     const [addUser,setAddUser]= useState(false);
     const dispatch = useDispatch();
@@ -81,13 +82,15 @@ export default function Sidebar({onComponentClick}){
               </a>
             </li>
             <li>
-              <a className="nav-link link-dark" onClick={()=>{onComponentClick('User');}} >
+              <a className="nav-link link-dark" onClick={()=>{onComponentClick('User');
+               navigate('/dashboard/user')}} >
                 <span className="settings w-30"></span>
                 Users
               </a>
             </li>
             <li>
-              <a className="nav-link link-dark" onClick={()=>{onComponentClick('TestCases')}}>
+              <a className="nav-link link-dark" onClick={()=>{onComponentClick('TestCases');
+            navigate('/dashboard/testcases')}}>
                 <span className="settings w-30"></span>
                 TestCases
               </a>

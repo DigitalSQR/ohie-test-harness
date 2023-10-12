@@ -3,6 +3,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import User from "./User";
 import TestCases from './TestCases';
+import { Outlet } from "react-router-dom";
 export default function Dashboard() {
   const [activeComponent,setActiveComponent]=useState(null);
 
@@ -25,7 +26,7 @@ export default function Dashboard() {
       <div style={{display:'flex'}}>
       <Sidebar onComponentClick={(component)=>{
         setActiveComponent(component)}}/>
-    <main style={{flex:1}}>{renderActiveComponent()}</main>
+    <main style={{flex:1}}>{<Outlet/>}</main>
     </div>
     </Fragment>
   )
