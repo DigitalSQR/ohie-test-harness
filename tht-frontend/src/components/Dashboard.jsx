@@ -13,7 +13,7 @@ export default function Dashboard() {
     switch(activeComponent){
       case'User':
       console.log('rendering user')
-        return <User/>;
+        //  return <User/>; //rendering based on routes
       case'TestCases':
         return <TestCases/>;
         default:

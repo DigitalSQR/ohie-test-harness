@@ -82,7 +82,7 @@ export default function Sidebar({onComponentClick}){
               </a>
             </li>
             <li>
-              <a className="nav-link link-dark" onClick={()=>{onComponentClick('User');
+              <a className="nav-link link-dark" onClick={()=>{
                navigate('/dashboard/user')}} >
                 <span className="settings w-30"></span>
                 Users

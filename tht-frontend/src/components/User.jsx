@@ -3,28 +3,68 @@ import "../styles/User.css";
 import { Fragment } from "react";
 import { Button,notification } from "antd";
 import 'antd/dist/reset.css';
+import { useFormik } from "formik";
 export default function User() {
   const [users, setUsers] = useState([]);
   const [addUser, setAddUser] = useState(false);
   const [editUser, setEditUser] = useState(false);
-  //States for user-info
-  const [firstname, setFirstName] = useState("");
-  const [lastname, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [contactinfo, setContactInfo] = useState("");
-  const [role, setRole] = useState("");
-  //on Submitiing
-  const SubmitHandler = (event) => {
-    event.preventDefault();
-    const id = Math.trunc(Math.random() * 1000);
-    const userinfo = { id, firstname, lastname, role, email, contactinfo };
-    console.log(userinfo);
-    setUsers([...users, userinfo]);
-    console.log("the user array has ", users); //displays wrong array info as useState schedules changes for next render cycle.
-    setAddUser(!addUser);
-  };
+
+  //formik updates
+  const formik = useFormik({
+    initialValues: {
+      //these should be same as the name attributes of the input fields
+      firstname: "",
+      lastname: "",
+      role: "",
+      email: "",
+      contactinfo: "",
+      id: "",
+    },
+    onSubmit: (values) => {
+      const id = Math.trunc(Math.random() * 1000);
+      const userinfo = { ...values, id };
+      console.log(userinfo);
+      setUsers([...users, userinfo]);
+      console.log("the users array has ", users);
+      setAddUser(!addUser)
+      formik.resetForm()
+    },
+    validate: values => { 
+      //validate.firstname, validate.lastname and etc.
+      //must return an object
+      //keys of returned object must match with those of the values field.
+      //the value of the keys of the object must be a string indicating what the error is.
+      const errors = {};
+      if(!values.firstname){
+        errors.firstname = 'First Name is required'
+      }
+
+      if(!values.lastname)
+      {
+        errors.lastname = 'Last Name is required'
+      }
+
+      if(!values.contactinfo){
+        errors.contactinfo ='Contact Number is required'
+      }
+
+      if(!values.email){
+        errors.email="email is required"
+      }else if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)){
+        errors.email = 'Invalid format'
+      }
+      if(!values.role){
+        errors.role = "Role is a required field"
+      }
+      return errors;
+    }
+  });
+
+  console.log('the errors are ', formik.errors)
+  //formik code updates
+
   //code for popup box for delete confirmation
-  function DeleteConfirmation  (id)  {
+  function DeleteConfirmation(id)  {
     const key = `delete{Date.now()}`;
   
   const confirmDelete = () => {
@@ -73,11 +113,11 @@ export default function User() {
     if (index !== -1) {
       updatedUsers[index] = {
         ...updatedUsers[index],
-        firstname: firstname,
-        lastname: lastname,
-        role:role,
-        contactinfo: contactinfo,
-        email: email,
+        firstname:  formik.values.firstname,
+        lastname:  formik.values.lastname,
+        role: formik.values.role,
+        contactinfo:  formik.values.contactinfo,
+        email:  formik.values.email,
       };
 
       setUsers(updatedUsers);
@@ -164,12 +204,10 @@ export default function User() {
                                     <input
                                       type="text"
                                       id="firstName"
-                                      name="firstName"
+                                      name="firstname"
                                       placeholder={user.firstname}
                                       required
-                                      onChange={(e) => {
-                                        setFirstName(e.target.value);
-                                      }}
+                                      onChange={formik.handleChange}
                                     />
                                   </div>
                                   <div className="lname-field">
@@ -177,23 +215,19 @@ export default function User() {
                                     <input
                                       type="text"
                                       id="lastName"
-                                      name="lastName"
+                                      name="lastname"
                                       placeholder={user.lastname}
                                       required
-                                      onChange={(e) => {
-                                        setLastName(e.target.value);
-                                      }}
+                                      onChange={formik.handleChange}
                                     />
                                   </div>
                                   <div>
                                     <label htmlFor="role">Select a Role:</label>
                                     <select
                                       id="role"
+                                      name="role"
                                       // value={user.role}
-                                      onChange={(e) => {
-                                        setRole(e.target.value);
-                                        console.log(role);
-                                      }}
+                                      onChange={formik.handleChange}
                                     >
                                       <option value="">Select...</option>
                                       <option value="Super-Admin">Super Admin</option>
@@ -210,9 +244,7 @@ export default function User() {
                                       name="email"
                                       placeholder={user.email}
                                       required
-                                      onChange={(e) => {
-                                        setEmail(e.target.value);
-                                      }}
+                                      onChange={formik.handleChange}
                                     />
                                   </div>
                                   <div className="contact-info">
@@ -220,15 +252,13 @@ export default function User() {
                                     <input
                                       type="tel"
                                       id="phone"
-                                      name="phone"
+                                      name="contactinfo"
                                       placeholder={user.contactinfo}
                                       required
-                                      onChange={(e) => {
-                                        setContactInfo(e.target.value);
-                                      }}
+                                      onChange={formik.handleChange}
                                     />
                                   </div>
-                                  <button type="submit">Update</button>
+                                  <button type="submit" >Update</button>
                                 </form>
                               </div>
                             </div>
@@ -270,39 +300,36 @@ export default function User() {
                 &times;
               </span>
               <h2>User Information</h2>
-              <form id="userForm" onSubmit={SubmitHandler}>
+              <form id="userForm" noValidate={true} onSubmit={formik.handleSubmit}>
                 <div className="fname-field">
                   <label htmlFor="firstName">First Name:</label>
                   <input
                     type="text"
                     id="firstName"
-                    name="firstName"
+                    name="firstname"
                     required
-                    onChange={(e) => {
-                      setFirstName(e.target.value);
-                    }}
+                    onChange={formik.handleChange}
                   />
+                  {formik.errors.firstname && <div>{formik.errors.firstname}</div>}
                 </div>
                 <div className="lname-field">
                   <label htmlFor="lastName">Last Name:</label>
                   <input
                     type="text"
                     id="lastName"
-                    name="lastName"
+                    name="lastname"
                     required
-                    onChange={(e) => {
-                      setLastName(e.target.value);
-                    }}
+                    onChange={formik.handleChange}
                   />
+                  {formik.errors.lastname && <div>{formik.errors.lastname}</div>}
                 </div>
                 <div>
                   <label htmlFor="role">Select a Role:</label>
                   <select
                     id="role"
-                    value={role}
-                    onChange={(e) => {
-                      setRole(e.target.value);
-                    }}
+                    name='role'
+                    value={formik.values.role}
+                    onChange={formik.handleChange}
                   >
                     <option value="">Select...</option>
                     <option value="Super Admin">Super Admin</option>
@@ -310,6 +337,7 @@ export default function User() {
                     <option value="Tester">Tester</option>
                     <option value="Testee">Testee</option>
                   </select>
+                  {formik.errors.role && <div>{formik.errors.role}</div>}
                 </div>
                 <div className="email-field">
                   <label htmlFor="email">Email:</label>
@@ -318,24 +346,22 @@ export default function User() {
                     id="email"
                     name="email"
                     required
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                    }}
+                    onChange={formik.handleChange}
                   />
+                  {formik.errors.email && <div>{formik.errors.email}</div>}
                 </div>
                 <div className="contact-info">
                   <label htmlFor="phone">Phone Number:</label>
                   <input
                     type="tel"
                     id="phone"
-                    name="phone"
+                    name="contactinfo"
                     required
-                    onChange={(e) => {
-                      setContactInfo(e.target.value);
-                    }}
+                    onChange={formik.handleChange}  
                   />
+                  {formik.errors.contactinfo && <div>{formik.errors.contactinfo}</div>}
                 </div>
-                <button type="submit">Submit</button>
+                <button type="submit" style={{position:'center'}}>Submit</button>
               </form>
             </div>
           </div>
