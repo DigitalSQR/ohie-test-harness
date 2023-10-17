@@ -26,7 +26,7 @@
   height: 40px;
   align-items: center;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   cursor: pointer;
 }
 .sidebar ul.nav li a {
@@ -112,9 +112,11 @@
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  text-align: left;
+  text-align: center;
   position:relative;
-  width:50%;
+  width:30%;
+  height: 150%;
+  height: auto;
 }
 
 /* Style for the close button */
@@ -128,12 +130,12 @@
 }
 
 /* Style for the form fields and labels */
-.fname-field,
+/* .fname-field,
 .lname-field,
 .email-field,
 .contact-info {
   margin-bottom: 20px;
-}
+} */
 
 label {
   font-weight: bold;
@@ -141,7 +143,7 @@ label {
 
 input {
   width: 100%;
-  padding: 8px;
+  padding: 0px;
   border: 1px solid #ccc;
   border-radius: 3px;
 }
