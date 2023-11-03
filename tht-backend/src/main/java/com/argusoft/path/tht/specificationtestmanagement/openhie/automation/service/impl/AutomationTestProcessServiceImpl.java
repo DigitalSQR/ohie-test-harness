@@ -33,8 +33,8 @@ public class AutomationTestProcessServiceImpl implements AutomationTestProcessSe
 
         //get these parameters from the UI.
         //and check that process is not started for these parameters before starting process.
-        String contextType = "D3"; //create enum for this
-        String serverBaseURL = "https://hapi.fhir.org/baseDstu3";
+        String contextType = "R4"; //create enum for this
+        String serverBaseURL = "https://hapi.fhir.org/baseR4";
         //http://hapi.fhir.org/baseR4
         //https://hapi.fhir.org/baseDstu2
         //https://hapi.fhir.org/baseDstu3
@@ -46,8 +46,11 @@ public class AutomationTestProcessServiceImpl implements AutomationTestProcessSe
             case "D2":
                 context = FhirContext.forDstu2();
                 break;
-            default:
+            case "D3":
                 context = FhirContext.forDstu3();
+                break;
+            default:
+                context = FhirContext.forR4();
         }
 
         context.getRestfulClientFactory().setConnectTimeout(60 * 1000); //fix configuration
@@ -56,30 +59,15 @@ public class AutomationTestProcessServiceImpl implements AutomationTestProcessSe
 
         //Add entry that started automation testing.
         //start testcases
-        List<CompletableFuture<ValidationResultInfo>> testCases = new ArrayList<>();
-        testCases.add(CRTestCases.test(client, contextInfo));
-        //same way add test case for other repositories.
-
-        CompletableFuture<Void> allTestCases = CompletableFuture.allOf(
-                testCases.toArray(new CompletableFuture[testCases.size()])
-        );
-
-        CompletableFuture<List<ValidationResultInfo>> allTestCasesJoins = allTestCases.thenApply(v -> {
-            return testCases.stream()
-                    .map(pageContentFuture -> pageContentFuture.join())
-                    .collect(Collectors.toList());
-        });
-
-        allTestCasesJoins.thenAccept(validationResultInfos -> {
-            //make entry for automation test.
-            if (ValidationUtils.containsErrors(validationResultInfos, ErrorLevel.ERROR)) {
-                System.out.println("Failed");
-//                new ValidationResultInfo("testAutomation", ErrorLevel.OK,"Failed");
-            } else {
-                System.out.println("Passed");
-//                new ValidationResultInfo("testAutomation", ErrorLevel.OK,"Passed");
-            }
-        });
+        List<ValidationResultInfo> validationResultInfos = new ArrayList<>();
+        validationResultInfos.add(CRTestCases.test(client, contextInfo));
+        if (ValidationUtils.containsErrors(validationResultInfos, ErrorLevel.ERROR)) {
+            System.out.println("Failed");
+            new ValidationResultInfo("testAutomation", ErrorLevel.OK,"Failed");
+        } else {
+            System.out.println("Passed");
+            new ValidationResultInfo("testAutomation", ErrorLevel.OK,"Passed");
+        }
     }
 
 }

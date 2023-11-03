@@ -21,46 +21,22 @@ import java.util.stream.Collectors;
  */
 public class CRWF4TestCases {
 
-        public static CompletableFuture<ValidationResultInfo> test(IGenericClient client, ContextInfo contextInfo) {
-
-            return CompletableFuture.supplyAsync(() -> {
+        public static ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) {
                 System.out.println("Started CRWF4TestCases");
                 //code to add entry that started process for CRWF4 testing
-                List<CompletableFuture<ValidationResultInfo>> testCases = new ArrayList<>();
-                testCases.add(CRWF4TestCases.testCRWF4Case1(client, contextInfo));
+                List<ValidationResultInfo> allTestCasesResults = new ArrayList<>();
+                allTestCasesResults.add(CRWF4TestCases.testCRWF4Case1(client, contextInfo));
 
-                CompletableFuture<Void> allTestCases = CompletableFuture.allOf(
-                        testCases.toArray(new CompletableFuture[testCases.size()])
-                );
-
-                CompletableFuture<List<ValidationResultInfo>> allTestCasesJoins = allTestCases.thenApply(v -> {
-                    return testCases.stream()
-                            .map(pageContentFuture -> pageContentFuture.join())
-                            .collect(Collectors.toList());
-                });
-
-                try {
-                    List<ValidationResultInfo> allTestCasesResults = allTestCasesJoins.thenApply(validationResultInfos -> {
-                        return validationResultInfos;
-                    }).get();
-
-                    //make entry for whole CRWF4 and return response.
-                    if (ValidationUtils.containsErrors(allTestCasesResults, ErrorLevel.ERROR)) {
-                        return new ValidationResultInfo("testCRWF4", ErrorLevel.OK,"Failed");
-                    } else {
-                        return new ValidationResultInfo("testCRWF4", ErrorLevel.OK,"Passed");
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    //create error validation response.
-                    return new ValidationResultInfo("testCRWF4", ErrorLevel.ERROR,e.getMessage());
+                //make entry for whole CRWF4 and return response.
+                if (ValidationUtils.containsErrors(allTestCasesResults, ErrorLevel.ERROR)) {
+                    return new ValidationResultInfo("testCRWF4", ErrorLevel.OK,"Failed");
+                } else {
+                    return new ValidationResultInfo("testCRWF4", ErrorLevel.OK,"Passed");
                 }
-            });
         }
 
-        private static CompletableFuture<ValidationResultInfo> testCRWF4Case1(IGenericClient client, ContextInfo contextInfo) {
-            return CompletableFuture.supplyAsync(() -> {
+        private static ValidationResultInfo testCRWF4Case1(IGenericClient client, ContextInfo contextInfo) {
                 System.out.println("Started testCRWF4Case1");
-                try {
         //            UriDt uriDt = new UriDt();
         //            Map<String, List<IQueryParameterType>> stringListMap = new HashMap<>();
         //            client.search(Patient.class, uriDt);
@@ -72,14 +48,8 @@ public class CRWF4TestCases {
         //            patients.stream().forEach(patient->{
         //                System.out.println(patient.toString());
         //            });
-                    return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
-                } catch (Exception ex) {
-                    return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, ex.getMessage());
-                }
-            }).thenApply(validationResultInfo -> {
-                System.out.println("Finished testCRWF4Case1");
-                //add entry for separate testcase.
-                return validationResultInfo;
-            });
+            System.out.println("Finished testCRWF4Case1");
+            //add entry for separate testcase.
+            return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
         }
 }

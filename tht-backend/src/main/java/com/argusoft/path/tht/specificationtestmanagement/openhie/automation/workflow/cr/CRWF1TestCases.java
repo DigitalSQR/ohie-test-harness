@@ -6,7 +6,8 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import org.hl7.fhir.dstu3.model.Patient;
+import com.google.gson.Gson;
+import org.hl7.fhir.r4.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,87 +24,55 @@ import java.util.stream.Collectors;
  */
 public class CRWF1TestCases {
 
-        public static CompletableFuture<ValidationResultInfo> test(IGenericClient client, ContextInfo contextInfo) {
-            return CompletableFuture.supplyAsync(() -> {
-                System.out.println("Started CRWF1TestCases");
-                //code to add entry that started process for CRWF1 testing.
-
-                List<CompletableFuture<ValidationResultInfo>> testCases = new ArrayList<>();
-                testCases.add(CRWF1TestCases.testCRWF1Case1(client, contextInfo));
-                testCases.add(CRWF1TestCases.testCRWF1Case2(client, contextInfo));
-
-                CompletableFuture<Void> allTestCases = CompletableFuture.allOf(
-                        testCases.toArray(new CompletableFuture[testCases.size()])
-                );
-
-                CompletableFuture<List<ValidationResultInfo>> allTestCasesJoins = allTestCases.thenApply(v -> {
-                    return testCases.stream()
-                            .map(pageContentFuture -> pageContentFuture.join())
-                            .collect(Collectors.toList());
-                });
-
-                try {
-                    List<ValidationResultInfo> allTestCasesResults = allTestCasesJoins.thenApply(validationResultInfos -> {
-                        return validationResultInfos;
-                    }).get();
-                    //make entry for whole CRWF1 and return response.
-                    if (ValidationUtils.containsErrors(allTestCasesResults, ErrorLevel.ERROR)) {
-                        return new ValidationResultInfo("testCRWF1", ErrorLevel.OK,"Failed");
-                    } else {
-                        return new ValidationResultInfo("testCRWF1", ErrorLevel.OK,"Passed");
-                    }
-                } catch (InterruptedException|ExecutionException e) {
-                    //create error validation response.
-                    return new ValidationResultInfo("testCRWF1", ErrorLevel.ERROR, e.getMessage());
-                }
-            });
-        }
-
-        private static CompletableFuture<ValidationResultInfo> testCRWF1Case1(IGenericClient client, ContextInfo contextInfo) {
-
-            return CompletableFuture.supplyAsync(() -> {
-                System.out.println("Started testCRWF1Case1");
-                try {
-                    return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.OK,"Passed");
-                } catch (Exception ex) {
-                    return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.ERROR, ex.getMessage());
-                }
-        }).thenApply(validationResultInfo -> {
-            System.out.println("Finished testCRWF1Case1");
-            //add entry for separate testcase.
-            return validationResultInfo;
-        });
+    public static ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) {
+            System.out.println("Started CRWF1TestCases");
+            //code to add entry that started process for CRWF1 testing.
+            List<ValidationResultInfo> allTestCasesResults = new ArrayList<>();
+            allTestCasesResults.add(CRWF1TestCases.testCRWF1Case1(client, contextInfo));
+            allTestCasesResults.add(CRWF1TestCases.testCRWF1Case2(client, contextInfo));
+            //make entry for whole CRWF1 and return response.
+            if (ValidationUtils.containsErrors(allTestCasesResults, ErrorLevel.ERROR)) {
+                return new ValidationResultInfo("testCRWF1", ErrorLevel.OK,"Failed");
+            } else {
+                return new ValidationResultInfo("testCRWF1", ErrorLevel.OK,"Passed");
+            }
     }
 
-    private static CompletableFuture<ValidationResultInfo> testCRWF1Case2(IGenericClient client, ContextInfo contextInfo) {
+    private static ValidationResultInfo testCRWF1Case1(IGenericClient client, ContextInfo contextInfo) {
+            System.out.println("Started testCRWF1Case1");
+            System.out.println("Finished testCRWF1Case1");
+            return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.OK,"Passed");
+    }
 
-        return CompletableFuture.supplyAsync(() -> {
+    private static ValidationResultInfo testCRWF1Case2(IGenericClient client, ContextInfo contextInfo) {
             System.out.println("Started testCRWF1Case2");
-            try {
-                Patient patient = new Patient();
-                //Create Mock data for the patient
-                MethodOutcome outcome = client.create()
-                        .resource(patient)
-                        .execute();
-
-                System.out.println("=>" + outcome.getId());
-                if (Boolean.FALSE.equals(outcome.getCreated())) {
-                    return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Not able to create patient");
-                }
-
-                //Standard: The workflow will not register a duplicate patent if the patient already exists in the Client Registry.
-                outcome = client.create()
-                        .resource(patient)
-                        .execute();
-
-                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.OK, "Passed");
-             } catch (Exception ex) {
-                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, ex.getMessage());
-             }
-        }).thenApply(validationResultInfo -> {
+            Patient patient = new Patient();
+            //Create Mock data for the patient
+            MethodOutcome outcome = client.create()
+                    .resource(patient)
+                    .execute();
+        RelatedPerson relatedPerson = new RelatedPerson();
+//        relatedPerson.setPatient()
+        Communication communication = new Communication();
+//        communication.;
+//            Encounter encounter = new Encounter();
+//            encounter.
+            Gson gson = new Gson();
+            String json = gson.toJson(outcome);
+            System.out.println("=====================");
+            System.out.println(json);
+            System.out.println("=====================");
+            System.out.println("=>" + outcome.getId());
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
+                //add entry for failure testcase.
+                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Not able to create patient");
+            }
+            //Standard: The workflow will not register a duplicate patent if the patient already exists in the Client Registry.
+            outcome = client.create()
+                    .resource(patient)
+                    .execute();
             System.out.println("Finished testCRWF1Case2");
             //add entry for separate testcase.
-            return validationResultInfo;
-        });
+            return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.OK, "Passed");
     }
 }

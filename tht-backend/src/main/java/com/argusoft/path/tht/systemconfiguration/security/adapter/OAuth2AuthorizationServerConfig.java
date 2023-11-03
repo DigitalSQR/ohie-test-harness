@@ -5,8 +5,6 @@
  */
 package com.argusoft.path.tht.systemconfiguration.security.adapter;
 
-import com.argusoft.path.tht.systemconfiguration.security.custom.CustomUserDetailService;
-
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +34,6 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     private DataSource dataSource;
 
     @Autowired
-    private CustomUserDetailService customUserDetailService;
-
-    @Autowired
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
@@ -62,8 +57,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .tokenServices(defaultTokenServices)
-                .authenticationManager(authenticationManager)
-                .userDetailsService(customUserDetailService);
+                .authenticationManager(authenticationManager);
     }
 
 }
