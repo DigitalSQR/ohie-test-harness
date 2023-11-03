@@ -5,7 +5,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.r4.model.Patient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,63 +22,33 @@ import java.util.stream.Collectors;
  */
 public class CRWF3TestCases {
 
-    public static CompletableFuture<ValidationResultInfo> test(IGenericClient client, ContextInfo contextInfo) {
-
-        return CompletableFuture.supplyAsync(() -> {
+    public static ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) {
             System.out.println("Started CRWF3TestCases");
             //code to add entry that started process for CRWF3 testing
-            List<CompletableFuture<ValidationResultInfo>> testCases = new ArrayList<>();
-            testCases.add(CRWF3TestCases.testCRWF3Case1(client, contextInfo));
+            List<ValidationResultInfo> allTestCasesResults = new ArrayList<>();
+            allTestCasesResults.add(CRWF3TestCases.testCRWF3Case1(client, contextInfo));
 
-            CompletableFuture<Void> allTestCases = CompletableFuture.allOf(
-                    testCases.toArray(new CompletableFuture[testCases.size()])
-            );
-
-            CompletableFuture<List<ValidationResultInfo>> allTestCasesJoins = allTestCases.thenApply(v -> {
-                return testCases.stream()
-                        .map(pageContentFuture -> pageContentFuture.join())
-                        .collect(Collectors.toList());
-            });
-
-            try {
-                List<ValidationResultInfo> allTestCasesResults = allTestCasesJoins.thenApply(validationResultInfos -> {
-                    return validationResultInfos;
-                }).get();
-
-                //make entry for whole CRWF3 and return response.
-                if (ValidationUtils.containsErrors(allTestCasesResults, ErrorLevel.ERROR)) {
-                    return new ValidationResultInfo("testCRWF3", ErrorLevel.OK,"Failed");
-                } else {
-                    return new ValidationResultInfo("testCRWF3", ErrorLevel.OK,"Passed");
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                //create error validation response.
-                return new ValidationResultInfo("testCRWF3", ErrorLevel.ERROR, e.getMessage());
+            //make entry for whole CRWF3 and return response.
+            if (ValidationUtils.containsErrors(allTestCasesResults, ErrorLevel.ERROR)) {
+                return new ValidationResultInfo("testCRWF3", ErrorLevel.OK,"Failed");
+            } else {
+                return new ValidationResultInfo("testCRWF3", ErrorLevel.OK,"Passed");
             }
-        });
+
     }
 
-        private static CompletableFuture<ValidationResultInfo> testCRWF3Case1(IGenericClient client, ContextInfo contextInfo) {
-            return CompletableFuture.supplyAsync(() -> {
+        private static ValidationResultInfo testCRWF3Case1(IGenericClient client, ContextInfo contextInfo) {
                 System.out.println("Started testCRWF3Case1");
-                try {
-                    //read by id
-                    //https://hapi.fhir.org/baseDstu3/Patient/20909
-                    Patient patient = client.read()
-                            .resource(Patient.class)
-                            .withId("20909")
-                            .execute();
-
-                    System.out.println("=>" + patient);
-                    System.out.println("=>" +patient.getName());
-                    return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
-                } catch (Exception ex) {
-                    return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, ex.getMessage());
-                }
-            }).thenApply(validationResultInfo -> {
+                //read by id
+                //https://hapi.fhir.org/baseDstu3/Patient/20909
+                Patient patient = client.read()
+                        .resource(Patient.class)
+                        .withId("20909")
+                        .execute();
+                System.out.println("=>" + patient);
+                System.out.println("=>" +patient.getName());
                 System.out.println("Finished testCRWF3Case1");
                 //add entry for separate testcase.
-                return validationResultInfo;
-            });
+                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
         }
 }
