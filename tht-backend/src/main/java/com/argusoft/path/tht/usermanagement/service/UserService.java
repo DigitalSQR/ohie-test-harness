@@ -190,6 +190,12 @@ public interface UserService {
             PermissionDeniedException,
             InvalidParameterException;
 
+    public UserEntity getUserByUsername(String username, ContextInfo contextInfo)
+            throws OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException, DoesNotExistException;
+
     /**
      * get logged in uses detail
      *

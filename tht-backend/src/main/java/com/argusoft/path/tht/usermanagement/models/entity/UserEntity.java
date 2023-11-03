@@ -24,11 +24,15 @@ public class UserEntity extends IdMetaEntity {
 
     @Column(name = "name")
     private String name;
+
     @Column(name = "user_name")
     private String userName;
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "provider")
+    private String provider;
 
     public String getUserName() {
         return userName;
@@ -57,4 +61,12 @@ public class UserEntity extends IdMetaEntity {
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
 }

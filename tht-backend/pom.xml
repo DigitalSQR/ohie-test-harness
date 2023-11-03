@@ -110,6 +110,10 @@
             <artifactId>hapi-fhir-client</artifactId>
             <version>6.4.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

@@ -210,6 +210,16 @@ public class UserServiceServiceImpl implements UserService {
         return users;
     }
 
+    @Override
+    public UserEntity getUserByUsername(String username, ContextInfo contextInfo)
+            throws OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException {
+        Optional<UserEntity> userByUsername = userRepository.findByUserName(username);
+        return userByUsername.orElse(null);
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -32,6 +32,16 @@ spring:
     out-of-order: true
     locations:
       - classpath:db/migration
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 997632152085-pp4ofm9tqfk5149giq4utb54m24et4ig.apps.googleusercontent.com
+            clientSecret: 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
+            scope:
+              - email
+              - profile
 server:
   servlet:
     context-path: /api

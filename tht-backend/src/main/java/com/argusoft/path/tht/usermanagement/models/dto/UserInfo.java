@@ -25,6 +25,7 @@ public class UserInfo extends IdMetaInfo implements Serializable {
             dataType = "String",
             required = true)
     private String name;
+
     @ApiModelProperty(notes = "The userName for User model",
             allowEmptyValue = false,
             example = "quickuser",
@@ -45,6 +46,14 @@ public class UserInfo extends IdMetaInfo implements Serializable {
             dataType = "String",
             required = true)
     private String password;
+
+    @ApiModelProperty(notes = "The provider for User model",
+            allowEmptyValue = false,
+            example = "[google,local]",
+            dataType = "String",
+            required = true,
+            hidden = true)
+    private String provider;
 
     @ApiModelProperty(notes = "The associatedRoleIds for model",
             allowEmptyValue = false,
@@ -75,5 +84,29 @@ public class UserInfo extends IdMetaInfo implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<String> getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(Set<String> roleIds) {
+        this.roleIds = roleIds;
     }
 }
