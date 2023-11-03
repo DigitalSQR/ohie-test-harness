@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Date;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 /**
  * This info is for context DTO who has Request Information, Date and LoggeIn
@@ -51,6 +52,10 @@ public class ContextInfo extends User implements Serializable {
         super("username", "password", new ArrayList<>());
     }
 
+    public ContextInfo(OAuth2User oAuth2User) {
+        super(oAuth2User.getAttribute("email"), "password", oAuth2User.getAuthorities());
+    }
+    
     public ContextInfo(
             String email,
             String principalId,

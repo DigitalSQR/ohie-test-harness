@@ -6,14 +6,12 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.google.gson.Gson;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Communication;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.RelatedPerson;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 /**
  * Implemantation of the CRWF1 Testing.
@@ -54,14 +52,6 @@ public class CRWF1TestCases {
         RelatedPerson relatedPerson = new RelatedPerson();
 //        relatedPerson.setPatient()
         Communication communication = new Communication();
-//        communication.;
-//            Encounter encounter = new Encounter();
-//            encounter.
-            Gson gson = new Gson();
-            String json = gson.toJson(outcome);
-            System.out.println("=====================");
-            System.out.println(json);
-            System.out.println("=====================");
             System.out.println("=>" + outcome.getId());
             if (Boolean.FALSE.equals(outcome.getCreated())) {
                 //add entry for failure testcase.

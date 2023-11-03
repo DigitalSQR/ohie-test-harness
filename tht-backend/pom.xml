@@ -102,8 +102,8 @@
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
-            <artifactId>hapi-fhir-structures-dstu3</artifactId>
-            <version>6.4.3</version>
+            <artifactId>hapi-fhir-structures-r4</artifactId>
+            <version>6.8.3</version>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
