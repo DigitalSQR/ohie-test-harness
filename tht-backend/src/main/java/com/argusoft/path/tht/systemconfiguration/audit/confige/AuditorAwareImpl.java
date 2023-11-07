@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.systemconfiguration.audit.confige;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.security.custom.CustomOauth2User;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class AuditorAwareImpl implements AuditorAware<String> {
         if(authentication.getPrincipal() instanceof User) {
             return Optional.of(((User) authentication.getPrincipal()).getUsername());
         } else {
-            return Optional.of(((DefaultOAuth2User) authentication.getPrincipal()).<String>getAttribute("userName"));
+            return Optional.of(((CustomOauth2User) authentication.getPrincipal()).getCustomAttributes().get("userName"));
         }
     }
 
