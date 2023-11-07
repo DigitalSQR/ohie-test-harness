@@ -26,7 +26,7 @@ public final class Constant {
 
     public static final String ANONYMOUS_REQUEST = "ANONYMOUS REQUEST";
     
-    public static final String DEFAULT_AUDIT_NAME = "SYSTEM_USER";
+    public static final String DEFAULT_SYSTEM_USER_NAME = "SYSTEM_USER";
 
     public static final String ANONYMOUS_USER = "anonymousUser";
 
@@ -86,8 +86,8 @@ public final class Constant {
     static {
         SUPER_USER_CONTEXT = new ContextInfo(
                 "ivasiwala@argusoft.com",
-                "1",
-                "argusadmin",
+                DEFAULT_SYSTEM_USER_NAME,
+                "password",
                 true,
                 true,
                 true,

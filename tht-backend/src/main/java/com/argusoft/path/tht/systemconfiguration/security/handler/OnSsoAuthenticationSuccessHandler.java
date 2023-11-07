@@ -42,12 +42,11 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
             authorities.add(new SimpleGrantedAuthority("GOOGLE_LOGIN"));
 
             UserEntity loggedInUser = createUserIfNotExists(oauth2User, Constant.SUPER_USER_CONTEXT);
-            oauth2User.getAttributes().put("userName", Constant.SUPER_USER_CONTEXT.getUsername());
 
             ContextInfo contextInfo = new ContextInfo(
                     oauth2User.<String>getAttribute("email"),
                     loggedInUser.getId(),
-                    "N/A",
+                    "password",
                     true,
                     true,
                     true,

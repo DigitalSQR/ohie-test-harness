@@ -50,7 +50,7 @@ public class ContextInfo extends User implements Serializable {
         super(oAuth2User.getAttribute("email"), "password", oAuth2User.getAuthorities());
     }
     
-    public ContextInfo(
+    public  ContextInfo(
             String email,
             String userName,
             String password,

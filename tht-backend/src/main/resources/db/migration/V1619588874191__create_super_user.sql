@@ -16,12 +16,12 @@ INSERT INTO tht_user (
         updated_at,
         version
     ) VALUES (
-        '1',
+        'SYSTEM_USER',
         'ivasiwala@argusoft.com',
         'Istyak Ahmed Vasiwala',
-	    'argusadmin',
-        'THT Application',
-        'THT Application',
+	    'password',
+        'SYSTEM_USER',
+        'SYSTEM_USER',
 	    Now(),
 	    Now(),
 	    0
