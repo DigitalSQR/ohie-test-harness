@@ -5,11 +5,13 @@
  */
 package com.argusoft.path.tht.systemconfiguration.constant;
 
+import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 /**
  * This Constant class contains all the common constant variables
@@ -79,4 +81,18 @@ public final class Constant {
 
     public static final DateTimeFormatter LOCAL_DATE_YYYYMMDD
             = DateTimeFormatter.ofPattern("yyyyMMdd");
+    public static ContextInfo SUPER_USER_CONTEXT;
+
+    static {
+        SUPER_USER_CONTEXT = new ContextInfo(
+                "ivasiwala@argusoft.com",
+                "1",
+                "argusadmin",
+                true,
+                true,
+                true,
+                true,
+                new ArrayList<>()
+        );
+    }
 }

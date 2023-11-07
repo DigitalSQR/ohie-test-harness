@@ -27,15 +27,10 @@ import org.springframework.data.repository.query.Param;
 public interface UserRepository
         extends JpaRepository<UserEntity, String>, UserCustomRepository {
 
-    public Optional<UserEntity> findByUserName(String userName);
-
     @Query("SELECT DISTINCT entity FROM UserEntity entity \n")
     public Page<UserEntity> findUsers(Pageable pageable);
 
     @Query("SELECT DISTINCT entity FROM UserEntity entity \n"
             + " WHERE entity.id IN (:ids)")
     public List<UserEntity> findUsersByIds(@Param("ids") List<String> ids);
-
-    @Query("SELECT user FROM UserEntity user where user.email = (:email)")
-    public Optional<UserEntity> findByEmail(@Param("email") String email);
 }

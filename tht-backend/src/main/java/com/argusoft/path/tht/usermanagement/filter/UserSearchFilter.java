@@ -32,27 +32,19 @@ public class UserSearchFilter {
     )
     private String email;
 
-    @ApiParam(
-            value = "userName of the user"
-    )
-    private String userName;
-
     public UserSearchFilter() {
     }
 
     public UserSearchFilter(String name,
         SearchType nameSearchType,
-        String email,
-        String userName) {
+        String email) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.email = email;
-        this.userName = userName;
     }
     public boolean isEmpty() {
         return StringUtils.isEmpty(name)
-                && StringUtils.isEmpty(email)
-                && StringUtils.isEmpty(userName);
+                && StringUtils.isEmpty(email);
     }
 
     public String getEmail() {
@@ -64,17 +56,6 @@ public class UserSearchFilter {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUserName() {
-        if (StringUtils.isEmpty(userName)) {
-            userName = null;
-        }
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 
     public String getName() {

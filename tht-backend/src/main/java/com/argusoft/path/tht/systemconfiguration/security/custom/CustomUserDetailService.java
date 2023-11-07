@@ -5,7 +5,8 @@
  */
 package com.argusoft.path.tht.systemconfiguration.security.custom;
 
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
+import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
@@ -16,6 +17,7 @@ import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,7 +40,7 @@ import java.util.*;
 public class CustomUserDetailService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
     @Timed(name = "loadUserByUsername")
@@ -49,8 +51,12 @@ public class CustomUserDetailService implements UserDetailsService {
             String password = request.getParameter("password");
             try {
                 UserSearchFilter searchFilter = new UserSearchFilter();
-                searchFilter.setUserName(username);
-                Page<UserEntity> usersPage = userRepository.advanceUserSearch(searchFilter, Constant.SINGLE_VALUE_PAGE);
+                searchFilter.setEmail(username);
+                Page<UserEntity> usersPage = userService.searchUsers(
+                        new ArrayList<>(),
+                        searchFilter,
+                        Constant.SINGLE_VALUE_PAGE,
+                        Constant.SUPER_USER_CONTEXT);
                 if (usersPage.getTotalElements() == 0) {
                     throw new UsernameNotFoundException("Invalid credentials.");
                 }
@@ -59,11 +65,11 @@ public class CustomUserDetailService implements UserDetailsService {
                     throw new UsernameNotFoundException("Invalid credentials.");
                 }
                 Collection<GrantedAuthority> authorities = new ArrayList<>();
+                authorities.add(new SimpleGrantedAuthority("SIMPLE_LOGIN"));
 
                 return new ContextInfo(
                         user.getEmail(),
                         user.getId(),
-                        user.getUserName(),
                         password,
                         true,
                         true,
@@ -71,7 +77,9 @@ public class CustomUserDetailService implements UserDetailsService {
                         true,
                         authorities);
 
-            } catch (OperationFailedException | NumberFormatException | UsernameNotFoundException e) {
+            } catch (OperationFailedException | NumberFormatException | UsernameNotFoundException |
+                     InvalidParameterException | PermissionDeniedException |
+                     MissingParameterException e) {
                 throw new UsernameNotFoundException("Credential are "
                         + "incorrect.") {
                 };

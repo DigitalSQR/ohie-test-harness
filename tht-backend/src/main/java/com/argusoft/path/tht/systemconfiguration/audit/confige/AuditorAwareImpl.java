@@ -5,6 +5,7 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
 import java.util.Optional;
 
@@ -21,7 +22,11 @@ public class AuditorAwareImpl implements AuditorAware<String> {
         if (Constant.ANONYMOUS_USER.equals(authentication.getPrincipal())) {
             return Optional.of(Constant.ANONYMOUS_USER_NAME);
         }
-        return Optional.of(((User) authentication.getPrincipal()).getUsername());
+        if(authentication.getPrincipal() instanceof User) {
+            return Optional.of(((User) authentication.getPrincipal()).getUsername());
+        } else {
+            return Optional.of(((DefaultOAuth2User) authentication.getPrincipal()).<String>getAttribute("userName"));
+        }
     }
 
 }

@@ -46,6 +46,11 @@ public class ContextSetterFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        if(SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+            System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
+            System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        }
+
         final String requestTokenHeader = request.getHeader("Authorization");
         String token = null;
         ContextInfo contextInfo = null;

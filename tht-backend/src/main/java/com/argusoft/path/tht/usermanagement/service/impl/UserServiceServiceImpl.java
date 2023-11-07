@@ -210,16 +210,6 @@ public class UserServiceServiceImpl implements UserService {
         return users;
     }
 
-    @Override
-    public UserEntity getUserByUsername(String username, ContextInfo contextInfo)
-            throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException {
-        Optional<UserEntity> userByUsername = userRepository.findByUserName(username);
-        return userByUsername.orElse(null);
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -285,9 +275,6 @@ public class UserServiceServiceImpl implements UserService {
         // For :Name
         validateUserEntityame(userEntity,
                 errors);
-        // For :UserName
-        validateUserEntityUserName(userEntity,
-                errors);
 
         return errors;
     }
@@ -301,10 +288,10 @@ public class UserServiceServiceImpl implements UserService {
             throws OperationFailedException,
             DoesNotExistException {
         Optional<UserEntity> userOptional
-                = userRepository.findByUserName(contextInfo.getUsername());
+                = userRepository.findById(contextInfo.getUsername());
         if (!userOptional.isPresent()) {
-            throw new DoesNotExistException("user by email :"
-                    + contextInfo.getEmail()
+            throw new DoesNotExistException("user by id :"
+                    + contextInfo.getUsername()
                     + Constant.NOT_FOUND);
         }
         return userOptional.get();
@@ -440,21 +427,6 @@ public class UserServiceServiceImpl implements UserService {
                 errors);
     }
 
-    //Validation For :UserName
-    protected void validateUserEntityUserName(UserEntity userEntity,
-                                          List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(userEntity.getUserName(),
-                "userName",
-                Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
-                errors);
-        ValidationUtils.validateLength(userEntity.getUserName(),
-                "userName",
-                3,
-                255,
-                errors);
-    }
-
     //trim all User field
     protected void trimUser(UserEntity userEntity) {
         if (userEntity.getId() != null) {
@@ -462,9 +434,6 @@ public class UserServiceServiceImpl implements UserService {
         }
         if (userEntity.getEmail() != null) {
             userEntity.setEmail(userEntity.getEmail().trim());
-        }
-        if (userEntity.getUserName() != null) {
-            userEntity.setUserName(userEntity.getUserName().trim());
         }
     }
 }

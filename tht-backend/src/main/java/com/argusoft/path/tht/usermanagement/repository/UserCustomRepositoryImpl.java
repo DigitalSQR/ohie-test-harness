@@ -55,14 +55,6 @@ public class UserCustomRepositoryImpl
 
             separate = SQLUtils.equalQL(
                     "user",
-                    "userName",
-                    searchFilter.getUserName(),
-                    parameters,
-                    separate,
-                    jpql);
-
-            separate = SQLUtils.equalQL(
-                    "user",
                     "email",
                     searchFilter.getEmail(),
                     parameters,
