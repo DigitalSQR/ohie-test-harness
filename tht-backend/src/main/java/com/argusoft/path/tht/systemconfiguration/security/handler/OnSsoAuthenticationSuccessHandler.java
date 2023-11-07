@@ -8,6 +8,7 @@ import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -72,13 +73,18 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
             OAuth2Authentication auth = new OAuth2Authentication(oauth2Request, authenticationToken);
 
             OAuth2AccessToken oAuth2AccessToken = defaultTokenServices.createAccessToken(auth);
-            System.out.println(oAuth2AccessToken.getValue());
-            System.out.println(oAuth2AccessToken.getExpiresIn());
-            System.out.println(oAuth2AccessToken.getRefreshToken().getValue());
-            System.out.println(oAuth2AccessToken.getScope());
-            System.out.println(oAuth2AccessToken.getTokenType());
-//            response.sendRedirect("http://localhost:8081/api/user");
-            response.getWriter().write(oAuth2AccessToken.getValue());
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("access_token", oAuth2AccessToken.getValue());
+            responseMap.put("token_type", oAuth2AccessToken.getTokenType());
+            responseMap.put("refresh_token", oAuth2AccessToken.getRefreshToken().getValue());
+            responseMap.put("expires_in", oAuth2AccessToken.getExpiresIn());
+            responseMap.put("scope", String.join(" ", oAuth2AccessToken.getScope()));
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonResponse = objectMapper.writeValueAsString(responseMap);
+
+            response.setContentType("application/json");
+            response.getWriter().write(jsonResponse);
             response.getWriter().flush();
         } catch (Exception e) {
             response.setStatus(500);
