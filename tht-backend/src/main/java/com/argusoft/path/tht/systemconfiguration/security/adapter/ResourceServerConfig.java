@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.systemconfiguration.security.adapter;
 
+import com.argusoft.path.tht.systemconfiguration.security.custom.CustomOauth2UserService;
 import com.argusoft.path.tht.systemconfiguration.security.exceptionhandler.CustomAccessDeniedHandler;
 import com.argusoft.path.tht.systemconfiguration.security.exceptionhandler.CustomAuthenticationEntryPoint;
 import com.argusoft.path.tht.systemconfiguration.security.filters.CorsFilter;
@@ -34,6 +35,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     private CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Autowired
+    private CustomOauth2UserService oauthUserService;
+
+    @Autowired
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Autowired
@@ -61,6 +65,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .oauth2Login()
                 .userInfoEndpoint()
+                .userService(oauthUserService)
                 .and()
                 .successHandler(onSsoAuthenticationSuccessHandler);
     }

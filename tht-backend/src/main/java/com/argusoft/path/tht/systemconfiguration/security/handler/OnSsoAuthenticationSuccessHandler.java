@@ -3,6 +3,7 @@ package com.argusoft.path.tht.systemconfiguration.security.handler;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.security.custom.CustomOauth2User;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
@@ -36,11 +37,12 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         try {
-            OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+            CustomOauth2User oauth2User = (CustomOauth2User) authentication.getPrincipal();
 
             List authorities = new ArrayList();
             authorities.add(new SimpleGrantedAuthority("GOOGLE_LOGIN"));
 
+            oauth2User.getCustomAttributes().put("userName", Constant.SUPER_USER_CONTEXT.getUsername());
             UserEntity loggedInUser = createUserIfNotExists(oauth2User, Constant.SUPER_USER_CONTEXT);
 
             ContextInfo contextInfo = new ContextInfo(
