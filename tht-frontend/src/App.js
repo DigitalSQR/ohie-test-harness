@@ -1,31 +1,27 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'; // Import the necessary components and hooks
 import { Provider } from 'react-redux';
-import store from './store/store';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-
+import { persistor, store } from './store/store';
+import { BrowserRouter as Router, Route, Routes, Navigate, RouterProvider } from 'react-router-dom'; // Import necessary components
+import routes from './routes/routes';
+import { LoaderProvider } from './components/loader/LoaderContext';
+import Loader from './components/loader/Loader';
 function App() {
   return (
+    <LoaderProvider>
     <Provider store={store}>
-      <Router>
-        <Routes> {/* Use Routes instead of Route */}
-        <Route
-            path="/"
-            element={<Login />} // Use Navigate instead of Redirect
-          />
-          <Route
-            path="/login"
-            element={store.getState().auth.token ? <Navigate to="/dashboard" /> : <Login />} // Use Navigate instead of Redirect
-          />
-          <Route
-            path="/dashboard"
-            element={store.getState().auth.token ? <Dashboard /> : <Navigate to="/login" />} // Use Navigate instead of Redirect
-          />
-          {/* Additional secured routes can be added here */}
-        </Routes>
-      </Router>
+      <RouterProvider router={routes}></RouterProvider>
+      <Loader />
+      {/* <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
+            <Route index element={<Navigate to="/login" />} />
+          </Routes>
+        </div> */}
+      {/* </Router> */}
     </Provider>
+    </LoaderProvider>
   );
 }
 

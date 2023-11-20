@@ -1,33 +1,34 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../api/authActions';
-import axios from 'axios';
+import { Fragment, useState } from "react";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
+import User from "./User";
+import TestCases from './TestCases';
+import { Outlet } from "react-router-dom";
+export default function Dashboard() {
+  const [activeComponent,setActiveComponent]=useState(null);
 
-const Dashboard = () => {
-  const dispatch = useDispatch();
-  const token = useSelector((state) => state.auth.token);
-
-  const handleLogout = async () => {
-    try {
-      // Make an authenticated API call
-      await axios.get('/api/logout');
-
-      // Dispatch the logout action to clear the token from Redux
-      dispatch(logout());
-
-      // Redirect or navigate to the login page
-    } catch (error) {
-      console.error('Logout failed:', error);
+  const renderActiveComponent=()=>{
+    
+    // console.log(activeComponent)
+    switch(activeComponent){
+      case'User':
+      console.log('rendering user')
+        //  return <User/>; //rendering based on routes
+      case'TestCases':
+        return <TestCases/>;
+        default:
+          return null;
     }
-  };
-
+  }
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <p>Welcome to the secured dashboard!</p>
-      <button onClick={handleLogout}>Logout</button>
+   <Fragment>
+      <Header/>
+      <div style={{display:'flex'}}>
+      <Sidebar onComponentClick={(component)=>{
+        setActiveComponent(component)}}/>
+    <main style={{flex:1}}>{<Outlet/>}</main>
     </div>
-  );
-};
-
-export default Dashboard;
+    </Fragment>
+  )
+      }
+  

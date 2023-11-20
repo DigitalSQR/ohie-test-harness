@@ -1,0 +1,73 @@
+.openhie-navbar {
+  background: #f0f4f7;
+  /* background: rgb(92, 153, 206); */
+  padding: 13px 40px;
+  color: #333;
+}
+
+.openhie-navbar .navbar-brand {
+  font-size: 25px;
+  font-family: Open Sans;
+  font-weight: 300;
+  color: #333;
+}
+.openhie-navbar .navbar-brand:hover {
+  text-decoration: none;
+  color: #c2e914;
+}
+.sidebar {
+  background-color: #009fc8;
+  height: calc(100vh - 73.5px);
+  width: 240px;
+  padding: 20px;
+}
+
+.sidebar .menu-toggle {
+  height: 40px;
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  cursor: pointer;
+}
+.sidebar ul.nav li a {
+  display: flex;
+  align-items: center;
+  color: #f0f4f7;
+  font-size: 18px;
+  font-family: Open Sans;
+  font-weight: 600;
+  gap: 10px;
+}
+
+.sidebar .w-30 {
+  width: 30px;
+  height: 30px;
+}
+.report {
+  background: url("./img/report.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 22px;
+  height: 22px;
+}
+.settings {
+  background: url("./img/settings.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 22px;
+  height: 22px;
+}
+.profile {
+  background: url("./img/profile.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 22px;
+  height: 22px;
+}
+.history {
+  background: url("./img/history.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 22px;
+  height: 22px;
+}

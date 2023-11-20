@@ -1,56 +1,160 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { loginSuccess } from '../api/authActions';
-import axios from 'axios';
-
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+import React, { useState, Fragment, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import "../styles/Login.css";
+import openhie_logo from "../styles/img/openhie-logo.png";
+import { useNavigate } from "react-router-dom";
+import { login_success, setIsKeepLoginState } from "../reducers/authReducer";
+import { AuthenticationAPI } from "../api/AuthenticationAPI";
+import { notification } from "antd";
+import { setAuthToken } from "../api/configs/axiosConfigs";
+import { setDefaultToken } from "../api/configs/axiosConfigs";
+import { useSelector } from "react-redux";
+import { useLoader } from "../components/loader/LoaderContext";
+export default function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const isKeepFromState = useSelector((state) => state.authSlice.isKeepLogin);
+  const [isKeepLogin, setIsKeepLogin] = useState(false);
 
+  // Initialize error state
+  //const isKeepLogin = useSelector((state) => state.authSlice.isKeepLogin);
+
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    grant_type: "password", // Assuming 'password' grant type
+  });
+  const { showLoader, hideLoader } = useLoader();
+
+  useEffect(() => {
+    setDefaultToken();
+    setKeepMeLoginFromState();
+  }, []);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
   const handleLogin = async () => {
-    try {
-      // Make a request to your authentication endpoint
-      const response = await axios.post('/auth/login', {
-        username,
-        password,
+    showLoader();
+    AuthenticationAPI.doLogin(new URLSearchParams(formData))
+      .then((response) => {
+        dispatch(login_success(response));
+        setAuthToken(response.access_token);
+
+        hideLoader();
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        // Handle the error here
+        hideLoader();
+        notification.error({
+          placement: "bottomRight",
+          description: "Invalid username or password",
+        });
       });
-
-      const { accessToken } = response.data;
-
-      // Dispatch the loginSuccess action to store the token in Redux
-      dispatch(loginSuccess(accessToken));
-
-      // Redirect or navigate to the secured dashboard
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
   };
 
-  return (
-    <div>
-      <h1>Login</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div>
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <div>
-        <button onClick={handleLogin}>Login</button>
-      </div>
-    </div>
-  );
-};
+  const setOrUnsetKeepMeLogin = (event) => {
+    const { checked } = event.target;
+    setIsKeepLogin(checked);
+    dispatch(setIsKeepLoginState(checked));
+  };
 
-export default Login;
+  const setKeepMeLoginFromState = () => {
+    if (isKeepFromState && isKeepFromState === true) {
+      setIsKeepLogin(true);
+    } else {
+      setIsKeepLogin(false);
+    }
+    dispatch(setIsKeepLoginState(isKeepLogin));    
+  };
+  return (
+    <Fragment>
+      <div className="full-page-wrapper">
+        <div className="openhie-card card">
+          <img
+            src={openhie_logo}
+            alt="logo"
+            className="img-fluid mx-auto d-block mb-3"
+            hei="true"
+          />
+          <div className="openhie-form row">
+            {error && <p style={{ color: "red" }}>{error}</p>}{" "}
+            {/* Display error message if it exists */}
+            <div className="col-12 mb-2">
+              {/* {error && <p style={{ color: 'red' }}>{error}</p>} */}
+              <div className="mb-3">
+                <label
+                  htmlFor="exampleFormControlInput1"
+                  className="form-label"
+                >
+                  UserName
+                </label>
+
+                <input
+                  className="form-control"
+                  name="username"
+                  id="exampleFormControlInput1"
+                  placeholder="username"
+                  autoComplete="off"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+            <div className="col-12 mb-2">
+              <div className="mb-3">
+                <label
+                  htmlFor="exampleFormControlInput2"
+                  className="form-label"
+                >
+                  Password
+                </label>
+
+                <input
+                  type="password"
+                  className="form-control"
+                  name="password"
+                  id="exampleFormControlInput2"
+                  placeholder="password"
+                  autoComplete="off"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+            <div className="col-md-6 mb-2 pe-0">
+              <div className="form-check form-check-inline">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="inlineCheckbox1"
+                  checked={isKeepLogin}
+                  onChange={setOrUnsetKeepMeLogin}
+                />
+                <label className="form-check-label" htmlFor="inlineCheckbox1">
+                  Keep me signed in
+                </label>
+              </div>
+            </div>
+            <div className="col-md-6 mb-2 text-end">
+              <a className="text-secondary text-decoration-none">
+                Forgot Password?
+              </a>
+            </div>
+            <div className="col-12">
+              <button
+                className="btn openhie-primary w-100"
+                id="submit"
+                onClick={handleLogin}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Fragment>
+  );
+}
