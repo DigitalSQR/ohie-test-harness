@@ -1,5 +1,5 @@
 .full-page-wrapper {
-    height: 100vh;
+    height: 125vh;
     width: 100vw;
     display: flex;
     align-items: center;
@@ -14,7 +14,7 @@
     background: #fff;
     box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.1);
     padding: 50px 30px;
-    display: block;
+    display: flex;
     margin: auto;
     border: 0;
   }

@@ -1,6 +1,5 @@
-import { Fragment, useState } from "react";
 import "../styles/Landing.css";
-import {Router, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { log_out } from "../reducers/authReducer";
 import { AuthenticationAPI } from "../api/AuthenticationAPI";
@@ -8,7 +7,7 @@ import { clearAuthInfo } from '../api/configs/axiosConfigs'
 
 
 export default function Sidebar({onComponentClick}){
-    const [addUser,setAddUser]= useState(false);
+    
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleLogout = async () => {
@@ -89,10 +88,10 @@ export default function Sidebar({onComponentClick}){
               </a>
             </li>
             <li>
-              <a className="nav-link link-dark" onClick={()=>{onComponentClick('TestCases');
+              <a className="nav-link link-dark" onClick={()=>{navigate('/testcases');
             navigate('/dashboard/testcases')}}>
                 <span className="settings w-30"></span>
-                TestCases
+                UploadTestCases
               </a>
             </li>
           </ul>

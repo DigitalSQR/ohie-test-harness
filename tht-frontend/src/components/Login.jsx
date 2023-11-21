@@ -10,12 +10,14 @@ import { setAuthToken } from "../api/configs/axiosConfigs";
 import { setDefaultToken } from "../api/configs/axiosConfigs";
 import { useSelector } from "react-redux";
 import { useLoader } from "../components/loader/LoaderContext";
+import ReCAPTCHA from "react-google-recaptcha";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const isKeepFromState = useSelector((state) => state.authSlice.isKeepLogin);
   const [isKeepLogin, setIsKeepLogin] = useState(false);
+  const [captcha, setCaptcha] = useState(false);
 
   // Initialize error state
   //const isKeepLogin = useSelector((state) => state.authSlice.isKeepLogin);
@@ -35,6 +37,27 @@ export default function Login() {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  //server side api call
+  // const captchaResponse = async(recaptchaValue) => {
+  //   try {
+  //     const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
+  //       params: {
+  //         secret: 'YOUR_RECAPTCHA_SECRET_KEY',
+  //         response: recaptchaValue
+  //       }
+  //     });
+
+  //     if (response.data.success) {
+  //       console.log(response)
+  //    setCaptcha(true);
+  //     } else {
+  //       setCaptcha(false);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+  //server side api calls 
   const handleLogin = async () => {
     showLoader();
     AuthenticationAPI.doLogin(new URLSearchParams(formData))
@@ -43,7 +66,7 @@ export default function Login() {
         setAuthToken(response.access_token);
 
         hideLoader();
-        navigate("/dashboard");
+        navigate("/waiting");
       })
       .catch((error) => {
         // Handle the error here
@@ -67,8 +90,9 @@ export default function Login() {
     } else {
       setIsKeepLogin(false);
     }
-    dispatch(setIsKeepLoginState(isKeepLogin));    
+    dispatch(setIsKeepLoginState(isKeepLogin));
   };
+
   return (
     <Fragment>
       <div className="full-page-wrapper">
@@ -133,24 +157,34 @@ export default function Login() {
                   checked={isKeepLogin}
                   onChange={setOrUnsetKeepMeLogin}
                 />
-                <label className="form-check-label" htmlFor="inlineCheckbox1">
+                <span className="form-check-label" htmlFor="inlineCheckbox1">
                   Keep me signed in
-                </label>
+                </span>
               </div>
             </div>
             <div className="col-md-6 mb-2 text-end">
-              <a className="text-secondary text-decoration-none">
+              <span style={{paddingRight:'20px'}}>
                 Forgot Password?
-              </a>
+              </span>
             </div>
             <div className="col-12">
+              <div style={{ marginLeft: "50px", marginBlock: "20px" }}>
+                <ReCAPTCHA
+                  sitekey="6Lf8OrIoAAAAAAKT2bArym6y1lrkkuoVVpIN0uXf"
+                  onChange={()=>{setCaptcha(true)}}
+                />
+              </div>
               <button
+                disabled={!captcha}
                 className="btn openhie-primary w-100"
                 id="submit"
                 onClick={handleLogin}
               >
                 Submit
               </button>
+              <h6 style={{textAlign:'center'}}>OR</h6>
+              <h4  style={{textAlign:'center'}}><a href="/login/oauth2/authorization/google">Login with Google</a></h4>
+              <h5 style={{textAlign:'center'}}><a href="/register">New User? Click Here</a></h5>
             </div>
           </div>
         </div>
