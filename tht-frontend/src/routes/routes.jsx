@@ -11,7 +11,7 @@ const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
 
   const isAuthenticated = !!token;
-  return isAuthenticated ? <Dashboard /> : <Navigate to="/login" />;
+  return isAuthenticated ? <WaitingPage /> : <Navigate to="/login" />;
 };
 
 const routes = createBrowserRouter([
