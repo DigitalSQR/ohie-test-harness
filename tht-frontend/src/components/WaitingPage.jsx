@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import Header from "./Header";
 import { useDispatch } from "react-redux";
 import { log_out } from "../reducers/authReducer";
+import fillinimage from '../styles/img/dystopian.jpg'
 import { useNavigate } from "react-router-dom";
 
 export default function WaitingPage() {

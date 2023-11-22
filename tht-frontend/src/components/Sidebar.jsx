@@ -91,7 +91,7 @@ export default function Sidebar({onComponentClick}){
               <button className="side-items" onClick={()=>{navigate('/testcases');
             navigate('/dashboard/testcases')}}>
                 <span className="settings w-30"></span>
-                UploadCases
+                UploadTestCases
               </button>
             </li>
           </ul>
