@@ -37,7 +37,7 @@ export const setAuthToken = (token) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response.status === 401 && error.response.data.error === 'invalid_token') {
+    if (error.response.status == 401 && error.response.data.error == 'invalid_token') {
       error.config._retry = true;
       try {
         const refresh_token = store.getState().authSlice.refresh_token; // Use the correct reducer name
