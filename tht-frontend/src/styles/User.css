@@ -22,6 +22,16 @@
   padding: 20px;
 }
 
+.sidebar .sidebar-items{
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 18px;
+  font-family: "Open Sans";
+  font-weight: 600;
+  gap: 10px;
+}
+
 .sidebar .menu-toggle {
   height: 40px;
   align-items: center;
@@ -30,7 +40,7 @@
   cursor: pointer;
 }
 .sidebar ul.nav li a {
-  display: flex;
+  display:flex;
   align-items: center;
   color: #f0f4f7;
   font-size: 18px;
@@ -218,3 +228,4 @@ select {
 .error{
   text-decoration-color: red;
 }
+

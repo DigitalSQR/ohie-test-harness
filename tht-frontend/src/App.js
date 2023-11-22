@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { persistor, store } from './store/store';
-import { BrowserRouter as Router, Route, Routes, Navigate, RouterProvider } from 'react-router-dom'; // Import necessary components
+import {  store } from './store/store';
+import {  RouterProvider } from 'react-router-dom'; // Import necessary components
 import routes from './routes/routes';
 import { LoaderProvider } from './components/loader/LoaderContext';
 import Loader from './components/loader/Loader';

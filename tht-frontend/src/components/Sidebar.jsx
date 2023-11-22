@@ -45,54 +45,54 @@ export default function Sidebar({onComponentClick}){
           </div>
           <ul className="nav nav-pills flex-column mb-auto">
             <li className="nav-item">
-              <a href="#" className="nav-link" aria-current="page">
+              <button className="nav-link" aria-current="page">
                 <span className="report w-30"></span>
                 Reports
-              </a>
+              </button>
             </li>
             <li>
-              <a href="#" className="nav-link link-dark">
+              <button  className="sidebar-items">
                 <span className="history w-30"></span>
                 History
-              </a>
+              </button>
             </li>
             <li>
-              <a href="#" className="nav-link link-dark">
+              <button  className="sidebar-items">
                 <span className="profile w-30"></span>
                 Profile
-              </a>
+              </button>
             </li>
             <li>
-              <a href="#" className="nav-link link-dark">
+              <button className="sidebar-items">
                 <span className="settings w-30"></span>
                 Settings
-              </a>
+              </button>
             </li>
             <li>
-              <a  onClick={viewUser} className="nav-link link-dark">
+              <button onClick={viewUser} className="sidebar-items">
                 <span className="settings w-30"></span>
                 View User
-              </a>
+              </button>
             </li>
             <li>
-              <a  onClick={handleLogout} className="nav-link link-dark">
+              <button onClick={handleLogout} className="sidebar-items">
                 <span className="settings w-30"></span>
                 Log out
-              </a>
+              </button>
             </li>
             <li>
-              <a className="nav-link link-dark" onClick={()=>{
+              <button className="sidebar-items" onClick={()=>{
                navigate('/dashboard/user')}} >
                 <span className="settings w-30"></span>
                 Users
-              </a>
+              </button>
             </li>
             <li>
-              <a className="nav-link link-dark" onClick={()=>{navigate('/testcases');
+              <button className="sidebar-items" onClick={()=>{navigate('/testcases');
             navigate('/dashboard/testcases')}}>
                 <span className="settings w-30"></span>
-                UploadTestCases
-              </a>
+                UploadCases
+              </button>
             </li>
           </ul>
         </div>
