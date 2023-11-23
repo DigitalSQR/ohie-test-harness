@@ -1,5 +1,5 @@
 .full-page-wrapper {
-    height: 125vh;
+    height: 130vh;
     width: 100vw;
     display: flex;
     align-items: center;
@@ -9,6 +9,7 @@
   }
 
   .full-page-wrapper .openhie-card {
+    max-height: fit-content;
     max-width: 460px;
     border-radius: 10px;
     background: #fff;

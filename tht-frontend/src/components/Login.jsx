@@ -66,7 +66,7 @@ export default function Login() {
         setAuthToken(response.access_token);
 
         hideLoader();
-        navigate("/waiting");
+        navigate("/dashboard/user");
       })
       .catch((error) => {
         // Handle the error here

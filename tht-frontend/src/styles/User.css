@@ -22,12 +22,23 @@
   padding: 20px;
 }
 
+
+
 .sidebar .menu-toggle {
   height: 40px;
   align-items: center;
   display: flex;
   justify-content: flex-end;
   cursor: pointer;
+}
+.sidebar ul.nav .side-items{
+  display: flex;
+  align-items: center;
+  color: #f0f4f7;
+  font-size: 18px;
+  font-family: Open Sans;
+  font-weight: 600;
+  gap: 10px;
 }
 .sidebar ul.nav li a {
   display: flex;

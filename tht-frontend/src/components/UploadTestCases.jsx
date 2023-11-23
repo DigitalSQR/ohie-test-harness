@@ -94,7 +94,7 @@ export default function UploadTestCases() {
         })}
       </div>
 
-      <button onClick={downloadPdfHandler}>Download PDF</button>
+      <button onClick={downloadPdfHandler} disabled={files.length === 0} >Download PDF</button>
     </div>
   );
 }
