@@ -14,7 +14,6 @@ if (persistedStateJSON) {
   const persistedState = JSON.parse(persistedStateJSON);
  
   const authSlice = JSON.parse(persistedState.authSlice);
-  const isKeepMeLogin = authSlice.isKeepLogin;
   if (authSlice){// && isKeepMeLogin && isKeepMeLogin === true) {
     setAuthToken(authSlice.access_token);
   }else {
