@@ -5,8 +5,11 @@
  */
 package com.argusoft.path.tht.usermanagement.service.impl;
 
+import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
+import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -14,7 +17,9 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
+import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,10 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This UserServiceServiceImpl contains implementation for User service.
@@ -41,6 +43,12 @@ public class UserServiceServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private TokenVerificationService tokenVerificationService;
 
     @Autowired
     private DefaultTokenServices defaultTokenServices;
@@ -81,6 +89,43 @@ public class UserServiceServiceImpl implements UserService {
         }
         userEntity = userRepository.save(userEntity);
         return userEntity;
+    }
+
+    @Override
+    public UserEntity getUserByEmail(String email, ContextInfo contextInfo) {
+        UserEntity userByEmail = userRepository.findUserByEmail(email);
+        return userByEmail;
+    }
+
+    @Override
+    public UserEntity registerUser(UserEntity userEntity, ContextInfo contextInfo) throws DoesNotExistException, PermissionDeniedException, OperationFailedException, InvalidParameterException, MissingParameterException, DataValidationErrorException {
+        // send email
+        userEntity.setState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING);
+        userEntity = this.createUser(userEntity,contextInfo);
+
+        TokenVerificationEntity tokenVerificationEntity = new TokenVerificationEntity();
+        tokenVerificationEntity.setUserEntity(userEntity);
+        TokenVerificationEntity tokenVerification = tokenVerificationService.createTokenVerification(tokenVerificationEntity, contextInfo);
+
+        String encodedBase64TokenVerificationId = new String(Base64.encodeBase64(tokenVerification.getId().getBytes()));
+
+        String emailIdBase64 = new String(Base64.encodeBase64(userEntity.getEmail().getBytes()));
+
+        emailService.sendSimpleMessage(userEntity.getEmail(),"Verify your email id","Verify your email id "+encodedBase64TokenVerificationId+" "+emailIdBase64);
+        return userEntity;
+    }
+
+    @Override
+    public Boolean verifyUserToken(String base64TokenId, String base64EmailId, ContextInfo contextInfo) throws DoesNotExistException {
+        String tokenDecodedBase64 = new String(Base64.decodeBase64(base64TokenId));
+        String emailDecodedBase64 = new String(Base64.decodeBase64(base64EmailId));
+
+        UserEntity userByEmail = this.getUserByEmail(emailDecodedBase64, contextInfo);
+        if(userByEmail==null){
+            throw new DoesNotExistException("user does not exist with email "+userByEmail);
+        }
+        Optional<TokenVerificationEntity> activeTokenByIdAndUserId = tokenVerificationService.getActiveTokenByIdAndUserId(tokenDecodedBase64, userByEmail.getId(), contextInfo);
+        return activeTokenByIdAndUserId.isPresent();
     }
 
     /**

@@ -8,6 +8,7 @@ package com.argusoft.path.tht.usermanagement.service;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
 import org.springframework.data.domain.Page;
@@ -43,6 +44,11 @@ public interface UserService {
             PermissionDeniedException,
             DataValidationErrorException;
 
+
+    public UserEntity registerUser(UserEntity userEntity,ContextInfo contextInfo) throws DoesNotExistException, PermissionDeniedException, OperationFailedException, InvalidParameterException, MissingParameterException, DataValidationErrorException;
+
+    public Boolean verifyUserToken(String base64TokenId, String base64EmailId, ContextInfo contextInfo) throws DoesNotExistException;
+
     /**
      * Creates a new User.In the user Id, Description, and Meta information may
      * not be set in the supplied userInfo.
@@ -65,6 +71,8 @@ public interface UserService {
             MissingParameterException,
             PermissionDeniedException,
             DataValidationErrorException, DoesNotExistException;
+
+    public UserEntity getUserByEmail(String email,ContextInfo contextInfo);
 
     /**
      * Updates an existing User.

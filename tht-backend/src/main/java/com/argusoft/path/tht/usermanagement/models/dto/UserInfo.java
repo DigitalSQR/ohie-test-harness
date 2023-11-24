@@ -6,6 +6,7 @@
 package com.argusoft.path.tht.usermanagement.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdMetaInfo;
+import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -17,7 +18,7 @@ import java.util.Set;
  * @author dhruv
  * @since 2023-09-13
  */
-public class UserInfo extends IdMetaInfo implements Serializable {
+public class UserInfo extends IdStateMetaInfo implements Serializable {
 
     @ApiModelProperty(notes = "The name for User model",
             allowEmptyValue = false,

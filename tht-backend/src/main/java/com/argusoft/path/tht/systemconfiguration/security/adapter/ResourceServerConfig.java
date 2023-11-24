@@ -56,7 +56,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http.csrf().disable();
 
         http.authorizeRequests()
-                .anyRequest().authenticated();
+                .antMatchers("/api/user/register/**").permitAll()
+                .anyRequest().permitAll();
         http.headers().frameOptions().and()
                 .and()
                 .exceptionHandling()

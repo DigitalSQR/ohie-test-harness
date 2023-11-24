@@ -6,6 +6,7 @@
 package com.argusoft.path.tht.usermanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
+import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateMetaEntity;
 
 import javax.persistence.*;
 
@@ -17,7 +18,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "tht_user")
-public class UserEntity extends IdMetaEntity {
+public class UserEntity extends IdStateMetaEntity {
 
     @Column(name = "email")
     private String email;

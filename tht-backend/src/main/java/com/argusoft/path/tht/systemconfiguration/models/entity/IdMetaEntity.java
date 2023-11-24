@@ -27,4 +27,5 @@ public class IdMetaEntity extends MetaEntity {
     public void setId(String id) {
         this.id = id;
     }
+
 }

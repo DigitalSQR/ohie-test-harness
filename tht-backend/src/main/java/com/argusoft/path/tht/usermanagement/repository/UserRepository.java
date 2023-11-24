@@ -33,4 +33,8 @@ public interface UserRepository
     @Query("SELECT DISTINCT entity FROM UserEntity entity \n"
             + " WHERE entity.id IN (:ids)")
     public List<UserEntity> findUsersByIds(@Param("ids") List<String> ids);
+
+    @Query("SELECT u FROM UserEntity u where u.email = (:email)")
+    public UserEntity findUserByEmail(@Param("email") String email);
+
 }

@@ -5,14 +5,11 @@
  */
 package com.argusoft.path.tht.usermanagement.restcontroller;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import com.argusoft.path.tht.specificationtestmanagement.openhie.automation.repositories.CRTestCases;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.mapper.UserMapper;
@@ -30,10 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * This userServiceRestController maps end points with standard service.
@@ -53,6 +47,9 @@ public class UserRestController {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private EmailService emailService;
+
 
     /**
      * {@inheritdoc}
@@ -71,6 +68,42 @@ public class UserRestController {
             DataValidationErrorException {
         return userService.logout(contextInfo);
     }
+
+
+    /**
+     * {@inheritdoc}
+     * @return
+     */
+    @ApiOperation(value = "Register new user", response = UserInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully user registered"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PostMapping("/register")
+    @Timed(name = "registerUser")
+    public UserInfo registerUser(
+            @RequestBody UserInfo userInfo,
+            @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException,
+            DataValidationErrorException, DoesNotExistException {
+
+        UserEntity userEntity = userMapper.dtoToModel(userInfo);
+        userEntity = userService.registerUser(userEntity, contextInfo);
+        return userMapper.modelToDto(userEntity);
+    }
+
+
+    /*@GetMapping("/verify/{base64TokenId}")
+    public boolean verifyUser(@PathVariable("base64TokenId") String base64TokenId, @RequestAttribute(name = "contextInfo") ContextInfo contextInfo){
+
+
+    }*/
+
+
 
     /**
      * {@inheritdoc}
