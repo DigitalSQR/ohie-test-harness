@@ -16,7 +16,7 @@ import javax.persistence.MappedSuperclass;
  * @since 2021-2-25
  */
 @MappedSuperclass
-public class IdMetaEntity extends MetaEntity {
+public class IdEntity {
 
     @Id
     @Column(name = "id")

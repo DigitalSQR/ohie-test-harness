@@ -9,13 +9,12 @@ import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
+import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.mapper.UserMapper;
-import com.codahale.metrics.annotation.Timed;
-import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -56,7 +55,7 @@ public class UserRestController {
      */
     @ApiOperation(value = "login  user", response = Boolean.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully logout user")
+            @ApiResponse(code = 200, message = "Successfully logout user")
     })
     @PostMapping("/logout")
     @Timed(name = "logout")
@@ -72,6 +71,7 @@ public class UserRestController {
 
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @ApiOperation(value = "Register new user", response = UserInfo.class)
@@ -81,8 +81,8 @@ public class UserRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/register")
-    @Timed(name = "registerUser")
-    public UserInfo registerUser(
+    @Timed(name = "registerAssessee")
+    public UserInfo registerAssessee(
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
@@ -92,7 +92,7 @@ public class UserRestController {
             DataValidationErrorException, DoesNotExistException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
-        userEntity = userService.registerUser(userEntity, contextInfo);
+        userEntity = userService.registerAssessee(userEntity, contextInfo);
         return userMapper.modelToDto(userEntity);
     }
 
@@ -104,16 +104,16 @@ public class UserRestController {
     }*/
 
 
-
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @ApiOperation(value = "Create new user", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully created user"),
-        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully created user"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("")
     @Timed(name = "createUser")
@@ -134,13 +134,14 @@ public class UserRestController {
 
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @ApiOperation(value = "Update existing user", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully updated user"),
-        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully updated user"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 
     })
     @PutMapping("")
@@ -157,20 +158,21 @@ public class UserRestController {
             DataValidationErrorException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
-        userEntity =  userService.updateUser(userEntity, contextInfo);
+        userEntity = userService.updateUser(userEntity, contextInfo);
         return userMapper.modelToDto(userEntity);
     }
 
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @ApiOperation(value = "View a page of available filtered users", response = Page.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved page"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            @ApiResponse(code = 200, message = "Successfully retrieved page"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
     @Timed(name = "searchUsers")
@@ -200,14 +202,15 @@ public class UserRestController {
 
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @ApiOperation(value = "View available user with supplied id", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved user"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            @ApiResponse(code = 200, message = "Successfully retrieved user"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{userId}")
     @Timed(name = "getUserById")
@@ -226,6 +229,7 @@ public class UserRestController {
 
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     public Page<UserInfo> getUsers(
@@ -244,9 +248,9 @@ public class UserRestController {
      */
     @ApiOperation(value = "View a list of validation errors for user", response = List.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved Validation errors"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully retrieved Validation errors"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
     @Timed(name = "validateUser")
@@ -262,16 +266,17 @@ public class UserRestController {
         return userService
                 .validateUser(validationTypeKey, new UserEntity(), contextInfo);
     }
-    
+
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @ApiOperation(value = "View loggedIn user's data", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved loggedIn user"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully retrieved loggedIn user"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("/principal")
     @Timed(name = "getPrincipalUser")

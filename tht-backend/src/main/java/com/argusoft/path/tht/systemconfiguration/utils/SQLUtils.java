@@ -14,7 +14,8 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This SQLUtils provides methods for SQL.
@@ -32,8 +33,8 @@ public final class SQLUtils {
             SearchType searchType,
             boolean separate,
             StringBuilder stringBuilder) {
-        if(StringUtils.isEmpty(columnValue)) return separate;
-        if(separate) {
+        if (StringUtils.isEmpty(columnValue)) return separate;
+        if (separate) {
             stringBuilder.append("AND ");
         }
         stringBuilder
@@ -55,10 +56,10 @@ public final class SQLUtils {
         parameters.forEach((key, value) -> countQuery.setParameter(key, value));
         long totalCount = countQuery.getSingleResult();
 
-        if(!pageable.getSort().isEmpty()) {
+        if (!pageable.getSort().isEmpty()) {
             jpql.append(" order by ");
             String saperator = "";
-            for(Sort.Order order : pageable.getSort()) {
+            for (Sort.Order order : pageable.getSort()) {
                 jpql
                         .append(saperator)
                         .append(order.getProperty())
@@ -68,7 +69,7 @@ public final class SQLUtils {
             }
         }
 
-        TypedQuery<T> query = (TypedQuery<T>) entityManager.createQuery("SELECT DISTINCT "+ tableName + jpql.toString(), type)
+        TypedQuery<T> query = (TypedQuery<T>) entityManager.createQuery("SELECT DISTINCT " + tableName + jpql.toString(), type)
                 .setMaxResults(pageable.getPageSize())
                 .setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
         parameters.forEach((key, value) -> query.setParameter(key, value));
@@ -83,8 +84,8 @@ public final class SQLUtils {
             Map<String, Object> parameters,
             boolean separate,
             StringBuilder stringBuilder) {
-        if(StringUtils.isEmpty(columnValue)) return separate;
-        if(separate) {
+        if (StringUtils.isEmpty(columnValue)) return separate;
+        if (separate) {
             stringBuilder.append("AND ");
         }
         stringBuilder
@@ -97,16 +98,16 @@ public final class SQLUtils {
     public static String parameterLikePattern(
             String columnValue,
             SearchType searchType) {
-            switch (searchType) {
-                case EXACTLY:
-                    return "%" + columnValue.toUpperCase() + "%";
-                case STARTING:
-                    return "%" + columnValue.toUpperCase();
-                case ENDING:
-                    return columnValue.toUpperCase() + "%";
-                //default case is for CONTAINING
-                default:
-                    return columnValue.toUpperCase();
-            }
+        switch (searchType) {
+            case EXACTLY:
+                return "%" + columnValue.toUpperCase() + "%";
+            case STARTING:
+                return "%" + columnValue.toUpperCase();
+            case ENDING:
+                return columnValue.toUpperCase() + "%";
+            //default case is for CONTAINING
+            default:
+                return columnValue.toUpperCase();
         }
+    }
 }

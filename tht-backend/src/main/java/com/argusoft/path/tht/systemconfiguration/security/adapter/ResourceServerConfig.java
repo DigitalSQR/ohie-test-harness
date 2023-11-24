@@ -29,20 +29,15 @@ import org.springframework.security.web.session.SessionManagementFilter;
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Autowired
+    CorsFilter corsFilter;
+    @Autowired
     private DefaultTokenServices defaultTokenServices;
-
     @Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
-
     @Autowired
     private CustomOauth2UserService oauthUserService;
-
     @Autowired
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-
-    @Autowired
-    CorsFilter corsFilter;
-
     @Autowired
     private UserRepository userRepository;
 

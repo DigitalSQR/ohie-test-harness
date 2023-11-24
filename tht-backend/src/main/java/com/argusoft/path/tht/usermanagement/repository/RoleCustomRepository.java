@@ -6,21 +6,21 @@
 package com.argusoft.path.tht.usermanagement.repository;
 
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import com.argusoft.path.tht.usermanagement.filter.RoleSearchFilter;
+import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * This repository is for making queries on the User model.
+ * This repository is for making queries on the Role model.
  *
  * @author dhruv
  * @since 2023-09-13
  */
-public interface UserCustomRepository {
+public interface RoleCustomRepository {
 
-    public Page<UserEntity> advanceUserSearch(
-            UserSearchFilter searchFilter,
+    public Page<RoleEntity> advanceRoleSearch(
+            RoleSearchFilter searchFilter,
             Pageable pageable
     ) throws OperationFailedException;
 }

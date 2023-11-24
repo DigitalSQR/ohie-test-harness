@@ -1,8 +1,6 @@
 package com.argusoft.path.tht.usermanagement.models.entity;
 
-import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateMetaEntity;
-import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +14,6 @@ public class TokenVerificationEntity extends IdStateMetaEntity {
     @OneToOne
     @Column(name = "user_id")
     private UserEntity userEntity;
-
 
     public UserEntity getUserEntity() {
         return userEntity;

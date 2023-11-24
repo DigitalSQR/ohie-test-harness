@@ -7,8 +7,8 @@ package com.argusoft.path.tht.usermanagement.repository;
 
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.utils.SQLUtils;
-import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import com.argusoft.path.tht.usermanagement.filter.RoleSearchFilter;
+import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,45 +25,37 @@ import java.util.Map;
  * @since 2023-09-13
  */
 @Repository
-public class UserCustomRepositoryImpl
-        implements UserCustomRepository {
+public class RoleCustomRepositoryImpl
+        implements RoleCustomRepository {
     @Autowired
     private EntityManager entityManager;
 
     @Override
-    public Page<UserEntity> advanceUserSearch(
-            UserSearchFilter searchFilter,
+    public Page<RoleEntity> advanceRoleSearch(
+            RoleSearchFilter searchFilter,
             Pageable pageable
     ) throws OperationFailedException {
         StringBuilder jpql = new StringBuilder();
         Map<String, Object> parameters = new HashMap<String, Object>();
 
-        jpql = jpql.append(" FROM UserEntity user \n");
+        jpql = jpql.append(" FROM RoleEntity role \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
             boolean separate;
 
             separate = SQLUtils.likeQL(
-                    "user",
+                    "role",
                     "name",
                     searchFilter.getName(),
                     parameters,
                     searchFilter.getNameSearchType(),
                     false,
                     jpql);
-
-            separate = SQLUtils.equalQL(
-                    "user",
-                    "email",
-                    searchFilter.getEmail(),
-                    parameters,
-                    separate,
-                    jpql);
         }
 
         try {
-            return SQLUtils.getResultPage("user", UserEntity.class, jpql, parameters, pageable, entityManager);
+            return SQLUtils.getResultPage("role", RoleEntity.class, jpql, parameters, pageable, entityManager);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new OperationFailedException("Operation Failed while Executing query.", ex);

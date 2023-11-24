@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -86,16 +87,16 @@ public class MetaEntity {
     public void setVersion(Long version) {
         this.version = version;
     }
-    
+
+    public MetaInfo getMeta() {
+        return new MetaInfo(this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.version);
+    }
+
     public void setMeta(MetaInfo metaInfo) {
         this.createdAt = metaInfo.getCreatedAt();
         this.createdBy = metaInfo.getCreatedBy();
         this.updatedAt = metaInfo.getUpdatedAt();
         this.updatedBy = metaInfo.getUpdatedBy();
         this.version = metaInfo.getVersion();
-    }
-
-    public MetaInfo getMeta() {
-        return new MetaInfo(this.createdAt, this.createdBy, this.updatedAt, this.updatedBy, this.version);
     }
 }

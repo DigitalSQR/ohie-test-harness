@@ -10,53 +10,34 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.util.StringUtils;
 
 /**
- * SearchFilter for User.
+ * SearchFilter for Role.
  *
  * @author dhruv
  * @since 2023-09-13
  */
-public class UserSearchFilter {
+public class RoleSearchFilter {
 
     @ApiParam(
-            value = "name of the user"
+            value = "name of the role"
     )
     private String name;
 
     @ApiParam(
-            value = "nameSearchType of the user"
+            value = "nameSearchType of the role"
     )
     private SearchType nameSearchType;
 
-    @ApiParam(
-            value = "email of the user"
-    )
-    private String email;
-
-    public UserSearchFilter() {
+    public RoleSearchFilter() {
     }
 
-    public UserSearchFilter(String name,
-                            SearchType nameSearchType,
-                            String email) {
+    public RoleSearchFilter(String name,
+                            SearchType nameSearchType) {
         this.name = name;
         this.nameSearchType = nameSearchType;
-        this.email = email;
     }
 
     public boolean isEmpty() {
-        return StringUtils.isEmpty(name)
-                && StringUtils.isEmpty(email);
-    }
-
-    public String getEmail() {
-        if (StringUtils.isEmpty(email)) {
-            email = null;
-        }
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        return StringUtils.isEmpty(name);
     }
 
     public String getName() {

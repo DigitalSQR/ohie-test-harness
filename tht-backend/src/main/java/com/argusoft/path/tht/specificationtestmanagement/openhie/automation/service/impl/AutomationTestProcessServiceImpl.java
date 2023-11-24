@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * This AutomationServiceImpl contains implementation for Automation Test Process service.
@@ -63,10 +61,10 @@ public class AutomationTestProcessServiceImpl implements AutomationTestProcessSe
         validationResultInfos.add(CRTestCases.test(client, contextInfo));
         if (ValidationUtils.containsErrors(validationResultInfos, ErrorLevel.ERROR)) {
             System.out.println("Failed");
-            new ValidationResultInfo("testAutomation", ErrorLevel.OK,"Failed");
+            new ValidationResultInfo("testAutomation", ErrorLevel.OK, "Failed");
         } else {
             System.out.println("Passed");
-            new ValidationResultInfo("testAutomation", ErrorLevel.OK,"Passed");
+            new ValidationResultInfo("testAutomation", ErrorLevel.OK, "Passed");
         }
     }
 

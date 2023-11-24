@@ -3,7 +3,22 @@
 --@author dhruv
 --@since 2023-09-13
 
+DELETE FROM role;
 DELETE FROM tht_user;
+
+INSERT INTO role (
+   	    id,
+    	name
+    ) VALUES (
+        'role.admin',
+        'Admin',
+    ), (
+        'role.tester',
+        'Tester',
+    ), (
+        'role.assessee',
+        'Assessee',
+    );
 
 INSERT INTO tht_user (
     	id,
@@ -28,3 +43,11 @@ INSERT INTO tht_user (
 	    Now(),
 	    0
     );
+
+INSERT INTO tht_user_role (
+        user_id,
+        role_id
+     ) VALUES (
+        'SYSTEM_USER',
+        'role.admin'
+     );

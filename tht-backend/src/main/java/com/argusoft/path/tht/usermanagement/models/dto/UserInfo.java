@@ -5,11 +5,11 @@
  */
 package com.argusoft.path.tht.usermanagement.models.dto;
 
-import com.argusoft.path.tht.systemconfiguration.models.dto.IdMetaInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -44,7 +44,7 @@ public class UserInfo extends IdStateMetaInfo implements Serializable {
     @ApiModelProperty(notes = "The associatedRoleIds for model",
             allowEmptyValue = false,
             example = "['1','2','3']",
-            dataType = "List<UserRoleInfo>",
+            dataType = "Set<String>",
             required = true)
     private Set<String> roleIds;
 
@@ -73,7 +73,10 @@ public class UserInfo extends IdStateMetaInfo implements Serializable {
     }
 
     public Set<String> getRoleIds() {
-        return roleIds;
+        if (this.roleIds == null) {
+            this.roleIds = new HashSet<>();
+        }
+        return this.roleIds;
     }
 
     public void setRoleIds(Set<String> roleIds) {

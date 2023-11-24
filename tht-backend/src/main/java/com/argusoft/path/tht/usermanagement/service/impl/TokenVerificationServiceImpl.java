@@ -23,10 +23,10 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
 
     @Override
     public Optional<TokenVerificationEntity> getActiveTokenByIdAndUserId(String token, String userId, ContextInfo contextInfo) {
-        return tokenVerificationRepository.findActiveTokenByIdAndUserInfo(TokenVerificationConstants.TOKEN_STATUS_ACTIVE,token, userId);
+        return tokenVerificationRepository.findActiveTokenByIdAndUserInfo(TokenVerificationConstants.TOKEN_STATUS_ACTIVE, token, userId);
     }
 
-    public TokenVerificationEntity getTokenById(String token, ContextInfo contextInfo){
+    public TokenVerificationEntity getTokenById(String token, ContextInfo contextInfo) {
         Optional<TokenVerificationEntity> tokenVerificationById = tokenVerificationRepository.findById(token);
         return tokenVerificationById.orElse(null);
     }

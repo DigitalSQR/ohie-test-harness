@@ -19,7 +19,7 @@ public interface AutomationTestProcessService {
      * start automation testing process.
      *
      * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     *                    information about the caller of service operation
      * @return message
      */
     public void startAutomationTestingProcess(ContextInfo contextInfo);

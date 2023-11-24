@@ -11,9 +11,6 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 /**
  * Implemantation of the CR Testing.
@@ -24,15 +21,15 @@ import java.util.stream.Collectors;
  */
 public class CRTestCases {
     public static ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) {
-            System.out.println("Started CRTestCases");
-            List<ValidationResultInfo> testCases = new ArrayList<>();
-            //code to add entry that started process for CRTest
-            testCases.add(CRWF1TestCases.test(client, contextInfo));
-            testCases.add(CRWF2TestCases.test(client, contextInfo));
-            testCases.add(CRWF3TestCases.test(client, contextInfo));
-            testCases.add(CRWF4TestCases.test(client, contextInfo));
+        System.out.println("Started CRTestCases");
+        List<ValidationResultInfo> testCases = new ArrayList<>();
+        //code to add entry that started process for CRTest
+        testCases.add(CRWF1TestCases.test(client, contextInfo));
+        testCases.add(CRWF2TestCases.test(client, contextInfo));
+        testCases.add(CRWF3TestCases.test(client, contextInfo));
+        testCases.add(CRWF4TestCases.test(client, contextInfo));
 
-            //make entry for whole CR and return response.
-            return new ValidationResultInfo("testCR", ErrorLevel.OK,"Passed");
+        //make entry for whole CR and return response.
+        return new ValidationResultInfo("testCR", ErrorLevel.OK, "Passed");
     }
 }

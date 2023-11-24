@@ -10,10 +10,12 @@ public interface TokenVerificationService {
     public TokenVerificationEntity createTokenVerification(TokenVerificationEntity tokenVerificationEntity,
                                                            ContextInfo contextInfo);
 
+    public Optional<TokenVerificationEntity> getActiveTokenByIdAndUserId(String token,
+                                                                         String userId,
+                                                                         ContextInfo contextInfo);
 
-    public Optional<TokenVerificationEntity> getActiveTokenByIdAndUserId(String token, String userId, ContextInfo contextInfo);
-
-    public TokenVerificationEntity getTokenById(String tokenId, ContextInfo contextInfo);
+    public TokenVerificationEntity getTokenById(String tokenId,
+                                                ContextInfo contextInfo);
 
 
 }

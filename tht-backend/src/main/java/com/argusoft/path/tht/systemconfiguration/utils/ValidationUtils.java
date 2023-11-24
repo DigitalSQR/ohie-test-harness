@@ -10,6 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.KeyCategory;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -17,11 +18,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.springframework.util.StringUtils;
 
 /**
  * This ValidationUtils provides methods for validation.
@@ -39,7 +39,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Required field.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param error
      */
@@ -57,7 +57,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Not Empty.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param errors
      */
@@ -77,8 +77,8 @@ public final class ValidationUtils {
      * Validation method for RefObjectUri.
      *
      * @param refObjectUri contains refObjectUri values
-     * @param fieldName name of the field
-     * @param infoName name of the info
+     * @param fieldName    name of the field
+     * @param infoName     name of the info
      * @param errors
      */
     public static void validateRefObjectUri(
@@ -91,7 +91,7 @@ public final class ValidationUtils {
                     .add(new ValidationResultInfo(fieldName,
                             ErrorLevel.ERROR,
                             "Provided " + fieldName
-                            + " must be for " + infoName));
+                                    + " must be for " + infoName));
         }
     }
 
@@ -99,11 +99,11 @@ public final class ValidationUtils {
      * Validation method for RefObjectUri.
      *
      * @param keyCatagory KeyCatagory values
-     * @param fieldName name of the field
-     * @param key key of the info
+     * @param fieldName   name of the field
+     * @param key         key of the info
      * @param minValue
      * @param maxValue
-     * @param value value of the info
+     * @param value       value of the info
      * @param errors
      */
     public static void validateKeyValue(
@@ -129,7 +129,7 @@ public final class ValidationUtils {
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     PROVIDED_KEY + key
-                                    + "'s value must be for BigDecimal"));
+                                            + "'s value must be for BigDecimal"));
                 }
 
                 break;
@@ -148,7 +148,7 @@ public final class ValidationUtils {
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     PROVIDED_KEY + key
-                                    + "'s value must be for Percentage"));
+                                            + "'s value must be for Percentage"));
                 }
 
                 break;
@@ -161,7 +161,7 @@ public final class ValidationUtils {
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     PROVIDED_KEY + key
-                                    + "'s value must be for BOOLEAN"));
+                                            + "'s value must be for BOOLEAN"));
                 }
                 break;
             }
@@ -179,7 +179,7 @@ public final class ValidationUtils {
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     PROVIDED_KEY + key
-                                    + "'s value must be for INTEGER"));
+                                            + "'s value must be for INTEGER"));
                 }
                 break;
             }
@@ -189,7 +189,7 @@ public final class ValidationUtils {
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     PROVIDED_KEY + key
-                                    + "'s value must be for STRING"));
+                                            + "'s value must be for STRING"));
                 }
                 break;
             }
@@ -203,7 +203,7 @@ public final class ValidationUtils {
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     PROVIDED_KEY + key
-                                    + "'s value must be for DATE with format: " + Constant.DATE_FORMATE_STRING
+                                            + "'s value must be for DATE with format: " + Constant.DATE_FORMATE_STRING
                             ));
                 }
                 break;
@@ -214,7 +214,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Float.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param minValue
      * @param maxValue
@@ -246,7 +246,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Float.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param minValue
      * @param maxValue
@@ -276,7 +276,7 @@ public final class ValidationUtils {
     /**
      * Validation method for effectiveDates.
      *
-     * @param effectiveDate contains effectiveDate
+     * @param effectiveDate  contains effectiveDate
      * @param expirationDate contain expirationDate
      * @param error
      */
@@ -297,7 +297,7 @@ public final class ValidationUtils {
     /**
      * Validation method for effectiveDates.
      *
-     * @param effectiveDate contains effectiveDate
+     * @param effectiveDate  contains effectiveDate
      * @param expirationDate contain expirationDate
      * @param error
      */
@@ -318,8 +318,8 @@ public final class ValidationUtils {
     /**
      * Check if date is effective.
      *
-     * @param date date to check
-     * @param effectiveDate contains effectiveDate
+     * @param date           date to check
+     * @param effectiveDate  contains effectiveDate
      * @param expirationDate contain expirationDate
      * @return true date is effective.
      */
@@ -356,7 +356,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Integer.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param errors
      */
@@ -379,7 +379,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Long.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param errors
      */
@@ -402,7 +402,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Integer.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param minValue
      * @param maxValue
@@ -432,9 +432,9 @@ public final class ValidationUtils {
     /**
      * Validation method for not updatable field.
      *
-     * @param field contains field values
+     * @param field         contains field values
      * @param originalField contains original fields values
-     * @param fieldName name of the field
+     * @param fieldName     name of the field
      * @param errors
      */
     public static void validateNotUpdatable(
@@ -456,14 +456,14 @@ public final class ValidationUtils {
     /**
      * Validation method for list size.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param minValue
      * @param maxValue
      * @param errors
      */
-    public static void validateListSize(
-            List<?> field,
+    public static void validateCollectionSize(
+            Collection<?> field,
             String fieldName,
             Integer minValue,
             Integer maxValue,
@@ -477,20 +477,20 @@ public final class ValidationUtils {
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 fieldName + " must contain "
-                                + minValue + " item"));
+                                        + minValue + " item"));
             } else {
                 if (minValue != null && field.size() < minValue) {
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     fieldName + " must contain more than "
-                                    + minValue + " items"));
+                                            + minValue + " items"));
                 } else if (maxValue != null && field.size() > maxValue) {
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     fieldName + " must contain less than "
-                                    + maxValue + " items"));
+                                            + maxValue + " items"));
                 }
             }
         }
@@ -507,17 +507,17 @@ public final class ValidationUtils {
     /**
      * Validation method for pattern match.
      *
-     * @param fieldValue contains field values
-     * @param fieldName name of the field
+     * @param fieldValue    contains field values
+     * @param fieldName     name of the field
      * @param patternString pattern for the field
      * @param errorMassage
      * @param errors
      */
     public static void validatePattern(String fieldValue,
-            String fieldName,
-            String patternString,
-            String errorMassage,
-            List<ValidationResultInfo> errors) {
+                                       String fieldName,
+                                       String patternString,
+                                       String errorMassage,
+                                       List<ValidationResultInfo> errors) {
         Pattern pattern = Pattern.compile(patternString);
         if (fieldValue != null && !pattern.matcher(fieldValue).matches()) {
             errors
@@ -530,11 +530,11 @@ public final class ValidationUtils {
     /**
      * Validation method for password match.
      *
-     * @param password contains field values
+     * @param password  contains field values
      * @param fieldName name of the field
-     * @param minLen Integer password length
-     * @param maxLen Integer password length
-     * @param errors error list where we can add details.
+     * @param minLen    Integer password length
+     * @param maxLen    Integer password length
+     * @param errors    error list where we can add details.
      */
     public static void validatePasswordString(
             String password,
@@ -611,29 +611,29 @@ public final class ValidationUtils {
      * Validation method for Length.
      *
      * @param fieldValue contains field values
-     * @param fieldName name of the field
-     * @param minLength minimum required length for field
-     * @param maxLength maximum required length for field
+     * @param fieldName  name of the field
+     * @param minLength  minimum required length for field
+     * @param maxLength  maximum required length for field
      * @param errors
      */
     public static void validateLength(String fieldValue,
-            String fieldName,
-            int minLength,
-            int maxLength,
-            List<ValidationResultInfo> errors) {
+                                      String fieldName,
+                                      int minLength,
+                                      int maxLength,
+                                      List<ValidationResultInfo> errors) {
         if (fieldValue != null) {
             int fieldLength = fieldValue.length();
             if (minLength > fieldLength) {
                 errors.add(new ValidationResultInfo(fieldName,
                         ErrorLevel.ERROR,
                         fieldName + " must have more than "
-                        + minLength + " characters"));
+                                + minLength + " characters"));
             } else if (fieldLength > maxLength) {
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 fieldName + " must have less than "
-                                + maxLength + " characters"));
+                                        + maxLength + " characters"));
             }
         }
     }
@@ -641,7 +641,7 @@ public final class ValidationUtils {
     /**
      * Check if errors contains WARN thresh hold Error.
      *
-     * @param errors list of errors
+     * @param errors     list of errors
      * @param errorLevel
      * @return true if it contains WARN thresh hold Error.
      */
@@ -662,8 +662,8 @@ public final class ValidationUtils {
         return validationResults.stream().anyMatch(validationResult
                 -> //Ignore any fields that are in the list
                 ((ignoreFields == null
-                || (!ignoreFields.contains(validationResult.getElement())))
-                && ValidationResultInfo.isSurpassingThreshold(validationResult.getLevel(),
+                        || (!ignoreFields.contains(validationResult.getElement())))
+                        && ValidationResultInfo.isSurpassingThreshold(validationResult.getLevel(),
                         threshold))
         );
     }
