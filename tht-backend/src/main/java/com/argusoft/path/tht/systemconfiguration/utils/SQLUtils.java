@@ -6,14 +6,15 @@
 package com.argusoft.path.tht.systemconfiguration.utils;
 
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
+
 import java.util.List;
 import java.util.Map;
 

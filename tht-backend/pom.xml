@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.15</version>
+        <version>3.2.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.argusoft.path.tht</groupId>
@@ -15,7 +15,7 @@
     <name>testing-harness-tool</name>
     <description>Testing Harness Tool</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <metrics.aspect.version>1.2.0</metrics.aspect.version>
         <metrics.version>3.2.2</metrics.version>

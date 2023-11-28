@@ -5,9 +5,7 @@
  */
 package com.argusoft.path.tht.systemconfiguration.models.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 
 /**
  * This model used in model those contains UUID as id.
