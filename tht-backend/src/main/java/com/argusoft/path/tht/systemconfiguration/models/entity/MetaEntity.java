@@ -6,13 +6,13 @@
 package com.argusoft.path.tht.systemconfiguration.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.MetaInfo;
+import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.*;
 import java.util.Date;
 
 /**

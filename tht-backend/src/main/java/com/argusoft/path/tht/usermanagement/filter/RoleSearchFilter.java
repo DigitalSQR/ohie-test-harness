@@ -6,7 +6,6 @@
 package com.argusoft.path.tht.usermanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
-import io.swagger.annotations.ApiParam;
 import org.springframework.util.StringUtils;
 
 /**
@@ -17,14 +16,14 @@ import org.springframework.util.StringUtils;
  */
 public class RoleSearchFilter {
 
-    @ApiParam(
-            value = "name of the role"
-    )
+    //    @ApiParam(
+//            value = "name of the role"
+//    )
     private String name;
 
-    @ApiParam(
-            value = "nameSearchType of the role"
-    )
+    //    @ApiParam(
+//            value = "nameSearchType of the role"
+//    )
     private SearchType nameSearchType;
 
     public RoleSearchFilter() {

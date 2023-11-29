@@ -5,7 +5,6 @@
  */
 package com.argusoft.path.tht.systemconfiguration.models.dto;
 
-import io.swagger.annotations.ApiParam;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -25,22 +24,22 @@ import java.util.Date;
  */
 public class ContextInfo extends User implements Serializable {
 
-    @ApiParam(
-            value = "currentDate of the context",
-            hidden = true
-    )
+    //    @ApiParam(
+//            value = "currentDate of the context",
+//            hidden = true
+//    )
     private Date currentDate;
 
-    @ApiParam(
-            value = "accessToken of the context",
-            hidden = true
-    )
+    //    @ApiParam(
+//            value = "accessToken of the context",
+//            hidden = true
+//    )
     private String accessToken;
 
-    @ApiParam(
-            value = "email of the context",
-            hidden = true
-    )
+    //    @ApiParam(
+//            value = "email of the context",
+//            hidden = true
+//    )
     private String email;
 
     public ContextInfo() {

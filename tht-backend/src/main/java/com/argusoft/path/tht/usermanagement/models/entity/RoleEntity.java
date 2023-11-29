@@ -1,8 +1,9 @@
 package com.argusoft.path.tht.usermanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdEntity;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "role")

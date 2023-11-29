@@ -2,10 +2,6 @@ package com.argusoft.path.tht.systemconfiguration.indexapi;
 
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -17,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("")
 @Metrics(registry = "AppBuildInfoController")
-@Api(value = "REST Endpoints for Build Info", tags = {"Build Info API"})
+//@Api(value = "REST Endpoints for Build Info", tags = {"Build Info API"})
 public class AppBuildInfoController {
 
     @Autowired
@@ -26,15 +22,15 @@ public class AppBuildInfoController {
     /**
      * {@inheritdoc}
      */
-    @ApiOperation(value = "View current API version", response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200,
-                    message = "Current API virsion"),
-            @ApiResponse(code = 401,
-                    message = "You are not authorized to create the resource"),
-            @ApiResponse(code = 403,
-                    message = "Accessing the resource you were trying to reach is forbidden")
-    })
+//    @ApiOperation(value = "View current API version", response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200,
+//                    message = "Current API virsion"),
+//            @ApiResponse(code = 401,
+//                    message = "You are not authorized to create the resource"),
+//            @ApiResponse(code = 403,
+//                    message = "Accessing the resource you were trying to reach is forbidden")
+//    })
     @GetMapping("/build")
     @Timed(name = "apiVersion")
     public String apiVersion() {
@@ -48,15 +44,15 @@ public class AppBuildInfoController {
     /**
      * {@inheritdoc}
      */
-    @ApiOperation(value = "View Index for API", response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200,
-                    message = "Index API"),
-            @ApiResponse(code = 401,
-                    message = "You are not authorized to create the resource"),
-            @ApiResponse(code = 403,
-                    message = "Accessing the resource you were trying to reach is forbidden")
-    })
+//    @ApiOperation(value = "View Index for API", response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200,
+//                    message = "Index API"),
+//            @ApiResponse(code = 401,
+//                    message = "You are not authorized to create the resource"),
+//            @ApiResponse(code = 403,
+//                    message = "Accessing the resource you were trying to reach is forbidden")
+//    })
     @GetMapping("")
     @Timed(name = "apiIndex")
     public String apiIndex() {
@@ -72,15 +68,15 @@ public class AppBuildInfoController {
     /**
      * {@inheritdoc}
      */
-    @ApiOperation(value = "View service", response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200,
-                    message = "View service"),
-            @ApiResponse(code = 401,
-                    message = "You are not authorized to create the resource"),
-            @ApiResponse(code = 403,
-                    message = "Accessing the resource you were trying to reach is forbidden")
-    })
+//    @ApiOperation(value = "View service", response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200,
+//                    message = "View service"),
+//            @ApiResponse(code = 401,
+//                    message = "You are not authorized to create the resource"),
+//            @ApiResponse(code = 403,
+//                    message = "Accessing the resource you were trying to reach is forbidden")
+//    })
     @GetMapping("/service")
     @Timed(name = "requestCsrf")
     public ResponseEntity<Object> requestCsrf() {

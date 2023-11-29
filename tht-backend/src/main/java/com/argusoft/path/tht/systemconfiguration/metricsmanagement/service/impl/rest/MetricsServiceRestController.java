@@ -3,17 +3,12 @@ package com.argusoft.path.tht.systemconfiguration.metricsmanagement.service.impl
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.metricsmanagement.util.MetricsUtil;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -22,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/metrics")
-@Api(value = "REST Endpoints for Metrics", tags = {"Metrics"})
+//@Api(value = "REST Endpoints for Metrics", tags = {"Metrics"})
 public class MetricsServiceRestController {
 
     private static final Map<String, ByteArrayOutputStream> map
@@ -57,15 +52,15 @@ public class MetricsServiceRestController {
         }
     }
 
-    @ApiOperation(value = "View metrics", response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200,
-                    message = "View metrics"),
-            @ApiResponse(code = 401,
-                    message = "You are not authorized to create the resource"),
-            @ApiResponse(code = 403,
-                    message = "Accessing the resource you were trying to reach is forbidden")
-    })
+    //    @ApiOperation(value = "View metrics", response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200,
+//                    message = "View metrics"),
+//            @ApiResponse(code = 401,
+//                    message = "You are not authorized to create the resource"),
+//            @ApiResponse(code = 403,
+//                    message = "Accessing the resource you were trying to reach is forbidden")
+//    })
     @GetMapping("/{registryName}")
     public ResponseEntity<Object> getmetrics(
             @PathVariable("registryName") String registryName,
@@ -83,15 +78,15 @@ public class MetricsServiceRestController {
                 .body(map.get(registryName).toString().replace("\n", "<BR>"));
     }
 
-    @ApiOperation(value = "View all registry", response = String.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200,
-                    message = "View metrics"),
-            @ApiResponse(code = 401,
-                    message = "You are not authorized to create the resource"),
-            @ApiResponse(code = 403,
-                    message = "Accessing the resource you were trying to reach is forbidden")
-    })
+    //    @ApiOperation(value = "View all registry", response = String.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200,
+//                    message = "View metrics"),
+//            @ApiResponse(code = 401,
+//                    message = "You are not authorized to create the resource"),
+//            @ApiResponse(code = 403,
+//                    message = "Accessing the resource you were trying to reach is forbidden")
+//    })
     @GetMapping("")
     public ResponseEntity<Object> getRegistryNames(
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo

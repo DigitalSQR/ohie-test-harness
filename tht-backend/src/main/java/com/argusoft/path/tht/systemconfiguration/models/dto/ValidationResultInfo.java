@@ -6,7 +6,7 @@
 package com.argusoft.path.tht.systemconfiguration.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import java.io.Serializable;
 
@@ -20,24 +20,24 @@ public class ValidationResultInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(notes = "The name of the element that has error",
-            example = "elementName",
-            readOnly = true)
+    @Parameter(name = "element",
+            description = "The name of the element that has error",
+            example = "elementName")
     private String element;
 
-    @ApiModelProperty(notes = "Level of the error",
-            example = "ERROR/WARN/OK",
-            readOnly = true)
+    @Parameter(name = "level",
+            description = "Level of the error",
+            example = "ERROR/WARN/OK")
     private ErrorLevel level;
 
-    @ApiModelProperty(notes = "Error message for the error",
-            example = "message",
-            readOnly = true)
+    @Parameter(name = "message",
+            description = "Error message for the error",
+            example = "message")
     private String message;
 
-    @ApiModelProperty(notes = "stackTrace for the error",
-            example = "exception path",
-            readOnly = true)
+    @Parameter(name = "stackTrace",
+            description = "stackTrace for the error",
+            example = "exception path")
     private String stackTrace;
 
     public ValidationResultInfo() {

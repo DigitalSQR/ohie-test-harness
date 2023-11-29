@@ -6,7 +6,6 @@
 package com.argusoft.path.tht.usermanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
-import io.swagger.annotations.ApiParam;
 import org.springframework.util.StringUtils;
 
 /**
@@ -17,19 +16,19 @@ import org.springframework.util.StringUtils;
  */
 public class UserSearchFilter {
 
-    @ApiParam(
-            value = "name of the user"
-    )
+    //    @ApiParam(
+//            value = "name of the user"
+//    )
     private String name;
 
-    @ApiParam(
-            value = "nameSearchType of the user"
-    )
+    //    @ApiParam(
+//            value = "nameSearchType of the user"
+//    )
     private SearchType nameSearchType;
 
-    @ApiParam(
-            value = "email of the user"
-    )
+    //    @ApiParam(
+//            value = "email of the user"
+//    )
     private String email;
 
     public UserSearchFilter() {

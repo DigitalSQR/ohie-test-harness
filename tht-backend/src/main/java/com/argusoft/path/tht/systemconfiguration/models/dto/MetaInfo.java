@@ -5,8 +5,6 @@
  */
 package com.argusoft.path.tht.systemconfiguration.models.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,44 +16,44 @@ import java.util.Date;
  */
 public class MetaInfo implements Serializable {
 
-    @ApiModelProperty(notes = "The creation time of the model data",
-            allowEmptyValue = true,
-            example = "2014-02-28",
-            dataType = "Date",
-            required = false,
-            readOnly = true)
+    //    @Parameter(description = "The creation time of the model data",
+//            allowEmptyValue = true,
+//            example = "2014-02-28",
+//            dataType = "Date",
+//            required = false,
+//            readOnly = true)
     private Date createdAt;
 
-    @ApiModelProperty(notes = "The id of the creator",
-            allowEmptyValue = true,
-            example = "1",
-            dataType = "String/Integer",
-            required = false,
-            readOnly = true)
+    //    @Parameter(description = "The id of the creator",
+//            allowEmptyValue = true,
+//            example = "1",
+//            dataType = "String/Integer",
+//            required = false,
+//            readOnly = true)
     private String createdBy;
 
-    @ApiModelProperty(notes = "The last updation time of the model data",
-            allowEmptyValue = true,
-            example = "2014-02-28",
-            dataType = "Date",
-            required = false,
-            readOnly = true)
+    //    @Parameter(description = "The last updation time of the model data",
+//            allowEmptyValue = true,
+//            example = "2014-02-28",
+//            dataType = "Date",
+//            required = false,
+//            readOnly = true)
     private Date updatedAt;
 
-    @ApiModelProperty(notes = "The id of the updator",
-            allowEmptyValue = true,
-            example = "1",
-            dataType = "String/Integer",
-            required = false,
-            readOnly = true)
+    //    @Parameter(description = "The id of the updator",
+//            allowEmptyValue = true,
+//            example = "1",
+//            dataType = "String/Integer",
+//            required = false,
+//            readOnly = true)
     private String updatedBy;
 
-    @ApiModelProperty(notes = "The version of the model data",
-            allowEmptyValue = false,
-            example = "1",
-            dataType = "Long",
-            required = true,
-            readOnly = true)
+    //    @Parameter(description = "The version of the model data",
+//            allowEmptyValue = false,
+//            example = "1",
+//            dataType = "Long",
+//            required = true,
+//            readOnly = true)
     private Long version;
 
     public MetaInfo() {

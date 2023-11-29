@@ -5,8 +5,6 @@
  */
 package com.argusoft.path.tht.systemconfiguration.models.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * This class is provides implementation for IdInfo.
  *
@@ -14,11 +12,11 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class IdInfo {
 
-    @ApiModelProperty(notes = "The unique id of the model",
-            allowEmptyValue = false,
-            example = "tht.state.viapointinfo.active",
-            dataType = "String",
-            required = false)
+    //    @ApiModelProperty(notes = "The unique id of the model",
+//            allowEmptyValue = false,
+//            example = "tht.state.viapointinfo.active",
+//            dataType = "String",
+//            required = false)
     private String id;
 
     public String getId() {

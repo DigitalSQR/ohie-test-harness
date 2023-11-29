@@ -6,7 +6,6 @@
 package com.argusoft.path.tht.usermanagement.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateMetaInfo;
-import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -20,32 +19,32 @@ import java.util.Set;
  */
 public class UserInfo extends IdStateMetaInfo implements Serializable {
 
-    @ApiModelProperty(notes = "The name for User model",
-            allowEmptyValue = false,
-            example = "quick user",
-            dataType = "String",
-            required = true)
+    //    @ApiModelProperty(notes = "The name for User model",
+//            allowEmptyValue = false,
+//            example = "quick user",
+//            dataType = "String",
+//            required = true)
     private String name;
 
-    @ApiModelProperty(notes = "The email for User model",
-            allowEmptyValue = false,
-            example = "abc@egov.com",
-            dataType = "String",
-            required = true)
+    //    @ApiModelProperty(notes = "The email for User model",
+//            allowEmptyValue = false,
+//            example = "abc@egov.com",
+//            dataType = "String",
+//            required = true)
     private String email;
 
-    @ApiModelProperty(notes = "The password for User model",
-            allowEmptyValue = false,
-            example = "Qwerty@123",
-            dataType = "String",
-            required = true)
+    //    @ApiModelProperty(notes = "The password for User model",
+//            allowEmptyValue = false,
+//            example = "Qwerty@123",
+//            dataType = "String",
+//            required = true)
     private String password;
 
-    @ApiModelProperty(notes = "The associatedRoleIds for model",
-            allowEmptyValue = false,
-            example = "['1','2','3']",
-            dataType = "Set<String>",
-            required = true)
+    //    @ApiModelProperty(notes = "The associatedRoleIds for model",
+//            allowEmptyValue = false,
+//            example = "['1','2','3']",
+//            dataType = "Set<String>",
+//            required = true)
     private Set<String> roleIds;
 
     public String getEmail() {

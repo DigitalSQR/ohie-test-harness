@@ -10,15 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @SpringBootApplication
-@EnableSwagger2
-@EnableAuthorizationServer
 @EnableCaching
 @EnableScheduling
 public class TestingHarnessToolApplication implements CommandLineRunner {

@@ -6,7 +6,6 @@
 package com.argusoft.path.tht.usermanagement.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdInfo;
-import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
@@ -18,11 +17,11 @@ import java.io.Serializable;
  */
 public class RoleInfo extends IdInfo implements Serializable {
 
-    @ApiModelProperty(notes = "The name for User model",
-            allowEmptyValue = false,
-            example = "quick user",
-            dataType = "String",
-            required = true)
+    //    @ApiModelProperty(notes = "The name for User model",
+//            allowEmptyValue = false,
+//            example = "quick user",
+//            dataType = "String",
+//            required = true)
     private String name;
 
     public String getName() {
