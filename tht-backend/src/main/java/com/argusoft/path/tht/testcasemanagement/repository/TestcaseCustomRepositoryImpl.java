@@ -60,7 +60,7 @@ public class TestcaseCustomRepositoryImpl
                     searchFilter.getState(),
                     parameters,
                     searchFilter.getStateSearchType(),
-                    false,
+                    separate,
                     jpql);
 
             separate = SQLUtils.likeQL(
@@ -69,7 +69,7 @@ public class TestcaseCustomRepositoryImpl
                     searchFilter.getSpecificationId(),
                     parameters,
                     SearchType.EXACTLY,
-                    false,
+                    separate,
                     jpql);
         }
 

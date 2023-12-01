@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * This info is for Component DTO that contains all the Component model's data.
@@ -25,11 +26,26 @@ public class ComponentInfo extends IdStateNameMetaInfo implements Serializable {
             required = true)
     private Integer order;
 
+    @ApiModelProperty(notes = "The specificationIds for the component",
+            allowEmptyValue = false,
+            example = "['1','2']",
+            dataType = "Set<String>",
+            required = false)
+    private Set<String> specificationIds;
+
     public Integer getOrder() {
         return order;
     }
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    public Set<String> getSpecificationIds() {
+        return specificationIds;
+    }
+
+    public void setSpecificationIds(Set<String> specificationIds) {
+        this.specificationIds = specificationIds;
     }
 }

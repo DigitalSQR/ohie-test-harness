@@ -31,7 +31,7 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     @Column(name = "bean_name")
     private String beanName;
 
-    @ManyToOne
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "specification_id")
     private SpecificationEntity specification;
 

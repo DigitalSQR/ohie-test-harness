@@ -46,6 +46,13 @@ public class TestcaseInfo extends IdStateNameMetaInfo implements Serializable {
             required = false)
     private Boolean isRequired;
 
+    @ApiModelProperty(notes = "The specificationId of the specification",
+            allowEmptyValue = false,
+            example = "specificationId",
+            dataType = "String",
+            required = true)
+    private String specificationId;
+
     public Integer getOrder() {
         return order;
     }
@@ -76,5 +83,13 @@ public class TestcaseInfo extends IdStateNameMetaInfo implements Serializable {
 
     public void setRequired(Boolean required) {
         isRequired = required;
+    }
+
+    public String getSpecificationId() {
+        return specificationId;
+    }
+
+    public void setSpecificationId(String specificationId) {
+        this.specificationId = specificationId;
     }
 }

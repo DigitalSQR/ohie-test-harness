@@ -59,7 +59,7 @@ public class ComponentCustomRepositoryImpl
                     searchFilter.getState(),
                     parameters,
                     searchFilter.getStateSearchType(),
-                    false,
+                    separate,
                     jpql);
         }
 

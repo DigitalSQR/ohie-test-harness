@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.argusoft.path.tht.testcasemanagement.repository;
+package com.argusoft.path.tht.reportmanagement.repository;
 
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.utils.SQLUtils;
-import com.argusoft.path.tht.testcasemanagement.filter.SpecificationSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,33 +20,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This custom repository implementation is for making queries on the Specification model.
+ * This custom repository implementation is for making queries on the TestcaseResult model.
  *
  * @author dhruv
  * @since 2023-09-13
  */
 @Repository
-public class SpecificationCustomRepositoryImpl
-        implements SpecificationCustomRepository {
+public class TestcaseResultCustomRepositoryImpl
+        implements TestcaseResultCustomRepository {
     @Autowired
     private EntityManager entityManager;
 
     @Override
-    public Page<SpecificationEntity> advanceSpecificationSearch(
-            SpecificationSearchFilter searchFilter,
+    public Page<TestcaseResultEntity> advanceTestcaseResultSearch(
+            TestcaseResultSearchFilter searchFilter,
             Pageable pageable
     ) throws OperationFailedException {
         StringBuilder jpql = new StringBuilder();
         Map<String, Object> parameters = new HashMap<String, Object>();
 
-        jpql = jpql.append(" FROM SpecificationEntity specification \n");
+        jpql = jpql.append(" FROM TestcaseResultEntity testcaseResult \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
             boolean separate;
 
             separate = SQLUtils.likeQL(
-                    "specification",
+                    "testcaseResult",
                     "name",
                     searchFilter.getName(),
                     parameters,
@@ -55,7 +55,7 @@ public class SpecificationCustomRepositoryImpl
                     jpql);
 
             separate = SQLUtils.likeQL(
-                    "specification",
+                    "testcaseResult",
                     "state",
                     searchFilter.getState(),
                     parameters,
@@ -63,11 +63,37 @@ public class SpecificationCustomRepositoryImpl
                     separate,
                     jpql);
 
+            separate = SQLUtils.likeQL(
+                    "testcaseResult",
+                    "tester.id",
+                    searchFilter.getTesterId(),
+                    parameters,
+                    SearchType.EXACTLY,
+                    separate,
+                    jpql);
 
             separate = SQLUtils.likeQL(
-                    "specification",
-                    "component.id",
-                    searchFilter.getComponentId(),
+                    "testcaseResult",
+                    "refId",
+                    searchFilter.getRefId(),
+                    parameters,
+                    SearchType.EXACTLY,
+                    separate,
+                    jpql);
+
+            separate = SQLUtils.likeQL(
+                    "testcaseResult",
+                    "refObjUri",
+                    searchFilter.getRefObjUri(),
+                    parameters,
+                    SearchType.EXACTLY,
+                    separate,
+                    jpql);
+
+            separate = SQLUtils.likeQL(
+                    "testcaseResult",
+                    "testRequestId",
+                    searchFilter.getTestRequestId(),
                     parameters,
                     SearchType.EXACTLY,
                     separate,
@@ -75,7 +101,7 @@ public class SpecificationCustomRepositoryImpl
         }
 
         try {
-            return SQLUtils.getResultPage("specification", SpecificationEntity.class, jpql, parameters, pageable, entityManager);
+            return SQLUtils.getResultPage("testcaseResult", TestcaseResultEntity.class, jpql, parameters, pageable, entityManager);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new OperationFailedException("Operation Failed while Executing query.", ex);

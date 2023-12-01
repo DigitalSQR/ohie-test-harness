@@ -27,7 +27,7 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     @Column(name = "is_functional")
     private Integer isFunctional;
 
-    @ManyToOne
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "component_id")
     private ComponentEntity component;
 
