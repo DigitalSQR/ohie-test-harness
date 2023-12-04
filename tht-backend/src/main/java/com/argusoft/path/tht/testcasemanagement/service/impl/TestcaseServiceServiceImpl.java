@@ -432,8 +432,8 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     //Validation For :Order
     protected void validateTestcaseEntityOrder(TestcaseEntity testcaseEntity,
                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateIntegerRange(testcaseEntity.getOrder(),
-                "order",
+        ValidationUtils.validateIntegerRange(testcaseEntity.getRank(),
+                "rank",
                 1,
                 null,
                 errors);

@@ -364,7 +364,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
                                           List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(specificationEntity.getName(), "name", errors);
         ValidationUtils.validateRequired(specificationEntity.getComponent(), "component", errors);
-        ValidationUtils.validateRequired(specificationEntity.getOrder(), "order", errors);
     }
 
     //Validate Common Unique
@@ -424,8 +423,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
     //Validation For :Order
     protected void validateSpecificationEntityOrder(SpecificationEntity specificationEntity,
                                                     List<ValidationResultInfo> errors) {
-        ValidationUtils.validateIntegerRange(specificationEntity.getOrder(),
-                "order",
+        ValidationUtils.validateIntegerRange(specificationEntity.getRank(),
+                "rank",
                 1,
                 null,
                 errors);

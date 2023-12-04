@@ -351,7 +351,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     protected void validateCommonRequired(TestcaseResultEntity testcaseResultEntity,
                                           List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testcaseResultEntity.getName(), "name", errors);
-        ValidationUtils.validateRequired(testcaseResultEntity.getOrder(), "order", errors);
+        ValidationUtils.validateRequired(testcaseResultEntity.getRank(), "rank", errors);
     }
 
     //Validate Common Unique
@@ -412,8 +412,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     //Validation For :Order
     protected void validateTestcaseResultEntityOrder(TestcaseResultEntity testcaseResultEntity,
                                                      List<ValidationResultInfo> errors) {
-        ValidationUtils.validateIntegerRange(testcaseResultEntity.getOrder(),
-                "order",
+        ValidationUtils.validateIntegerRange(testcaseResultEntity.getRank(),
+                "rank",
                 1,
                 null,
                 errors);

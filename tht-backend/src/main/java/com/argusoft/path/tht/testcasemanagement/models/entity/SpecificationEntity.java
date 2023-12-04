@@ -21,11 +21,11 @@ import java.util.Set;
 @Table(name = "specification")
 public class SpecificationEntity extends IdStateNameMetaEntity {
 
-    @Column(name = "order")
-    private Integer order;
+    @Column(name = "rank")
+    private Integer rank;
 
     @Column(name = "is_functional")
-    private Integer isFunctional;
+    private Boolean isFunctional;
 
     @ManyToOne(cascade = {})
     @JoinColumn(name = "component_id")
@@ -34,19 +34,19 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     @OneToMany(mappedBy = "specification", cascade = {})
     private Set<TestcaseEntity> testcases;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
-    public Integer getIsFunctional() {
+    public Boolean getIsFunctional() {
         return isFunctional;
     }
 
-    public void setIsFunctional(Integer isFunctional) {
+    public void setIsFunctional(Boolean isFunctional) {
         this.isFunctional = isFunctional;
     }
 

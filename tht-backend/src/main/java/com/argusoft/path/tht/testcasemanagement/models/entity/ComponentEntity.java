@@ -24,18 +24,18 @@ import java.util.Set;
 @Table(name = "component")
 public class ComponentEntity extends IdStateNameMetaEntity {
 
-    @Column(name = "order")
-    private Integer order;
+    @Column(name = "rank")
+    private Integer rank;
 
     @OneToMany(mappedBy = "component", cascade = {})
     private Set<SpecificationEntity> specifications;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
     public Set<SpecificationEntity> getSpecifications() {

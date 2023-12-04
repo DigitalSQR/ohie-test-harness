@@ -346,7 +346,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
     protected void validateCommonRequired(ComponentEntity componentEntity,
                                           List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(componentEntity.getName(), "name", errors);
-        ValidationUtils.validateRequired(componentEntity.getOrder(), "order", errors);
     }
 
     //Validate Common Unique
@@ -406,8 +405,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
     //Validation For :Order
     protected void validateComponentEntityOrder(ComponentEntity componentEntity,
                                                 List<ValidationResultInfo> errors) {
-        ValidationUtils.validateIntegerRange(componentEntity.getOrder(),
-                "order",
+        ValidationUtils.validateIntegerRange(componentEntity.getRank(),
+                "rank",
                 1,
                 null,
                 errors);

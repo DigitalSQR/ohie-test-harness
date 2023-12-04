@@ -19,12 +19,12 @@ import java.util.Set;
  */
 public class SpecificationInfo extends IdStateNameMetaInfo implements Serializable {
 
-    @ApiModelProperty(notes = "The unique order of the specification",
+    @ApiModelProperty(notes = "The unique rank of the specification",
             allowEmptyValue = false,
             example = "1",
             dataType = "Integer",
             required = true)
-    private Integer order;
+    private Integer rank;
 
     @ApiModelProperty(notes = "The testcaseIds for the specification",
             allowEmptyValue = false,
@@ -47,12 +47,12 @@ public class SpecificationInfo extends IdStateNameMetaInfo implements Serializab
             required = false)
     private Boolean isFunctional;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
     public Boolean getFunctional() {

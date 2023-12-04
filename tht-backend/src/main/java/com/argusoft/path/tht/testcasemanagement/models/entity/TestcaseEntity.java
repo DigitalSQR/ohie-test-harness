@@ -19,8 +19,8 @@ import javax.persistence.*;
 @Table(name = "testcase")
 public class TestcaseEntity extends IdStateNameMetaEntity {
 
-    @Column(name = "order")
-    private Integer order;
+    @Column(name = "rank")
+    private Integer rank;
 
     @Column(name = "is_manual")
     private Boolean isManual;
@@ -35,12 +35,12 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     @JoinColumn(name = "specification_id")
     private SpecificationEntity specification;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
     public String getBeanName() {

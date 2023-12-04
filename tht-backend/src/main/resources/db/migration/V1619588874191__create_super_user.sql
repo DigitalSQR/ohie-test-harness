@@ -3,6 +3,7 @@
 --@author dhruv
 --@since 2023-09-13
 
+DELETE FROM role_tht_user;
 DELETE FROM role;
 DELETE FROM tht_user;
 
@@ -11,13 +12,13 @@ INSERT INTO role (
     	name
     ) VALUES (
         'role.admin',
-        'Admin',
+        'Admin'
     ), (
         'role.tester',
-        'Tester',
+        'Tester'
     ), (
         'role.assessee',
-        'Assessee',
+        'Assessee'
     );
 
 INSERT INTO tht_user (
@@ -37,14 +38,14 @@ INSERT INTO tht_user (
         'Istyak Ahmed Vasiwala',
 	    'user.status.active',
 	    'password',
-        'SYSTEM_USER',
-        'SYSTEM_USER',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
 	    Now(),
 	    Now(),
 	    0
     );
 
-INSERT INTO tht_user_role (
+INSERT INTO role_tht_user (
         user_id,
         role_id
      ) VALUES (

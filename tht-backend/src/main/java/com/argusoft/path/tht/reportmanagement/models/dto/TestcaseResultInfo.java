@@ -18,12 +18,12 @@ import java.io.Serializable;
  */
 public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializable {
 
-    @ApiModelProperty(notes = "The unique order of the TestcaseResult",
+    @ApiModelProperty(notes = "The unique rank of the TestcaseResult",
             allowEmptyValue = false,
             example = "1",
             dataType = "Integer",
             required = true)
-    private Integer order;
+    private Integer rank;
 
     @ApiModelProperty(notes = "The testerId of the TestcaseResult",
             allowEmptyValue = false,
@@ -67,11 +67,11 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = true)
     private Boolean hasSystemError;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer order) {
+        this.rank = rank;
     }
 }

@@ -39,7 +39,8 @@ public class TestcaseResultCustomRepositoryImpl
         StringBuilder jpql = new StringBuilder();
         Map<String, Object> parameters = new HashMap<String, Object>();
 
-        jpql = jpql.append(" FROM TestcaseResultEntity testcaseResult \n");
+        jpql = jpql.append(" FROM TestcaseResultEntity testcaseResult \n"
+                + "JOIN testcaseResult.tester tester \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
@@ -64,8 +65,8 @@ public class TestcaseResultCustomRepositoryImpl
                     jpql);
 
             separate = SQLUtils.likeQL(
-                    "testcaseResult",
-                    "tester.id",
+                    "tester",
+                    "id",
                     searchFilter.getTesterId(),
                     parameters,
                     SearchType.EXACTLY,

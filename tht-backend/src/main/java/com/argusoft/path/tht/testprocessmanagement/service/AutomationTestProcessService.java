@@ -5,6 +5,8 @@
  */
 package com.argusoft.path.tht.testprocessmanagement.service;
 
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 
 /**
@@ -23,6 +25,6 @@ public interface AutomationTestProcessService {
      *                      information about the caller of service operation
      * @return message
      */
-    public void startAutomationTestingProcess(String testRequestId, ContextInfo contextInfo);
+    public void startAutomationTestingProcess(String testRequestId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException;
 
 }

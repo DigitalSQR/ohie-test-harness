@@ -5,6 +5,8 @@
  */
 package com.argusoft.path.tht.testprocessmanagement.service.impl;
 
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestcaseExecutionar;
 import com.argusoft.path.tht.testprocessmanagement.service.AutomationTestProcessService;
@@ -23,7 +25,7 @@ public class AutomationTestProcessServiceImpl implements AutomationTestProcessSe
     @Autowired
     private TestcaseExecutionar testcaseExecutionar;
 
-    public void startAutomationTestingProcess(String testRequestId, ContextInfo contextInfo) {
+    public void startAutomationTestingProcess(String testRequestId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         testcaseExecutionar.executeAutomationTestingByTestRequest(testRequestId, contextInfo);
     }
 

@@ -17,11 +17,11 @@ import javax.persistence.*;
  * @since 2023-09-13
  */
 @Entity
-@Table(name = "TestcaseResult")
+@Table(name = "testcase_result")
 public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
-    @Column(name = "order")
-    private Integer order;
+    @Column(name = "rank")
+    private Integer rank;
 
     @ManyToOne(cascade = {})
     @JoinColumn(name = "tester_id")
@@ -42,12 +42,12 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "has_system_error")
     private Boolean hasSystemError;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
     public UserEntity getTester() {

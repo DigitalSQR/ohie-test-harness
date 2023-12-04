@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.testprocessmanagement.restcontroller;
 
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.testprocessmanagement.service.AutomationTestProcessService;
@@ -15,10 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * This AutomationTestProcessRestController maps end points with standard service.
@@ -40,10 +38,11 @@ public class AutomationTestProcessRestController {
             @ApiResponse(code = 200, message = "Successfully started automation testing process")
     })
     @Timed(name = "startAutomationTestingProcess")
-    @GetMapping("/start-automation-testing-process")
+    @GetMapping("/start-automation-testing-process/{testRequestId}")
     public void startAutomationTestingProcess(
-            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws OperationFailedException {
-        automationTestProcessService.startAutomationTestingProcess(contextInfo);
+            @PathVariable("testRequestId") String testRequestId,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException {
+        automationTestProcessService.startAutomationTestingProcess(testRequestId, contextInfo);
     }
 
 }

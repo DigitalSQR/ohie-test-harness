@@ -29,6 +29,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Implemantation of the CR Testing.
@@ -47,40 +50,122 @@ import java.util.Objects;
 @Component
 public class TestcaseExecutionar {
 
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     @Autowired
     private ApplicationContext applicationContext;
-
     @Autowired
     private ComponentService componentService;
-
     @Autowired
     private SpecificationService specificationService;
-
     @Autowired
     private TestcaseService testcaseService;
-
     @Autowired
     private TestcaseResultService testcaseResultService;
 
-    public ValidationResultInfo executeAutomationTestingByTestRequest(
+    public void executeAutomationTestingByTestRequest(
             String testRequestId,
-            ContextInfo contextInfo) {
-        return testRequest(testRequestId, contextInfo);
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        try {
+            createDraftTestcaseResultsByTestRequest(testRequestId, contextInfo);
+        } catch (DataValidationErrorException e) {
+            throw new OperationFailedException(e);
+        } catch (InvalidParameterException | OperationFailedException e) {
+            throw new OperationFailedException(e.getMessage(), e);
+        }
+        executorService.execute(() -> testRequest(testRequestId, contextInfo));
     }
 
-    private ValidationResultInfo testRequest(String testRequestId,
-                                             ContextInfo contextInfo) {
+    private void createDraftTestcaseResultsByTestRequest(String testRequestId,
+                                                         ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
+        Integer counter = 1;
+        //TODO: Update TestRequest Name
+        createDraftTestCaseResultByValidationResults(
+                TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
+                testRequestId,
+                testRequestId,
+                "TestRequest",
+                counter,
+                contextInfo);
+        counter++;
+
+        List<ComponentEntity> activeComponents = fetchActiveComponents(contextInfo);
+        for (ComponentEntity componentEntity : activeComponents) {
+            createDraftTestCaseResultByValidationResults(
+                    ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                    componentEntity.getId(),
+                    testRequestId,
+                    componentEntity.getName(),
+                    counter,
+                    contextInfo);
+            counter++;
+
+            List<SpecificationEntity> activeSpecifications = fetchActiveSpecifications(componentEntity.getId(), contextInfo);
+            for (SpecificationEntity specificationEntity : activeSpecifications) {
+                createDraftTestCaseResultByValidationResults(
+                        SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
+                        specificationEntity.getId(),
+                        testRequestId,
+                        specificationEntity.getName(),
+                        counter,
+                        contextInfo);
+                counter++;
+
+                List<TestcaseEntity> activeTestcases = fetchActiveTestcases(specificationEntity.getId(), contextInfo);
+                for (TestcaseEntity testcaseEntity : activeTestcases) {
+                    createDraftTestCaseResultByValidationResults(
+                            TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
+                            testcaseEntity.getId(),
+                            testRequestId,
+                            testcaseEntity.getName(),
+                            counter,
+                            contextInfo);
+                    counter++;
+                }
+            }
+        }
+    }
+
+    private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        return componentService.searchComponents(
+                null,
+                new ComponentSearchFilter(null,
+                        SearchType.CONTAINING,
+                        ComponentServiceConstants.COMPONENT_STATUS_ACTIVE,
+                        SearchType.EXACTLY),
+                Constant.FULL_PAGE_SORT_BY_RANK,
+                contextInfo).getContent();
+    }
+
+    private List<SpecificationEntity> fetchActiveSpecifications(String componentId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        return specificationService.searchSpecifications(
+                null,
+                new SpecificationSearchFilter(null,
+                        SearchType.CONTAINING,
+                        SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE,
+                        SearchType.EXACTLY,
+                        componentId),
+                Constant.FULL_PAGE_SORT_BY_RANK,
+                contextInfo).getContent();
+    }
+
+    private List<TestcaseEntity> fetchActiveTestcases(String specificationId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        return testcaseService.searchTestcases(
+                null,
+                new TestcaseSearchFilter(null,
+                        SearchType.EXACTLY,
+                        TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE,
+                        SearchType.EXACTLY,
+                        specificationId),
+                Constant.FULL_PAGE_SORT_BY_RANK,
+                contextInfo).getContent();
+    }
+
+    private void testRequest(String testRequestId,
+                             ContextInfo contextInfo) {
         try {
             makeTestCaseResultInProgress(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, testRequestId, testRequestId, contextInfo);
 
-            List<ComponentEntity> activeComponents = componentService.searchComponents(
-                    null,
-                    new ComponentSearchFilter(null,
-                            SearchType.CONTAINING,
-                            ComponentServiceConstants.COMPONENT_STATUS_ACTIVE,
-                            SearchType.EXACTLY),
-                    Constant.FULL_PAGE,
-                    contextInfo).getContent();
+            List<ComponentEntity> activeComponents = fetchActiveComponents(contextInfo);
             //TODO: Filter activeComponents based on the testRequest as well
 
             //TODO: Create IGenericClient Based on the component's baseUrl instead of fix value
@@ -95,7 +180,7 @@ public class TestcaseExecutionar {
                                 contextInfo));
             }
 
-            return updateTestCaseResultByValidationResults(
+            updateTestCaseResultByValidationResults(
                     TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
                     testRequestId,
                     testRequestId,
@@ -103,8 +188,7 @@ public class TestcaseExecutionar {
                     contextInfo);
 
         } catch (Exception e) {
-            //TODO: add system failure for testRequest
-            return new ValidationResultInfo(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI + "~" + testRequestId, ErrorLevel.ERROR, "Failed");
+            //TODO: add system failure for testRequest new ValidationResultInfo(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI + "~" + testRequestId, ErrorLevel.ERROR, "Failed");
         }
     }
 
@@ -115,15 +199,7 @@ public class TestcaseExecutionar {
         try {
             makeTestCaseResultInProgress(ComponentServiceConstants.COMPONENT_REF_OBJ_URI, componentId, testRequestId, contextInfo);
 
-            List<SpecificationEntity> activeSpecifications = specificationService.searchSpecifications(
-                    null,
-                    new SpecificationSearchFilter(null,
-                            SearchType.CONTAINING,
-                            SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE,
-                            SearchType.EXACTLY,
-                            componentId),
-                    Constant.FULL_PAGE,
-                    contextInfo).getContent();
+            List<SpecificationEntity> activeSpecifications = fetchActiveSpecifications(componentId, contextInfo);
 
             List<ValidationResultInfo> validationResultInfos = new ArrayList<>();
             for (SpecificationEntity specificationEntity : activeSpecifications) {
@@ -154,15 +230,7 @@ public class TestcaseExecutionar {
         try {
             makeTestCaseResultInProgress(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI, specificationId, testRequestId, contextInfo);
 
-            List<TestcaseEntity> activeTestcases = testcaseService.searchTestcases(
-                    null,
-                    new TestcaseSearchFilter(null,
-                            SearchType.EXACTLY,
-                            TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE,
-                            SearchType.EXACTLY,
-                            specificationId),
-                    Constant.FULL_PAGE,
-                    contextInfo).getContent();
+            List<TestcaseEntity> activeTestcases = fetchActiveTestcases(specificationId, contextInfo);
 
             List<ValidationResultInfo> validationResultInfos = new ArrayList<>();
             for (TestcaseEntity testcaseEntity : activeTestcases) {
@@ -204,6 +272,7 @@ public class TestcaseExecutionar {
 
             return validationResultInfo;
         } catch (Exception e) {
+            System.out.println(e);
             //TODO: add system failure for testRequest and testcase
             return new ValidationResultInfo(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI + "~" + testcaseEntity.getId(), ErrorLevel.ERROR, "Failed");
         }
@@ -238,6 +307,26 @@ public class TestcaseExecutionar {
         }
     }
 
+    private void createDraftTestCaseResultByValidationResults(String refObjUri,
+                                                              String refId,
+                                                              String testRequestId,
+                                                              String name,
+                                                              Integer counter,
+                                                              ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
+        TestcaseResultEntity testcaseResultEntity = new TestcaseResultEntity();
+        testcaseResultEntity.setRefObjUri(refObjUri);
+        testcaseResultEntity.setRefId(refId);
+        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING);
+        testcaseResultEntity.setTestRequestId(testRequestId);
+        testcaseResultEntity.setRank(counter);
+        testcaseResultEntity.setName(name);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(contextInfo.getUsername());
+        testcaseResultEntity.setTester(userEntity);
+
+        testcaseResultService.createTestcaseResult(testcaseResultEntity, contextInfo);
+    }
+
     private ValidationResultInfo updateTestCaseResultByValidationResults(String refObjUri,
                                                                          String refId,
                                                                          String testRequestId,
@@ -262,7 +351,7 @@ public class TestcaseExecutionar {
                 new TestcaseResultSearchFilter(
                         null,
                         null,
-                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING,
+                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS,
                         SearchType.EXACTLY,
                         null,
                         refObjUri,
@@ -270,7 +359,6 @@ public class TestcaseExecutionar {
                         testRequestId),
                 Constant.SINGLE_VALUE_PAGE,
                 contextInfo).getContent();
-
         if (!testcaseResultEntities.isEmpty()) {
             TestcaseResultEntity testcaseResultEntity = testcaseResultEntities.get(0);
             testcaseResultEntity.setState(

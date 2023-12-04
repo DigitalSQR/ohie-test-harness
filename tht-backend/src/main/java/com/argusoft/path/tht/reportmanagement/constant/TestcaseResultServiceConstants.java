@@ -6,9 +6,9 @@ public class TestcaseResultServiceConstants {
 
     public static final String TESTCASE_RESULT_REF_OBJ_URI = TestcaseResultInfo.class.getName();
 
-    //Component states
-    public static final String TESTCASE_RESULT_STATUS_PENDING = "component.status.draft";
-    public static final String TESTCASE_RESULT_STATUS_INPROGRESS = "component.status.active";
-    public static final String TESTCASE_RESULT_STATUS_PASSED = "component.status.passed";
-    public static final String TESTCASE_RESULT_STATUS_FAILED = "component.status.failed";
+    //Testcase Result states
+    public static final String TESTCASE_RESULT_STATUS_PENDING = "testcase.result.status.draft";
+    public static final String TESTCASE_RESULT_STATUS_INPROGRESS = "testcase.result.status.inprogress";
+    public static final String TESTCASE_RESULT_STATUS_PASSED = "testcase.result.status.passed";
+    public static final String TESTCASE_RESULT_STATUS_FAILED = "testcase.result.status.failed";
 }

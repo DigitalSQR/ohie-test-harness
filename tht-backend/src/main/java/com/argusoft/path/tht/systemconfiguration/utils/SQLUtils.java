@@ -62,7 +62,7 @@ public final class SQLUtils {
             for (Sort.Order order : pageable.getSort()) {
                 jpql
                         .append(saperator)
-                        .append(order.getProperty())
+                        .append(tableName + "." + order.getProperty())
                         .append(" ")
                         .append(order.isDescending() ? "DESC" : "");
                 saperator = ",";

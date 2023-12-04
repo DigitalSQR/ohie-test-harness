@@ -19,12 +19,12 @@ import java.util.Set;
  */
 public class ComponentInfo extends IdStateNameMetaInfo implements Serializable {
 
-    @ApiModelProperty(notes = "The unique order of the component",
+    @ApiModelProperty(notes = "The unique rank of the component",
             allowEmptyValue = false,
             example = "1",
             dataType = "Integer",
             required = true)
-    private Integer order;
+    private Integer rank;
 
     @ApiModelProperty(notes = "The specificationIds for the component",
             allowEmptyValue = false,
@@ -33,12 +33,12 @@ public class ComponentInfo extends IdStateNameMetaInfo implements Serializable {
             required = false)
     private Set<String> specificationIds;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
     public Set<String> getSpecificationIds() {
