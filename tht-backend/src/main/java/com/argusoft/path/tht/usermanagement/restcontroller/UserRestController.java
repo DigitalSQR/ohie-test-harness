@@ -6,6 +6,7 @@
 package com.argusoft.path.tht.usermanagement.restcontroller;
 
 import com.argusoft.path.tht.emailservice.service.EmailService;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -13,6 +14,7 @@ import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.mapper.UserMapper;
+import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
@@ -20,13 +22,20 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Validation;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This userServiceRestController maps end points with standard service.
@@ -42,6 +51,9 @@ public class UserRestController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TokenVerificationService tokenVerificationService;
 
     @Autowired
     private UserMapper userMapper;
@@ -97,11 +109,36 @@ public class UserRestController {
     }
 
 
-    /*@GetMapping("/verify/{base64TokenId}")
-    public boolean verifyUser(@PathVariable("base64TokenId") String base64TokenId, @RequestAttribute(name = "contextInfo") ContextInfo contextInfo){
+    @GetMapping("/verify/{base64UserEmail}/{base64TokenId}")
+    public ValidationResultInfo verifyUser(@PathVariable("base64UserEmail") String base64UserEmail ,
+                                              @PathVariable("base64TokenId") String base64TokenId,
+                                              @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
+            throws DataValidationErrorException,
+            OperationFailedException,
+            MissingParameterException,
+            VersionMismatchException,
+            InvalidParameterException,
+            PermissionDeniedException {
 
+        ValidationResultInfo vris = new ValidationResultInfo();
+        Boolean isVerified = false;
+        try {
+            isVerified = tokenVerificationService.verifyUserToken(base64TokenId, base64UserEmail, contextInfo);
+        } catch (DoesNotExistException e) {
+            // return false as it is
+        }
+        vris.setLevel(isVerified ?  ErrorLevel.OK : ErrorLevel.ERROR);
+        return vris;
+    }
 
-    }*/
+    @GetMapping("/forgot/password/{userEmail}")
+    public ValidationResultInfo forgotPasswordRequest(@PathVariable("userEmail") String userEmail,
+                                                        @RequestAttribute(name = "contextInfo") ContextInfo contextInfo){
+        userService.createForgotPasswordRequestAndSendEmail(userEmail, contextInfo);
+        ValidationResultInfo vris = new ValidationResultInfo();
+        vris.setMessage("You will receive email if already registered !");
+        return vris;
+    }
 
 
     /**

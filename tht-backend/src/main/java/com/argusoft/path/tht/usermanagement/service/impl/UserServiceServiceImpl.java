@@ -12,17 +12,19 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.usermanagement.constant.TokenVerificationConstants;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import com.argusoft.path.tht.usermanagement.models.enums.TokenTypeEnum;
 import com.argusoft.path.tht.usermanagement.repository.RoleRepository;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
-import org.apache.commons.codec.binary.Base64;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -97,29 +99,22 @@ public class UserServiceServiceImpl implements UserService {
 
         //On Email verification pending send mail for the email for verification
         if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
-            TokenVerificationEntity tokenVerificationEntity = new TokenVerificationEntity();
-            tokenVerificationEntity.setUserEntity(userEntity);
-            TokenVerificationEntity tokenVerification = tokenVerificationService.createTokenVerification(tokenVerificationEntity, contextInfo);
-
-            String encodedBase64TokenVerificationId = new String(Base64.encodeBase64(tokenVerification.getId().getBytes()));
-            String emailIdBase64 = new String(Base64.encodeBase64(userEntity.getEmail().getBytes()));
-
-            emailService.sendSimpleMessage(userEntity.getEmail(), "Verify your email id", "Verify your email id " + encodedBase64TokenVerificationId + " " + emailIdBase64);
+            tokenVerificationService.generateTokenForUserAndSendEmailForType(userEntity.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
         }
         return userEntity;
     }
 
-    @Override
-    public Boolean verifyUserToken(String base64TokenId, String base64EmailId, ContextInfo contextInfo) throws DoesNotExistException {
-        String tokenDecodedBase64 = new String(Base64.decodeBase64(base64TokenId));
-        String emailDecodedBase64 = new String(Base64.decodeBase64(base64EmailId));
 
-        UserEntity userByEmail = this.getUserByEmail(emailDecodedBase64, contextInfo);
-        if (userByEmail == null) {
-            throw new DoesNotExistException("user does not exist with email " + userByEmail);
+    @Override
+    public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo) {
+        UserEntity userByEmail = null;
+        try {
+            userByEmail = this.getUserByEmail(userEmail,contextInfo);
+            TokenVerificationEntity tokenVerification = tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.FORGOT_PASSWORD.getKey(), contextInfo);
+        } catch (Exception e) {
+            // ignore it, no need to show that they are not exists in DB
+            //TODO add log
         }
-        Optional<TokenVerificationEntity> activeTokenByIdAndUserId = tokenVerificationService.getActiveTokenByIdAndUserId(tokenDecodedBase64, userByEmail.getId(), contextInfo);
-        return activeTokenByIdAndUserId.isPresent();
     }
 
     /**
@@ -145,9 +140,6 @@ public class UserServiceServiceImpl implements UserService {
                     "Error(s) occurred in the validating",
                     validationResultEntitys);
         }
-        if (StringUtils.isEmpty(userEntity.getId())) {
-            userEntity.setId(UUID.randomUUID().toString());
-        }
         userEntity = userRepository.save(userEntity);
         return userEntity;
     }
@@ -164,10 +156,8 @@ public class UserServiceServiceImpl implements UserService {
             throws DoesNotExistException,
             OperationFailedException,
             MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException,
             VersionMismatchException,
-            DataValidationErrorException {
+            DataValidationErrorException, InvalidParameterException, PermissionDeniedException {
         List<ValidationResultInfo> validationResultEntitys
                 = this.validateUser(Constant.UPDATE_VALIDATION,
                 userEntity,

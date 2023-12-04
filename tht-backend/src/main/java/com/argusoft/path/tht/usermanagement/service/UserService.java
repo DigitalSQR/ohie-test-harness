@@ -92,10 +92,8 @@ public interface UserService {
             throws DoesNotExistException,
             OperationFailedException,
             MissingParameterException,
-            PermissionDeniedException,
             VersionMismatchException,
-            DataValidationErrorException,
-            InvalidParameterException;
+            DataValidationErrorException, InvalidParameterException, PermissionDeniedException;
 
     /**
      * Retrieves a list of Users corresponding to the given User Name.The
@@ -239,9 +237,6 @@ public interface UserService {
             MissingParameterException,
             DataValidationErrorException;
 
-    public Boolean verifyUserToken(String base64TokenId,
-                                   String base64EmailId,
-                                   ContextInfo contextInfo)
-            throws DoesNotExistException;
+    public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo);
 
 }

@@ -5,11 +5,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 public interface TokenVerificationRepository extends JpaRepository<TokenVerificationEntity, String> {
 
-    @Query("SELECT e FROM TokenVerificationEntity e where e.id = (:id) AND e.userEntity.id = (:userId) AND e.state = (:state)")
-    Optional<TokenVerificationEntity> findActiveTokenByIdAndUserInfo(@Param("state") String state, @Param("id") String id, @Param("userId") String userId);
+    @Query("SELECT e FROM TokenVerificationEntity e where e.id = (:id) AND e.userEntity.id = (:userId) AND e.state = (:state) AND e.type = (:type)")
+    Optional<TokenVerificationEntity> findActiveTokenByIdAndUserAndType(@Param("state") String state, @Param("id") String id, @Param("userId") String userId, @Param("type") String type);
+
+    @Query("SELECT e FROM TokenVerificationEntity e where e.userEntity.id = (:userId) and e.type = (:type)")
+    List<TokenVerificationEntity> findAllTokenVerificationsByTypeAndUser(@Param("type") String type, @Param("userId") String userId);
 
 }

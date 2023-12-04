@@ -54,3 +54,7 @@ logging:
     org.springframework.web: INFO
     com.argusoft.path.tht: INFO
     org.flywaydb.core: INFO
+
+exception:
+  stack-trace:
+    enabled: true
