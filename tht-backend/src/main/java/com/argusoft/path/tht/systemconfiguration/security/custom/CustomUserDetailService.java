@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -51,7 +52,7 @@ public class CustomUserDetailService implements UserDetailsService {
             String password = request.getParameter("password");
             try {
                 UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
-                if (!Objects.equals(user.getPassword(), password)) {
+                if (StringUtils.isEmpty(user.getPassword()) || !Objects.equals(user.getPassword(), password)) {
                     throw new UsernameNotFoundException("Invalid credentials.");
                 }
 
