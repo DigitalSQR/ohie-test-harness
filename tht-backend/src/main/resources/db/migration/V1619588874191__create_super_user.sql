@@ -12,13 +12,13 @@ INSERT INTO role (
     	name
     ) VALUES (
         'role.admin',
-        'Admin',
+        'Admin'
     ), (
         'role.tester',
-        'Tester',
+        'Tester'
     ), (
         'role.assessee',
-        'Assessee',
+        'Assessee'
     );
 
 INSERT INTO tht_user (
