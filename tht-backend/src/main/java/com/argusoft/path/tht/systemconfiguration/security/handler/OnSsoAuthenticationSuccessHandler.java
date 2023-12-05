@@ -89,17 +89,47 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                 response.getWriter().write(jsonResponse);
                 response.getWriter().flush();
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, loggedInUser.getState())) {
-                //TODO: Add appropriate message.
-            } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, loggedInUser.getState())) {
-                //TODO: Add appropriate message.
-            } else if (Objects.equals(UserServiceConstants.USER_STATUS_REJECTED, loggedInUser.getState())) {
-                //TODO: Add appropriate message.
-            } else if (Objects.equals(UserServiceConstants.USER_STATUS_INACTIVE, loggedInUser.getState())) {
-                //TODO: Add appropriate message.
-            } else {
-                //TODO: Add appropriate message.
-            }
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("message", "Pending email verification.");
 
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonResponse = objectMapper.writeValueAsString(responseMap);
+
+                response.setContentType("application/json");
+                response.getWriter().write(jsonResponse);
+                response.getWriter().flush();
+            } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, loggedInUser.getState())) {
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("message", "Pending admin approval.");
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonResponse = objectMapper.writeValueAsString(responseMap);
+
+                response.setContentType("application/json");
+                response.getWriter().write(jsonResponse);
+                response.getWriter().flush();
+            } else if (Objects.equals(UserServiceConstants.USER_STATUS_REJECTED, loggedInUser.getState())) {
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("message", "Admin approval has been rejected.");
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonResponse = objectMapper.writeValueAsString(responseMap);
+
+                response.setContentType("application/json");
+                response.getWriter().write(jsonResponse);
+                response.getWriter().flush();
+            } else {
+                //Only left UserServiceConstants.USER_STATUS_INACTIVE,
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("message", "User is inactive.");
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonResponse = objectMapper.writeValueAsString(responseMap);
+
+                response.setContentType("application/json");
+                response.getWriter().write(jsonResponse);
+                response.getWriter().flush();
+            }
         } catch (Exception e) {
             //TODO: Add appropriate message.
             response.setStatus(500);

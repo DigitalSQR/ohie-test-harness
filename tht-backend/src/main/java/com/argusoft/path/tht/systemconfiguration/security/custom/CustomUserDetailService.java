@@ -53,21 +53,24 @@ public class CustomUserDetailService implements UserDetailsService {
             try {
                 UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
                 if (StringUtils.isEmpty(user.getPassword()) || !Objects.equals(user.getPassword(), password)) {
-                    throw new UsernameNotFoundException("Invalid credentials.");
+                    throw new UsernameNotFoundException("Credential are incorrect.");
                 }
 
                 //If User is not active
                 if (!Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, user.getState())) {
                     if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
-                        //TODO: Add appropriate message.
+                        throw new UsernameNotFoundException("Pending email verification.") {
+                        };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, user.getState())) {
-                        //TODO: Add appropriate message.
+                        throw new UsernameNotFoundException("Pending admin approval.") {
+                        };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_REJECTED, user.getState())) {
-                        //TODO: Add appropriate message.
-                    } else if (Objects.equals(UserServiceConstants.USER_STATUS_INACTIVE, user.getState())) {
-                        //TODO: Add appropriate message.
+                        throw new UsernameNotFoundException("Admin approval has been rejected.") {
+                        };
                     } else {
-                        //TODO: Add appropriate message.
+                        //Only state left is UserServiceConstants.USER_STATUS_INACTIVE.
+                        throw new UsernameNotFoundException("User is inactive.") {
+                        };
                     }
                 }
 
@@ -85,7 +88,7 @@ public class CustomUserDetailService implements UserDetailsService {
                         true,
                         authorities);
 
-            } catch (NumberFormatException | UsernameNotFoundException | DoesNotExistException e) {
+            } catch (NumberFormatException | DoesNotExistException e) {
                 throw new UsernameNotFoundException("Credential are incorrect.") {
                 };
             }
