@@ -78,7 +78,7 @@ public class TestcaseExecutionar {
     private void createDraftTestcaseResultsByTestRequest(String testRequestId,
                                                          ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         Integer counter = 1;
-        //TODO: Update TestRequest Name
+        //TODO: Update TestCaseResult name based on the TestRequest Name
         createDraftTestCaseResultByValidationResults(
                 TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
                 testRequestId,
@@ -188,14 +188,14 @@ public class TestcaseExecutionar {
                     contextInfo);
 
         } catch (Exception e) {
-            //TODO: add system failure for testRequest new ValidationResultInfo(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI + "~" + testRequestId, ErrorLevel.ERROR, "Failed");
+            //TODO: add system failure for testRequest
         }
     }
 
     private ValidationResultInfo testComponent(String componentId,
                                                String testRequestId,
                                                IGenericClient client,
-                                               ContextInfo contextInfo) {
+                                               ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         try {
             makeTestCaseResultInProgress(ComponentServiceConstants.COMPONENT_REF_OBJ_URI, componentId, testRequestId, contextInfo);
 
@@ -218,15 +218,22 @@ public class TestcaseExecutionar {
                     contextInfo);
 
         } catch (Exception e) {
-            //TODO: add system failure for testRequest and component
-            return new ValidationResultInfo(ComponentServiceConstants.COMPONENT_REF_OBJ_URI + "~" + componentId, ErrorLevel.ERROR, "Failed");
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo(ComponentServiceConstants.COMPONENT_REF_OBJ_URI + "~" + componentId, ErrorLevel.ERROR, "SYSTEM_FAILURE");
+            //TODO: add system failure log and connect it with testResult by refObjUri/refId.
+            updateTestCaseResultForSystemError(
+                    ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                    componentId,
+                    testRequestId,
+                    validationResultInfo,
+                    contextInfo);
+            return validationResultInfo;
         }
     }
 
     private ValidationResultInfo testSpecification(String specificationId,
                                                    String testRequestId,
                                                    IGenericClient client,
-                                                   ContextInfo contextInfo) {
+                                                   ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         try {
             makeTestCaseResultInProgress(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI, specificationId, testRequestId, contextInfo);
 
@@ -249,15 +256,22 @@ public class TestcaseExecutionar {
                     contextInfo);
 
         } catch (Exception e) {
-            //TODO: add system failure for testRequest and specification
-            return new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI + "~" + specificationId, ErrorLevel.ERROR, "Failed");
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI + "~" + specificationId, ErrorLevel.ERROR, "SYSTEM_FAILURE");
+            //TODO: add system failure log and connect it with testResult by refObjUri/refId.
+            updateTestCaseResultForSystemError(
+                    SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
+                    specificationId,
+                    testRequestId,
+                    validationResultInfo,
+                    contextInfo);
+            return validationResultInfo;
         }
     }
 
     private ValidationResultInfo executeTestcase(TestcaseEntity testcaseEntity,
                                                  String testRequestId,
                                                  IGenericClient client,
-                                                 ContextInfo contextInfo) {
+                                                 ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         try {
             makeTestCaseResultInProgress(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, testcaseEntity.getId(), testRequestId, contextInfo);
 
@@ -272,9 +286,14 @@ public class TestcaseExecutionar {
 
             return validationResultInfo;
         } catch (Exception e) {
-            System.out.println(e);
-            //TODO: add system failure for testRequest and testcase
-            return new ValidationResultInfo(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI + "~" + testcaseEntity.getId(), ErrorLevel.ERROR, "Failed");
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI + "~" + testcaseEntity.getId(), ErrorLevel.ERROR, "SYSTEM_FAILURE");
+            //TODO: add system failure log and connect it with testResult by refObjUri/refId.
+            updateTestCaseResultForSystemError(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
+                    testcaseEntity.getId(),
+                    testRequestId,
+                    validationResultInfo,
+                    contextInfo);
+            return validationResultInfo;
         }
     }
 
@@ -340,6 +359,34 @@ public class TestcaseExecutionar {
         }
         updateTestCaseResultByValidationResult(refObjUri, refId, testRequestId, validationResultInfo, contextInfo);
         return validationResultInfo;
+    }
+
+    private void updateTestCaseResultForSystemError(String refObjUri,
+                                                        String refId,
+                                                        String testRequestId,
+                                                        ValidationResultInfo validationResultInfo,
+                                                        ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null,
+                new TestcaseResultSearchFilter(
+                        null,
+                        null,
+                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS,
+                        SearchType.EXACTLY,
+                        null,
+                        refObjUri,
+                        refId,
+                        testRequestId),
+                Constant.SINGLE_VALUE_PAGE,
+                contextInfo).getContent();
+        if (!testcaseResultEntities.isEmpty()) {
+            TestcaseResultEntity testcaseResultEntity = testcaseResultEntities.get(0);
+            testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FAILED);
+            testcaseResultEntity.setMessage(validationResultInfo.getMessage());
+            testcaseResultEntity.setHasSystemError(true);
+            testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
+        } else {
+            //TODO: handle if testcaseResult don't exists
+        }
     }
 
     private void updateTestCaseResultByValidationResult(String refObjUri,
