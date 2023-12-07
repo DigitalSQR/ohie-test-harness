@@ -7,8 +7,8 @@ package com.argusoft.path.tht.usermanagement.repository;
 
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.utils.SQLUtils;
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +40,7 @@ public class UserCustomRepositoryImpl
 
         jpql = jpql.append(" FROM UserEntity user \n");
 
-        if(!searchFilter.isEmpty()) {
+        if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
             boolean separate;
 
@@ -51,14 +51,6 @@ public class UserCustomRepositoryImpl
                     parameters,
                     searchFilter.getNameSearchType(),
                     false,
-                    jpql);
-
-            separate = SQLUtils.equalQL(
-                    "user",
-                    "userName",
-                    searchFilter.getUserName(),
-                    parameters,
-                    separate,
                     jpql);
 
             separate = SQLUtils.equalQL(

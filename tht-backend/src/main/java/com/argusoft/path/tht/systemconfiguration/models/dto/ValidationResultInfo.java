@@ -7,6 +7,7 @@ package com.argusoft.path.tht.systemconfiguration.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
@@ -54,6 +55,11 @@ public class ValidationResultInfo implements Serializable {
         this.message = message;
     }
 
+    public static boolean isSurpassingThreshold(ErrorLevel currentLevel,
+                                                ErrorLevel threshold) {
+        return currentLevel.compareTo(threshold) >= 0;
+    }
+
     public String getElement() {
         return element;
     }
@@ -81,11 +87,6 @@ public class ValidationResultInfo implements Serializable {
     @Override
     public String toString() {
         return "ValidationResultInfo{" + "element=" + element + ", level=" + level + ", message=" + message + '}';
-    }
-
-    public static boolean isSurpassingThreshold(ErrorLevel currentLevel,
-            ErrorLevel threshold) {
-        return currentLevel.compareTo(threshold) >= 0;
     }
 
     public String getStackTrace() {

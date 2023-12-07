@@ -5,12 +5,16 @@
  */
 package com.argusoft.path.tht.systemconfiguration.security.adapter;
 
+import com.argusoft.path.tht.systemconfiguration.security.custom.CustomOauth2UserService;
 import com.argusoft.path.tht.systemconfiguration.security.exceptionhandler.CustomAccessDeniedHandler;
 import com.argusoft.path.tht.systemconfiguration.security.exceptionhandler.CustomAuthenticationEntryPoint;
 import com.argusoft.path.tht.systemconfiguration.security.filters.CorsFilter;
+import com.argusoft.path.tht.systemconfiguration.security.handler.OnSsoAuthenticationSuccessHandler;
+import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
@@ -26,16 +30,20 @@ import org.springframework.security.web.session.SessionManagementFilter;
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Autowired
+    CorsFilter corsFilter;
+    @Autowired
     private DefaultTokenServices defaultTokenServices;
-
     @Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
-
+    @Autowired
+    private CustomOauth2UserService oauthUserService;
     @Autowired
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
-    CorsFilter corsFilter;
+    private OnSsoAuthenticationSuccessHandler onSsoAuthenticationSuccessHandler;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -43,13 +51,24 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http.addFilterBefore(corsFilter, SessionManagementFilter.class);
         http.csrf().disable();
 
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         http.authorizeRequests()
-                .antMatchers("*").permitAll();
+                .antMatchers("/user/register").permitAll()
+                .antMatchers("/user/logout").permitAll()
+                .anyRequest().authenticated();
+
         http.headers().frameOptions().and()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
-                .accessDeniedHandler(customAccessDeniedHandler);
+                .accessDeniedHandler(customAccessDeniedHandler)
+                .and()
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(oauthUserService)
+                .and()
+                .successHandler(onSsoAuthenticationSuccessHandler);
     }
 
     @Override
@@ -57,4 +76,5 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         resources.tokenServices(defaultTokenServices);
         resources.resourceId("resource_id");
     }
+
 }

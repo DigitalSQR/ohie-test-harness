@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,10 @@ public class ExceptionController {
 
     @Autowired
     private Environment environment;
+
+    @Value("${exception.stack-trace.enabled}")
+    private Boolean isStackTraceEnabled;
+
 
     @ExceptionHandler(value = OperationFailedException.class)
     public ResponseEntity<Object> handleException(OperationFailedException exception) {
@@ -89,7 +94,7 @@ public class ExceptionController {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         exception.printStackTrace(pw);
-        resultInfo.setStackTrace(sw.toString());
+        resultInfo.setStackTrace(isStackTraceEnabled ? sw.toString() : null);
         return resultInfo;
     }
 }

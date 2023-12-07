@@ -6,8 +6,8 @@
 package com.argusoft.path.tht.usermanagement.repository;
 
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
