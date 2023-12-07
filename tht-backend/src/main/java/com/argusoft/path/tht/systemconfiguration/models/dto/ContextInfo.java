@@ -6,13 +6,15 @@
 package com.argusoft.path.tht.systemconfiguration.models.dto;
 
 import io.swagger.annotations.ApiParam;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 /**
  * This info is for context DTO who has Request Information, Date and LoggeIn
@@ -41,27 +43,24 @@ public class ContextInfo extends User implements Serializable {
     )
     private String email;
 
-    @ApiParam(
-            value = "principalId of the context",
-            hidden = true
-    )
-    private String principalId;
-
     public ContextInfo() {
         super("username", "password", new ArrayList<>());
     }
 
+    public ContextInfo(OAuth2User oAuth2User) {
+        super(oAuth2User.getAttribute("email"), "password", oAuth2User.getAuthorities());
+    }
+
     public ContextInfo(
             String email,
-            String principalId,
-            String username,
+            String userName,
             String password,
             boolean enabled,
             boolean accountNonExpired,
             boolean credentialsNonExpired,
             boolean accountNonLocked,
             Collection<? extends GrantedAuthority> authorities) {
-        super(username,
+        super(userName,
                 password,
                 enabled,
                 accountNonExpired,
@@ -69,7 +68,6 @@ public class ContextInfo extends User implements Serializable {
                 accountNonLocked,
                 authorities);
         this.email = email;
-        this.principalId = principalId;
     }
 
     public Date getCurrentDate() {
@@ -89,14 +87,6 @@ public class ContextInfo extends User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPrincipalId() {
-        return principalId;
-    }
-
-    public void setPrincipalId(String principalId) {
-        this.principalId = principalId;
     }
 
     public String getAccessToken() {
@@ -145,13 +135,4 @@ public class ContextInfo extends User implements Serializable {
         return super.getAuthorities();
     }
 
-    @Override
-    public String toString() {
-        return "ContextInfo{"
-                + "currentDate=" + currentDate
-                + ", accessToken=" + accessToken
-                + ", email=" + email
-                + ", principalId=" + principalId
-                + '}';
-    }
 }

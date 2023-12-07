@@ -5,10 +5,11 @@
  */
 package com.argusoft.path.tht.usermanagement.models.dto;
 
-import com.argusoft.path.tht.systemconfiguration.models.dto.IdMetaInfo;
+import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Set;
  * @author dhruv
  * @since 2023-09-13
  */
-public class UserInfo extends IdMetaInfo implements Serializable {
+public class UserInfo extends IdStateMetaInfo implements Serializable {
 
     @ApiModelProperty(notes = "The name for User model",
             allowEmptyValue = false,
@@ -25,12 +26,6 @@ public class UserInfo extends IdMetaInfo implements Serializable {
             dataType = "String",
             required = true)
     private String name;
-    @ApiModelProperty(notes = "The userName for User model",
-            allowEmptyValue = false,
-            example = "quickuser",
-            dataType = "String",
-            required = true)
-    private String userName;
 
     @ApiModelProperty(notes = "The email for User model",
             allowEmptyValue = false,
@@ -49,17 +44,9 @@ public class UserInfo extends IdMetaInfo implements Serializable {
     @ApiModelProperty(notes = "The associatedRoleIds for model",
             allowEmptyValue = false,
             example = "['1','2','3']",
-            dataType = "List<UserRoleInfo>",
+            dataType = "Set<String>",
             required = true)
     private Set<String> roleIds;
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
 
     public String getEmail() {
         return email;
@@ -75,5 +62,24 @@ public class UserInfo extends IdMetaInfo implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<String> getRoleIds() {
+        if (this.roleIds == null) {
+            this.roleIds = new HashSet<>();
+        }
+        return this.roleIds;
+    }
+
+    public void setRoleIds(Set<String> roleIds) {
+        this.roleIds = roleIds;
     }
 }

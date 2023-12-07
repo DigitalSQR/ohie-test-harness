@@ -5,16 +5,26 @@
  */
 package com.argusoft.path.tht.usermanagement.service.impl;
 
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.usermanagement.constant.TokenVerificationConstants;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
+import com.argusoft.path.tht.usermanagement.filter.RoleSearchFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
+import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntity;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import com.argusoft.path.tht.usermanagement.models.enums.TokenTypeEnum;
+import com.argusoft.path.tht.usermanagement.repository.RoleRepository;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
+import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,13 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * This UserServiceDaoImpl contains DAO implementation for User service.
+ * This UserServiceServiceImpl contains implementation for User service.
  *
  * @author dhruv
  * @since 2023-09-13
@@ -41,6 +48,15 @@ public class UserServiceServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private TokenVerificationService tokenVerificationService;
 
     @Autowired
     private DefaultTokenServices defaultTokenServices;
@@ -54,8 +70,56 @@ public class UserServiceServiceImpl implements UserService {
         return defaultTokenServices.revokeToken(contextInfo.getAccessToken());
     }
 
+
+    @Override
+    public UserEntity getUserByEmail(String email, ContextInfo contextInfo) throws DoesNotExistException {
+        Optional<UserEntity> userOptional = userRepository.findUserByEmail(email);
+        if (!userOptional.isPresent()) {
+            throw new DoesNotExistException("User by email :"
+                    + email
+                    + Constant.NOT_FOUND);
+        }
+        return userOptional.get();
+    }
+
+    @Override
+    public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo) throws DoesNotExistException, PermissionDeniedException, OperationFailedException, InvalidParameterException, MissingParameterException, DataValidationErrorException {
+        if (Objects.equals(contextInfo.getEmail(), Constant.SUPER_USER_CONTEXT.getEmail())) {
+            //If method get called on google Oauth2 login then verification of email is not needed.
+            userEntity.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
+        } else {
+            userEntity.setState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING);
+        }
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setId(UserServiceConstants.ROLE_ID_ASSESSEE);
+        userEntity.getRoles().clear();
+        userEntity.getRoles().add(roleEntity);
+
+        userEntity = this.createUser(userEntity, contextInfo);
+
+        //On Email verification pending send mail for the email for verification
+        if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
+            tokenVerificationService.generateTokenForUserAndSendEmailForType(userEntity.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
+        }
+        return userEntity;
+    }
+
+
+    @Override
+    public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo) {
+        UserEntity userByEmail = null;
+        try {
+            userByEmail = this.getUserByEmail(userEmail,contextInfo);
+            TokenVerificationEntity tokenVerification = tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.FORGOT_PASSWORD.getKey(), contextInfo);
+        } catch (Exception e) {
+            // ignore it, no need to show that they are not exists in DB
+            //TODO add log
+        }
+    }
+
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @Override
@@ -76,15 +140,13 @@ public class UserServiceServiceImpl implements UserService {
                     "Error(s) occurred in the validating",
                     validationResultEntitys);
         }
-        if (StringUtils.isEmpty(userEntity.getId())) {
-            userEntity.setId(UUID.randomUUID().toString());
-        }
         userEntity = userRepository.save(userEntity);
         return userEntity;
     }
 
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @Override
@@ -94,10 +156,8 @@ public class UserServiceServiceImpl implements UserService {
             throws DoesNotExistException,
             OperationFailedException,
             MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException,
             VersionMismatchException,
-            DataValidationErrorException {
+            DataValidationErrorException, InvalidParameterException, PermissionDeniedException {
         List<ValidationResultInfo> validationResultEntitys
                 = this.validateUser(Constant.UPDATE_VALIDATION,
                 userEntity,
@@ -121,6 +181,7 @@ public class UserServiceServiceImpl implements UserService {
 
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @Override
@@ -147,9 +208,10 @@ public class UserServiceServiceImpl implements UserService {
             MissingParameterException,
             PermissionDeniedException,
             InvalidParameterException {
+
         Page<UserEntity> users = userRepository.advanceUserSearch(
-            userSearchFilter,
-            pageable);
+                userSearchFilter,
+                pageable);
         return users;
     }
 
@@ -169,6 +231,7 @@ public class UserServiceServiceImpl implements UserService {
 
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @Override
@@ -196,6 +259,7 @@ public class UserServiceServiceImpl implements UserService {
 
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @Override
@@ -205,7 +269,7 @@ public class UserServiceServiceImpl implements UserService {
             MissingParameterException,
             PermissionDeniedException,
             InvalidParameterException {
-        Page<UserEntity> users  = userRepository.findUsers(pageable);
+        Page<UserEntity> users = userRepository.findUsers(pageable);
         return users;
     }
 
@@ -228,6 +292,9 @@ public class UserServiceServiceImpl implements UserService {
 
         // check Common Required
         this.validateCommonRequired(userEntity, errors);
+
+        // check Common ForeignKey
+        this.validateCommonForeignKey(userEntity, errors, contextInfo);
 
         // check Common Unique
         this.validateCommonUnique(userEntity,
@@ -272,17 +339,48 @@ public class UserServiceServiceImpl implements UserService {
         validateUserEntityId(userEntity,
                 errors);
         // For :Name
-        validateUserEntityame(userEntity,
+        validateUserEntityName(userEntity,
                 errors);
-        // For :UserName
-        validateUserEntityUserName(userEntity,
+        // For :Email
+        validateUserEntityEmail(userEntity,
+                errors);
+        // For :Password
+        validateUserEntityPassword(userEntity,
+                errors);
+        // For :Role
+        validateUserEntityRoles(userEntity,
                 errors);
 
         return errors;
     }
 
+    protected void validateCommonForeignKey(UserEntity userEntity,
+                                            List<ValidationResultInfo> errors,
+                                            ContextInfo contextInfo)
+            throws OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException {
+        //validate Role foreignKey.
+        Set<RoleEntity> roleEntitySet = new HashSet<>();
+        userEntity.getRoles().stream().forEach(item -> {
+            try {
+                roleEntitySet.add(this.getRoleById(item.getId(), contextInfo));
+            } catch (DoesNotExistException | InvalidParameterException | MissingParameterException |
+                     OperationFailedException | PermissionDeniedException ex) {
+                String fieldName = "roles";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                "The id supplied for the role does not exists"));
+            }
+        });
+        userEntity.setRoles(roleEntitySet);
+    }
+
     /**
      * {@inheritdoc}
+     *
      * @return
      */
     @Override
@@ -290,10 +388,10 @@ public class UserServiceServiceImpl implements UserService {
             throws OperationFailedException,
             DoesNotExistException {
         Optional<UserEntity> userOptional
-                = userRepository.findByUserName(contextInfo.getUsername());
+                = userRepository.findById(contextInfo.getUsername());
         if (!userOptional.isPresent()) {
-            throw new DoesNotExistException("user by email :"
-                    + contextInfo.getEmail()
+            throw new DoesNotExistException("user by id :"
+                    + contextInfo.getUsername()
                     + Constant.NOT_FOUND);
         }
         return userOptional.get();
@@ -357,7 +455,8 @@ public class UserServiceServiceImpl implements UserService {
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
-            } catch (DoesNotExistException | InvalidParameterException | MissingParameterException | OperationFailedException | PermissionDeniedException ex) {
+            } catch (DoesNotExistException | InvalidParameterException | MissingParameterException |
+                     OperationFailedException | PermissionDeniedException ex) {
                 // This is ok becuase created id should be unique
             }
         }
@@ -385,16 +484,16 @@ public class UserServiceServiceImpl implements UserService {
                 && userEntity.getEmail() != null) {
             UserSearchFilter searchFilter = new UserSearchFilter();
             searchFilter.setEmail(userEntity.getEmail());
-            Page<UserEntity> userEntitys = this
+            Page<UserEntity> userEntities = this
                     .searchUsers(
-                    null,
-                    searchFilter,
-                    Constant.TWO_VALUE_PAGE,
-                    contextInfo);
+                            null,
+                            searchFilter,
+                            Constant.TWO_VALUE_PAGE,
+                            contextInfo);
 
             // if info found with same email and username than and not current id
             boolean flag
-                    = userEntitys.stream().anyMatch(u -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
+                    = userEntities.stream().anyMatch(u -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
                     || !u.getId().equals(userEntity.getId()))
             );
             if (flag) {
@@ -415,8 +514,8 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     //Validation For :Name
-    protected void validateUserEntityame(UserEntity userEntity,
-                                              List<ValidationResultInfo> errors) {
+    protected void validateUserEntityName(UserEntity userEntity,
+                                          List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(userEntity.getName(),
                 "userName",
                 Constant.ALLOWED_CHARS_IN_NAMES,
@@ -429,19 +528,128 @@ public class UserServiceServiceImpl implements UserService {
                 errors);
     }
 
-    //Validation For :UserName
-    protected void validateUserEntityUserName(UserEntity userEntity,
-                                          List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(userEntity.getUserName(),
-                "userName",
-                Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
+    //Validation For :Email
+    protected void validateUserEntityEmail(UserEntity userEntity,
+                                           List<ValidationResultInfo> errors) {
+        ValidationUtils.validatePattern(userEntity.getEmail(),
+                "email",
+                UserServiceConstants.EMAIL_REGEX,
+                "Given email is invalid.",
                 errors);
-        ValidationUtils.validateLength(userEntity.getUserName(),
-                "userName",
-                3,
+    }
+
+    //Validation For :Password
+    protected void validateUserEntityPassword(UserEntity userEntity,
+                                              List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(userEntity.getName(),
+                "password",
+                6,
                 255,
                 errors);
+    }
+
+    //Validation For :Roles
+    protected void validateUserEntityRoles(UserEntity userEntity,
+                                           List<ValidationResultInfo> errors) {
+        ValidationUtils.validateCollectionSize(userEntity.getRoles(),
+                "roles",
+                1,
+                null,
+                errors);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public Page<RoleEntity> searchRoles(
+            List<String> ids,
+            RoleSearchFilter roleSearchFilter,
+            Pageable pageable,
+            ContextInfo contextInfo)
+            throws OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException {
+        if (!CollectionUtils.isEmpty(ids)) {
+            return this.searchRolesById(ids, pageable);
+        } else {
+            return this.searchRoles(roleSearchFilter, pageable);
+        }
+    }
+
+    public Page<RoleEntity> searchRoles(
+            RoleSearchFilter roleSearchFilter,
+            Pageable pageable)
+            throws OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException {
+
+        Page<RoleEntity> roles = roleRepository.advanceRoleSearch(
+                roleSearchFilter,
+                pageable);
+        return roles;
+    }
+
+    public Page<RoleEntity> searchRolesById(
+            List<String> ids,
+            Pageable pageable)
+            throws OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException {
+        List<RoleEntity> roles
+                = roleRepository.findRolesByIds(ids);
+        return new PageImpl<>(roles,
+                pageable,
+                roles.size());
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public RoleEntity getRoleById(String roleId,
+                                  ContextInfo contextInfo)
+            throws DoesNotExistException,
+            OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException {
+        if (StringUtils.isEmpty(roleId)) {
+            throw new DoesNotExistException("User by id :"
+                    + roleId
+                    + Constant.NOT_FOUND);
+        }
+        Optional<RoleEntity> roleOptional
+                = roleRepository.findById(roleId);
+        if (!roleOptional.isPresent()) {
+            throw new DoesNotExistException("User by id :"
+                    + roleId
+                    + Constant.NOT_FOUND);
+        }
+        return roleOptional.get();
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public Page<RoleEntity> getRoles(Pageable pageable,
+                                     ContextInfo contextInfo)
+            throws OperationFailedException,
+            MissingParameterException,
+            PermissionDeniedException,
+            InvalidParameterException {
+        Page<RoleEntity> roles = roleRepository.findRoles(pageable);
+        return roles;
     }
 
     //trim all User field
@@ -451,9 +659,6 @@ public class UserServiceServiceImpl implements UserService {
         }
         if (userEntity.getEmail() != null) {
             userEntity.setEmail(userEntity.getEmail().trim());
-        }
-        if (userEntity.getUserName() != null) {
-            userEntity.setUserName(userEntity.getUserName().trim());
         }
     }
 }

@@ -5,9 +5,11 @@
  */
 package com.argusoft.path.tht.usermanagement.models.entity;
 
-import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
+import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateMetaEntity;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This model is mapped to user table in database.
@@ -17,26 +19,23 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "tht_user")
-public class UserEntity extends IdMetaEntity {
+public class UserEntity extends IdStateMetaEntity {
 
     @Column(name = "email")
     private String email;
 
     @Column(name = "name")
     private String name;
-    @Column(name = "user_name")
-    private String userName;
 
     @Column(name = "password")
     private String password;
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {})
+    @JoinTable(
+            name = "role_tht_user",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<RoleEntity> roles;
 
     public String getEmail() {
         return email;
@@ -54,7 +53,22 @@ public class UserEntity extends IdMetaEntity {
         this.password = password;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<RoleEntity> getRoles() {
+        if (roles == null) {
+            roles = new HashSet<>();
+        }
+        return roles;
+    }
+
+    public void setRoles(Set<RoleEntity> roles) {
+        this.roles = roles;
+    }
 }

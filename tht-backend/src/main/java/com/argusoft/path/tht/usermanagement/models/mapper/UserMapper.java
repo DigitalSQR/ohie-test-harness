@@ -1,7 +1,8 @@
 package com.argusoft.path.tht.usermanagement.models.mapper;
 
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
+import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -30,5 +33,21 @@ public interface UserMapper {
         List<UserEntity> userEntities = page.getContent();
         List<UserInfo> userDtoList = this.modelToDto(userEntities);
         return new PageImpl<>(userDtoList, page.getPageable(), page.getTotalElements());
+    }
+
+    default Set<String> setToRoleIds(Set<RoleEntity> roles) {
+        return roles.stream()
+                .map(RoleEntity::getId)
+                .collect(Collectors.toSet());
+    }
+
+    default Set<RoleEntity> setToRoles(Set<String> roleIds) {
+        return roleIds.stream()
+                .map(id -> {
+                    RoleEntity roleEntity = new RoleEntity();
+                    roleEntity.setId(id);
+                    return roleEntity;
+                })
+                .collect(Collectors.toSet());
     }
 }

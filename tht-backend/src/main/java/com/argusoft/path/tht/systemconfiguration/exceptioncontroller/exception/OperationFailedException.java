@@ -22,4 +22,7 @@ public class OperationFailedException extends Exception {
         super(message, cause);
     }
 
+    public OperationFailedException(DataValidationErrorException ex) {
+        super(ex.toString(), ex);
+    }
 }

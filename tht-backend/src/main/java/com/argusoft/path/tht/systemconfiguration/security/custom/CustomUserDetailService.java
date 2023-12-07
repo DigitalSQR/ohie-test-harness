@@ -5,28 +5,31 @@
  */
 package com.argusoft.path.tht.systemconfiguration.security.custom;
 
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.codahale.metrics.annotation.Timed;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
-import com.argusoft.path.tht.usermanagement.repository.UserRepository;
+import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author dhruv
@@ -38,7 +41,7 @@ import java.util.*;
 public class CustomUserDetailService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
     @Timed(name = "loadUserByUsername")
@@ -48,19 +51,36 @@ public class CustomUserDetailService implements UserDetailsService {
             HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
             String password = request.getParameter("password");
             try {
-                UserSearchFilter searchFilter = new UserSearchFilter();
-                searchFilter.setUserName(username);
-                Page<UserEntity> usersPage = userRepository.advanceUserSearch(searchFilter, Constant.SINGLE_VALUE_PAGE);
-                if (usersPage.getTotalElements() == 0) {
-                    throw new UsernameNotFoundException("Invalid credentials.");
+                UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
+                if (StringUtils.isEmpty(user.getPassword()) || !Objects.equals(user.getPassword(), password)) {
+                    throw new UsernameNotFoundException("Credential are incorrect.");
                 }
-                UserEntity user = usersPage.getContent().get(0);
-                Collection<GrantedAuthority> authorities = new ArrayList<>();
+
+                //If User is not active
+                if (!Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, user.getState())) {
+                    if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
+                        throw new UsernameNotFoundException("Pending email verification.") {
+                        };
+                    } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, user.getState())) {
+                        throw new UsernameNotFoundException("Pending admin approval.") {
+                        };
+                    } else if (Objects.equals(UserServiceConstants.USER_STATUS_REJECTED, user.getState())) {
+                        throw new UsernameNotFoundException("Admin approval has been rejected.") {
+                        };
+                    } else {
+                        //Only state left is UserServiceConstants.USER_STATUS_INACTIVE.
+                        throw new UsernameNotFoundException("User is inactive.") {
+                        };
+                    }
+                }
+
+                List<GrantedAuthority> authorities
+                        = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getId()))
+                        .collect(Collectors.toList());
 
                 return new ContextInfo(
                         user.getEmail(),
                         user.getId(),
-                        user.getUserName(),
                         password,
                         true,
                         true,
@@ -68,9 +88,8 @@ public class CustomUserDetailService implements UserDetailsService {
                         true,
                         authorities);
 
-            } catch (OperationFailedException | NumberFormatException | UsernameNotFoundException e) {
-                throw new UsernameNotFoundException("Credintial are "
-                        + "incorrect.") {
+            } catch (NumberFormatException | DoesNotExistException e) {
+                throw new UsernameNotFoundException("Credential are incorrect.") {
                 };
             }
         }

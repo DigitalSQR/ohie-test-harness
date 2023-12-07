@@ -6,6 +6,7 @@
 package com.argusoft.path.tht.systemconfiguration.models.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -68,28 +69,12 @@ public class MetaInfo implements Serializable {
         this.version = version;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
+    public Long getVersion() {
+        return this.version;
     }
 
     public void setVersion(Long version) {
         this.version = version;
-    }
-
-    public Long getVersion() {
-        return this.version;
     }
 
     public Date getCreatedAt() {
@@ -97,8 +82,16 @@ public class MetaInfo implements Serializable {
                 ? new Date(createdAt.getTime()) : null;
     }
 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public String getCreatedBy() {
         return this.createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     public Date getUpdatedAt() {
@@ -106,7 +99,15 @@ public class MetaInfo implements Serializable {
                 ? new Date(updatedAt.getTime()) : null;
     }
 
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public String getUpdatedBy() {
         return this.updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }

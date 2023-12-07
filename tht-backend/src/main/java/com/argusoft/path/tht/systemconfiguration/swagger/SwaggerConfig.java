@@ -5,19 +5,18 @@
  */
 package com.argusoft.path.tht.systemconfiguration.swagger;
 
-import java.util.Collections;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import springfox.documentation.builders.RequestHandlerSelectors;
-
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.Collections;
 
 /**
  * Swagger Configurations.
@@ -48,11 +47,11 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "TA User Management API",//User App Info
                 "Application programming Interface [ API ]  is at the core of enabling interoperability."
-                + " It’s a connective tissue that facilitates data sharing and enables digital THT Management experiences. "
-                + "It helps to expose the actions that the devloper needs.\n\n"
-                + "THT exposes the following APIs. "
-                + "It’s vital to know which information these APIs return.\n\n"
-                + "Detailed information on these APIs is as follows", //JSON REST API for MGS Backend
+                        + " It’s a connective tissue that facilitates data sharing and enables digital THT Management experiences. "
+                        + "It helps to expose the actions that the devloper needs.\n\n"
+                        + "THT exposes the following APIs. "
+                        + "It’s vital to know which information these APIs return.\n\n"
+                        + "Detailed information on these APIs is as follows", //JSON REST API for MGS Backend
                 appVersion,
                 "Terms of service",
                 DEFAULT_CONTACT,
