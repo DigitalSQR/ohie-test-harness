@@ -59,11 +59,14 @@ api.interceptors.response.use(
           return api.request(error.config);          
         } else {
           store.dispatch(refreshTokenFailure());
+          window.location.href = "/login";
           return Promise.reject(error);
        //   return Promise.reject(error);
         }
       } catch (refreshError) {
         store.dispatch(refreshTokenFailure());
+        window.location.href = "/login";
+
         return Promise.reject(error);
       //  return Promise.reject(error);
       }
