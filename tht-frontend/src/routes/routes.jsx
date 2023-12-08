@@ -3,7 +3,9 @@ import Login from "../components/Login";
 import Dashboard from "../components/Dashboard";
 import { useSelector } from "react-redux";
 import User from "../components/User";
-import TestCases from "../components/TestCases";
+import UploadTestCases from "../components/UploadTestCases";
+import WaitingPage from "../components/WaitingPage";
+import Register from "../components/Register";
 
 const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
@@ -13,16 +15,18 @@ const PrivateRoute = () => {
 };
 
 const routes = createBrowserRouter([
+  {path:'/waiting',element:<WaitingPage/>},
   { path: "/login", element: <Login /> },
   {
     path: "/dashboard",
-    element: <PrivateRoute />,
+    element: <PrivateRoute/>,
     children: [
       { path: "user", element: <User/> },
-      { path: "testcases", element: <TestCases /> },
+      { path: "testcases", element: <UploadTestCases /> },
     ],
   },
   { path: "/", element: <Navigate to="/login" /> },
+  {path:'/register',element:<Register/>}
 ]);
 
 export default routes;

@@ -37,7 +37,7 @@ export const setAuthToken = (token) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response.status == 401 && error.response.data.error == 'invalid_token') {
+    if (error.response.status === 401 && error.response.data.error === 'invalid_token') {
       error.config._retry = true;
       try {
         const refresh_token = store.getState().authSlice.refresh_token; // Use the correct reducer name
@@ -59,14 +59,15 @@ api.interceptors.response.use(
           return api.request(error.config);          
         } else {
           store.dispatch(refreshTokenFailure());
-          return Promise.reject(error);
           window.location.href = "/login";
+          return Promise.reject(error);
        //   return Promise.reject(error);
         }
       } catch (refreshError) {
         store.dispatch(refreshTokenFailure());
-        return Promise.reject(error);
         window.location.href = "/login";
+
+        return Promise.reject(error);
       //  return Promise.reject(error);
       }
     }

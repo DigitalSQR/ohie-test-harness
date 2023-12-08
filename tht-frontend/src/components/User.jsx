@@ -62,7 +62,7 @@ export default function User() {
     },
   });
 
-  console.log("the errors are ", formik.errors);
+  // console.log("the errors are ", formik.errors);
   //formik code updates
 
   //code for popup box for delete confirmation
@@ -77,6 +77,7 @@ export default function User() {
     notification.open({
       message: "Delete Confirmation",
       key,
+      placement: "top",
       duration: 0,
       description: (
         <div>
@@ -88,7 +89,8 @@ export default function User() {
           >
             Cancel
           </Button>
-          <Button type="danger" size="small" onClick={confirmDelete}>
+          {"    "}
+          <Button type="primary" size="small" onClick={confirmDelete}>
             Confirm
           </Button>
         </div>
@@ -130,7 +132,7 @@ export default function User() {
 
     // window.confirm("User has been updated")
   };
-
+  
   return (
     <div className="wrapper d-flex">
       <div className="d-inline-flex flex-grow-1 main-container bg-transparent">
@@ -138,7 +140,6 @@ export default function User() {
           <div className="heading-title d-flex align-items-center gap-2 font-title">
             Available Users
           </div>
-
           <div>
             {/* DISPLAYING USERS */}
             <Fragment>
@@ -183,7 +184,7 @@ export default function User() {
                             Edit User
                           </button>
                         </td>
-
+                          {/* below form is for updating user info */}
                         {editUser && (
                           <div id="infoPopup" className="popup">
                             <div className="popup-content">
@@ -318,19 +319,20 @@ export default function User() {
                   Firstname:
                 </label>
                 <input
-                  style={{marginLeft:'7px'}}
+                  style={{ marginLeft: "7px" }}
                   type="text"
                   id="firstName"
                   name="firstname"
                   required
                   onChange={formik.handleChange}
                 />
-                </div>
-                {formik.errors.firstname && (
-                  <div>{formik.errors.firstname}</div>
-                )}
-              
-              <div className="lname-field d-flex " style={{paddingTop:'20px'}}>
+              </div>
+              {formik.errors.firstname && <div>{formik.errors.firstname}</div>}
+
+              <div
+                className="lname-field d-flex "
+                style={{ paddingTop: "20px" }}
+              >
                 <label
                   htmlFor="lastName"
                   style={{ fontSize: "18px", paddingTop: "6px" }}
@@ -338,17 +340,17 @@ export default function User() {
                   Lastname:
                 </label>
                 <input
-                style={{marginLeft:'10px'}}
+                  style={{ marginLeft: "10px" }}
                   type="text"
                   id="lastName"
                   name="lastname"
                   required
                   onChange={formik.handleChange}
                 />
-                </div>
-                {formik.errors.lastname && <div>{formik.errors.lastname}</div>}
-              
-              <div className="d-flex" style={{paddingTop:'20px'}}>
+              </div>
+              {formik.errors.lastname && <div>{formik.errors.lastname}</div>}
+
+              <div className="d-flex" style={{ paddingTop: "20px" }}>
                 <label
                   htmlFor="role"
                   style={{ fontSize: "18px", paddingTop: "6px" }}
@@ -356,7 +358,7 @@ export default function User() {
                   Role:
                 </label>
                 <select
-                style={{marginLeft:'55px'}}
+                  style={{ marginLeft: "55px" }}
                   id="role"
                   name="role"
                   value={formik.values.role}
@@ -370,7 +372,10 @@ export default function User() {
                 </select>
               </div>
               {formik.errors.role && <div>{formik.errors.role}</div>}
-              <div className="email-field d-flex" style={{paddingTop:'20px'}}>
+              <div
+                className="email-field d-flex"
+                style={{ paddingTop: "20px" }}
+              >
                 <label
                   htmlFor="email"
                   style={{ fontSize: "18px", paddingTop: "6px" }}
@@ -378,17 +383,24 @@ export default function User() {
                   Email:
                 </label>
                 <input
-                style={{marginLeft:'46px'}}
+                  style={{ marginLeft: "46px" }}
                   type="email"
                   id="email"
                   name="email"
                   required
                   onChange={formik.handleChange}
                 />
+              </div>
+              {formik.errors.email && (
+                <div style={{ paddingRight: "40px" }}>
+                  {formik.errors.email}
                 </div>
-                {formik.errors.email && <div style={{paddingRight:'40px'}}>{formik.errors.email}</div>}
-              
-              <div className="contact-info d-flex" style={{paddingTop:'20px'}}>
+              )}
+
+              <div
+                className="contact-info d-flex"
+                style={{ paddingTop: "20px" }}
+              >
                 <label
                   htmlFor="phone"
                   style={{ fontSize: "18px", paddingTop: "6px" }}
@@ -396,21 +408,21 @@ export default function User() {
                   Contact:
                 </label>
                 <input
-                style={{marginLeft:'26px'}}
+                  style={{ marginLeft: "26px" }}
                   type="tel"
                   id="phone"
                   name="contactinfo"
                   required
                   onChange={formik.handleChange}
                 />
+              </div>
+              {formik.errors.contactinfo && (
+                <div style={{ paddingLeft: "30px" }}>
+                  {formik.errors.contactinfo}
                 </div>
-                {formik.errors.contactinfo && (
-                  <div style={{paddingLeft:'30px'}}>{formik.errors.contactinfo}</div>
-                )}
-              
-              <button type="submit" >
-                Submit
-              </button>
+              )}
+
+              <button type="submit">Submit</button>
             </form>
           </div>
         </div>
