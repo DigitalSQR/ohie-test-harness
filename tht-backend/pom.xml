@@ -11,7 +11,7 @@
     <groupId>com.argusoft.path.tht</groupId>
     <artifactId>testing-harness-tool</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>testing-harness-tool</name>
     <description>Testing Harness Tool</description>
     <properties>
