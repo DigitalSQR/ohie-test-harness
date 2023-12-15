@@ -32,7 +32,7 @@ export const AuthenticationAPI = {
   doLogout: async function (data) {
     try {
       const response = await api.request({
-        url: `/users/logout`,
+        url: `/user/logout`,
         method: "POST",
       });
       return response.data;
@@ -43,7 +43,7 @@ export const AuthenticationAPI = {
   viewUser: async function (userName) {
     try {
       const response = await api.request({
-        url: `/users?name=${userName}`,
+        url: `/user/principal`,
         method: "GET",
       });
       return response.data;
