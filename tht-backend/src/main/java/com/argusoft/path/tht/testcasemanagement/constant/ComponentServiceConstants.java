@@ -2,6 +2,11 @@ package com.argusoft.path.tht.testcasemanagement.constant;
 
 import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
 
+/**
+ * Constant for ComponentService.
+ *
+ * @author Dhruv
+ */
 public class ComponentServiceConstants {
 
     public static final String COMPONENT_REF_OBJ_URI = ComponentInfo.class.getName();

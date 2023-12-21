@@ -20,8 +20,7 @@ import java.util.Map;
 /**
  * This SQLUtils provides methods for SQL.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public final class SQLUtils {
 

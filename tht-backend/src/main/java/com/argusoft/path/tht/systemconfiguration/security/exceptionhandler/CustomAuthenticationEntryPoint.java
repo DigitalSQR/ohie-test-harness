@@ -15,8 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @author dhruv
- * @since 2023-09-13
+ * CustomAuthenticationEntryPoint to handle AuthenticationEntryPoint.
+ *
+ * @author Dhruv
  */
 @Component
 public class CustomAuthenticationEntryPoint

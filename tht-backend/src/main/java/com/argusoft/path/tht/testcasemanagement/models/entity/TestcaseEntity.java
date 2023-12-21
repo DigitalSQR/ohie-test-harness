@@ -12,8 +12,7 @@ import javax.persistence.*;
 /**
  * This model is mapped to testcase table in database.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @Entity
 @Table(name = "testcase")

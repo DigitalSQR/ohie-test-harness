@@ -24,8 +24,7 @@ import java.io.StringWriter;
 /**
  * This class is manage occurred exceptions and its response error massages.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @RestControllerAdvice
 public class ExceptionController {

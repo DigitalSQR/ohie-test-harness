@@ -14,7 +14,7 @@ import java.util.Date;
  * This info is for meta DTO that contains
  * createdAt,createdBy,updatedAt,updatedBy and version.
  *
- * @author dhruv
+ * @author Dhruv
  */
 public class MetaInfo implements Serializable {
 

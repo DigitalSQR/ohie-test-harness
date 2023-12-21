@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author dhruv
+ * This Util provides utility to enable metrics.
+ *
+ * @author Dhruv
  */
 @Component
 public class MetricsUtil {

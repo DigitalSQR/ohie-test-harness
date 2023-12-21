@@ -9,6 +9,11 @@ import org.springframework.security.core.userdetails.User;
 
 import java.util.Optional;
 
+/**
+ * AuditorAware to handle created/updated By.
+ *
+ * @author Dhruv
+ */
 public class AuditorAwareImpl implements AuditorAware<String> {
 
     @Override

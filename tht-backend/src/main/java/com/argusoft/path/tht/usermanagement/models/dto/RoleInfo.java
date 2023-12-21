@@ -13,8 +13,7 @@ import java.io.Serializable;
 /**
  * This info is for User DTO that contains all the Role model's data.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class RoleInfo extends IdInfo implements Serializable {
 

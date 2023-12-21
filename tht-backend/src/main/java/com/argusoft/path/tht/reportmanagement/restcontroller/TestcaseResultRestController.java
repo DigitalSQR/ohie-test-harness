@@ -30,8 +30,7 @@ import java.util.List;
 /**
  * This TestcaseResultServiceRestController maps end points with standard service.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @RestController
 @RequestMapping("/testcaseResult")
@@ -66,7 +65,7 @@ public class TestcaseResultRestController {
             MissingParameterException,
             PermissionDeniedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException {
+            DataValidationErrorException, DoesNotExistException, VersionMismatchException {
 
         TestcaseResultEntity TestcaseResultEntity = testcaseResultMapper.dtoToModel(TestcaseResultInfo);
         TestcaseResultEntity = testcaseResultService.createTestcaseResult(TestcaseResultEntity, contextInfo);

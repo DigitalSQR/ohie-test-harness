@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * This interface provides contract for Testcase API.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public interface TestcaseService {
 

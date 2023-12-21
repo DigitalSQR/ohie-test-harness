@@ -26,8 +26,7 @@ import java.util.regex.Pattern;
 /**
  * This ValidationUtils provides methods for validation.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public final class ValidationUtils {
 

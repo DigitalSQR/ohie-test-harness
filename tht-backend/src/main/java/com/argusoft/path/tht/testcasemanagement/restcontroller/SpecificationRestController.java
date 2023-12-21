@@ -30,8 +30,7 @@ import java.util.List;
 /**
  * This SpecificationServiceRestController maps end points with standard service.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @RestController
 @RequestMapping("/specification")

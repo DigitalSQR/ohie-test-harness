@@ -17,11 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of the CRWF1 Testing.
- * Reference https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/create-patient-demographic-record-workflow.
+ * Implementation of CRWF4TestCase1.
  *
- * @author dhruv
- * @since 2023-09-25
+ * @author Dhruv
  */
 @Component
 public class CRWF4TestCase1 implements TestCase {
@@ -65,7 +63,7 @@ public class CRWF4TestCase1 implements TestCase {
                     .execute();
             List<Patient> patients = FHIRUtils.processBundle(Patient.class, bundle);
 
-            if(patients.size() != 2) {
+            if (patients.size() != 2) {
                 return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to search patients by demographics");
             }
 
@@ -80,7 +78,7 @@ public class CRWF4TestCase1 implements TestCase {
 
             patients = FHIRUtils.processBundle(Patient.class, bundle);
 
-            if(patients.size() == 1) {
+            if (patients.size() == 1) {
                 return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
             } else {
                 return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to search patients by Identifiers and demographics");

@@ -4,12 +4,17 @@ import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateMetaEntity
 
 import javax.persistence.*;
 
+/**
+ * This model is mapped to token verification table in database.
+ *
+ * @author Hardik
+ */
 @Entity
 @Table(name = "token_verification")
 public class TokenVerificationEntity extends IdStateMetaEntity {
 
     @OneToOne
-    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userEntity;
 
     @Column(name = "type", nullable = false)

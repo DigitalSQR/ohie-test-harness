@@ -12,8 +12,7 @@ import org.springframework.util.StringUtils;
 /**
  * SearchFilter for User.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class UserSearchFilter {
 

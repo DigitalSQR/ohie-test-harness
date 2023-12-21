@@ -6,6 +6,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * This CustomOauth2User implements OAuth2User.
+ *
+ * @author Dhruv
+ */
 public class CustomOauth2User implements OAuth2User {
 
     private final OAuth2User delegate;

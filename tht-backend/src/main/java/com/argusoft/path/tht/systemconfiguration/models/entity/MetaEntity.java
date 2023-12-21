@@ -19,8 +19,7 @@ import java.util.Date;
  * This model used in model, which contains createdAt, createdBy, updatedAt,
  * updatedBy and version.
  *
- * @author dhruv
- * @since 2021-2-11
+ * @author Dhruv
  */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)

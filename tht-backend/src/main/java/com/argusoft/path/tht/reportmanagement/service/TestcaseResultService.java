@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * This interface provides contract for TestcaseResult API.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public interface TestcaseResultService {
 
@@ -39,7 +38,7 @@ public interface TestcaseResultService {
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException;
+            DataValidationErrorException, DoesNotExistException, VersionMismatchException;
 
     /**
      * Updates an existing TestcaseResult.
@@ -59,7 +58,7 @@ public interface TestcaseResultService {
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException,
-            InvalidParameterException;
+            InvalidParameterException, DoesNotExistException;
 
     /**
      * Retrieves a list of TestcaseResults corresponding to the given TestcaseResult Name.The

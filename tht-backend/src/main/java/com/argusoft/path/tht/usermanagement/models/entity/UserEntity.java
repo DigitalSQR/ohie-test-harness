@@ -14,8 +14,7 @@ import java.util.Set;
 /**
  * This model is mapped to user table in database.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @Entity
 @Table(name = "tht_user")

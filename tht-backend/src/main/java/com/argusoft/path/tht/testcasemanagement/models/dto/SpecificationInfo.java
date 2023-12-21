@@ -14,8 +14,7 @@ import java.util.Set;
 /**
  * This info is for Specification DTO that contains all the Specification model's data.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class SpecificationInfo extends IdStateNameMetaInfo implements Serializable {
 

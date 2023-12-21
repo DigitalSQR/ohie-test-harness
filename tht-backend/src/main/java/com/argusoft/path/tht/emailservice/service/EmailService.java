@@ -5,6 +5,11 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
+/**
+ * Email Service to do operations related to email.
+ *
+ * @author Hardik
+ */
 @Component
 public class EmailService {
 

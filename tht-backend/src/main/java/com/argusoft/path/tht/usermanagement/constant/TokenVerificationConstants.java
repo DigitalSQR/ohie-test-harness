@@ -1,5 +1,10 @@
 package com.argusoft.path.tht.usermanagement.constant;
 
+/**
+ * Constant for TokenVerification.
+ *
+ * @author Hardik
+ */
 public class TokenVerificationConstants {
 
     // states
@@ -7,11 +12,12 @@ public class TokenVerificationConstants {
     public static final String TOKEN_STATUS_INACTIVE = "verification.token.status.inactive";
 
     // types
-    public enum TOKEN_TYPE{
+    public enum TOKEN_TYPE {
         VERIFICATION("verification.token.type.verification"),
         FORGOT_PASSWORD("verification.token.type.forgot.password");
 
         private final String key;
+
         TOKEN_TYPE(String key) {
             this.key = key;
         }

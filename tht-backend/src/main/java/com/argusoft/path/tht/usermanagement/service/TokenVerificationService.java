@@ -7,6 +7,11 @@ import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntit
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This interface provides contract for TokenVerification API.
+ *
+ * @author Hardik
+ */
 public interface TokenVerificationService {
 
     public TokenVerificationEntity createTokenVerification(TokenVerificationEntity tokenVerificationEntity,
@@ -16,16 +21,16 @@ public interface TokenVerificationService {
                                                                                 String userId,
                                                                                 String type, ContextInfo contextInfo);
 
-    public List<TokenVerificationEntity> getAllTokenVerificationEntityByTypeAndUser(String type,String userId, ContextInfo contextInfo);
+    public List<TokenVerificationEntity> getAllTokenVerificationEntityByTypeAndUser(String type, String userId, ContextInfo contextInfo);
 
     public TokenVerificationEntity getTokenById(String tokenId, ContextInfo contextInfo) throws DoesNotExistException;
 
 
     public Boolean verifyUserToken(String base64TokenId, String base64EmailId, ContextInfo contextInfo)
-            throws DoesNotExistException, DataValidationErrorException, OperationFailedException, MissingParameterException, VersionMismatchException, InvalidParameterException, PermissionDeniedException;
-    
+            throws DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException, InvalidParameterException;
 
-    public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId, String type ,ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException, MissingParameterException, PermissionDeniedException;
+
+    public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId, String type, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException, MissingParameterException;
 
     public TokenVerificationEntity updateTokenVerificationEntity(String tokenId, TokenVerificationEntity tokenVerification, ContextInfo contextInfo) throws DoesNotExistException;
 

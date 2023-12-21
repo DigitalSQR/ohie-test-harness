@@ -8,8 +8,7 @@ package com.argusoft.path.tht.systemconfiguration.constant;
 /**
  * Type of the search.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public enum SearchType {
     STARTING("STARTING"),
