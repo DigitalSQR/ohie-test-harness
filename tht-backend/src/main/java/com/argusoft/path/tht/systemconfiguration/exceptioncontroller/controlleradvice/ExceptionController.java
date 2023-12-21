@@ -46,16 +46,6 @@ public class ExceptionController {
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = PermissionDeniedException.class)
-    public ResponseEntity<Object> handleException(PermissionDeniedException exception) {
-        return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.FORBIDDEN);
-    }
-
-    @ExceptionHandler(value = MissingParameterException.class)
-    public ResponseEntity<Object> handleException(MissingParameterException exception) {
-        return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(value = VersionMismatchException.class)
     public ResponseEntity<Object> handleException(VersionMismatchException exception) {
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.BAD_REQUEST);

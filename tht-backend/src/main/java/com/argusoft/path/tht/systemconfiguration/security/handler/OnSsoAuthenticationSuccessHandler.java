@@ -142,7 +142,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
         }
     }
 
-    private UserEntity createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, PermissionDeniedException, OperationFailedException, DoesNotExistException, DataValidationErrorException {
+    private UserEntity createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException {
         try {
             return userService.getUserByEmail(oauth2User.<String>getAttribute("email"), contextInfo);
         } catch (DoesNotExistException ex) {

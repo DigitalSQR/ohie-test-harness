@@ -62,8 +62,6 @@ public class TestcaseResultRestController {
             @RequestBody TestcaseResultInfo TestcaseResultInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException,
             DataValidationErrorException, DoesNotExistException, VersionMismatchException {
 
@@ -93,8 +91,6 @@ public class TestcaseResultRestController {
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException,
             VersionMismatchException,
             DataValidationErrorException {
@@ -124,8 +120,6 @@ public class TestcaseResultRestController {
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
         Page<TestcaseResultEntity> TestcaseResultEntities;
@@ -160,9 +154,6 @@ public class TestcaseResultRestController {
             @PathVariable("TestcaseResultId") String TestcaseResultId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
-            OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
         TestcaseResultEntity TestcaseResultById = testcaseResultService.getTestcaseResultById(TestcaseResultId, contextInfo);
@@ -177,10 +168,7 @@ public class TestcaseResultRestController {
     public Page<TestcaseResultInfo> getTestcaseResults(
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException {
+            throws InvalidParameterException {
         Page<TestcaseResultEntity> TestcaseResults = testcaseResultService.getTestcaseResults(pageable, contextInfo);
         return testcaseResultMapper.pageEntityToDto(TestcaseResults);
     }
@@ -203,9 +191,7 @@ public class TestcaseResultRestController {
             @RequestBody(required = true) TestcaseResultInfo TestcaseResultInfo,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
-            MissingParameterException,
-            OperationFailedException,
-            PermissionDeniedException, DoesNotExistException {
+            OperationFailedException {
         TestcaseResultEntity TestcaseResultEntity = testcaseResultMapper.dtoToModel(TestcaseResultInfo);
         return testcaseResultService
                 .validateTestcaseResult(validationTypeKey, TestcaseResultEntity, contextInfo);
