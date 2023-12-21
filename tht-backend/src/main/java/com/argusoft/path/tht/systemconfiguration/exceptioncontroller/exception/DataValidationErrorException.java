@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This exception mainly used when validation in model are not satisfied.It Also
- * contains error message with HTTP status.
+ * This exception mainly used when validation in model are not satisfied.
+ * It Also contains error message with HTTP status.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class DataValidationErrorException extends Exception {
 

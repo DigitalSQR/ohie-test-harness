@@ -14,8 +14,7 @@ import java.util.Set;
 /**
  * This info is for Component DTO that contains all the Component model's data.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class ComponentInfo extends IdStateNameMetaInfo implements Serializable {
 

@@ -13,8 +13,7 @@ import javax.persistence.*;
 /**
  * This model is mapped to user table in database.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @Entity
 @Table(name = "testcase_result")
@@ -41,6 +40,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     @Column(name = "has_system_error")
     private Boolean hasSystemError;
+
+    @Column(name = "is_manual")
+    private Boolean isManual;
 
     public Integer getRank() {
         return rank;
@@ -96,5 +98,13 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     public void setTestRequestId(String testRequestId) {
         this.testRequestId = testRequestId;
+    }
+
+    public Boolean getManual() {
+        return isManual;
+    }
+
+    public void setManual(Boolean manual) {
+        isManual = manual;
     }
 }

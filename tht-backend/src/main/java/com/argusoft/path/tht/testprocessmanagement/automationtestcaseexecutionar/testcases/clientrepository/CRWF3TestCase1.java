@@ -8,20 +8,17 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
- * Implementation of the CRWF1 Testing.
- * Reference https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/query-patient-demographic-records-by-identifier-workflow.
+ * Implementation of CRWF3TestCase1.
  *
- * @author dhruv
- * @since 2023-09-25
+ * @author Dhruv
  */
 @Component
 public class CRWF3TestCase1 implements TestCase {
@@ -50,7 +47,7 @@ public class CRWF3TestCase1 implements TestCase {
                     .withId(outcome.getResource().getIdElement().getIdPart())
                     .execute();
 
-            if(!patient1.getBirthDate().equals(createdPatient.getBirthDate())) {
+            if (!patient1.getBirthDate().equals(createdPatient.getBirthDate())) {
                 return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to get patient by ID");
             }
 
@@ -75,7 +72,7 @@ public class CRWF3TestCase1 implements TestCase {
 
             List<Patient> patients = FHIRUtils.processBundle(Patient.class, bundle);
 
-            if(patients.size() == 2) {
+            if (patients.size() == 2) {
                 return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
             } else {
                 return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to get patients by IDs");

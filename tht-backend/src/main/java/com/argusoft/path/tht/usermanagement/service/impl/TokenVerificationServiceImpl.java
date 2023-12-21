@@ -12,7 +12,6 @@ import com.argusoft.path.tht.usermanagement.repository.TokenVerificationReposito
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +20,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This TokenVerificationServiceImpl contains implementation for TokenVerification service.
+ *
+ * @author Hardik
+ */
 @Service
 public class TokenVerificationServiceImpl implements TokenVerificationService {
 
@@ -33,6 +37,13 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     @Autowired
     private EmailService emailService;
 
+    private static void checkForValidTokenTypeWithVerifyingInEnum(String tokenType) throws MissingParameterException {
+        boolean validEnum = TokenTypeEnum.isValidKey(tokenType);
+        if (!validEnum) {
+            throw new MissingParameterException("token type outside of the provided support => " + tokenType);
+        }
+    }
+
     @Override
     public TokenVerificationEntity createTokenVerification(TokenVerificationEntity tokenVerificationEntity, ContextInfo contextInfo) {
         return tokenVerificationRepository.save(tokenVerificationEntity);
@@ -44,11 +55,11 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     }
 
     @Override
-    public List<TokenVerificationEntity> getAllTokenVerificationEntityByTypeAndUser(String type ,String userId, ContextInfo contextInfo) {
-        return tokenVerificationRepository.findAllTokenVerificationsByTypeAndUser(type ,userId);
+    public List<TokenVerificationEntity> getAllTokenVerificationEntityByTypeAndUser(String type, String userId, ContextInfo contextInfo) {
+        return tokenVerificationRepository.findAllTokenVerificationsByTypeAndUser(type, userId);
     }
 
-    public TokenVerificationEntity getTokenById(String token, ContextInfo contextInfo) throws DoesNotExistException{
+    public TokenVerificationEntity getTokenById(String token, ContextInfo contextInfo) throws DoesNotExistException {
         Optional<TokenVerificationEntity> tokenVerificationById = tokenVerificationRepository.findById(token);
         return tokenVerificationById.orElseThrow(() ->
                 new DoesNotExistException("Token VerificationEntity does not exist with token " + token));
@@ -59,10 +70,8 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
             throws DoesNotExistException,
             DataValidationErrorException,
             OperationFailedException,
-            MissingParameterException,
             VersionMismatchException,
-            InvalidParameterException,
-            PermissionDeniedException {
+            InvalidParameterException {
 
         String tokenDecodedBase64 = new String(Base64.decodeBase64(base64TokenId));
         String emailDecodedBase64 = new String(Base64.decodeBase64(base64EmailId));
@@ -75,33 +84,32 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         Optional<TokenVerificationEntity> activeTokenByIdAndUserId = this.getActiveTokenByIdAndUserIdAndType(tokenDecodedBase64, userByEmail.getId(), tokenById.getType(), contextInfo);
 
         // set inactive token verification record
-        if(activeTokenByIdAndUserId.isPresent()){
+        if (activeTokenByIdAndUserId.isPresent()) {
             TokenVerificationEntity tokenVerification = activeTokenByIdAndUserId.get();
 
-            if(TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())){
+            if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
                 Calendar c = Calendar.getInstance();
                 c.setTime(new Date());
                 c.add(Calendar.HOUR, -24);
                 Date minus24HoursFromCurrentDate = c.getTime();
 
-                if(tokenVerification.getCreatedAt().before(minus24HoursFromCurrentDate)){
+                if (tokenVerification.getCreatedAt().before(minus24HoursFromCurrentDate)) {
                     // even that old then can't update
                     throw new OperationFailedException("Link is older than expected, try again!");
                 }
             }
 
             tokenVerification.setState(TokenVerificationConstants.TOKEN_STATUS_INACTIVE);
-            this.updateTokenVerificationEntity(tokenVerification.getId(),tokenVerification,contextInfo);
+            this.updateTokenVerificationEntity(tokenVerification.getId(), tokenVerification, contextInfo);
 
             // call back tasks
-            if(TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())){
+            if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
                 // nothing as of now
 
-            }
-            else if(TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())){
-                if(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(userByEmail.getState())){
+            } else if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
+                if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(userByEmail.getState())) {
                     userByEmail.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
-                    userByEmail = userService.updateUser(userByEmail,contextInfo);
+                    userByEmail = userService.updateUser(userByEmail, contextInfo);
                 }
             }
         }
@@ -112,20 +120,19 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId,
                                                                            String tokenType,
                                                                            ContextInfo contextInfo) throws DoesNotExistException,
-            InvalidParameterException,
-            OperationFailedException,
             MissingParameterException,
-            PermissionDeniedException {
+            InvalidParameterException,
+            OperationFailedException {
 
         checkForValidTokenTypeWithVerifyingInEnum(tokenType);
 
         UserEntity userById = getUserByIdAndVerifyForEmailExistense(userId, contextInfo);
         // inactive all the verification tokens created in past for this user
         List<TokenVerificationEntity> allTokenVerificationEntityByUser =
-                this.getAllTokenVerificationEntityByTypeAndUser(tokenType,userById.getId(), contextInfo);
+                this.getAllTokenVerificationEntityByTypeAndUser(tokenType, userById.getId(), contextInfo);
         for (TokenVerificationEntity tokenVerification : allTokenVerificationEntityByUser) {
             tokenVerification.setState(TokenVerificationConstants.TOKEN_STATUS_INACTIVE);
-            this.updateTokenVerificationEntity(tokenVerification.getId(),tokenVerification,contextInfo);
+            this.updateTokenVerificationEntity(tokenVerification.getId(), tokenVerification, contextInfo);
         }
 
         // generate new token for this user
@@ -133,36 +140,28 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         tokenVerification.setUserEntity(userById);
         tokenVerification.setState(TokenVerificationConstants.TOKEN_STATUS_ACTIVE);
         tokenVerification.setType(tokenType);
-        this.createTokenVerification(tokenVerification,contextInfo);
+        this.createTokenVerification(tokenVerification, contextInfo);
 
         // send email
         String encodedBase64TokenVerificationId = new String(Base64.encodeBase64(tokenVerification.getId().getBytes()));
         String emailIdBase64 = new String(Base64.encodeBase64(userById.getEmail().getBytes()));
 
-        if(TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
+        if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
             emailService.sendSimpleMessage(userById.getEmail(), "Verify your email id", "http://localhost:8081/api/user/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
-        }
-        else if(TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
+        } else if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
             emailService.sendSimpleMessage(userById.getEmail(), "Reset Your Password", "http://localhost:8081/api/user/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         }
 
         return tokenVerification;
     }
 
-    private UserEntity getUserByIdAndVerifyForEmailExistense(String userId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException, MissingParameterException, PermissionDeniedException, InvalidParameterException {
+    private UserEntity getUserByIdAndVerifyForEmailExistense(String userId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException, InvalidParameterException {
         UserEntity userById = userService.getUserById(userId, contextInfo);
         // check if user has email id
-        if(userById.getEmail()==null){
+        if (userById.getEmail() == null) {
             throw new OperationFailedException("Provided user does not have email id");
         }
         return userById;
-    }
-
-    private static void checkForValidTokenTypeWithVerifyingInEnum(String tokenType) throws MissingParameterException {
-        boolean validEnum = TokenTypeEnum.isValidKey(tokenType);
-        if(!validEnum){
-            throw new MissingParameterException("token type outside of the provided support => "+ tokenType);
-        }
     }
 
     @Override

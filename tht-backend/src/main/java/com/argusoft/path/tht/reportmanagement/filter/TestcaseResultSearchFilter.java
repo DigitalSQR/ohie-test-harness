@@ -10,10 +10,9 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.util.StringUtils;
 
 /**
- * SearchFilter for Componenet.
+ * SearchFilter for TestCaseResult.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class TestcaseResultSearchFilter {
 
@@ -57,6 +56,11 @@ public class TestcaseResultSearchFilter {
     )
     private String testRequestId;
 
+    @ApiParam(
+            value = "isManual of the TestcaseResult"
+    )
+    private Boolean isManual;
+
     public TestcaseResultSearchFilter() {
     }
 
@@ -67,7 +71,8 @@ public class TestcaseResultSearchFilter {
                                       String testerId,
                                       String refObjUri,
                                       String refId,
-                                      String testRequestId) {
+                                      String testRequestId,
+                                      Boolean isManual) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
@@ -76,6 +81,7 @@ public class TestcaseResultSearchFilter {
         this.refObjUri = refObjUri;
         this.refId = refId;
         this.testRequestId = testRequestId;
+        this.isManual = isManual;
 
     }
 
@@ -85,7 +91,8 @@ public class TestcaseResultSearchFilter {
                 && StringUtils.isEmpty(testerId)
                 && StringUtils.isEmpty(refObjUri)
                 && StringUtils.isEmpty(refId)
-                && StringUtils.isEmpty(testRequestId);
+                && StringUtils.isEmpty(testRequestId)
+                && isManual == null;
     }
 
     public String getName() {
@@ -156,5 +163,13 @@ public class TestcaseResultSearchFilter {
 
     public void setTestRequestId(String testRequestId) {
         this.testRequestId = testRequestId;
+    }
+
+    public Boolean getIsManual() {
+        return isManual;
+    }
+
+    public void setIsManual(Boolean isManual) {
+        this.isManual = isManual;
     }
 }

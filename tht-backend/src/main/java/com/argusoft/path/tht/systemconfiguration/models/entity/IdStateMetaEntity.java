@@ -6,6 +6,11 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import java.util.UUID;
 
+/**
+ * This model used in model those contain UUID as id and state.
+ *
+ * @author Dhruv
+= */
 @MappedSuperclass
 public class IdStateMetaEntity extends MetaEntity {
 
@@ -33,7 +38,7 @@ public class IdStateMetaEntity extends MetaEntity {
     }
 
     @PrePersist
-    private void changesBeforeSave(){
+    private void changesBeforeSave() {
         this.setId(UUID.randomUUID().toString());
     }
 }

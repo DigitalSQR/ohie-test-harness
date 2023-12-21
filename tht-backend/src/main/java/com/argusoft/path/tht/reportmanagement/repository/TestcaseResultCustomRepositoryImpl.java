@@ -22,8 +22,7 @@ import java.util.Map;
 /**
  * This custom repository implementation is for making queries on the TestcaseResult model.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @Repository
 public class TestcaseResultCustomRepositoryImpl
@@ -98,6 +97,15 @@ public class TestcaseResultCustomRepositoryImpl
                     parameters,
                     SearchType.EXACTLY,
                     separate,
+                    jpql);
+
+            separate = SQLUtils.likeQL(
+                    "testcaseResult",
+                    "isManual",
+                    searchFilter.getIsManual().toString(),
+                    parameters,
+                    SearchType.EXACTLY,
+                    false,
                     jpql);
         }
 

@@ -13,8 +13,7 @@ import java.io.Serializable;
 /**
  * This info is for Testcase DTO that contains all the Testcase model's data.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class TestcaseInfo extends IdStateNameMetaInfo implements Serializable {
 

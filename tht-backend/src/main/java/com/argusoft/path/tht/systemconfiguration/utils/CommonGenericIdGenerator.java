@@ -15,8 +15,7 @@ import java.util.stream.Stream;
 /**
  * CommonGenericIdGenerator.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class CommonGenericIdGenerator implements IdentifierGenerator, Configurable {
 

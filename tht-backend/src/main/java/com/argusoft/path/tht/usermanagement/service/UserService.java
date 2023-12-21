@@ -20,8 +20,7 @@ import java.util.List;
 /**
  * This interface provides contract for User API.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public interface UserService {
 
@@ -31,19 +30,10 @@ public interface UserService {
      * @param contextInfo information containing the principalId and locale
      *                    information about the caller of service operation
      * @return UserInfo the User just created
-     * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException    userInfo or contextInfo is not valid
-     * @throws MissingParameterException    userInfo or contextInfo is missing or
-     *                                      null
-     * @throws OperationFailedException     unable to complete request
-     * @throws PermissionDeniedException    an authorization failure occurred
+     * @throws OperationFailedException unable to complete request
      */
     public Boolean logout(ContextInfo contextInfo)
-            throws OperationFailedException,
-            InvalidParameterException,
-            MissingParameterException,
-            PermissionDeniedException,
-            DataValidationErrorException;
+            throws OperationFailedException;
 
     /**
      * Creates a new User.In the user Id, Description, and Meta information may
@@ -55,20 +45,16 @@ public interface UserService {
      * @return UserInfo the User just created
      * @throws DataValidationErrorException supplied data is invalid
      * @throws InvalidParameterException    userInfo or contextInfo is not valid
-     * @throws MissingParameterException    userInfo or contextInfo is missing or
-     *                                      null
      * @throws OperationFailedException     unable to complete request
-     * @throws PermissionDeniedException    an authorization failure occurred
      */
     public UserEntity createUser(UserEntity userEntity,
                                  ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            MissingParameterException,
-            PermissionDeniedException,
-            DataValidationErrorException, DoesNotExistException;
+            DataValidationErrorException;
 
-    public UserEntity getUserByEmail(String email, ContextInfo contextInfo) throws DoesNotExistException;
+    public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
+            throws DoesNotExistException;
 
     /**
      * Updates an existing User.
@@ -78,22 +64,17 @@ public interface UserService {
      *                    information about the caller of service operation
      * @return UserInfo the details of User just updated
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws DoesNotExistException        user Id not found
      * @throws InvalidParameterException    userInfo or contextInfo is not valid
-     * @throws MissingParameterException    userInfo, or contextInfo is missing or
-     *                                      null
      * @throws OperationFailedException     unable to complete request
-     * @throws PermissionDeniedException    an authorization failure occurred
      * @throws VersionMismatchException     optimistic locking failure or the action
      *                                      was attempted on an out of date version
      */
     public UserEntity updateUser(UserEntity userEntity,
                                  ContextInfo contextInfo)
-            throws DoesNotExistException,
-            OperationFailedException,
-            MissingParameterException,
+            throws OperationFailedException,
             VersionMismatchException,
-            DataValidationErrorException, InvalidParameterException, PermissionDeniedException;
+            DataValidationErrorException,
+            InvalidParameterException;
 
     /**
      * Retrieves a list of Users corresponding to the given User Name.The
@@ -116,8 +97,6 @@ public interface UserService {
                                         Pageable pageable,
                                         ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException;
 
     /**
@@ -132,20 +111,13 @@ public interface UserService {
      *                          information about the caller of service operation
      * @return Results user performing the validation
      * @throws InvalidParameterException userInfo or contextInfo is not valid
-     * @throws MissingParameterException validationTypeKey, userInfo, or
-     *                                   contextInfo is missing or null
      * @throws OperationFailedException  unable to complete request
-     * @throws PermissionDeniedException an authorization failure occurred
-     * @throws DoesNotExistException
      */
     public List<ValidationResultInfo> validateUser(String validationTypeKey,
                                                    UserEntity userEntity,
                                                    ContextInfo contextInfo)
             throws InvalidParameterException,
-            MissingParameterException,
-            OperationFailedException,
-            PermissionDeniedException,
-            DoesNotExistException;
+            OperationFailedException;
 
     /**
      * Retrieves a User corresponding to the given User Id.
@@ -164,9 +136,6 @@ public interface UserService {
     public UserEntity getUserById(String userId,
                                   ContextInfo contextInfo)
             throws DoesNotExistException,
-            OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException;
 
     /**
@@ -185,10 +154,7 @@ public interface UserService {
      */
     public Page<UserEntity> getUsers(Pageable pageable,
                                      ContextInfo contextInfo)
-            throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException;
+            throws InvalidParameterException;
 
     /**
      * get logged in uses detail
@@ -209,33 +175,24 @@ public interface UserService {
                                         Pageable pageable,
                                         ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException;
 
     public RoleEntity getRoleById(String roleId,
                                   ContextInfo contextInfo)
             throws DoesNotExistException,
             OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException;
 
     public Page<RoleEntity> getRoles(Pageable pageable,
                                      ContextInfo contextInfo)
-            throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException;
+            throws InvalidParameterException;
 
     public UserEntity registerAssessee(UserEntity userEntity,
                                        ContextInfo contextInfo)
             throws DoesNotExistException,
-            PermissionDeniedException,
             OperationFailedException,
             InvalidParameterException,
-            MissingParameterException,
-            DataValidationErrorException;
+            DataValidationErrorException, MissingParameterException;
 
     public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo);
 

@@ -6,11 +6,10 @@
 package com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception;
 
 /**
- * This exception mainly used when parameter are invalid.It Also contains error
- * message with HTTP status.
+ * This exception mainly used when parameter are invalid.
+ * It Also contains error message with HTTP status.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class InvalidParameterException extends Exception {
 

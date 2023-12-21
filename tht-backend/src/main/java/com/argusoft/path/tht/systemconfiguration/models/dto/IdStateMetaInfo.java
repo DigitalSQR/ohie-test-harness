@@ -2,6 +2,11 @@ package com.argusoft.path.tht.systemconfiguration.models.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * This class is provides implementation for IdStateMetaInfo.
+ *
+ * @author Dhruv
+ */
 public class IdStateMetaInfo extends HasMetaInfo {
 
     @ApiModelProperty(notes = "The unique id of the model",

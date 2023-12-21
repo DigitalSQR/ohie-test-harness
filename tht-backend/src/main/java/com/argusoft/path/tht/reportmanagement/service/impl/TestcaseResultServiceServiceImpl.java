@@ -5,17 +5,23 @@
  */
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
+import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
+import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,8 +40,7 @@ import java.util.UUID;
 /**
  * This TestcaseResultServiceServiceImpl contains implementation for TestcaseResult service.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @Service
 public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
@@ -45,6 +50,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     @Autowired
     private SpecificationService specificationService;
+
+    @Autowired
+    private TestRequestService testRequestService;
 
     @Autowired
     private UserService userService;
@@ -60,7 +68,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException, VersionMismatchException {
 
         List<ValidationResultInfo> validationResultEntities
                 = this.validateTestcaseResult(Constant.CREATE_VALIDATION,
@@ -75,7 +83,40 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             testcaseResultEntity.setId(UUID.randomUUID().toString());
         }
         testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
+        updateTestRequestByTestcaseResultState(testcaseResultEntity.getTestRequestId(), testcaseResultEntity.getState(), contextInfo);
         return testcaseResultEntity;
+    }
+
+    public void updateTestRequestByTestcaseResultState(String testRequestId, String testcaseResultState, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
+        if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING.equals(testcaseResultState)) {
+            //If result is pending then do not change anything.
+            return;
+        }
+        TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
+        //If result is in progress then make testRequest inProgress.
+        if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS.equals(testcaseResultState)) {
+            if(!TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(testRequestEntity.getState())) {
+                testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS);
+                testRequestService.updateTestRequest(testRequestEntity, contextInfo);
+            }
+            return;
+        }
+        //If all result are finished and testRequest is not finished then make it finished.
+        if(!TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(testRequestEntity.getState())) {
+            TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
+                    null, SearchType.CONTAINING,
+                    null, SearchType.CONTAINING,
+                    null, null, null, testRequestId, null
+            );
+            List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+            Boolean testingFinished = testcaseResultEntities.stream().allMatch(testcaseResultEntity ->
+                    TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PASSED.equals(testcaseResultEntity.getState())
+                            || TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FAILED.equals(testcaseResultEntity.getState()));
+            if(testingFinished) {
+                testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED);
+                testRequestService.updateTestRequest(testRequestEntity, contextInfo);
+            }
+        }
     }
 
     /**
@@ -89,7 +130,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException, VersionMismatchException {
 
         List<ValidationResultInfo> validationResultEntitys
                 = this.validateTestcaseResult(Constant.UPDATE_VALIDATION,
@@ -103,6 +144,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         Optional<TestcaseResultEntity> testcaseResultOptional
                 = testcaseResultRepository.findById(testcaseResultEntity.getId());
         testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
+        updateTestRequestByTestcaseResultState(testcaseResultEntity.getTestRequestId(), testcaseResultEntity.getState(), contextInfo);
         return testcaseResultEntity;
     }
 
@@ -262,9 +304,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         // For :Order
         validateTestcaseResultEntityOrder(testcaseResultEntity,
                 errors);
-        // For :Order
-        validateTestcaseResultEntityOrder(testcaseResultEntity,
-                errors);
         return errors;
     }
 
@@ -285,8 +324,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 "The id supplied for the tester does not exists"));
-            } catch (MissingParameterException | PermissionDeniedException e) {
-                // TODO: remove this exceptions
             }
         }
     }
@@ -417,11 +454,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 1,
                 null,
                 errors);
-    }
-
-    //Validation For :Order
-    protected void validateTestcaseResultEntity(TestcaseResultEntity testcaseResultEntity,
-                                                List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseResult field

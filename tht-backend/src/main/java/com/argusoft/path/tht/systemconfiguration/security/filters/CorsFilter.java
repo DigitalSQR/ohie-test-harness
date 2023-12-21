@@ -16,8 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @author dhruv
- * @since 2023-09-13
+ * CorsFilter to handle cors
+ *
+ * @author Dhruv
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -30,7 +31,9 @@ public class CorsFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         final HttpServletResponse response = (HttpServletResponse) res;
+        //TODO: Add THT-UI-PROD-URL to prevent other UIs to use our systems API.
         response.setHeader("Access-Control-Allow-Origin", "*");
+
         response.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS,HEAD,PATCH,TRACE");
         response.setHeader("Access-Control-Allow-Headers", "*");
         response.setHeader("Access-Control-Max-Age", "3600");

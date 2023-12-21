@@ -2,6 +2,11 @@ package com.argusoft.path.tht.testcasemanagement.constant;
 
 import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
 
+/**
+ * Constant for SpecificationService.
+ *
+ * @author Dhruv
+ */
 public class SpecificationServiceConstants {
 
     public static final String SPECIFICATION_REF_OBJ_URI = SpecificationInfo.class.getName();

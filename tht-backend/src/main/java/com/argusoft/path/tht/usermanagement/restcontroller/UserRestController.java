@@ -22,26 +22,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Validation;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This userServiceRestController maps end points with standard service.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @RestController
 @RequestMapping("/user")
@@ -72,11 +64,7 @@ public class UserRestController {
     @PostMapping("/logout")
     @Timed(name = "logout")
     public Boolean logout(@RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
-            throws OperationFailedException,
-            InvalidParameterException,
-            MissingParameterException,
-            PermissionDeniedException,
-            DataValidationErrorException {
+            throws OperationFailedException{
         return userService.logout(contextInfo);
     }
 
@@ -98,10 +86,8 @@ public class UserRestController {
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException {
+            DataValidationErrorException, DoesNotExistException, MissingParameterException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
         userEntity = userService.registerAssessee(userEntity, contextInfo);
@@ -110,15 +96,13 @@ public class UserRestController {
 
 
     @GetMapping("/verify/{base64UserEmail}/{base64TokenId}")
-    public ValidationResultInfo verifyUser(@PathVariable("base64UserEmail") String base64UserEmail ,
-                                              @PathVariable("base64TokenId") String base64TokenId,
-                                              @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
+    public ValidationResultInfo verifyUser(@PathVariable("base64UserEmail") String base64UserEmail,
+                                           @PathVariable("base64TokenId") String base64TokenId,
+                                           @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws DataValidationErrorException,
             OperationFailedException,
-            MissingParameterException,
             VersionMismatchException,
-            InvalidParameterException,
-            PermissionDeniedException {
+            InvalidParameterException {
 
         ValidationResultInfo vris = new ValidationResultInfo();
         Boolean isVerified = false;
@@ -127,13 +111,13 @@ public class UserRestController {
         } catch (DoesNotExistException e) {
             // return false as it is
         }
-        vris.setLevel(isVerified ?  ErrorLevel.OK : ErrorLevel.ERROR);
+        vris.setLevel(isVerified ? ErrorLevel.OK : ErrorLevel.ERROR);
         return vris;
     }
 
     @GetMapping("/forgot/password/{userEmail}")
     public ValidationResultInfo forgotPasswordRequest(@PathVariable("userEmail") String userEmail,
-                                                        @RequestAttribute(name = "contextInfo") ContextInfo contextInfo){
+                                                      @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
         userService.createForgotPasswordRequestAndSendEmail(userEmail, contextInfo);
         ValidationResultInfo vris = new ValidationResultInfo();
         vris.setMessage("You will receive email if already registered !");
@@ -158,10 +142,8 @@ public class UserRestController {
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException {
+            DataValidationErrorException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
         userEntity = userService.createUser(userEntity, contextInfo);
@@ -186,10 +168,8 @@ public class UserRestController {
     public UserInfo updateUser(
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
-            throws DoesNotExistException,
+            throws
             OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException,
             VersionMismatchException,
             DataValidationErrorException {
@@ -255,9 +235,6 @@ public class UserRestController {
             @PathVariable("userId") String userId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
-            OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
         UserEntity userById = userService.getUserById(userId, contextInfo);
@@ -272,10 +249,7 @@ public class UserRestController {
     public Page<UserInfo> getUsers(
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException {
+            throws InvalidParameterException {
         Page<UserEntity> users = userService.getUsers(pageable, contextInfo);
         return userMapper.pageEntityToDto(users);
     }
@@ -297,11 +271,10 @@ public class UserRestController {
             @RequestBody(required = true) UserInfo userInfo,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
-            MissingParameterException,
-            OperationFailedException,
-            PermissionDeniedException, DoesNotExistException {
+            OperationFailedException {
+        UserEntity userEntity = userMapper.dtoToModel(userInfo);
         return userService
-                .validateUser(validationTypeKey, new UserEntity(), contextInfo);
+                .validateUser(validationTypeKey, userEntity, contextInfo);
     }
 
     /**

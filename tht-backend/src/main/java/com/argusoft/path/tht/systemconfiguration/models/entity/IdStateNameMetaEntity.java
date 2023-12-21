@@ -4,6 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+/**
+ * This model used in model those contain UUID as id, state, name and description.
+ *
+ * @author Dhruv
+= */
 @MappedSuperclass
 public class IdStateNameMetaEntity extends MetaEntity {
 

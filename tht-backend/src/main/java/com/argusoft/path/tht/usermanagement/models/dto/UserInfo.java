@@ -15,8 +15,7 @@ import java.util.Set;
 /**
  * This info is for User DTO that contains all the User model's data.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class UserInfo extends IdStateMetaInfo implements Serializable {
 

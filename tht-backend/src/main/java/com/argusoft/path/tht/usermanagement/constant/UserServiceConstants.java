@@ -1,5 +1,10 @@
 package com.argusoft.path.tht.usermanagement.constant;
 
+/**
+ * Constant for UserService.
+ *
+ * @author Dhruv
+ */
 public class UserServiceConstants {
 
     //User status

@@ -10,10 +10,9 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.util.StringUtils;
 
 /**
- * SearchFilter for Componenet.
+ * SearchFilter for Specification.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class SpecificationSearchFilter {
 

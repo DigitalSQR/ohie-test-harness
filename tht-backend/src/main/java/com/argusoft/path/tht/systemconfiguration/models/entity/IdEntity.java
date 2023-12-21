@@ -12,10 +12,9 @@ import javax.persistence.PrePersist;
 import java.util.UUID;
 
 /**
- * This model used in model those contains UUID as id.
+ * This model used in model those contain UUID as id.
  *
- * @author dhruv
- * @since 2021-2-25
+ * @author Dhruv
  */
 @MappedSuperclass
 public class IdEntity {
@@ -33,7 +32,7 @@ public class IdEntity {
     }
 
     @PrePersist
-    private void changesBeforeSave(){
+    private void changesBeforeSave() {
         this.setId(UUID.randomUUID().toString());
     }
 

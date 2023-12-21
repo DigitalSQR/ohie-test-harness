@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 
+/**
+ * This CustomOauth2UserService implements DefaultOAuth2UserService.
+ *
+ * @author Dhruv
+ */
 @Component
 public class CustomOauth2UserService extends DefaultOAuth2UserService {
 

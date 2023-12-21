@@ -15,8 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @author dhruv
- * @since 2023-09-13
+ * CustomAccessDeniedHandler to handle AccessDenied Exception.
+ *
+ * @author Dhruv
  */
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {

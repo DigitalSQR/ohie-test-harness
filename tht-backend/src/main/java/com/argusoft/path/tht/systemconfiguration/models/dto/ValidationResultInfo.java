@@ -13,8 +13,7 @@ import java.io.Serializable;
 /**
  * Information about the results of a data validation.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class ValidationResultInfo implements Serializable {
 
