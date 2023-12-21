@@ -62,10 +62,8 @@ public class SpecificationRestController {
             @RequestBody SpecificationInfo specificationInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException {
+            DataValidationErrorException {
 
         SpecificationEntity specificationEntity = SpecificationMapper.dtoToModel(specificationInfo);
         specificationEntity = SpecificationService.createSpecification(specificationEntity, contextInfo);
@@ -90,10 +88,7 @@ public class SpecificationRestController {
     public SpecificationInfo updateSpecification(
             @RequestBody SpecificationInfo specificationInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
-            throws DoesNotExistException,
-            OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
+            throws OperationFailedException,
             InvalidParameterException,
             VersionMismatchException,
             DataValidationErrorException {
@@ -123,8 +118,6 @@ public class SpecificationRestController {
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
         Page<SpecificationEntity> specificationEntities;
@@ -159,9 +152,6 @@ public class SpecificationRestController {
             @PathVariable("SpecificationId") String specificationId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
-            OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
         SpecificationEntity specificationById = SpecificationService.getSpecificationById(specificationId, contextInfo);
@@ -176,10 +166,7 @@ public class SpecificationRestController {
     public Page<SpecificationInfo> getSpecifications(
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException {
+            throws InvalidParameterException {
         Page<SpecificationEntity> specifications = SpecificationService.getSpecifications(pageable, contextInfo);
         return SpecificationMapper.pageEntityToDto(specifications);
     }
@@ -201,9 +188,7 @@ public class SpecificationRestController {
             @RequestBody(required = true) SpecificationInfo specificationInfo,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
-            MissingParameterException,
-            OperationFailedException,
-            PermissionDeniedException, DoesNotExistException {
+            OperationFailedException{
         SpecificationEntity specificationEntity = SpecificationMapper.dtoToModel(specificationInfo);
         return SpecificationService
                 .validateSpecification(validationTypeKey, specificationEntity, contextInfo);

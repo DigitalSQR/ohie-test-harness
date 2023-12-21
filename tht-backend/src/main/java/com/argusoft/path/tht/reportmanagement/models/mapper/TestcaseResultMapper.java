@@ -2,6 +2,7 @@ package com.argusoft.path.tht.reportmanagement.models.mapper;
 
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -46,5 +47,15 @@ public interface TestcaseResultMapper {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(testerId);
         return userEntity;
+    }
+
+    default String setToTestcaseOptionId(TestcaseOptionEntity testcaseOptionEntity) {
+        return testcaseOptionEntity.getId();
+    }
+
+    default TestcaseOptionEntity setToTestcaseOption(String testcaseOptionId) {
+        TestcaseOptionEntity testcaseOptionEntity = new TestcaseOptionEntity();
+        testcaseOptionEntity.setId(testcaseOptionId);
+        return testcaseOptionEntity;
     }
 }

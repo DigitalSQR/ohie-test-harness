@@ -37,10 +37,10 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     @Autowired
     private EmailService emailService;
 
-    private static void checkForValidTokenTypeWithVerifyingInEnum(String tokenType) throws MissingParameterException {
+    private static void checkForValidTokenTypeWithVerifyingInEnum(String tokenType) throws InvalidParameterException {
         boolean validEnum = TokenTypeEnum.isValidKey(tokenType);
         if (!validEnum) {
-            throw new MissingParameterException("token type outside of the provided support => " + tokenType);
+            throw new InvalidParameterException("token type outside of the provided support => " + tokenType);
         }
     }
 
@@ -120,7 +120,6 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId,
                                                                            String tokenType,
                                                                            ContextInfo contextInfo) throws DoesNotExistException,
-            MissingParameterException,
             InvalidParameterException,
             OperationFailedException {
 

@@ -18,6 +18,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
@@ -32,10 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This TestcaseResultServiceServiceImpl contains implementation for TestcaseResult service.
@@ -50,6 +48,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     @Autowired
     private SpecificationService specificationService;
+
+    @Autowired
+    private TestcaseOptionService testcaseOptionService;
 
     @Autowired
     private TestRequestService testRequestService;
@@ -304,6 +305,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         // For :Order
         validateTestcaseResultEntityOrder(testcaseResultEntity,
                 errors);
+        // For :TestcaseOption
+        validateTestcaseResultEntityTestcaseOption(testcaseResultEntity,
+                errors);
         return errors;
     }
 
@@ -324,6 +328,20 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 "The id supplied for the tester does not exists"));
+            }
+        }
+        //validate TestcaseOption foreignKey.
+        if (testcaseResultEntity.getTestcaseOption() != null) {
+            try {
+                testcaseResultEntity.setTestcaseOption(
+                        testcaseOptionService.getTestcaseOptionById(testcaseResultEntity.getTestcaseOption().getId(), contextInfo)
+                );
+            } catch (DoesNotExistException | InvalidParameterException ex) {
+                String fieldName = "testcaseOption";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                "The id supplied for the testcaseOption does not exists"));
             }
         }
     }
@@ -389,6 +407,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                           List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testcaseResultEntity.getName(), "name", errors);
         ValidationUtils.validateRequired(testcaseResultEntity.getRank(), "rank", errors);
+        if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PASSED.equals(testcaseResultEntity.getState())
+                || TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FAILED.equals(testcaseResultEntity.getState())) {
+            ValidationUtils.validateRequired(testcaseResultEntity.getTestcaseOption(), "testcaseOption", errors);
+        }
     }
 
     //Validate Common Unique
@@ -403,6 +425,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             searchFilter.setTestRequestId(testcaseResultEntity.getTestRequestId());
             searchFilter.setRefId(testcaseResultEntity.getRefId());
             searchFilter.setRefObjUri(testcaseResultEntity.getRefObjUri());
+            searchFilter.setIsManual(Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual()));
             Page<TestcaseResultEntity> testcaseResultEntities = this
                     .searchTestcaseResults(
                             null,
@@ -454,6 +477,11 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 1,
                 null,
                 errors);
+    }
+
+    //Validation For :TestcaseOption
+    protected void validateTestcaseResultEntityTestcaseOption(TestcaseResultEntity testcaseResultEntity,
+                                                     List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseResult field

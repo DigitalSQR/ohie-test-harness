@@ -87,7 +87,7 @@ public class UserRestController {
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException, MissingParameterException {
+            DataValidationErrorException, DoesNotExistException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
         userEntity = userService.registerAssessee(userEntity, contextInfo);
@@ -199,8 +199,6 @@ public class UserRestController {
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
         Page<UserEntity> userEntities;

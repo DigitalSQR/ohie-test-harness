@@ -33,13 +33,13 @@ import java.util.List;
  * @author Dhruv
  */
 @RestController
-@RequestMapping("/testRequest")
+@RequestMapping("/test-request")
 @Api(value = "REST API for TestRequest services", tags = {"TestRequest API"})
 @Metrics(registry = "TestRequestRestController")
 public class TestRequestRestController {
 
     @Autowired
-    private TestRequestService  TestRequestService;
+    private TestRequestService TestRequestService;
 
     @Autowired
     private TestRequestMapper TestRequestMapper;
@@ -62,10 +62,8 @@ public class TestRequestRestController {
             @RequestBody TestRequestInfo testRequestInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException {
+            DataValidationErrorException {
 
         TestRequestEntity testRequestEntity = TestRequestMapper.dtoToModel(testRequestInfo);
         testRequestEntity = TestRequestService.createTestRequest(testRequestEntity, contextInfo);
@@ -90,10 +88,7 @@ public class TestRequestRestController {
     public TestRequestInfo updateTestRequest(
             @RequestBody TestRequestInfo testRequestInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
-            throws DoesNotExistException,
-            OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
+            throws OperationFailedException,
             InvalidParameterException,
             VersionMismatchException,
             DataValidationErrorException {
@@ -123,8 +118,6 @@ public class TestRequestRestController {
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
         Page<TestRequestEntity> testRequestEntities;
@@ -159,9 +152,6 @@ public class TestRequestRestController {
             @PathVariable("TestRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
-            OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
         TestRequestEntity testRequestById = TestRequestService.getTestRequestById(testRequestId, contextInfo);
@@ -176,10 +166,7 @@ public class TestRequestRestController {
     public Page<TestRequestInfo> getTestRequests(
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException {
+            throws InvalidParameterException {
         Page<TestRequestEntity> testRequests = TestRequestService.getTestRequests(pageable, contextInfo);
         return TestRequestMapper.pageEntityToDto(testRequests);
     }
@@ -201,9 +188,7 @@ public class TestRequestRestController {
             @RequestBody(required = true) TestRequestInfo testRequestInfo,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
-            MissingParameterException,
-            OperationFailedException,
-            PermissionDeniedException, DoesNotExistException {
+            OperationFailedException {
         TestRequestEntity testRequestEntity = TestRequestMapper.dtoToModel(testRequestInfo);
         return TestRequestService
                 .validateTestRequest(validationTypeKey, testRequestEntity, contextInfo);
@@ -217,7 +202,8 @@ public class TestRequestRestController {
     @GetMapping("/start-automation-testing-process/{testRequestId}")
     public void startAutomationTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
         TestRequestService.startAutomationTestingProcess(testRequestId, contextInfo);
     }
 }

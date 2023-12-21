@@ -73,6 +73,21 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = true)
     private Boolean isManual;
 
+    @ApiModelProperty(notes = "The testcaseOptionId of the TestcaseResult",
+            allowEmptyValue = false,
+            example = "testcaseOptionId1",
+            dataType = "String",
+            required = true)
+    private String testcaseOptionId;
+
+    public String getTestcaseOptionId() {
+        return testcaseOptionId;
+    }
+
+    public void setTestcaseOptionId(String testcaseOptionId) {
+        this.testcaseOptionId = testcaseOptionId;
+    }
+
     public Integer getRank() {
         return rank;
     }

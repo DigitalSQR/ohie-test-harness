@@ -192,7 +192,7 @@ public interface UserService {
             throws DoesNotExistException,
             OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, MissingParameterException;
+            DataValidationErrorException;
 
     public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo);
 
