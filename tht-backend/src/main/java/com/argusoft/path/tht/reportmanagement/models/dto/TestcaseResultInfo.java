@@ -13,8 +13,7 @@ import java.io.Serializable;
 /**
  * This info is for TestcaseResult DTO that contains all the TestcaseResult model's data.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializable {
 
@@ -67,11 +66,74 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = true)
     private Boolean hasSystemError;
 
+    @ApiModelProperty(notes = "The isManual of the TestcaseResult",
+            allowEmptyValue = false,
+            example = "false",
+            dataType = "Boolean",
+            required = true)
+    private Boolean isManual;
+
     public Integer getRank() {
         return rank;
     }
 
     public void setRank(Integer order) {
         this.rank = rank;
+    }
+
+    public String getTesterId() {
+        return testerId;
+    }
+
+    public void setTesterId(String testerId) {
+        this.testerId = testerId;
+    }
+
+    public String getRefObjUri() {
+        return refObjUri;
+    }
+
+    public void setRefObjUri(String refObjUri) {
+        this.refObjUri = refObjUri;
+    }
+
+    public String getRefId() {
+        return refId;
+    }
+
+    public void setRefId(String refId) {
+        this.refId = refId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getTestRequestId() {
+        return testRequestId;
+    }
+
+    public void setTestRequestId(String testRequestId) {
+        this.testRequestId = testRequestId;
+    }
+
+    public Boolean getHasSystemError() {
+        return hasSystemError;
+    }
+
+    public void setHasSystemError(Boolean hasSystemError) {
+        this.hasSystemError = hasSystemError;
+    }
+
+    public Boolean getManual() {
+        return isManual;
+    }
+
+    public void setManual(Boolean manual) {
+        isManual = manual;
     }
 }

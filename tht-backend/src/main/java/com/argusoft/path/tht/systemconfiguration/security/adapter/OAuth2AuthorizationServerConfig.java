@@ -6,7 +6,6 @@
 package com.argusoft.path.tht.systemconfiguration.security.adapter;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,8 +19,9 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import javax.sql.DataSource;
 
 /**
- * @author dhruv
- * @since 2023-09-13
+ * This OAuth2AuthorizationServerConfig configures tokenService in spring security.
+ *
+ * @author Dhruv
  */
 @Configuration
 @EnableAuthorizationServer

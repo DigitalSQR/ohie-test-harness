@@ -2,7 +2,6 @@ package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutiona
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import com.argusoft.path.tht.reportmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
@@ -10,10 +9,7 @@ import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.VersionMismatchException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
@@ -29,6 +25,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -40,15 +37,15 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 /**
- * Implemantation of the CR Testing.
- * Reference
+ * This TestcaseExecutioner can start automation process by running testcases based on the testRequest.
  *
- * @author dhruv
- * @since 2023-09-25
+ * @author Dhruv
  */
+
 @Component
-public class TestcaseExecutionar {
+public class TestcaseExecutioner {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     @Autowired
@@ -69,14 +66,14 @@ public class TestcaseExecutionar {
             createDraftTestcaseResultsByTestRequest(testRequestId, contextInfo);
         } catch (DataValidationErrorException e) {
             throw new OperationFailedException(e);
-        } catch (InvalidParameterException | OperationFailedException e) {
+        } catch (InvalidParameterException | OperationFailedException | VersionMismatchException | DoesNotExistException e) {
             throw new OperationFailedException(e.getMessage(), e);
         }
         executorService.execute(() -> testRequest(testRequestId, contextInfo));
     }
 
     private void createDraftTestcaseResultsByTestRequest(String testRequestId,
-                                                         ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
+                                                         ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         Integer counter = 1;
         //TODO: Update TestCaseResult name based on the TestRequest Name
         createDraftTestCaseResultByValidationResults(
@@ -195,7 +192,7 @@ public class TestcaseExecutionar {
     private ValidationResultInfo testComponent(String componentId,
                                                String testRequestId,
                                                IGenericClient client,
-                                               ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+                                               ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         try {
             makeTestCaseResultInProgress(ComponentServiceConstants.COMPONENT_REF_OBJ_URI, componentId, testRequestId, contextInfo);
 
@@ -233,7 +230,7 @@ public class TestcaseExecutionar {
     private ValidationResultInfo testSpecification(String specificationId,
                                                    String testRequestId,
                                                    IGenericClient client,
-                                                   ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+                                                   ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         try {
             makeTestCaseResultInProgress(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI, specificationId, testRequestId, contextInfo);
 
@@ -271,7 +268,7 @@ public class TestcaseExecutionar {
     private ValidationResultInfo executeTestcase(TestcaseEntity testcaseEntity,
                                                  String testRequestId,
                                                  IGenericClient client,
-                                                 ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+                                                 ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         try {
             makeTestCaseResultInProgress(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, testcaseEntity.getId(), testRequestId, contextInfo);
 
@@ -302,7 +299,7 @@ public class TestcaseExecutionar {
                                               String testRequestId,
                                               ContextInfo contextInfo)
             throws InvalidParameterException,
-            OperationFailedException, DataValidationErrorException, VersionMismatchException {
+            OperationFailedException, DataValidationErrorException, VersionMismatchException, DoesNotExistException {
 
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null,
                 new TestcaseResultSearchFilter(
@@ -313,7 +310,8 @@ public class TestcaseExecutionar {
                         null,
                         refObjUri,
                         refId,
-                        testRequestId),
+                        testRequestId,
+                        Boolean.TRUE),
                 Constant.SINGLE_VALUE_PAGE,
                 contextInfo).getContent();
 
@@ -331,7 +329,7 @@ public class TestcaseExecutionar {
                                                               String testRequestId,
                                                               String name,
                                                               Integer counter,
-                                                              ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
+                                                              ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
         TestcaseResultEntity testcaseResultEntity = new TestcaseResultEntity();
         testcaseResultEntity.setRefObjUri(refObjUri);
         testcaseResultEntity.setRefId(refId);
@@ -339,6 +337,7 @@ public class TestcaseExecutionar {
         testcaseResultEntity.setTestRequestId(testRequestId);
         testcaseResultEntity.setRank(counter);
         testcaseResultEntity.setName(name);
+        testcaseResultEntity.setManual(Boolean.TRUE);
         UserEntity userEntity = new UserEntity();
         userEntity.setId(contextInfo.getUsername());
         testcaseResultEntity.setTester(userEntity);
@@ -350,7 +349,7 @@ public class TestcaseExecutionar {
                                                                          String refId,
                                                                          String testRequestId,
                                                                          List<ValidationResultInfo> validationResultInfos,
-                                                                         ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+                                                                         ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         ValidationResultInfo validationResultInfo;
         if (ValidationUtils.containsErrors(validationResultInfos, ErrorLevel.ERROR)) {
             validationResultInfo = new ValidationResultInfo(refObjUri + "~" + refId, ErrorLevel.ERROR, "Failed");
@@ -362,10 +361,10 @@ public class TestcaseExecutionar {
     }
 
     private void updateTestCaseResultForSystemError(String refObjUri,
-                                                        String refId,
-                                                        String testRequestId,
-                                                        ValidationResultInfo validationResultInfo,
-                                                        ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+                                                    String refId,
+                                                    String testRequestId,
+                                                    ValidationResultInfo validationResultInfo,
+                                                    ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null,
                 new TestcaseResultSearchFilter(
                         null,
@@ -375,7 +374,8 @@ public class TestcaseExecutionar {
                         null,
                         refObjUri,
                         refId,
-                        testRequestId),
+                        testRequestId,
+                        Boolean.TRUE),
                 Constant.SINGLE_VALUE_PAGE,
                 contextInfo).getContent();
         if (!testcaseResultEntities.isEmpty()) {
@@ -393,7 +393,7 @@ public class TestcaseExecutionar {
                                                         String refId,
                                                         String testRequestId,
                                                         ValidationResultInfo validationResultInfo,
-                                                        ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+                                                        ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null,
                 new TestcaseResultSearchFilter(
                         null,
@@ -403,7 +403,8 @@ public class TestcaseExecutionar {
                         null,
                         refObjUri,
                         refId,
-                        testRequestId),
+                        testRequestId,
+                        Boolean.TRUE),
                 Constant.SINGLE_VALUE_PAGE,
                 contextInfo).getContent();
         if (!testcaseResultEntities.isEmpty()) {

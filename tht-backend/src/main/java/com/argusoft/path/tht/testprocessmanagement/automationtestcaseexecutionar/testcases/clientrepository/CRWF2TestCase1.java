@@ -8,20 +8,15 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
- * Implementation of the CRWF1 Testing.
- * Reference https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/update-patient-demographic-record-workflow.
+ * Implementation of CRWF2TestCase1.
  *
- * @author dhruv
- * @since 2023-09-25
+ * @author Dhruv
  */
 @Component
 public class CRWF2TestCase1 implements TestCase {
@@ -58,7 +53,7 @@ public class CRWF2TestCase1 implements TestCase {
                     .resource(patient)
                     .execute();
 
-            if(!patientId.equals(outcome.getResource().getIdElement().getIdPart())) {
+            if (!patientId.equals(outcome.getResource().getIdElement().getIdPart())) {
                 return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Instead of Update, Server has created new Patient");
             }
 
@@ -68,7 +63,7 @@ public class CRWF2TestCase1 implements TestCase {
                     .execute();
 
             //check if patient got updated or not
-            if(patient.getBirthDate().equals(birthDate)) {
+            if (patient.getBirthDate().equals(birthDate)) {
                 return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.OK, "Passed");
             } else {
                 return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Failed to update patient");

@@ -2,6 +2,11 @@ package com.argusoft.path.tht.reportmanagement.constant;
 
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 
+/**
+ * Constant for TestcaseResultService.
+ *
+ * @author Dhruv
+ */
 public class TestcaseResultServiceConstants {
 
     public static final String TESTCASE_RESULT_REF_OBJ_URI = TestcaseResultInfo.class.getName();

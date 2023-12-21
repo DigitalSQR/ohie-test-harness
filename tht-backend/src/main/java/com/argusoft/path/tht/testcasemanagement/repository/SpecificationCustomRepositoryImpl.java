@@ -22,8 +22,7 @@ import java.util.Map;
 /**
  * This custom repository implementation is for making queries on the Specification model.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @Repository
 public class SpecificationCustomRepositoryImpl

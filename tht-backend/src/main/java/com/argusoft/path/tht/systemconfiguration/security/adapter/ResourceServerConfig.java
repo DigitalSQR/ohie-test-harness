@@ -22,8 +22,9 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.web.session.SessionManagementFilter;
 
 /**
- * @author dhruv
- * @since 2023-09-13
+ * This ResourceServerConfig configures Authorisation for APIs and CORS, CSRF, Authentication configurations.
+ *
+ * @author Dhruv
  */
 @Configuration
 @EnableResourceServer

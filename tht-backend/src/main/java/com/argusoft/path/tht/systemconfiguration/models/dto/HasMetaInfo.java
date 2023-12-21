@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * This class is provides implementation for HasMeta.
  *
- * @author dhruv
+ * @author Dhruv
  */
 public class HasMetaInfo implements Serializable {
 

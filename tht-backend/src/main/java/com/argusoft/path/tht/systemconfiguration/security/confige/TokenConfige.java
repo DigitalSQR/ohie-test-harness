@@ -16,8 +16,9 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import javax.sql.DataSource;
 
 /**
- * @author dhruv
- * @since 2023-09-13
+ * This configuration creates bean for the tokenStore and tokenService.
+ *
+ * @author Dhruv
  */
 @Configuration
 public class TokenConfige {

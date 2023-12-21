@@ -14,8 +14,7 @@ import org.springframework.data.domain.Pageable;
 /**
  * This repository is for making queries on the Specification model.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public interface SpecificationCustomRepository {
 

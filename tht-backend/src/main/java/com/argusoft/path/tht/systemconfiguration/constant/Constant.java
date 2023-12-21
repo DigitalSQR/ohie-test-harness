@@ -16,8 +16,7 @@ import java.util.ArrayList;
 /**
  * This Constant class contains all the common constant variables
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public final class Constant {
 

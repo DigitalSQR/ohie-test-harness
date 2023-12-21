@@ -5,10 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This repository is for making queries on the TokenVerification model.
+ *
+ * @author Hardik
+ */
 public interface TokenVerificationRepository extends JpaRepository<TokenVerificationEntity, String> {
 
     @Query("SELECT e FROM TokenVerificationEntity e where e.id = (:id) AND e.userEntity.id = (:userId) AND e.state = (:state) AND e.type = (:type)")

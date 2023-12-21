@@ -5,31 +5,18 @@
  */
 package com.argusoft.path.tht.systemconfiguration.utils;
 
-import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.constant.KeyCategory;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import org.hl7.fhir.r4.model.*;
-import org.springframework.data.domain.Page;
-import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * This FHIRUtil provides methods for fhir.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public final class FHIRUtils {
 

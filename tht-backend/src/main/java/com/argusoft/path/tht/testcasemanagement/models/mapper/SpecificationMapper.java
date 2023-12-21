@@ -14,6 +14,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Mapper to covert DTO <-> Entity for the Specification.
+ *
+ * @author Dhruv
+ */
 @Mapper(componentModel = "spring")
 public interface SpecificationMapper {
 

@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This Controller contains APIs for the system base apis.
+ *
+ * @author Dhruv
+ */
 @RestController
 @RequestMapping("")
 @Metrics(registry = "AppBuildInfoController")

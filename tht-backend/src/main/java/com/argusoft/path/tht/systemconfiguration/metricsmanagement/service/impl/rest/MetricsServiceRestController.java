@@ -19,6 +19,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This Controller contains APIs related to matrics.
+ *
+ * @author Dhruv
+ */
 @RestController
 @RequestMapping("/metrics")
 @Api(value = "REST Endpoints for Metrics", tags = {"Metrics"})

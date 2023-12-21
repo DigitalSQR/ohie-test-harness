@@ -16,6 +16,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import javax.sql.DataSource;
 import java.util.Properties;
 
+/**
+ * CommandLineRunner.
+ *
+ * @author Dhruv
+ */
 @SpringBootApplication
 @EnableSwagger2
 @EnableAuthorizationServer

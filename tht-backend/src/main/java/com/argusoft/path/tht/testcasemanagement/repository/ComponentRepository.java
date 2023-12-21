@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * This repository is for making queries on the Component model.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @Repository
 public interface ComponentRepository

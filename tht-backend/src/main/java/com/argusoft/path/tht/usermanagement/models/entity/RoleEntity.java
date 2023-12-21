@@ -6,6 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * This model is mapped to role table in database.
+ *
+ * @author Dhruv
+ */
+
 @Entity
 @Table(name = "role")
 public class RoleEntity extends IdEntity {

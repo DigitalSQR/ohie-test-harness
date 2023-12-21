@@ -26,6 +26,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * OnSsoAuthenticationSuccessHandler to handle authorization and token.
+ *
+ * @author Dhruv
+ */
 @Component
 public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 

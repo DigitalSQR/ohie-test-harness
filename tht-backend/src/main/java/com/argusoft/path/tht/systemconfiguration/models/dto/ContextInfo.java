@@ -20,8 +20,7 @@ import java.util.Date;
  * This info is for context DTO who has Request Information, Date and LoggeIn
  * UserId.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class ContextInfo extends User implements Serializable {
 

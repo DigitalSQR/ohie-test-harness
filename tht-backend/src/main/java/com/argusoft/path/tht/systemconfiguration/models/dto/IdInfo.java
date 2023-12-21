@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * This class is provides implementation for IdInfo.
  *
- * @author dhruv
+ * @author Dhruv
  */
 public class IdInfo {
 

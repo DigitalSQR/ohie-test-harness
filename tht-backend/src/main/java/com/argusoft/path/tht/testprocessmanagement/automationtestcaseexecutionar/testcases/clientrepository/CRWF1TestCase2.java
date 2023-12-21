@@ -8,20 +8,13 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
- * Implementation of the CRWF1 Testcase2 Testing.
- * Reference https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/create-patient-demographic-record-workflow-1.
+ * Implementation of the CRWF1TestCase2.
  *
- * @author dhruv
- * @since 2023-09-25
+ * @author Dhruv
  */
 @Component
 public class CRWF1TestCase2 implements TestCase {

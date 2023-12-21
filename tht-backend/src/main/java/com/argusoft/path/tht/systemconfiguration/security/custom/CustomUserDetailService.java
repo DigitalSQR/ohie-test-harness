@@ -31,9 +31,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+
 /**
- * @author dhruv
- * @since 2023-09-13
+ * This CustomUserDetailService implements UserDetailsService and authenticates user.
+ *
+ * @author Dhruv
  */
 @Service
 @Transactional

@@ -11,6 +11,11 @@ import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
+/**
+ * Mapper to covert DTO <-> Entity for the Testcase.
+ *
+ * @author Dhruv
+ */
 @Mapper(componentModel = "spring")
 public interface TestcaseMapper {
 

@@ -6,11 +6,10 @@
 package com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception;
 
 /**
- * This exception mainly used when parameter are missing or null.It Also
- * contains error message with HTTP status.
+ * This exception mainly used when parameter are missing or null.
+ * It Also contains error message with HTTP status.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 public class MissingParameterException extends Exception {
 

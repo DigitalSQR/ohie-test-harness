@@ -35,8 +35,7 @@ import java.util.*;
 /**
  * This SpecificationServiceServiceImpl contains implementation for Specification service.
  *
- * @author dhruv
- * @since 2023-09-13
+ * @author Dhruv
  */
 @Service
 public class SpecificationServiceServiceImpl implements SpecificationService {
