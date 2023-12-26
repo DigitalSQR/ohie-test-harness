@@ -26,7 +26,7 @@ public interface TokenVerificationService {
     public TokenVerificationEntity getTokenById(String tokenId, ContextInfo contextInfo) throws DoesNotExistException;
 
 
-    public Boolean verifyUserToken(String base64TokenId, String base64EmailId, ContextInfo contextInfo)
+    public Boolean verifyUserToken(String base64TokenId, String base64EmailId, Boolean verifyForgotPasswordTokenOnly, ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException, InvalidParameterException;
 
 

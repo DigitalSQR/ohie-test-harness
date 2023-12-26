@@ -57,6 +57,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/user/register").permitAll()
                 .antMatchers("/user/logout").permitAll()
+                .antMatchers("/user/verify/**").permitAll()
+                .antMatchers("/user/forgot/password/**").permitAll()
+                .antMatchers("/user/update/password/**").permitAll()
                 .anyRequest().authenticated();
 
         http.headers().frameOptions().and()

@@ -15,6 +15,7 @@ import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -23,6 +24,7 @@ import com.argusoft.path.tht.usermanagement.repository.RoleRepository;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -113,6 +115,52 @@ public class UserServiceServiceImpl implements UserService {
         } catch (Exception e) {
             // ignore it, no need to show that they are not exists in DB
             //TODO add log
+        }
+    }
+
+    @Override
+    public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException {
+
+        //trim values
+        updatePasswordInfo.trimObject();
+
+        validateUpdatePasswordInfoAgainstNullValues(updatePasswordInfo);
+
+        validateThatOldAndNewPasswordIsDifferent(updatePasswordInfo);
+
+        Boolean isTokenVerified = tokenVerificationService
+                .verifyUserToken(updatePasswordInfo.getBase64TokenId(), updatePasswordInfo.getBase64UserEmail(), true, contextInfo);
+
+        // update user with new password
+        if(isTokenVerified){
+            String userEmail = new String(Base64.decodeBase64(updatePasswordInfo.getBase64UserEmail()));
+            UserEntity userByEmail = this.getUserByEmail(userEmail, contextInfo);
+            userByEmail.setPassword(updatePasswordInfo.getNewPassword());
+            UserEntity userEntity = this.updateUser(userByEmail, contextInfo);
+        }
+    }
+
+    private static void validateThatOldAndNewPasswordIsDifferent(UpdatePasswordInfo updatePasswordInfo) throws DataValidationErrorException {
+        if(updatePasswordInfo.getOldPassword().equals(updatePasswordInfo.getNewPassword())){
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setElement("password");
+            validationResultInfo.setMessage("Old password and new password can not be the same.");
+            throw new DataValidationErrorException("Error(s) occurred in the validating", Collections.singletonList(validationResultInfo));
+        }
+    }
+
+    private static void validateUpdatePasswordInfoAgainstNullValues(UpdatePasswordInfo updatePasswordInfo) throws DataValidationErrorException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        ValidationUtils.validateRequired(updatePasswordInfo.getBase64TokenId(),"base64TokenId",errors);
+        ValidationUtils.validateRequired(updatePasswordInfo.getBase64UserEmail(),"base64UserEmail",errors);
+        ValidationUtils.validateRequired(updatePasswordInfo.getOldPassword(),"oldPassword",errors);
+        ValidationUtils.validateRequired(updatePasswordInfo.getNewPassword(),"newPassword",errors);
+
+        if(ValidationUtils.containsErrors(errors,ErrorLevel.ERROR)){
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
         }
     }
 

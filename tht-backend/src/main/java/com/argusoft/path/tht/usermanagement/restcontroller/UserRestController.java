@@ -11,6 +11,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.mapper.UserMapper;
@@ -107,12 +108,25 @@ public class UserRestController {
         ValidationResultInfo vris = new ValidationResultInfo();
         Boolean isVerified = false;
         try {
-            isVerified = tokenVerificationService.verifyUserToken(base64TokenId, base64UserEmail, contextInfo);
+            isVerified = tokenVerificationService.verifyUserToken(base64TokenId, base64UserEmail, false, contextInfo);
         } catch (DoesNotExistException e) {
             // return false as it is
         }
         vris.setLevel(isVerified ? ErrorLevel.OK : ErrorLevel.ERROR);
         return vris;
+    }
+
+    @PostMapping("/update/password/")
+    public ValidationResultInfo updatePassword(@RequestBody UpdatePasswordInfo updatePasswordInfo,
+                                               @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
+            throws InvalidParameterException, DoesNotExistException,
+            DataValidationErrorException, OperationFailedException,
+            VersionMismatchException {
+        ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+        userService.updatePasswordWithVerificationToken(updatePasswordInfo,contextInfo);
+        validationResultInfo.setMessage("Password Updated Successfully!");
+        validationResultInfo.setLevel(ErrorLevel.OK);
+        return validationResultInfo;
     }
 
     @GetMapping("/forgot/password/{userEmail}")
