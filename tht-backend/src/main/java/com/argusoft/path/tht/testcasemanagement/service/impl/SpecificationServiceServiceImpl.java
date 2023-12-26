@@ -415,7 +415,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         ValidationUtils.validateLength(specificationEntity.getName(),
                 "name",
                 3,
-                255,
+                1000,
                 errors);
     }
 

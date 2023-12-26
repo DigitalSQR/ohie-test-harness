@@ -206,4 +206,17 @@ public class TestRequestRestController {
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
         TestRequestService.startAutomationTestingProcess(testRequestId, contextInfo);
     }
+
+    @ApiOperation(value = "Start manual testing process", response = Boolean.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully started manual testing process")
+    })
+    @Timed(name = "startManualTestingProcess")
+    @GetMapping("/start-manual-testing-process/{testRequestId}")
+    public void startManualTestingProcess(
+            @PathVariable("testRequestId") String testRequestId,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException, InvalidParameterException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+        TestRequestService.startManualTestingProcess(testRequestId, contextInfo);
+    }
 }

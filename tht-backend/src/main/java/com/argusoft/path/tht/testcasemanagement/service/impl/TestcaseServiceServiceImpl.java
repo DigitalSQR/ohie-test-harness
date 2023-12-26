@@ -411,7 +411,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         ValidationUtils.validateLength(testcaseEntity.getName(),
                 "name",
                 3,
-                255,
+                1000,
                 errors);
     }
 

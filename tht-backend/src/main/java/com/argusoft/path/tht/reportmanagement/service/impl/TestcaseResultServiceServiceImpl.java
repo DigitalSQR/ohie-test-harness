@@ -17,6 +17,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
@@ -111,8 +112,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             );
             List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
             Boolean testingFinished = testcaseResultEntities.stream().allMatch(testcaseResultEntity ->
-                    TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PASSED.equals(testcaseResultEntity.getState())
-                            || TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FAILED.equals(testcaseResultEntity.getState()));
+                    TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState()));
             if(testingFinished) {
                 testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED);
                 testRequestService.updateTestRequest(testRequestEntity, contextInfo);
@@ -308,6 +308,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         // For :TestcaseOption
         validateTestcaseResultEntityTestcaseOption(testcaseResultEntity,
                 errors);
+        // For :IsSuccess
+        validateTestcaseResultEntityIsSuccess(testcaseResultEntity,
+                errors);
         return errors;
     }
 
@@ -407,8 +410,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                           List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testcaseResultEntity.getName(), "name", errors);
         ValidationUtils.validateRequired(testcaseResultEntity.getRank(), "rank", errors);
-        if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PASSED.equals(testcaseResultEntity.getState())
-                || TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FAILED.equals(testcaseResultEntity.getState())) {
+        if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())
+            && TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())
+            && Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual())
+            && Objects.equals(Boolean.FALSE, testcaseResultEntity.getHasSystemError())) {
             ValidationUtils.validateRequired(testcaseResultEntity.getTestcaseOption(), "testcaseOption", errors);
         }
     }
@@ -465,7 +470,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         ValidationUtils.validateLength(testcaseResultEntity.getName(),
                 "name",
                 3,
-                255,
+                1000,
                 errors);
     }
 
@@ -482,6 +487,11 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     //Validation For :TestcaseOption
     protected void validateTestcaseResultEntityTestcaseOption(TestcaseResultEntity testcaseResultEntity,
                                                      List<ValidationResultInfo> errors) {
+    }
+
+    //Validation For :isSuccess
+    protected void validateTestcaseResultEntityIsSuccess(TestcaseResultEntity testcaseResultEntity,
+                                                              List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseResult field

@@ -66,6 +66,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         List<ValidationResultInfo> validationResultEntities
                 = this.validateTestRequestStartProcess(
                 testRequestId,
+                Constant.START_AUTOMATION_PROCESS_VALIDATION,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -75,8 +76,27 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         testcaseExecutioner.executeAutomationTestingByTestRequest(testRequestId, contextInfo);
     }
 
+    @Transactional
+    public void startManualTestingProcess(String testRequestId, ContextInfo contextInfo)
+            throws InvalidParameterException,
+            OperationFailedException,
+            DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+        List<ValidationResultInfo> validationResultEntities
+                = this.validateTestRequestStartProcess(
+                testRequestId,
+                Constant.START_MANUAL_PROCESS_VALIDATION,
+                contextInfo);
+        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    validationResultEntities);
+        }
+        testcaseExecutioner.executeManualTestingByTestRequest(testRequestId, contextInfo);
+    }
+
     public List<ValidationResultInfo> validateTestRequestStartProcess(
             String testRequestId,
+            String validationTypeKey,
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
@@ -93,7 +113,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
                         testRequestId,
                         testRequestId,
-                        Boolean.TRUE
+                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey) ? Boolean.FALSE : Boolean.TRUE
                 );
                 List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
                 if(!testcaseResultEntities.isEmpty()) {
@@ -463,7 +483,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         ValidationUtils.validateLength(testRequestEntity.getName(),
                 "name",
                 3,
-                255,
+                1000,
                 errors);
     }
 

@@ -71,6 +71,15 @@ public class TestcaseCustomRepositoryImpl
                     SearchType.EXACTLY,
                     separate,
                     jpql);
+
+            separate = SQLUtils.likeQL(
+                    "testcase",
+                    "isManual",
+                    searchFilter.getManual().toString(),
+                    parameters,
+                    SearchType.EXACTLY,
+                    false,
+                    jpql);
         }
 
         try {

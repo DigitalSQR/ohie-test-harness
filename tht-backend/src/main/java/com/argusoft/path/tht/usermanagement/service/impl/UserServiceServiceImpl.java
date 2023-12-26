@@ -475,7 +475,7 @@ public class UserServiceServiceImpl implements UserService {
         ValidationUtils.validateLength(userEntity.getName(),
                 "userName",
                 3,
-                255,
+                1000,
                 errors);
     }
 

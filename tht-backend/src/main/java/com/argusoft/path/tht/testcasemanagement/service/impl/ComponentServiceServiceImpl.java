@@ -397,7 +397,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
         ValidationUtils.validateLength(componentEntity.getName(),
                 "name",
                 3,
-                255,
+                1000,
                 errors);
     }
 
