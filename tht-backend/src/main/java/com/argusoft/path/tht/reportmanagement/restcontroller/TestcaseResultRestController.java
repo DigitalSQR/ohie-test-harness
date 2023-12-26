@@ -62,8 +62,6 @@ public class TestcaseResultRestController {
             @RequestBody TestcaseResultInfo TestcaseResultInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException,
             DataValidationErrorException, DoesNotExistException, VersionMismatchException {
 
@@ -93,8 +91,6 @@ public class TestcaseResultRestController {
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException,
             VersionMismatchException,
             DataValidationErrorException {
@@ -124,8 +120,6 @@ public class TestcaseResultRestController {
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
         Page<TestcaseResultEntity> TestcaseResultEntities;
@@ -147,6 +141,32 @@ public class TestcaseResultRestController {
      *
      * @return
      */
+    @ApiOperation(value = "Submit manual TestcaseResults", response = Page.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully Submitted TestcaseResult"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @PostMapping("/submit/{TestcaseResultId}/{SelectedTestcaseOptionId}")
+    @Timed(name = "submitTestcaseResult")
+    public TestcaseResultInfo submitTestcaseResult(
+            @PathVariable("TestcaseResultId") String testcaseResultId,
+            @PathVariable("SelectedTestcaseOptionId") String selectedTestcaseOptionId,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        TestcaseResultEntity testcaseResultEntity = testcaseResultService
+                    .submitTestcaseResult(
+                            testcaseResultId,
+                            selectedTestcaseOptionId,
+                            contextInfo);
+        return testcaseResultMapper.modelToDto(testcaseResultEntity);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
     @ApiOperation(value = "View available TestcaseResult with supplied id", response = TestcaseResultInfo.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResult"),
@@ -157,16 +177,13 @@ public class TestcaseResultRestController {
     @GetMapping("/{TestcaseResultId}")
     @Timed(name = "getTestcaseResultById")
     public TestcaseResultInfo getTestcaseResultById(
-            @PathVariable("TestcaseResultId") String TestcaseResultId,
+            @PathVariable("TestcaseResultId") String testcaseResultId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
-            OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
             InvalidParameterException {
 
-        TestcaseResultEntity TestcaseResultById = testcaseResultService.getTestcaseResultById(TestcaseResultId, contextInfo);
-        return testcaseResultMapper.modelToDto(TestcaseResultById);
+        TestcaseResultEntity testcaseResultById = testcaseResultService.getTestcaseResultById(testcaseResultId, contextInfo);
+        return testcaseResultMapper.modelToDto(testcaseResultById);
     }
 
     /**
@@ -177,10 +194,7 @@ public class TestcaseResultRestController {
     public Page<TestcaseResultInfo> getTestcaseResults(
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException,
-            MissingParameterException,
-            PermissionDeniedException,
-            InvalidParameterException {
+            throws InvalidParameterException {
         Page<TestcaseResultEntity> TestcaseResults = testcaseResultService.getTestcaseResults(pageable, contextInfo);
         return testcaseResultMapper.pageEntityToDto(TestcaseResults);
     }
@@ -203,9 +217,7 @@ public class TestcaseResultRestController {
             @RequestBody(required = true) TestcaseResultInfo TestcaseResultInfo,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
-            MissingParameterException,
-            OperationFailedException,
-            PermissionDeniedException, DoesNotExistException {
+            OperationFailedException {
         TestcaseResultEntity TestcaseResultEntity = testcaseResultMapper.dtoToModel(TestcaseResultInfo);
         return testcaseResultService
                 .validateTestcaseResult(validationTypeKey, TestcaseResultEntity, contextInfo);

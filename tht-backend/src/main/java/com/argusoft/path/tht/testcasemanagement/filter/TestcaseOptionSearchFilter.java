@@ -10,61 +10,54 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.util.StringUtils;
 
 /**
- * SearchFilter for Testcase.
+ * SearchFilter for TestcaseOption.
  *
  * @author Dhruv
  */
-public class TestcaseSearchFilter {
+public class TestcaseOptionSearchFilter {
 
     @ApiParam(
-            value = "name of the testcase"
+            value = "name of the testcaseOption"
     )
     private String name;
 
     @ApiParam(
-            value = "nameSearchType of the testcase"
+            value = "nameSearchType of the testcaseOption"
     )
     private SearchType nameSearchType;
 
     @ApiParam(
-            value = "state of the testcase"
+            value = "state of the testcaseOption"
     )
     private String state;
 
     @ApiParam(
-            value = "stateSearchType of the testcase"
+            value = "stateSearchType of the testcaseOption"
     )
     private SearchType stateSearchType;
 
     @ApiParam(
-            value = "specificationId of the testcase"
+            value = "testcaseId of the testcaseOption"
     )
-    private String specificationId;
+    private String testcaseId;
 
-    @ApiParam(
-            value = "isManual of the testcase"
-    )
-    private Boolean isManual;
-
-    public TestcaseSearchFilter() {
+    public TestcaseOptionSearchFilter() {
     }
 
-    public TestcaseSearchFilter(String name,
-                                SearchType nameSearchType,
-                                String state,
-                                SearchType stateSearchType,
-                                String specificationId,
-                                Boolean isManual) {
+    public TestcaseOptionSearchFilter(String name,
+                                      SearchType nameSearchType,
+                                      String state,
+                                      SearchType stateSearchType,
+                                      String testcaseId) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
         this.stateSearchType = stateSearchType;
-        this.specificationId = specificationId;
-        this.isManual = isManual;
+        this.testcaseId = testcaseId;
     }
 
     public boolean isEmpty() {
-        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state) && StringUtils.isEmpty(specificationId) && isManual != null;
+        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state) && StringUtils.isEmpty(testcaseId);
     }
 
     public String getName() {
@@ -105,19 +98,11 @@ public class TestcaseSearchFilter {
         this.stateSearchType = stateSearchType;
     }
 
-    public String getSpecificationId() {
-        return specificationId;
+    public String getTestcaseId() {
+        return testcaseId;
     }
 
-    public void setSpecificationId(String specificationId) {
-        this.specificationId = specificationId;
-    }
-
-    public Boolean getManual() {
-        return isManual;
-    }
-
-    public void setManual(Boolean manual) {
-        isManual = manual;
+    public void setTestcaseId(String testcaseId) {
+        this.testcaseId = testcaseId;
     }
 }

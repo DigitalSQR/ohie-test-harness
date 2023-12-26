@@ -14,12 +14,13 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
-import com.argusoft.path.tht.testcasemanagement.repository.ComponentRepository;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.repository.TestcaseOptionRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,18 +33,18 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 /**
- * This ComponentServiceServiceImpl contains implementation for Component service.
+ * This TestcaseOptionServiceServiceImpl contains implementation for TestcaseOption service.
  *
  * @author Dhruv
  */
 @Service
-public class ComponentServiceServiceImpl implements ComponentService {
+public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
     @Autowired
-    ComponentRepository ComponentRepository;
+    TestcaseOptionRepository TestcaseOptionRepository;
 
     @Autowired
-    private SpecificationService specificationService;
+    TestcaseService testcaseService;
 
     /**
      * {@inheritdoc}
@@ -52,26 +53,26 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     @Transactional
-    public ComponentEntity createComponent(ComponentEntity componentEntity,
-                                           ContextInfo contextInfo)
+    public TestcaseOptionEntity createTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
+                                                   ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
         List<ValidationResultInfo> validationResultEntities
-                = this.validateComponent(Constant.CREATE_VALIDATION,
-                componentEntity,
+                = this.validateTestcaseOption(Constant.CREATE_VALIDATION,
+                testcaseOptionEntity,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
         }
-        if (StringUtils.isEmpty(componentEntity.getId())) {
-            componentEntity.setId(UUID.randomUUID().toString());
+        if (StringUtils.isEmpty(testcaseOptionEntity.getId())) {
+            testcaseOptionEntity.setId(UUID.randomUUID().toString());
         }
-        componentEntity = ComponentRepository.save(componentEntity);
-        return componentEntity;
+        testcaseOptionEntity = TestcaseOptionRepository.save(testcaseOptionEntity);
+        return testcaseOptionEntity;
     }
 
     /**
@@ -81,25 +82,25 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     @Transactional
-    public ComponentEntity updateComponent(ComponentEntity componentEntity,
-                                           ContextInfo contextInfo)
+    public TestcaseOptionEntity updateTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
+                                                   ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
         List<ValidationResultInfo> validationResultEntitys
-                = this.validateComponent(Constant.UPDATE_VALIDATION,
-                componentEntity,
+                = this.validateTestcaseOption(Constant.UPDATE_VALIDATION,
+                testcaseOptionEntity,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
                     "Error(s) occurred validating",
                     validationResultEntitys);
         }
-        Optional<ComponentEntity> componentOptional
-                = ComponentRepository.findById(componentEntity.getId());
-        componentEntity = ComponentRepository.save(componentEntity);
-        return componentEntity;
+        Optional<TestcaseOptionEntity> testcaseOptionOptional
+                = TestcaseOptionRepository.findById(testcaseOptionEntity.getId());
+        testcaseOptionEntity = TestcaseOptionRepository.save(testcaseOptionEntity);
+        return testcaseOptionEntity;
     }
 
     /**
@@ -108,40 +109,40 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    public Page<ComponentEntity> searchComponents(
+    public Page<TestcaseOptionEntity> searchTestcaseOptions(
             List<String> ids,
-            ComponentSearchFilter componentSearchFilter,
+            TestcaseOptionSearchFilter testcaseOptionSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
             throws OperationFailedException {
 
         if (!CollectionUtils.isEmpty(ids)) {
-            return this.searchComponentsById(ids, pageable);
+            return this.searchTestcaseOptionsById(ids, pageable);
         } else {
-            return this.searchComponents(componentSearchFilter, pageable);
+            return this.searchTestcaseOptions(testcaseOptionSearchFilter, pageable);
         }
     }
 
-    private Page<ComponentEntity> searchComponents(
-            ComponentSearchFilter componentSearchFilter,
+    private Page<TestcaseOptionEntity> searchTestcaseOptions(
+            TestcaseOptionSearchFilter testcaseOptionSearchFilter,
             Pageable pageable)
             throws OperationFailedException {
 
-        Page<ComponentEntity> Components = ComponentRepository.advanceComponentSearch(
-                componentSearchFilter,
+        Page<TestcaseOptionEntity> TestcaseOptions = TestcaseOptionRepository.advanceTestcaseOptionSearch(
+                testcaseOptionSearchFilter,
                 pageable);
-        return Components;
+        return TestcaseOptions;
     }
 
-    private Page<ComponentEntity> searchComponentsById(
+    private Page<TestcaseOptionEntity> searchTestcaseOptionsById(
             List<String> ids,
             Pageable pageable) {
 
-        List<ComponentEntity> components
-                = ComponentRepository.findComponentsByIds(ids);
-        return new PageImpl<>(components,
+        List<TestcaseOptionEntity> testcaseOptions
+                = TestcaseOptionRepository.findTestcaseOptionsByIds(ids);
+        return new PageImpl<>(testcaseOptions,
                 pageable,
-                components.size());
+                testcaseOptions.size());
     }
 
     /**
@@ -150,21 +151,21 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    public ComponentEntity getComponentById(String componentId,
-                                            ContextInfo contextInfo)
+    public TestcaseOptionEntity getTestcaseOptionById(String testcaseOptionId,
+                                                    ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
-        if (StringUtils.isEmpty(componentId)) {
-            throw new InvalidParameterException("ComponentId is missing");
+        if (StringUtils.isEmpty(testcaseOptionId)) {
+            throw new InvalidParameterException("TestcaseOptionId is missing");
         }
-        Optional<ComponentEntity> ComponentOptional
-                = ComponentRepository.findById(componentId);
-        if (!ComponentOptional.isPresent()) {
-            throw new DoesNotExistException("Component by id :"
-                    + componentId
+        Optional<TestcaseOptionEntity> TestcaseOptionOptional
+                = TestcaseOptionRepository.findById(testcaseOptionId);
+        if (!TestcaseOptionOptional.isPresent()) {
+            throw new DoesNotExistException("TestcaseOption by id :"
+                    + testcaseOptionId
                     + Constant.NOT_FOUND);
         }
-        return ComponentOptional.get();
+        return TestcaseOptionOptional.get();
     }
 
     /**
@@ -173,45 +174,45 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    public Page<ComponentEntity> getComponents(Pageable pageable,
-                                               ContextInfo contextInfo)
+    public Page<TestcaseOptionEntity> getTestcaseOptions(Pageable pageable,
+                                                       ContextInfo contextInfo)
             throws InvalidParameterException {
         if (pageable == null) {
             throw new InvalidParameterException("pageble is missing");
         }
-        Page<ComponentEntity> components = ComponentRepository.findComponents(pageable);
-        return components;
+        Page<TestcaseOptionEntity> testcaseOptions = TestcaseOptionRepository.findTestcaseOptions(pageable);
+        return testcaseOptions;
     }
 
     /**
      * {@inheritdoc}
      */
     @Override
-    public List<ValidationResultInfo> validateComponent(
+    public List<ValidationResultInfo> validateTestcaseOption(
             String validationTypeKey,
-            ComponentEntity componentEntity,
+            TestcaseOptionEntity testcaseOptionEntity,
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        if (componentEntity == null) {
-            throw new InvalidParameterException("componentEntity is missing");
+        if (testcaseOptionEntity == null) {
+            throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
         if (StringUtils.isEmpty(validationTypeKey)) {
             throw new InvalidParameterException("validationTypeKey is missing");
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        ComponentEntity originalEntity = null;
-        trimComponent(componentEntity);
+        TestcaseOptionEntity originalEntity = null;
+        trimTestcaseOption(testcaseOptionEntity);
 
         // check Common Required
-        this.validateCommonRequired(componentEntity, errors);
+        this.validateCommonRequired(testcaseOptionEntity, errors);
 
         // check Common ForeignKey
-        this.validateCommonForeignKey(componentEntity, errors, contextInfo);
+        this.validateCommonForeignKey(testcaseOptionEntity, errors, contextInfo);
 
         // check Common Unique
-        this.validateCommonUnique(componentEntity,
+        this.validateCommonUnique(testcaseOptionEntity,
                 validationTypeKey,
                 errors,
                 contextInfo);
@@ -219,10 +220,10 @@ public class ComponentServiceServiceImpl implements ComponentService {
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
                 // get the info
-                if (componentEntity.getId() != null) {
+                if (testcaseOptionEntity.getId() != null) {
                     try {
                         originalEntity = this
-                                .getComponentById(componentEntity.getId(),
+                                .getTestcaseOptionById(testcaseOptionEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         String fieldName = "id";
@@ -238,96 +239,97 @@ public class ComponentServiceServiceImpl implements ComponentService {
                     return errors;
                 }
 
-                this.validateUpdateComponent(errors,
-                        componentEntity,
+                this.validateUpdateTestcaseOption(errors,
+                        testcaseOptionEntity,
                         originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
-                this.validateCreateComponent(errors, componentEntity, contextInfo);
+                this.validateCreateTestcaseOption(errors, testcaseOptionEntity, contextInfo);
                 break;
             default:
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
         // For : Id
-        validateComponentEntityId(componentEntity,
+        validateTestcaseOptionEntityId(testcaseOptionEntity,
                 errors);
         // For :Name
-        validateComponentEntityName(componentEntity,
+        validateTestcaseOptionEntityName(testcaseOptionEntity,
                 errors);
         // For :Order
-        validateComponentEntityOrder(componentEntity,
+        validateTestcaseOptionEntityOrder(testcaseOptionEntity,
                 errors);
-        // For :Order
-        validateComponentEntityOrder(componentEntity,
+        // For :IsFunctional
+        validateTestcaseOptionEntityIsSuccess(testcaseOptionEntity,
                 errors);
         return errors;
     }
 
-    protected void validateCommonForeignKey(ComponentEntity componentEntity,
+    protected void validateCommonForeignKey(TestcaseOptionEntity testcaseOptionEntity,
                                             List<ValidationResultInfo> errors,
                                             ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
-        //validate Component foreignKey.
-        Set<SpecificationEntity> specificationEntitySet = new HashSet<>();
-        componentEntity.getSpecifications().stream().forEach(item -> {
+        Set<TestcaseEntity> testcaseEntitySet = new HashSet<>();
+
+        if (testcaseOptionEntity.getTestcase() != null) {
             try {
-                specificationEntitySet.add(specificationService.getSpecificationById(item.getId(), contextInfo));
+                testcaseOptionEntity.setTestcase(
+                        testcaseService.getTestcaseById(testcaseOptionEntity.getTestcase().getId(), contextInfo)
+                );
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                String fieldName = "specification";
+                String fieldName = "testcase";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied for the specification does not exists"));
+                                "The id supplied for the testcase does not exists"));
             }
-        });
-        componentEntity.setSpecifications(specificationEntitySet);
+        }
     }
 
     //validate update
-    protected void validateUpdateComponent(List<ValidationResultInfo> errors,
-                                           ComponentEntity componentEntity,
-                                           ComponentEntity originalEntity)
+    protected void validateUpdateTestcaseOption(List<ValidationResultInfo> errors,
+                                               TestcaseOptionEntity testcaseOptionEntity,
+                                               TestcaseOptionEntity originalEntity)
             throws OperationFailedException,
             InvalidParameterException {
         // required validation
-        ValidationUtils.validateRequired(componentEntity.getId(), "id", errors);
+        ValidationUtils.validateRequired(testcaseOptionEntity.getId(), "id", errors);
         //check the meta required
-        if (componentEntity.getVersion() == null) {
+        if (testcaseOptionEntity.getVersion() == null) {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
                     fieldName + " must be provided"));
         }
         // check meta version id
-        else if (!componentEntity.getVersion()
+        else if (!testcaseOptionEntity.getVersion()
                 .equals(originalEntity.getVersion())) {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    "someone else has updated the Component since you"
+                    "someone else has updated the TestcaseOption since you"
                             + " started updating, you might want to"
                             + " refresh your copy."));
         }
         // check not updatable fields
-        this.validateNotUpdatable(errors, componentEntity, originalEntity);
+        this.validateNotUpdatable(errors, testcaseOptionEntity, originalEntity);
     }
 
     //validate not update
     protected void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                        ComponentEntity componentEntity,
-                                        ComponentEntity originalEntity) {
+                                        TestcaseOptionEntity testcaseOptionEntity,
+                                        TestcaseOptionEntity originalEntity) {
     }
 
     //validate create
-    protected void validateCreateComponent(
+    protected void validateCreateTestcaseOption(
             List<ValidationResultInfo> errors,
-            ComponentEntity componentEntity,
+            TestcaseOptionEntity testcaseOptionEntity,
             ContextInfo contextInfo) {
-        if (componentEntity.getId() != null) {
+        if (testcaseOptionEntity.getId() != null) {
             try {
-                this.getComponentById(componentEntity.getId(),
+                this.getTestcaseOptionById(testcaseOptionEntity.getId(),
                         contextInfo);
                 // if info found with same id than
                 String fieldName = "id";
@@ -342,59 +344,36 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     //Validate Required
-    protected void validateCommonRequired(ComponentEntity componentEntity,
+    protected void validateCommonRequired(TestcaseOptionEntity testcaseOptionEntity,
                                           List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(componentEntity.getName(), "name", errors);
+        ValidationUtils.validateRequired(testcaseOptionEntity.getName(), "name", errors);
+        ValidationUtils.validateRequired(testcaseOptionEntity.getTestcase(), "component", errors);
     }
 
     //Validate Common Unique
-    protected void validateCommonUnique(ComponentEntity componentEntity,
+    protected void validateCommonUnique(TestcaseOptionEntity testcaseOptionEntity,
                                         String validationTypeKey,
                                         List<ValidationResultInfo> errors,
                                         ContextInfo contextInfo)
             throws OperationFailedException {
         // check unique field
-        if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || componentEntity.getId() != null)
-                && StringUtils.isEmpty(componentEntity.getName())) {
-            ComponentSearchFilter searchFilter = new ComponentSearchFilter();
-            searchFilter.setName(componentEntity.getName());
-            Page<ComponentEntity> componentEntities = this
-                    .searchComponents(
-                            null,
-                            searchFilter,
-                            Constant.TWO_VALUE_PAGE,
-                            contextInfo);
-
-            // if info found with same name than and not current id
-            boolean flag
-                    = componentEntities.stream().anyMatch(c -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
-                    || !c.getId().equals(componentEntity.getId()))
-            );
-            if (flag) {
-                String fieldName = "name";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "Given Component with same name already exists."));
-            }
-        }
     }
 
     //Validation For :Id
-    protected void validateComponentEntityId(ComponentEntity componentEntity,
-                                             List<ValidationResultInfo> errors) {
-        ValidationUtils.validateNotEmpty(componentEntity.getId(), "id", errors);
+    protected void validateTestcaseOptionEntityId(TestcaseOptionEntity testcaseOptionEntity,
+                                                 List<ValidationResultInfo> errors) {
+        ValidationUtils.validateNotEmpty(testcaseOptionEntity.getId(), "id", errors);
     }
 
     //Validation For :Name
-    protected void validateComponentEntityName(ComponentEntity componentEntity,
-                                               List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(componentEntity.getName(),
+    protected void validateTestcaseOptionEntityName(TestcaseOptionEntity testcaseOptionEntity,
+                                                   List<ValidationResultInfo> errors) {
+        ValidationUtils.validatePattern(testcaseOptionEntity.getName(),
                 "name",
                 Constant.ALLOWED_CHARS_IN_NAMES,
                 "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
                 errors);
-        ValidationUtils.validateLength(componentEntity.getName(),
+        ValidationUtils.validateLength(testcaseOptionEntity.getName(),
                 "name",
                 3,
                 1000,
@@ -402,30 +381,35 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     //Validation For :Order
-    protected void validateComponentEntityOrder(ComponentEntity componentEntity,
-                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateIntegerRange(componentEntity.getRank(),
+    protected void validateTestcaseOptionEntityOrder(TestcaseOptionEntity testcaseOptionEntity,
+                                                    List<ValidationResultInfo> errors) {
+        ValidationUtils.validateIntegerRange(testcaseOptionEntity.getRank(),
                 "rank",
                 1,
                 null,
                 errors);
     }
 
-    //Validation For :Order
-    protected void validateComponentEntity(ComponentEntity componentEntity,
-                                           List<ValidationResultInfo> errors) {
+    //Validation For :IsFunctional
+    protected void validateTestcaseOptionEntityIsSuccess(TestcaseOptionEntity testcaseOptionEntity,
+                                                           List<ValidationResultInfo> errors) {
     }
 
-    //trim all Component field
-    protected void trimComponent(ComponentEntity ComponentEntity) {
-        if (ComponentEntity.getId() != null) {
-            ComponentEntity.setId(ComponentEntity.getId().trim());
+    //Validation For :ComponentId
+    protected void validateTestcaseOptionEntityComponentId(TestcaseOptionEntity testcaseOptionEntity,
+                                                          List<ValidationResultInfo> errors) {
+    }
+
+    //trim all TestcaseOption field
+    protected void trimTestcaseOption(TestcaseOptionEntity TestcaseOptionEntity) {
+        if (TestcaseOptionEntity.getId() != null) {
+            TestcaseOptionEntity.setId(TestcaseOptionEntity.getId().trim());
         }
-        if (ComponentEntity.getName() != null) {
-            ComponentEntity.setName(ComponentEntity.getName().trim());
+        if (TestcaseOptionEntity.getName() != null) {
+            TestcaseOptionEntity.setName(TestcaseOptionEntity.getName().trim());
         }
-        if (ComponentEntity.getDescription() != null) {
-            ComponentEntity.setDescription(ComponentEntity.getDescription().trim());
+        if (TestcaseOptionEntity.getDescription() != null) {
+            TestcaseOptionEntity.setDescription(TestcaseOptionEntity.getDescription().trim());
         }
     }
 }

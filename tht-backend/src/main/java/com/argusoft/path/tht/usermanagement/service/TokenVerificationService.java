@@ -30,7 +30,7 @@ public interface TokenVerificationService {
             throws DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException, InvalidParameterException;
 
 
-    public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId, String type, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException, MissingParameterException;
+    public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId, String type, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException;
 
     public TokenVerificationEntity updateTokenVerificationEntity(String tokenId, TokenVerificationEntity tokenVerification, ContextInfo contextInfo) throws DoesNotExistException;
 

@@ -8,11 +8,11 @@ package com.argusoft.path.tht.testcasemanagement.restcontroller;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
-import com.argusoft.path.tht.testcasemanagement.models.mapper.ComponentMapper;
-import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseOptionInfo;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
+import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseOptionMapper;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
@@ -28,21 +28,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * This ComponentServiceRestController maps end points with standard service.
+ * This TestcaseOptionServiceRestController maps end points with standard service.
  *
  * @author Dhruv
  */
 @RestController
-@RequestMapping("/component")
-@Api(value = "REST API for Component services", tags = {"Component API"})
-@Metrics(registry = "ComponentRestController")
-public class ComponentRestController {
+@RequestMapping("/testcase-option")
+@Api(value = "REST API for TestcaseOption services", tags = {"TestcaseOption API"})
+@Metrics(registry = "TestcaseOptionRestController")
+public class TestcaseOptionRestController {
 
     @Autowired
-    private ComponentService ComponentService;
+    private TestcaseOptionService TestcaseOptionService;
 
     @Autowired
-    private ComponentMapper ComponentMapper;
+    private TestcaseOptionMapper TestcaseOptionMapper;
 
     /**
      * We can expose this API in future if needed.
@@ -50,24 +50,24 @@ public class ComponentRestController {
      *
      * @return
      */
-//    @ApiOperation(value = "Create new Component", response = ComponentInfo.class)
+//    @ApiOperation(value = "Create new TestcaseOption", response = TestcaseOptionInfo.class)
 //    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Successfully created Component"),
+//            @ApiResponse(code = 200, message = "Successfully created TestcaseOption"),
 //            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
 //            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 //    })
 //    @PostMapping("")
-    @Timed(name = "createComponent")
-    public ComponentInfo createComponent(
-            @RequestBody ComponentInfo componentInfo,
+    @Timed(name = "createTestcaseOption")
+    public TestcaseOptionInfo createTestcaseOption(
+            @RequestBody TestcaseOptionInfo testcaseOptionInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
-        ComponentEntity componentEntity = ComponentMapper.dtoToModel(componentInfo);
-        componentEntity = ComponentService.createComponent(componentEntity, contextInfo);
-        return ComponentMapper.modelToDto(componentEntity);
+        TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
+        testcaseOptionEntity = TestcaseOptionService.createTestcaseOption(testcaseOptionEntity, contextInfo);
+        return TestcaseOptionMapper.modelToDto(testcaseOptionEntity);
 
     }
 
@@ -76,26 +76,26 @@ public class ComponentRestController {
      *
      * @return
      */
-    @ApiOperation(value = "Update existing Component", response = ComponentInfo.class)
+    @ApiOperation(value = "Update existing TestcaseOption", response = TestcaseOptionInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated Component"),
+            @ApiResponse(code = 200, message = "Successfully updated TestcaseOption"),
             @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 
     })
     @PutMapping("")
-    @Timed(name = "updateComponent")
-    public ComponentInfo updateComponent(
-            @RequestBody ComponentInfo componentInfo,
+    @Timed(name = "updateTestcaseOption")
+    public TestcaseOptionInfo updateTestcaseOption(
+            @RequestBody TestcaseOptionInfo testcaseOptionInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             VersionMismatchException,
             DataValidationErrorException {
 
-        ComponentEntity componentEntity = ComponentMapper.dtoToModel(componentInfo);
-        componentEntity = ComponentService.updateComponent(componentEntity, contextInfo);
-        return ComponentMapper.modelToDto(componentEntity);
+        TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
+        testcaseOptionEntity = TestcaseOptionService.updateTestcaseOption(testcaseOptionEntity, contextInfo);
+        return TestcaseOptionMapper.modelToDto(testcaseOptionEntity);
     }
 
     /**
@@ -103,7 +103,7 @@ public class ComponentRestController {
      *
      * @return
      */
-    @ApiOperation(value = "View a page of available filtered Components", response = Page.class)
+    @ApiOperation(value = "View a page of available filtered TestcaseOptions", response = Page.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved page"),
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
@@ -111,27 +111,27 @@ public class ComponentRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
-    @Timed(name = "searchComponents")
-    public Page<ComponentInfo> searchComponents(
+    @Timed(name = "searchTestcaseOptions")
+    public Page<TestcaseOptionInfo> searchTestcaseOptions(
             @RequestParam(name = "id", required = false) List<String> ids,
-            ComponentSearchFilter componentSearchFilter,
+            TestcaseOptionSearchFilter testcaseOptionSearchFilter,
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
 
-        Page<ComponentEntity> componentEntities;
-        if (!componentSearchFilter.isEmpty()
+        Page<TestcaseOptionEntity> testcaseOptionEntities;
+        if (!testcaseOptionSearchFilter.isEmpty()
                 || !CollectionUtils.isEmpty(ids)) {
-            componentEntities = ComponentService
-                    .searchComponents(
+            testcaseOptionEntities = TestcaseOptionService
+                    .searchTestcaseOptions(
                             ids,
-                            componentSearchFilter,
+                            testcaseOptionSearchFilter,
                             pageable,
                             contextInfo);
-            return ComponentMapper.pageEntityToDto(componentEntities);
+            return TestcaseOptionMapper.pageEntityToDto(testcaseOptionEntities);
         }
-        return this.getComponents(pageable, contextInfo);
+        return this.getTestcaseOptions(pageable, contextInfo);
     }
 
     /**
@@ -139,23 +139,23 @@ public class ComponentRestController {
      *
      * @return
      */
-    @ApiOperation(value = "View available Component with supplied id", response = ComponentInfo.class)
+    @ApiOperation(value = "View available TestcaseOption with supplied id", response = TestcaseOptionInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved Component"),
+            @ApiResponse(code = 200, message = "Successfully retrieved TestcaseOption"),
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    @GetMapping("/{componentId}")
-    @Timed(name = "getComponentById")
-    public ComponentInfo getComponentById(
-            @PathVariable("ComponentId") String componentId,
+    @GetMapping("/{testcaseOptionId}")
+    @Timed(name = "getTestcaseOptionById")
+    public TestcaseOptionInfo getTestcaseOptionById(
+            @PathVariable("TestcaseOptionId") String testcaseOptionId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
 
-        ComponentEntity componentById = ComponentService.getComponentById(componentId, contextInfo);
-        return ComponentMapper.modelToDto(componentById);
+        TestcaseOptionEntity testcaseOptionById = TestcaseOptionService.getTestcaseOptionById(testcaseOptionId, contextInfo);
+        return TestcaseOptionMapper.modelToDto(testcaseOptionById);
     }
 
     /**
@@ -163,35 +163,35 @@ public class ComponentRestController {
      *
      * @return
      */
-    public Page<ComponentInfo> getComponents(
+    public Page<TestcaseOptionInfo> getTestcaseOptions(
             Pageable pageable,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Page<ComponentEntity> components = ComponentService.getComponents(pageable, contextInfo);
-        return ComponentMapper.pageEntityToDto(components);
+        Page<TestcaseOptionEntity> testcaseOptions = TestcaseOptionService.getTestcaseOptions(pageable, contextInfo);
+        return TestcaseOptionMapper.pageEntityToDto(testcaseOptions);
     }
 
     /**
      * {@inheritdoc}
      */
-    @ApiOperation(value = "View a list of validation errors for Component", response = List.class)
+    @ApiOperation(value = "View a list of validation errors for TestcaseOption", response = List.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved Validation errors"),
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
-    @Timed(name = "validateComponent")
-    public List<ValidationResultInfo> validateComponent(
+    @Timed(name = "validateTestcaseOption")
+    public List<ValidationResultInfo> validateTestcaseOption(
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,
-            @RequestBody(required = true) ComponentInfo componentInfo,
+            @RequestBody(required = true) TestcaseOptionInfo testcaseOptionInfo,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
-            OperationFailedException {
-        ComponentEntity componentEntity = ComponentMapper.dtoToModel(componentInfo);
-        return ComponentService
-                .validateComponent(validationTypeKey, componentEntity, contextInfo);
+            OperationFailedException{
+        TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
+        return TestcaseOptionService
+                .validateTestcaseOption(validationTypeKey, testcaseOptionEntity, contextInfo);
     }
 
 }

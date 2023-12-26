@@ -61,6 +61,27 @@ public interface TestcaseResultService {
             InvalidParameterException, DoesNotExistException;
 
     /**
+     * Submit TestcaseResult for the manual testing.
+     *
+     * @param testcaseResultEntity the new data for the TestcaseResult
+     * @param contextInfo          information containing the principalId and locale
+     *                             information about the caller of service operation
+     * @return TestcaseResultInfo the details of TestcaseResult just updated
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException    TestcaseResultInfo or contextInfo is not valid
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
+     */
+    public TestcaseResultEntity submitTestcaseResult(String testcaseResultId,
+                                                     String selectedTestcaseOptionId,
+                                                     ContextInfo contextInfo)
+            throws OperationFailedException,
+            VersionMismatchException,
+            DataValidationErrorException,
+            InvalidParameterException, DoesNotExistException;
+
+    /**
      * Retrieves a list of TestcaseResults corresponding to the given TestcaseResult Name.The
      * returned list may be in any order with unique set.
      *

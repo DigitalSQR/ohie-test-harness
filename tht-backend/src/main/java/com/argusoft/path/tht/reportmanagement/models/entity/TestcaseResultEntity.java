@@ -6,6 +6,8 @@
 package com.argusoft.path.tht.reportmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 
 import javax.persistence.*;
@@ -43,6 +45,13 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     @Column(name = "is_manual")
     private Boolean isManual;
+
+    @Column(name = "is_success")
+    private Boolean isSuccess;
+
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "testcase_option_id")
+    private TestcaseOptionEntity testcaseOption;
 
     public Integer getRank() {
         return rank;
@@ -106,5 +115,21 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     public void setManual(Boolean manual) {
         isManual = manual;
+    }
+
+    public TestcaseOptionEntity getTestcaseOption() {
+        return testcaseOption;
+    }
+
+    public void setTestcaseOption(TestcaseOptionEntity testcaseOption) {
+        this.testcaseOption = testcaseOption;
+    }
+
+    public Boolean getSuccess() {
+        return isSuccess;
+    }
+
+    public void setSuccess(Boolean success) {
+        isSuccess = success;
     }
 }

@@ -82,7 +82,7 @@ public class UserServiceServiceImpl implements UserService {
 
     @Override
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
-            throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException, MissingParameterException {
+            throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException {
         if (Objects.equals(contextInfo.getEmail(), Constant.SUPER_USER_CONTEXT.getEmail())) {
             //If method get called on google Oauth2 login then verification of email is not needed.
             userEntity.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
@@ -475,7 +475,7 @@ public class UserServiceServiceImpl implements UserService {
         ValidationUtils.validateLength(userEntity.getName(),
                 "userName",
                 3,
-                255,
+                1000,
                 errors);
     }
 
