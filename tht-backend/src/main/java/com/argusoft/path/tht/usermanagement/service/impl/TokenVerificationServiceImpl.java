@@ -66,7 +66,8 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     }
 
     @Override
-    public Boolean verifyUserToken(String base64TokenId, String base64EmailId, ContextInfo contextInfo)
+    public Boolean verifyUserToken(String base64TokenId, String base64EmailId,
+                                   Boolean verifyForgotPasswordTokenOnly, ContextInfo contextInfo)
             throws DoesNotExistException,
             DataValidationErrorException,
             OperationFailedException,
@@ -86,6 +87,10 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         // set inactive token verification record
         if (activeTokenByIdAndUserId.isPresent()) {
             TokenVerificationEntity tokenVerification = activeTokenByIdAndUserId.get();
+
+            if(TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType()) && (verifyForgotPasswordTokenOnly==null || !verifyForgotPasswordTokenOnly)){
+                throw new OperationFailedException("Can not verify this token currently");
+            }
 
             if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
                 Calendar c = Calendar.getInstance();

@@ -10,6 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.springframework.data.domain.Page;
@@ -195,5 +196,7 @@ public interface UserService {
             DataValidationErrorException;
 
     public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo);
+
+    public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException;
 
 }
