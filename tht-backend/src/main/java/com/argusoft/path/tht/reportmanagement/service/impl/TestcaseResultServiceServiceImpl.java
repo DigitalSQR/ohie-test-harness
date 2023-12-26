@@ -18,12 +18,15 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
+import com.argusoft.path.tht.testcasemanagement.repository.TestcaseOptionRepository;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -89,7 +92,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return testcaseResultEntity;
     }
 
-    public void updateTestRequestByTestcaseResultState(String testRequestId, String testcaseResultState, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
+    protected void updateTestRequestByTestcaseResultState(String testRequestId, String testcaseResultState, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
         if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING.equals(testcaseResultState)) {
             //If result is pending then do not change anything.
             return;
@@ -142,11 +145,96 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                     "Error(s) occurred validating",
                     validationResultEntitys);
         }
-        Optional<TestcaseResultEntity> testcaseResultOptional
-                = testcaseResultRepository.findById(testcaseResultEntity.getId());
         testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
         updateTestRequestByTestcaseResultState(testcaseResultEntity.getTestRequestId(), testcaseResultEntity.getState(), contextInfo);
         return testcaseResultEntity;
+    }
+
+
+    @Override
+    public TestcaseResultEntity submitTestcaseResult(String testcaseResultId, String selectedTestcaseOptionId, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
+        List<ValidationResultInfo> validationResultEntitys
+                = this.validateTestcaseResultSubmit(Constant.SUBMIT_VALIDATION,
+                testcaseResultId,
+                selectedTestcaseOptionId,
+                contextInfo);
+        if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred validating",
+                    validationResultEntitys);
+        }
+        //Submit testcaseResult.
+        TestcaseResultEntity testcaseResultEntity
+                = testcaseResultRepository.findById(testcaseResultId).get();
+
+        TestcaseOptionEntity testcaseOptionEntity
+                = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
+
+        testcaseResultEntity.setTestcaseOption(testcaseOptionEntity);
+
+        UserEntity userEntity =
+                userService.getPrincipalUser(contextInfo);
+        testcaseResultEntity.setTester(userEntity);
+
+        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
+        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
+
+        testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
+
+        //TODO: User will be able to add testOption for only TestResult of the manual Testcases.
+        //TODO: Based on the that update TestResult of the specification, component and testRequest.
+
+        //Updated TestRequest State
+        updateTestRequestByTestcaseResultState(testcaseResultEntity.getTestRequestId(), testcaseResultEntity.getState(), contextInfo);
+
+        return  testcaseResultEntity;
+    }
+
+    public List<ValidationResultInfo> validateTestcaseResultSubmit(
+            String testcaseResultId,
+            String selectedTestcaseOptionId,
+            String validationTypeKey,
+            ContextInfo contextInfo)
+            throws InvalidParameterException,
+            OperationFailedException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        TestcaseResultEntity originalEntity;
+        try {
+            originalEntity = this
+                    .getTestcaseResultById(testcaseResultId,
+                            contextInfo);
+        } catch (DoesNotExistException | InvalidParameterException ex) {
+            String fieldName = "testcaseResultId";
+            errors.add(
+                    new ValidationResultInfo(fieldName,
+                            ErrorLevel.ERROR,
+                            "The testcaseResultId supplied for the submit does not "
+                                    + "exists"));
+            return errors;
+        }
+        try {
+            TestcaseOptionEntity testcaseOption = testcaseOptionService
+                    .getTestcaseOptionById(selectedTestcaseOptionId,
+                            contextInfo);
+
+            if(!originalEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)
+                    && !testcaseOption.getTestcase().getId().equals(originalEntity.getRefId())
+            ) {
+                String fieldName = "selectedTestcaseOptionId";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                "The selectedTestcaseOptionId supplied for the submit is invalid for the testcaseResult."));
+            }
+        } catch (DoesNotExistException | InvalidParameterException ex) {
+            String fieldName = "selectedTestcaseOptionId";
+            errors.add(
+                    new ValidationResultInfo(fieldName,
+                            ErrorLevel.ERROR,
+                            "The selectedTestcaseOptionId supplied for the submit does not "
+                                    + "exists"));
+        }
+        return errors;
     }
 
     /**
