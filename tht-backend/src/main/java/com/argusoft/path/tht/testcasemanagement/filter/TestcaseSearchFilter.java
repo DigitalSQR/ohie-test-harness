@@ -41,6 +41,11 @@ public class TestcaseSearchFilter {
     )
     private String specificationId;
 
+    @ApiParam(
+            value = "isManual of the testcase"
+    )
+    private Boolean isManual;
+
     public TestcaseSearchFilter() {
     }
 
@@ -48,16 +53,18 @@ public class TestcaseSearchFilter {
                                 SearchType nameSearchType,
                                 String state,
                                 SearchType stateSearchType,
-                                String specificationId) {
+                                String specificationId,
+                                Boolean isManual) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
         this.stateSearchType = stateSearchType;
         this.specificationId = specificationId;
+        this.isManual = isManual;
     }
 
     public boolean isEmpty() {
-        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state) && StringUtils.isEmpty(specificationId);
+        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state) && StringUtils.isEmpty(specificationId) && isManual != null;
     }
 
     public String getName() {
@@ -104,5 +111,13 @@ public class TestcaseSearchFilter {
 
     public void setSpecificationId(String specificationId) {
         this.specificationId = specificationId;
+    }
+
+    public Boolean getManual() {
+        return isManual;
+    }
+
+    public void setManual(Boolean manual) {
+        isManual = manual;
     }
 }

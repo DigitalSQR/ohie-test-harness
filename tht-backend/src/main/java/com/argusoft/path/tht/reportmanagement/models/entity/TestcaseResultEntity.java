@@ -46,6 +46,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "is_manual")
     private Boolean isManual;
 
+    @Column(name = "is_success")
+    private Boolean isSuccess;
+
     @ManyToOne(cascade = {})
     @JoinColumn(name = "testcase_option_id")
     private TestcaseOptionEntity testcaseOption;
@@ -120,5 +123,13 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     public void setTestcaseOption(TestcaseOptionEntity testcaseOption) {
         this.testcaseOption = testcaseOption;
+    }
+
+    public Boolean getSuccess() {
+        return isSuccess;
+    }
+
+    public void setSuccess(Boolean success) {
+        isSuccess = success;
     }
 }

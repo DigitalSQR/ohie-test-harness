@@ -73,6 +73,13 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = true)
     private Boolean isManual;
 
+    @ApiModelProperty(notes = "The isSuccess of the testcaseOption",
+            allowEmptyValue = false,
+            example = "true",
+            dataType = "Boolean",
+            required = false)
+    private Boolean isSuccess;
+
     @ApiModelProperty(notes = "The testcaseOptionId of the TestcaseResult",
             allowEmptyValue = false,
             example = "testcaseOptionId1",
@@ -150,5 +157,13 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
 
     public void setManual(Boolean manual) {
         isManual = manual;
+    }
+
+    public Boolean getSuccess() {
+        return isSuccess;
+    }
+
+    public void setSuccess(Boolean success) {
+        isSuccess = success;
     }
 }

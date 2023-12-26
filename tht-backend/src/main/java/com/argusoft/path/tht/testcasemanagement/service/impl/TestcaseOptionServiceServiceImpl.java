@@ -376,7 +376,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         ValidationUtils.validateLength(testcaseOptionEntity.getName(),
                 "name",
                 3,
-                255,
+                1000,
                 errors);
     }
 

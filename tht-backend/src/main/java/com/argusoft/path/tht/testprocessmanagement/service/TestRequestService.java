@@ -141,4 +141,14 @@ public interface TestRequestService {
      * @return message
      */
     public void startAutomationTestingProcess(String testRequestId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException;
+
+    /**
+     * start manual testing process.
+     *
+     * @param testRequestId testRequestWhich needs to be tested
+     * @param contextInfo   information containing the principalId and locale
+     *                      information about the caller of service operation
+     * @return message
+     */
+    public void startManualTestingProcess(String testRequestId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException;
 }
