@@ -141,6 +141,32 @@ public class TestcaseResultRestController {
      *
      * @return
      */
+    @ApiOperation(value = "Submit manual TestcaseResults", response = Page.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully Submitted TestcaseResult"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @PostMapping("/submit/{TestcaseResultId}/{SelectedTestcaseOptionId}")
+    @Timed(name = "submitTestcaseResult")
+    public TestcaseResultInfo submitTestcaseResult(
+            @PathVariable("TestcaseResultId") String testcaseResultId,
+            @PathVariable("SelectedTestcaseOptionId") String selectedTestcaseOptionId,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        TestcaseResultEntity testcaseResultEntity = testcaseResultService
+                    .submitTestcaseResult(
+                            testcaseResultId,
+                            selectedTestcaseOptionId,
+                            contextInfo);
+        return testcaseResultMapper.modelToDto(testcaseResultEntity);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
     @ApiOperation(value = "View available TestcaseResult with supplied id", response = TestcaseResultInfo.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResult"),
@@ -151,13 +177,13 @@ public class TestcaseResultRestController {
     @GetMapping("/{TestcaseResultId}")
     @Timed(name = "getTestcaseResultById")
     public TestcaseResultInfo getTestcaseResultById(
-            @PathVariable("TestcaseResultId") String TestcaseResultId,
+            @PathVariable("TestcaseResultId") String testcaseResultId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
 
-        TestcaseResultEntity TestcaseResultById = testcaseResultService.getTestcaseResultById(TestcaseResultId, contextInfo);
-        return testcaseResultMapper.modelToDto(TestcaseResultById);
+        TestcaseResultEntity testcaseResultById = testcaseResultService.getTestcaseResultById(testcaseResultId, contextInfo);
+        return testcaseResultMapper.modelToDto(testcaseResultById);
     }
 
     /**

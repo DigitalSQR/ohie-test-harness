@@ -27,6 +27,7 @@ public final class Constant {
     // Constants for validating
     public static final String CREATE_VALIDATION = "create.validation";
     public static final String UPDATE_VALIDATION = "update.validation";
+    public static final String SUBMIT_VALIDATION = "submit.validation";
     public static final String START_MANUAL_PROCESS_VALIDATION = "start.manual.process.validation";
     public static final String START_AUTOMATION_PROCESS_VALIDATION = "start.automation.process.validation";
     public static final String TRUE_STRING = "true";
