@@ -58,3 +58,6 @@ logging:
 exception:
   stack-trace:
     enabled: true
+
+tht-file:
+  location: /srv/tht/files
