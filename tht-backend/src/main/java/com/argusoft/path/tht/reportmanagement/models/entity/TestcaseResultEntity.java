@@ -6,7 +6,6 @@
 package com.argusoft.path.tht.reportmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 
@@ -28,6 +27,10 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @JoinColumn(name = "tester_id")
     private UserEntity tester;
 
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "parent_test_case_result_id")
+    private TestcaseResultEntity parentTestcaseResult;
+
     @Column(name = "ref_obj_uri")
     private String refObjUri;
 
@@ -37,6 +40,8 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "message")
     private String message;
 
+
+    //TODO: make it entity
     @Column(name = "test_request_id")
     private String testRequestId;
 
@@ -131,5 +136,13 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     public void setSuccess(Boolean success) {
         isSuccess = success;
+    }
+
+    public TestcaseResultEntity getParentTestcaseResult() {
+        return parentTestcaseResult;
+    }
+
+    public void setParentTestcaseResult(TestcaseResultEntity parentTestcaseResult) {
+        this.parentTestcaseResult = parentTestcaseResult;
     }
 }

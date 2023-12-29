@@ -5,6 +5,8 @@
  */
 package com.argusoft.path.tht.systemconfiguration.models.entity;
 
+import org.springframework.util.StringUtils;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -33,7 +35,9 @@ public class IdEntity {
 
     @PrePersist
     private void changesBeforeSave() {
-        this.setId(UUID.randomUUID().toString());
+        if (!StringUtils.isEmpty(id)) {
+            this.setId(UUID.randomUUID().toString());
+        }
     }
 
 }

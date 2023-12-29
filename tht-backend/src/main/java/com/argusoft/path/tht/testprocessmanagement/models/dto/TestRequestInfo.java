@@ -9,6 +9,8 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This info is for Component DTO that contains all the Component model's data.
@@ -51,6 +53,24 @@ public class TestRequestInfo extends IdStateNameMetaInfo implements Serializable
             dataType = "String",
             required = true)
     private String fhirVersion;
+
+    @ApiModelProperty(notes = "The testRequestUrls of the testRequest",
+            allowEmptyValue = false,
+            example = "1",
+            dataType = "Set<TestRequestUrlInfo>",
+            required = true)
+    private Set<TestRequestUrlInfo> testRequestUrls;
+
+    public Set<TestRequestUrlInfo> getTestRequestUrls() {
+        if (testRequestUrls == null) {
+            testRequestUrls = new HashSet<>();
+        }
+        return testRequestUrls;
+    }
+
+    public void setTestRequestUrls(Set<TestRequestUrlInfo> testRequestUrls) {
+        this.testRequestUrls = testRequestUrls;
+    }
 
     public String getEvaluationVersionId() {
         return evaluationVersionId;

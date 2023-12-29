@@ -19,11 +19,9 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
-import com.argusoft.path.tht.testcasemanagement.repository.TestcaseOptionRepository;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
-import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -92,31 +90,66 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return testcaseResultEntity;
     }
 
+    protected void updateParentTestcaseResultByTestcaseResultState(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
+        if (testcaseResultEntity.getParentTestcaseResult() == null
+                || TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING.equals(testcaseResultEntity.getState())
+                || TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getParentTestcaseResult())) {
+            //If result is pending then do not change anything.
+            //If result don't have parent then skip.
+            return;
+        }
+        TestcaseResultEntity parenttestcaseResultEntity = testcaseResultEntity.getParentTestcaseResult();
+        if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS.equals(testcaseResultEntity.getState())) {
+            parenttestcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS);
+            parenttestcaseResultEntity = this.updateTestcaseResult(parenttestcaseResultEntity, contextInfo);
+            updateParentTestcaseResultByTestcaseResultState(parenttestcaseResultEntity, contextInfo);
+        } else {
+            TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
+                    null, SearchType.CONTAINING,
+                    TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, SearchType.EXACTLY,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    parenttestcaseResultEntity.getId()
+            );
+            List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+            if (testcaseResultEntities.stream().allMatch(testcaseResultEntity1 -> TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity1.getState()))) {
+                parenttestcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
+                parenttestcaseResultEntity.setTester(testcaseResultEntity.getTester());
+                parenttestcaseResultEntity.setSuccess(testcaseResultEntities.stream().allMatch(testcaseResultEntity1 -> testcaseResultEntity1.getSuccess()));
+                parenttestcaseResultEntity = this.updateTestcaseResult(parenttestcaseResultEntity, contextInfo);
+                updateParentTestcaseResultByTestcaseResultState(parenttestcaseResultEntity, contextInfo);
+            }
+        }
+    }
+
     protected void updateTestRequestByTestcaseResultState(String testRequestId, String testcaseResultState, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
-        if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING.equals(testcaseResultState)) {
+        if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING.equals(testcaseResultState)) {
             //If result is pending then do not change anything.
             return;
         }
         TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
         //If result is in progress then make testRequest inProgress.
-        if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS.equals(testcaseResultState)) {
-            if(!TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(testRequestEntity.getState())) {
+        if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS.equals(testcaseResultState)) {
+            if (!TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(testRequestEntity.getState())) {
                 testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS);
                 testRequestService.updateTestRequest(testRequestEntity, contextInfo);
             }
             return;
         }
         //If all result are finished and testRequest is not finished then make it finished.
-        if(!TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(testRequestEntity.getState())) {
+        if (!TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(testRequestEntity.getState())) {
             TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
                     null, SearchType.CONTAINING,
                     null, SearchType.CONTAINING,
-                    null, null, null, testRequestId, null
+                    null, TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, testRequestId, testRequestId, null, null
             );
             List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
-            Boolean testingFinished = testcaseResultEntities.stream().allMatch(testcaseResultEntity ->
-                    TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState()));
-            if(testingFinished) {
+            if (testcaseResultEntities.size() == 2
+                    && TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntities.get(0).getState())
+                    && TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntities.get(0).getState())) {
                 testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED);
                 testRequestService.updateTestRequest(testRequestEntity, contextInfo);
             }
@@ -181,13 +214,13 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
 
-        //TODO: User will be able to add testOption for only TestResult of the manual Testcases.
-        //TODO: Based on the that update TestResult of the specification, component and testRequest.
+        //Update parents
+        updateParentTestcaseResultByTestcaseResultState(testcaseResultEntity, contextInfo);
 
-        //Updated TestRequest State
+        //Update TestRequest
         updateTestRequestByTestcaseResultState(testcaseResultEntity.getTestRequestId(), testcaseResultEntity.getState(), contextInfo);
 
-        return  testcaseResultEntity;
+        return testcaseResultEntity;
     }
 
     public List<ValidationResultInfo> validateTestcaseResultSubmit(
@@ -217,7 +250,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                     .getTestcaseOptionById(selectedTestcaseOptionId,
                             contextInfo);
 
-            if(!originalEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)
+            if (!originalEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)
                     && !testcaseOption.getTestcase().getId().equals(originalEntity.getRefId())
             ) {
                 String fieldName = "selectedTestcaseOptionId";
@@ -421,6 +454,20 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                 "The id supplied for the tester does not exists"));
             }
         }
+        //validate TestcaseResult parentTestcaseResult.
+        if (testcaseResultEntity.getParentTestcaseResult() != null) {
+            try {
+                testcaseResultEntity.setParentTestcaseResult(
+                        this.getTestcaseResultById(testcaseResultEntity.getParentTestcaseResult().getId(), contextInfo)
+                );
+            } catch (DoesNotExistException | InvalidParameterException ex) {
+                String fieldName = "parentTestcaseResult";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                "The id supplied for the parentTestcaseResult does not exists"));
+            }
+        }
         //validate TestcaseOption foreignKey.
         if (testcaseResultEntity.getTestcaseOption() != null) {
             try {
@@ -498,10 +545,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                           List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testcaseResultEntity.getName(), "name", errors);
         ValidationUtils.validateRequired(testcaseResultEntity.getRank(), "rank", errors);
-        if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())
-            && TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())
-            && Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual())
-            && Objects.equals(Boolean.FALSE, testcaseResultEntity.getHasSystemError())) {
+        if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())
+                && TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())
+                && Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual())
+                && Objects.equals(Boolean.FALSE, testcaseResultEntity.getHasSystemError())) {
             ValidationUtils.validateRequired(testcaseResultEntity.getTestcaseOption(), "testcaseOption", errors);
         }
     }
@@ -550,11 +597,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     //Validation For :Name
     protected void validateTestcaseResultEntityName(TestcaseResultEntity testcaseResultEntity,
                                                     List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(testcaseResultEntity.getName(),
-                "name",
-                Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
-                errors);
         ValidationUtils.validateLength(testcaseResultEntity.getName(),
                 "name",
                 3,
@@ -574,12 +616,12 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     //Validation For :TestcaseOption
     protected void validateTestcaseResultEntityTestcaseOption(TestcaseResultEntity testcaseResultEntity,
-                                                     List<ValidationResultInfo> errors) {
+                                                              List<ValidationResultInfo> errors) {
     }
 
     //Validation For :isSuccess
     protected void validateTestcaseResultEntityIsSuccess(TestcaseResultEntity testcaseResultEntity,
-                                                              List<ValidationResultInfo> errors) {
+                                                         List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseResult field

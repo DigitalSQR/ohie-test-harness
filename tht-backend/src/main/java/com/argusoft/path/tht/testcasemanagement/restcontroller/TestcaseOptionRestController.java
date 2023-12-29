@@ -188,7 +188,7 @@ public class TestcaseOptionRestController {
             @RequestBody(required = true) TestcaseOptionInfo testcaseOptionInfo,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
-            OperationFailedException{
+            OperationFailedException {
         TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
         return TestcaseOptionService
                 .validateTestcaseOption(validationTypeKey, testcaseOptionEntity, contextInfo);

@@ -188,7 +188,7 @@ public class SpecificationRestController {
             @RequestBody(required = true) SpecificationInfo specificationInfo,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
-            OperationFailedException{
+            OperationFailedException {
         SpecificationEntity specificationEntity = SpecificationMapper.dtoToModel(specificationInfo);
         return SpecificationService
                 .validateSpecification(validationTypeKey, specificationEntity, contextInfo);

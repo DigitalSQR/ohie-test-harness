@@ -65,7 +65,7 @@ public class UserRestController {
     @PostMapping("/logout")
     @Timed(name = "logout")
     public Boolean logout(@RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
-            throws OperationFailedException{
+            throws OperationFailedException {
         return userService.logout(contextInfo);
     }
 
@@ -123,7 +123,7 @@ public class UserRestController {
             DataValidationErrorException, OperationFailedException,
             VersionMismatchException {
         ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-        userService.updatePasswordWithVerificationToken(updatePasswordInfo,contextInfo);
+        userService.updatePasswordWithVerificationToken(updatePasswordInfo, contextInfo);
         validationResultInfo.setMessage("Password Updated Successfully!");
         validationResultInfo.setLevel(ErrorLevel.OK);
         return validationResultInfo;

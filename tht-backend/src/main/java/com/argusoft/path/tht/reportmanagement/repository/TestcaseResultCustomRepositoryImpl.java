@@ -39,7 +39,8 @@ public class TestcaseResultCustomRepositoryImpl
         Map<String, Object> parameters = new HashMap<String, Object>();
 
         jpql = jpql.append(" FROM TestcaseResultEntity testcaseResult \n"
-                + "JOIN testcaseResult.tester tester \n");
+                + "JOIN testcaseResult.tester tester \n"
+                + "JOIN testcaseResult.parentTestcaseResult parentTestcaseResult \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
@@ -102,10 +103,18 @@ public class TestcaseResultCustomRepositoryImpl
             separate = SQLUtils.likeQL(
                     "testcaseResult",
                     "isManual",
-                    searchFilter.getIsManual().toString(),
+                    searchFilter.getIsManual(),
+                    parameters,
+                    separate,
+                    jpql);
+
+            separate = SQLUtils.likeQL(
+                    "parentTestcaseResult",
+                    "id",
+                    searchFilter.getParentTestcaseResultId(),
                     parameters,
                     SearchType.EXACTLY,
-                    false,
+                    separate,
                     jpql);
         }
 

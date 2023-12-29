@@ -43,6 +43,23 @@ public final class SQLUtils {
         return true;
     }
 
+    public static boolean likeQL(
+            String tableName,
+            String columnName,
+            Boolean columnValue,
+            Map<String, Object> parameters,
+            boolean separate,
+            StringBuilder stringBuilder) {
+        if (StringUtils.isEmpty(columnValue)) return separate;
+        if (separate) {
+            stringBuilder.append("AND ");
+        }
+        stringBuilder
+                .append(tableName).append(".").append(columnName)
+                .append(" = ").append(columnValue.toString()).append(" ");
+        return true;
+    }
+
     public static <T> Page<T> getResultPage(
             String tableName,
             Class<T> type,

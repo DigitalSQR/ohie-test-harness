@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.testcasemanagement.constant;
 
-import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseOptionInfo;
 
 /**

@@ -5,6 +5,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,8 +23,10 @@ public interface TestcaseOptionMapper {
     TestcaseOptionMapper INSTANCE = Mappers.getMapper(TestcaseOptionMapper.class);
 
     @InheritInverseConfiguration
+    @Mapping(source = "testcase", target = "testcaseId")
     TestcaseOptionInfo modelToDto(TestcaseOptionEntity testcaseOptionEntity);
 
+    @Mapping(source = "testcaseId", target = "testcase")
     TestcaseOptionEntity dtoToModel(TestcaseOptionInfo testcaseOptionInfo);
 
     @InheritInverseConfiguration
