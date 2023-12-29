@@ -1,0 +1,204 @@
+h1 {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 48px; }
+
+h2 {
+  font-size: 32px;
+  font-weight: 700; }
+
+h3 {
+  font-size: 28px;
+  font-weight: 700; }
+
+h4 {
+  font-size: 24px;
+  font-weight: 700; }
+
+h5 {
+  font-size: 20px;
+  font-weight: 700; }
+
+h6 {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 26px; }
+
+.text-blue {
+  color: #009FC8 !important; }
+
+.text-green {
+  color: #53C63F; }
+
+.font-size-16 {
+  font-size: 16px; }
+
+.font-weight-500 {
+  font-weight: 500; }
+
+/*variable defined for all the colors in system*/
+.btn-blue {
+  background: #009FC8;
+  transition: all .5s;
+  padding: 15px 30px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  border-color: #009FC8; }
+  .btn-blue:hover {
+    background: #1991b1;
+    border-color: #1991b1; }
+
+.custom-input input {
+  height: 50px;
+  border-radius: 5px;
+  border: 1px solid #CCDADE;
+  font-size: 14px;
+  font-weight: 400;
+  color: #51516D; }
+  .custom-input input:focus {
+    box-shadow: none;
+    border: 1px solid #CCDADE; }
+.custom-input label {
+  font-weight: 500;
+  color: #51516D; }
+.custom-input .input-group-text {
+  background: #fff;
+  border: 1px solid #CCDADE;
+  border-right: 0px;
+  padding: 0px;
+  height: 50px;
+  width: 46px;
+  padding-left: 15px;
+  color: #CCDADE;
+  font-size: 18px; }
+.custom-input ::-ms-input-placeholder {
+  /* Edge 12-18 */
+  color: #CCDADE;
+  font-weight: 400; }
+.custom-input ::placeholder {
+  color: #CCDADE;
+  font-weight: 400; }
+
+.custom-checkbox {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  font-weight: 400;
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+  .custom-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0; }
+
+/* Create a custom checkbox */
+.custom-checkbox .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 2px;
+  border: 1px solid #CCDADE; }
+
+/* When the checkbox is checked, add a blue background */
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: #009FC8;
+  border-color: #009FC8;
+  border-radius: 2px; }
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.custom-checkbox .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none; }
+
+/* Show the checkmark when checked */
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block; }
+
+.custom-checkbox .checkmark:after {
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg); }
+
+.capture {
+  background: #F9F9F9;
+  border: 1px solid #CCDADE;
+  height: 80px;
+  margin: 25px 0px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  padding: 0px 15px;
+  justify-content: space-between; }
+
+.login-bg {
+  background: url(./images/login-bg.svg);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  text-align: center;
+  color: #fff;
+  background-repeat: no-repeat;
+  background-position: center center; }
+  @media (max-width: 767px) {
+    .login-bg {
+      height: 40vh;
+      background-position: bottom; } }
+
+.login-form-bg {
+  width: 400px;
+  margin: 0 auto;
+  background: #fff; }
+  @media (max-width: 991px) {
+    .login-form-bg {
+      width: 320px; } }
+
+.custom-scrollbar {
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 10px;
+  height: calc(100vh - 240px); }
+  @media (max-width: 767px) {
+    .custom-scrollbar {
+      height: auto;
+      padding-bottom: 30px;
+      padding-right: initial; } }
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px; }
+
+/* Track */
+.custom-scrollbar::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 2px grey;
+  border-radius: 4px; }
+
+/* Handle */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #9A9A9A;
+  border-radius: 4px; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 400;
+  color: #51516D; }
+
+/*# sourceMappingURL=style.css.map */

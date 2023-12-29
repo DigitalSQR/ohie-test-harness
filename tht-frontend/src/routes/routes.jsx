@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 import User from "../components/User";
 import UploadTestCases from "../components/UploadTestCases";
 import WaitingPage from "../components/WaitingPage";
-import Register from "../components/Register";
+import SignUp from "../components/SignUp";
+import CongratulationsPage from "../components/CongratulationsPage";
 
 const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
@@ -17,6 +18,8 @@ const PrivateRoute = () => {
 const routes = createBrowserRouter([
   {path:'/waiting',element:<WaitingPage/>},
   { path: "/login", element: <Login /> },
+  { path: "/SignUp", element: <SignUp /> },
+  { path: "/CongratulationsPage", element: <CongratulationsPage /> },
   {
     path: "/dashboard",
     element: <PrivateRoute/>,
@@ -25,8 +28,7 @@ const routes = createBrowserRouter([
       { path: "testcases", element: <UploadTestCases /> },
     ],
   },
-  { path: "/", element: <Navigate to="/login" /> },
-  {path:'/register',element:<Register/>}
+  { path: "/", element: <Navigate to="/login" /> }
 ]);
 
 export default routes;
