@@ -15,10 +15,9 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.TestcaseOptionRepository;
-import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
     @Override
     @Transactional
     public TestcaseOptionEntity createTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
-                                                   ContextInfo contextInfo)
+                                                     ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -83,7 +82,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
     @Override
     @Transactional
     public TestcaseOptionEntity updateTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
-                                                   ContextInfo contextInfo)
+                                                     ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -152,7 +151,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     public TestcaseOptionEntity getTestcaseOptionById(String testcaseOptionId,
-                                                    ContextInfo contextInfo)
+                                                      ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (StringUtils.isEmpty(testcaseOptionId)) {
@@ -175,7 +174,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     public Page<TestcaseOptionEntity> getTestcaseOptions(Pageable pageable,
-                                                       ContextInfo contextInfo)
+                                                         ContextInfo contextInfo)
             throws InvalidParameterException {
         if (pageable == null) {
             throw new InvalidParameterException("pageble is missing");
@@ -289,8 +288,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
     //validate update
     protected void validateUpdateTestcaseOption(List<ValidationResultInfo> errors,
-                                               TestcaseOptionEntity testcaseOptionEntity,
-                                               TestcaseOptionEntity originalEntity)
+                                                TestcaseOptionEntity testcaseOptionEntity,
+                                                TestcaseOptionEntity originalEntity)
             throws OperationFailedException,
             InvalidParameterException {
         // required validation
@@ -361,18 +360,13 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
     //Validation For :Id
     protected void validateTestcaseOptionEntityId(TestcaseOptionEntity testcaseOptionEntity,
-                                                 List<ValidationResultInfo> errors) {
+                                                  List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(testcaseOptionEntity.getId(), "id", errors);
     }
 
     //Validation For :Name
     protected void validateTestcaseOptionEntityName(TestcaseOptionEntity testcaseOptionEntity,
-                                                   List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(testcaseOptionEntity.getName(),
-                "name",
-                Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
-                errors);
+                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseOptionEntity.getName(),
                 "name",
                 3,
@@ -382,7 +376,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
     //Validation For :Order
     protected void validateTestcaseOptionEntityOrder(TestcaseOptionEntity testcaseOptionEntity,
-                                                    List<ValidationResultInfo> errors) {
+                                                     List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(testcaseOptionEntity.getRank(),
                 "rank",
                 1,
@@ -392,12 +386,12 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
     //Validation For :IsFunctional
     protected void validateTestcaseOptionEntityIsSuccess(TestcaseOptionEntity testcaseOptionEntity,
-                                                           List<ValidationResultInfo> errors) {
+                                                         List<ValidationResultInfo> errors) {
     }
 
     //Validation For :ComponentId
     protected void validateTestcaseOptionEntityComponentId(TestcaseOptionEntity testcaseOptionEntity,
-                                                          List<ValidationResultInfo> errors) {
+                                                           List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseOption field

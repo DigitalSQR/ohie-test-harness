@@ -33,7 +33,7 @@ import java.util.List;
  * @author Dhruv
  */
 @RestController
-@RequestMapping("/testcaseResult")
+@RequestMapping("/test-case-result")
 @Api(value = "REST API for TestcaseResult services", tags = {"TestcaseResult API"})
 @Metrics(registry = "TestcaseResultRestController")
 public class TestcaseResultRestController {
@@ -155,10 +155,10 @@ public class TestcaseResultRestController {
             @PathVariable("SelectedTestcaseOptionId") String selectedTestcaseOptionId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         TestcaseResultEntity testcaseResultEntity = testcaseResultService
-                    .submitTestcaseResult(
-                            testcaseResultId,
-                            selectedTestcaseOptionId,
-                            contextInfo);
+                .submitTestcaseResult(
+                        testcaseResultId,
+                        selectedTestcaseOptionId,
+                        contextInfo);
         return testcaseResultMapper.modelToDto(testcaseResultEntity);
     }
 

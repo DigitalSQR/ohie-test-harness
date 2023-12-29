@@ -105,7 +105,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             TestRequestEntity originalEntity = this
                     .getTestRequestById(testRequestId,
                             contextInfo);
-            if(!Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
+            if (!Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
                 TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
                         null, SearchType.CONTAINING,
                         null, SearchType.CONTAINING,
@@ -113,10 +113,10 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
                         testRequestId,
                         testRequestId,
-                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey) ? Boolean.FALSE : Boolean.TRUE
+                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey) ? Boolean.TRUE : Boolean.FALSE, null
                 );
                 List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
-                if(!testcaseResultEntities.isEmpty()) {
+                if (!testcaseResultEntities.isEmpty()) {
                     String fieldName = "testRequestId";
                     errors.add(
                             new ValidationResultInfo(fieldName,
@@ -160,6 +160,8 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         if (StringUtils.isEmpty(testRequestEntity.getId())) {
             testRequestEntity.setId(UUID.randomUUID().toString());
         }
+        //TODO: New request will have state TEST_REQUEST_STATUS_PENDING or DRAFT by default
+        //Create state change API to make this as Accepted or Rejected
         testRequestEntity = testRequestRepository.save(testRequestEntity);
         return testRequestEntity;
     }
@@ -369,7 +371,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
         if (testRequestEntity.getAssessee() != null) {
             try {
-                testRequestEntity.setApprover(
+                testRequestEntity.setAssessee(
                         userService.getUserById(testRequestEntity.getAssessee().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
@@ -383,7 +385,9 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         if (!testRequestEntity.getTestRequestUrls().isEmpty()) {
             for (TestRequestUrlEntity testRequestUrlEntity : testRequestEntity.getTestRequestUrls()) {
                 try {
-                    testRequestUrlEntity.setComponent(componentService.getComponentById(testRequestUrlEntity.getComponent().getId(), contextInfo));
+                    if (testRequestUrlEntity.getComponent() != null) {
+                        testRequestUrlEntity.setComponent(componentService.getComponentById(testRequestUrlEntity.getComponent().getId(), contextInfo));
+                    }
                 } catch (DoesNotExistException | InvalidParameterException ex) {
                     String fieldName = "testRequestUrls.component";
                     errors.add(
