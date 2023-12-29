@@ -403,11 +403,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     //Validation For :Name
     protected void validateTestcaseEntityName(TestcaseEntity testcaseEntity,
                                               List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(testcaseEntity.getName(),
-                "name",
-                Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
-                errors);
         ValidationUtils.validateLength(testcaseEntity.getName(),
                 "name",
                 3,

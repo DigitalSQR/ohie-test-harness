@@ -1,14 +1,19 @@
 package com.argusoft.path.tht.systemconfiguration.models.entity;
 
+import org.springframework.util.StringUtils;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import java.util.UUID;
 
 /**
  * This model used in model those contain UUID as id, state, name and description.
  *
  * @author Dhruv
-= */
+ * =
+ */
 @MappedSuperclass
 public class IdStateNameMetaEntity extends MetaEntity {
 
@@ -55,5 +60,12 @@ public class IdStateNameMetaEntity extends MetaEntity {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    @PrePersist
+    private void changesBeforeSave() {
+        if (!StringUtils.isEmpty(id)) {
+            this.setId(UUID.randomUUID().toString());
+        }
     }
 }

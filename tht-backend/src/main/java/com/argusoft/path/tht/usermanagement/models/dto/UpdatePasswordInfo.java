@@ -43,7 +43,7 @@ public class UpdatePasswordInfo {
         this.base64TokenId = base64TokenId;
     }
 
-    public void trimObject(){
+    public void trimObject() {
         this.setBase64TokenId(this.getBase64TokenId().trim());
         this.setBase64UserEmail(this.getBase64UserEmail().trim());
         this.setOldPassword(this.getOldPassword().trim());

@@ -57,6 +57,11 @@ public class TestcaseResultSearchFilter {
     private String testRequestId;
 
     @ApiParam(
+            value = "parentTestcaseResultId of the TestcaseResult"
+    )
+    private String parentTestcaseResultId;
+
+    @ApiParam(
             value = "isManual of the TestcaseResult"
     )
     private Boolean isManual;
@@ -72,7 +77,8 @@ public class TestcaseResultSearchFilter {
                                       String refObjUri,
                                       String refId,
                                       String testRequestId,
-                                      Boolean isManual) {
+                                      Boolean isManual,
+                                      String parentTestcaseResultId) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
@@ -82,7 +88,7 @@ public class TestcaseResultSearchFilter {
         this.refId = refId;
         this.testRequestId = testRequestId;
         this.isManual = isManual;
-
+        this.parentTestcaseResultId = parentTestcaseResultId;
     }
 
     public boolean isEmpty() {
@@ -92,7 +98,24 @@ public class TestcaseResultSearchFilter {
                 && StringUtils.isEmpty(refObjUri)
                 && StringUtils.isEmpty(refId)
                 && StringUtils.isEmpty(testRequestId)
-                && isManual == null;
+                && isManual == null
+                && StringUtils.isEmpty(parentTestcaseResultId);
+    }
+
+    public Boolean getManual() {
+        return isManual;
+    }
+
+    public void setManual(Boolean manual) {
+        isManual = manual;
+    }
+
+    public String getParentTestcaseResultId() {
+        return parentTestcaseResultId;
+    }
+
+    public void setParentTestcaseResultId(String parentTestcaseResultId) {
+        this.parentTestcaseResultId = parentTestcaseResultId;
     }
 
     public String getName() {

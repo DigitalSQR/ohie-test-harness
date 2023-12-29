@@ -5,6 +5,7 @@ import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,8 +25,11 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @InheritInverseConfiguration
+    @Mapping(source = "roles", target = "roleIds")
     UserInfo modelToDto(UserEntity userEntity);
 
+
+    @Mapping(source = "roleIds", target = "roles")
     UserEntity dtoToModel(UserInfo userInfo);
 
     @InheritInverseConfiguration

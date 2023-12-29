@@ -6,6 +6,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEnti
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,8 +24,14 @@ public interface TestcaseResultMapper {
     TestcaseResultMapper INSTANCE = Mappers.getMapper(TestcaseResultMapper.class);
 
     @InheritInverseConfiguration
+    @Mapping(source = "tester", target = "testerId")
+    @Mapping(source = "testcaseOption", target = "testcaseOptionId")
+    @Mapping(source = "parentTestcaseResult", target = "parentTestcaseResultId")
     TestcaseResultInfo modelToDto(TestcaseResultEntity testcaseResultEntity);
 
+    @Mapping(source = "testerId", target = "tester")
+    @Mapping(source = "testcaseOptionId", target = "testcaseOption")
+    @Mapping(source = "parentTestcaseResultId", target = "parentTestcaseResult")
     TestcaseResultEntity dtoToModel(TestcaseResultInfo testcaseResultInfo);
 
     @InheritInverseConfiguration
@@ -56,6 +63,17 @@ public interface TestcaseResultMapper {
     default TestcaseOptionEntity setToTestcaseOption(String testcaseOptionId) {
         TestcaseOptionEntity testcaseOptionEntity = new TestcaseOptionEntity();
         testcaseOptionEntity.setId(testcaseOptionId);
+        return testcaseOptionEntity;
+    }
+
+
+    default String setToParentTestcaseResultId(TestcaseResultEntity parentTestcaseResult) {
+        return parentTestcaseResult.getId();
+    }
+
+    default TestcaseResultEntity setToParentTestcaseResult(String parentTestcaseResultId) {
+        TestcaseResultEntity testcaseOptionEntity = new TestcaseResultEntity();
+        testcaseOptionEntity.setId(parentTestcaseResultId);
         return testcaseOptionEntity;
     }
 }

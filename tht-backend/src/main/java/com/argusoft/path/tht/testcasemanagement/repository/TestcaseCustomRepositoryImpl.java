@@ -75,10 +75,9 @@ public class TestcaseCustomRepositoryImpl
             separate = SQLUtils.likeQL(
                     "testcase",
                     "isManual",
-                    searchFilter.getManual().toString(),
+                    searchFilter.getManual(),
                     parameters,
-                    SearchType.EXACTLY,
-                    false,
+                    separate,
                     jpql);
         }
 

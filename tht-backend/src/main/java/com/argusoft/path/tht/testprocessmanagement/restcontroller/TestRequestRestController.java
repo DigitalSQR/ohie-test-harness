@@ -45,18 +45,17 @@ public class TestRequestRestController {
     private TestRequestMapper TestRequestMapper;
 
     /**
-     * We can expose this API in future if needed.
      * {@inheritdoc}
      *
      * @return
      */
-//    @ApiOperation(value = "Create new TestRequest", response = TestRequestInfo.class)
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Successfully created TestRequest"),
-//            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-//            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
-//    })
-//    @PostMapping("")
+    @ApiOperation(value = "Create new TestRequest", response = TestRequestInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully created TestRequest"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PostMapping("")
     @Timed(name = "createTestRequest")
     public TestRequestInfo createTestRequest(
             @RequestBody TestRequestInfo testRequestInfo,
@@ -76,14 +75,14 @@ public class TestRequestRestController {
      *
      * @return
      */
-    @ApiOperation(value = "Update existing TestRequest", response = TestRequestInfo.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated TestRequest"),
-            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
-
-    })
-    @PutMapping("")
+//    @ApiOperation(value = "Update existing TestRequest", response = TestRequestInfo.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "Successfully updated TestRequest"),
+//            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+//            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+//
+//    })
+//    @PutMapping("")
     @Timed(name = "updateTestRequest")
     public TestRequestInfo updateTestRequest(
             @RequestBody TestRequestInfo testRequestInfo,
@@ -199,7 +198,7 @@ public class TestRequestRestController {
             @ApiResponse(code = 200, message = "Successfully started automation testing process")
     })
     @Timed(name = "startAutomationTestingProcess")
-    @GetMapping("/start-automation-testing-process/{testRequestId}")
+    @PostMapping("/start-automation-testing-process/{testRequestId}")
     public void startAutomationTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -212,7 +211,7 @@ public class TestRequestRestController {
             @ApiResponse(code = 200, message = "Successfully started manual testing process")
     })
     @Timed(name = "startManualTestingProcess")
-    @GetMapping("/start-manual-testing-process/{testRequestId}")
+    @PostMapping("/start-manual-testing-process/{testRequestId}")
     public void startManualTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)

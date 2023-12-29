@@ -7,10 +7,12 @@ package com.argusoft.path.tht.testprocessmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * This model is mapped to testRequest table in database.
@@ -90,5 +92,14 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
 
     public void setTestRequestUrls(Set<TestRequestUrlEntity> testRequestUrls) {
         this.testRequestUrls = testRequestUrls;
+    }
+
+
+    @PrePersist
+    private void changesBeforeSave() {
+        if (!StringUtils.isEmpty(this.getId())) {
+            this.setId(UUID.randomUUID().toString());
+            this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.argusoft.path.tht.testprocessmanagement.constant;
 
+import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
+
 /**
  * Constant for TestRequestService.
  *
@@ -7,7 +9,7 @@ package com.argusoft.path.tht.testprocessmanagement.constant;
  */
 public class TestRequestServiceConstants {
 
-    public static final String TEST_REQUEST_REF_OBJ_URI = "TestRequestInfo";
+    public static final String TEST_REQUEST_REF_OBJ_URI = TestRequestInfo.class.getName();
 
     //TestRequest states
     public static final String TEST_REQUEST_STATUS_DRAFT = "component.status.draft";

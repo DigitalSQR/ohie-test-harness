@@ -87,6 +87,21 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = true)
     private String testcaseOptionId;
 
+    @ApiModelProperty(notes = "The parentTestcaseResultId of the TestcaseResult",
+            allowEmptyValue = false,
+            example = "parentTestcaseResultId1",
+            dataType = "String",
+            required = true)
+    private String parentTestcaseResultId;
+
+    public String getParentTestcaseResultId() {
+        return parentTestcaseResultId;
+    }
+
+    public void setParentTestcaseResultId(String parentTestcaseResultId) {
+        this.parentTestcaseResultId = parentTestcaseResultId;
+    }
+
     public String getTestcaseOptionId() {
         return testcaseOptionId;
     }

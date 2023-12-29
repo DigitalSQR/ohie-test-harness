@@ -5,6 +5,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntit
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,8 +23,10 @@ public interface TestcaseMapper {
     TestcaseMapper INSTANCE = Mappers.getMapper(TestcaseMapper.class);
 
     @InheritInverseConfiguration
+    @Mapping(source = "specification", target = "specificationId")
     TestcaseInfo modelToDto(TestcaseEntity testcaseEntity);
 
+    @Mapping(source = "specificationId", target = "specification")
     TestcaseEntity dtoToModel(TestcaseInfo testcaseInfo);
 
     @InheritInverseConfiguration
@@ -42,7 +45,7 @@ public interface TestcaseMapper {
         return specificationEntity.getId();
     }
 
-    default SpecificationEntity setToComponent(String specificationId) {
+    default SpecificationEntity setToSpecification(String specificationId) {
         SpecificationEntity specificationEntity = new SpecificationEntity();
         specificationEntity.setId(specificationId);
         return specificationEntity;

@@ -88,7 +88,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         if (activeTokenByIdAndUserId.isPresent()) {
             TokenVerificationEntity tokenVerification = activeTokenByIdAndUserId.get();
 
-            if(TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType()) && (verifyForgotPasswordTokenOnly==null || !verifyForgotPasswordTokenOnly)){
+            if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType()) && (verifyForgotPasswordTokenOnly == null || !verifyForgotPasswordTokenOnly)) {
                 throw new OperationFailedException("Can not verify this token currently");
             }
 

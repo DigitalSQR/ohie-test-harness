@@ -63,9 +63,10 @@ public interface TestcaseResultService {
     /**
      * Submit TestcaseResult for the manual testing.
      *
-     * @param testcaseResultEntity the new data for the TestcaseResult
-     * @param contextInfo          information containing the principalId and locale
-     *                             information about the caller of service operation
+     * @param testcaseResultId
+     * @param selectedTestcaseOptionId
+     * @param contextInfo              information containing the principalId and locale
+     *                                 information about the caller of service operation
      * @return TestcaseResultInfo the details of TestcaseResult just updated
      * @throws DataValidationErrorException supplied data is invalid
      * @throws InvalidParameterException    TestcaseResultInfo or contextInfo is not valid
