@@ -13,8 +13,6 @@ import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.mapper.TestRequestMapper;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
-import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -22,6 +20,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +34,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/test-request")
 @Api(value = "REST API for TestRequest services", tags = {"TestRequest API"})
-@Metrics(registry = "TestRequestRestController")
 public class TestRequestRestController {
 
     @Autowired
@@ -56,7 +54,7 @@ public class TestRequestRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("")
-    @Timed(name = "createTestRequest")
+    @Transactional
     public TestRequestInfo createTestRequest(
             @RequestBody TestRequestInfo testRequestInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -83,7 +81,7 @@ public class TestRequestRestController {
 //
 //    })
 //    @PutMapping("")
-    @Timed(name = "updateTestRequest")
+    @Transactional
     public TestRequestInfo updateTestRequest(
             @RequestBody TestRequestInfo testRequestInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -110,7 +108,6 @@ public class TestRequestRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
-    @Timed(name = "searchTestRequests")
     public Page<TestRequestInfo> searchTestRequests(
             @RequestParam(name = "id", required = false) List<String> ids,
             TestRequestSearchFilter testRequestSearchFilter,
@@ -146,7 +143,6 @@ public class TestRequestRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{testRequestId}")
-    @Timed(name = "getTestRequestById")
     public TestRequestInfo getTestRequestById(
             @PathVariable("TestRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -180,7 +176,6 @@ public class TestRequestRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
-    @Timed(name = "validateTestRequest")
     public List<ValidationResultInfo> validateTestRequest(
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,
@@ -197,8 +192,8 @@ public class TestRequestRestController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully started automation testing process")
     })
-    @Timed(name = "startAutomationTestingProcess")
     @PostMapping("/start-automation-testing-process/{testRequestId}")
+    @Transactional
     public void startAutomationTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -210,8 +205,8 @@ public class TestRequestRestController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully started manual testing process")
     })
-    @Timed(name = "startManualTestingProcess")
     @PostMapping("/start-manual-testing-process/{testRequestId}")
+    @Transactional
     public void startManualTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)

@@ -22,14 +22,12 @@ public interface TestcaseMapper {
 
     TestcaseMapper INSTANCE = Mappers.getMapper(TestcaseMapper.class);
 
-    @InheritInverseConfiguration
     @Mapping(source = "specification", target = "specificationId")
     TestcaseInfo modelToDto(TestcaseEntity testcaseEntity);
 
-    @Mapping(source = "specificationId", target = "specification")
+    @InheritInverseConfiguration
     TestcaseEntity dtoToModel(TestcaseInfo testcaseInfo);
 
-    @InheritInverseConfiguration
     List<TestcaseInfo> modelToDto(List<TestcaseEntity> testcaseEntities);
 
     List<TestcaseEntity> dtoToModel(List<TestcaseInfo> testcaseInfos);
@@ -42,6 +40,7 @@ public interface TestcaseMapper {
     }
 
     default String setToSpecificationId(SpecificationEntity specificationEntity) {
+        if (specificationEntity == null) return null;
         return specificationEntity.getId();
     }
 

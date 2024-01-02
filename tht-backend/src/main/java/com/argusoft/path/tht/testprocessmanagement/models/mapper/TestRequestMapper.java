@@ -28,18 +28,17 @@ public interface TestRequestMapper {
 
     TestRequestMapper INSTANCE = Mappers.getMapper(TestRequestMapper.class);
 
-    @InheritInverseConfiguration
     @Mapping(source = "approver", target = "approverId", qualifiedByName = "setToApproverId")
     @Mapping(source = "assessee", target = "assesseeId", qualifiedByName = "setToAssesseeId")
     @Mapping(source = "testRequestEntity", target = "testRequestUrls")
     TestRequestInfo modelToDto(TestRequestEntity testRequestEntity);
 
+    @InheritInverseConfiguration
     @Mapping(source = "approverId", target = "approver", qualifiedByName = "setToApprover")
     @Mapping(source = "assesseeId", target = "assessee", qualifiedByName = "setToAssessee")
     @Mapping(source = "testRequestInfo", target = "testRequestUrls")
     TestRequestEntity dtoToModel(TestRequestInfo testRequestInfo);
 
-    @InheritInverseConfiguration
     List<TestRequestInfo> modelToDto(List<TestRequestEntity> testRequestEntities);
 
     List<TestRequestEntity> dtoToModel(List<TestRequestInfo> testRequestInfos);

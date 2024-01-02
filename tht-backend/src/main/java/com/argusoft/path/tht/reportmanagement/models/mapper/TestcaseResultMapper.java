@@ -23,18 +23,14 @@ public interface TestcaseResultMapper {
 
     TestcaseResultMapper INSTANCE = Mappers.getMapper(TestcaseResultMapper.class);
 
-    @InheritInverseConfiguration
     @Mapping(source = "tester", target = "testerId")
     @Mapping(source = "testcaseOption", target = "testcaseOptionId")
     @Mapping(source = "parentTestcaseResult", target = "parentTestcaseResultId")
     TestcaseResultInfo modelToDto(TestcaseResultEntity testcaseResultEntity);
 
-    @Mapping(source = "testerId", target = "tester")
-    @Mapping(source = "testcaseOptionId", target = "testcaseOption")
-    @Mapping(source = "parentTestcaseResultId", target = "parentTestcaseResult")
+    @InheritInverseConfiguration
     TestcaseResultEntity dtoToModel(TestcaseResultInfo testcaseResultInfo);
 
-    @InheritInverseConfiguration
     List<TestcaseResultInfo> modelToDto(List<TestcaseResultEntity> testcaseResultEntities);
 
     List<TestcaseResultEntity> dtoToModel(List<TestcaseResultInfo> testcaseResultInfos);
@@ -47,6 +43,7 @@ public interface TestcaseResultMapper {
     }
 
     default String setToTesterId(UserEntity userEntity) {
+        if (userEntity == null) return null;
         return userEntity.getId();
     }
 
@@ -57,6 +54,7 @@ public interface TestcaseResultMapper {
     }
 
     default String setToTestcaseOptionId(TestcaseOptionEntity testcaseOptionEntity) {
+        if (testcaseOptionEntity == null) return null;
         return testcaseOptionEntity.getId();
     }
 
@@ -68,6 +66,7 @@ public interface TestcaseResultMapper {
 
 
     default String setToParentTestcaseResultId(TestcaseResultEntity parentTestcaseResult) {
+        if (parentTestcaseResult == null) return null;
         return parentTestcaseResult.getId();
     }
 

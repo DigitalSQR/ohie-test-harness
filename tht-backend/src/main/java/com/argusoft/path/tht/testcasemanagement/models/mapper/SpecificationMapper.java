@@ -25,16 +25,13 @@ public interface SpecificationMapper {
 
     SpecificationMapper INSTANCE = Mappers.getMapper(SpecificationMapper.class);
 
-    @InheritInverseConfiguration
     @Mapping(source = "component", target = "componentId")
     @Mapping(source = "testcases", target = "testcaseIds")
     SpecificationInfo modelToDto(SpecificationEntity specificationEntity);
 
-    @Mapping(source = "testcaseIds", target = "testcases")
-    @Mapping(source = "componentId", target = "component")
+    @InheritInverseConfiguration
     SpecificationEntity dtoToModel(SpecificationInfo specificationInfo);
 
-    @InheritInverseConfiguration
     List<SpecificationInfo> modelToDto(List<SpecificationEntity> specificationEntities);
 
     List<SpecificationEntity> dtoToModel(List<SpecificationInfo> specificationInfos);
@@ -63,6 +60,7 @@ public interface SpecificationMapper {
     }
 
     default String setToComponentId(ComponentEntity componentEntity) {
+        if (componentEntity == null) return null;
         return componentEntity.getId();
     }
 

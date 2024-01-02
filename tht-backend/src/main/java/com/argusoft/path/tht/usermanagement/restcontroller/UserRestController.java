@@ -17,8 +17,6 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.mapper.UserMapper;
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
-import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -26,6 +24,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +38,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 @Api(value = "REST API for User services", tags = {"User API"})
-@Metrics(registry = "UserRestController")
 public class UserRestController {
 
     @Autowired
@@ -63,7 +61,7 @@ public class UserRestController {
             @ApiResponse(code = 200, message = "Successfully logout user")
     })
     @PostMapping("/logout")
-    @Timed(name = "logout")
+    @Transactional
     public Boolean logout(@RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException {
         return userService.logout(contextInfo);
@@ -82,7 +80,7 @@ public class UserRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/register")
-    @Timed(name = "registerAssessee")
+    @Transactional
     public UserInfo registerAssessee(
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -96,7 +94,8 @@ public class UserRestController {
     }
 
 
-    @GetMapping("/verify/{base64UserEmail}/{base64TokenId}")
+    @PostMapping("/verify/{base64UserEmail}/{base64TokenId}")
+    @Transactional
     public ValidationResultInfo verifyUser(@PathVariable("base64UserEmail") String base64UserEmail,
                                            @PathVariable("base64TokenId") String base64TokenId,
                                            @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -117,6 +116,7 @@ public class UserRestController {
     }
 
     @PostMapping("/update/password/")
+    @Transactional
     public ValidationResultInfo updatePassword(@RequestBody UpdatePasswordInfo updatePasswordInfo,
                                                @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException, DoesNotExistException,
@@ -151,7 +151,7 @@ public class UserRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("")
-    @Timed(name = "createUser")
+    @Transactional
     public UserInfo createUser(
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -178,7 +178,7 @@ public class UserRestController {
 
     })
     @PutMapping("")
-    @Timed(name = "updateUser")
+    @Transactional
     public UserInfo updateUser(
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -206,7 +206,6 @@ public class UserRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
-    @Timed(name = "searchUsers")
     public Page<UserInfo> searchUsers(
             @RequestParam(name = "id", required = false) List<String> ids,
             UserSearchFilter userSearchFilter,
@@ -242,7 +241,6 @@ public class UserRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{userId}")
-    @Timed(name = "getUserById")
     public UserInfo getUserById(
             @PathVariable("userId") String userId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -276,7 +274,6 @@ public class UserRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
-    @Timed(name = "validateUser")
     public List<ValidationResultInfo> validateUser(
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,
@@ -301,7 +298,6 @@ public class UserRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("/principal")
-    @Timed(name = "getPrincipalUser")
     public UserInfo getPrincipalUser(@RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, DoesNotExistException {
         UserEntity principalUser = userService

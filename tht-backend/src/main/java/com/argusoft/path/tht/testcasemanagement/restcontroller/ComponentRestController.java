@@ -13,8 +13,6 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.ComponentMapper;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -22,6 +20,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +34,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/component")
 @Api(value = "REST API for Component services", tags = {"Component API"})
-@Metrics(registry = "ComponentRestController")
 public class ComponentRestController {
 
     @Autowired
@@ -57,7 +55,7 @@ public class ComponentRestController {
 //            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 //    })
 //    @PostMapping("")
-    @Timed(name = "createComponent")
+    @Transactional
     public ComponentInfo createComponent(
             @RequestBody ComponentInfo componentInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -84,7 +82,7 @@ public class ComponentRestController {
 
     })
     @PutMapping("")
-    @Timed(name = "updateComponent")
+    @Transactional
     public ComponentInfo updateComponent(
             @RequestBody ComponentInfo componentInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -111,7 +109,6 @@ public class ComponentRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
-    @Timed(name = "searchComponents")
     public Page<ComponentInfo> searchComponents(
             @RequestParam(name = "id", required = false) List<String> ids,
             ComponentSearchFilter componentSearchFilter,
@@ -147,7 +144,6 @@ public class ComponentRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{componentId}")
-    @Timed(name = "getComponentById")
     public ComponentInfo getComponentById(
             @PathVariable("ComponentId") String componentId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -181,7 +177,6 @@ public class ComponentRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
-    @Timed(name = "validateComponent")
     public List<ValidationResultInfo> validateComponent(
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,

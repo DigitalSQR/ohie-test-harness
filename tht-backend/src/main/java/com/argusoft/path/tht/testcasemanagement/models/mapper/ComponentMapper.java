@@ -24,14 +24,13 @@ public interface ComponentMapper {
 
     ComponentMapper INSTANCE = Mappers.getMapper(ComponentMapper.class);
 
-    @InheritInverseConfiguration
     @Mapping(source = "specifications", target = "specificationIds")
     ComponentInfo modelToDto(ComponentEntity componentEntity);
 
+    @InheritInverseConfiguration
     @Mapping(source = "specificationIds", target = "specifications")
     ComponentEntity dtoToModel(ComponentInfo componentInfo);
 
-    @InheritInverseConfiguration
     List<ComponentInfo> modelToDto(List<ComponentEntity> componentEntities);
 
     List<ComponentEntity> dtoToModel(List<ComponentInfo> componentInfos);
