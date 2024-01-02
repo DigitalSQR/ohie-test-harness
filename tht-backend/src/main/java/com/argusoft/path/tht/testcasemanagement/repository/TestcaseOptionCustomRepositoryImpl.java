@@ -39,7 +39,7 @@ public class TestcaseOptionCustomRepositoryImpl
         Map<String, Object> parameters = new HashMap<String, Object>();
 
         jpql = jpql.append(" FROM TestcaseOptionEntity testcaseOption \n" +
-                "JOIN testcaseOption.testcase testcase \n");
+                "LEFT JOIN testcaseOption.testcase testcase \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");

@@ -36,10 +36,17 @@ public final class SQLUtils {
         if (separate) {
             stringBuilder.append("AND ");
         }
-        stringBuilder
-                .append("UPPER(").append(tableName).append(".").append(columnName).append(")")
-                .append(" LIKE :").append(columnName).append(" ");
-        parameters.put(columnName, parameterLikePattern(columnValue, searchType));
+        if(SearchType.EXACTLY.equals(searchType)) {
+            stringBuilder
+                    .append(tableName).append(".").append(columnName)
+                    .append(" = :").append(columnName).append(" ");
+            parameters.put(columnName, columnValue);
+        } else {
+            stringBuilder
+                    .append("UPPER(").append(tableName).append(".").append(columnName).append(")")
+                    .append(" LIKE :").append(columnName).append(" ");
+            parameters.put(columnName, parameterLikePattern(columnValue, searchType));
+        }
         return true;
     }
 
@@ -77,10 +84,10 @@ public final class SQLUtils {
             String saperator = "";
             for (Sort.Order order : pageable.getSort()) {
                 jpql
-                        .append(saperator)
-                        .append(tableName + "." + order.getProperty())
-                        .append(" ")
-                        .append(order.isDescending() ? "DESC" : "");
+                    .append(saperator)
+                    .append(tableName + "." + order.getProperty())
+                    .append(" ")
+                    .append(order.isDescending() ? "DESC" : "");
                 saperator = ",";
             }
         }
@@ -115,12 +122,12 @@ public final class SQLUtils {
             String columnValue,
             SearchType searchType) {
         switch (searchType) {
-            case EXACTLY:
-                return "%" + columnValue.toUpperCase() + "%";
             case STARTING:
                 return "%" + columnValue.toUpperCase();
             case ENDING:
                 return columnValue.toUpperCase() + "%";
+            case EXACTLY:
+                return "%" + columnValue.toUpperCase() + "%";
             //default case is for CONTAINING
             default:
                 return columnValue.toUpperCase();

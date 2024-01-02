@@ -114,7 +114,7 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
         return rank;
     }
 
-    public void setRank(Integer order) {
+    public void setRank(Integer rank) {
         this.rank = rank;
     }
 
