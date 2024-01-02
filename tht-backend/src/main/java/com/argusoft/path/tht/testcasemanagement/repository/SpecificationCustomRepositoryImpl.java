@@ -39,8 +39,8 @@ public class SpecificationCustomRepositoryImpl
         Map<String, Object> parameters = new HashMap<String, Object>();
 
         jpql = jpql.append(" FROM SpecificationEntity specification \n"
-                + "JOIN specification.component component \n"
-                + "JOIN specification.testcases testcase \n");
+                + "LEFT JOIN specification.component component \n"
+                + "LEFT JOIN specification.testcases testcase \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
