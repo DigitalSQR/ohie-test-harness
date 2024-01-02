@@ -24,15 +24,13 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @InheritInverseConfiguration
     @Mapping(source = "roles", target = "roleIds")
     UserInfo modelToDto(UserEntity userEntity);
 
 
-    @Mapping(source = "roleIds", target = "roles")
+    @InheritInverseConfiguration
     UserEntity dtoToModel(UserInfo userInfo);
 
-    @InheritInverseConfiguration
     List<UserInfo> modelToDto(List<UserEntity> userEntities);
 
     List<UserEntity> dtoToModel(List<UserInfo> userInfos);

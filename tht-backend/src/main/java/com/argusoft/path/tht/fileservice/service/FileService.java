@@ -8,17 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 public class FileService {
 
     static String RESOURCE_FOLDER;
-
-    @Value("${tht-file.location}")
-    public void setResourceFolder(String value) {
-        RESOURCE_FOLDER = value;
-    }
 
     public static FileDetails storeFile(MultipartFile multipartFile) throws IOException, InvalidFileTypeException {
         // Validate file type
@@ -43,9 +40,8 @@ public class FileService {
         return new FileDetails(filePath.toString(), fileName);
     }
 
-
-    public static boolean deleteFile(String fileName){
-        Path filePath = Paths.get(RESOURCE_FOLDER,fileName);
+    public static boolean deleteFile(String fileName) {
+        Path filePath = Paths.get(RESOURCE_FOLDER, fileName);
         try {
             return Files.deleteIfExists(filePath);
         } catch (IOException e) {
@@ -62,6 +58,11 @@ public class FileService {
         if (!("jpeg".equalsIgnoreCase(extension) || "jpg".equalsIgnoreCase(extension) || "png".equalsIgnoreCase(extension))) {
             throw new InvalidFileTypeException("Invalid file type. Only JPEG, JPG, and PNG files are allowed.");
         }
+    }
+
+    @Value("${tht-file.location}")
+    public void setResourceFolder(String value) {
+        RESOURCE_FOLDER = value;
     }
 
 }

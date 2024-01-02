@@ -11,6 +11,8 @@ import com.argusoft.path.tht.usermanagement.models.enums.TokenTypeEnum;
 import com.argusoft.path.tht.usermanagement.repository.TokenVerificationRepository;
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.codahale.metrics.annotation.Timed;
+import io.astefanutti.metrics.aspectj.Metrics;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ import java.util.Optional;
  * @author Hardik
  */
 @Service
+@Metrics(registry = "TokenVerificationServiceImpl")
 public class TokenVerificationServiceImpl implements TokenVerificationService {
 
     @Autowired
@@ -45,20 +48,25 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     }
 
     @Override
+    @Timed(name = "createTokenVerification")
     public TokenVerificationEntity createTokenVerification(TokenVerificationEntity tokenVerificationEntity, ContextInfo contextInfo) {
         return tokenVerificationRepository.save(tokenVerificationEntity);
     }
 
     @Override
+    @Timed(name = "getActiveTokenByIdAndUserIdAndType")
     public Optional<TokenVerificationEntity> getActiveTokenByIdAndUserIdAndType(String token, String userId, String type, ContextInfo contextInfo) {
         return tokenVerificationRepository.findActiveTokenByIdAndUserAndType(TokenVerificationConstants.TOKEN_STATUS_ACTIVE, token, userId, type);
     }
 
     @Override
+    @Timed(name = "getAllTokenVerificationEntityByTypeAndUser")
     public List<TokenVerificationEntity> getAllTokenVerificationEntityByTypeAndUser(String type, String userId, ContextInfo contextInfo) {
         return tokenVerificationRepository.findAllTokenVerificationsByTypeAndUser(type, userId);
     }
 
+    @Override
+    @Timed(name = "getTokenById")
     public TokenVerificationEntity getTokenById(String token, ContextInfo contextInfo) throws DoesNotExistException {
         Optional<TokenVerificationEntity> tokenVerificationById = tokenVerificationRepository.findById(token);
         return tokenVerificationById.orElseThrow(() ->
@@ -66,6 +74,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     }
 
     @Override
+    @Timed(name = "verifyUserToken")
     public Boolean verifyUserToken(String base64TokenId, String base64EmailId,
                                    Boolean verifyForgotPasswordTokenOnly, ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -122,6 +131,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     }
 
     @Override
+    @Timed(name = "generateTokenForUserAndSendEmailForType")
     public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId,
                                                                            String tokenType,
                                                                            ContextInfo contextInfo) throws DoesNotExistException,
@@ -169,9 +179,11 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     }
 
     @Override
+    @Timed(name = "updateTokenVerificationEntity")
     public TokenVerificationEntity updateTokenVerificationEntity(String tokenId, TokenVerificationEntity tokenVerification, ContextInfo contextInfo) throws DoesNotExistException {
         TokenVerificationEntity tokenById = this.getTokenById(tokenId, contextInfo);
         tokenVerification.setId(tokenById.getId());
-        return tokenVerificationRepository.save(tokenVerification);
+        tokenVerification = tokenVerificationRepository.save(tokenVerification);
+        return tokenVerification;
     }
 }

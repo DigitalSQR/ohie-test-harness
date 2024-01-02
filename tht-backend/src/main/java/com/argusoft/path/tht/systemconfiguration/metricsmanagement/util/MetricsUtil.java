@@ -21,8 +21,14 @@ public class MetricsUtil {
     public void initMetricsReports(Map<String, ByteArrayOutputStream> map)
             throws UnsupportedEncodingException {
         addRegistry("CustomUserDetailService", map);
-        addRegistry("UserRestController", map);
-        addRegistry("AutomationTestProcessRestController", map);
+        addRegistry("TestcaseResultServiceServiceImpl", map);
+        addRegistry("ComponentServiceServiceImpl", map);
+        addRegistry("SpecificationServiceServiceImpl", map);
+        addRegistry("TestcaseOptionServiceServiceImpl", map);
+        addRegistry("TestcaseServiceServiceImpl", map);
+        addRegistry("TestRequestServiceServiceImpl", map);
+        addRegistry("TokenVerificationServiceImpl", map);
+        addRegistry("UserServiceServiceImpl", map);
     }
 
     private void addRegistry(

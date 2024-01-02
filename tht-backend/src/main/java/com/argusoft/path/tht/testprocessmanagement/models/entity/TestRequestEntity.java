@@ -40,7 +40,7 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @Column(name = "fhir_version")
     private String fhirVersion;
 
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private Set<TestRequestUrlEntity> testRequestUrls;
 
     public String getEvaluationVersionId() {
@@ -94,10 +94,9 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
         this.testRequestUrls = testRequestUrls;
     }
 
-
     @PrePersist
     private void changesBeforeSave() {
-        if (!StringUtils.isEmpty(this.getId())) {
+        if (StringUtils.isEmpty(this.getId())) {
             this.setId(UUID.randomUUID().toString());
             this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));
         }

@@ -20,12 +20,13 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntit
 import com.argusoft.path.tht.testcasemanagement.repository.ComponentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.codahale.metrics.annotation.Timed;
+import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -37,6 +38,7 @@ import java.util.*;
  * @author Dhruv
  */
 @Service
+@Metrics(registry = "ComponentServiceServiceImpl")
 public class ComponentServiceServiceImpl implements ComponentService {
 
     @Autowired
@@ -51,7 +53,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    @Transactional
+    @Timed(name = "createComponent")
     public ComponentEntity createComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
             throws OperationFailedException,
@@ -80,7 +82,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    @Transactional
+    @Timed(name = "updateComponent")
     public ComponentEntity updateComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
             throws OperationFailedException,
@@ -108,6 +110,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
+    @Timed(name = "searchComponents")
     public Page<ComponentEntity> searchComponents(
             List<String> ids,
             ComponentSearchFilter componentSearchFilter,
@@ -150,6 +153,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
+    @Timed(name = "getComponentById")
     public ComponentEntity getComponentById(String componentId,
                                             ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -173,6 +177,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
+    @Timed(name = "getComponents")
     public Page<ComponentEntity> getComponents(Pageable pageable,
                                                ContextInfo contextInfo)
             throws InvalidParameterException {
@@ -187,6 +192,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * {@inheritdoc}
      */
     @Override
+    @Timed(name = "validateComponent")
     public List<ValidationResultInfo> validateComponent(
             String validationTypeKey,
             ComponentEntity componentEntity,

@@ -36,21 +36,28 @@ public class ComponentSearchFilter {
     )
     private SearchType stateSearchType;
 
+    @ApiParam(
+            value = "isManual of the component"
+    )
+    private Boolean isManual;
+
     public ComponentSearchFilter() {
     }
 
     public ComponentSearchFilter(String name,
                                  SearchType nameSearchType,
                                  String state,
-                                 SearchType stateSearchType) {
+                                 SearchType stateSearchType,
+                                 Boolean isManual) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
         this.stateSearchType = stateSearchType;
+        this.isManual = isManual;
     }
 
     public boolean isEmpty() {
-        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state);
+        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state) && isManual == null;
     }
 
     public String getName() {
@@ -89,5 +96,13 @@ public class ComponentSearchFilter {
 
     public void setStateSearchType(SearchType stateSearchType) {
         this.stateSearchType = stateSearchType;
+    }
+
+    public Boolean getManual() {
+        return isManual;
+    }
+
+    public void setManual(Boolean manual) {
+        isManual = manual;
     }
 }

@@ -38,8 +38,9 @@ public class SpecificationCustomRepositoryImpl
         StringBuilder jpql = new StringBuilder();
         Map<String, Object> parameters = new HashMap<String, Object>();
 
-        jpql = jpql.append(" FROM SpecificationEntity specification \n" +
-                "JOIN specification.component component \n");
+        jpql = jpql.append(" FROM SpecificationEntity specification \n"
+                + "JOIN specification.component component \n"
+                + "JOIN specification.testcases testcase \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
@@ -70,6 +71,14 @@ public class SpecificationCustomRepositoryImpl
                     searchFilter.getComponentId(),
                     parameters,
                     SearchType.EXACTLY,
+                    separate,
+                    jpql);
+
+            separate = SQLUtils.likeQL(
+                    "testcase",
+                    "isManual",
+                    searchFilter.getManual(),
+                    parameters,
                     separate,
                     jpql);
         }

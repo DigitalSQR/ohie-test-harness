@@ -21,12 +21,13 @@ import com.argusoft.path.tht.testcasemanagement.repository.SpecificationReposito
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.codahale.metrics.annotation.Timed;
+import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -38,6 +39,7 @@ import java.util.*;
  * @author Dhruv
  */
 @Service
+@Metrics(registry = "SpecificationServiceServiceImpl")
 public class SpecificationServiceServiceImpl implements SpecificationService {
 
     @Autowired
@@ -55,7 +57,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    @Transactional
+    @Timed(name = "createSpecification")
     public SpecificationEntity createSpecification(SpecificationEntity specificationEntity,
                                                    ContextInfo contextInfo)
             throws OperationFailedException,
@@ -84,7 +86,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    @Transactional
+    @Timed(name = "updateSpecification")
     public SpecificationEntity updateSpecification(SpecificationEntity specificationEntity,
                                                    ContextInfo contextInfo)
             throws OperationFailedException,
@@ -112,6 +114,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
+    @Timed(name = "searchSpecifications")
     public Page<SpecificationEntity> searchSpecifications(
             List<String> ids,
             SpecificationSearchFilter specificationSearchFilter,
@@ -154,6 +157,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
+    @Timed(name = "getSpecificationById")
     public SpecificationEntity getSpecificationById(String specificationId,
                                                     ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -177,6 +181,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
+    @Timed(name = "getSpecifications")
     public Page<SpecificationEntity> getSpecifications(Pageable pageable,
                                                        ContextInfo contextInfo)
             throws InvalidParameterException {
@@ -191,6 +196,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * {@inheritdoc}
      */
     @Override
+    @Timed(name = "validateSpecification")
     public List<ValidationResultInfo> validateSpecification(
             String validationTypeKey,
             SpecificationEntity specificationEntity,

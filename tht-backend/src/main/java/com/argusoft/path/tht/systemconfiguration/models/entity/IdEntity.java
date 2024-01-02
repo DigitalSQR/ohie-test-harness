@@ -35,7 +35,7 @@ public class IdEntity {
 
     @PrePersist
     private void changesBeforeSave() {
-        if (!StringUtils.isEmpty(id)) {
+        if (StringUtils.isEmpty(id)) {
             this.setId(UUID.randomUUID().toString());
         }
     }

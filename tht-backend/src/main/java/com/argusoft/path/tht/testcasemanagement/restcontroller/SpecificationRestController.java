@@ -14,7 +14,6 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntit
 import com.argusoft.path.tht.testcasemanagement.models.mapper.SpecificationMapper;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -35,7 +34,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/specification")
 @Api(value = "REST API for Specification services", tags = {"Specification API"})
-@Metrics(registry = "SpecificationRestController")
 public class SpecificationRestController {
 
     @Autowired
@@ -111,7 +109,6 @@ public class SpecificationRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
-    @Timed(name = "searchSpecifications")
     public Page<SpecificationInfo> searchSpecifications(
             @RequestParam(name = "id", required = false) List<String> ids,
             SpecificationSearchFilter specificationSearchFilter,
@@ -147,7 +144,6 @@ public class SpecificationRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{specificationId}")
-    @Timed(name = "getSpecificationById")
     public SpecificationInfo getSpecificationById(
             @PathVariable("SpecificationId") String specificationId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -181,7 +177,6 @@ public class SpecificationRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
-    @Timed(name = "validateSpecification")
     public List<ValidationResultInfo> validateSpecification(
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,
