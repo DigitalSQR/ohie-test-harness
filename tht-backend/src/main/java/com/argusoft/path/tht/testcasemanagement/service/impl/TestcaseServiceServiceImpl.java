@@ -20,13 +20,14 @@ import com.argusoft.path.tht.testcasemanagement.repository.TestcaseRepository;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
+import com.codahale.metrics.annotation.Timed;
+import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -41,6 +42,7 @@ import java.util.UUID;
  * @author Dhruv
  */
 @Service
+@Metrics(registry = "TestcaseServiceServiceImpl")
 public class TestcaseServiceServiceImpl implements TestcaseService {
 
     @Autowired
@@ -58,7 +60,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
-    @Transactional
+    @Timed(name = "createTestcase")
     public TestcaseEntity createTestcase(TestcaseEntity testcaseEntity,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
@@ -87,7 +89,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
-    @Transactional
+    @Timed(name = "updateTestcase")
     public TestcaseEntity updateTestcase(TestcaseEntity testcaseEntity,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
@@ -115,6 +117,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
+    @Timed(name = "searchTestcases")
     public Page<TestcaseEntity> searchTestcases(
             List<String> ids,
             TestcaseSearchFilter testcaseSearchFilter,
@@ -157,6 +160,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
+    @Timed(name = "getTestcaseById")
     public TestcaseEntity getTestcaseById(String testcaseId,
                                           ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -180,6 +184,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
+    @Timed(name = "getTestcases")
     public Page<TestcaseEntity> getTestcases(Pageable pageable,
                                              ContextInfo contextInfo)
             throws InvalidParameterException {
@@ -194,6 +199,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * {@inheritdoc}
      */
     @Override
+    @Timed(name = "validateTestcase")
     public List<ValidationResultInfo> validateTestcase(
             String validationTypeKey,
             TestcaseEntity testcaseEntity,

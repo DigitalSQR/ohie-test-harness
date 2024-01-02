@@ -13,8 +13,6 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseMapper;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -22,6 +20,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +34,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/testcase")
 @Api(value = "REST API for Testcase services", tags = {"Testcase API"})
-@Metrics(registry = "TestcaseRestController")
 public class TestcaseRestController {
 
     @Autowired
@@ -57,7 +55,7 @@ public class TestcaseRestController {
 //            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 //    })
 //    @PostMapping("")
-    @Timed(name = "createTestcase")
+    @Transactional
     public TestcaseInfo createTestcase(
             @RequestBody TestcaseInfo testcaseInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -84,7 +82,7 @@ public class TestcaseRestController {
 
     })
     @PutMapping("")
-    @Timed(name = "updateTestcase")
+    @Transactional
     public TestcaseInfo updateTestcase(
             @RequestBody TestcaseInfo testcaseInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -112,7 +110,6 @@ public class TestcaseRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
-    @Timed(name = "searchTestcases")
     public Page<TestcaseInfo> searchTestcases(
             @RequestParam(name = "id", required = false) List<String> ids,
             TestcaseSearchFilter testcaseSearchFilter,
@@ -148,7 +145,6 @@ public class TestcaseRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{testcaseId}")
-    @Timed(name = "getTestcaseById")
     public TestcaseInfo getTestcaseById(
             @PathVariable("TestcaseId") String testcaseId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -182,7 +178,6 @@ public class TestcaseRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
-    @Timed(name = "validateTestcase")
     public List<ValidationResultInfo> validateTestcase(
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,

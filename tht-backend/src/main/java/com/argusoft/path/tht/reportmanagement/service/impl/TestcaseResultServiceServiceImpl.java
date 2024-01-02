@@ -26,12 +26,13 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.codahale.metrics.annotation.Timed;
+import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -43,6 +44,7 @@ import java.util.*;
  * @author Dhruv
  */
 @Service
+@Metrics(registry = "TestcaseResultServiceServiceImpl")
 public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     @Autowired
@@ -66,7 +68,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
-    @Transactional
+    @Timed(name = "createTestcaseResult")
     public TestcaseResultEntity createTestcaseResult(TestcaseResultEntity testcaseResultEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
@@ -161,8 +163,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      *
      * @return
      */
+    @Timed(name = "updateTestcaseResult")
     @Override
-    @Transactional
     public TestcaseResultEntity updateTestcaseResult(TestcaseResultEntity testcaseResultEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
@@ -184,12 +186,14 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
 
+    @Timed(name = "submitTestcaseResult")
     @Override
     public TestcaseResultEntity submitTestcaseResult(String testcaseResultId, String selectedTestcaseOptionId, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
         List<ValidationResultInfo> validationResultEntitys
-                = this.validateTestcaseResultSubmit(Constant.SUBMIT_VALIDATION,
+                = this.validateTestcaseResultSubmit(
                 testcaseResultId,
                 selectedTestcaseOptionId,
+                Constant.SUBMIT_VALIDATION,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -276,6 +280,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
+    @Timed(name = "searchTestcaseResults")
     public Page<TestcaseResultEntity> searchTestcaseResults(
             List<String> ids,
             TestcaseResultSearchFilter testcaseResultSearchFilter,
@@ -318,6 +323,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
+    @Timed(name = "getTestcaseResultById")
     public TestcaseResultEntity getTestcaseResultById(String testcaseResultId,
                                                       ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -341,6 +347,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
+    @Timed(name = "getTestcaseResults")
     public Page<TestcaseResultEntity> getTestcaseResults(Pageable pageable,
                                                          ContextInfo contextInfo)
             throws InvalidParameterException {
@@ -355,6 +362,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * {@inheritdoc}
      */
     @Override
+    @Timed(name = "validateTestcaseResult")
     public List<ValidationResultInfo> validateTestcaseResult(
             String validationTypeKey,
             TestcaseResultEntity testcaseResultEntity,

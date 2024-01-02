@@ -22,14 +22,12 @@ public interface TestcaseOptionMapper {
 
     TestcaseOptionMapper INSTANCE = Mappers.getMapper(TestcaseOptionMapper.class);
 
-    @InheritInverseConfiguration
     @Mapping(source = "testcase", target = "testcaseId")
     TestcaseOptionInfo modelToDto(TestcaseOptionEntity testcaseOptionEntity);
 
-    @Mapping(source = "testcaseId", target = "testcase")
+    @InheritInverseConfiguration
     TestcaseOptionEntity dtoToModel(TestcaseOptionInfo testcaseOptionInfo);
 
-    @InheritInverseConfiguration
     List<TestcaseOptionInfo> modelToDto(List<TestcaseOptionEntity> testcaseOptionEntities);
 
     List<TestcaseOptionEntity> dtoToModel(List<TestcaseOptionInfo> testcaseOptionInfos);
@@ -42,6 +40,7 @@ public interface TestcaseOptionMapper {
     }
 
     default String setToTestcaseId(TestcaseEntity testcaseEntity) {
+        if (testcaseEntity == null) return null;
         return testcaseEntity.getId();
     }
 

@@ -37,7 +37,9 @@ public class ComponentCustomRepositoryImpl
         StringBuilder jpql = new StringBuilder();
         Map<String, Object> parameters = new HashMap<String, Object>();
 
-        jpql = jpql.append(" FROM ComponentEntity component \n");
+        jpql = jpql.append(" FROM ComponentEntity component \n"
+                + "JOIN component.specifications specification \n"
+                + "JOIN specification.testcases testcase \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
@@ -58,6 +60,14 @@ public class ComponentCustomRepositoryImpl
                     searchFilter.getState(),
                     parameters,
                     searchFilter.getStateSearchType(),
+                    separate,
+                    jpql);
+
+            separate = SQLUtils.likeQL(
+                    "testcase",
+                    "isManual",
+                    searchFilter.getManual(),
+                    parameters,
                     separate,
                     jpql);
         }

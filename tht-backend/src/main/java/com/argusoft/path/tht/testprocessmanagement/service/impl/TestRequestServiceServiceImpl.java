@@ -24,12 +24,13 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlE
 import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.codahale.metrics.annotation.Timed;
+import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -41,6 +42,7 @@ import java.util.*;
  * @author Dhruv
  */
 @Service
+@Metrics(registry = "TestRequestServiceServiceImpl")
 public class TestRequestServiceServiceImpl implements TestRequestService {
 
     @Autowired
@@ -58,7 +60,8 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     @Autowired
     private TestcaseExecutioner testcaseExecutioner;
 
-    @Transactional
+    @Override
+    @Timed(name = "startAutomationTestingProcess")
     public void startAutomationTestingProcess(String testRequestId, ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException,
@@ -76,7 +79,8 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         testcaseExecutioner.executeAutomationTestingByTestRequest(testRequestId, contextInfo);
     }
 
-    @Transactional
+    @Override
+    @Timed(name = "startManualTestingProcess")
     public void startManualTestingProcess(String testRequestId, ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException,
@@ -141,7 +145,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * @return
      */
     @Override
-    @Transactional
+    @Timed(name = "createTestRequest")
     public TestRequestEntity createTestRequest(TestRequestEntity testRequestEntity,
                                                ContextInfo contextInfo)
             throws OperationFailedException,
@@ -157,9 +161,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     "Error(s) occurred in the validating",
                     validationResultEntities);
         }
-        if (StringUtils.isEmpty(testRequestEntity.getId())) {
-            testRequestEntity.setId(UUID.randomUUID().toString());
-        }
         //TODO: New request will have state TEST_REQUEST_STATUS_PENDING or DRAFT by default
         //Create state change API to make this as Accepted or Rejected
         testRequestEntity = testRequestRepository.save(testRequestEntity);
@@ -172,7 +173,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * @return
      */
     @Override
-    @Transactional
+    @Timed(name = "updateTestRequest")
     public TestRequestEntity updateTestRequest(TestRequestEntity testRequestEntity,
                                                ContextInfo contextInfo)
             throws OperationFailedException,
@@ -200,6 +201,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * @return
      */
     @Override
+    @Timed(name = "searchTestRequests")
     public Page<TestRequestEntity> searchTestRequests(
             List<String> ids,
             TestRequestSearchFilter testRequestSearchFilter,
@@ -242,6 +244,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * @return
      */
     @Override
+    @Timed(name = "getTestRequestById")
     public TestRequestEntity getTestRequestById(String testRequestId,
                                                 ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -265,6 +268,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * @return
      */
     @Override
+    @Timed(name = "getTestRequests")
     public Page<TestRequestEntity> getTestRequests(Pageable pageable,
                                                    ContextInfo contextInfo)
             throws InvalidParameterException {
@@ -279,6 +283,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * {@inheritdoc}
      */
     @Override
+    @Timed(name = "validateTestRequest")
     public List<ValidationResultInfo> validateTestRequest(
             String validationTypeKey,
             TestRequestEntity testRequestEntity,
