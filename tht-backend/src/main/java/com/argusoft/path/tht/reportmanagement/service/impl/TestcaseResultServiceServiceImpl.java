@@ -108,7 +108,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         } else {
             TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
                     null, SearchType.CONTAINING,
-                    TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, SearchType.EXACTLY,
+                    null, SearchType.EXACTLY,
                     null,
                     null,
                     null,
@@ -151,7 +151,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
             if (testcaseResultEntities.size() == 2
                     && TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntities.get(0).getState())
-                    && TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntities.get(0).getState())) {
+                    && TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntities.get(1).getState())) {
+
                 testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED);
                 testRequestService.updateTestRequest(testRequestEntity, contextInfo);
             }

@@ -38,8 +38,8 @@ public class ComponentCustomRepositoryImpl
         Map<String, Object> parameters = new HashMap<String, Object>();
 
         jpql = jpql.append(" FROM ComponentEntity component \n"
-                + "JOIN component.specifications specification \n"
-                + "JOIN specification.testcases testcase \n");
+                + "LEFT JOIN component.specifications specification \n"
+                + "LEFT JOIN specification.testcases testcase \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
