@@ -61,6 +61,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/user/verify/**").permitAll()
                 .antMatchers("/user/forgot/password/**").permitAll()
                 .antMatchers("/user/update/password/**").permitAll()
+                .antMatchers("/swagger-ui**").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+                .antMatchers("/v2/**").permitAll()
+                .antMatchers("/v3/**").permitAll()
+                .antMatchers("/metrics/**").permitAll()
+                .antMatchers("/").permitAll()
+                .antMatchers("/favicon.ico").permitAll()
                 .anyRequest().authenticated();
 
         http.headers().frameOptions().and()

@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.systemconfiguration.swagger;
 
+import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,9 @@ public class SwaggerConfig {
     public Docket userApi() {
         return new Docket(DocumentationType.SWAGGER_2).groupName("all-api")
                 .apiInfo(apiInfo()).select()
-                .apis(RequestHandlerSelectors.basePackage("com.argusoft.path.tht")).build();
+                .apis(RequestHandlerSelectors.basePackage("com.argusoft.path.tht"))
+                .build()
+                .ignoredParameterTypes(ContextInfo.class);
     }
 
     public ApiInfo apiInfo() {
