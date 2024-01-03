@@ -5,9 +5,12 @@ public class FileDetails {
     private final String location;
     private final String fileName;
 
-    public FileDetails(String location, String fileName) {
+    private final String fileId;
+
+    public FileDetails(String location, String fileName, String fileId) {
         this.location = location;
         this.fileName = fileName;
+        this.fileId = fileId;
     }
 
     public String getLocation() {
@@ -18,4 +21,7 @@ public class FileDetails {
         return fileName;
     }
 
+    public String getFileId() {
+        return fileId;
+    }
 }

@@ -1,0 +1,930 @@
+Subject: [PATCH] file service patch
+---
+Index: tht-backend/src/main/java/com/argusoft/path/tht/fileservice/MultipartFileTypeTesterPredicate.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/MultipartFileTypeTesterPredicate.java b/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/MultipartFileTypeTesterPredicate.java
+new file mode 100644
+--- /dev/null	(date 1703844387416)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/MultipartFileTypeTesterPredicate.java	(date 1703844387416)
+@@ -0,0 +1,32 @@
++package com.argusoft.path.tht.fileservice;
++
++import com.argusoft.path.tht.fileservice.service.FileService;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
++import org.springframework.web.multipart.MultipartFile;
++
++import java.util.List;
++import java.util.function.Predicate;
++
++public class MultipartFileTypeTesterPredicate implements Predicate<MultipartFile> {
++
++    private final List<String> allowedTypes;
++
++    public MultipartFileTypeTesterPredicate(List<String> allowedTypes) throws OperationFailedException {
++        if(allowedTypes.isEmpty()){
++            throw new OperationFailedException("ValidationAgainstTypes should not be null or empty to validate file type ");
++        }
++        this.allowedTypes = allowedTypes;
++    }
++
++    @Override
++    public boolean test(MultipartFile multipartFile) {
++        try {
++            return FileService.validateFileTypeWithAllowedTypes(multipartFile,allowedTypes);
++        } catch (InvalidFileTypeException e) {
++            throw new RuntimeException("File validation failed due to InvalidFileTypeException : "+e.getMessage(),e);
++        } catch (OperationFailedException e) {
++            throw new RuntimeException("File validation failed due to OperationFailedException : "+e.getMessage(),e);
++        }
++    }
++
++}
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/entity/DocumentEntity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/entity/DocumentEntity.java b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/entity/DocumentEntity.java
+new file mode 100644
+--- /dev/null	(date 1703838044842)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/entity/DocumentEntity.java	(date 1703838044842)
+@@ -0,0 +1,70 @@
++package com.argusoft.path.tht.testcasemanagement.models.entity;
++
++import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
++
++import javax.persistence.Column;
++import javax.persistence.Entity;
++import javax.persistence.OneToMany;
++import javax.persistence.Table;
++import java.util.HashSet;
++import java.util.Set;
++
++@Entity
++@Table(name = "document")
++public class DocumentEntity extends IdStateNameMetaEntity {
++
++    @Column(name = "order_id")
++    private Integer order;
++
++    @Column(name = "ref_obj_uri")
++    private String refObjUri;
++
++    @Column(name = "ref_id")
++    private String refId;
++
++    @Column(name = "file_id")
++    private String fileId;
++
++    @Column(name = "file_type")
++    private String fileType;
++
++    public Integer getOrder() {
++        return order;
++    }
++
++    public void setOrder(Integer order) {
++        this.order = order;
++    }
++
++    public String getRefObjUri() {
++        return refObjUri;
++    }
++
++    public void setRefObjUri(String refObjUri) {
++        this.refObjUri = refObjUri;
++    }
++
++    public String getRefId() {
++        return refId;
++    }
++
++    public void setRefId(String refId) {
++        this.refId = refId;
++    }
++
++    public String getFileId() {
++        return fileId;
++    }
++
++    public void setFileId(String fileId) {
++        this.fileId = fileId;
++    }
++
++    public String getFileType() {
++        return fileType;
++    }
++
++    public void setFileType(String fileType) {
++        this.fileType = fileType;
++    }
++}
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/service/impl/DocumentServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/service/impl/DocumentServiceImpl.java b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/service/impl/DocumentServiceImpl.java
+new file mode 100644
+--- /dev/null	(date 1704179017070)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/service/impl/DocumentServiceImpl.java	(date 1704179017070)
+@@ -0,0 +1,169 @@
++package com.argusoft.path.tht.testcasemanagement.service.impl;
++
++
++import com.argusoft.path.tht.fileservice.FileDetails;
++import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
++import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
++import com.argusoft.path.tht.fileservice.service.FileService;
++import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
++import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
++import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
++import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
++import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
++import com.argusoft.path.tht.testcasemanagement.repository.DocumentRepository;
++import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Service;
++import org.springframework.web.multipart.MultipartFile;
++
++import java.io.File;
++import java.io.IOException;
++import java.util.*;
++
++@Service
++public class DocumentServiceImpl implements DocumentService {
++
++    @Autowired
++    FileService fileService;
++
++    @Autowired
++    DocumentRepository documentRepository;
++
++    @Override
++    public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
++                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, IOException {
++
++        //get FileType
++        String fileType = getFileType(file);
++        documentEntity.setFileType(fileType);
++
++        //validate documentEntity
++        List<ValidationResultInfo> errors = validateDocumentEntity(com.argusoft.path.tht.systemconfiguration.constant.Constant.CREATE_VALIDATION, documentEntity, contextInfo);
++        if(ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)){
++            throw new DataValidationErrorException("Error(s) occurred validating ",errors);
++        }
++
++        //save file
++        FileDetails fileDetails = storeFileAndGetFileDetails(file);
++
++        //set FileId to DocumentEntity as it is UUID
++        documentEntity.setFileId(fileDetails.getFileId());
++        documentEntity.setName(fileDetails.getFileName());
++
++        DocumentEntity document = documentRepository.save(documentEntity);
++        return document;
++    }
++
++    private FileDetails storeFileAndGetFileDetails(MultipartFile file) throws OperationFailedException, IOException, InvalidFileTypeException {
++        MultipartFileTypeTesterPredicate multipartFileTypeTesterPredicate = new MultipartFileTypeTesterPredicate(getFileTypePdfPngJpeg());
++        FileDetails fileDetails = FileService.storeFile(file, multipartFileTypeTesterPredicate);
++        return fileDetails;
++    }
++
++
++    private List<ValidationResultInfo> validateDocumentEntity(String validationTypeKey,
++                                                              DocumentEntity documentEntity,
++                                                              ContextInfo contextInfo){
++        List<ValidationResultInfo> errors = new ArrayList<>();
++        validateRequired(documentEntity,errors);
++        switch (validationTypeKey){
++            case com.argusoft.path.tht.systemconfiguration.constant.Constant.CREATE_VALIDATION:
++                //TODO define and add validation for create
++                break;
++            case com.argusoft.path.tht.systemconfiguration.constant.Constant.UPDATE_VALIDATION:
++                //TODO define and add validation for update
++                break;
++        }
++        return errors;
++    }
++
++
++    private void validateRequired(DocumentEntity documentEntity, List<ValidationResultInfo> errors){
++        ValidationUtils.validateRequired(documentEntity.getFileType(), "fileType", errors);
++        ValidationUtils.validateRequired(documentEntity.getRefId(), "refId", errors);
++        ValidationUtils.validateRequired(documentEntity.getRefObjUri(), "refObjUri", errors);
++    }
++
++    private String getFileType(MultipartFile file) throws OperationFailedException {
++        try {
++            return FileService.detectInputStreamTypeWithTika(file.getInputStream());
++        } catch (IOException e) {
++            throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
++        }
++    }
++
++    private List<String> getFileTypePdfPngJpeg(){
++        List<String> validationAgainstTypes = new ArrayList<>();
++        validationAgainstTypes.add("application/pdf");
++        validationAgainstTypes.add("image/png");
++        validationAgainstTypes.add("image/jpeg");
++
++        return validationAgainstTypes;
++    }
++
++    @Override
++    public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException {
++        Optional<DocumentEntity> documentById = documentRepository.findById(documentId);
++        return documentById.orElseThrow(() -> new DoesNotExistException("DocumentEntity does not found with id : " + documentId));
++    }
++
++    @Override
++    public DocumentEntity getDocumentByFileId(String fileId, ContextInfo contextInfo) throws DoesNotExistException {
++        Optional<DocumentEntity> documentById = documentRepository.findDocumentByFileId(fileId);
++        return documentById.orElseThrow(() -> new DoesNotExistException("DocumentEntity does not found with fileId : " + fileId));
++    }
++
++    @Override
++    public List<DocumentEntity> getDocumentsByRefObjectUriAndRefObjectId(String refObjectUri, String refObjectId, ContextInfo contextInfo) {
++        return documentRepository.findDocumentByRefObjectUriAndId(refObjectUri, refObjectId);
++    }
++
++    @Override
++    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException {
++        DocumentEntity document = this.getDocument(documentId, contextInfo);
++
++        String refObjUri = document.getRefObjUri();
++        String refId = document.getRefId();
++
++        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId
++                = this.getDocumentsByRefObjectUriAndRefObjectId(refObjUri, refId, contextInfo);
++
++
++        TreeMap<Integer, DocumentEntity> documentEntityTreeMap = new TreeMap<>();
++        for (int i = 1; i <= documentsByRefObjectUriAndRefObjectId.size(); i++) {
++            documentEntityTreeMap.put(i,documentsByRefObjectUriAndRefObjectId.get(i--));
++        }
++
++        boolean foundTheInBetweenDocumentEntity = false;
++        if(documentEntityTreeMap.containsKey(orderId)){
++            for (Map.Entry<Integer, DocumentEntity> integerDocumentEntityEntry : documentEntityTreeMap.entrySet()) {
++                if(Objects.equals(integerDocumentEntityEntry.getKey(), orderId)){
++                    foundTheInBetweenDocumentEntity = true;
++                }
++                if(foundTheInBetweenDocumentEntity){
++                    DocumentEntity documentEntity = integerDocumentEntityEntry.getValue();
++                    documentEntity.setOrder(integerDocumentEntityEntry.getKey()+1);
++                    documentRepository.save(documentEntity);
++                }
++            }
++            document.setOrder(orderId);
++        }
++        else {
++            document.setOrder(documentsByRefObjectUriAndRefObjectId.size()+2);
++        }
++
++        documentRepository.save(document);
++        return document;
++    }
++
++    @Override
++    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException {
++        DocumentEntity document = this.getDocument(documentId, contextInfo);
++        document.setState(stateKey);
++        documentRepository.save(document);
++        return document;
++    }
++}
+Index: tht-backend/src/main/java/com/argusoft/path/tht/fileservice/FileDetails.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/FileDetails.java b/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/FileDetails.java
+--- a/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/FileDetails.java	(revision 8bf417db4433933e4683f2667294f8a04cbad10f)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/FileDetails.java	(date 1703841525977)
+@@ -5,9 +5,12 @@
+     private final String location;
+     private final String fileName;
+ 
+-    public FileDetails(String location, String fileName) {
++    private final String fileId;
++
++    public FileDetails(String location, String fileName, String fileId) {
+         this.location = location;
+         this.fileName = fileName;
++        this.fileId = fileId;
+     }
+ 
+     public String getLocation() {
+@@ -18,4 +21,7 @@
+         return fileName;
+     }
+ 
++    public String getFileId() {
++        return fileId;
++    }
+ }
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentRepository.java b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentRepository.java
+new file mode 100644
+--- /dev/null	(date 1703845163090)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentRepository.java	(date 1703845163090)
+@@ -0,0 +1,21 @@
++package com.argusoft.path.tht.testcasemanagement.repository;
++
++import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
++import org.springframework.data.jpa.repository.JpaRepository;
++import org.springframework.data.jpa.repository.Query;
++import org.springframework.data.repository.query.Param;
++import org.springframework.stereotype.Repository;
++
++import java.util.List;
++import java.util.Optional;
++
++@Repository
++public interface DocumentRepository extends JpaRepository<DocumentEntity,String>, DocumentCustomRepository {
++
++    @Query("SELECT entity FROM DocumentEntity entity WHERE entity.fileId = (:fileId)")
++    Optional<DocumentEntity> findDocumentByFileId(@Param("fileId") String fileId);
++
++    @Query("SELECT entity FROM DocumentEntity entity WHERE entity.refObjUri = (:refObjectUri) AND entity.refId = (:refObjectId)")
++    List<DocumentEntity> findDocumentByRefObjectUriAndId(@Param("refObjectUri") String refObjectUri ,@Param("refObjectId") String refObjectId);
++
++}
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/mapper/DocumentMapper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/mapper/DocumentMapper.java b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/mapper/DocumentMapper.java
+new file mode 100644
+--- /dev/null	(date 1703830423631)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/mapper/DocumentMapper.java	(date 1703830423631)
+@@ -0,0 +1,20 @@
++package com.argusoft.path.tht.testcasemanagement.models.mapper;
++
++import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
++import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
++import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
++import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
++import org.mapstruct.Mapper;
++import org.mapstruct.factory.Mappers;
++
++@Mapper(componentModel = "spring")
++public interface DocumentMapper {
++
++
++    DocumentMapper INSTANCE = Mappers.getMapper(DocumentMapper.class);
++
++    DocumentInfo modelToDto(DocumentEntity componentEntity);
++
++    DocumentEntity DtoToModel(DocumentInfo componentEntity);
++
++}
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testprocessmanagement/models/entity/TestRequestEntity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testprocessmanagement/models/entity/TestRequestEntity.java b/tht-backend/src/main/java/com/argusoft/path/tht/testprocessmanagement/models/entity/TestRequestEntity.java
+--- a/tht-backend/src/main/java/com/argusoft/path/tht/testprocessmanagement/models/entity/TestRequestEntity.java	(revision 8bf417db4433933e4683f2667294f8a04cbad10f)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testprocessmanagement/models/entity/TestRequestEntity.java	(date 1704179909318)
+@@ -97,7 +97,7 @@
+ 
+     @PrePersist
+     private void changesBeforeSave() {
+-        if (!StringUtils.isEmpty(this.getId())) {
++        if (StringUtils.isEmpty(this.getId())) {
+             this.setId(UUID.randomUUID().toString());
+             this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));
+         }
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/service/DocumentService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/service/DocumentService.java b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/service/DocumentService.java
+new file mode 100644
+--- /dev/null	(date 1704178813921)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/service/DocumentService.java	(date 1704178813921)
+@@ -0,0 +1,38 @@
++package com.argusoft.path.tht.testcasemanagement.service;
++
++import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
++import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
++import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
++import org.springframework.stereotype.Service;
++import org.springframework.web.multipart.MultipartFile;
++
++import java.io.IOException;
++import java.util.List;
++
++@Service
++public interface DocumentService {
++
++
++    public DocumentEntity createDocument(DocumentEntity documentEntity,
++                                         MultipartFile file,
++                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, IOException;
++
++
++    public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException;
++
++    public DocumentEntity getDocumentByFileId(String fileId, ContextInfo contextInfo) throws DoesNotExistException;
++
++
++    public List<DocumentEntity> getDocumentsByRefObjectUriAndRefObjectId(String refObjectUri,
++                                                                         String refObjectId,
++                                                                         ContextInfo contextInfo);
++
++
++    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException;
++
++    public DocumentEntity changeState(String documentId, String stateKey ,ContextInfo contextInfo) throws DoesNotExistException;
++
++}
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/dto/DocumentInfo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/dto/DocumentInfo.java b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/dto/DocumentInfo.java
+new file mode 100644
+--- /dev/null	(date 1703838080534)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/models/dto/DocumentInfo.java	(date 1703838080534)
+@@ -0,0 +1,84 @@
++package com.argusoft.path.tht.testcasemanagement.models.dto;
++
++import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
++import io.swagger.annotations.ApiModelProperty;
++
++import java.io.Serializable;
++
++public class DocumentInfo  extends IdStateNameMetaInfo implements Serializable {
++
++    @ApiModelProperty(notes = "The unique rank of the component",
++            allowEmptyValue = false,
++            example = "1",
++            dataType = "Integer",
++            required = true)
++    private Integer order;
++
++    @ApiModelProperty(notes = "The refObjUri of the TestcaseResult",
++            allowEmptyValue = false,
++            example = "refObjUri",
++            dataType = "String",
++            required = true)
++    private String refObjUri;
++
++    @ApiModelProperty(notes = "The refId of the TestcaseResult",
++            allowEmptyValue = false,
++            example = "refId",
++            dataType = "String",
++            required = true)
++    private String refId;
++
++    @ApiModelProperty(notes = "The fileId of the Saved File",
++            allowEmptyValue = true,
++            example = "fileId",
++            dataType = "String",
++            required = true)
++    private String fileId;
++
++    @ApiModelProperty(notes = "The fileType of the Saved File",
++            allowEmptyValue = true,
++            example = "fileType",
++            dataType = "String",
++            required = true)
++    private String fileType;
++
++    public Integer getOrder() {
++        return order;
++    }
++
++    public void setOrder(Integer order) {
++        this.order = order;
++    }
++
++    public String getRefObjUri() {
++        return refObjUri;
++    }
++
++    public void setRefObjUri(String refObjUri) {
++        this.refObjUri = refObjUri;
++    }
++
++    public String getRefId() {
++        return refId;
++    }
++
++    public void setRefId(String refId) {
++        this.refId = refId;
++    }
++
++    public String getFileId() {
++        return fileId;
++    }
++
++    public void setFileId(String fileId) {
++        this.fileId = fileId;
++    }
++
++    public String getFileType() {
++        return fileType;
++    }
++
++    public void setFileType(String fileType) {
++        this.fileType = fileType;
++    }
++}
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentCustomRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentCustomRepository.java b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentCustomRepository.java
+new file mode 100644
+--- /dev/null	(date 1703832802226)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentCustomRepository.java	(date 1703832802226)
+@@ -0,0 +1,18 @@
++package com.argusoft.path.tht.testcasemanagement.repository;
++
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
++import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
++import com.argusoft.path.tht.testcasemanagement.filter.DocumentSearchFilter;
++import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
++import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
++import org.springframework.data.domain.Page;
++import org.springframework.data.domain.Pageable;
++
++public interface DocumentCustomRepository {
++
++    public Page<DocumentEntity> advanceComponentSearch(
++            DocumentSearchFilter searchFilter,
++            Pageable pageable
++    ) throws OperationFailedException;
++
++}
+Index: tht-backend/src/main/java/com/argusoft/path/tht/fileservice/service/FileService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/service/FileService.java b/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/service/FileService.java
+--- a/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/service/FileService.java	(revision 8bf417db4433933e4683f2667294f8a04cbad10f)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/fileservice/service/FileService.java	(date 1703844387408)
+@@ -1,14 +1,21 @@
+ package com.argusoft.path.tht.fileservice.service;
+ 
+ import com.argusoft.path.tht.fileservice.FileDetails;
++import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
+ import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
+ import org.apache.commons.io.FilenameUtils;
++import org.apache.tika.Tika;
+ import org.springframework.beans.factory.annotation.Value;
+ import org.springframework.stereotype.Service;
+ import org.springframework.web.multipart.MultipartFile;
+ 
+ import java.io.IOException;
++import java.io.InputStream;
+ import java.nio.file.*;
++import java.util.List;
++import java.util.UUID;
+ 
+ @Service
+ public class FileService {
+@@ -20,10 +27,13 @@
+         RESOURCE_FOLDER = value;
+     }
+ 
+-    public static FileDetails storeFile(MultipartFile multipartFile) throws IOException, InvalidFileTypeException {
++    public static FileDetails storeFile(MultipartFile multipartFile, MultipartFileTypeTesterPredicate multipartFilePredicateToValidateFile) throws IOException, InvalidFileTypeException {
+         // Validate file type
++        boolean test = multipartFilePredicateToValidateFile.test(multipartFile);
++        if(!test){
++            throw new InvalidFileTypeException("File Type Validation Failed");
++        }
+         String fileName = multipartFile.getOriginalFilename();
+-        validateFileType(fileName);
+ 
+         // Construct the path to the resources folder
+         Path resourcesPath = Paths.get(RESOURCE_FOLDER);
+@@ -33,14 +43,16 @@
+             Files.createDirectories(resourcesPath);
+         }
+ 
++        String randomUUID = UUID.randomUUID().toString();
++
+         // Construct the path for the new file
+-        Path filePath = resourcesPath.resolve(fileName);
++        Path filePath = resourcesPath.resolve(randomUUID);
+ 
+         // Write the file to the specified path
+         multipartFile.transferTo(filePath.toFile());
+ 
+         // Return the details of the stored file
+-        return new FileDetails(filePath.toString(), fileName);
++        return new FileDetails(filePath.toString(), fileName, randomUUID);
+     }
+ 
+ 
+@@ -54,13 +66,35 @@
+         }
+     }
+ 
+-    private static void validateFileType(String fileName) throws InvalidFileTypeException {
+-        // Get the file extension
+-        String extension = FilenameUtils.getExtension(fileName);
++    public static String detectInputStreamTypeWithTika(InputStream inputStream) throws IOException {
++        Tika tika = new Tika();
++        return tika.detect(inputStream);
++    }
++
++    public static boolean validateFileType(MultipartFile file, List<String> validateAgainstTypes) throws InvalidFileTypeException, InvalidParameterException, OperationFailedException {
++        if(validateAgainstTypes==null || validateAgainstTypes.isEmpty()){
++            throw new InvalidParameterException("ValidationAgainstTypes should not be null or empty to validate file type ");
++        }
++
++        try {
++            String actualType = detectInputStreamTypeWithTika(file.getInputStream());
++            if(validateAgainstTypes.contains(actualType)){
++                return true;
++            }
++            throw new InvalidFileTypeException("Given file is of type ("+actualType+") which was not expected in given types => "+(String.join(",", validateAgainstTypes)));
++        } catch (IOException e) {
++            throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
++        }
++    }
++
+ 
+-        // Check if the file type is allowed
+-        if (!("jpeg".equalsIgnoreCase(extension) || "jpg".equalsIgnoreCase(extension) || "png".equalsIgnoreCase(extension))) {
+-            throw new InvalidFileTypeException("Invalid file type. Only JPEG, JPG, and PNG files are allowed.");
++    public static boolean validateFileTypeWithAllowedTypes(MultipartFile file, List<String> allowedTypes)
++            throws InvalidFileTypeException, OperationFailedException {
++
++        try {
++            return validateFileType(file, allowedTypes);
++        } catch (InvalidParameterException e) {
++            throw new OperationFailedException("File validation failed due to InvalidParameterException : "+e.getMessage(),e);
+         }
+     }
+ 
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentCustomRepositoryImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentCustomRepositoryImpl.java b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentCustomRepositoryImpl.java
+new file mode 100644
+--- /dev/null	(date 1703838244940)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/repository/DocumentCustomRepositoryImpl.java	(date 1703838244940)
+@@ -0,0 +1,90 @@
++package com.argusoft.path.tht.testcasemanagement.repository;
++
++import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
++import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
++import com.argusoft.path.tht.systemconfiguration.utils.SQLUtils;
++import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
++import com.argusoft.path.tht.testcasemanagement.filter.DocumentSearchFilter;
++import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
++import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.data.domain.Page;
++import org.springframework.data.domain.Pageable;
++import org.springframework.stereotype.Repository;
++
++import javax.persistence.EntityManager;
++import java.util.HashMap;
++import java.util.Map;
++
++@Repository
++public class DocumentCustomRepositoryImpl implements DocumentCustomRepository{
++
++    @Autowired
++    private EntityManager entityManager;
++
++    @Override
++    public Page<DocumentEntity> advanceComponentSearch(DocumentSearchFilter searchFilter, Pageable pageable) throws OperationFailedException {
++        StringBuilder jpql = new StringBuilder();
++        Map<String, Object> parameters = new HashMap<String, Object>();
++
++        jpql = jpql.append(" FROM DocumentEntity component \n");
++
++        if (!searchFilter.isEmpty()) {
++            jpql.append("WHERE \n");
++            boolean separate;
++
++            separate = SQLUtils.likeQL(
++                    "document",
++                    "name",
++                    searchFilter.getName(),
++                    parameters,
++                    searchFilter.getNameSearchType(),
++                    false,
++                    jpql);
++
++            separate = SQLUtils.likeQL(
++                    "document",
++                    "state",
++                    searchFilter.getState(),
++                    parameters,
++                    SearchType.EXACTLY,
++                    separate,
++                    jpql);
++
++            separate = SQLUtils.likeQL(
++                    "document",
++                    "ref_obj_uri",
++                    searchFilter.getRefObjUri(),
++                    parameters,
++                    SearchType.EXACTLY,
++                    separate,
++                    jpql);
++
++            separate = SQLUtils.likeQL(
++                    "document",
++                    "ref_id",
++                    searchFilter.getRefId(),
++                    parameters,
++                    SearchType.EXACTLY,
++                    separate,
++                    jpql);
++
++            separate = SQLUtils.likeQL(
++                    "document",
++                    "file_type",
++                    searchFilter.getFileType(),
++                    parameters,
++                    SearchType.EXACTLY,
++                    separate,
++                    jpql);
++
++        }
++
++        try {
++            return SQLUtils.getResultPage("document", DocumentEntity.class, jpql, parameters, pageable, entityManager);
++        } catch (Exception ex) {
++            ex.printStackTrace();
++            throw new OperationFailedException("Operation Failed while Executing query.", ex);
++        }
++    }
++}
+Index: tht-backend/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/pom.xml b/tht-backend/pom.xml
+--- a/tht-backend/pom.xml	(revision 8bf417db4433933e4683f2667294f8a04cbad10f)
++++ b/tht-backend/pom.xml	(date 1703838339136)
+@@ -146,6 +146,12 @@
+             <groupId>org.springframework</groupId>
+             <artifactId>spring-test</artifactId>
+         </dependency>
++        <!-- Other dependencies -->
++        <dependency>
++            <groupId>org.apache.tika</groupId>
++            <artifactId>tika-core</artifactId>
++            <version>1.27</version> <!-- Use the latest version available -->
++        </dependency>
+ 
+     </dependencies>
+ 
+Index: tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/filter/DocumentSearchFilter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/filter/DocumentSearchFilter.java b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/filter/DocumentSearchFilter.java
+new file mode 100644
+--- /dev/null	(date 1703838188957)
++++ b/tht-backend/src/main/java/com/argusoft/path/tht/testcasemanagement/filter/DocumentSearchFilter.java	(date 1703838188957)
+@@ -0,0 +1,111 @@
++package com.argusoft.path.tht.testcasemanagement.filter;
++
++import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
++import io.swagger.annotations.ApiParam;
++import org.springframework.util.StringUtils;
++
++import javax.persistence.Column;
++
++public class DocumentSearchFilter {
++
++    @ApiParam(
++            value = "name of the component"
++    )
++    private String name;
++
++
++    @ApiParam(
++            value = "nameSearchType of the component"
++    )
++    private SearchType nameSearchType;
++
++
++    @ApiParam(
++            value = "refObjUri of the component"
++    )
++    private String refObjUri;
++
++    @ApiParam(
++            value = "refId of the component"
++    )
++    private String refId;
++
++    @ApiParam(
++            value = "state of the component"
++    )
++    private String state;
++
++
++    @ApiParam(
++            value = "fileType of the component"
++    )
++    private String fileType;
++
++    public DocumentSearchFilter(String name, SearchType nameSearchType, String refObjUri, String refId, String state, String fileType) {
++        this.name = name;
++        this.nameSearchType = nameSearchType;
++        this.refObjUri = refObjUri;
++        this.refId = refId;
++        this.state = state;
++        this.fileType = fileType;
++    }
++
++    public DocumentSearchFilter() {
++    }
++
++
++    public boolean isEmpty() {
++        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state) && StringUtils.isEmpty(refObjUri) && StringUtils.isEmpty(refId) && StringUtils.isEmpty(fileType);
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public SearchType getNameSearchType() {
++        if (nameSearchType == null) {
++            return SearchType.CONTAINING;
++        }
++        return nameSearchType;
++    }
++
++    public void setNameSearchType(SearchType nameSearchType) {
++        this.nameSearchType = nameSearchType;
++    }
++
++    public String getRefObjUri() {
++        return refObjUri;
++    }
++
++    public void setRefObjUri(String refObjUri) {
++        this.refObjUri = refObjUri;
++    }
++
++    public String getRefId() {
++        return refId;
++    }
++
++    public void setRefId(String refId) {
++        this.refId = refId;
++    }
++
++    public String getState() {
++        return state;
++    }
++
++    public void setState(String state) {
++        this.state = state;
++    }
++
++    public String getFileType() {
++        return fileType;
++    }
++
++    public void setFileType(String fileType) {
++        this.fileType = fileType;
++    }
++}
