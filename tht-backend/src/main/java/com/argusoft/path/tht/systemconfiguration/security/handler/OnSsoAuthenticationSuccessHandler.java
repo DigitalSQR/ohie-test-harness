@@ -12,6 +12,7 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,6 +46,9 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     @Autowired
     private UserService userService;
+
+    @Value("${frontend.google.success}")
+    private String successCallbackEndUrl;
 
     @Override
     @Transactional
@@ -92,59 +98,77 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                 responseMap.put("expires_in", oAuth2AccessToken.getExpiresIn());
                 responseMap.put("scope", String.join(" ", oAuth2AccessToken.getScope()));
 
-                ObjectMapper objectMapper = new ObjectMapper();
+               /* ObjectMapper objectMapper = new ObjectMapper();
                 String jsonResponse = objectMapper.writeValueAsString(responseMap);
 
                 response.setContentType("application/json");
                 response.getWriter().write(jsonResponse);
-                response.getWriter().flush();
+                response.getWriter().flush();*/
+
+                String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
+                response.sendRedirect(s);
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, loggedInUser.getState())) {
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("message", "Pending email verification.");
 
-                ObjectMapper objectMapper = new ObjectMapper();
-                String jsonResponse = objectMapper.writeValueAsString(responseMap);
-
-                response.setContentType("application/json");
-                response.getWriter().write(jsonResponse);
-                response.getWriter().flush();
+                String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
+                response.sendRedirect(s);
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, loggedInUser.getState())) {
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("message", "Pending admin approval.");
 
-                ObjectMapper objectMapper = new ObjectMapper();
-                String jsonResponse = objectMapper.writeValueAsString(responseMap);
-
-                response.setContentType("application/json");
-                response.getWriter().write(jsonResponse);
-                response.getWriter().flush();
+                String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
+                response.sendRedirect(s);
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_REJECTED, loggedInUser.getState())) {
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("message", "Admin approval has been rejected.");
 
-                ObjectMapper objectMapper = new ObjectMapper();
-                String jsonResponse = objectMapper.writeValueAsString(responseMap);
-
-                response.setContentType("application/json");
-                response.getWriter().write(jsonResponse);
-                response.getWriter().flush();
+                String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
+                response.sendRedirect(s);
             } else {
                 //Only left UserServiceConstants.USER_STATUS_INACTIVE,
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("message", "User is inactive.");
 
-                ObjectMapper objectMapper = new ObjectMapper();
-                String jsonResponse = objectMapper.writeValueAsString(responseMap);
-
-                response.setContentType("application/json");
-                response.getWriter().write(jsonResponse);
-                response.getWriter().flush();
+                String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
+                response.sendRedirect(s);
             }
         } catch (Exception e) {
             //TODO: Add appropriate message.
             response.setStatus(500);
             e.printStackTrace();
         }
+    }
+
+    public static String appendParamsToUrl(String baseUrl, Map<String, Object> parameters) {
+        StringBuilder urlBuilder = new StringBuilder(baseUrl);
+
+        // Check if the base URL already contains a query parameter
+        boolean hasQuery = baseUrl.contains("?");
+
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            try {
+                // Encode the parameter names and values to handle special characters
+                String encodedKey = URLEncoder.encode(entry.getKey(), "UTF-8");
+                String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
+
+                // Append the key-value pair to the URL
+                if (!hasQuery) {
+                    urlBuilder.append("?");
+                    hasQuery = true;
+                } else {
+                    urlBuilder.append("&");
+                }
+
+                urlBuilder.append(encodedKey)
+                        .append("=")
+                        .append(encodedValue);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace(); // Handle encoding exception as needed
+            }
+        }
+
+        return urlBuilder.toString();
     }
 
     private UserEntity createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException {

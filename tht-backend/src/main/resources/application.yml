@@ -61,3 +61,6 @@ exception:
 
 tht-file:
   location: /srv/tht/files
+
+frontend:
+  google.success: /google/success
