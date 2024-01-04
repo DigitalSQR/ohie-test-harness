@@ -30,17 +30,26 @@ export default function SignUp() {
       showLoader();
       AuthenticationAPI.signup(formData)
         .then(
-          (response) => {
+          (result) => {
             hideLoader();
             navigate("/CongratulationsPage");
           },
-          (response) => {
+          (result) => {
             hideLoader();
-            console.log(response);
-          response.response.data.map((res)=>{ notification.error({
-            placement: "bottomRight",
-            description: `${res.element + ',' + res.message}`,
-          });})
+            const messages = result.response.data.map((res) => res.message);
+            const MessageList = () => (
+              <div>
+                {messages.map((message, index) => (
+                  <li key={index}>{message}</li>
+                ))}
+              </div>
+            );
+            
+            notification.error({
+              placement: 'bottomRight',
+              message: 'Error',
+              description: <MessageList />,
+            });
           }
         )
         .catch((error) => {
