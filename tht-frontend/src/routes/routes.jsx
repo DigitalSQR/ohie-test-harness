@@ -20,6 +20,7 @@ const routes = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/SignUp", element: <SignUp /> },
   { path: "/CongratulationsPage", element: <CongratulationsPage /> },
+  {path:"/signup",element:<SignUp/>},
   {
     path: "/dashboard",
     element: <PrivateRoute/>,
