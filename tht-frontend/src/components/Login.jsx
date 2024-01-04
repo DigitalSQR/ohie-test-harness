@@ -64,13 +64,19 @@ export default function Login() {
       .then((response) => {
         dispatch(login_success(response));
         setAuthToken(response.access_token);
-
         hideLoader();
         navigate("/dashboard/user");
-      })
+      },(response)=>{ 
+        hideLoader();
+        console.log(response);
+        notification.error({
+        placement: "bottomRight",
+        description: `${response.response.data.error_description}`,
+      });})
       .catch((error) => {
         // Handle the error here
         hideLoader();
+        console.log(error);
         notification.error({
           placement: "bottomRight",
           description: "Invalid username or password",

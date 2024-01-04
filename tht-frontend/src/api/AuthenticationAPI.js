@@ -51,4 +51,16 @@ export const AuthenticationAPI = {
       throw error; // You can choose to re-throw the error or handle it in a specific way
     }
   },
+  signup : async function(data){
+    try{const response = await api.request({
+      url:`/user/register`,
+      method:"POST",
+      data:data
+    });
+    return response.data;
+  }
+    catch(error){
+      throw error;
+    }
+  }
 };
