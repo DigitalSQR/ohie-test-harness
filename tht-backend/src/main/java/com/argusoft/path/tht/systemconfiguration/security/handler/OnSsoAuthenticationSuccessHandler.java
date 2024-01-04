@@ -10,7 +10,9 @@ import com.argusoft.path.tht.systemconfiguration.security.custom.CustomOauth2Use
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -98,7 +101,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                 responseMap.put("expires_in", oAuth2AccessToken.getExpiresIn());
                 responseMap.put("scope", String.join(" ", oAuth2AccessToken.getScope()));
 
-               /* ObjectMapper objectMapper = new ObjectMapper();
+                /*ObjectMapper objectMapper = new ObjectMapper();
                 String jsonResponse = objectMapper.writeValueAsString(responseMap);
 
                 response.setContentType("application/json");
@@ -140,34 +143,16 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
         }
     }
 
-    public static String appendParamsToUrl(String baseUrl, Map<String, Object> parameters) {
+    public static String appendParamsToUrl(String baseUrl, Map<String, Object> parameters) throws JsonProcessingException {
         StringBuilder urlBuilder = new StringBuilder(baseUrl);
 
-        // Check if the base URL already contains a query parameter
-        boolean hasQuery = baseUrl.contains("?");
-
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            try {
-                // Encode the parameter names and values to handle special characters
-                String encodedKey = URLEncoder.encode(entry.getKey(), "UTF-8");
-                String encodedValue = URLEncoder.encode(entry.getValue().toString(), "UTF-8");
-
-                // Append the key-value pair to the URL
-                if (!hasQuery) {
-                    urlBuilder.append("?");
-                    hasQuery = true;
-                } else {
-                    urlBuilder.append("&");
-                }
-
-                urlBuilder.append(encodedKey)
-                        .append("=")
-                        .append(encodedValue);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace(); // Handle encoding exception as needed
-            }
-        }
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonOfParams = objectMapper.writeValueAsString(parameters);
+        String encodedBase64 = new String(Base64.encodeBase64(jsonOfParams.getBytes()));
+        urlBuilder.append("?");
+        urlBuilder.append("result")
+                .append("=")
+                .append(encodedBase64);
         return urlBuilder.toString();
     }
 
