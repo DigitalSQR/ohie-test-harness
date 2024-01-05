@@ -58,21 +58,11 @@ public class UserServiceServiceImpl implements UserService {
     @Autowired
     private DefaultTokenServices defaultTokenServices;
 
-    private static void validateThatOldAndNewPasswordIsDifferent(UpdatePasswordInfo updatePasswordInfo) throws DataValidationErrorException {
-        if (updatePasswordInfo.getOldPassword().equals(updatePasswordInfo.getNewPassword())) {
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setElement("password");
-            validationResultInfo.setMessage("Old password and new password can not be the same.");
-            throw new DataValidationErrorException("Error(s) occurred in the validating", Collections.singletonList(validationResultInfo));
-        }
-    }
 
     private static void validateUpdatePasswordInfoAgainstNullValues(UpdatePasswordInfo updatePasswordInfo) throws DataValidationErrorException {
         List<ValidationResultInfo> errors = new ArrayList<>();
         ValidationUtils.validateRequired(updatePasswordInfo.getBase64TokenId(), "base64TokenId", errors);
         ValidationUtils.validateRequired(updatePasswordInfo.getBase64UserEmail(), "base64UserEmail", errors);
-        ValidationUtils.validateRequired(updatePasswordInfo.getOldPassword(), "oldPassword", errors);
         ValidationUtils.validateRequired(updatePasswordInfo.getNewPassword(), "newPassword", errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
@@ -150,8 +140,6 @@ public class UserServiceServiceImpl implements UserService {
         updatePasswordInfo.trimObject();
 
         validateUpdatePasswordInfoAgainstNullValues(updatePasswordInfo);
-
-        validateThatOldAndNewPasswordIsDifferent(updatePasswordInfo);
 
         Boolean isTokenVerified = tokenVerificationService
                 .verifyUserToken(updatePasswordInfo.getBase64TokenId(), updatePasswordInfo.getBase64UserEmail(), true, contextInfo);
