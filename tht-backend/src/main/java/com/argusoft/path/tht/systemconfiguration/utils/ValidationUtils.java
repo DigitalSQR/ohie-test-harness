@@ -666,4 +666,13 @@ public final class ValidationUtils {
                         threshold))
         );
     }
+
+    public static <T> boolean isAnyNull(T... objects) {
+        for (T obj : objects) {
+            if (obj == null) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

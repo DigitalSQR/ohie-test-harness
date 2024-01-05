@@ -146,6 +146,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
         </dependency>
+        <!-- Other dependencies -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.27</version> <!-- Use the latest version available -->
+        </dependency>
 
     </dependencies>
 
