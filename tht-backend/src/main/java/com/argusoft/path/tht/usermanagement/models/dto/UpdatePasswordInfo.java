@@ -3,21 +3,11 @@ package com.argusoft.path.tht.usermanagement.models.dto;
 
 public class UpdatePasswordInfo {
 
-    private String oldPassword;
-
     private String newPassword;
 
     private String base64UserEmail;
 
     private String base64TokenId;
-
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
 
     public String getNewPassword() {
         return newPassword;
@@ -46,7 +36,6 @@ public class UpdatePasswordInfo {
     public void trimObject() {
         this.setBase64TokenId(this.getBase64TokenId().trim());
         this.setBase64UserEmail(this.getBase64UserEmail().trim());
-        this.setOldPassword(this.getOldPassword().trim());
         this.setNewPassword(this.getNewPassword().trim());
     }
 }
