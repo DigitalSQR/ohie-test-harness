@@ -31,26 +31,6 @@ public class DataValidationErrorException extends Exception {
         this.validationResults = validationResults;
     }
 
-    public DataValidationErrorException(String message, List<ValidationResultInfo> validationResults, Throwable cause) {
-        super(message, cause);
-        this.validationResults = validationResults;
-    }
-
-    public DataValidationErrorException(String message, Throwable cause) {
-        super(message, cause);
-        this.validationResults = new ArrayList<>();
-    }
-
-    public DataValidationErrorException(String message) {
-        super(message);
-        this.validationResults = new ArrayList<>();
-    }
-
-    public DataValidationErrorException(Throwable cause) {
-        super(cause);
-        this.validationResults = new ArrayList<>();
-    }
-
     public List<ValidationResultInfo> getValidationResults() {
         return validationResults;
     }

@@ -1,11 +1,11 @@
 package com.argusoft.path.tht.testcasemanagement.models.mapper;
 
-import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface DocumentMapper {
@@ -15,6 +15,10 @@ public interface DocumentMapper {
 
     DocumentInfo modelToDto(DocumentEntity componentEntity);
 
-    DocumentEntity DtoToModel(DocumentInfo componentEntity);
+    DocumentEntity dtoToModel(DocumentInfo componentEntity);
+
+    List<DocumentEntity> dtoToModel(List<DocumentInfo> documentInfos);
+
+    List<DocumentInfo> modelToDto(List<DocumentEntity> documentEntities);
 
 }

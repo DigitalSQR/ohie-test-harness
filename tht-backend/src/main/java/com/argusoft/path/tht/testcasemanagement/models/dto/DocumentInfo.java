@@ -11,35 +11,35 @@ public class DocumentInfo  extends IdStateNameMetaInfo implements Serializable {
             allowEmptyValue = false,
             example = "1",
             dataType = "Integer",
-            required = true)
+            required = false)
     private Integer order;
 
     @ApiModelProperty(notes = "The refObjUri of the TestcaseResult",
             allowEmptyValue = false,
             example = "refObjUri",
             dataType = "String",
-            required = true)
+            required = false)
     private String refObjUri;
 
     @ApiModelProperty(notes = "The refId of the TestcaseResult",
             allowEmptyValue = false,
             example = "refId",
             dataType = "String",
-            required = true)
+            required = false)
     private String refId;
 
     @ApiModelProperty(notes = "The fileId of the Saved File",
             allowEmptyValue = true,
             example = "fileId",
             dataType = "String",
-            required = true)
+            required = false)
     private String fileId;
 
     @ApiModelProperty(notes = "The fileType of the Saved File",
             allowEmptyValue = true,
             example = "fileType",
             dataType = "String",
-            required = true)
+            required = false)
     private String fileType;
 
     public Integer getOrder() {

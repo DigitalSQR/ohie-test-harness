@@ -22,8 +22,6 @@ public class MultipartFileTypeTesterPredicate implements Predicate<MultipartFile
     public boolean test(MultipartFile multipartFile) {
         try {
             return FileService.validateFileTypeWithAllowedTypes(multipartFile,allowedTypes);
-        } catch (InvalidFileTypeException e) {
-            throw new RuntimeException("File validation failed due to InvalidFileTypeException : "+e.getMessage(),e);
         } catch (OperationFailedException e) {
             throw new RuntimeException("File validation failed due to OperationFailedException : "+e.getMessage(),e);
         }

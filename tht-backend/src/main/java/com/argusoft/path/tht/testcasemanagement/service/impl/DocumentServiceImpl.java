@@ -12,6 +12,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.DocumentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -34,7 +34,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
-                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, IOException {
+                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException {
 
         //get FileType
         String fileType = getFileType(file);
@@ -47,19 +47,42 @@ public class DocumentServiceImpl implements DocumentService {
         }
 
         //save file
-        FileDetails fileDetails = storeFileAndGetFileDetails(file);
+        FileDetails fileDetails = null;
+        try {
+            fileDetails = storeFileAndGetFileDetails(file, validationAllowedTypes);
+        }catch (InvalidFileTypeException e){
+            ValidationResultInfo error = new ValidationResultInfo();
+            error.setMessage(e.getMessage());
+            error.setLevel(ErrorLevel.ERROR);
+            error.setStackTrace(Arrays.toString(e.getStackTrace()));
+            error.setElement("fileType");
+            throw new DataValidationErrorException(e.getMessage(),Collections.singletonList(error));
+        }
 
         //set FileId to DocumentEntity as it is UUID
         documentEntity.setFileId(fileDetails.getFileId());
         documentEntity.setName(fileDetails.getFileName());
+        documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
+        setOrderBasedOnRefObjIdAndUri(documentEntity,contextInfo);
 
         DocumentEntity document = documentRepository.save(documentEntity);
         return document;
     }
 
-    private FileDetails storeFileAndGetFileDetails(MultipartFile file) throws OperationFailedException, IOException, InvalidFileTypeException {
-        MultipartFileTypeTesterPredicate multipartFileTypeTesterPredicate = new MultipartFileTypeTesterPredicate(getFileTypePdfPngJpeg());
-        FileDetails fileDetails = FileService.storeFile(file, multipartFileTypeTesterPredicate);
+    private void setOrderBasedOnRefObjIdAndUri(DocumentEntity documentEntity,ContextInfo contextInfo) {
+        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = this.getDocumentsByRefObjectUriAndRefObjectId(documentEntity.getRefObjUri(), documentEntity.getRefId(), contextInfo);
+        int size = documentsByRefObjectUriAndRefObjectId.size();
+        documentEntity.setOrder(size+1);
+    }
+
+    private FileDetails storeFileAndGetFileDetails(MultipartFile file, List<String> allowedFileTypes) throws OperationFailedException, InvalidFileTypeException {
+        MultipartFileTypeTesterPredicate multipartFileTypeTesterPredicate = new MultipartFileTypeTesterPredicate(allowedFileTypes);
+        FileDetails fileDetails = null;
+        try {
+            fileDetails = FileService.storeFile(file, multipartFileTypeTesterPredicate);
+        } catch (IOException e) {
+            throw new OperationFailedException("Operation Failed due to IOException",e);
+        }
         return fileDetails;
     }
 
@@ -95,14 +118,6 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-    private List<String> getFileTypePdfPngJpeg(){
-        List<String> validationAgainstTypes = new ArrayList<>();
-        validationAgainstTypes.add("application/pdf");
-        validationAgainstTypes.add("image/png");
-        validationAgainstTypes.add("image/jpeg");
-
-        return validationAgainstTypes;
-    }
 
     @Override
     public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException {
@@ -122,7 +137,17 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException {
+    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        if(orderId<0){
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setMessage("orderId cannot be lesser than 0");
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setElement("orderId");
+            errors.add(validationResultInfo);
+            throw new DataValidationErrorException("Error(s) occured in validating ",errors);
+        }
+
         DocumentEntity document = this.getDocument(documentId, contextInfo);
 
         String refObjUri = document.getRefObjUri();
@@ -160,7 +185,21 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException {
+    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
+
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        //validate given stateKey
+        boolean contains = DocumentServiceConstants.documentStatuses.contains(stateKey);
+        if(!contains){
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setElement("stateKey");
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("provided stateKey is not valid ");
+            errors.add(validationResultInfo);
+            throw new DataValidationErrorException("Validation Failed due to errors ",errors);
+        }
+
         DocumentEntity document = this.getDocument(documentId, contextInfo);
         document.setState(stateKey);
         documentRepository.save(document);
