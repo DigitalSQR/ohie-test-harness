@@ -17,6 +17,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.DocumentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -204,5 +205,31 @@ public class DocumentServiceImpl implements DocumentService {
         document.setState(stateKey);
         documentRepository.save(document);
         return document;
+    }
+
+    @Override
+    public ByteArrayResource getByteArrayResourceByDocumentId(String documentId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
+        DocumentEntity document = this.getDocument(documentId, contextInfo);
+        String fileId = document.getFileId();
+        byte[] fileContentByFilePathAndFileName = getFileContentByFileId(fileId);
+        return new ByteArrayResource(fileContentByFilePathAndFileName);
+    }
+
+    @Override
+    public ByteArrayResource getByteArrayResourceByFileId(String fileId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
+        DocumentEntity documentByFileId = this.getDocumentByFileId(fileId, contextInfo);
+        String documentFileId = documentByFileId.getFileId();
+        byte[] fileContentByFilePathAndFileName = getFileContentByFileId(documentFileId);
+        return new ByteArrayResource(fileContentByFilePathAndFileName);
+    }
+
+    private static byte[] getFileContentByFileId(String fileId) throws OperationFailedException {
+        byte[] fileContentByFilePathAndFileName;
+        try {
+            fileContentByFilePathAndFileName = FileService.getFileContentByFilePathAndFileName(null, fileId);
+        } catch (IOException e) {
+            throw new OperationFailedException("Exception occurred due to I/O Exception",e);
+        }
+        return fileContentByFilePathAndFileName;
     }
 }

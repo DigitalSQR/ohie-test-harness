@@ -6,6 +6,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,5 +100,24 @@ public interface DocumentService {
      * @throws DataValidationErrorException when validation fails
      */
     public DocumentEntity changeState(String documentId, String stateKey ,ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException;
+
+
+    /**
+     * get ByteArrayResource to send to the user by documentId
+     *
+     * @param documentId documentId in which file is associated
+     * @param contextInfo ContextInfo
+     * @return ByteArrayResource of file
+     */
+    public ByteArrayResource getByteArrayResourceByDocumentId(String documentId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException;
+
+    /**
+     * get ByteArrayResource to send to the user by fileId
+     *
+     * @param fileId fileId
+     * @param contextInfo ContextInfo
+     * @return ByteArrayResource of file
+     */
+    public ByteArrayResource getByteArrayResourceByFileId(String fileId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException;
 
 }

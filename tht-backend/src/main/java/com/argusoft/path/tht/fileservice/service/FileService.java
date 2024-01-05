@@ -5,6 +5,7 @@ import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +46,9 @@ public class FileService {
 
         String randomUUID = UUID.randomUUID().toString();
 
+        String extension = FilenameUtils.getExtension(fileName);
+        randomUUID = randomUUID +"."+extension;
+
         // Construct the path for the new file
         Path filePath = resourcesPath.resolve(randomUUID);
 
@@ -63,6 +67,15 @@ public class FileService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static byte[] getFileContentByFilePathAndFileName(String filePath,String fileName) throws IOException {
+        if(filePath==null){
+            filePath = RESOURCE_FOLDER;
+        }
+        Path path = Paths.get(filePath);
+        path = path.resolve(fileName);
+        return Files.readAllBytes(path);
     }
 
     public static String detectInputStreamTypeWithTika(InputStream inputStream) throws IOException {

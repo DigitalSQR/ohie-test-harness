@@ -14,6 +14,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -119,6 +124,32 @@ public class DocumentRestController {
                                             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
         DocumentEntity updatedDocumentEntity = documentService.changeOrder(documentId, orderId, contextInfo);
         return documentMapper.modelToDto(updatedDocumentEntity);
+    }
+
+
+    @ApiOperation(value = "To download the document", response = DocumentInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully Downloaded Document"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @GetMapping("/file/{documentId}")
+    public ResponseEntity<Resource> getFileByDocument(@PathVariable("documentId") String documentId,
+                                                      @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException,
+            OperationFailedException {
+        ByteArrayResource byteArrayResourceByDocumentId = documentService.getByteArrayResourceByDocumentId(documentId, contextInfo);
+        DocumentEntity document = documentService.getDocument(documentId, contextInfo);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + document.getName());
+
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(byteArrayResourceByDocumentId.contentLength())
+                .body(byteArrayResourceByDocumentId);
     }
 
 
