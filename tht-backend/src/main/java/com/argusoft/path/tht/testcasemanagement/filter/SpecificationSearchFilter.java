@@ -32,11 +32,6 @@ public class SpecificationSearchFilter {
     private String state;
 
     @ApiParam(
-            value = "stateSearchType of the specification"
-    )
-    private SearchType stateSearchType;
-
-    @ApiParam(
             value = "componentId of the specification"
     )
     private String componentId;
@@ -52,13 +47,11 @@ public class SpecificationSearchFilter {
     public SpecificationSearchFilter(String name,
                                      SearchType nameSearchType,
                                      String state,
-                                     SearchType stateSearchType,
                                      String componentId,
                                      Boolean isManual) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
-        this.stateSearchType = stateSearchType;
         this.componentId = componentId;
         this.isManual = isManual;
     }
@@ -101,18 +94,6 @@ public class SpecificationSearchFilter {
     public void setState(String state) {
         this.state = state;
     }
-
-    public SearchType getStateSearchType() {
-        if (stateSearchType == null) {
-            return SearchType.CONTAINING;
-        }
-        return stateSearchType;
-    }
-
-    public void setStateSearchType(SearchType stateSearchType) {
-        this.stateSearchType = stateSearchType;
-    }
-
     public String getComponentId() {
         return componentId;
     }

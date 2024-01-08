@@ -32,11 +32,6 @@ public class TestcaseOptionSearchFilter {
     private String state;
 
     @ApiParam(
-            value = "stateSearchType of the testcaseOption"
-    )
-    private SearchType stateSearchType;
-
-    @ApiParam(
             value = "testcaseId of the testcaseOption"
     )
     private String testcaseId;
@@ -47,12 +42,10 @@ public class TestcaseOptionSearchFilter {
     public TestcaseOptionSearchFilter(String name,
                                       SearchType nameSearchType,
                                       String state,
-                                      SearchType stateSearchType,
                                       String testcaseId) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
-        this.stateSearchType = stateSearchType;
         this.testcaseId = testcaseId;
     }
 
@@ -86,18 +79,6 @@ public class TestcaseOptionSearchFilter {
     public void setState(String state) {
         this.state = state;
     }
-
-    public SearchType getStateSearchType() {
-        if (stateSearchType == null) {
-            return SearchType.CONTAINING;
-        }
-        return stateSearchType;
-    }
-
-    public void setStateSearchType(SearchType stateSearchType) {
-        this.stateSearchType = stateSearchType;
-    }
-
     public String getTestcaseId() {
         return testcaseId;
     }

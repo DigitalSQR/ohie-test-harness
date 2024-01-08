@@ -136,7 +136,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     && Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
                 TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
                         null, SearchType.CONTAINING,
-                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, SearchType.EXACTLY,
+                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS,
                         null,
                         TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
                         testRequestId,
@@ -178,7 +178,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             if (!Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
                 TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
                         null, SearchType.CONTAINING,
-                        null, SearchType.CONTAINING,
+                        null,
                         null,
                         TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
                         testRequestId,
