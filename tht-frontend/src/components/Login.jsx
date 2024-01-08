@@ -295,7 +295,7 @@ export default function Login() {
                   </button>
                   <h6 style={{ textAlign: "center" }}>OR</h6>
                   <h4 style={{ textAlign: "center" }}>
-                    <a href="/login/oauth2/authorization/google">
+                    <a href="/api/oauth2/authorization/google">
                       Login with Google
                     </a>
                   </h4>
