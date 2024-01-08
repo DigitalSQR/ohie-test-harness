@@ -162,6 +162,9 @@ public class TestcaseExecutioner {
                 .put(testRequestEntity.getId(), testRequestTestcaseResult);
 
         for (ComponentEntity componentEntity : activeComponents) {
+            if(!testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> componentEntity.getId().equals(testRequestUrlEntity.getComponent().getId()))) {
+                continue;
+            }
             TestcaseResultEntity componentTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(
                     ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
                     componentEntity.getId(),
