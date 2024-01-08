@@ -109,22 +109,7 @@ INSERT INTO specification (
        Now(),
        Now(),
        0
-   ),
-   (
-     'specification.cr.crf.3',
-     'CRF-3',
-     'CRF-3 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
-     'specification.status.active',
-     3,
-     true,
-     'component.client.repository',
-     'ivasiwala@argusoft.com',
-     'ivasiwala@argusoft.com',
-     Now(),
-     Now(),
-     0
-      )
-   ;
+   );
 
 INSERT INTO testcase (
    	    id,
@@ -262,23 +247,7 @@ INSERT INTO testcase (
          Now(),
          Now(),
          0
-    ),
-         (
-                  'testcase.cr.crf.3.1',
-                  'Verify inbound/outbound transaction',
-                   'Test case verify the ability to keep record of both message it receives and the messages it sends and can be reviewed/monitored',
-                   'testcase.status.active',
-                    1,
-                    false,
-                    false,
-                    'CRF3TestCase1',
-                    'specification.cr.crf.3',
-                    'ivasiwala@argusoft.com',
-                    'ivasiwala@argusoft.com',
-                    Now(),
-                    Now(),
-                    0
-         );
+    );
 
 
 INSERT INTO testcase_option (
