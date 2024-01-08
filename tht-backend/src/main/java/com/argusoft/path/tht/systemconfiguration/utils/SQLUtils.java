@@ -36,7 +36,7 @@ public final class SQLUtils {
         if (separate) {
             stringBuilder.append("AND ");
         }
-        if(SearchType.EXACTLY.equals(searchType)) {
+        if (SearchType.EXACTLY.equals(searchType)) {
             stringBuilder
                     .append(tableName).append(".").append(columnName)
                     .append(" = :").append(columnName).append(" ");
@@ -84,10 +84,10 @@ public final class SQLUtils {
             String saperator = "";
             for (Sort.Order order : pageable.getSort()) {
                 jpql
-                    .append(saperator)
-                    .append(tableName + "." + order.getProperty())
-                    .append(" ")
-                    .append(order.isDescending() ? "DESC" : "");
+                        .append(saperator)
+                        .append(tableName + "." + order.getProperty())
+                        .append(" ")
+                        .append(order.isDescending() ? "DESC" : "");
                 saperator = ",";
             }
         }
