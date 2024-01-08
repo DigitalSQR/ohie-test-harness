@@ -1,8 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.constant;
 
-import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
-import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,5 +20,5 @@ public class DocumentServiceConstants {
         documentStatuses.add(DOCUMENT_STATUS_INACTIVE);
     }
 
-    
+
 }

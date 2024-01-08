@@ -3,9 +3,7 @@ package com.argusoft.path.tht.testcasemanagement.repository;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.utils.SQLUtils;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.filter.DocumentSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class DocumentCustomRepositoryImpl implements DocumentCustomRepository{
+public class DocumentCustomRepositoryImpl implements DocumentCustomRepository {
 
     @Autowired
     private EntityManager entityManager;

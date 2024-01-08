@@ -1,11 +1,10 @@
 package com.argusoft.path.tht.fileservice.service;
 
 import com.argusoft.path.tht.fileservice.FileDetails;
-import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
+import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,12 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import java.io.InputStream;
 
 @Service
 public class FileService {
@@ -31,7 +30,7 @@ public class FileService {
 
         // Validate file type
         boolean test = multipartFilePredicateToValidateFile.test(multipartFile);
-        if(!test){
+        if (!test) {
             throw new InvalidFileTypeException("File Type Validation Failed");
         }
         String fileName = multipartFile.getOriginalFilename();
@@ -47,7 +46,7 @@ public class FileService {
         String randomUUID = UUID.randomUUID().toString();
 
         String extension = FilenameUtils.getExtension(fileName);
-        randomUUID = randomUUID +"."+extension;
+        randomUUID = randomUUID + "." + extension;
 
         // Construct the path for the new file
         Path filePath = resourcesPath.resolve(randomUUID);
@@ -69,8 +68,8 @@ public class FileService {
         }
     }
 
-    public static byte[] getFileContentByFilePathAndFileName(String filePath,String fileName) throws IOException {
-        if(filePath==null){
+    public static byte[] getFileContentByFilePathAndFileName(String filePath, String fileName) throws IOException {
+        if (filePath == null) {
             filePath = RESOURCE_FOLDER;
         }
         Path path = Paths.get(filePath);
@@ -84,16 +83,16 @@ public class FileService {
     }
 
     public static boolean validateFileType(MultipartFile file, List<String> validateAgainstTypes) throws InvalidFileTypeException, InvalidParameterException, OperationFailedException {
-        if(validateAgainstTypes==null || validateAgainstTypes.isEmpty()){
+        if (validateAgainstTypes == null || validateAgainstTypes.isEmpty()) {
             throw new InvalidParameterException("ValidationAgainstTypes should not be null or empty to validate file type ");
         }
 
         try {
             String actualType = detectInputStreamTypeWithTika(file.getInputStream());
-            if(validateAgainstTypes.contains(actualType)){
+            if (validateAgainstTypes.contains(actualType)) {
                 return true;
             }
-            throw new InvalidFileTypeException("Given file is of type ("+actualType+") which was not expected in given types => "+(String.join(",", validateAgainstTypes)));
+            throw new InvalidFileTypeException("Given file is of type (" + actualType + ") which was not expected in given types => " + (String.join(",", validateAgainstTypes)));
         } catch (IOException e) {
             throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
         }
@@ -106,7 +105,7 @@ public class FileService {
         try {
             return validateFileType(file, allowedTypes);
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("File validation failed due to InvalidParameterException : "+e.getMessage(),e);
+            throw new OperationFailedException("File validation failed due to InvalidParameterException : " + e.getMessage(), e);
         }
     }
 

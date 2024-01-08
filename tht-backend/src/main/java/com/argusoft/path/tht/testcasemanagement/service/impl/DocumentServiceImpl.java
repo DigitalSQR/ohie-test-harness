@@ -33,6 +33,16 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     DocumentRepository documentRepository;
 
+    private static byte[] getFileContentByFileId(String fileId) throws OperationFailedException {
+        byte[] fileContentByFilePathAndFileName;
+        try {
+            fileContentByFilePathAndFileName = FileService.getFileContentByFilePathAndFileName(null, fileId);
+        } catch (IOException e) {
+            throw new OperationFailedException("Exception occurred due to I/O Exception", e);
+        }
+        return fileContentByFilePathAndFileName;
+    }
+
     @Override
     public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
                                          List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException {
@@ -43,37 +53,37 @@ public class DocumentServiceImpl implements DocumentService {
 
         //validate documentEntity
         List<ValidationResultInfo> errors = validateDocumentEntity(com.argusoft.path.tht.systemconfiguration.constant.Constant.CREATE_VALIDATION, documentEntity, contextInfo);
-        if(ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)){
-            throw new DataValidationErrorException("Error(s) occurred validating ",errors);
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException("Error(s) occurred validating ", errors);
         }
 
         //save file
         FileDetails fileDetails = null;
         try {
             fileDetails = storeFileAndGetFileDetails(file, validationAllowedTypes);
-        }catch (InvalidFileTypeException e){
+        } catch (InvalidFileTypeException e) {
             ValidationResultInfo error = new ValidationResultInfo();
             error.setMessage(e.getMessage());
             error.setLevel(ErrorLevel.ERROR);
             error.setStackTrace(Arrays.toString(e.getStackTrace()));
             error.setElement("fileType");
-            throw new DataValidationErrorException(e.getMessage(),Collections.singletonList(error));
+            throw new DataValidationErrorException(e.getMessage(), Collections.singletonList(error));
         }
 
         //set FileId to DocumentEntity as it is UUID
         documentEntity.setFileId(fileDetails.getFileId());
         documentEntity.setName(fileDetails.getFileName());
         documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
-        setOrderBasedOnRefObjIdAndUri(documentEntity,contextInfo);
+        setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
 
         DocumentEntity document = documentRepository.save(documentEntity);
         return document;
     }
 
-    private void setOrderBasedOnRefObjIdAndUri(DocumentEntity documentEntity,ContextInfo contextInfo) {
+    private void setOrderBasedOnRefObjIdAndUri(DocumentEntity documentEntity, ContextInfo contextInfo) {
         List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = this.getDocumentsByRefObjectUriAndRefObjectId(documentEntity.getRefObjUri(), documentEntity.getRefId(), contextInfo);
         int size = documentsByRefObjectUriAndRefObjectId.size();
-        documentEntity.setOrder(size+1);
+        documentEntity.setOrder(size + 1);
     }
 
     private FileDetails storeFileAndGetFileDetails(MultipartFile file, List<String> allowedFileTypes) throws OperationFailedException, InvalidFileTypeException {
@@ -82,18 +92,17 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             fileDetails = FileService.storeFile(file, multipartFileTypeTesterPredicate);
         } catch (IOException e) {
-            throw new OperationFailedException("Operation Failed due to IOException",e);
+            throw new OperationFailedException("Operation Failed due to IOException", e);
         }
         return fileDetails;
     }
 
-
     private List<ValidationResultInfo> validateDocumentEntity(String validationTypeKey,
                                                               DocumentEntity documentEntity,
-                                                              ContextInfo contextInfo){
+                                                              ContextInfo contextInfo) {
         List<ValidationResultInfo> errors = new ArrayList<>();
-        validateRequired(documentEntity,errors);
-        switch (validationTypeKey){
+        validateRequired(documentEntity, errors);
+        switch (validationTypeKey) {
             case com.argusoft.path.tht.systemconfiguration.constant.Constant.CREATE_VALIDATION:
                 //TODO define and add validation for create
                 break;
@@ -104,8 +113,7 @@ public class DocumentServiceImpl implements DocumentService {
         return errors;
     }
 
-
-    private void validateRequired(DocumentEntity documentEntity, List<ValidationResultInfo> errors){
+    private void validateRequired(DocumentEntity documentEntity, List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(documentEntity.getFileType(), "fileType", errors);
         ValidationUtils.validateRequired(documentEntity.getRefId(), "refId", errors);
         ValidationUtils.validateRequired(documentEntity.getRefObjUri(), "refObjUri", errors);
@@ -118,7 +126,6 @@ public class DocumentServiceImpl implements DocumentService {
             throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
         }
     }
-
 
     @Override
     public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException {
@@ -140,13 +147,13 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
         List<ValidationResultInfo> errors = new ArrayList<>();
-        if(orderId<0){
+        if (orderId < 0) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setMessage("orderId cannot be lesser than 0");
             validationResultInfo.setLevel(ErrorLevel.ERROR);
             validationResultInfo.setElement("orderId");
             errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Error(s) occured in validating ",errors);
+            throw new DataValidationErrorException("Error(s) occured in validating ", errors);
         }
 
         DocumentEntity document = this.getDocument(documentId, contextInfo);
@@ -160,25 +167,24 @@ public class DocumentServiceImpl implements DocumentService {
 
         TreeMap<Integer, DocumentEntity> documentEntityTreeMap = new TreeMap<>();
         for (int i = 1; i <= documentsByRefObjectUriAndRefObjectId.size(); i++) {
-            documentEntityTreeMap.put(i,documentsByRefObjectUriAndRefObjectId.get(i--));
+            documentEntityTreeMap.put(i, documentsByRefObjectUriAndRefObjectId.get(i--));
         }
 
         boolean foundTheInBetweenDocumentEntity = false;
-        if(documentEntityTreeMap.containsKey(orderId)){
+        if (documentEntityTreeMap.containsKey(orderId)) {
             for (Map.Entry<Integer, DocumentEntity> integerDocumentEntityEntry : documentEntityTreeMap.entrySet()) {
-                if(Objects.equals(integerDocumentEntityEntry.getKey(), orderId)){
+                if (Objects.equals(integerDocumentEntityEntry.getKey(), orderId)) {
                     foundTheInBetweenDocumentEntity = true;
                 }
-                if(foundTheInBetweenDocumentEntity){
+                if (foundTheInBetweenDocumentEntity) {
                     DocumentEntity documentEntity = integerDocumentEntityEntry.getValue();
-                    documentEntity.setOrder(integerDocumentEntityEntry.getKey()+1);
+                    documentEntity.setOrder(integerDocumentEntityEntry.getKey() + 1);
                     documentRepository.save(documentEntity);
                 }
             }
             document.setOrder(orderId);
-        }
-        else {
-            document.setOrder(documentsByRefObjectUriAndRefObjectId.size()+2);
+        } else {
+            document.setOrder(documentsByRefObjectUriAndRefObjectId.size() + 2);
         }
 
         documentRepository.save(document);
@@ -192,13 +198,13 @@ public class DocumentServiceImpl implements DocumentService {
 
         //validate given stateKey
         boolean contains = DocumentServiceConstants.documentStatuses.contains(stateKey);
-        if(!contains){
+        if (!contains) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setElement("stateKey");
             validationResultInfo.setLevel(ErrorLevel.ERROR);
             validationResultInfo.setMessage("provided stateKey is not valid ");
             errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Validation Failed due to errors ",errors);
+            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
         }
 
         DocumentEntity document = this.getDocument(documentId, contextInfo);
@@ -221,15 +227,5 @@ public class DocumentServiceImpl implements DocumentService {
         String documentFileId = documentByFileId.getFileId();
         byte[] fileContentByFilePathAndFileName = getFileContentByFileId(documentFileId);
         return new ByteArrayResource(fileContentByFilePathAndFileName);
-    }
-
-    private static byte[] getFileContentByFileId(String fileId) throws OperationFailedException {
-        byte[] fileContentByFilePathAndFileName;
-        try {
-            fileContentByFilePathAndFileName = FileService.getFileContentByFilePathAndFileName(null, fileId);
-        } catch (IOException e) {
-            throw new OperationFailedException("Exception occurred due to I/O Exception",e);
-        }
-        return fileContentByFilePathAndFileName;
     }
 }

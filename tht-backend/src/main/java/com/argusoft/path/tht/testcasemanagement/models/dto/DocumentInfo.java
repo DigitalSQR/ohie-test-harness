@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
-public class DocumentInfo  extends IdStateNameMetaInfo implements Serializable {
+public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
 
     @ApiModelProperty(notes = "The unique rank of the component",
             allowEmptyValue = false,
