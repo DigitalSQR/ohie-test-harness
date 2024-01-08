@@ -134,7 +134,7 @@ export default function User() {
   };
   
   return (
-    <div className="wrapper d-flex">
+    <div className="d-flex" id="wrapper">
       <div className="d-inline-flex flex-grow-1 main-container bg-transparent">
         <div className="data-wrapper w-100">
           <div className="heading-title d-flex align-items-center gap-2 font-title">

@@ -147,7 +147,7 @@ h6 {
   justify-content: space-between; }
 
 .login-bg {
-  background: url(./images/login-bg.svg);
+  background: url(../styles/images/login-bg.svg);
   height: 100vh;
   display: flex;
   align-items: center;

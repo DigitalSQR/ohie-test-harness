@@ -7,6 +7,13 @@ import UploadTestCases from "../components/UploadTestCases";
 import WaitingPage from "../components/WaitingPage";
 import SignUp from "../components/SignUp";
 import CongratulationsPage from "../components/CongratulationsPage";
+import ApplicationStatus from "../components/ApplicationStatus";
+import ApplicationRequest from "../components/ApplicationRequest";
+import ApplicationReport from "../components/ApplicationReport";
+import ChooseTest from "../components/ChooseTest";
+import Landing from "../components/Landing";
+import FunctionalTesting from "../components/FunctionalTesting";
+import WorkFlowTesting from "../components/workflow-testing";
 
 const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
@@ -16,20 +23,26 @@ const PrivateRoute = () => {
 };
 
 const routes = createBrowserRouter([
-  {path:'/waiting',element:<WaitingPage/>},
+  { path: "/waiting", element: <WaitingPage /> },
   { path: "/login", element: <Login /> },
   { path: "/SignUp", element: <SignUp /> },
   { path: "/CongratulationsPage", element: <CongratulationsPage /> },
-  {path:"/signup",element:<SignUp/>},
+  { path: "application-report", element: <ApplicationReport /> },
   {
     path: "/dashboard",
-    element: <PrivateRoute/>,
+    element: <PrivateRoute />,
     children: [
-      { path: "user", element: <User/> },
+      { path: "", element: <Landing /> },
+      { path: "user", element: <User /> },
       { path: "testcases", element: <UploadTestCases /> },
+      { path: "application-status", element: <ApplicationStatus /> },
+      { path: "application-request", element: <ApplicationRequest /> },
+      { path: "choose-test", element: <ChooseTest /> },
+      { path: "functional-testing", element: <FunctionalTesting /> },
+      { path: "workflow-testing", element: <WorkFlowTesting /> },
     ],
   },
-  { path: "/", element: <Navigate to="/login" /> }
+  { path: "/", element: <Navigate to="/login" /> },
 ]);
 
 export default routes;
