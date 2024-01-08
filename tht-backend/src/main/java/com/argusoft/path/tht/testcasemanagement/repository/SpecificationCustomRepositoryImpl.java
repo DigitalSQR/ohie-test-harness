@@ -60,7 +60,6 @@ public class SpecificationCustomRepositoryImpl
                     "state",
                     searchFilter.getState(),
                     parameters,
-                    searchFilter.getStateSearchType(),
                     separate,
                     jpql);
 
@@ -70,7 +69,6 @@ public class SpecificationCustomRepositoryImpl
                     "id",
                     searchFilter.getComponentId(),
                     parameters,
-                    SearchType.EXACTLY,
                     separate,
                     jpql);
 

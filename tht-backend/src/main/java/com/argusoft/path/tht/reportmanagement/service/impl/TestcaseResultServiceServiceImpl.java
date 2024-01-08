@@ -108,7 +108,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         } else {
             TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
                     null, SearchType.CONTAINING,
-                    null, SearchType.EXACTLY,
+                    null,
                     null,
                     null,
                     null,
@@ -142,7 +142,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         if (!TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(testRequestEntity.getState())) {
             TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
                     null, SearchType.CONTAINING,
-                    null, SearchType.CONTAINING,
+                    null,
                     null, TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, testRequestId, testRequestId, null, null
             );
             List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();

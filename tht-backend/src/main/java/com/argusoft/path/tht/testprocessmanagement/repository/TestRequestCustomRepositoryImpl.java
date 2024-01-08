@@ -57,7 +57,6 @@ public class TestRequestCustomRepositoryImpl
                     "state",
                     searchFilter.getState(),
                     parameters,
-                    searchFilter.getStateSearchType(),
                     separate,
                     jpql);
         }

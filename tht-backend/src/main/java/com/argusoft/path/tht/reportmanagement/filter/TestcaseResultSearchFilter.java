@@ -32,11 +32,6 @@ public class TestcaseResultSearchFilter {
     private String state;
 
     @ApiParam(
-            value = "stateSearchType of the TestcaseResult"
-    )
-    private SearchType stateSearchType;
-
-    @ApiParam(
             value = "testerId of the TestcaseResult"
     )
     private String testerId;
@@ -72,7 +67,6 @@ public class TestcaseResultSearchFilter {
     public TestcaseResultSearchFilter(String name,
                                       SearchType nameSearchType,
                                       String state,
-                                      SearchType stateSearchType,
                                       String testerId,
                                       String refObjUri,
                                       String refId,
@@ -82,7 +76,6 @@ public class TestcaseResultSearchFilter {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
-        this.stateSearchType = stateSearchType;
         this.testerId = testerId;
         this.refObjUri = refObjUri;
         this.refId = refId;
@@ -144,18 +137,6 @@ public class TestcaseResultSearchFilter {
     public void setState(String state) {
         this.state = state;
     }
-
-    public SearchType getStateSearchType() {
-        if (stateSearchType == null) {
-            return SearchType.CONTAINING;
-        }
-        return stateSearchType;
-    }
-
-    public void setStateSearchType(SearchType stateSearchType) {
-        this.stateSearchType = stateSearchType;
-    }
-
     public String getTesterId() {
         return testerId;
     }

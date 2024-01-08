@@ -22,6 +22,11 @@ public class UserSearchFilter {
     private String name;
 
     @ApiParam(
+            value = "name of the user"
+    )
+    private String state;
+
+    @ApiParam(
             value = "nameSearchType of the user"
     )
     private SearchType nameSearchType;
@@ -36,15 +41,26 @@ public class UserSearchFilter {
 
     public UserSearchFilter(String name,
                             SearchType nameSearchType,
+                            String state,
                             String email) {
         this.name = name;
         this.nameSearchType = nameSearchType;
+        this.state = state;
         this.email = email;
     }
 
     public boolean isEmpty() {
         return StringUtils.isEmpty(name)
-                && StringUtils.isEmpty(email);
+                && StringUtils.isEmpty(email)
+                && StringUtils.isEmpty(state);
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getEmail() {
