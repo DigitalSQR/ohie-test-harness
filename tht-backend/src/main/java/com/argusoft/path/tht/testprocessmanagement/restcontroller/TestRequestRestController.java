@@ -201,6 +201,19 @@ public class TestRequestRestController {
         TestRequestService.startAutomationTestingProcess(testRequestId, contextInfo);
     }
 
+    @ApiOperation(value = "Reinitialize automation testing process", response = Boolean.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully started automation testing process")
+    })
+    @PostMapping("/reinitialize-automation-testing-process/{testRequestId}")
+    @Transactional
+    public void reinitializeAutomationTestingProcess(
+            @PathVariable("testRequestId") String testRequestId,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
+        TestRequestService.reinitializeAutomationTestingProcess(testRequestId, contextInfo);
+    }
+
     @ApiOperation(value = "Start manual testing process", response = Boolean.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully started manual testing process")
