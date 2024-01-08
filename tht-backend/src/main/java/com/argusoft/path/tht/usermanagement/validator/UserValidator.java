@@ -289,7 +289,7 @@ public class UserValidator {
     //Validation For :Password
     private static void validateUserEntityPassword(UserEntity userEntity,
                                                    List<ValidationResultInfo> errors) {
-        ValidationUtils.validateLength(userEntity.getName(),
+        ValidationUtils.validateLength(userEntity.getPassword(),
                 "password",
                 6,
                 255,
