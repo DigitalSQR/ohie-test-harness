@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testprocessmanagement.validator;
 
+import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
@@ -55,7 +56,6 @@ public class TestRequestValidator {
         }
     }
 
-
     public static List<ValidationResultInfo> validateTestRequestStartProcess(
             String testRequestId,
             String validationTypeKey,
@@ -79,7 +79,10 @@ public class TestRequestValidator {
                         Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey) ? Boolean.TRUE : Boolean.FALSE, null
                 );
                 List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
-                if (!testcaseResultEntities.isEmpty()) {
+                if (!testcaseResultEntities.isEmpty()
+                        && testcaseResultEntities.stream().anyMatch(testcaseResultEntity ->
+                        !TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING.equals(testcaseResultEntity.getState())
+                )) {
                     String fieldName = "testRequestId";
                     errors.add(
                             new ValidationResultInfo(fieldName,
