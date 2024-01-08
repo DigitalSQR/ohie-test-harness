@@ -14,35 +14,37 @@ import ChooseTest from "../components/ChooseTest";
 import Landing from "../components/Landing";
 import FunctionalTesting from "../components/FunctionalTesting";
 import WorkFlowTesting from "../components/workflow-testing";
+import GoogleAuth from "../components/GoogleAuth";
 
 const PrivateRoute = () => {
-  const token = useSelector((state) => state.authSlice.access_token);
+	const token = useSelector((state) => state.authSlice.access_token);
 
-  const isAuthenticated = !!token;
-  return isAuthenticated ? <Dashboard /> : <Navigate to="/login" />;
+	const isAuthenticated = !!token;
+	return isAuthenticated ? <Dashboard /> : <Navigate to="/login" />;
 };
 
 const routes = createBrowserRouter([
-  { path: "/waiting", element: <WaitingPage /> },
-  { path: "/login", element: <Login /> },
-  { path: "/SignUp", element: <SignUp /> },
-  { path: "/CongratulationsPage", element: <CongratulationsPage /> },
-  { path: "application-report", element: <ApplicationReport /> },
-  {
-    path: "/dashboard",
-    element: <PrivateRoute />,
-    children: [
-      { path: "", element: <Landing /> },
-      { path: "user", element: <User /> },
-      { path: "testcases", element: <UploadTestCases /> },
-      { path: "application-status", element: <ApplicationStatus /> },
-      { path: "application-request", element: <ApplicationRequest /> },
-      { path: "choose-test", element: <ChooseTest /> },
-      { path: "functional-testing", element: <FunctionalTesting /> },
-      { path: "workflow-testing", element: <WorkFlowTesting /> },
-    ],
-  },
-  { path: "/", element: <Navigate to="/login" /> },
+	{ path: "/waiting", element: <WaitingPage /> },
+	{ path: "/login", element: <Login /> },
+	{ path: "/SignUp", element: <SignUp /> },
+	{ path: "/CongratulationsPage", element: <CongratulationsPage /> },
+	{ path: "application-report", element: <ApplicationReport /> },
+	{ path: "/google/success", element: <GoogleAuth /> },
+	{
+		path: "/dashboard",
+		element: <PrivateRoute />,
+		children: [
+			{ path: "", element: <Landing /> },
+			{ path: "user", element: <User /> },
+			{ path: "testcases", element: <UploadTestCases /> },
+			{ path: "application-status", element: <ApplicationStatus /> },
+			{ path: "application-request", element: <ApplicationRequest /> },
+			{ path: "choose-test", element: <ChooseTest /> },
+			{ path: "functional-testing", element: <FunctionalTesting /> },
+			{ path: "workflow-testing", element: <WorkFlowTesting /> },
+		],
+	},
+	{ path: "/", element: <Navigate to="/login" /> },
 ]);
 
 export default routes;
