@@ -21,6 +21,7 @@ import com.argusoft.path.tht.testcasemanagement.repository.SpecificationReposito
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.argusoft.path.tht.testcasemanagement.validator.SpecificationValidator;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,15 +65,11 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             InvalidParameterException,
             DataValidationErrorException {
 
-        List<ValidationResultInfo> validationResultEntities
-                = this.validateSpecification(Constant.CREATE_VALIDATION,
+        SpecificationValidator.validateSpecification(Constant.CREATE_VALIDATION,
+                this,
                 specificationEntity,
                 contextInfo);
-        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
-                    validationResultEntities);
-        }
+
         if (StringUtils.isEmpty(specificationEntity.getId())) {
             specificationEntity.setId(UUID.randomUUID().toString());
         }
@@ -93,15 +90,12 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             InvalidParameterException,
             DataValidationErrorException {
 
-        List<ValidationResultInfo> validationResultEntitys
-                = this.validateSpecification(Constant.UPDATE_VALIDATION,
+
+        SpecificationValidator.validateSpecification(Constant.UPDATE_VALIDATION,
+                this,
                 specificationEntity,
                 contextInfo);
-        if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    "Error(s) occurred validating",
-                    validationResultEntitys);
-        }
+
         Optional<SpecificationEntity> specificationOptional
                 = SpecificationRepository.findById(specificationEntity.getId());
         specificationEntity = SpecificationRepository.save(specificationEntity);
@@ -203,258 +197,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        if (specificationEntity == null) {
-            throw new InvalidParameterException("specificationEntity is missing");
-        }
-        if (StringUtils.isEmpty(validationTypeKey)) {
-            throw new InvalidParameterException("validationTypeKey is missing");
-        }
-        // VALIDATE
-        List<ValidationResultInfo> errors = new ArrayList<>();
-        SpecificationEntity originalEntity = null;
-        trimSpecification(specificationEntity);
-
-        // check Common Required
-        this.validateCommonRequired(specificationEntity, errors);
-
-        // check Common ForeignKey
-        this.validateCommonForeignKey(specificationEntity, errors, contextInfo);
-
-        // check Common Unique
-        this.validateCommonUnique(specificationEntity,
-                validationTypeKey,
-                errors,
-                contextInfo);
-
-        switch (validationTypeKey) {
-            case Constant.UPDATE_VALIDATION:
-                // get the info
-                if (specificationEntity.getId() != null) {
-                    try {
-                        originalEntity = this
-                                .getSpecificationById(specificationEntity.getId(),
-                                        contextInfo);
-                    } catch (DoesNotExistException | InvalidParameterException ex) {
-                        String fieldName = "id";
-                        errors.add(
-                                new ValidationResultInfo(fieldName,
-                                        ErrorLevel.ERROR,
-                                        "The id supplied to the update does not "
-                                                + "exists"));
-                    }
-                }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                this.validateUpdateSpecification(errors,
-                        specificationEntity,
-                        originalEntity);
-                break;
-            case Constant.CREATE_VALIDATION:
-                this.validateCreateSpecification(errors, specificationEntity, contextInfo);
-                break;
-            default:
-                throw new InvalidParameterException("Invalid validationTypeKey");
-        }
-
-        // For : Id
-        validateSpecificationEntityId(specificationEntity,
-                errors);
-        // For :Name
-        validateSpecificationEntityName(specificationEntity,
-                errors);
-        // For :Order
-        validateSpecificationEntityOrder(specificationEntity,
-                errors);
-        // For :IsFunctional
-        validateSpecificationEntityIsFunctional(specificationEntity,
-                errors);
+        List<ValidationResultInfo> errors = SpecificationValidator.validateCreateUpdateSpecification(validationTypeKey, specificationEntity, this, testcaseService, componentService, contextInfo);
         return errors;
-    }
-
-    protected void validateCommonForeignKey(SpecificationEntity specificationEntity,
-                                            List<ValidationResultInfo> errors,
-                                            ContextInfo contextInfo)
-            throws OperationFailedException,
-            InvalidParameterException {
-        Set<TestcaseEntity> testcaseEntitySet = new HashSet<>();
-        specificationEntity.getTestcases().stream().forEach(item -> {
-            try {
-                testcaseEntitySet.add(testcaseService.getTestcaseById(item.getId(), contextInfo));
-            } catch (DoesNotExistException | InvalidParameterException ex) {
-                String fieldName = "testcase";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "The id supplied for the testcase does not exists"));
-            }
-        });
-        specificationEntity.setTestcases(testcaseEntitySet);
-
-        if (specificationEntity.getComponent() != null) {
-            try {
-                specificationEntity.setComponent(
-                        componentService.getComponentById(specificationEntity.getComponent().getId(), contextInfo)
-                );
-            } catch (DoesNotExistException | InvalidParameterException ex) {
-                String fieldName = "component";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "The id supplied for the component does not exists"));
-            }
-        }
-    }
-
-    //validate update
-    protected void validateUpdateSpecification(List<ValidationResultInfo> errors,
-                                               SpecificationEntity specificationEntity,
-                                               SpecificationEntity originalEntity)
-            throws OperationFailedException,
-            InvalidParameterException {
-        // required validation
-        ValidationUtils.validateRequired(specificationEntity.getId(), "id", errors);
-        //check the meta required
-        if (specificationEntity.getVersion() == null) {
-            String fieldName = "meta.version";
-            errors.add(new ValidationResultInfo(fieldName,
-                    ErrorLevel.ERROR,
-                    fieldName + " must be provided"));
-        }
-        // check meta version id
-        else if (!specificationEntity.getVersion()
-                .equals(originalEntity.getVersion())) {
-            String fieldName = "meta.version";
-            errors.add(new ValidationResultInfo(fieldName,
-                    ErrorLevel.ERROR,
-                    "someone else has updated the Specification since you"
-                            + " started updating, you might want to"
-                            + " refresh your copy."));
-        }
-        // check not updatable fields
-        this.validateNotUpdatable(errors, specificationEntity, originalEntity);
-    }
-
-    //validate not update
-    protected void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                        SpecificationEntity specificationEntity,
-                                        SpecificationEntity originalEntity) {
-    }
-
-    //validate create
-    protected void validateCreateSpecification(
-            List<ValidationResultInfo> errors,
-            SpecificationEntity specificationEntity,
-            ContextInfo contextInfo) {
-        if (specificationEntity.getId() != null) {
-            try {
-                this.getSpecificationById(specificationEntity.getId(),
-                        contextInfo);
-                // if info found with same id than
-                String fieldName = "id";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "The id supplied to the create already exists"));
-            } catch (DoesNotExistException | InvalidParameterException ex) {
-                // This is ok because created id should be unique
-            }
-        }
-    }
-
-    //Validate Required
-    protected void validateCommonRequired(SpecificationEntity specificationEntity,
-                                          List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(specificationEntity.getName(), "name", errors);
-        ValidationUtils.validateRequired(specificationEntity.getComponent(), "component", errors);
-    }
-
-    //Validate Common Unique
-    protected void validateCommonUnique(SpecificationEntity specificationEntity,
-                                        String validationTypeKey,
-                                        List<ValidationResultInfo> errors,
-                                        ContextInfo contextInfo)
-            throws OperationFailedException {
-        // check unique field
-        if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || specificationEntity.getId() != null)
-                && StringUtils.isEmpty(specificationEntity.getName())) {
-            SpecificationSearchFilter searchFilter = new SpecificationSearchFilter();
-            searchFilter.setName(specificationEntity.getName());
-            Page<SpecificationEntity> specificationEntities = this
-                    .searchSpecifications(
-                            null,
-                            searchFilter,
-                            Constant.TWO_VALUE_PAGE,
-                            contextInfo);
-
-            // if info found with same name than and not current id
-            boolean flag
-                    = specificationEntities.stream().anyMatch(c -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
-                    || !c.getId().equals(specificationEntity.getId()))
-            );
-            if (flag) {
-                String fieldName = "name";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "Given Specification with same name already exists."));
-            }
-        }
-    }
-
-    //Validation For :Id
-    protected void validateSpecificationEntityId(SpecificationEntity specificationEntity,
-                                                 List<ValidationResultInfo> errors) {
-        ValidationUtils.validateNotEmpty(specificationEntity.getId(), "id", errors);
-    }
-
-    //Validation For :Name
-    protected void validateSpecificationEntityName(SpecificationEntity specificationEntity,
-                                                   List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(specificationEntity.getName(),
-                "name",
-                Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
-                errors);
-        ValidationUtils.validateLength(specificationEntity.getName(),
-                "name",
-                3,
-                1000,
-                errors);
-    }
-
-    //Validation For :Order
-    protected void validateSpecificationEntityOrder(SpecificationEntity specificationEntity,
-                                                    List<ValidationResultInfo> errors) {
-        ValidationUtils.validateIntegerRange(specificationEntity.getRank(),
-                "rank",
-                1,
-                null,
-                errors);
-    }
-
-    //Validation For :IsFunctional
-    protected void validateSpecificationEntityIsFunctional(SpecificationEntity specificationEntity,
-                                                           List<ValidationResultInfo> errors) {
-    }
-
-    //Validation For :ComponentId
-    protected void validateSpecificationEntityComponentId(SpecificationEntity specificationEntity,
-                                                          List<ValidationResultInfo> errors) {
-    }
-
-    //trim all Specification field
-    protected void trimSpecification(SpecificationEntity SpecificationEntity) {
-        if (SpecificationEntity.getId() != null) {
-            SpecificationEntity.setId(SpecificationEntity.getId().trim());
-        }
-        if (SpecificationEntity.getName() != null) {
-            SpecificationEntity.setName(SpecificationEntity.getName().trim());
-        }
-        if (SpecificationEntity.getDescription() != null) {
-            SpecificationEntity.setDescription(SpecificationEntity.getDescription().trim());
-        }
     }
 }
