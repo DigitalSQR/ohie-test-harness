@@ -59,7 +59,6 @@ public class TestcaseCustomRepositoryImpl
                     "state",
                     searchFilter.getState(),
                     parameters,
-                    searchFilter.getStateSearchType(),
                     separate,
                     jpql);
 
@@ -68,7 +67,6 @@ public class TestcaseCustomRepositoryImpl
                     "id",
                     searchFilter.getSpecificationId(),
                     parameters,
-                    SearchType.EXACTLY,
                     separate,
                     jpql);
 

@@ -31,11 +31,6 @@ public class TestRequestSearchFilter {
     )
     private String state;
 
-    @ApiParam(
-            value = "stateSearchType of the testRequest"
-    )
-    private SearchType stateSearchType;
-
     public TestRequestSearchFilter() {
     }
 
@@ -46,7 +41,6 @@ public class TestRequestSearchFilter {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
-        this.stateSearchType = stateSearchType;
     }
 
     public boolean isEmpty() {
@@ -78,16 +72,5 @@ public class TestRequestSearchFilter {
 
     public void setState(String state) {
         this.state = state;
-    }
-
-    public SearchType getStateSearchType() {
-        if (stateSearchType == null) {
-            return SearchType.CONTAINING;
-        }
-        return stateSearchType;
-    }
-
-    public void setStateSearchType(SearchType stateSearchType) {
-        this.stateSearchType = stateSearchType;
     }
 }

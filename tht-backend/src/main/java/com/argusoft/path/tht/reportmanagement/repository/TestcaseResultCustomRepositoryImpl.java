@@ -60,7 +60,6 @@ public class TestcaseResultCustomRepositoryImpl
                     "state",
                     searchFilter.getState(),
                     parameters,
-                    searchFilter.getStateSearchType(),
                     separate,
                     jpql);
 
@@ -69,7 +68,6 @@ public class TestcaseResultCustomRepositoryImpl
                     "id",
                     searchFilter.getTesterId(),
                     parameters,
-                    SearchType.EXACTLY,
                     separate,
                     jpql);
 
@@ -78,7 +76,6 @@ public class TestcaseResultCustomRepositoryImpl
                     "refId",
                     searchFilter.getRefId(),
                     parameters,
-                    SearchType.EXACTLY,
                     separate,
                     jpql);
 
@@ -87,7 +84,6 @@ public class TestcaseResultCustomRepositoryImpl
                     "refObjUri",
                     searchFilter.getRefObjUri(),
                     parameters,
-                    SearchType.EXACTLY,
                     separate,
                     jpql);
 
@@ -96,7 +92,6 @@ public class TestcaseResultCustomRepositoryImpl
                     "testRequestId",
                     searchFilter.getTestRequestId(),
                     parameters,
-                    SearchType.EXACTLY,
                     separate,
                     jpql);
 
@@ -113,7 +108,6 @@ public class TestcaseResultCustomRepositoryImpl
                     "id",
                     searchFilter.getParentTestcaseResultId(),
                     parameters,
-                    SearchType.EXACTLY,
                     separate,
                     jpql);
         }
