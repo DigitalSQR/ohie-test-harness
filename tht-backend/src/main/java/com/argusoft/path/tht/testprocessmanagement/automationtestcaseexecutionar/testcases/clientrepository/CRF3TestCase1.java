@@ -32,37 +32,43 @@ public class CRF3TestCase1 implements TestCase{
                     .resource(newPatient)
                     .execute();
 
+            // Checking whether patient is created or not
+            if(!patientOutcome.getCreated())
+            {
+                return new ValidationResultInfo("testCRF3",ErrorLevel.ERROR,"Failed to create patient");
+            }
+
             // Retrieving the Patient's ID
             String PatientId = patientOutcome.getResource().getIdElement().getIdPart();
 
             // Searching for AuditEvent related to the created Patient
             Bundle auditEventBundle = (Bundle) client.search().forResource(AuditEvent.class)
                     .where(new ReferenceClientParam("patient").hasId(PatientId))
+                    .where(new TokenClientParam("action").exactly().code("C"))
                     .prettyPrint()
                     .execute();
 
-            if (auditEventBundle.hasEntry()) {
-
-                // Reading Patient
-                Patient retrievedPatient = client.read()
-                        .resource(Patient.class)
-                        .withId(PatientId)
-                        .execute();
-
-                // Searching for specific AuditEvent related to the Read Patient
-                Bundle specificAuditEventBundle = (Bundle) client.search().forResource(AuditEvent.class)
-                        .where(new ReferenceClientParam("patient").hasId(PatientId))
-                        .where(new TokenClientParam("action").exactly().code("R"))
-                        .prettyPrint().execute();
-
-                if (specificAuditEventBundle.hasEntry()) {
-                    return new ValidationResultInfo("testCRF3", ErrorLevel.OK, "Passed");
-                } else {
-                    return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed due to failure of outbound transaction");
-                }
-            } else {
-                return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed due to failure of inbound transaction");
+            if (!auditEventBundle.hasEntry()) {
+                return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed due to non presence of inbound transaction");
             }
+
+
+            // Reading Patient
+            Patient retrievedPatient = client.read()
+                    .resource(Patient.class)
+                    .withId(PatientId)
+                    .execute();
+            // Searching for specific AuditEvent related to the Read Patient
+            Bundle specificAuditEventBundle = (Bundle) client.search().forResource(AuditEvent.class)
+                    .where(new ReferenceClientParam("patient").hasId(PatientId))
+                    .where(new TokenClientParam("action").exactly().code("R"))
+                    .prettyPrint().execute();
+
+            if (!specificAuditEventBundle.hasEntry()) {
+                System.out.println("Failed due to non presence of outbound transaction");
+                return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed due to non presence of outbound transaction");
+            }
+            return new ValidationResultInfo("testCRF3", ErrorLevel.OK, "Passed");
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);
         }
