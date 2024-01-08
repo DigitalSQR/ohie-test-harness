@@ -25,7 +25,7 @@ import java.util.Set;
 public class ComponentValidator {
 
 
-    public static void validateComponent(String validationTypeKey, ComponentService componentService , ComponentEntity componentEntity, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+    public static void validateComponent(String validationTypeKey, ComponentService componentService, ComponentEntity componentEntity, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntities
                 = componentService.validateComponent(validationTypeKey,
                 componentEntity,
@@ -60,7 +60,7 @@ public class ComponentValidator {
         validateCommonRequired(componentEntity, errors);
 
         // check Common ForeignKey
-        validateCommonForeignKey(componentEntity, errors, specificationService,contextInfo);
+        validateCommonForeignKey(componentEntity, errors, specificationService, contextInfo);
 
         // check Common Unique
         validateCommonUnique(componentEntity,
@@ -118,9 +118,9 @@ public class ComponentValidator {
     }
 
     private static void validateCommonForeignKey(ComponentEntity componentEntity,
-                                            List<ValidationResultInfo> errors,
-                                            SpecificationService specificationService,
-                                            ContextInfo contextInfo)
+                                                 List<ValidationResultInfo> errors,
+                                                 SpecificationService specificationService,
+                                                 ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
         //validate Component foreignKey.
@@ -141,8 +141,8 @@ public class ComponentValidator {
 
     //validate update
     private static void validateUpdateComponent(List<ValidationResultInfo> errors,
-                                           ComponentEntity componentEntity,
-                                           ComponentEntity originalEntity)
+                                                ComponentEntity componentEntity,
+                                                ComponentEntity originalEntity)
             throws OperationFailedException,
             InvalidParameterException {
         // required validation
@@ -170,8 +170,8 @@ public class ComponentValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                        ComponentEntity componentEntity,
-                                        ComponentEntity originalEntity) {
+                                             ComponentEntity componentEntity,
+                                             ComponentEntity originalEntity) {
     }
 
     //validate create
@@ -198,16 +198,16 @@ public class ComponentValidator {
 
     //Validate Required
     private static void validateCommonRequired(ComponentEntity componentEntity,
-                                          List<ValidationResultInfo> errors) {
+                                               List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(componentEntity.getName(), "name", errors);
     }
 
     //Validate Common Unique
     private static void validateCommonUnique(ComponentEntity componentEntity,
-                                        String validationTypeKey,
-                                        List<ValidationResultInfo> errors,
-                                        ComponentService componentService,
-                                        ContextInfo contextInfo)
+                                             String validationTypeKey,
+                                             List<ValidationResultInfo> errors,
+                                             ComponentService componentService,
+                                             ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || componentEntity.getId() != null)
@@ -238,13 +238,13 @@ public class ComponentValidator {
 
     //Validation For :Id
     private static void validateComponentEntityId(ComponentEntity componentEntity,
-                                             List<ValidationResultInfo> errors) {
+                                                  List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(componentEntity.getId(), "id", errors);
     }
 
     //Validation For :Name
     private static void validateComponentEntityName(ComponentEntity componentEntity,
-                                               List<ValidationResultInfo> errors) {
+                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(componentEntity.getName(),
                 "name",
                 Constant.ALLOWED_CHARS_IN_NAMES,
@@ -259,7 +259,7 @@ public class ComponentValidator {
 
     //Validation For :Order
     private static void validateComponentEntityOrder(ComponentEntity componentEntity,
-                                                List<ValidationResultInfo> errors) {
+                                                     List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(componentEntity.getRank(),
                 "rank",
                 1,
@@ -269,7 +269,7 @@ public class ComponentValidator {
 
     //Validation For :Order
     private static void validateComponentEntity(ComponentEntity componentEntity,
-                                           List<ValidationResultInfo> errors) {
+                                                List<ValidationResultInfo> errors) {
     }
 
     //trim all Component field

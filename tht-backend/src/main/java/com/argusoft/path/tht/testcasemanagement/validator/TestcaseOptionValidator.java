@@ -108,10 +108,10 @@ public class TestcaseOptionValidator {
 
     }
 
-        private static void validateCommonForeignKey(TestcaseOptionEntity testcaseOptionEntity
-                                                 , TestcaseService testcaseService,
-                                            List<ValidationResultInfo> errors,
-                                                 ContextInfo contextInfo){
+    private static void validateCommonForeignKey(TestcaseOptionEntity testcaseOptionEntity
+            , TestcaseService testcaseService,
+                                                 List<ValidationResultInfo> errors,
+                                                 ContextInfo contextInfo) {
         Set<TestcaseEntity> testcaseEntitySet = new HashSet<>();
 
         if (testcaseOptionEntity.getTestcase() != null) {
@@ -131,8 +131,8 @@ public class TestcaseOptionValidator {
 
     //validate update
     private static void validateUpdateTestcaseOption(List<ValidationResultInfo> errors,
-                                                TestcaseOptionEntity testcaseOptionEntity,
-                                                TestcaseOptionEntity originalEntity)
+                                                     TestcaseOptionEntity testcaseOptionEntity,
+                                                     TestcaseOptionEntity originalEntity)
             throws OperationFailedException,
             InvalidParameterException {
         // required validation
@@ -160,8 +160,8 @@ public class TestcaseOptionValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                        TestcaseOptionEntity testcaseOptionEntity,
-                                        TestcaseOptionEntity originalEntity) {
+                                             TestcaseOptionEntity testcaseOptionEntity,
+                                             TestcaseOptionEntity originalEntity) {
     }
 
     //validate create
@@ -188,29 +188,29 @@ public class TestcaseOptionValidator {
 
     //Validate Required
     private static void validateCommonRequired(TestcaseOptionEntity testcaseOptionEntity,
-                                          List<ValidationResultInfo> errors) {
+                                               List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testcaseOptionEntity.getName(), "name", errors);
         ValidationUtils.validateRequired(testcaseOptionEntity.getTestcase(), "component", errors);
     }
 
     //Validate Common Unique
     private static void validateCommonUnique(TestcaseOptionEntity testcaseOptionEntity,
-                                        String validationTypeKey,
-                                        List<ValidationResultInfo> errors,
-                                        ContextInfo contextInfo)
+                                             String validationTypeKey,
+                                             List<ValidationResultInfo> errors,
+                                             ContextInfo contextInfo)
             throws OperationFailedException {
         // check unique field
     }
 
     //Validation For :Id
     private static void validateTestcaseOptionEntityId(TestcaseOptionEntity testcaseOptionEntity,
-                                                  List<ValidationResultInfo> errors) {
+                                                       List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(testcaseOptionEntity.getId(), "id", errors);
     }
 
     //Validation For :Name
     private static void validateTestcaseOptionEntityName(TestcaseOptionEntity testcaseOptionEntity,
-                                                    List<ValidationResultInfo> errors) {
+                                                         List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseOptionEntity.getName(),
                 "name",
                 3,
@@ -220,7 +220,7 @@ public class TestcaseOptionValidator {
 
     //Validation For :Order
     private static void validateTestcaseOptionEntityOrder(TestcaseOptionEntity testcaseOptionEntity,
-                                                     List<ValidationResultInfo> errors) {
+                                                          List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(testcaseOptionEntity.getRank(),
                 "rank",
                 1,
@@ -230,12 +230,12 @@ public class TestcaseOptionValidator {
 
     //Validation For :IsFunctional
     private static void validateTestcaseOptionEntityIsSuccess(TestcaseOptionEntity testcaseOptionEntity,
-                                                         List<ValidationResultInfo> errors) {
+                                                              List<ValidationResultInfo> errors) {
     }
 
     //Validation For :ComponentId
     private static void validateTestcaseOptionEntityComponentId(TestcaseOptionEntity testcaseOptionEntity,
-                                                           List<ValidationResultInfo> errors) {
+                                                                List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseOption field
@@ -250,4 +250,4 @@ public class TestcaseOptionValidator {
             TestcaseOptionEntity.setDescription(TestcaseOptionEntity.getDescription().trim());
         }
     }
-    }
+}

@@ -13,16 +13,12 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
-import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
-import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -107,7 +103,7 @@ public class TestRequestValidator {
                                                                           TestRequestService testRequestService,
                                                                           UserService userService,
                                                                           ComponentService componentService,
-                                                                         ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+                                                                          ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (testRequestEntity == null) {
             throw new InvalidParameterException("TestRequestEntity is missing");
@@ -159,7 +155,7 @@ public class TestRequestValidator {
                         originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
-                validateCreateTestRequest(errors, testRequestEntity, testRequestService,contextInfo);
+                validateCreateTestRequest(errors, testRequestEntity, testRequestService, contextInfo);
                 break;
             default:
                 throw new InvalidParameterException("Invalid validationTypeKey");
@@ -176,11 +172,11 @@ public class TestRequestValidator {
     }
 
 
-        private static void validateCommonForeignKey(TestRequestEntity testRequestEntity,
-                                            List<ValidationResultInfo> errors,
-                                            UserService userService,
-                                            ComponentService componentService,
-                                            ContextInfo contextInfo)
+    private static void validateCommonForeignKey(TestRequestEntity testRequestEntity,
+                                                 List<ValidationResultInfo> errors,
+                                                 UserService userService,
+                                                 ComponentService componentService,
+                                                 ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
         //validate TestRequest foreignKey.
@@ -229,8 +225,8 @@ public class TestRequestValidator {
 
     //validate update
     private static void validateUpdateTestRequest(List<ValidationResultInfo> errors,
-                                             TestRequestEntity testRequestEntity,
-                                             TestRequestEntity originalEntity)
+                                                  TestRequestEntity testRequestEntity,
+                                                  TestRequestEntity originalEntity)
             throws OperationFailedException,
             InvalidParameterException {
         // required validation
@@ -258,8 +254,8 @@ public class TestRequestValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                        TestRequestEntity testRequestEntity,
-                                        TestRequestEntity originalEntity) {
+                                             TestRequestEntity testRequestEntity,
+                                             TestRequestEntity originalEntity) {
     }
 
     //validate create
@@ -286,28 +282,28 @@ public class TestRequestValidator {
 
     //Validate Required
     private static void validateCommonRequired(TestRequestEntity testRequestEntity,
-                                          List<ValidationResultInfo> errors) {
+                                               List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testRequestEntity.getName(), "name", errors);
     }
 
     //Validate Common Unique
     private static void validateCommonUnique(TestRequestEntity testRequestEntity,
-                                        String validationTypeKey,
-                                        List<ValidationResultInfo> errors,
-                                        ContextInfo contextInfo)
+                                             String validationTypeKey,
+                                             List<ValidationResultInfo> errors,
+                                             ContextInfo contextInfo)
             throws OperationFailedException {
         // check unique field
     }
 
     //Validation For :Id
     private static void validateTestRequestEntityId(TestRequestEntity testRequestEntity,
-                                               List<ValidationResultInfo> errors) {
+                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(testRequestEntity.getId(), "id", errors);
     }
 
     //Validation For :Name
     private static void validateTestRequestEntityName(TestRequestEntity testRequestEntity,
-                                                 List<ValidationResultInfo> errors) {
+                                                      List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(testRequestEntity.getName(),
                 "name",
                 Constant.ALLOWED_CHARS_IN_NAMES,

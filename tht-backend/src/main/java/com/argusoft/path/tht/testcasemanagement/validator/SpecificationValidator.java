@@ -53,7 +53,7 @@ public class SpecificationValidator {
         validateCommonRequired(specificationEntity, errors);
 
         // check Common ForeignKey
-        validateCommonForeignKey(specificationEntity, errors, testcaseService, componentService,contextInfo);
+        validateCommonForeignKey(specificationEntity, errors, testcaseService, componentService, contextInfo);
 
         // check Common Unique
         validateCommonUnique(specificationEntity,
@@ -90,7 +90,7 @@ public class SpecificationValidator {
                         originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
-                validateCreateSpecification(errors, specificationEntity, specificationService,contextInfo);
+                validateCreateSpecification(errors, specificationEntity, specificationService, contextInfo);
                 break;
             default:
                 throw new InvalidParameterException("Invalid validationTypeKey");
@@ -113,10 +113,10 @@ public class SpecificationValidator {
 
 
     private static void validateCommonForeignKey(SpecificationEntity specificationEntity,
-                                            List<ValidationResultInfo> errors,
-                                            TestcaseService testcaseService,
+                                                 List<ValidationResultInfo> errors,
+                                                 TestcaseService testcaseService,
                                                  ComponentService componentService,
-                                            ContextInfo contextInfo) {
+                                                 ContextInfo contextInfo) {
         Set<TestcaseEntity> testcaseEntitySet = new HashSet<>();
         specificationEntity.getTestcases().stream().forEach(item -> {
             try {
@@ -148,9 +148,9 @@ public class SpecificationValidator {
 
     //validate update
     private static void validateUpdateSpecification(List<ValidationResultInfo> errors,
-                                               SpecificationEntity specificationEntity,
+                                                    SpecificationEntity specificationEntity,
                                                     SpecificationService specificationService,
-                                               SpecificationEntity originalEntity) {
+                                                    SpecificationEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(specificationEntity.getId(), "id", errors);
         //check the meta required
@@ -176,9 +176,9 @@ public class SpecificationValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                        SpecificationEntity specificationEntity,
-                                        SpecificationService specificationService,
-                                        SpecificationEntity originalEntity) {
+                                             SpecificationEntity specificationEntity,
+                                             SpecificationService specificationService,
+                                             SpecificationEntity originalEntity) {
     }
 
     //validate create
@@ -205,17 +205,17 @@ public class SpecificationValidator {
 
     //Validate Required
     private static void validateCommonRequired(SpecificationEntity specificationEntity,
-                                          List<ValidationResultInfo> errors) {
+                                               List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(specificationEntity.getName(), "name", errors);
         ValidationUtils.validateRequired(specificationEntity.getComponent(), "component", errors);
     }
 
     //Validate Common Unique
     private static void validateCommonUnique(SpecificationEntity specificationEntity,
-                                        String validationTypeKey,
+                                             String validationTypeKey,
                                              SpecificationService specificationService,
-                                        List<ValidationResultInfo> errors,
-                                        ContextInfo contextInfo)
+                                             List<ValidationResultInfo> errors,
+                                             ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || specificationEntity.getId() != null)
@@ -246,13 +246,13 @@ public class SpecificationValidator {
 
     //Validation For :Id
     private static void validateSpecificationEntityId(SpecificationEntity specificationEntity,
-                                                 List<ValidationResultInfo> errors) {
+                                                      List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(specificationEntity.getId(), "id", errors);
     }
 
     //Validation For :Name
     private static void validateSpecificationEntityName(SpecificationEntity specificationEntity,
-                                                   List<ValidationResultInfo> errors) {
+                                                        List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(specificationEntity.getName(),
                 "name",
                 Constant.ALLOWED_CHARS_IN_NAMES,
@@ -267,7 +267,7 @@ public class SpecificationValidator {
 
     //Validation For :Order
     private static void validateSpecificationEntityOrder(SpecificationEntity specificationEntity,
-                                                    List<ValidationResultInfo> errors) {
+                                                         List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(specificationEntity.getRank(),
                 "rank",
                 1,
@@ -277,12 +277,12 @@ public class SpecificationValidator {
 
     //Validation For :IsFunctional
     private static void validateSpecificationEntityIsFunctional(SpecificationEntity specificationEntity,
-                                                           List<ValidationResultInfo> errors) {
+                                                                List<ValidationResultInfo> errors) {
     }
 
     //Validation For :ComponentId
     private static void validateSpecificationEntityComponentId(SpecificationEntity specificationEntity,
-                                                          List<ValidationResultInfo> errors) {
+                                                               List<ValidationResultInfo> errors) {
     }
 
     //trim all Specification field

@@ -34,7 +34,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * This TestcaseResultServiceServiceImpl contains implementation for TestcaseResult service.
@@ -313,7 +316,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        List<ValidationResultInfo> errors = TestcaseResultValidator.validateCreateUpdateTestCaseResult(validationTypeKey,  testcaseResultEntity,userService,this,testcaseOptionService,contextInfo);
+        List<ValidationResultInfo> errors = TestcaseResultValidator.validateCreateUpdateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, contextInfo);
         return errors;
     }
 

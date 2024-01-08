@@ -16,23 +16,17 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.DocumentServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestcaseExecutioner;
-import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.clientrepository.CRWF1TestCase1;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
-import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.testprocessmanagement.validator.TestRequestValidator;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -75,10 +69,10 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     public void startAutomationTestingProcess(String testRequestId, ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException, DataValidationErrorException {
-       TestRequestValidator.validateTestRequestProcess(
+        TestRequestValidator.validateTestRequestProcess(
                 testRequestId,
                 Constant.START_AUTOMATION_PROCESS_VALIDATION,
-               this,
+                this,
                 testcaseResultService,
                 contextInfo);
 

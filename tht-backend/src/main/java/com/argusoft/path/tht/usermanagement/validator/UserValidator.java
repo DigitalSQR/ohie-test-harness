@@ -50,15 +50,15 @@ public class UserValidator {
 
     //Validate Required
     private static void validateCommonRequired(UserEntity userEntity,
-                                          List<ValidationResultInfo> errors) {
+                                               List<ValidationResultInfo> errors) {
         //check the email required
         ValidationUtils
                 .validateRequired(userEntity.getEmail(), "email", errors);
     }
 
     private static void validateCommonForeignKey(UserService userService, UserEntity userEntity,
-                                            List<ValidationResultInfo> errors,
-                                            ContextInfo contextInfo) {
+                                                 List<ValidationResultInfo> errors,
+                                                 ContextInfo contextInfo) {
         //validate Role foreignKey.
         Set<RoleEntity> roleEntitySet = new HashSet<>();
         userEntity.getRoles().stream().forEach(item -> {
@@ -77,9 +77,9 @@ public class UserValidator {
     }
 
     private static void validateCommonUnique(UserService userService, UserEntity userEntity,
-                                        String validationTypeKey,
-                                        List<ValidationResultInfo> errors,
-                                        ContextInfo contextInfo)
+                                             String validationTypeKey,
+                                             List<ValidationResultInfo> errors,
+                                             ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
         // check unique field
@@ -111,9 +111,9 @@ public class UserValidator {
     }
 
     public static List<ValidationResultInfo> validateCreateUpdateUser(UserService userService,
-                                                String validationTypeKey,
-                                                UserEntity userEntity,
-                                                ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+                                                                      String validationTypeKey,
+                                                                      UserEntity userEntity,
+                                                                      ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
@@ -201,8 +201,8 @@ public class UserValidator {
 
     //validate update
     private static void validateUpdateUser(List<ValidationResultInfo> errors,
-                                      UserEntity userEntity,
-                                      UserEntity originalEntity) {
+                                           UserEntity userEntity,
+                                           UserEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(userEntity.getId(), "id", errors);
         //check the meta required
@@ -228,17 +228,17 @@ public class UserValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                        UserEntity userEntity,
-                                        UserEntity originalEntity) {
+                                             UserEntity userEntity,
+                                             UserEntity originalEntity) {
         //email can't be update
         ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
     }
 
     //validate create
     private static void validateCreateUser(UserService userService,
-            List<ValidationResultInfo> errors,
-            UserEntity userEntity,
-            ContextInfo contextInfo) {
+                                           List<ValidationResultInfo> errors,
+                                           UserEntity userEntity,
+                                           ContextInfo contextInfo) {
         if (userEntity.getId() != null) {
             try {
                 userService.getUserById(userEntity.getId(),
@@ -257,13 +257,13 @@ public class UserValidator {
 
     //Validation For :Id
     private static void validateUserEntityId(UserEntity userEntity,
-                                        List<ValidationResultInfo> errors) {
+                                             List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(userEntity.getId(), "id", errors);
     }
 
     //Validation For :Name
     private static void validateUserEntityName(UserEntity userEntity,
-                                          List<ValidationResultInfo> errors) {
+                                               List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(userEntity.getName(),
                 "userName",
                 Constant.ALLOWED_CHARS_IN_NAMES,
@@ -278,7 +278,7 @@ public class UserValidator {
 
     //Validation For :Email
     private static void validateUserEntityEmail(UserEntity userEntity,
-                                           List<ValidationResultInfo> errors) {
+                                                List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(userEntity.getEmail(),
                 "email",
                 UserServiceConstants.EMAIL_REGEX,
@@ -288,7 +288,7 @@ public class UserValidator {
 
     //Validation For :Password
     private static void validateUserEntityPassword(UserEntity userEntity,
-                                              List<ValidationResultInfo> errors) {
+                                                   List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(userEntity.getName(),
                 "password",
                 6,
@@ -298,7 +298,7 @@ public class UserValidator {
 
     //Validation For :Roles
     private static void validateUserEntityRoles(UserEntity userEntity,
-                                           List<ValidationResultInfo> errors) {
+                                                List<ValidationResultInfo> errors) {
         ValidationUtils.validateCollectionSize(userEntity.getRoles(),
                 "roles",
                 1,
