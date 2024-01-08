@@ -3,6 +3,7 @@ package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutiona
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
@@ -36,8 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 /**
@@ -77,6 +80,56 @@ public class TestcaseExecutioner {
         }
     }
 
+    public void reinitializeAutomationTestingByTestRequest(
+            String testRequestId,
+            ContextInfo contextInfo) throws OperationFailedException {
+        try {
+            updateTestcaseResultsToDraftByTestRequest(testRequestId, Constant.START_AUTOMATION_PROCESS_VALIDATION, contextInfo);
+            updateTestRequestToInProgress(testRequestId, contextInfo);
+        } catch (DoesNotExistException | InvalidParameterException |
+                 OperationFailedException | VersionMismatchException ex) {
+            throw new OperationFailedException("Operation failed while updating testcaseResults", ex);
+        } catch (DataValidationErrorException ex) {
+            throw new OperationFailedException(ex);
+        }
+    }
+
+    private void updateTestRequestToInProgress(String testRequestId,
+                                               ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+        TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
+        testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS);
+        testRequestService.updateTestRequest(testRequestEntity, contextInfo);
+    }
+
+    private void updateTestcaseResultsToDraftByTestRequest(String testRequestId,
+                                                           String processTypeKey,
+                                                           ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(
+                null,
+                new TestcaseResultSearchFilter(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        testRequestId,
+                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(processTypeKey) ? Boolean.TRUE : Boolean.FALSE,
+                        null),
+                Constant.FULL_PAGE,
+                contextInfo).getContent();
+
+        for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
+            testcaseResult.setSuccess(null);
+            testcaseResult.setTestcaseOption(null);
+            testcaseResult.setHasSystemError(null);
+            testcaseResult.setMessage(null);
+            testcaseResult.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING);
+            testcaseResultService.updateTestcaseResult(testcaseResult, contextInfo);
+        }
+    }
+
     public void executeManualTestingByTestRequest(
             String testRequestId,
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
@@ -96,7 +149,7 @@ public class TestcaseExecutioner {
 
         List<ComponentEntity> activeComponents = fetchActiveComponents(processTypeKey, contextInfo);
 
-        TestcaseResultEntity testRequestTestcaseResult = createDraftTestCaseResultByValidationResults(
+        TestcaseResultEntity testRequestTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(
                 TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
                 testRequestEntity.getId(),
                 testRequestEntity.getId(),
@@ -110,7 +163,7 @@ public class TestcaseExecutioner {
                 .put(testRequestEntity.getId(), testRequestTestcaseResult);
 
         for (ComponentEntity componentEntity : activeComponents) {
-            TestcaseResultEntity componentTestcaseResult = createDraftTestCaseResultByValidationResults(
+            TestcaseResultEntity componentTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(
                     ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
                     componentEntity.getId(),
                     testRequestEntity.getId(),
@@ -125,7 +178,7 @@ public class TestcaseExecutioner {
 
             List<SpecificationEntity> activeSpecifications = fetchActiveSpecifications(componentEntity.getId(), processTypeKey, contextInfo);
             for (SpecificationEntity specificationEntity : activeSpecifications) {
-                TestcaseResultEntity specificationTestcaseResult = createDraftTestCaseResultByValidationResults(
+                TestcaseResultEntity specificationTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(
                         SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
                         specificationEntity.getId(),
                         testRequestEntity.getId(),
@@ -140,7 +193,7 @@ public class TestcaseExecutioner {
 
                 List<TestcaseEntity> activeTestcases = fetchActiveTestcases(specificationEntity.getId(), processTypeKey, contextInfo);
                 for (TestcaseEntity testcaseEntity : activeTestcases) {
-                    TestcaseResultEntity testcaseTestcaseResult = createDraftTestCaseResultByValidationResults(
+                    TestcaseResultEntity testcaseTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(
                             TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
                             testcaseEntity.getId(),
                             testRequestEntity.getId(),
@@ -384,14 +437,34 @@ public class TestcaseExecutioner {
         return testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
     }
 
-    private TestcaseResultEntity createDraftTestCaseResultByValidationResults(String refObjUri,
-                                                                              String refId,
-                                                                              String testRequestId,
-                                                                              String name,
-                                                                              Integer counter,
-                                                                              String processTypeKey,
-                                                                              String parentTestcaseResultId,
-                                                                              ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+    private TestcaseResultEntity createOrFetchDraftTestCaseResultByValidationResults(String refObjUri,
+                                                                                     String refId,
+                                                                                     String testRequestId,
+                                                                                     String name,
+                                                                                     Integer counter,
+                                                                                     String processTypeKey,
+                                                                                     String parentTestcaseResultId,
+                                                                                     ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(
+                null,
+                new TestcaseResultSearchFilter(
+                        null,
+                        null,
+                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING,
+                        SearchType.EXACTLY,
+                        null,
+                        refObjUri,
+                        refId,
+                        testRequestId,
+                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(processTypeKey) ? Boolean.TRUE : Boolean.FALSE,
+                        null),
+                Constant.FULL_PAGE,
+                contextInfo).getContent();
+
+        if (!testcaseResultEntities.isEmpty()) {
+            return testcaseResultEntities.get(0);
+        }
+
         TestcaseResultEntity testcaseResultEntity = new TestcaseResultEntity();
         testcaseResultEntity.setRefObjUri(refObjUri);
         testcaseResultEntity.setRefId(refId);

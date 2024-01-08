@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.testprocessmanagement.service.impl;
 
+import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
@@ -34,7 +35,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This TestRequestServiceServiceImpl contains implementation for TestRequest service.
@@ -80,6 +84,26 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Override
+    @Timed(name = "reinitializeAutomationTestingProcess")
+    public void reinitializeAutomationTestingProcess(String testRequestId, ContextInfo contextInfo)
+            throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
+        if (StringUtils.isEmpty(testRequestId)) {
+            throw new InvalidParameterException("testRequestId is missing");
+        }
+        List<ValidationResultInfo> validationResultEntities
+                = this.validateTestRequestReinitializeProcess(
+                testRequestId,
+                Constant.START_AUTOMATION_PROCESS_VALIDATION,
+                contextInfo);
+        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    validationResultEntities);
+        }
+        testcaseExecutioner.reinitializeAutomationTestingByTestRequest(testRequestId, contextInfo);
+    }
+
+    @Override
     @Timed(name = "startManualTestingProcess")
     public void startManualTestingProcess(String testRequestId, ContextInfo contextInfo)
             throws InvalidParameterException,
@@ -96,6 +120,48 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     validationResultEntities);
         }
         testcaseExecutioner.executeManualTestingByTestRequest(testRequestId, contextInfo);
+    }
+
+    public List<ValidationResultInfo> validateTestRequestReinitializeProcess(
+            String testRequestId,
+            String validationTypeKey,
+            ContextInfo contextInfo)
+            throws OperationFailedException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        try {
+            TestRequestEntity originalEntity = this
+                    .getTestRequestById(testRequestId,
+                            contextInfo);
+            if (!Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey)
+                    && Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
+                TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
+                        null, SearchType.CONTAINING,
+                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, SearchType.EXACTLY,
+                        null,
+                        TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
+                        testRequestId,
+                        testRequestId,
+                        Boolean.FALSE,
+                        null
+                );
+                List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+                if (!testcaseResultEntities.isEmpty()) {
+                    String fieldName = "testRequestId";
+                    errors.add(
+                            new ValidationResultInfo(fieldName,
+                                    ErrorLevel.ERROR,
+                                    "Automation process for The supplied testRequestId hasn't been finished yet."));
+                }
+            }
+        } catch (DoesNotExistException | InvalidParameterException ex) {
+            String fieldName = "testRequestId";
+            errors.add(
+                    new ValidationResultInfo(fieldName,
+                            ErrorLevel.ERROR,
+                            "The testRequestId supplied for the start process does not "
+                                    + "exists"));
+        }
+        return errors;
     }
 
     public List<ValidationResultInfo> validateTestRequestStartProcess(
@@ -120,7 +186,10 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey) ? Boolean.TRUE : Boolean.FALSE, null
                 );
                 List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
-                if (!testcaseResultEntities.isEmpty()) {
+                if (!testcaseResultEntities.isEmpty()
+                        && testcaseResultEntities.stream().anyMatch(testcaseResultEntity ->
+                        !TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING.equals(testcaseResultEntity.getState())
+                )) {
                     String fieldName = "testRequestId";
                     errors.add(
                             new ValidationResultInfo(fieldName,

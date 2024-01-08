@@ -546,7 +546,7 @@ public class UserServiceServiceImpl implements UserService {
     //Validation For :Password
     protected void validateUserEntityPassword(UserEntity userEntity,
                                               List<ValidationResultInfo> errors) {
-        ValidationUtils.validateLength(userEntity.getName(),
+        ValidationUtils.validateLength(userEntity.getPassword(),
                 "password",
                 6,
                 255,
