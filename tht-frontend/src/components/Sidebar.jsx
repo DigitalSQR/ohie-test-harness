@@ -5,9 +5,12 @@ import { AuthenticationAPI } from "../api/AuthenticationAPI";
 import { clearAuthInfo } from '../api/configs/axiosConfigs'
 import "../scss/_sidebar.scss";
 import logo from "../styles/images/logo-white.png"
+import { useState } from 'react';
 export default function Sidebar({onComponentClick}){
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    // const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
     const handleLogout = async () => {
       AuthenticationAPI.doLogout()
         .then((response) => {
@@ -30,18 +33,24 @@ export default function Sidebar({onComponentClick}){
           });*/
         })
     };
+    // const toggleSidebar = () => {
+    //   setIsSidebarOpen(!isSidebarOpen);
+    // };
     return(
            //side-bar
-           <div class="sidebar-wrapper" id="mySidenav">
-               <div class="close-sidemenu-icon"><i class="bi bi-filter-left" onclick="ToggleClass()"></i></div>
+           <div className='sidebar-wrapper'id="mySidenav">
+               {/* <div class="close-sidemenu-icon"><i class="bi bi-filter-left"></i></div> */}
                <div class="logo-white">
                    <img src={logo}/>
                </div>
                <ul class="side-menu">
                    <li><a class="active" onClick={()=>{navigate("/dashboard")}}><i class="bi bi-columns-gap menu-left-icon"></i><span> Dashboard </span></a></li>
                    <li><a onClick={()=>{navigate("/dashboard/application-status")}}><i class="bi bi-file-earmark-bar-graph menu-left-icon"></i><span> Application Status </span></a></li>
-                   <li><a class="active"  onClick={()=>{dispatch(log_out());}}><i class="bi bi-columns-gap menu-left-icon"></i><span> Logout </span></a></li>
+                   <li><a class="active"  onClick={()=>{navigate("/dashboard/registration-request")}}><i class="bi bi-columns-gap menu-left-icon"></i>Registeration Request</a></li>
                    <li><a onClick={()=>{navigate("/dashboard/application-request")}}><i class="bi bi-file-earmark-bar-graph menu-left-icon"></i>Application Request</a></li>
+                   <li><a class="active"onClick={()=>{navigate("/dashboard/application-request")}}><i class="bi bi-columns-gap menu-left-icon"></i>Register Application</a></li>
+                   <li><a onClick={()=>{dispatch(log_out());}}><i class="bi bi-file-earmark-bar-graph menu-left-icon"></i><span> Logout </span></a></li>
+
                    {/* <li><a><i class="bi bi-file-earmark-bar-graph menu-left-icon"></i></a></li> */}
                </ul>
            </div>

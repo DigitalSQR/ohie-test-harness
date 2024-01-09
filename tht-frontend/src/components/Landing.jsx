@@ -14,7 +14,7 @@ export default function Landing(){
             health and data content, as specified by WHO SMART Guidelines.
           </p>
           <p class="my-4">
-            <a class="text-blue font-weight-500" href="#">
+            <a class="text-blue font-weight-500" href="https://guides.ohie.org/arch-spec/openhie-component-specifications-1">
               View OpenHIE Component Specifications
             </a>
           </p>

@@ -3,7 +3,12 @@ import pdf_logo from "../styles/images/pdf.png";
 import img_logo from "../styles/images/img.png";
 import question_img_logo from "../styles/images/question-img.png";
 import "../scss/functional-testing.scss";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { log_out } from "../reducers/authReducer";
 export default function FunctionalTesting() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   return (
     <div id="wrapper" class="stepper-wrapper">
       <div class="col-12 non-fuctional-requirement">
@@ -168,7 +173,7 @@ export default function FunctionalTesting() {
             </div>
           </div>
           <div class="d-flex justify-content-between">
-            <button class="btn btn-primary btn-white py-2 font-size-14">
+            <button class="btn btn-primary btn-white py-2 font-size-14" onClick={()=>{dispatch(log_out())}}>
               Save & Exit
             </button>
             <button class="btn btn-primary btn-blue py-2 font-size-14">

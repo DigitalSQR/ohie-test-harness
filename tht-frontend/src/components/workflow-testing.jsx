@@ -1,6 +1,13 @@
 import error_logo from "../styles/images/error.png";
 import "../scss/workflow-testing.scss";
+import { notification } from "antd";
 export default function WorkFlowTesting(){
+    const clickHandler = () => {
+        notification.info({
+            placement:"botton-right",
+            description:"No actions yet"
+        })
+    }
     return (
         <div class="Workflow-testing-wrapper">
         <div class="container">
@@ -104,7 +111,7 @@ export default function WorkFlowTesting(){
                     </table>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <button  class="btn btn-primary btn-blue py-2 font-size-14">Generate report</button>
+                    <button onClick={clickHandler} class="btn btn-primary btn-blue py-2 font-size-14">Generate report</button>
                 </div>
             </div>
         </div>

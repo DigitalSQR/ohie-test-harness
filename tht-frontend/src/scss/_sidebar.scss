@@ -76,3 +76,15 @@
     transition: all 0.5s;
   }
 }
+
+.shrink {
+  width: 40px; }
+  .shrink ul li a span {
+    opacity: 0; }
+  .shrink .logo-white {
+    position: relative;
+    left: -7px;
+    transition: all 0.5s; }
+  .shrink .close-sidemenu-icon {
+    right: 4px;
+    top: 10px; }
