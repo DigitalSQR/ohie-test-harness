@@ -76,9 +76,11 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             InvalidParameterException,
             DataValidationErrorException, DoesNotExistException, VersionMismatchException {
 
-        TestcaseResultValidator.validateTestcaseResult(Constant.CREATE_VALIDATION,
-                this,
+        TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.CREATE_VALIDATION,
                 testcaseResultEntity,
+                this,
+                userService,
+                testcaseOptionService,
                 contextInfo);
 
         if (StringUtils.isEmpty(testcaseResultEntity.getId())) {
@@ -170,9 +172,11 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             InvalidParameterException,
             DataValidationErrorException, DoesNotExistException, VersionMismatchException {
 
-        TestcaseResultValidator.validateTestcaseResult(Constant.UPDATE_VALIDATION,
-                this,
+        TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.UPDATE_VALIDATION,
                 testcaseResultEntity,
+                this,
+                userService,
+                testcaseOptionService,
                 contextInfo);
 
         testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
@@ -316,7 +320,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        List<ValidationResultInfo> errors = TestcaseResultValidator.validateCreateUpdateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, contextInfo);
+        List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestcaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, contextInfo);
         return errors;
     }
 
