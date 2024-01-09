@@ -132,8 +132,8 @@ public class UserRestController {
         return validationResultInfo;
     }
 
-    @PostMapping("/forgot/password")
-    public ValidationResultInfo forgotPasswordRequest(@QueryParam("userEmail") String userEmail,
+    @GetMapping("/forgot/password")
+    public ValidationResultInfo forgotPasswordRequest(@RequestParam("userEmail") String userEmail,
                                                       @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
         userService.createForgotPasswordRequestAndSendEmail(userEmail, contextInfo);
         ValidationResultInfo vris = new ValidationResultInfo();
