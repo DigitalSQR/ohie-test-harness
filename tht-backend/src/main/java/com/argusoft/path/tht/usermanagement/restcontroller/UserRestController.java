@@ -29,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -131,8 +132,8 @@ public class UserRestController {
         return validationResultInfo;
     }
 
-    @GetMapping("/forgot/password/{userEmail}")
-    public ValidationResultInfo forgotPasswordRequest(@PathVariable("userEmail") String userEmail,
+    @PostMapping("/forgot/password")
+    public ValidationResultInfo forgotPasswordRequest(@QueryParam("userEmail") String userEmail,
                                                       @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
         userService.createForgotPasswordRequestAndSendEmail(userEmail, contextInfo);
         ValidationResultInfo vris = new ValidationResultInfo();
