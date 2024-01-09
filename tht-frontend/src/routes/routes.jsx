@@ -15,6 +15,8 @@ import Landing from "../components/Landing";
 import FunctionalTesting from "../components/FunctionalTesting";
 import WorkFlowTesting from "../components/workflow-testing";
 import GoogleAuth from "../components/GoogleAuth";
+import RegistrationRequest from "../components/RegistrationRequest";
+import RegisterApplication from "../components/RegisterApplication";
 
 const PrivateRoute = () => {
 	const token = useSelector((state) => state.authSlice.access_token);
@@ -42,6 +44,8 @@ const routes = createBrowserRouter([
 			{ path: "choose-test", element: <ChooseTest /> },
 			{ path: "functional-testing", element: <FunctionalTesting /> },
 			{ path: "workflow-testing", element: <WorkFlowTesting /> },
+      { path: "register-application", element:<RegisterApplication/>},
+      { path: "registration-request", element:<RegistrationRequest/>},
 		],
 	},
 	{ path: "/", element: <Navigate to="/login" /> },
