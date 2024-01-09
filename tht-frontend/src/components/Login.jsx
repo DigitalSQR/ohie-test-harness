@@ -281,9 +281,9 @@ export default function Login() {
                     />
                     <span class="checkmark"></span>
                   </label>
-                  <a class=" ps-2 text-blue" href="#">
+                  <button class=" ps-2 text-white" onClick={()=>{navigate("/forgotpassword")}}>
                     Reset Password!
-                  </a>
+                  </button>
                 </div>
 
                 <div class="my-4">

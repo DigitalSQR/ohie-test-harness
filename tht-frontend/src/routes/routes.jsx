@@ -15,6 +15,8 @@ import Landing from "../components/Landing";
 import FunctionalTesting from "../components/FunctionalTesting";
 import WorkFlowTesting from "../components/workflow-testing";
 import GoogleAuth from "../components/GoogleAuth";
+import ForgotPassword from "../components/ForgotPassword";
+import UpdatePassword from "../components/UpdatePassword";
 import RegistrationRequest from "../components/RegistrationRequest";
 import RegisterApplication from "../components/RegisterApplication";
 
@@ -32,6 +34,8 @@ const routes = createBrowserRouter([
 	{ path: "/CongratulationsPage", element: <CongratulationsPage /> },
 	{ path: "application-report", element: <ApplicationReport /> },
 	{ path: "/google/success", element: <GoogleAuth /> },
+  {path:"/forgotpassword", element:<ForgotPassword/>},
+  {path:"user/verify/",element:<UpdatePassword/>},
 	{
 		path: "/dashboard",
 		element: <PrivateRoute />,

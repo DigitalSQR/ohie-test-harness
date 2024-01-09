@@ -38,8 +38,11 @@ export default function Sidebar({onComponentClick}){
                    <img src={logo}/>
                </div>
                <ul class="side-menu">
-                   <li><a class="active" href="#"><i class="bi bi-columns-gap menu-left-icon"></i><span> Dashboard </span></a></li>
-                   <li><a href="#"><i class="bi bi-file-earmark-bar-graph menu-left-icon"></i><span> Application Status </span></a></li>
+                   <li><a class="active" onClick={()=>{navigate("/dashboard")}}><i class="bi bi-columns-gap menu-left-icon"></i><span> Dashboard </span></a></li>
+                   <li><a onClick={()=>{navigate("/dashboard/application-status")}}><i class="bi bi-file-earmark-bar-graph menu-left-icon"></i><span> Application Status </span></a></li>
+                   <li><a class="active"  onClick={()=>{dispatch(log_out());}}><i class="bi bi-columns-gap menu-left-icon"></i><span> Logout </span></a></li>
+                   <li><a onClick={()=>{navigate("/dashboard/application-request")}}><i class="bi bi-file-earmark-bar-graph menu-left-icon"></i>Application Request</a></li>
+                   {/* <li><a><i class="bi bi-file-earmark-bar-graph menu-left-icon"></i></a></li> */}
                </ul>
            </div>
            //side-bar
