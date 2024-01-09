@@ -34,11 +34,11 @@ public class UserValidator {
         }
     }
 
-    public static void validateResultEntitys(UserService userService, String validationTypeKey, UserEntity userEntity, ContextInfo contextInfo) throws OperationFailedException,
+    public static void validateCreateUpdateUser(UserService userService, String validationTypeKey, UserEntity userEntity, ContextInfo contextInfo) throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntitys
-                = userService.validateUser(validationTypeKey,
+                = validateUser(userService, validationTypeKey,
                 userEntity,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
@@ -110,7 +110,7 @@ public class UserValidator {
         }
     }
 
-    public static List<ValidationResultInfo> validateCreateUpdateUser(UserService userService,
+    public static List<ValidationResultInfo> validateUser(UserService userService,
                                                                       String validationTypeKey,
                                                                       UserEntity userEntity,
                                                                       ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {

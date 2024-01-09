@@ -132,8 +132,6 @@ public class UserServiceServiceImpl implements UserService {
 
         UserValidator.validateUpdatePasswordInfoAgainstNullValues(updatePasswordInfo);
 
-        UserValidator.validateThatOldAndNewPasswordIsDifferent(updatePasswordInfo);
-
         Boolean isTokenVerified = tokenVerificationService
                 .verifyUserToken(updatePasswordInfo.getBase64TokenId(), updatePasswordInfo.getBase64UserEmail(), true, contextInfo);
 
@@ -188,7 +186,7 @@ public class UserServiceServiceImpl implements UserService {
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
-        UserValidator.validateResultEntitys(this, Constant.CREATE_VALIDATION, userEntity, contextInfo);
+        UserValidator.validateCreateUpdateUser(this, Constant.CREATE_VALIDATION, userEntity, contextInfo);
         userEntity = userRepository.save(userEntity);
         return userEntity;
     }
@@ -205,7 +203,7 @@ public class UserServiceServiceImpl implements UserService {
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException, InvalidParameterException {
-        UserValidator.validateResultEntitys(this, Constant.UPDATE_VALIDATION, userEntity, contextInfo);
+        UserValidator.validateCreateUpdateUser(this, Constant.UPDATE_VALIDATION, userEntity, contextInfo);
         userEntity = userRepository.save(userEntity);
         return userEntity;
     }
@@ -301,7 +299,7 @@ public class UserServiceServiceImpl implements UserService {
             throws InvalidParameterException,
             OperationFailedException {
 
-        return UserValidator.validateCreateUpdateUser(this,
+        return UserValidator.validateUser(this,
                 validationTypeKey,
                 userEntity,
                 contextInfo);
