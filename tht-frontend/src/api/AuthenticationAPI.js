@@ -74,4 +74,16 @@ export const AuthenticationAPI = {
 			throw error;
 		}
 	},
+	resetPassword: async function (data) {
+		try {
+			const response = await api.request({
+				url: `/user/update/password/`,
+				data: data,
+				method: "POST"
+			});
+			return response;
+		} catch (error) {
+			throw error;
+		}
+	}
 };
