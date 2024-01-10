@@ -1,0 +1,90 @@
+.sidebar-wrapper {
+  background: #009fc8;
+  overflow-x: hidden;
+  transition: 0.5s;
+  height: 100%;
+  position: fixed;
+  z-index: 60;
+  left: 0px;
+  width: 230px;
+  top: 0px;
+}
+@media (max-width: 767.98px) {
+  .sidebar-wrapper {
+    width: 40px;
+  }
+}
+.sidebar-wrapper .side-menu {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 420px;
+  margin-top: 15px;
+  padding: 0px;
+}
+.sidebar-wrapper .side-menu li {
+  list-style-type: none;
+}
+.sidebar-wrapper .side-menu li a {
+  padding: 10px 40px;
+  white-space: nowrap;
+  font-size: 14px;
+  text-decoration: none;
+  color: #fff;
+  display: block;
+}
+.sidebar-wrapper .side-menu li a .menu-left-icon {
+  position: absolute;
+  left: 15px;
+  font-size: 16px;
+  transition: all 0.5s;
+  margin: 0px;
+}
+.sidebar-wrapper .side-menu li a span {
+  opacity: 1;
+  transition: all 0.5s;
+}
+.sidebar-wrapper .side-menu li .active {
+  background: #0eb4b4;
+  color: #fff;
+}
+.sidebar-wrapper .close-sidemenu-icon {
+  transition: all 0.5s;
+  position: absolute;
+  right: 15px;
+  z-index: 99;
+  top: 20px;
+}
+@media (max-width: 767.98px) {
+  .sidebar-wrapper .close-sidemenu-icon {
+    right: 4px;
+    top: 10px;
+  }
+}
+.sidebar-wrapper .close-sidemenu-icon i {
+  font-size: 30px;
+  color: #fff;
+  cursor: pointer;
+}
+.sidebar-wrapper .logo-white {
+  padding-top: 40px;
+  padding-left: 15px;
+}
+@media (max-width: 767.98px) {
+  .sidebar-wrapper .logo-white {
+    position: relative;
+    left: -7px;
+    transition: all 0.5s;
+  }
+}
+
+.shrink {
+  width: 40px; }
+  .shrink ul li a span {
+    opacity: 0; }
+  .shrink .logo-white {
+    position: relative;
+    left: -7px;
+    transition: all 0.5s; }
+  .shrink .close-sidemenu-icon {
+    right: 4px;
+    top: 10px; }
