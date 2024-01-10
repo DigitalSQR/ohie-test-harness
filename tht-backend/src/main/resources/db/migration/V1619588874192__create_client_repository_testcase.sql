@@ -186,7 +186,8 @@ INSERT INTO testcase (
          Now(),
          Now(),
          0
-    ) , (
+    ) ,
+                (
          'testcase.cr.crwf.4.1',
          'Verify Fetch Patient By Demographic And/Or Identifier',
          'Testcase Verify Fetch Patient By Demographic And/Or Identifier for Specification CRWF4 of the Client Repository',
