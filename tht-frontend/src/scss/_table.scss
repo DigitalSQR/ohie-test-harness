@@ -1,0 +1,26 @@
+@import "../scss/_variables.scss";
+
+.data-table {
+  width: 100%;
+  background: $color-white;
+  th {
+    padding: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 18px;
+    white-space: nowrap;
+  }
+  td {
+    border-top: 1px solid $color-gray-20;
+    padding: 12px;
+    font-weight: 500;
+    font-size: 13px;
+    border-top: 1px solid $color-gray-5;
+    line-height: 18px;
+  }
+}
+
+.data-table > tbody > tr:nth-of-type(odd) {
+  background: $color-gray-10;
+}
