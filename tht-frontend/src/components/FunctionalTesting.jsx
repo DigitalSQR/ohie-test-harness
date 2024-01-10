@@ -173,7 +173,7 @@ export default function FunctionalTesting() {
             </div>
           </div>
           <div class="d-flex justify-content-between">
-            <button class="btn btn-primary btn-white py-2 font-size-14" onClick={()=>{dispatch(log_out())}}>
+            <button class="btn btn-primary btn-white py-2 font-size-14" onClick={()=>{navigate("/dashboard")}}>
               Save & Exit
             </button>
             <button class="btn btn-primary btn-blue py-2 font-size-14">

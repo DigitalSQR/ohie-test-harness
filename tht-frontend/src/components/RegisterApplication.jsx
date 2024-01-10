@@ -1,7 +1,9 @@
 import React from "react";
 import "../scss/_registrationApplication.scss"
+import { useNavigate } from "react-router-dom";
 
 const RegisterApplication = () => {
+  const navigate = useNavigate();
   return (
     <div>
       <div id="wrapper">
@@ -100,7 +102,7 @@ const RegisterApplication = () => {
             </div>
           </div>
           <div class="my-4 text-end">
-            <button class="btn btn-primary btn-white py-2 font-size-14">
+            <button class="btn btn-primary btn-white py-2 font-size-14"onClick={()=>{navigate("/dashboard")}}>
               Cancel
             </button>
             <button class="btn btn-primary btn-blue py-2 font-size-14">

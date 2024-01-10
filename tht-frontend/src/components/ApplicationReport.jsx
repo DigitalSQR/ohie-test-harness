@@ -2,7 +2,9 @@ import React from "react";
 import Header from "./Header";
 import "../scss/application-report.scss";
 import Footer from "./Footer";
+import { useNavigate } from "react-router-dom";
 const ApplicationReport = () => {
+  const navigate = useNavigate();
   return (
     <div>
       <Header/>
@@ -15,7 +17,7 @@ const ApplicationReport = () => {
                   Application Report - <span>MedPlat</span>{" "}
                 </h2>
                 <div>
-                  <button className="btn btn-link  py-2 font-size-14">BACK</button>
+                  <button  onClick={()=>{navigate("/dashboard/")}}className="btn btn-link  py-2 font-size-14">BACK</button>
                   <button className="btn btn-primary btn-blue py-2 font-size-14">
                     DOWNLOAD
                   </button>

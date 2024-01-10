@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import tool_icon from "../styles/images/tool-icon.png";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 export default function Landing() {
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ export default function Landing() {
             <p class="my-4"><a class="text-blue font-weight-500" target="_blank"
                     href="https://guides.ohie.org/arch-spec/openhie-component-specifications-1">View OpenHIE Component
                     Specifications</a></p>
-            <div class="my-4"> <button class="btn btn-primary btn-blue mt-2" onClick={() => { navigate("/dashboard/choose-test") }}><i class="bi bi-pencil-square"></i>
+            <div class="my-4"> <button class="btn btn-primary btn-blue mt-2" onClick={() => { navigate("/dashboard/register-application") }}><i class="bi bi-pencil-square"></i>
                     Register application</button></div>
         </div>
     </div>
