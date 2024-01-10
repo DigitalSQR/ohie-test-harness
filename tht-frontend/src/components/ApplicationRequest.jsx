@@ -3,7 +3,9 @@ import "./Sidebar";
 import "../scss/_table.scss";
 import "../scss/application-request.scss";
 import sortIcon from '../styles/images/sort-icon.png'
+import { useNavigate } from 'react-router-dom';
 const ApplicationRequest = () => {
+    const navigate = useNavigate();
   return (
     <div>
       <div id="wrapper">
@@ -45,14 +47,14 @@ const ApplicationRequest = () => {
                                 <td>ArguSoft</td>
                                 <td>12 Mar 2023</td>
                                 <td>abc@efr.com</td>
-                                <td><button className="btn btn-green-sm"> <i className="bi bi-play-fill"></i> Start</button></td>
+                                <td><button className="btn btn-green-sm" onClick={()=>{navigate("/dashboard/choose-test")}}> <i className="bi bi-play-fill"></i> Start</button></td>
                             </tr>
                             <tr>
                                 <td>Apptivate</td>
                                 <td>ArguSoft</td>
                                 <td>12 Mar 2023</td>
                                 <td>abc@efr.com</td>
-                                <td><button className="btn btn-green-sm"> <i className="bi bi-play-fill"></i> Start</button></td>
+                                <td><button className="btn btn-green-sm"  onClick={()=>{navigate("/dashboard/choose-test")}}> <i className="bi bi-play-fill"></i> Start</button></td>
                             </tr>
                             <tr>
                                 <td>LazyPixal</td>
@@ -66,7 +68,7 @@ const ApplicationRequest = () => {
                                 <td>ArguSoft</td>
                                 <td>12 Mar 2023</td>
                                 <td>abc@efr.com</td>
-                                <td><button className="btn btn-blue-sm"> <i className="bi bi-file-text"></i> Report</button></td>
+                                <td><button className="btn btn-blue-sm" onClick={()=>{navigate("/application-report")}}> <i className="bi bi-file-text"></i> Report</button></td>
                             </tr>
                         </tbody>
                     </table>

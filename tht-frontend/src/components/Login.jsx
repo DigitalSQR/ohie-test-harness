@@ -65,7 +65,7 @@ export default function Login() {
         dispatch(login_success(response));
         setAuthToken(response.access_token);
         hideLoader();
-        navigate("/dashboard/user");
+        navigate("/dashboard/");
       },(response)=>{ 
         hideLoader();
         console.log(response);
