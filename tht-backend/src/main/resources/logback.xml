@@ -16,9 +16,9 @@
             <level>ERROR</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>/srv/tht/error-logs/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>200MB</maxFileSize>
-            <!--<maxHistory>2</maxHistory>-->
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
     </appender>
 
