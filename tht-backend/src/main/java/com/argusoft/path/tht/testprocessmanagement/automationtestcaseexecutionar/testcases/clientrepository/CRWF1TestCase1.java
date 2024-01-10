@@ -9,6 +9,8 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.Patient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,10 +20,15 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CRWF1TestCase1 implements TestCase {
+
+    public static final Logger LOGGER =  LoggerFactory.getLogger(CRWF1TestCase1.class);
+
     @Override
     public ValidationResultInfo test(IGenericClient client,
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
+            LOGGER.info("Start testing CRWF1TestCase1");
+            LOGGER.info("Creating patient");
             // Create a new patient resource with all demographic information
             Patient patient = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "00001", "555-555-5555", "john.doe@example.com");
 
@@ -30,8 +37,10 @@ public class CRWF1TestCase1 implements TestCase {
                     .execute();
             // Check if the patient was created successfully
             if (outcome.getCreated()) {
+                LOGGER.info("Testcase successfully passed!");
                 return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.OK, "Passed");
             } else {
+                LOGGER.error("Testcase Failed");
                 return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.ERROR, "Failed to create patient");
             }
 
