@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -48,6 +49,9 @@ public interface TestcaseResultMapper {
     }
 
     default UserEntity setToTester(String testerId) {
+        if(StringUtils.isEmpty(testerId)) {
+            return null;
+        }
         UserEntity userEntity = new UserEntity();
         userEntity.setId(testerId);
         return userEntity;
@@ -59,6 +63,9 @@ public interface TestcaseResultMapper {
     }
 
     default TestcaseOptionEntity setToTestcaseOption(String testcaseOptionId) {
+        if(StringUtils.isEmpty(testcaseOptionId)) {
+            return null;
+        }
         TestcaseOptionEntity testcaseOptionEntity = new TestcaseOptionEntity();
         testcaseOptionEntity.setId(testcaseOptionId);
         return testcaseOptionEntity;
@@ -71,6 +78,9 @@ public interface TestcaseResultMapper {
     }
 
     default TestcaseResultEntity setToParentTestcaseResult(String parentTestcaseResultId) {
+        if(StringUtils.isEmpty(parentTestcaseResultId)) {
+            return null;
+        }
         TestcaseResultEntity testcaseOptionEntity = new TestcaseResultEntity();
         testcaseOptionEntity.setId(parentTestcaseResultId);
         return testcaseOptionEntity;

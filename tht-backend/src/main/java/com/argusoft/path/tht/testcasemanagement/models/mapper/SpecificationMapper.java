@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -65,6 +66,9 @@ public interface SpecificationMapper {
     }
 
     default ComponentEntity setToComponent(String componentId) {
+        if(StringUtils.isEmpty(componentId)) {
+            return null;
+        }
         ComponentEntity componentEntity = new ComponentEntity();
         componentEntity.setId(componentId);
         return componentEntity;

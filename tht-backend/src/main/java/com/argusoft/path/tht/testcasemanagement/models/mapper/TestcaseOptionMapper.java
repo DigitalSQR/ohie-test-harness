@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -45,6 +46,9 @@ public interface TestcaseOptionMapper {
     }
 
     default TestcaseEntity setToTestcase(String testcaseId) {
+        if(StringUtils.isEmpty(testcaseId)) {
+            return null;
+        }
         TestcaseEntity testcaseEntity = new TestcaseEntity();
         testcaseEntity.setId(testcaseId);
         return testcaseEntity;

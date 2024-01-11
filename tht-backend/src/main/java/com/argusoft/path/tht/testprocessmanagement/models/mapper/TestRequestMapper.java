@@ -13,6 +13,7 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -86,6 +87,9 @@ public interface TestRequestMapper {
 
     @Named("setToApprover")
     default UserEntity setToApprover(String approverId) {
+        if(StringUtils.isEmpty(approverId)) {
+            return null;
+        }
         UserEntity userEntity = new UserEntity();
         userEntity.setId(approverId);
         return userEntity;
@@ -98,6 +102,9 @@ public interface TestRequestMapper {
 
     @Named("setToAssessee")
     default UserEntity setToAssessee(String assesseeId) {
+        if(StringUtils.isEmpty(assesseeId)) {
+            return null;
+        }
         UserEntity userEntity = new UserEntity();
         userEntity.setId(assesseeId);
         return userEntity;
