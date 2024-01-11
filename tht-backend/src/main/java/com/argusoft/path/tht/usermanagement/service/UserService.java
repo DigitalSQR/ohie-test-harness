@@ -199,4 +199,17 @@ public interface UserService {
 
     public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException;
 
+    /**
+     *
+     * change state of user with id and giving the expected state
+     *
+     * @param documentId id of the user
+     * @param stateKey expected statekey
+     * @param contextInfo ContextInfo
+     * @return UserEntity
+     * @throws DoesNotExistException when user does not exists for that id
+     * @throws DataValidationErrorException when validation fails
+     */
+    public UserEntity changeState(String documentId, String stateKey , ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
 }

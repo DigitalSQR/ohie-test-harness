@@ -101,7 +101,7 @@ public class DocumentRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PutMapping("/change/status/{documentId}/{changeState}")
+    @PutMapping("/state/{documentId}/{changeState}")
     @Transactional
     public DocumentInfo updateDocumentState(@PathVariable("documentId") String documentId,
                                               @PathVariable("changeState") String changeState,
@@ -117,7 +117,7 @@ public class DocumentRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PutMapping("/change/order/{documentId}/{orderId}")
+    @PutMapping("/order/{documentId}/{orderId}")
     @Transactional
     public DocumentInfo changeDocumentOrder(@PathVariable("documentId") String documentId,
                                             @PathVariable("orderId") Integer orderId,

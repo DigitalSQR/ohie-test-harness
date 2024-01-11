@@ -28,9 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 /**
@@ -193,6 +190,23 @@ public class UserRestController {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
         userEntity = userService.updateUser(userEntity, contextInfo);
+        return userMapper.modelToDto(userEntity);
+    }
+
+
+    @ApiOperation(value = "To change state of User", response = UserInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated user"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PutMapping("/state/{userId}/{changeState}")
+    @Transactional
+    public UserInfo updateDocumentState(@PathVariable("userId") String userId,
+                                            @PathVariable("changeState") String changeState,
+                                            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        UserEntity userEntity = userService.changeState(userId, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
     }
 
