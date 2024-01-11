@@ -82,6 +82,7 @@ public interface TestRequestMapper {
 
     @Named("setToApproverId")
     default String setToApproverId(UserEntity approver) {
+        if (approver == null) return null;
         return approver.getId();
     }
 
@@ -97,6 +98,7 @@ public interface TestRequestMapper {
 
     @Named("setToAssesseeId")
     default String setToAssesseeId(UserEntity assessee) {
+        if (assessee == null) return null;
         return assessee.getId();
     }
 
