@@ -82,6 +82,7 @@ public class CRWF1TestCase1 implements TestCase {
 //            assertEquals(apiTest.getExpectedResponse(), actualResponse);
 //            map.put("nameToStoreResponseResource", getResourceBasedOnBundle(responseBundle)); in case wants to use this as new request data.
         } catch (Exception ex) {
+            LOGGER.error("Exception while CRWF1TestCase1 ",ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }
