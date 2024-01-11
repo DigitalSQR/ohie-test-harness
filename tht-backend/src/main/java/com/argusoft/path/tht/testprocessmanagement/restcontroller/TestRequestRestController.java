@@ -8,6 +8,8 @@ package com.argusoft.path.tht.testprocessmanagement.restcontroller;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
+import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
@@ -37,10 +39,10 @@ import java.util.List;
 public class TestRequestRestController {
 
     @Autowired
-    private TestRequestService TestRequestService;
+    private TestRequestService testRequestService;
 
     @Autowired
-    private TestRequestMapper TestRequestMapper;
+    private TestRequestMapper testRequestMapper;
 
     /**
      * {@inheritdoc}
@@ -62,9 +64,9 @@ public class TestRequestRestController {
             InvalidParameterException,
             DataValidationErrorException {
 
-        TestRequestEntity testRequestEntity = TestRequestMapper.dtoToModel(testRequestInfo);
-        testRequestEntity = TestRequestService.createTestRequest(testRequestEntity, contextInfo);
-        return TestRequestMapper.modelToDto(testRequestEntity);
+        TestRequestEntity testRequestEntity = testRequestMapper.dtoToModel(testRequestInfo);
+        testRequestEntity = testRequestService.createTestRequest(testRequestEntity, contextInfo);
+        return testRequestMapper.modelToDto(testRequestEntity);
 
     }
 
@@ -73,14 +75,14 @@ public class TestRequestRestController {
      *
      * @return
      */
-//    @ApiOperation(value = "Update existing TestRequest", response = TestRequestInfo.class)
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Successfully updated TestRequest"),
-//            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-//            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
-//
-//    })
-//    @PutMapping("")
+    @ApiOperation(value = "Update existing TestRequest", response = TestRequestInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated TestRequest"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+
+    })
+    @PutMapping("")
     @Transactional
     public TestRequestInfo updateTestRequest(
             @RequestBody TestRequestInfo testRequestInfo,
@@ -90,9 +92,9 @@ public class TestRequestRestController {
             VersionMismatchException,
             DataValidationErrorException {
 
-        TestRequestEntity testRequestEntity = TestRequestMapper.dtoToModel(testRequestInfo);
-        testRequestEntity = TestRequestService.updateTestRequest(testRequestEntity, contextInfo);
-        return TestRequestMapper.modelToDto(testRequestEntity);
+        TestRequestEntity testRequestEntity = testRequestMapper.dtoToModel(testRequestInfo);
+        testRequestEntity = testRequestService.updateTestRequest(testRequestEntity, contextInfo);
+        return testRequestMapper.modelToDto(testRequestEntity);
     }
 
     /**
@@ -119,13 +121,13 @@ public class TestRequestRestController {
         Page<TestRequestEntity> testRequestEntities;
         if (!testRequestSearchFilter.isEmpty()
                 || !CollectionUtils.isEmpty(ids)) {
-            testRequestEntities = TestRequestService
+            testRequestEntities = testRequestService
                     .searchTestRequests(
                             ids,
                             testRequestSearchFilter,
                             pageable,
                             contextInfo);
-            return TestRequestMapper.pageEntityToDto(testRequestEntities);
+            return testRequestMapper.pageEntityToDto(testRequestEntities);
         }
         return this.getTestRequests(pageable, contextInfo);
     }
@@ -149,8 +151,8 @@ public class TestRequestRestController {
             throws DoesNotExistException,
             InvalidParameterException {
 
-        TestRequestEntity testRequestById = TestRequestService.getTestRequestById(testRequestId, contextInfo);
-        return TestRequestMapper.modelToDto(testRequestById);
+        TestRequestEntity testRequestById = testRequestService.getTestRequestById(testRequestId, contextInfo);
+        return testRequestMapper.modelToDto(testRequestById);
     }
 
     /**
@@ -162,8 +164,8 @@ public class TestRequestRestController {
             Pageable pageable,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Page<TestRequestEntity> testRequests = TestRequestService.getTestRequests(pageable, contextInfo);
-        return TestRequestMapper.pageEntityToDto(testRequests);
+        Page<TestRequestEntity> testRequests = testRequestService.getTestRequests(pageable, contextInfo);
+        return testRequestMapper.pageEntityToDto(testRequests);
     }
 
     /**
@@ -183,8 +185,8 @@ public class TestRequestRestController {
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        TestRequestEntity testRequestEntity = TestRequestMapper.dtoToModel(testRequestInfo);
-        return TestRequestService
+        TestRequestEntity testRequestEntity = testRequestMapper.dtoToModel(testRequestInfo);
+        return testRequestService
                 .validateTestRequest(validationTypeKey, testRequestEntity, contextInfo);
     }
 
@@ -198,7 +200,7 @@ public class TestRequestRestController {
             @PathVariable("testRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
-        TestRequestService.startAutomationTestingProcess(testRequestId, contextInfo);
+        testRequestService.startAutomationTestingProcess(testRequestId, contextInfo);
     }
 
     @ApiOperation(value = "Reinitialize automation testing process", response = Boolean.class)
@@ -211,7 +213,7 @@ public class TestRequestRestController {
             @PathVariable("testRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
-        TestRequestService.reinitializeAutomationTestingProcess(testRequestId, contextInfo);
+        testRequestService.reinitializeAutomationTestingProcess(testRequestId, contextInfo);
     }
 
     @ApiOperation(value = "Start manual testing process", response = Boolean.class)
@@ -224,6 +226,22 @@ public class TestRequestRestController {
             @PathVariable("testRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
-        TestRequestService.startManualTestingProcess(testRequestId, contextInfo);
+        testRequestService.startManualTestingProcess(testRequestId, contextInfo);
+    }
+
+    @ApiOperation(value = "To change status of TestRequest", response = DocumentInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated TestRequest"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PutMapping("/state/{testRequestId}/{changeState}")
+    @Transactional
+    public TestRequestInfo updateDocumentState(@PathVariable("testRequestId") String testRequestId,
+                                            @PathVariable("changeState") String changeState,
+                                            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException {
+        TestRequestEntity testRequestEntity = testRequestService.changeState(testRequestId, changeState, contextInfo);
+        return testRequestMapper.modelToDto(testRequestEntity);
     }
 }

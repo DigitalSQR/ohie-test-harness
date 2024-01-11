@@ -84,8 +84,8 @@ public class TestcaseExecutioner {
             String testRequestId,
             ContextInfo contextInfo) throws OperationFailedException {
         try {
-            updateTestcaseResultsToDraftByTestRequest(testRequestId, Constant.START_AUTOMATION_PROCESS_VALIDATION, contextInfo);
-            updateTestRequestToInProgress(testRequestId, contextInfo);
+            updateTestcaseResultsToInactivateByTestRequest(testRequestId, Constant.START_AUTOMATION_PROCESS_VALIDATION, contextInfo);
+            updateTestRequestToAccepted(testRequestId, contextInfo);
         } catch (DoesNotExistException | InvalidParameterException |
                  OperationFailedException | VersionMismatchException ex) {
             throw new OperationFailedException("Operation failed while updating testcaseResults", ex);
@@ -94,14 +94,14 @@ public class TestcaseExecutioner {
         }
     }
 
-    private void updateTestRequestToInProgress(String testRequestId,
+    private void updateTestRequestToAccepted(String testRequestId,
                                                ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
-        testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS);
+        testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED);
         testRequestService.updateTestRequest(testRequestEntity, contextInfo);
     }
 
-    private void updateTestcaseResultsToDraftByTestRequest(String testRequestId,
+    private void updateTestcaseResultsToInactivateByTestRequest(String testRequestId,
                                                            String processTypeKey,
                                                            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(
@@ -120,11 +120,7 @@ public class TestcaseExecutioner {
                 contextInfo).getContent();
 
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
-            testcaseResult.setSuccess(null);
-            testcaseResult.setTestcaseOption(null);
-            testcaseResult.setHasSystemError(null);
-            testcaseResult.setMessage(null);
-            testcaseResult.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING);
+            testcaseResult.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INACTIVE);
             testcaseResultService.updateTestcaseResult(testcaseResult, contextInfo);
         }
     }
