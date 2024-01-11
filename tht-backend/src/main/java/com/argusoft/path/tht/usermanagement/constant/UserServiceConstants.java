@@ -1,5 +1,8 @@
 package com.argusoft.path.tht.usermanagement.constant;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Constant for UserService.
  *
@@ -13,6 +16,16 @@ public class UserServiceConstants {
     public static final String USER_STATUS_REJECTED = "user.status.rejected";
     public static final String USER_STATUS_ACTIVE = "user.status.active";
     public static final String USER_STATUS_INACTIVE = "user.status.inactive";
+
+    public static List<String> userStates = new ArrayList<>();
+
+    static {
+        userStates.add(USER_STATUS_VERIFICATION_PENDING);
+        userStates.add(USER_STATUS_APPROVAL_PENDING);
+        userStates.add(USER_STATUS_ACTIVE);
+        userStates.add(USER_STATUS_REJECTED);
+        userStates.add(USER_STATUS_INACTIVE);
+    }
 
     //Role Ids
     public static final String ROLE_ID_ADMIN = "role.admin";
