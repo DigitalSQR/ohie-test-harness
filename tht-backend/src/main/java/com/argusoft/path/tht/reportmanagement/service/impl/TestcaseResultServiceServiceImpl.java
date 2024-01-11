@@ -128,6 +128,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
     protected void updateTestRequestByTestcaseResultState(String testRequestId, String testcaseResultState, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
+        //If result is inactive then do nothing.
+        if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INACTIVE.equals(testcaseResultState)) {
+            return;
+        }
         TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
         //If result is in progress/pending then make testRequest inProgress.
         if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS.equals(testcaseResultState)

@@ -8,6 +8,7 @@ package com.argusoft.path.tht.testprocessmanagement.service;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import org.springframework.data.domain.Page;
@@ -158,4 +159,18 @@ public interface TestRequestService {
      *                      information about the caller of service operation
      */
     public void startManualTestingProcess(String testRequestId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException;
+
+    /**
+     *
+     * change state of testRequest with id and giving the expected state
+     *
+     * @param testRequestId id of the testRequest
+     * @param stateKey expected statekey
+     * @param contextInfo ContextInfo
+     * @return DocumentEntity
+     * @throws DoesNotExistException when document does not exists for that id
+     * @throws DataValidationErrorException when validation fails
+     */
+    public TestRequestEntity changeState(String testRequestId, String stateKey , ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException;
+
 }

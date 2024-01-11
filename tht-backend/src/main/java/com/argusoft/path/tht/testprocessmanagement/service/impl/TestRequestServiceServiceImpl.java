@@ -16,6 +16,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.DocumentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestcaseExecutioner;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.clientrepository.CRWF1TestCase1;
@@ -139,7 +141,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     && Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
                 TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
                         null, SearchType.CONTAINING,
-                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS,
+                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED,
                         null,
                         TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
                         testRequestId,
@@ -148,7 +150,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         null
                 );
                 List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
-                if (!testcaseResultEntities.isEmpty()) {
+                if (testcaseResultEntities.isEmpty()) {
                     String fieldName = "testRequestId";
                     errors.add(
                             new ValidationResultInfo(fieldName,
@@ -596,5 +598,27 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 testRequestUrlEntity.setPassword(testRequestUrlEntity.getPassword().trim());
             }
         });
+    }
+
+    @Override
+    public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException {
+
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        //validate given stateKey
+        if(!TestRequestServiceConstants.TEST_REQUEST_STATUS.contains(stateKey)) {
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setElement("state");
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("provided state is not valid ");
+            errors.add(validationResultInfo);
+            throw new DataValidationErrorException("Validation Failed due to errors ",errors);
+        }
+        TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
+
+        testRequestEntity.setState(stateKey);
+        testRequestRepository.save(testRequestEntity);
+
+        return testRequestEntity;
     }
 }
