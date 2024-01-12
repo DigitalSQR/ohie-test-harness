@@ -5,7 +5,7 @@ import {
 } from "../../reducers/authReducer";
 import { persistor, store } from '../../store/store';
 const api = axios.create({
-  baseURL: "http://192.1.200.226:8081/api", // Replace with your API endpoint
+  baseURL: process.env.REACT_APP_HOST || "http://192.1.200.226:8081/api", // Replace with your API endpoint
   //http://192.1.200.226:8081/api - server url
 });
 const defaultToken = `Basic dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==`;
