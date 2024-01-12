@@ -98,4 +98,34 @@ public final class FHIRUtils {
             throw new RuntimeException("Error parsing date", e);
         }
     }
+
+    public static HealthcareService createHealthcareService(String identifierValue, String name, String comment,
+                                                            String phone, String email, List<String> specialties, Location location) {
+        HealthcareService healthcareService = new HealthcareService();
+
+        // Set the identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
+        healthcareService.addIdentifier(identifier);
+
+        //set demographics
+        healthcareService.setName(name);
+        healthcareService.setComment(comment);
+
+        //set contact details
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        ContactPoint emailContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL).setValue(email).setUse(ContactPoint.ContactPointUse.HOME);
+        healthcareService.addTelecom(phoneContact).addTelecom(emailContact);
+
+        // Set specialties
+        for (String specialty : specialties) {
+            CodeableConcept codeableConcept = new CodeableConcept();
+            Coding coding = codeableConcept.addCoding();
+            coding.setCode(specialty);
+            healthcareService.addSpecialty(codeableConcept);
+        }
+
+        //set location
+        healthcareService.getLocation().add(new Reference(location));
+        return healthcareService;
+    }
 }
