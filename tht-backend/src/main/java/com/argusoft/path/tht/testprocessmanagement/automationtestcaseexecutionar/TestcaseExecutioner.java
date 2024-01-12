@@ -37,10 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 
 /**
@@ -162,7 +160,7 @@ public class TestcaseExecutioner {
                 .put(testRequestEntity.getId(), testRequestTestcaseResult);
 
         for (ComponentEntity componentEntity : activeComponents) {
-            if(!testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> componentEntity.getId().equals(testRequestUrlEntity.getComponent().getId()))) {
+            if (!testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> componentEntity.getId().equals(testRequestUrlEntity.getComponent().getId()))) {
                 continue;
             }
             TestcaseResultEntity componentTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(

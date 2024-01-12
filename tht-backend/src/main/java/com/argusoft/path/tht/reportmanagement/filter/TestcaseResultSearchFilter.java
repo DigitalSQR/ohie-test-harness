@@ -137,6 +137,7 @@ public class TestcaseResultSearchFilter {
     public void setState(String state) {
         this.state = state;
     }
+
     public String getTesterId() {
         return testerId;
     }

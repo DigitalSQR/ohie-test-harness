@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class DocumentRestController {
             DataValidationErrorException,
             OperationFailedException {
         DocumentEntity documentEntity = documentMapper.dtoToModel(documentInfo);
-        DocumentEntity document = documentService.createDocument(documentEntity, file, getFileTypePdfPngJpeg(),contextInfo);
+        DocumentEntity document = documentService.createDocument(documentEntity, file, getFileTypePdfPngJpeg(), contextInfo);
         documentInfo = documentMapper.modelToDto(document);
         return documentInfo;
     }
@@ -90,7 +89,7 @@ public class DocumentRestController {
     @GetMapping
     public List<DocumentInfo> getDocumentsByRefObjectUriAndRefObjectId(@RequestParam("refObjectUri") String refObjectUri,
                                                                        @RequestParam("refId") String refId,
-                                                                       @RequestAttribute("contextInfo") ContextInfo contextInfo){
+                                                                       @RequestAttribute("contextInfo") ContextInfo contextInfo) {
         List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = documentService.getDocumentsByRefObjectUriAndRefObjectId(refObjectUri, refId, contextInfo);
         return documentMapper.modelToDto(documentsByRefObjectUriAndRefObjectId);
     }
@@ -104,8 +103,8 @@ public class DocumentRestController {
     @PutMapping("/change/status/{documentId}/{changeState}")
     @Transactional
     public DocumentInfo updateDocumentState(@PathVariable("documentId") String documentId,
-                                              @PathVariable("changeState") String changeState,
-                                              @RequestAttribute("contextInfo") ContextInfo contextInfo)
+                                            @PathVariable("changeState") String changeState,
+                                            @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException {
         DocumentEntity documentEntity = documentService.changeState(documentId, changeState, contextInfo);
         return documentMapper.modelToDto(documentEntity);
@@ -153,7 +152,7 @@ public class DocumentRestController {
     }
 
 
-    private List<String> getFileTypePdfPngJpeg(){
+    private List<String> getFileTypePdfPngJpeg() {
         List<String> validationAgainstTypes = new ArrayList<>();
         validationAgainstTypes.add("application/pdf");
         validationAgainstTypes.add("image/png");

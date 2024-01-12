@@ -7,7 +7,6 @@ package com.argusoft.path.tht.reportmanagement.repository;
 
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.utils.SQLUtils;
 import org.springframework.beans.factory.annotation.Autowired;

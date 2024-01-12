@@ -4,8 +4,6 @@ import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import io.swagger.annotations.ApiParam;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.Column;
-
 public class DocumentSearchFilter {
 
     @ApiParam(
