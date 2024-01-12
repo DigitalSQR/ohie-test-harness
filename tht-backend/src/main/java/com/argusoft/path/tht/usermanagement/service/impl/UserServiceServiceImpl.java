@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.usermanagement.service.impl;
 
+import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
@@ -57,6 +58,9 @@ public class UserServiceServiceImpl implements UserService {
 
     @Autowired
     private DefaultTokenServices defaultTokenServices;
+
+    @Autowired
+    private EmailService emailService;
 
 
     private static void validateUpdatePasswordInfoAgainstNullValues(UpdatePasswordInfo updatePasswordInfo) throws DataValidationErrorException {
@@ -170,9 +174,17 @@ public class UserServiceServiceImpl implements UserService {
         }
 
         UserEntity userEntity = this.getUserById(userId, contextInfo);
+        String oldState = userEntity.getState();
         userEntity.setState(stateKey);
         userEntity = this.updateUser(userEntity,contextInfo);
+        sendMailToTheUserOnChangeState(oldState,userEntity.getState(), userEntity);
         return userEntity;
+    }
+
+    private void sendMailToTheUserOnChangeState(String oldState ,String newState, UserEntity userEntity) {
+        if(UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)){
+            emailService.sendSimpleMessage(userEntity.getEmail(), "Account Request Approved!", "Your Account Request Has Been Approved Successfully!");
+        }
     }
 
     /**
