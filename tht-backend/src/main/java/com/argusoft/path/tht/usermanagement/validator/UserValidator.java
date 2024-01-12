@@ -33,7 +33,7 @@ public class UserValidator {
                     errors);
         }
     }
-
+    
     public static void validateCreateUpdateUser(UserService userService, String validationTypeKey, UserEntity userEntity, ContextInfo contextInfo) throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -304,5 +304,19 @@ public class UserValidator {
                 1,
                 null,
                 errors);
+    }
+
+    //validate given stateKey
+    public static void validateStateKey(String stateKey) throws DataValidationErrorException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        boolean contains = UserServiceConstants.userStates.contains(stateKey);
+        if(!contains){
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setElement("stateKey");
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("provided stateKey is not valid ");
+            errors.add(validationResultInfo);
+            throw new DataValidationErrorException("Validation Failed due to errors ",errors);
+        }
     }
 }

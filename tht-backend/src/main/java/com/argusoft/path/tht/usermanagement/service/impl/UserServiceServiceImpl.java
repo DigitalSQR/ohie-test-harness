@@ -149,18 +149,8 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     @Timed(name = "changeState")
     public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
-
         //validate given stateKey
-        boolean contains = UserServiceConstants.userStates.contains(stateKey);
-        if(!contains){
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setElement("stateKey");
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("provided stateKey is not valid ");
-            errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Validation Failed due to errors ",errors);
-        }
+        UserValidator.validateStateKey(stateKey);
 
         UserEntity userEntity = this.getUserById(userId, contextInfo);
         String oldState = userEntity.getState();
