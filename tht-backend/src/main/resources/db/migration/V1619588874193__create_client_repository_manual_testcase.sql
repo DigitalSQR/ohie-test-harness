@@ -282,6 +282,8 @@ VALUES
         Now(),
         Now(),
         0
+    );
+
     ),
     (
                  'testcase.cr.crf.4',
@@ -447,6 +449,9 @@ INSERT INTO
     )
 VALUES
     (
+        'testcase.cr.crf.1.1.option.1',
+        'YES',
+        'YES',
             'testcase.cr.crf.1.1.option.1',
             'Yes, you can change these rules easily.',
             'Yes, you can change these rules easily.',
