@@ -13,6 +13,8 @@ import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar
 import org.hl7.fhir.r4.model.AuditEvent;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Patient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
@@ -20,10 +22,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class CRF3TestCase1 implements TestCase{
 
+    public static final Logger LOGGER =  LoggerFactory.getLogger(CRF3TestCase1.class);
     @Override
     public ValidationResultInfo test(IGenericClient client,
                                              ContextInfo contextInfo) throws OperationFailedException {
+
         try {
+            LOGGER.info("Start testing CRF3TestCase1");
+
             // Create Patient resource
             Patient newPatient = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "00002", "555-555-5555", "john.doe@example.com");
 
