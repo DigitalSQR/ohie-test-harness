@@ -145,7 +145,7 @@ public class ComponentRestController {
     })
     @GetMapping("/{componentId}")
     public ComponentInfo getComponentById(
-            @PathVariable("ComponentId") String componentId,
+            @PathVariable("componentId") String componentId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {

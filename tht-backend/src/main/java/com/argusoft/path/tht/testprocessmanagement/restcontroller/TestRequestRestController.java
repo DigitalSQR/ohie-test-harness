@@ -146,7 +146,7 @@ public class TestRequestRestController {
     })
     @GetMapping("/{testRequestId}")
     public TestRequestInfo getTestRequestById(
-            @PathVariable("TestRequestId") String testRequestId,
+            @PathVariable("testRequestId") String testRequestId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
