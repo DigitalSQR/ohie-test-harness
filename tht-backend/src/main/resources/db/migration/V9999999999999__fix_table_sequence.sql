@@ -2,7 +2,6 @@
 --
 --@author dhruv
 --@since 2023-09-13
-
 --do
 --$$
 --declare
@@ -13,4 +12,3 @@
 --	SELECT setval('{{table_name}}_seq', counter + 1, false) into newval;
 --end
 --$$;
-
