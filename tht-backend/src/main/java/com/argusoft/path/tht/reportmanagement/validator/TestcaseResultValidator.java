@@ -26,10 +26,10 @@ import java.util.Objects;
 
 public class TestcaseResultValidator {
 
-    public static void validateTestcaseResult(String validationTypeKey,
-                                              TestcaseResultService testcaseResultService,
-                                              TestcaseResultEntity testcaseResultEntity,
-                                              ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+    public static List<ValidationResultInfo> validateTestcaseResult(String validationTypeKey,
+                                                                    TestcaseResultService testcaseResultService,
+                                                                    TestcaseResultEntity testcaseResultEntity,
+                                                                    ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
 
         List<ValidationResultInfo> validationResultEntities
                 = testcaseResultService.validateTestcaseResult(validationTypeKey,
@@ -40,6 +40,7 @@ public class TestcaseResultValidator {
                     "Error(s) occurred in the validating",
                     validationResultEntities);
         }
+        return validationResultEntities;
     }
 
     public static void validateSubmitTestcaseResult(String testcaseResultId, String selectedTestcaseOptionId, String validationTypekey, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {

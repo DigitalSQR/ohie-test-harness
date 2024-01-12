@@ -121,7 +121,7 @@ public interface TestcaseResultService {
                                                              TestcaseResultEntity testcaseResultEntity,
                                                              ContextInfo contextInfo)
             throws InvalidParameterException,
-            OperationFailedException;
+            OperationFailedException, DataValidationErrorException;
 
     /**
      * Retrieves a TestcaseResult corresponding to the given TestcaseResult Id.

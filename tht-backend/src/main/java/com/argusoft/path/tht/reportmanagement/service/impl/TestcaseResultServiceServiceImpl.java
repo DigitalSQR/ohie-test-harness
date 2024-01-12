@@ -78,8 +78,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.CREATE_VALIDATION,
                 testcaseResultEntity,
-                this,
                 userService,
+                this,
                 testcaseOptionService,
                 contextInfo);
 
@@ -174,8 +174,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.UPDATE_VALIDATION,
                 testcaseResultEntity,
-                this,
                 userService,
+                this,
                 testcaseOptionService,
                 contextInfo);
 
@@ -319,8 +319,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             TestcaseResultEntity testcaseResultEntity,
             ContextInfo contextInfo)
             throws InvalidParameterException,
-            OperationFailedException {
-        List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestcaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, contextInfo);
+            OperationFailedException, DataValidationErrorException {
+        List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestcaseResult(validationTypeKey, this, testcaseResultEntity, contextInfo);
         return errors;
     }
 

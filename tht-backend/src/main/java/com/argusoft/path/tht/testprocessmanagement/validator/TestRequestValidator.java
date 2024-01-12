@@ -71,10 +71,10 @@ public class TestRequestValidator {
             if (!Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
                 TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
                         null, SearchType.CONTAINING,
-                        null, SearchType.CONTAINING,
+                        null,
                         null,
                         TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
-                        testRequestId,
+                        null,
                         testRequestId,
                         Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey) ? Boolean.TRUE : Boolean.FALSE, null
                 );
