@@ -3,8 +3,7 @@
 --@author dhruv
 --@since 2023-09-13
 
-drop table if exists oauth_client_details;
-create table oauth_client_details (
+create table if not exists oauth_client_details (
   client_id VARCHAR(255) PRIMARY KEY,
   resource_ids VARCHAR(255),
   client_secret VARCHAR(255),
@@ -42,17 +41,15 @@ create table if not exists oauth_refresh_token (
   authentication BYTEA
 );
 
-create table if not exists oauth_code (
-  code VARCHAR(255), authentication BYTEA
-);
+create table if not exists oauth_code (code VARCHAR(255), authentication BYTEA);
 
 create table if not exists oauth_approvals (
-	userId VARCHAR(255),
-	clientId VARCHAR(255),
-	scope VARCHAR(255),
-	status VARCHAR(10),
-	expiresAt TIMESTAMP,
-	lastModifiedAt TIMESTAMP
+  userId VARCHAR(255),
+  clientId VARCHAR(255),
+  scope VARCHAR(255),
+  status VARCHAR(10),
+  expiresAt TIMESTAMP,
+  lastModifiedAt TIMESTAMP
 );
 
 create table if not exists ClientDetails (
