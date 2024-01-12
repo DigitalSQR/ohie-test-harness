@@ -145,7 +145,7 @@ public class SpecificationRestController {
     })
     @GetMapping("/{specificationId}")
     public SpecificationInfo getSpecificationById(
-            @PathVariable("SpecificationId") String specificationId,
+            @PathVariable("specificationId") String specificationId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {

@@ -145,10 +145,10 @@ public class TestcaseResultRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    @PostMapping("/submit/{TestcaseResultId}/{SelectedTestcaseOptionId}")
+    @PostMapping("/submit/{testcaseResultId}/{selectedTestcaseOptionId}")
     public TestcaseResultInfo submitTestcaseResult(
-            @PathVariable("TestcaseResultId") String testcaseResultId,
-            @PathVariable("SelectedTestcaseOptionId") String selectedTestcaseOptionId,
+            @PathVariable("testcaseResultId") String testcaseResultId,
+            @PathVariable("selectedTestcaseOptionId") String selectedTestcaseOptionId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         TestcaseResultEntity testcaseResultEntity = testcaseResultService
                 .submitTestcaseResult(
@@ -170,9 +170,9 @@ public class TestcaseResultRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    @GetMapping("/{TestcaseResultId}")
+    @GetMapping("/{testcaseResultId}")
     public TestcaseResultInfo getTestcaseResultById(
-            @PathVariable("TestcaseResultId") String testcaseResultId,
+            @PathVariable("testcaseResultId") String testcaseResultId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {

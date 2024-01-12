@@ -145,7 +145,7 @@ public class TestcaseOptionRestController {
     })
     @GetMapping("/{testcaseOptionId}")
     public TestcaseOptionInfo getTestcaseOptionById(
-            @PathVariable("TestcaseOptionId") String testcaseOptionId,
+            @PathVariable("testcaseOptionId") String testcaseOptionId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
