@@ -88,11 +88,11 @@ export default function ForgotPassword() {
                             </div>
 
                             <div class="buttonWrapper">
-                                <button id="submitButton" onClick={VerifyEmail} class="submitButton pure-button pure-button-primary">
+                                <button id="submitButton" onClick={VerifyEmail} className="btn btn-primary">
                                     <span>Continue</span>
                                     <span id="loader"></span>
                                 </button>
-                                <button id="submitButton" onClick={backToLogin} class=" mx-2 submitButton pure-button pure-button-primary">
+                                <button id="submitButton" onClick={backToLogin} className=" mx-2 btn btn-primary">
                                     <span>Back to Login</span>
                                     <span id="loader"></span>
                                 </button>

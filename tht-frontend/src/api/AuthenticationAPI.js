@@ -74,5 +74,15 @@ export const AuthenticationAPI = {
 		} catch (error) {
 			throw error;
 		}
+	},
+	verifyEmail : async function(base64UserEmail,base64TokenId){
+		try{
+		const response = await api.request({
+			url:`/user/verify/${base64UserEmail}/${base64TokenId}`,
+			method:"POST"
+		});
+		return response;
+		}catch(error){throw error}
 	}
-};
+}
+
