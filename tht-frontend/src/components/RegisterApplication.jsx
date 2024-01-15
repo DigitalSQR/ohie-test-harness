@@ -7,7 +7,7 @@ import { ComponentAPI } from "../api/ComponentAPI";
 import { useLoader } from "./loader/LoaderContext";
 import { TestRequestAPI } from "../api/TestRequestAPI";
 import { notification } from "antd";
-import { TestRequestStateConstants } from "../constants/state_constants.js";
+import { TestRequestStateConstants } from "../constants/test_requests_constants.js";
 import { CREATE_VALIDATION } from "../constants/validation_constants.js";
 
 const RegisterApplication = () => {
@@ -40,6 +40,17 @@ const RegisterApplication = () => {
     });
   }, [])
 
+  // A custom validation function. This must return an object
+  // which keys are symmetrical to our values/initialValues
+  const validate = values => {
+    const errors = {};
+    if (values.testRequestUrls.length === 0) {
+      errors.testRequestUrls = 'Please select atleast one component';
+    }
+
+    return errors;
+  };
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -49,6 +60,7 @@ const RegisterApplication = () => {
       assesseeId: '',
       testRequestUrls: []
     },
+    validate,
     onSubmit: values => {
       showLoader();
       formik.values.assesseeId = userId;
@@ -62,7 +74,7 @@ const RegisterApplication = () => {
                   message: `Successfully Created! Waiting for Approval`
                 })
                 hideLoader();
-                navigate('/dashboard/application-status');
+                navigate('/dashboard/testing-requests');
               })
           } else {
             res.forEach(err => {
@@ -176,6 +188,7 @@ const RegisterApplication = () => {
                             {component.name}
                           </label>
                         </div>
+                        {formik.errors.testRequestUrls ? <div className="text-danger">{formik.errors.testRequestUrls}</div> : null}
                       </div>
                     </div>
                     {
@@ -250,10 +263,10 @@ const RegisterApplication = () => {
           </div>
 
           <div class="my-4 text-end">
-            <button class="btn btn-primary btn-white py-2 font-size-14" onClick={() => { navigate("/dashboard") }}>
+            <button class="btn btn-primary btn-white py-2 font-size-14 mx-2" onClick={() => { navigate("/dashboard") }}>
               Cancel
             </button>
-            <button type="button" onClick={formik.handleSubmit} class="btn btn-primary btn-blue py-2 font-size-14">
+            <button disabled={!formik.isValid} type="button" onClick={formik.handleSubmit} class="btn btn-primary btn-blue py-2 font-size-14">
               submit
             </button>
           </div>

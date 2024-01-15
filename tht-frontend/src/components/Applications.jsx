@@ -4,7 +4,7 @@ import "../scss/_table.scss";
 import "../scss/application-request.scss";
 import sortIcon from '../styles/images/sort-icon.png'
 import { useNavigate } from 'react-router-dom';
-const ApplicationRequest = () => {
+const Applications = () => {
     const navigate = useNavigate();
   return (
     <div>
@@ -79,4 +79,4 @@ const ApplicationRequest = () => {
   )
 }
 
-export default ApplicationRequest
+export default Applications;

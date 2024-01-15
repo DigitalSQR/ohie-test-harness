@@ -281,7 +281,7 @@ export default function Login() {
                     />
                     <span class="checkmark"></span>
                   </label>
-                  <a href="javascript:void(0)" onClick={()=>{navigate("/forgotpassword")}}>
+                  <a  onClick={()=>{navigate("/forgotpassword")}}>
                     Reset Password
                   </a>
                 </div>

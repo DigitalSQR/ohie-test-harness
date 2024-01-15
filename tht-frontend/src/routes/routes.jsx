@@ -7,8 +7,6 @@ import UploadTestCases from "../components/UploadTestCases";
 import WaitingPage from "../components/WaitingPage";
 import SignUp from "../components/SignUp";
 import CongratulationsPage from "../components/CongratulationsPage";
-import ApplicationStatus from "../components/ApplicationStatus";
-import ApplicationRequest from "../components/ApplicationRequest";
 import ApplicationReport from "../components/ApplicationReport";
 import ChooseTest from "../components/ChooseTest";
 import Landing from "../components/Landing";
@@ -17,7 +15,9 @@ import WorkFlowTesting from "../components/workflow-testing";
 import GoogleAuth from "../components/GoogleAuth";
 import ForgotPassword from "../components/ForgotPassword";
 import UpdatePassword from "../components/UpdatePassword";
-import RegistrationRequest from "../components/RegistrationRequest";
+import UserRegistration from "../components/UserRegistration";
+import Applications from "../components/Applications";
+import TestingRequests from "../components/TestingRequests";
 import RegisterApplication from "../components/RegisterApplication";
 
 const PrivateRoute = () => {
@@ -43,13 +43,13 @@ const routes = createBrowserRouter([
 			{ path: "", element: <Landing /> },
 			{ path: "user", element: <User /> },
 			{ path: "testcases", element: <UploadTestCases /> },
-			{ path: "application-status", element: <ApplicationStatus /> },
-			{ path: "application-request", element: <ApplicationRequest /> },
+			{ path: "testing-requests", element: <TestingRequests /> },
+			{ path: "applications", element: <Applications /> },
 			{ path: "choose-test", element: <ChooseTest /> },
 			{ path: "functional-testing", element: <FunctionalTesting /> },
 			{ path: "workflow-testing", element: <WorkFlowTesting /> },
-			{ path: "register-application", element: <RegisterApplication /> },
-			{ path: "registration-request", element: <RegistrationRequest /> },
+			{ path: "user-registration", element: <UserRegistration /> },
+			{ path: "register-application", element: <RegisterApplication />}
 		],
 	},
 	{ path: "/", element: <Navigate to="/login" /> },
