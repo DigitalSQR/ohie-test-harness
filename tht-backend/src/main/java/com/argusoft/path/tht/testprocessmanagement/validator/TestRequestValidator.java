@@ -28,10 +28,13 @@ import java.util.Objects;
 
 public class TestRequestValidator {
 
-    public static void validateTestRequest(String validationTypeKey, TestRequestService testRequestService, TestRequestEntity testRequestEntity, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+    public static void validateCreateUpdateTestRequest(String validationTypeKey, TestRequestEntity testRequestEntity, TestRequestService testRequestService, UserService userService, ComponentService componentService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntities
-                = testRequestService.validateTestRequest(validationTypeKey,
+                = validateTestRequest(validationTypeKey,
                 testRequestEntity,
+                testRequestService,
+                userService,
+                componentService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -39,6 +42,69 @@ public class TestRequestValidator {
                     validationResultEntities);
 
         }
+    }
+
+    public static void validateTestRequestReinitializeProcess(String testRequestId, String validationTypeKey, TestRequestService testRequestService, TestcaseResultService testcaseResultService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+
+        if (StringUtils.isEmpty(testRequestId)) {
+            throw new InvalidParameterException("testRequestId is missing");
+        }
+        List<ValidationResultInfo> validationResultEntities
+                = validateTestRequestReinitialize(
+                testRequestId,
+                Constant.START_AUTOMATION_PROCESS_VALIDATION,
+                testRequestService,
+                testcaseResultService,
+                contextInfo);
+        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    validationResultEntities);
+        }
+    }
+
+    private static List<ValidationResultInfo> validateTestRequestReinitialize(
+            String testRequestId,
+            String validationTypeKey,
+            TestRequestService testRequestService,
+            TestcaseResultService testcaseResultService,
+            ContextInfo contextInfo)
+            throws OperationFailedException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        try {
+            TestRequestEntity originalEntity = testRequestService
+                    .getTestRequestById(testRequestId,
+                            contextInfo);
+            if (!Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey)
+                    && Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
+                TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
+                        null, SearchType.CONTAINING,
+                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED,
+                        null,
+                        TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
+                        testRequestId,
+                        testRequestId,
+                        Boolean.FALSE,
+                        null
+                );
+                List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+                if (!testcaseResultEntities.isEmpty()) {
+                    String fieldName = "testRequestId";
+                    errors.add(
+                            new ValidationResultInfo(fieldName,
+                                    ErrorLevel.ERROR,
+                                    "Automation process for The supplied testRequestId hasn't been finished yet."));
+                }
+            }
+        } catch (DoesNotExistException | InvalidParameterException ex) {
+            String fieldName = "testRequestId";
+            errors.add(
+                    new ValidationResultInfo(fieldName,
+                            ErrorLevel.ERROR,
+                            "The testRequestId supplied for the start process does not "
+                                    + "exists"));
+        }
+        return errors;
     }
 
     public static void validateTestRequestProcess(String testRequestId, String validationTypeKey, TestRequestService testRequestService, TestcaseResultService testcaseResultService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
@@ -101,7 +167,7 @@ public class TestRequestValidator {
         return errors;
     }
 
-    public static List<ValidationResultInfo> validateCreateUpdateTestCase(String validationTypeKey,
+    public static List<ValidationResultInfo> validateTestRequest(String validationTypeKey,
                                                                           TestRequestEntity testRequestEntity,
                                                                           TestRequestService testRequestService,
                                                                           UserService userService,
