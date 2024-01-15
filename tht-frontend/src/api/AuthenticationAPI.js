@@ -37,17 +37,6 @@ export const AuthenticationAPI = {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}
 	},
-	viewUser: async function (userName) {
-		try {
-			const response = await api.request({
-				url: `/user/principal`,
-				method: "GET",
-			});
-			return response.data;
-		} catch (error) {
-			throw error; // You can choose to re-throw the error or handle it in a specific way
-		}
-	},
 	signup: async function (data) {
 		try {
 			const response = await api.request({
