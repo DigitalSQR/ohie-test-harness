@@ -8,8 +8,6 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
-import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CRWF1TestCase1 implements TestCase {
 
-    public static final Logger LOGGER =  LoggerFactory.getLogger(CRWF1TestCase1.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(CRWF1TestCase1.class);
 
     @Override
     public ValidationResultInfo test(IGenericClient client,
@@ -49,7 +47,7 @@ public class CRWF1TestCase1 implements TestCase {
             }
 
         } catch (Exception ex) {
-            LOGGER.error("Exception while CRWF1TestCase1 ",ex);
+            LOGGER.error("Exception while CRWF1TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

@@ -30,9 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,6 +49,19 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     @Value("${frontend.google.success}")
     private String successCallbackEndUrl;
+
+    public static String appendParamsToUrl(String baseUrl, Map<String, Object> parameters) throws JsonProcessingException {
+        StringBuilder urlBuilder = new StringBuilder(baseUrl);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonOfParams = objectMapper.writeValueAsString(parameters);
+        String encodedBase64 = new String(Base64.encodeBase64(jsonOfParams.getBytes()));
+        urlBuilder.append("?");
+        urlBuilder.append("result")
+                .append("=")
+                .append(encodedBase64);
+        return urlBuilder.toString();
+    }
 
     @Override
     @Transactional
@@ -141,19 +151,6 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
             response.setStatus(500);
             e.printStackTrace();
         }
-    }
-
-    public static String appendParamsToUrl(String baseUrl, Map<String, Object> parameters) throws JsonProcessingException {
-        StringBuilder urlBuilder = new StringBuilder(baseUrl);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonOfParams = objectMapper.writeValueAsString(parameters);
-        String encodedBase64 = new String(Base64.encodeBase64(jsonOfParams.getBytes()));
-        urlBuilder.append("?");
-        urlBuilder.append("result")
-                .append("=")
-                .append(encodedBase64);
-        return urlBuilder.toString();
     }
 
     private UserEntity createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException {

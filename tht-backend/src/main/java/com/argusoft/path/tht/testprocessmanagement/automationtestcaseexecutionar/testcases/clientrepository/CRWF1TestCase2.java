@@ -37,7 +37,7 @@ public class CRWF1TestCase2 implements TestCase {
             }
 
             Patient patientForConflict = FHIRUtils.createPatient("MOHR", "MAIDEN", "female", "1958-01-30",
-                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-m94", false, "IHERED-994","555-555-5555", "maiden.mohr@example.com", client);
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-m94", false, "IHERED-994", "555-555-5555", "maiden.mohr@example.com", client);
 
             outcome = client.create()
                     .resource(patientForConflict)

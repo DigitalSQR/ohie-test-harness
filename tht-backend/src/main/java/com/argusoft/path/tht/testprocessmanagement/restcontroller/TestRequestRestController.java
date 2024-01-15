@@ -9,7 +9,6 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
@@ -238,8 +237,8 @@ public class TestRequestRestController {
     @PutMapping("/state/{testRequestId}/{changeState}")
     @Transactional
     public TestRequestInfo updateDocumentState(@PathVariable("testRequestId") String testRequestId,
-                                            @PathVariable("changeState") String changeState,
-                                            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+                                               @PathVariable("changeState") String changeState,
+                                               @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException {
         TestRequestEntity testRequestEntity = testRequestService.changeState(testRequestId, changeState, contextInfo);
         return testRequestMapper.modelToDto(testRequestEntity);

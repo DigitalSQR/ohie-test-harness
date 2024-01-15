@@ -37,10 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 
 /**
@@ -95,15 +93,15 @@ public class TestcaseExecutioner {
     }
 
     private void updateTestRequestToAccepted(String testRequestId,
-                                               ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+                                             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
         testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED);
         testRequestService.updateTestRequest(testRequestEntity, contextInfo);
     }
 
     private void updateTestcaseResultsToInactivateByTestRequest(String testRequestId,
-                                                           String processTypeKey,
-                                                           ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+                                                                String processTypeKey,
+                                                                ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(
                 null,
                 new TestcaseResultSearchFilter(
@@ -158,7 +156,7 @@ public class TestcaseExecutioner {
                 .put(testRequestEntity.getId(), testRequestTestcaseResult);
 
         for (ComponentEntity componentEntity : activeComponents) {
-            if(!testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> componentEntity.getId().equals(testRequestUrlEntity.getComponent().getId()))) {
+            if (!testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> componentEntity.getId().equals(testRequestUrlEntity.getComponent().getId()))) {
                 continue;
             }
             TestcaseResultEntity componentTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(

@@ -11,8 +11,6 @@ import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 /**
  * Implementation of CRWF2TestCase1.
  *

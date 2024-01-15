@@ -49,7 +49,7 @@ public interface TestcaseResultMapper {
     }
 
     default UserEntity setToTester(String testerId) {
-        if(StringUtils.isEmpty(testerId)) {
+        if (StringUtils.isEmpty(testerId)) {
             return null;
         }
         UserEntity userEntity = new UserEntity();
@@ -63,7 +63,7 @@ public interface TestcaseResultMapper {
     }
 
     default TestcaseOptionEntity setToTestcaseOption(String testcaseOptionId) {
-        if(StringUtils.isEmpty(testcaseOptionId)) {
+        if (StringUtils.isEmpty(testcaseOptionId)) {
             return null;
         }
         TestcaseOptionEntity testcaseOptionEntity = new TestcaseOptionEntity();
@@ -78,7 +78,7 @@ public interface TestcaseResultMapper {
     }
 
     default TestcaseResultEntity setToParentTestcaseResult(String parentTestcaseResultId) {
-        if(StringUtils.isEmpty(parentTestcaseResultId)) {
+        if (StringUtils.isEmpty(parentTestcaseResultId)) {
             return null;
         }
         TestcaseResultEntity testcaseOptionEntity = new TestcaseResultEntity();

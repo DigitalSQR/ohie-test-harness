@@ -86,6 +86,7 @@ public class TestcaseSearchFilter {
     public void setState(String state) {
         this.state = state;
     }
+
     public String getSpecificationId() {
         return specificationId;
     }

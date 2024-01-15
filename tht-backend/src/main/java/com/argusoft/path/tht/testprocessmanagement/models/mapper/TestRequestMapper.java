@@ -88,7 +88,7 @@ public interface TestRequestMapper {
 
     @Named("setToApprover")
     default UserEntity setToApprover(String approverId) {
-        if(StringUtils.isEmpty(approverId)) {
+        if (StringUtils.isEmpty(approverId)) {
             return null;
         }
         UserEntity userEntity = new UserEntity();
@@ -104,7 +104,7 @@ public interface TestRequestMapper {
 
     @Named("setToAssessee")
     default UserEntity setToAssessee(String assesseeId) {
-        if(StringUtils.isEmpty(assesseeId)) {
+        if (StringUtils.isEmpty(assesseeId)) {
             return null;
         }
         UserEntity userEntity = new UserEntity();

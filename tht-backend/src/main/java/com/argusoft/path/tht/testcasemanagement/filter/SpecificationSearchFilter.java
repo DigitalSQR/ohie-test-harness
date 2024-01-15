@@ -94,6 +94,7 @@ public class SpecificationSearchFilter {
     public void setState(String state) {
         this.state = state;
     }
+
     public String getComponentId() {
         return componentId;
     }

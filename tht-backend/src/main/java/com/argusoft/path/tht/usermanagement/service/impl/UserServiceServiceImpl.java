@@ -7,11 +7,9 @@ package com.argusoft.path.tht.usermanagement.service.impl;
 
 import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
@@ -24,6 +22,7 @@ import com.argusoft.path.tht.usermanagement.repository.RoleRepository;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.argusoft.path.tht.usermanagement.validator.UserValidator;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.apache.commons.codec.binary.Base64;
@@ -36,7 +35,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This UserServiceServiceImpl contains implementation for User service.
@@ -61,20 +62,6 @@ public class UserServiceServiceImpl implements UserService {
 
     @Autowired
     private EmailService emailService;
-
-
-    private static void validateUpdatePasswordInfoAgainstNullValues(UpdatePasswordInfo updatePasswordInfo) throws DataValidationErrorException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
-        ValidationUtils.validateRequired(updatePasswordInfo.getBase64TokenId(), "base64TokenId", errors);
-        ValidationUtils.validateRequired(updatePasswordInfo.getBase64UserEmail(), "base64UserEmail", errors);
-        ValidationUtils.validateRequired(updatePasswordInfo.getNewPassword(), "newPassword", errors);
-
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
-                    errors);
-        }
-    }
 
     /**
      * {@inheritdoc}
@@ -143,7 +130,7 @@ public class UserServiceServiceImpl implements UserService {
         //trim values
         updatePasswordInfo.trimObject();
 
-        validateUpdatePasswordInfoAgainstNullValues(updatePasswordInfo);
+        UserValidator.validateUpdatePasswordInfoAgainstNullValues(updatePasswordInfo);
 
         Boolean isTokenVerified = tokenVerificationService
                 .verifyUserToken(updatePasswordInfo.getBase64TokenId(), updatePasswordInfo.getBase64UserEmail(), true, contextInfo);
@@ -160,29 +147,19 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     @Timed(name = "changeState")
     public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
-
         //validate given stateKey
-        boolean contains = UserServiceConstants.userStates.contains(stateKey);
-        if(!contains){
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setElement("stateKey");
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("provided stateKey is not valid ");
-            errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Validation Failed due to errors ",errors);
-        }
+        UserValidator.validateStateKey(stateKey);
 
         UserEntity userEntity = this.getUserById(userId, contextInfo);
         String oldState = userEntity.getState();
         userEntity.setState(stateKey);
-        userEntity = this.updateUser(userEntity,contextInfo);
-        sendMailToTheUserOnChangeState(oldState,userEntity.getState(), userEntity);
+        userEntity = this.updateUser(userEntity, contextInfo);
+        sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity);
         return userEntity;
     }
 
-    private void sendMailToTheUserOnChangeState(String oldState ,String newState, UserEntity userEntity) {
-        if(UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)){
+    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity) {
+        if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
             emailService.sendSimpleMessage(userEntity.getEmail(), "Account Request Approved!", "Your Account Request Has Been Approved Successfully!");
         }
     }
@@ -199,15 +176,7 @@ public class UserServiceServiceImpl implements UserService {
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
-        List<ValidationResultInfo> validationResultEntitys
-                = this.validateUser(Constant.CREATE_VALIDATION,
-                userEntity,
-                contextInfo);
-        if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
-                    validationResultEntitys);
-        }
+        UserValidator.validateCreateUpdateUser(this, Constant.CREATE_VALIDATION, userEntity, contextInfo);
         userEntity = userRepository.save(userEntity);
         return userEntity;
     }
@@ -224,15 +193,7 @@ public class UserServiceServiceImpl implements UserService {
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException, InvalidParameterException {
-        List<ValidationResultInfo> validationResultEntitys
-                = this.validateUser(Constant.UPDATE_VALIDATION,
-                userEntity,
-                contextInfo);
-        if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    "Error(s) occurred validating",
-                    validationResultEntitys);
-        }
+        UserValidator.validateCreateUpdateUser(this, Constant.UPDATE_VALIDATION, userEntity, contextInfo);
         userEntity = userRepository.save(userEntity);
         return userEntity;
     }
@@ -327,93 +288,11 @@ public class UserServiceServiceImpl implements UserService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        // VALIDATE
-        List<ValidationResultInfo> errors = new ArrayList<>();
-        UserEntity originalEntity = null;
-        trimUser(userEntity);
 
-        // check Common Required
-        this.validateCommonRequired(userEntity, errors);
-
-        // check Common ForeignKey
-        this.validateCommonForeignKey(userEntity, errors, contextInfo);
-
-        // check Common Unique
-        this.validateCommonUnique(userEntity,
+        return UserValidator.validateUser(this,
                 validationTypeKey,
-                errors,
+                userEntity,
                 contextInfo);
-
-        switch (validationTypeKey) {
-            case Constant.UPDATE_VALIDATION:
-                // get the info
-                if (userEntity.getId() != null) {
-                    try {
-                        originalEntity = this
-                                .getUserById(userEntity.getId(),
-                                        contextInfo);
-                    } catch (DoesNotExistException | InvalidParameterException ex) {
-                        String fieldName = "id";
-                        errors.add(
-                                new ValidationResultInfo(fieldName,
-                                        ErrorLevel.ERROR,
-                                        "The id supplied to the update does not "
-                                                + "exists"));
-                    }
-                }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                this.validateUpdateUser(errors,
-                        userEntity,
-                        originalEntity);
-                break;
-            case Constant.CREATE_VALIDATION:
-                this.validateCreateUser(errors, userEntity, contextInfo);
-                break;
-            default:
-                throw new InvalidParameterException("Invalid validationTypeKey");
-        }
-
-        // For : Id
-        validateUserEntityId(userEntity,
-                errors);
-        // For :Name
-        validateUserEntityName(userEntity,
-                errors);
-        // For :Email
-        validateUserEntityEmail(userEntity,
-                errors);
-        // For :Password
-        validateUserEntityPassword(userEntity,
-                errors);
-        // For :Role
-        validateUserEntityRoles(userEntity,
-                errors);
-
-        return errors;
-    }
-
-    protected void validateCommonForeignKey(UserEntity userEntity,
-                                            List<ValidationResultInfo> errors,
-                                            ContextInfo contextInfo) {
-        //validate Role foreignKey.
-        Set<RoleEntity> roleEntitySet = new HashSet<>();
-        userEntity.getRoles().stream().forEach(item -> {
-            try {
-                roleEntitySet.add(this.getRoleById(item.getId(), contextInfo));
-            } catch (DoesNotExistException | InvalidParameterException |
-                     OperationFailedException ex) {
-                String fieldName = "roles";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "The id supplied for the role does not exists"));
-            }
-        });
-        userEntity.setRoles(roleEntitySet);
     }
 
     /**
@@ -433,156 +312,6 @@ public class UserServiceServiceImpl implements UserService {
                     + Constant.NOT_FOUND);
         }
         return userOptional.get();
-    }
-
-    //validate update
-    protected void validateUpdateUser(List<ValidationResultInfo> errors,
-                                      UserEntity userEntity,
-                                      UserEntity originalEntity) {
-        // required validation
-        ValidationUtils.validateRequired(userEntity.getId(), "id", errors);
-        //check the meta required
-        if (userEntity.getVersion() == null) {
-            String fieldName = "meta.version";
-            errors.add(new ValidationResultInfo(fieldName,
-                    ErrorLevel.ERROR,
-                    fieldName + " must be provided"));
-        }
-        // check meta version id
-        else if (!userEntity.getVersion()
-                .equals(originalEntity.getVersion())) {
-            String fieldName = "meta.version";
-            errors.add(new ValidationResultInfo(fieldName,
-                    ErrorLevel.ERROR,
-                    "someone else has updated the user since you"
-                            + " started updating, you might want to"
-                            + " refresh your copy."));
-        }
-        // check not updatable fields
-        this.validateNotUpdatable(errors, userEntity, originalEntity);
-    }
-
-    //validate not update
-    protected void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                        UserEntity userEntity,
-                                        UserEntity originalEntity) {
-        //email can't be update
-        ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
-    }
-
-    //validate create
-    protected void validateCreateUser(
-            List<ValidationResultInfo> errors,
-            UserEntity userEntity,
-            ContextInfo contextInfo) {
-        if (userEntity.getId() != null) {
-            try {
-                this.getUserById(userEntity.getId(),
-                        contextInfo);
-                // if info found with same id than
-                String fieldName = "id";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "The id supplied to the create already exists"));
-            } catch (DoesNotExistException | InvalidParameterException ex) {
-                // This is ok because created id should be unique
-            }
-        }
-    }
-
-    //Validate Required
-    protected void validateCommonRequired(UserEntity userEntity,
-                                          List<ValidationResultInfo> errors) {
-        //check the email required
-        ValidationUtils
-                .validateRequired(userEntity.getEmail(), "email", errors);
-    }
-
-    //Validate Common Unique
-    protected void validateCommonUnique(UserEntity userEntity,
-                                        String validationTypeKey,
-                                        List<ValidationResultInfo> errors,
-                                        ContextInfo contextInfo)
-            throws OperationFailedException,
-            InvalidParameterException {
-        // check unique field
-        if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || userEntity.getId() != null)
-                && userEntity.getEmail() != null) {
-            UserSearchFilter searchFilter = new UserSearchFilter();
-            searchFilter.setEmail(userEntity.getEmail());
-            Page<UserEntity> userEntities = this
-                    .searchUsers(
-                            null,
-                            searchFilter,
-                            Constant.TWO_VALUE_PAGE,
-                            contextInfo);
-
-            // if info found with same email and username than and not current id
-            boolean flag
-                    = userEntities.stream().anyMatch(u -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
-                    || !u.getId().equals(userEntity.getId()))
-            );
-            if (flag) {
-                String fieldName = "Email";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "Given User with same Email already exists."));
-            }
-
-        }
-    }
-
-    //Validation For :Id
-    protected void validateUserEntityId(UserEntity userEntity,
-                                        List<ValidationResultInfo> errors) {
-        ValidationUtils.validateNotEmpty(userEntity.getId(), "id", errors);
-    }
-
-    //Validation For :Name
-    protected void validateUserEntityName(UserEntity userEntity,
-                                          List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(userEntity.getName(),
-                "userName",
-                Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
-                errors);
-        ValidationUtils.validateLength(userEntity.getName(),
-                "userName",
-                3,
-                1000,
-                errors);
-    }
-
-    //Validation For :Email
-    protected void validateUserEntityEmail(UserEntity userEntity,
-                                           List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(userEntity.getEmail(),
-                "email",
-                UserServiceConstants.EMAIL_REGEX,
-                "Given email is invalid.",
-                errors);
-    }
-
-    //Validation For :Password
-    protected void validateUserEntityPassword(UserEntity userEntity,
-                                              List<ValidationResultInfo> errors) {
-        ValidationUtils.validateLength(userEntity.getPassword(),
-                "password",
-                6,
-                255,
-                errors);
-    }
-
-    //Validation For :Roles
-    protected void validateUserEntityRoles(UserEntity userEntity,
-                                           List<ValidationResultInfo> errors) {
-        ValidationUtils.validateCollectionSize(userEntity.getRoles(),
-                "roles",
-                1,
-                null,
-                errors);
     }
 
     /**
@@ -667,13 +396,4 @@ public class UserServiceServiceImpl implements UserService {
         return roles;
     }
 
-    //trim all User field
-    protected void trimUser(UserEntity userEntity) {
-        if (userEntity.getId() != null) {
-            userEntity.setId(userEntity.getId().trim());
-        }
-        if (userEntity.getEmail() != null) {
-            userEntity.setEmail(userEntity.getEmail().trim());
-        }
-    }
 }

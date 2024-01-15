@@ -203,8 +203,8 @@ public class UserRestController {
     @PutMapping("/state/{userId}/{changeState}")
     @Transactional
     public UserInfo updateDocumentState(@PathVariable("userId") String userId,
-                                            @PathVariable("changeState") String changeState,
-                                            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+                                        @PathVariable("changeState") String changeState,
+                                        @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         UserEntity userEntity = userService.changeState(userId, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
