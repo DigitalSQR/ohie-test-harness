@@ -88,20 +88,20 @@ VALUES
                 Now(),
                 0
         ),
-        (
-                'specification.cr.crf.8.1',
-                'CRF-8',
-                'CRF-8 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
-                'specification.status.active',
-                5,
-                true,
-                'component.client.repository',
-                'ivasiwala@argusoft.com',
-                'ivasiwala@argusoft.com',
-                Now(),
-                Now(),
-                0
-        ),
+--        (
+--                'specification.cr.crf.8.1',
+--                'CRF-8',
+--                'CRF-8 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+--                'specification.status.active',
+--                5,
+--                true,
+--                'component.client.repository',
+--                'ivasiwala@argusoft.com',
+--                'ivasiwala@argusoft.com',
+--                Now(),
+--                Now(),
+--                0
+--        ),
         (
                 'specification.cr.crf.9',
                 'CRF-9',
@@ -408,7 +408,7 @@ VALUES
                 0
         ),
         (
-                'testcase.cr.crf.8.1.1',
+                'testcase.cr.crf.8.2',
                 'Does the system record and log details such as what was changed, when it was changed, and who made the change whenever modifications are made to the data?',
                 'Question for the CRF-8 Specification of the Client Repository',
                 'testcase.status.active',
@@ -416,7 +416,7 @@ VALUES
                 true,
                 true,
                 null,
-                'specification.cr.crf.8.1',
+                'specification.cr.crf.8',
                 'ivasiwala@argusoft.com',
                 'ivasiwala@argusoft.com',
                 Now(),
@@ -424,7 +424,7 @@ VALUES
                 0
         ),
         (
-                'testcase.cr.crf.8.1.2',
+                'testcase.cr.crf.8.3',
                 'Does the system record and log changes to settings or configurations, including information on who made the changes and what was modified?',
                 'Question for the CRF-8 Specification of the Client Repository',
                 'testcase.status.active',
@@ -432,7 +432,7 @@ VALUES
                 true,
                 true,
                 null,
-                'specification.cr.crf.8.1',
+                'specification.cr.crf.8',
                 'ivasiwala@argusoft.com',
                 'ivasiwala@argusoft.com',
                 Now(),
@@ -440,7 +440,7 @@ VALUES
                 0
         ),
         (
-                'testcase.cr.crf.8.1.3',
+                'testcase.cr.crf.8.4',
                 'Does the system log user activities, including login events, changes made, and system access, to keep track of user interactions within the system?',
                 'Question for the CRF-8 Specification of the Client Repository',
                 'testcase.status.active',
@@ -448,7 +448,7 @@ VALUES
                 true,
                 true,
                 null,
-                'specification.cr.crf.8.1',
+                'specification.cr.crf.8',
                 'ivasiwala@argusoft.com',
                 'ivasiwala@argusoft.com',
                 Now(),
@@ -521,9 +521,6 @@ INSERT INTO
         )
 VALUES
         (
-                'testcase.cr.crf.1.1.option.1',
-                'YES',
-                'YES',
                 'testcase.cr.crf.1.1.option.1',
                 'Yes, you can change these rules easily.',
                 'Yes, you can change these rules easily.',
