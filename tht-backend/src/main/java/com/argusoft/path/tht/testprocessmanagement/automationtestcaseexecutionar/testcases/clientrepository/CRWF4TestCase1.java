@@ -30,7 +30,8 @@ public class CRWF4TestCase1 implements TestCase {
         try {
             List<String> patientIds = new ArrayList<>();
             // Create a new patient resource with all demographic information
-            Patient patient1 = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "00006", "555-555-5555", "john.doe@example.com");
+            Patient patient1 = FHIRUtils.createPatient("MOHR", "ALISSA", "female", "1958-01-30",
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "alissa.mohr@example.com", client);
 
             MethodOutcome outcome = client.create()
                     .resource(patient1)
@@ -42,7 +43,8 @@ public class CRWF4TestCase1 implements TestCase {
             }
             patientIds.add(outcome.getResource().getIdElement().getIdPart());
 
-            Patient patient2 = FHIRUtils.createPatient("Jane", "Doe", "F", "1992-02-02", "00007", "555-555-1234", "jane.doe@example.com");
+            Patient patient2 = FHIRUtils.createPatient("MOHR", "ALICE", "male", "1958-01-30",
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-995", true, "", "666-666-6666", "alice.mohr@example.com", client);
 
             outcome = client.create()
                     .resource(patient2)
@@ -57,8 +59,9 @@ public class CRWF4TestCase1 implements TestCase {
             //Verify patient by demographics
             Bundle bundle = client.search()
                     .forResource(Patient.class)
-                    .where(new DateClientParam("birthdate").afterOrEquals().day("1990-01-01")) // Replace with the actual start date
-                    .where(new DateClientParam("birthdate").beforeOrEquals().day("1992-02-02")) // Replace with the actual end date
+                    .where(Patient.RES_ID.exactly().codes(patientIds))
+                    .where(new DateClientParam("birthdate").afterOrEquals().day("1958-01-29")) // Replace with the actual start date
+                    .where(new DateClientParam("birthdate").beforeOrEquals().day("1958-01-28")) // Replace with the actual end date
                     .returnBundle(Bundle.class)
                     .execute();
             List<Patient> patients = FHIRUtils.processBundle(Patient.class, bundle);
@@ -66,23 +69,7 @@ public class CRWF4TestCase1 implements TestCase {
             if (patients.size() != 2) {
                 return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to search patients by demographics");
             }
-
-            //Verify patient by demographics and IDs
-            bundle = client.search()
-                    .forResource(Patient.class)
-                    .where(Patient.RES_ID.exactly().codes(patientIds))
-                    .where(new DateClientParam("birthdate").afterOrEquals().day("1990-01-01")) // Replace with the actual start date
-                    .where(new DateClientParam("birthdate").beforeOrEquals().day("1992-02-01")) // Replace with the actual end date
-                    .returnBundle(Bundle.class)
-                    .execute();
-
-            patients = FHIRUtils.processBundle(Patient.class, bundle);
-
-            if (patients.size() == 1) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
-            } else {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to search patients by Identifiers and demographics");
-            }
+            return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);
         }

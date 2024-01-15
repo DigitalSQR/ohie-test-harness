@@ -8,6 +8,8 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
+import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +30,11 @@ public class CRWF1TestCase1 implements TestCase {
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing CRWF1TestCase1");
+
             LOGGER.info("Creating patient");
             // Create a new patient resource with all demographic information
-            Patient patient = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "00001", "555-555-5555", "john.doe@example.com");
+            Patient patient = FHIRUtils.createPatient("MOHR", "ALISSA", "female", "1958-01-30",
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "alissa.mohr@example.com", client);
 
             MethodOutcome outcome = client.create()
                     .resource(patient)
@@ -44,43 +48,6 @@ public class CRWF1TestCase1 implements TestCase {
                 return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.ERROR, "Failed to create patient");
             }
 
-//instead of here in code, if we wants to store complete testcase code in database then we can do that by below logic
-//create table apiTest
-//@Entity
-//public class ApiTest {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//
-//    private String apiUrl;
-//    private String requestBody;
-//    private String expectedResponse;
-//    private String rank;
-//    private String nameToStoreResponseResource;
-//    private String testcaseId;
-//
-//    // getters and setters
-//}
-// And write common code like below
-
-//            // Build and send the FHIR request
-//            Map<String, Object> map = new HashMap<>();
-//            for(ApiTest apitest: apitests (order by rank by testId))
-//
-//            Update next API call based on previous calls.
-//            apiTest.setRequestBody(apiTest.getRequestBody(), map);
-//
-//            Bundle responseBundle = client
-//                    .transaction()
-//                    .withBundle(apiTest.getRequestBody())
-//                    .execute()
-//                    .getResource(Bundle.class);
-//
-//            // Convert the response to a string for easy comparison
-//            String actualResponse = fhirContext.newJsonParser().encodeResourceToString(responseBundle);
-//            // Assert the response
-//            assertEquals(apiTest.getExpectedResponse(), actualResponse);
-//            map.put("nameToStoreResponseResource", getResourceBasedOnBundle(responseBundle)); in case wants to use this as new request data.
         } catch (Exception ex) {
             LOGGER.error("Exception while CRWF1TestCase1 ",ex);
             throw new OperationFailedException(ex.getMessage(), ex);

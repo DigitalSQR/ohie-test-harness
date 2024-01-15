@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.systemconfiguration.utils;
 
+import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r4.model.*;
 
 import java.text.ParseException;
@@ -30,18 +31,56 @@ public final class FHIRUtils {
         return resources;
     }
 
-    public static Patient createPatient(String givenName, String familyName, String gender, String birthDate,
-                                        String identifierValue, String phone, String email) {
+    public static Patient createPatient(
+            String familyName,
+            String givenName,
+            String gender,
+            String birthDate,
+            String identifierSystem,
+            String identifierValue,
+            boolean active,
+            String linkedIdentifierValue,
+            String phone,
+            String email,
+            IGenericClient fhirClient) {
+        // Creating a new Patient resource
         Patient patient = new Patient();
 
-        // Set patient demographics
-        patient.addName().addGiven(givenName).setFamily(familyName);
-        patient.setGender(gender.equals("M") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE);
-        patient.setBirthDate(parseDate(birthDate));
+        // Setting patient name
+        HumanName name = patient.addName();
+        name.setFamily(familyName);
+        name.addGiven(givenName);
 
-        // Set identifier
-        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
-        patient.addIdentifier(identifier);
+        // Setting patient gender
+        if (gender != null) {
+            patient.setGender(Enumerations.AdministrativeGender.valueOf(gender.toUpperCase()));
+        }
+
+        // Setting patient birth date
+        if (birthDate != null) {
+            patient.setBirthDateElement(new DateType(birthDate));
+        }
+
+        // Setting patient identifier
+        Identifier identifier = patient.addIdentifier();
+        identifier.setSystem(identifierSystem);
+        identifier.setValue(identifierValue);
+
+        // Setting patient active status
+        patient.setActive(active);
+
+        // Handling linking scenario
+        if (!linkedIdentifierValue.isEmpty()) {
+            Resource linkTarget = fhirClient
+                    .search()
+                    .forResource(Patient.class)
+                    .where(Patient.IDENTIFIER.exactly().systemAndCode(identifierSystem, linkedIdentifierValue))
+                    .returnBundle(Bundle.class)
+                    .execute()
+                    .getEntryFirstRep()
+                    .getResource();
+            patient.addLink().setOther(new Reference(linkTarget));
+        }
 
         // Set contact information
         ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);

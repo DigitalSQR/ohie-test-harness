@@ -26,7 +26,8 @@ public class CRWF2TestCase1 implements TestCase {
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
             // Create a new patient resource with all demographic information
-            Patient patient = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "00003", "555-555-5555", "john.doe@example.com");
+            Patient patient = FHIRUtils.createPatient("MOHR", "ALISSA", "female", "1958-01-30",
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "alissa.mohr@example.com", client);
 
             MethodOutcome outcome = client.create()
                     .resource(patient)
@@ -44,9 +45,7 @@ public class CRWF2TestCase1 implements TestCase {
                     .withId(patientId)
                     .execute();
 
-            // Update the birth date using a Date object
-            Date birthDate = FHIRUtils.parseDate("1999-07-25");
-            patient.setBirthDate(birthDate);
+            patient.getName().get(0).getGiven().get(0).setValue("ALICE");
 
             //update patient data.
             outcome = client.update()
@@ -63,7 +62,7 @@ public class CRWF2TestCase1 implements TestCase {
                     .execute();
 
             //check if patient got updated or not
-            if (patient.getBirthDate().equals(birthDate)) {
+            if (patient.getName().get(0).getGiven().get(0).getValue().equals("ALICE")) {
                 return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.OK, "Passed");
             } else {
                 return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Failed to update patient");
