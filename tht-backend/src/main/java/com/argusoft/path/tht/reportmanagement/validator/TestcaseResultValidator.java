@@ -4,6 +4,7 @@ import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceCons
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
+import com.argusoft.path.tht.reportmanagement.service.impl.TestcaseResultServiceServiceImpl;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
@@ -26,14 +27,13 @@ import java.util.Objects;
 
 public class TestcaseResultValidator {
 
-    public static List<ValidationResultInfo> validateTestcaseResult(String validationTypeKey,
-                                                                    TestcaseResultService testcaseResultService,
-                                                                    TestcaseResultEntity testcaseResultEntity,
-                                                                    ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
-
+    public static List<ValidationResultInfo> validateCreateUpdateTestCaseResult(String validationTypeKey, TestcaseResultService testcaseResultService, UserService userService, TestcaseOptionService testcaseOptionService, TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
-                = testcaseResultService.validateTestcaseResult(validationTypeKey,
+                = validateTestCaseResult(validationTypeKey,
                 testcaseResultEntity,
+                userService,
+                testcaseResultService,
+                testcaseOptionService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -59,7 +59,7 @@ public class TestcaseResultValidator {
         }
     }
 
-    public static List<ValidationResultInfo> validateCreateUpdateTestCaseResult(String validationTypeKey, TestcaseResultEntity testcaseResultEntity, UserService userService, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public static List<ValidationResultInfo> validateTestCaseResult(String validationTypeKey, TestcaseResultEntity testcaseResultEntity, UserService userService, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (testcaseResultEntity == null) {
             throw new InvalidParameterException("TestcaseResultEntity is missing");
@@ -399,6 +399,4 @@ public class TestcaseResultValidator {
         }
         return errors;
     }
-
-
 }
