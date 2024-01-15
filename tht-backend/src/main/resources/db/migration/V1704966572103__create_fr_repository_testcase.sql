@@ -66,9 +66,9 @@ INSERT INTO testcase (
         updated_at,
         version
     ) VALUES (
-        'testcase.fr.frwf.1',
-        'Verify Create Facility',
-        'Testcase to verify create facility for specification FRWF1 of the fr repository',
+        'testcase.fr.frwf.1.1',
+        'Verify Create Organization and Location',
+        'Testcase to verify create Organization and Location for specification FRWF1 of the fr repository',
         'testcase.status.active',
         1,
         false,

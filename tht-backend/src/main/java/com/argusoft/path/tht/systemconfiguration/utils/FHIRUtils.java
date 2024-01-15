@@ -128,4 +128,55 @@ public final class FHIRUtils {
         healthcareService.getLocation().add(new Reference(location));
         return healthcareService;
     }
+
+    public static Organization createOrganization(String name,
+                                                  String identifierValue, String phone, String email, String city, String state, String country) {
+        Organization organization = new Organization();
+
+        // Set organization demographics
+        organization.setName(name);
+        organization.addAddress().setCity(city);
+        organization.addAddress().setState(state);
+        organization.addAddress().setCountry(country);
+
+        // Set identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
+        organization.addIdentifier(identifier);
+
+        // Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        ContactPoint emailContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL).setValue(email).setUse(ContactPoint.ContactPointUse.HOME);
+        organization.addTelecom(phoneContact).addTelecom(emailContact);
+
+        return organization;
+    }
+
+    public static Location createLocation(String identifierValue, String name, String description, String phone,
+                                          String email, String city, String postalCode, String country, Organization organization) {
+        Location location = new Location();
+
+        //set location demographics
+        location.setName(name);
+        location.setDescription(description);
+
+        Address address = new Address();
+        address.setCity(city);
+        address.setPostalCode(postalCode);
+        address.setCountry(country);
+        location.setAddress(address);
+
+        // Set identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
+        location.addIdentifier(identifier);
+
+        // Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        ContactPoint emailContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL).setValue(email).setUse(ContactPoint.ContactPointUse.HOME);
+        location.addTelecom(phoneContact).addTelecom(emailContact);
+
+        //set organization
+        location.setManagingOrganization(new Reference(organization));
+
+        return location;
+    }
 }
