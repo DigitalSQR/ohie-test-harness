@@ -1,4 +1,5 @@
 package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.frrepository;
+
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -7,19 +8,19 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
-import org.hl7.fhir.r4.model.HealthcareService;
 import org.hl7.fhir.r4.model.Location;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Reference;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import java.util.ArrayList;
-import java.util.List;
-import org.slf4j.Logger;
 
 
 @Component
 public class FRWF1TestCase1 implements TestCase {
 
-    public static final Logger LOGGER =  LoggerFactory.getLogger(FRWF1TestCase1.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(FRWF1TestCase1.class);
+
     @Override
     public ValidationResultInfo test(IGenericClient client,
                                      ContextInfo contextInfo) throws OperationFailedException {
@@ -27,50 +28,62 @@ public class FRWF1TestCase1 implements TestCase {
             LOGGER.info("Start testing FRWF1TestCase1");
             LOGGER.info("Creating facility");
 
-            //create new facility
+            //create organization
+            Organization organization = FHIRUtils.createOrganization("Health Level Seven International", "0222", "999-999-9999",
+                    "hq@HL7.org", "Ann Arbor", "MI", "USA");
 
-            // Specialty as a list of strings
-            List<String> specialties = new ArrayList<>();
-            specialties.add("Cardiology");
-            specialties.add("Dermatology");
-
-            //get location to pass it as reference
-            String locationId = "68";
-            Location location = client.read().resource(Location.class).withId(locationId).execute();
-
-            HealthcareService healthcareService = FHIRUtils.createHealthcareService("1111", "Consulting psychologists and/or psychology services",
-                    "Providing Specialist psychology services to the greater Den Burg area, many years of experience dealing with PTSD ", "555-555-5555",
-                    "directaddress@example.com", specialties, location);
-
-            MethodOutcome outcome = client.create()
-                    .resource(healthcareService)
+            MethodOutcome organizationOutcome = client.create()
+                    .resource(organization)
                     .execute();
 
-            // Check if the healthcare service was created successfully
-            if (!outcome.getCreated()) {
-                LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to create Facility");
+            // Check if the organization was created successfully
+            if (!organizationOutcome.getCreated()) {
+                return new ValidationResultInfo("testHWWF1Case2", ErrorLevel.ERROR, "Failed to create organization");
             }
 
-            String careServiceId = outcome.getResource().getIdElement().getIdPart();
-
-            healthcareService = client.read()
-                    .resource(HealthcareService.class)
-                    .withId(careServiceId)
+            String organizationId = organizationOutcome.getResource().getIdElement().getIdPart();
+            organization = client.read()
+                    .resource(Organization.class)
+                    .withId(organizationId)
                     .execute();
 
-            //check if we can queryy healthcare service or not
-            if (healthcareService.hasName()) {
-                LOGGER.info("Testcase successfully passed!");
+            //check for organization
+            if (!organization.hasName()) {
+                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to read organization");
+            }
+
+            //create location
+            Location location = FHIRUtils.createLocation("0234", "South Wing, second floor", "Second floor of the Old South Wing, formerly in use by Psychiatry",
+                    "2328", "second wing admissions", "Den Burg", "9105 PZ", "NLD", organization);
+
+            MethodOutcome locationOutcome = client.create()
+                    .resource(location)
+                    .execute();
+
+            //check for the location created successfully
+            if (!locationOutcome.getCreated()) {
+                return new ValidationResultInfo("testHWWF1Case2", ErrorLevel.ERROR, "Failed to create location");
+            }
+
+            String locationId = locationOutcome.getResource().getIdElement().getIdPart();
+            location = client.read()
+                    .resource(Location.class)
+                    .withId(locationId)
+                    .execute();
+
+            //to fetch out organization from location
+            Reference organizationRef = location.getManagingOrganization();
+            String organizationRefId = organizationRef.getReferenceElement().getIdPart();
+
+            //check this id with the actual organization id
+            if (organizationId.equals(organizationRefId)) {
                 return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.OK, "Passed");
             } else {
-                LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to query services");
-
+                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to find organization in location");
             }
 
         } catch (Exception ex) {
-            LOGGER.error("Exception while FRWF1TestCase1 ",ex);
+            LOGGER.error("Exception while FRWF1TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }
