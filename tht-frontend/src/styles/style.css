@@ -254,4 +254,18 @@ body {
   margin-left: 30px !important;
 }
 
+.component-checkbox {
+  zoom: 1.5;
+}
+
+.approval-action-button {
+  font-weight: 500;
+  font-size: 13px;
+  border-top: 1px solid #DFEFF3;
+  line-height: 18px;
+}
+
+.approval-action-button:hover {
+  border: 0.5px solid gray;
+}
 /*# sourceMappingURL=style.css.map */

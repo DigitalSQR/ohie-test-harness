@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/User.css";
+// import "../styles/User.css";
 import { Fragment } from "react";
 import { Button, notification } from "antd";
 import "antd/dist/reset.css";

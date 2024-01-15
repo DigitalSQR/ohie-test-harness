@@ -1,11 +1,104 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../scss/_registrationApplication.scss"
 import { useNavigate } from "react-router-dom";
+import { useFormik } from 'formik';
+import { UserAPI } from "../api/UserAPI";
+import { ComponentAPI } from "../api/ComponentAPI";
+import { useLoader } from "./loader/LoaderContext";
+import { TestRequestAPI } from "../api/TestRequestAPI";
+import { notification } from "antd";
+import { TestRequestStateConstants } from "../constants/state_constants.js";
+import { CREATE_VALIDATION } from "../constants/validation_constants.js";
 
 const RegisterApplication = () => {
   const navigate = useNavigate();
+  const { showLoader, hideLoader } = useLoader();
+  const [components, setComponents] = useState([])
+  const [userId, setUserId] = useState();
+
+  useEffect(() => {
+    showLoader();
+    UserAPI.viewUser().then((res) => {
+      setUserId(res.id);
+    }).catch((err) => {
+      notification.error({
+        placement: "bottomRight",
+        message: err.data?.message
+      })
+      hideLoader();
+    });
+
+    ComponentAPI.getCompoents().then((res) => {
+      setComponents(res.content);
+      hideLoader();
+    }).catch((err) => {
+      notification.error({
+        placement: "bottomRight",
+        message: err.data?.message
+      })
+      hideLoader();
+    });
+  }, [])
+
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      state: TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING,
+      productName: '',
+      description: '',
+      assesseeId: '',
+      testRequestUrls: []
+    },
+    onSubmit: values => {
+      showLoader();
+      formik.values.assesseeId = userId;
+      TestRequestAPI.validateTestRequest(CREATE_VALIDATION, values)
+        .then((res) => {
+          if (res.length == 0) {
+            TestRequestAPI.createTestRequest(values)
+              .then((res) => {
+                notification.success({
+                  placement: "bottomRight",
+                  message: `Successfully Created! Waiting for Approval`
+                })
+                hideLoader();
+                navigate('/dashboard/application-status');
+              })
+          } else {
+            res.forEach(err => {
+              notification.error({
+                placement: "bottomRight",
+                message: err.message
+              });
+            });
+            hideLoader();
+          }
+        })
+    },
+  });
+
+  const addOrRemoveTestUrls = (component, i) => {
+    var turls = formik.getFieldHelpers("testRequestUrls");
+    if (component.isSelected) {
+      turls.setValue([...formik.values.testRequestUrls, {
+        username: '',
+        password: '',
+        baseUrl: '',
+        componentId: component.id
+      }]);
+    } else {
+      turls.setValue(formik.values.testRequestUrls.filter((url) => url.componentId !== component.id));
+    }
+  }
+
+  const onComponentSelected = (index, e) => {
+    components[index].isSelected = e.target.checked;
+    setComponents(components);
+    addOrRemoveTestUrls(components[index], index);
+  }
+
   return (
-    <div>
+    <form>
       <div id="wrapper">
         <div class="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
           <div class="form-bg-white">
@@ -14,25 +107,33 @@ const RegisterApplication = () => {
             <div class="row">
               <div class="col-sm-6 col-12">
                 <div class="custom-input mb-3">
-                  <label for="exampleFormControlInput1" class="form-label">
+                  <label for="name" class="form-label">
                     Application Name
                   </label>
                   <input
+                    id="name"
+                    name="name"
                     type="text"
                     class="form-control"
                     placeholder="Application Name"
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
                   />
                 </div>
               </div>
               <div class="col-sm-6 col-12">
                 <div class="custom-input mb-3">
-                  <label for="exampleFormControlInput1" class="form-label">
-                    Application URL
+                  <label for="productName" class="form-label">
+                    Product Name
                   </label>
                   <input
+                    id="productName"
+                    name="productName"
                     type="text"
                     class="form-control"
-                    placeholder="Application URL"
+                    placeholder="Product Name"
+                    value={formik.values.productName}
+                    onChange={formik.handleChange}
                   />
                 </div>
               </div>
@@ -41,77 +142,124 @@ const RegisterApplication = () => {
             <div class="row">
               <div class="col-12">
                 <div class="custom-input mb-3">
-                  <label for="exampleFormControlInput1" class="form-label">
+                  <label for="description" class="form-label">
                     Application Description
                   </label>
                   <textarea
+                    id="description"
+                    name="description"
                     class="form-control custom-textarea"
-                    id="exampleFormControlTextarea1"
                     rows="3"
                     placeholder="Application Description"
+                    value={formik.values.description}
+                    onChange={formik.handleChange}
                   ></textarea>
                 </div>
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-12">
-                {" "}
-                <label for="exampleFormControlInput1" class="form-label">
-                  Credentials
-                </label>
-              </div>
-              <div class="col-sm-6 col-12">
-                <div class="custom-input mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Username"
-                  />
-                </div>
-              </div>
-              <div class="col-sm-6 col-12">
-                <div class="custom-input mb-3">
-                  <input
-                    type="Password"
-                    class="form-control"
-                    placeholder="Password"
-                  />
-                </div>
-              </div>
-            </div>
+            {
+              components.map((component, index) => {
+                return (
+                  <>
+                    <div class="row mt-2">
+                      <div class="col-12">
+                        <div class="field-box">
+                          <input
+                            id="component"
+                            type="checkbox"
+                            className="field-checkbox component-checkbox"
+                            name="component"
+                            onChange={(e) => { onComponentSelected(index, e) }}
+                          />
+                          <label for="component" className="form-label mx-2 align-middle">
+                            {component.name}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    {
+                      formik.values.testRequestUrls.map((url, index) => {
+                        return <>
+                          {url.componentId == component.id ?
+                            <div className="form-bg-white mt-3" >
+                              <span class="heading-line-up">{component.name} Details</span>
+                              <div class="row">
+                                <div class="col-12">
+                                  {" "}
+                                  <label for="username" class="form-label">
+                                    Credentials
+                                  </label>
+                                </div>
+                                <div class="col-sm-6 col-12">
+                                  <div class="custom-input mb-3">
+                                    <input
+                                      id="username"
+                                      name={'testRequestUrls[' + index + '].username'}
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="Username"
+                                      value={formik.values.testRequestUrls[index].username}
+                                      onChange={formik.handleChange}
+                                    />
+                                  </div>
+                                </div>
+                                <div class="col-sm-6 col-12">
+                                  <div class="custom-input mb-3">
+                                    <input
+                                      id="password"
+                                      name={'testRequestUrls[' + index + '].password'}
+                                      type="Password"
+                                      class="form-control"
+                                      placeholder="Password"
+                                      value={formik.values.testRequestUrls[index].password}
+                                      onChange={formik.handleChange}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
 
-            <div class="row">
-              <div class="col-12">
-                <div class="custom-input mb-3">
-                  <label for="exampleFormControlInput1" class="form-label">
-                    Select OpenHIE Components:{" "}
-                    <i class="bi bi-info-circle-fill cursor-pointer"></i>
-                  </label>
-                  <select
-                    class="form-select custom-select"
-                    aria-label="Default select example"
-                  >
-                    <option selected>Component name</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+                              <div class="row">
+                                <div class="col-12">
+                                  <div class="custom-input mb-3">
+                                    <label for="baseUrl" class="form-label">
+                                      Base Url:{" "}
+                                      {/* <i class="bi bi-info-circle-fill cursor-pointer"></i> */}
+                                    </label>
+                                    <input
+                                      id="baseUrl"
+                                      name={'testRequestUrls[' + index + '].baseUrl'}
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="../base-url/"
+                                      value={formik.values.testRequestUrls[index].baseUrl}
+                                      onChange={formik.handleChange}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            : null}
+                        </>
+                      })
+                    }
+                  </>
+                );
+              })
+            }
           </div>
+
           <div class="my-4 text-end">
-            <button class="btn btn-primary btn-white py-2 font-size-14"onClick={()=>{navigate("/dashboard")}}>
+            <button class="btn btn-primary btn-white py-2 font-size-14" onClick={() => { navigate("/dashboard") }}>
               Cancel
             </button>
-            <button class="btn btn-primary btn-blue py-2 font-size-14">
+            <button type="button" onClick={formik.handleSubmit} class="btn btn-primary btn-blue py-2 font-size-14">
               submit
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
