@@ -1,9 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import tool_icon from "../styles/images/tool-icon.png";
 import { useEffect, useState } from "react";
+import { UserAPI } from "../api/UserAPI";
+import { USER_ROLES } from "../constants/role_constants";
 export default function Landing() {
   const navigate = useNavigate();
+  const [user, setUser] = useState();
 
+  useEffect(() => {
+    UserAPI.viewUser().then((user) => {
+      setUser(user);
+    })
+  })
 
   return (
     <div id="wrapper">
@@ -19,8 +27,14 @@ export default function Landing() {
             <p class="my-4"><a class="text-blue font-weight-500" target="_blank"
                     href="https://guides.ohie.org/arch-spec/openhie-component-specifications-1">View OpenHIE Component
                     Specifications</a></p>
-            <div class="my-4"> <button class="btn btn-primary btn-blue mt-2" onClick={() => { navigate("/dashboard/register-application") }}><i class="bi bi-pencil-square"></i>
+            {
+              user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) ?
+              <>
+                <div class="my-4"> <button class="btn btn-primary btn-blue mt-2" onClick={() => { navigate("/dashboard/register-application") }}><i class="bi bi-pencil-square"></i>
                     Register application</button></div>
+              </>
+              : null 
+            }
         </div>
     </div>
   )
