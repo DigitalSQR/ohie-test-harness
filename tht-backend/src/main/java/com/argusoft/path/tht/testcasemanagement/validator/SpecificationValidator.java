@@ -24,10 +24,13 @@ import java.util.List;
 import java.util.Set;
 
 public class SpecificationValidator {
-    public static void validateSpecification(String validationTypeKey, SpecificationService specificationService, SpecificationEntity specificationEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
+    public static void validateCreateUpdateSpecification(String validationTypeKey, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, SpecificationEntity specificationEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
-                = specificationService.validateSpecification(validationTypeKey,
+                = validateSpecification(validationTypeKey,
                 specificationEntity,
+                specificationService,
+                testcaseService,
+                componentService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -37,7 +40,7 @@ public class SpecificationValidator {
 
     }
 
-    public static List<ValidationResultInfo> validateCreateUpdateSpecification(String validationTypeKey, SpecificationEntity specificationEntity, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public static List<ValidationResultInfo> validateSpecification(String validationTypeKey, SpecificationEntity specificationEntity, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         if (specificationEntity == null) {
             throw new InvalidParameterException("specificationEntity is missing");
         }

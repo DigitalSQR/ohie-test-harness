@@ -60,8 +60,9 @@ public class ComponentServiceServiceImpl implements ComponentService {
             InvalidParameterException,
             DataValidationErrorException {
 
-        ComponentValidator.validateComponent(Constant.CREATE_VALIDATION,
+        ComponentValidator.validateCreateUpdateComponent(Constant.CREATE_VALIDATION,
                 this,
+                specificationService,
                 componentEntity,
                 contextInfo);
 
@@ -85,8 +86,9 @@ public class ComponentServiceServiceImpl implements ComponentService {
             InvalidParameterException,
             DataValidationErrorException {
 
-        ComponentValidator.validateComponent(Constant.UPDATE_VALIDATION,
+        ComponentValidator.validateCreateUpdateComponent(Constant.UPDATE_VALIDATION,
                 this,
+                specificationService,
                 componentEntity,
                 contextInfo);
 
@@ -192,7 +194,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             throws InvalidParameterException,
             OperationFailedException {
 
-        List<ValidationResultInfo> errors = ComponentValidator.validateCreateUpdateComponent(validationTypeKey, componentEntity, this, specificationService, contextInfo);
+        List<ValidationResultInfo> errors = ComponentValidator.validateComponent(validationTypeKey, componentEntity, this, specificationService, contextInfo);
 
         return errors;
     }

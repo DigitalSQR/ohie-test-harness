@@ -5,6 +5,7 @@ import com.argusoft.path.tht.fileservice.FileDetails;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
 import com.argusoft.path.tht.fileservice.service.FileService;
+import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
@@ -16,6 +17,7 @@ import com.argusoft.path.tht.testcasemanagement.constant.DocumentServiceConstant
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.DocumentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
+import com.argusoft.path.tht.testcasemanagement.validator.DocumentValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
@@ -52,22 +54,14 @@ public class DocumentServiceImpl implements DocumentService {
         documentEntity.setFileType(fileType);
 
         //validate documentEntity
-        List<ValidationResultInfo> errors = validateDocumentEntity(com.argusoft.path.tht.systemconfiguration.constant.Constant.CREATE_VALIDATION, documentEntity, contextInfo);
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException("Error(s) occurred validating ", errors);
-        }
+        DocumentValidator.validateDocumentEntity(Constant.CREATE_VALIDATION, documentEntity, contextInfo);
 
         //save file
         FileDetails fileDetails = null;
         try {
             fileDetails = storeFileAndGetFileDetails(file, validationAllowedTypes);
         } catch (InvalidFileTypeException e) {
-            ValidationResultInfo error = new ValidationResultInfo();
-            error.setMessage(e.getMessage());
-            error.setLevel(ErrorLevel.ERROR);
-            error.setStackTrace(Arrays.toString(e.getStackTrace()));
-            error.setElement("fileType");
-            throw new DataValidationErrorException(e.getMessage(), Collections.singletonList(error));
+            DocumentValidator.setErrorMessageForFileType(e);
         }
 
         //set FileId to DocumentEntity as it is UUID
@@ -95,22 +89,6 @@ public class DocumentServiceImpl implements DocumentService {
             throw new OperationFailedException("Operation Failed due to IOException", e);
         }
         return fileDetails;
-    }
-
-    private List<ValidationResultInfo> validateDocumentEntity(String validationTypeKey,
-                                                              DocumentEntity documentEntity,
-                                                              ContextInfo contextInfo) {
-        List<ValidationResultInfo> errors = new ArrayList<>();
-        validateRequired(documentEntity, errors);
-        switch (validationTypeKey) {
-            case com.argusoft.path.tht.systemconfiguration.constant.Constant.CREATE_VALIDATION:
-                //TODO define and add validation for create
-                break;
-            case com.argusoft.path.tht.systemconfiguration.constant.Constant.UPDATE_VALIDATION:
-                //TODO define and add validation for update
-                break;
-        }
-        return errors;
     }
 
     private void validateRequired(DocumentEntity documentEntity, List<ValidationResultInfo> errors) {
@@ -146,16 +124,8 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
-        if (orderId < 0) {
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setMessage("orderId cannot be lesser than 0");
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setElement("orderId");
-            errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Error(s) occured in validating ", errors);
-        }
 
+        DocumentValidator.validateDocumentOrder(orderId);
         DocumentEntity document = this.getDocument(documentId, contextInfo);
 
         String refObjUri = document.getRefObjUri();
@@ -194,18 +164,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
 
-        List<ValidationResultInfo> errors = new ArrayList<>();
-
-        //validate given stateKey
-        boolean contains = DocumentServiceConstants.documentStatuses.contains(stateKey);
-        if (!contains) {
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setElement("stateKey");
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("provided stateKey is not valid ");
-            errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
-        }
+        DocumentValidator.validateDocumentStateKey(stateKey);
 
         DocumentEntity document = this.getDocument(documentId, contextInfo);
         document.setState(stateKey);

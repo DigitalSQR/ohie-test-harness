@@ -60,8 +60,9 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             InvalidParameterException,
             DataValidationErrorException {
 
-        TestcaseOptionValidator.validateTestcaseOption(Constant.CREATE_VALIDATION,
+        TestcaseOptionValidator.validateCreateUpdateTestcaseOption(Constant.CREATE_VALIDATION,
                 this,
+                testcaseService,
                 testcaseOptionEntity,
                 contextInfo);
 
@@ -85,8 +86,9 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             InvalidParameterException,
             DataValidationErrorException {
 
-        TestcaseOptionValidator.validateTestcaseOption(Constant.UPDATE_VALIDATION,
+        TestcaseOptionValidator.validateCreateUpdateTestcaseOption(Constant.UPDATE_VALIDATION,
                 this,
+                testcaseService,
                 testcaseOptionEntity,
                 contextInfo);
 
@@ -191,7 +193,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        List<ValidationResultInfo> errors = TestcaseOptionValidator.validateCreateUpdateTestcaseOption(validationTypeKey, testcaseOptionEntity, this, testcaseService, contextInfo);
+        List<ValidationResultInfo> errors = TestcaseOptionValidator.validateTestcaseOption(validationTypeKey, testcaseOptionEntity, this, testcaseService, contextInfo);
         return errors;
     }
 

@@ -23,10 +23,13 @@ import java.util.List;
 
 public class TestcaseValidator {
 
-    public static void validateTestCase(String validationTypeKey, TestcaseService testcaseService, TestcaseEntity testcaseEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
+    public static void validateCreateUpdateTestCase(String validationTypeKey, TestcaseEntity testcaseEntity, TestcaseService testcaseService, SpecificationService specificationService, ApplicationContext applicationContext, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
-                = testcaseService.validateTestcase(validationTypeKey,
+                = validateTestCase(validationTypeKey,
                 testcaseEntity,
+                testcaseService,
+                specificationService,
+                applicationContext,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -36,7 +39,7 @@ public class TestcaseValidator {
 
     }
 
-    public static List<ValidationResultInfo> validateCreateUpdateTestCase(String validationTypeKey,
+    public static List<ValidationResultInfo> validateTestCase(String validationTypeKey,
                                                                           TestcaseEntity testcaseEntity,
                                                                           TestcaseService testcaseService,
                                                                           SpecificationService specificationService,

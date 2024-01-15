@@ -25,10 +25,12 @@ import java.util.Set;
 public class ComponentValidator {
 
 
-    public static void validateComponent(String validationTypeKey, ComponentService componentService, ComponentEntity componentEntity, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+    public static void validateCreateUpdateComponent(String validationTypeKey, ComponentService componentService, SpecificationService specificationService, ComponentEntity componentEntity, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntities
-                = componentService.validateComponent(validationTypeKey,
+                = validateComponent(validationTypeKey,
                 componentEntity,
+                componentService,
+                specificationService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -37,7 +39,7 @@ public class ComponentValidator {
         }
     }
 
-    public static List<ValidationResultInfo> validateCreateUpdateComponent(
+    public static List<ValidationResultInfo> validateComponent(
             String validationTypeKey,
             ComponentEntity componentEntity,
             ComponentService componentService,

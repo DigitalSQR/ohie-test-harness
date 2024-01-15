@@ -66,9 +66,11 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             InvalidParameterException,
             DataValidationErrorException {
 
-        TestcaseValidator.validateTestCase(Constant.CREATE_VALIDATION,
-                this,
+        TestcaseValidator.validateCreateUpdateTestCase(Constant.CREATE_VALIDATION,
                 testcaseEntity,
+                this,
+                specificationService,
+                applicationContext,
                 contextInfo);
 
         if (StringUtils.isEmpty(testcaseEntity.getId())) {
@@ -91,9 +93,11 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             InvalidParameterException,
             DataValidationErrorException {
 
-        TestcaseValidator.validateTestCase(Constant.UPDATE_VALIDATION,
-                this,
+        TestcaseValidator.validateCreateUpdateTestCase(Constant.UPDATE_VALIDATION,
                 testcaseEntity,
+                this,
+                specificationService,
+                applicationContext,
                 contextInfo);
 
         Optional<TestcaseEntity> testcaseOptional
@@ -198,7 +202,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             throws InvalidParameterException,
             OperationFailedException {
 
-        List<ValidationResultInfo> errors = TestcaseValidator.validateCreateUpdateTestCase(validationTypeKey, testcaseEntity, this, specificationService, applicationContext, contextInfo);
+        List<ValidationResultInfo> errors = TestcaseValidator.validateTestCase(validationTypeKey, testcaseEntity, this, specificationService, applicationContext, contextInfo);
         return errors;
     }
 

@@ -64,8 +64,10 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             InvalidParameterException,
             DataValidationErrorException {
 
-        SpecificationValidator.validateSpecification(Constant.CREATE_VALIDATION,
+        SpecificationValidator.validateCreateUpdateSpecification(Constant.CREATE_VALIDATION,
                 this,
+                testcaseService,
+                componentService,
                 specificationEntity,
                 contextInfo);
 
@@ -90,8 +92,10 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             DataValidationErrorException {
 
 
-        SpecificationValidator.validateSpecification(Constant.UPDATE_VALIDATION,
+        SpecificationValidator.validateCreateUpdateSpecification(Constant.UPDATE_VALIDATION,
                 this,
+                testcaseService,
+                componentService,
                 specificationEntity,
                 contextInfo);
 
@@ -196,7 +200,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        List<ValidationResultInfo> errors = SpecificationValidator.validateCreateUpdateSpecification(validationTypeKey, specificationEntity, this, testcaseService, componentService, contextInfo);
+        List<ValidationResultInfo> errors = SpecificationValidator.validateSpecification(validationTypeKey, specificationEntity, this, testcaseService, componentService, contextInfo);
         return errors;
     }
 }
