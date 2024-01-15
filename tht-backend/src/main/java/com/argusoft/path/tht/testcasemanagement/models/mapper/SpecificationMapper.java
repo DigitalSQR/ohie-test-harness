@@ -66,7 +66,7 @@ public interface SpecificationMapper {
     }
 
     default ComponentEntity setToComponent(String componentId) {
-        if(StringUtils.isEmpty(componentId)) {
+        if (StringUtils.isEmpty(componentId)) {
             return null;
         }
         ComponentEntity componentEntity = new ComponentEntity();

@@ -46,7 +46,7 @@ public interface TestcaseOptionMapper {
     }
 
     default TestcaseEntity setToTestcase(String testcaseId) {
-        if(StringUtils.isEmpty(testcaseId)) {
+        if (StringUtils.isEmpty(testcaseId)) {
             return null;
         }
         TestcaseEntity testcaseEntity = new TestcaseEntity();

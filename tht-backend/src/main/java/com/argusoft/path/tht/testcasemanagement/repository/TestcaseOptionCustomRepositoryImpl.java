@@ -5,7 +5,6 @@
  */
 package com.argusoft.path.tht.testcasemanagement.repository;
 
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.utils.SQLUtils;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionSearchFilter;

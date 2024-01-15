@@ -79,6 +79,7 @@ public class TestcaseOptionSearchFilter {
     public void setState(String state) {
         this.state = state;
     }
+
     public String getTestcaseId() {
         return testcaseId;
     }

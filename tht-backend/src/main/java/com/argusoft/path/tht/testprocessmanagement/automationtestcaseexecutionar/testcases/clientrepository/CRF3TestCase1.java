@@ -18,20 +18,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
-
 @Component
-public class CRF3TestCase1 implements TestCase{
+public class CRF3TestCase1 implements TestCase {
 
-    public static final Logger LOGGER =  LoggerFactory.getLogger(CRF3TestCase1.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(CRF3TestCase1.class);
+
     @Override
     public ValidationResultInfo test(IGenericClient client,
-                                             ContextInfo contextInfo) throws OperationFailedException {
+                                     ContextInfo contextInfo) throws OperationFailedException {
 
         try {
             LOGGER.info("Start testing CRF3TestCase1");
 
             // Create Patient resource
-            Patient newPatient = FHIRUtils.createPatient("Doe", "John", "M", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true,"","555-555-5555","john.doe@example.com", client);
+            Patient newPatient = FHIRUtils.createPatient("Doe", "John", "M", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
 
             // Create the Patient
             MethodOutcome patientOutcome = client.create()
@@ -39,9 +39,8 @@ public class CRF3TestCase1 implements TestCase{
                     .execute();
 
             // Checking whether patient is created or not
-            if(!patientOutcome.getCreated())
-            {
-                return new ValidationResultInfo("testCRF3",ErrorLevel.ERROR,"Failed to create patient");
+            if (!patientOutcome.getCreated()) {
+                return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed to create patient");
             }
 
             // Retrieving the Patient's ID

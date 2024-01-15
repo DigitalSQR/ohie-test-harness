@@ -46,7 +46,7 @@ public interface TestcaseMapper {
     }
 
     default SpecificationEntity setToSpecification(String specificationId) {
-        if(StringUtils.isEmpty(specificationId)) {
+        if (StringUtils.isEmpty(specificationId)) {
             return null;
         }
         SpecificationEntity specificationEntity = new SpecificationEntity();

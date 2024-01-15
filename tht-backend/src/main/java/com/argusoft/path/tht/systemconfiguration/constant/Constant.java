@@ -30,6 +30,7 @@ public final class Constant {
     public static final String SUBMIT_VALIDATION = "submit.validation";
     public static final String START_MANUAL_PROCESS_VALIDATION = "start.manual.process.validation";
     public static final String START_AUTOMATION_PROCESS_VALIDATION = "start.automation.process.validation";
+    public static final String REINITIALIZE_AUTOMATION_PROCESS_VALIDATION = "reinitialize.automation.process.validation";
     public static final String TRUE_STRING = "true";
     public static final String FALSE_STRING = "false";
     public static final Pageable SINGLE_VALUE_PAGE = PageRequest.of(0, 1);
