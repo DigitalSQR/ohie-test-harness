@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../scss/application-status.scss";
 import "../scss/_table.scss";
-import { TestRequestStateLabels, TestRequestStateConstants, TestRequestStateConstantNames, StateBadgeClasses } from "../constants/state_constants";
+import { TestRequestStateLabels, TestRequestStateConstants, TestRequestStateConstantNames, StateBadgeClasses } from "../constants/test_requests_constants.js";
 import { USER_ROLES } from "../constants/role_constants.js";
 import { TestRequestAPI } from "../api/TestRequestAPI";
 import { UserAPI } from "../api/UserAPI.js";
@@ -9,7 +9,7 @@ import { useLoader } from "./loader/LoaderContext.js";
 import ComponentIdConnector from "./connectors/ComponentIdConnector/ComponentIdConnector.js";
 import { notification } from "antd";
 
-const ApplicationStatus = () => {
+const TestingRequests = () => {
 	const testRequestStates = [...TestRequestStateLabels, { label: "All", value: '' }];
 	const { showLoader, hideLoader } = useLoader();
 	const [filterState, setFilterState] = useState(TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING);
@@ -173,4 +173,4 @@ const ApplicationStatus = () => {
 	);
 };
 
-export default ApplicationStatus;
+export default TestingRequests;

@@ -11,7 +11,7 @@ export default function Landing() {
     UserAPI.viewUser().then((user) => {
       setUser(user);
     })
-  })
+  }, [])
 
   return (
     <div id="wrapper">

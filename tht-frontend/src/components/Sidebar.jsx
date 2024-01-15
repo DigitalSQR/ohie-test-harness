@@ -66,24 +66,24 @@ export default function Sidebar() {
           </a>
         </li>
         <li>
-          <a className={activeMenuItem === "/dashboard/application-status" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/application-status")}>
-            <i aria-label='Application Status' title='Application Status' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
-            <span> Application Status </span>
+          <a className={activeMenuItem === "/dashboard/testing-requests" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/testing-requests")}>
+            <i aria-label='Testing Requests' title='Testing Requests' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
+            <span> Testing Requests</span>
           </a>
         </li>
         {
           user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ?
             <>
               <li>
-                <a className={activeMenuItem === "/dashboard/registration-request" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/registration-request")}>
-                  <i aria-label='Registration Request' title='Registration Request' className="bi bi-columns-gap menu-left-icon"></i>
-                  <span> Registration Request </span>
+                <a className={activeMenuItem === "/dashboard/user-registration" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/user-registration")}>
+                  <i aria-label='User Registration' title='User Registration' className="bi bi-columns-gap menu-left-icon"></i>
+                  <span> User Registration </span>
                 </a>
               </li>
               <li>
-                <a className={activeMenuItem === "/dashboard/application-request" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/application-request")}>
-                  <i aria-label='Application Request' title='Application Request' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
-                  <span> Application Request </span>
+                <a className={activeMenuItem === "/dashboard/applications" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/applications")}>
+                  <i aria-label='Applications' title='Applications' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
+                  <span> Applications </span>
                 </a>
               </li>
             </>
