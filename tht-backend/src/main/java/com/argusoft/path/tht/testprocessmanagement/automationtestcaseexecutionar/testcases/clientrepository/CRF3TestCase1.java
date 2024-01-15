@@ -31,7 +31,7 @@ public class CRF3TestCase1 implements TestCase{
             LOGGER.info("Start testing CRF3TestCase1");
 
             // Create Patient resource
-            Patient newPatient = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "00002", "555-555-5555", "john.doe@example.com");
+            Patient newPatient = FHIRUtils.createPatient("Doe", "John", "M", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true,"","555-555-5555","john.doe@example.com", client);
 
             // Create the Patient
             MethodOutcome patientOutcome = client.create()
@@ -58,7 +58,6 @@ public class CRF3TestCase1 implements TestCase{
                 return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed due to non presence of inbound transaction");
             }
 
-
             // Reading Patient
             Patient retrievedPatient = client.read()
                     .resource(Patient.class)
@@ -71,14 +70,12 @@ public class CRF3TestCase1 implements TestCase{
                     .prettyPrint().execute();
 
             if (!specificAuditEventBundle.hasEntry()) {
-                System.out.println("Failed due to non presence of outbound transaction");
                 return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed due to non presence of outbound transaction");
             }
+
             return new ValidationResultInfo("testCRF3", ErrorLevel.OK, "Passed");
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);
         }
-
     }
-
 }

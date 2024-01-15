@@ -29,7 +29,8 @@ public class CRWF3TestCase1 implements TestCase {
         try {
             List<String> patientIds = new ArrayList<>();
             // Create a new patient resource with all demographic information
-            Patient patient1 = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "00004", "555-555-5555", "john.doe@example.com");
+            Patient patient1 = FHIRUtils.createPatient("MOHR", "ALISSA", "female", "1958-01-30",
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "alissa.mohr@example.com", client);
 
             MethodOutcome outcome = client.create()
                     .resource(patient1)
@@ -52,7 +53,8 @@ public class CRWF3TestCase1 implements TestCase {
             }
 
             //verify patients by IDs
-            Patient patient2 = FHIRUtils.createPatient("Jane", "Doe", "F", "1992-02-02", "00005", "555-555-1234", "jane.doe@example.com");
+            Patient patient2 = FHIRUtils.createPatient("MOHR", "ALICE", "male", "1958-01-30",
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-995", true, "", "666-666-6666", "alice.mohr@example.com", client);
 
             outcome = client.create()
                     .resource(patient2)

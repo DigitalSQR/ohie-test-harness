@@ -24,7 +24,8 @@ public class CRWF1TestCase2 implements TestCase {
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
             // Create a new patient resource with all demographic information
-            Patient patient = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "00002", "555-555-5555", "john.doe@example.com");
+            Patient patient = FHIRUtils.createPatient("MOHR", "ALISSA", "female", "1958-01-30",
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "alissa.mohr@example.com", client);
 
             MethodOutcome outcome = client.create()
                     .resource(patient)
@@ -35,22 +36,18 @@ public class CRWF1TestCase2 implements TestCase {
                 return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Failed to create patient");
             }
 
-            String patientId = outcome.getResource().getIdElement().getIdPart();
-            patient = client.read()
-                    .resource(Patient.class)
-                    .withId(patientId)
-                    .execute();
+            Patient patientForConflict = FHIRUtils.createPatient("MOHR", "MAIDEN", "female", "1958-01-30",
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-m94", false, "IHERED-994","555-555-5555", "maiden.mohr@example.com", client);
 
-            // Create a new patient resource with all demographic information
             outcome = client.create()
-                    .resource(patient)
+                    .resource(patientForConflict)
                     .execute();
 
             // Check if the patient was created twice?
             if (outcome.getCreated()) {
-                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Was able to create duplicate patient");
-            } else {
                 return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.OK, "Passed");
+            } else {
+                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Was not able to resolve patient conflict via linking patient");
             }
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);

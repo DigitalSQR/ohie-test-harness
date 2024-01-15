@@ -18,22 +18,21 @@ public class CRF10TestCase2 implements TestCase {
     @Override
     public  ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) throws OperationFailedException
     {
-        Patient patient = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "101", "555-555-5555", "john.doe@example.com");
+        Patient patient = FHIRUtils.createPatient("Doe", "John", "M", "2001-01-05", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true,"","555-555-5555","john.doe@example.com", client);
         patient.setMultipleBirth(new BooleanType(true));
         patient.setMultipleBirth(new IntegerType(1));
+
         MethodOutcome outcome = client.create().resource(patient).execute();
         String patientId = outcome.getId().getIdPart();
         if(!outcome.getCreated())
         {
-            return new ValidationResultInfo("testCRF10case2",ErrorLevel.ERROR,"Failed patient is not created");
+            return new ValidationResultInfo("testCRF10case2",ErrorLevel.ERROR,"Failed to create patient");
         }
         Patient infant = client.read().resource(Patient.class).withId(patientId).execute();
-        if(infant.hasMultipleBirth())
+        if(!infant.hasMultipleBirth())
         {
-            return new ValidationResultInfo("testCRF10case2", ErrorLevel.OK,"Passed");
+            return new ValidationResultInfo("testCRF10case2",ErrorLevel.ERROR,"Failed to store patient with the multiple birth indicator");
         }
-            return new ValidationResultInfo("testCRF10case2",ErrorLevel.ERROR,"Failed because test case has no multiple birth indicator");
+        return new ValidationResultInfo("testCRF10case2", ErrorLevel.OK,"Passed");
     }
-
-
 }

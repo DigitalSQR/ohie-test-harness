@@ -19,11 +19,7 @@ public class CRF10TestCase1 implements TestCase {
     @Override
     public ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) throws OperationFailedException {
         try {
-
-            Patient patient = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "100", "555-555-5555", "john.doe@example.com");
-
-            patient.setBirthDateElement(new DateType("2001-01-05"
-            ));
+            Patient patient = FHIRUtils.createPatient("Doe", "John", "M", "2001-01-05", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true,"","555-555-5555","john.doe@example.com", client);
             patient.addContact()
                     .setRelationship(Collections.singletonList(new CodeableConcept().setText("mother")))
                     .setName(new HumanName().addGiven("Clarke").setFamily("Doe")).addTelecom(new ContactPoint().
@@ -32,25 +28,23 @@ public class CRF10TestCase1 implements TestCase {
             MethodOutcome outcome = client.create().resource(patient).execute();
             String patientId = outcome.getId().getIdPart();
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testCRF10case1", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo("testCRF10case1", ErrorLevel.ERROR, "Failed to create patient with related person");
             }
             Patient infant = client.read().resource(Patient.class).withId(patientId).execute();
-                if (!infant.hasContact()) {
-                    return new ValidationResultInfo("testCRF10case1",ErrorLevel.ERROR,"Failed because test case has no contact");
-                }
-                Patient.ContactComponent contact = infant.getContactFirstRep();
-                if (contact.hasRelationship() && contact.getRelationship().stream()
-                        .anyMatch(codeableConcept -> "mother".equals(codeableConcept.getText()))) {
-                    return new ValidationResultInfo("testCRF10case1",ErrorLevel.OK,"Passed");
-                }
-                return new ValidationResultInfo("testCRF10case1",ErrorLevel.ERROR,"Failed because test case has no relationship ");
 
+            if (!infant.hasContact()) {
+                return new ValidationResultInfo("testCRF10case1",ErrorLevel.ERROR,"Failed to create patient with related person");
+            }
 
+            Patient.ContactComponent contact = infant.getContactFirstRep();
+            if (contact.hasRelationship() && contact.getRelationship().stream()
+                    .anyMatch(codeableConcept -> "mother".equals(codeableConcept.getText()))) {
+                return new ValidationResultInfo("testCRF10case1",ErrorLevel.OK,"Passed");
+            }
 
-
+            return new ValidationResultInfo("testCRF10case1",ErrorLevel.ERROR,"Failed to create related person with given relationship ");
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);
         }
-
     }
 }
