@@ -6,6 +6,8 @@ import { clearAuthInfo } from '../api/configs/axiosConfigs'
 import "../scss/_sidebar.scss";
 import logo from "../styles/images/logo-white.png"
 import { useEffect, useState } from 'react';
+import { UserAPI } from '../api/UserAPI';
+import { USER_ROLES } from '../constants/role_constants';
 
 export default function Sidebar() {
   const dispatch = useDispatch();
@@ -13,6 +15,7 @@ export default function Sidebar() {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeMenuItem, setActiveMenuItem] = useState();
+  const [user, setUser] = useState();
 
   /* 
    * This is to expand/shrink the wrapper when the side menu bar is toogled
@@ -33,6 +36,12 @@ export default function Sidebar() {
   };
 
   useEffect(() => {
+    UserAPI.viewUser().then((user) => {
+      setUser(user);
+    });
+  }, [])
+
+  useEffect(() => {
     setActiveMenuItem(location.pathname);
     let wrapper = document.getElementById("wrapper");
     if (wrapper) {
@@ -48,34 +57,41 @@ export default function Sidebar() {
       <div className="logo-white">
         <img src={logo} alt="Logo" />
       </div>
+
       <ul className="side-menu">
         <li>
           <a className={activeMenuItem === "/dashboard" ? "active" : ""} onClick={() => { handleMenuItemClick("/dashboard") }}>
-            <i className="bi bi-columns-gap menu-left-icon"></i>
+            <i aria-label='Dashboard' title='Dashboard' className="bi bi-columns-gap menu-left-icon"></i>
             <span> Dashboard </span>
           </a>
         </li>
         <li>
           <a className={activeMenuItem === "/dashboard/application-status" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/application-status")}>
-            <i className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
+            <i aria-label='Application Status' title='Application Status' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
             <span> Application Status </span>
           </a>
         </li>
+        {
+          user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ?
+            <>
+              <li>
+                <a className={activeMenuItem === "/dashboard/registration-request" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/registration-request")}>
+                  <i aria-label='Registration Request' title='Registration Request' className="bi bi-columns-gap menu-left-icon"></i>
+                  <span> Registration Request </span>
+                </a>
+              </li>
+              <li>
+                <a className={activeMenuItem === "/dashboard/application-request" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/application-request")}>
+                  <i aria-label='Application Request' title='Application Request' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
+                  <span> Application Request </span>
+                </a>
+              </li>
+            </>
+            : null
+        }
         <li>
-          <a className={activeMenuItem === "/dashboard/registration-request" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/registration-request")}>
-            <i className="bi bi-columns-gap menu-left-icon"></i>
-            <span> Registration Request </span>
-          </a>
-        </li>
-        <li>
-          <a className={activeMenuItem === "/dashboard/application-request" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/application-request")}>
-            <i className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
-            <span> Application Request </span>
-          </a>
-        </li>
-        <li>
-          <a onClick={() => { dispatch(log_out()); }}>
-            <i className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
+          <a onClick={() => { dispatch(log_out()); }} aria-label='Logout' title='Logout'>
+            <i aria-label='Logout' title='Logout' className="bi bi-box-arrow-right menu-left-icon"></i>
             <span> Logout </span>
           </a>
         </li>
