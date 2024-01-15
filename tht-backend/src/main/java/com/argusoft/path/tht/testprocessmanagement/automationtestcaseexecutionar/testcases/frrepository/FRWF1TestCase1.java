@@ -8,6 +8,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
+import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Reference;
@@ -76,11 +77,35 @@ public class FRWF1TestCase1 implements TestCase {
             String organizationRefId = organizationRef.getReferenceElement().getIdPart();
 
             //check this id with the actual organization id
-            if (organizationId.equals(organizationRefId)) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.OK, "Passed");
-            } else {
+            if (!organizationId.equals(organizationRefId)) {
                 return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to find organization in location");
             }
+
+            //query for the location by name
+            Bundle locationBundle = client.search()
+                    .forResource(Location.class)
+                    .where(Location.NAME.matches().value("South Wing, second floor"))
+                    .returnBundle(Bundle.class)
+                    .execute();
+
+            // Check if location was found by name
+            if (locationBundle.getEntry().isEmpty()) {
+                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to search location by name");
+            }
+
+            //query for the organization by name
+            Bundle organizationBundle = client.search()
+                    .forResource(Organization.class)
+                    .where(Organization.NAME.matches().value("Health Level Seven International"))
+                    .returnBundle(Bundle.class)
+                    .execute();
+
+            // Check if organization was found by name
+            if (locationBundle.getEntry().isEmpty()) {
+                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to search organization by name");
+            }
+
+            return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
             LOGGER.error("Exception while FRWF1TestCase1 ", ex);
