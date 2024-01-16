@@ -37,7 +37,8 @@ public class TestRequestCustomRepositoryImpl
         StringBuilder jpql = new StringBuilder();
         Map<String, Object> parameters = new HashMap<String, Object>();
 
-        jpql = jpql.append(" FROM TestRequestEntity testRequest \n");
+        jpql = jpql.append(" FROM TestRequestEntity testRequest \n" +
+                " LEFT JOIN testRequest.assessee assessee ");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
@@ -56,6 +57,14 @@ public class TestRequestCustomRepositoryImpl
                     "testRequest",
                     "state",
                     searchFilter.getState(),
+                    parameters,
+                    separate,
+                    jpql);
+
+            separate = SQLUtils.equalQL(
+                    "assessee",
+                    "id",
+                    searchFilter.getAssesseeId(),
                     parameters,
                     separate,
                     jpql);

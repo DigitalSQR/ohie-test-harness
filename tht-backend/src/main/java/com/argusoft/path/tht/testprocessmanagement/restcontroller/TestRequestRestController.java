@@ -115,11 +115,10 @@ public class TestRequestRestController {
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
-            InvalidParameterException {
+            InvalidParameterException, DoesNotExistException {
 
         Page<TestRequestEntity> testRequestEntities;
-        if (!testRequestSearchFilter.isEmpty()
-                || !CollectionUtils.isEmpty(ids)) {
+
             testRequestEntities = testRequestService
                     .searchTestRequests(
                             ids,
@@ -127,8 +126,8 @@ public class TestRequestRestController {
                             pageable,
                             contextInfo);
             return testRequestMapper.pageEntityToDto(testRequestEntities);
-        }
-        return this.getTestRequests(pageable, contextInfo);
+
+
     }
 
     /**
