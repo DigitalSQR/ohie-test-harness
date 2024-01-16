@@ -52,7 +52,7 @@ public class UserCustomRepositoryImpl
                     false,
                     jpql);
 
-            separate = SQLUtils.equalQL(
+            separate = SQLUtils.inQL(
                     "user",
                     "state",
                     searchFilter.getState(),

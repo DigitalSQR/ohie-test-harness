@@ -57,6 +57,8 @@ public class UserValidator {
         //check the email required
         ValidationUtils
                 .validateRequired(userEntity.getEmail(), "email", errors);
+        ValidationUtils
+                .validateRequired(userEntity.getState(), "state", errors);
     }
 
     private static void validateCommonForeignKey(UserService userService, UserEntity userEntity,

@@ -7,7 +7,10 @@ package com.argusoft.path.tht.usermanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import io.swagger.annotations.ApiParam;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * SearchFilter for User.
@@ -24,7 +27,7 @@ public class UserSearchFilter {
     @ApiParam(
             value = "name of the user"
     )
-    private String state;
+    private List<String> state;
 
     @ApiParam(
             value = "nameSearchType of the user"
@@ -41,7 +44,7 @@ public class UserSearchFilter {
 
     public UserSearchFilter(String name,
                             SearchType nameSearchType,
-                            String state,
+                            List<String> state,
                             String email) {
         this.name = name;
         this.nameSearchType = nameSearchType;
@@ -52,14 +55,14 @@ public class UserSearchFilter {
     public boolean isEmpty() {
         return StringUtils.isEmpty(name)
                 && StringUtils.isEmpty(email)
-                && StringUtils.isEmpty(state);
+                && CollectionUtils.isEmpty(state);
     }
 
-    public String getState() {
+    public List<String> getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(List<String> state) {
         this.state = state;
     }
 

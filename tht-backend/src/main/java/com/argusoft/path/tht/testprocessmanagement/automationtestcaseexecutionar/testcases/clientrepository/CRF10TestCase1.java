@@ -21,7 +21,7 @@ public class CRF10TestCase1 implements TestCase {
     @Override
     public ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) throws OperationFailedException {
         try {
-            Patient patient = FHIRUtils.createPatient("Doe", "John", "M", "2001-01-05", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
+            Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "2001-01-05", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
             patient.addContact()
                     .setRelationship(Collections.singletonList(new CodeableConcept().setText("mother")))
                     .setName(new HumanName().addGiven("Clarke").setFamily("Doe")).addTelecom(new ContactPoint().

@@ -23,7 +23,7 @@ public final class Constant {
     public static final String DEFAULT_SYSTEM_USER_ID = "SYSTEM_USER";
     public static final String ANONYMOUS_USER = "anonymousUser";
     public static final String ANONYMOUS_USER_NAME = "ANONYMOUS_USER";
-
+    public static final String OAUTH2 = "OAUTH2";
     // Constants for validating
     public static final String CREATE_VALIDATION = "create.validation";
     public static final String UPDATE_VALIDATION = "update.validation";
@@ -50,9 +50,22 @@ public final class Constant {
             = DateTimeFormatter.ofPattern("yyyyMMdd");
     public static ContextInfo SUPER_USER_CONTEXT;
 
+    public static ContextInfo OAUTH2_CONTEXT;
+
     static {
         SUPER_USER_CONTEXT = new ContextInfo(
                 "ivasiwala@argusoft.com",
+                DEFAULT_SYSTEM_USER_ID,
+                "password",
+                true,
+                true,
+                true,
+                true,
+                new ArrayList<>()
+        );
+
+        OAUTH2_CONTEXT = new ContextInfo(
+                OAUTH2,
                 DEFAULT_SYSTEM_USER_ID,
                 "password",
                 true,

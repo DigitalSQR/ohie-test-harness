@@ -52,7 +52,7 @@ public interface UserService {
                                  ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException;
+            DataValidationErrorException, DoesNotExistException;
 
     public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
             throws DoesNotExistException;

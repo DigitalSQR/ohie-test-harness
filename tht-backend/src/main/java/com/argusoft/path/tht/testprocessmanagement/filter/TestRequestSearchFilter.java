@@ -7,7 +7,10 @@ package com.argusoft.path.tht.testprocessmanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import io.swagger.annotations.ApiParam;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * SearchFilter for TestRequest.
@@ -29,14 +32,14 @@ public class TestRequestSearchFilter {
     @ApiParam(
             value = "state of the testRequest"
     )
-    private String state;
+    private List<String> state;
 
     public TestRequestSearchFilter() {
     }
 
     public TestRequestSearchFilter(String name,
                                    SearchType nameSearchType,
-                                   String state,
+                                   List<String> state,
                                    SearchType stateSearchType) {
         this.name = name;
         this.nameSearchType = nameSearchType;
@@ -44,7 +47,7 @@ public class TestRequestSearchFilter {
     }
 
     public boolean isEmpty() {
-        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state);
+        return StringUtils.isEmpty(name) && CollectionUtils.isEmpty(state);
     }
 
     public String getName() {
@@ -66,11 +69,11 @@ public class TestRequestSearchFilter {
         this.nameSearchType = nameSearchType;
     }
 
-    public String getState() {
+    public List<String> getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(List<String> state) {
         this.state = state;
     }
 }

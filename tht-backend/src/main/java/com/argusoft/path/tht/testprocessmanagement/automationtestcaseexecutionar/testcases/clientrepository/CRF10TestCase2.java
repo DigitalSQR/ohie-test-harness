@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class CRF10TestCase2 implements TestCase {
     @Override
     public ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) throws OperationFailedException {
-        Patient patient = FHIRUtils.createPatient("Doe", "John", "M", "2001-01-05", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
+        Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "2001-01-05", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
         patient.setMultipleBirth(new BooleanType(true));
         patient.setMultipleBirth(new IntegerType(1));
 
