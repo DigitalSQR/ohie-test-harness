@@ -39,7 +39,7 @@ public class FRWF1TestCase1 implements TestCase {
 
             // Check if the organization was created successfully
             if (!organizationOutcome.getCreated()) {
-                return new ValidationResultInfo("testHWWF1Case2", ErrorLevel.ERROR, "Failed to create organization");
+                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to create organization");
             }
 
             String organizationId = organizationOutcome.getResource().getIdElement().getIdPart();
@@ -63,7 +63,7 @@ public class FRWF1TestCase1 implements TestCase {
 
             //check for the location created successfully
             if (!locationOutcome.getCreated()) {
-                return new ValidationResultInfo("testHWWF1Case2", ErrorLevel.ERROR, "Failed to create location");
+                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to create location");
             }
 
             String locationId = locationOutcome.getResource().getIdElement().getIdPart();
@@ -101,7 +101,7 @@ public class FRWF1TestCase1 implements TestCase {
                     .execute();
 
             // Check if organization was found by name
-            if (locationBundle.getEntry().isEmpty()) {
+            if (organizationBundle.getEntry().isEmpty()) {
                 return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to search organization by name");
             }
 
