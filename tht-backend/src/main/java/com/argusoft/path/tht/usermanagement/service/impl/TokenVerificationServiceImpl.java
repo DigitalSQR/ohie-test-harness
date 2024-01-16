@@ -87,9 +87,6 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         String emailDecodedBase64 = new String(Base64.decodeBase64(base64EmailId));
 
         UserEntity userByEmail = userService.getUserByEmail(emailDecodedBase64, contextInfo);
-        if (userByEmail == null) {
-            throw new DoesNotExistException("user does not exist with email " + emailDecodedBase64);
-        }
         TokenVerificationEntity tokenById = this.getTokenById(tokenDecodedBase64, contextInfo);
         Optional<TokenVerificationEntity> activeTokenByIdAndUserId = this.getActiveTokenByIdAndUserIdAndType(tokenDecodedBase64, userByEmail.getId(), tokenById.getType(), contextInfo);
 
@@ -122,7 +119,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
 
             } else if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
                 if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(userByEmail.getState())) {
-                    if(userByEmail.getRoles().contains(UserServiceConstants.ROLE_ID_ASSESSEE)) {
+                    if(userByEmail.getRoles().stream().anyMatch(roleEntity -> roleEntity.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))) {
                         userByEmail.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
                     } else {
                         userByEmail.setState(UserServiceConstants.USER_STATUS_ACTIVE);
