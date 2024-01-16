@@ -19,6 +19,7 @@ import UserRegistration from "../components/UserRegistration";
 import Applications from "../components/Applications";
 import TestingRequests from "../components/TestingRequests";
 import RegisterApplication from "../components/RegisterApplication";
+import EmailVerified from "../components/EmailVerified";
 
 const PrivateRoute = () => {
 	const token = useSelector((state) => state.authSlice.access_token);
@@ -35,7 +36,8 @@ const routes = createBrowserRouter([
 	{ path: "application-report", element: <ApplicationReport /> },
 	{ path: "/google/success", element: <GoogleAuth /> },
 	{ path: "/forgotpassword", element: <ForgotPassword /> },
-	{ path: "/user/verify/:base64UserEmail/:base64TokenId", element: <UpdatePassword /> },
+	{ path: "/reset/cred/:base64UserEmail/:base64TokenId", element: <UpdatePassword /> },
+	{path:"/email/verify/:base64UserEmail/:base64TokenId",element:<EmailVerified/>},
 	{
 		path: "/dashboard",
 		element: <PrivateRoute />,
