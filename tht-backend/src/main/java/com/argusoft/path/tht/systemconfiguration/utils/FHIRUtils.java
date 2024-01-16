@@ -90,12 +90,13 @@ public final class FHIRUtils {
         return patient;
     }
 
-    public static Location createAmbulance(String name, String description, String phone) {
+    public static Location createAmbulance(String name, String description, String phone, Location.LocationStatus status) {
 
         Location ambulance = new Location();
         ambulance.setName(name);
         ambulance.setDescription(description);
         ambulance.setMode(Location.LocationMode.KIND);
+        ambulance.setStatus(status);
 
         // Set this location as Ambulance
         ambulance.addType().addCoding().setCode("AMB").setSystem("http://terminology.hl7.org/CodeSystem/v3-RoleCode").setDisplay("Ambulance");

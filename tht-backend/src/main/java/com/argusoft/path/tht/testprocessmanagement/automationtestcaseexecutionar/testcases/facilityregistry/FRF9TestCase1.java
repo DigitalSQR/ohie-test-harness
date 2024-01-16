@@ -9,90 +9,128 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
-import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.clientrepository.CRWF1TestCase1;
-import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Location;
 import org.hl7.fhir.r4.model.Organization;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.util.List;
 
+@Component
 public class FRF9TestCase1 implements TestCase {
 
-    public static final Logger LOGGER =  LoggerFactory.getLogger(CRWF1TestCase1.class);
+    public static final Logger LOGGER =  LoggerFactory.getLogger(FRF9TestCase1.class);
 
     @Override
     public ValidationResultInfo test(IGenericClient client,
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
+            LOGGER.info("Start testing "+this.getClass().getSimpleName());
 
-            String city = "Stockholm City";
+            String city = "Stockholm City"+new SecureRandom().nextInt(999999);
+            String orgName = "Burgers University Medical Center"+new SecureRandom().nextInt(999999);
+            String ambulanceName = "Ambulance"+new SecureRandom().nextInt(999999);
 
-            // Search for organizations by city
+            // Create a new organization
+            Organization organization = FHIRUtils.createOrganization(orgName, "Sweden",city,"+41-123-23");
+            MethodOutcome outcome = client.create().resource(organization).execute();
+            // Check if the organization was created successfully
+            if (!outcome.getCreated()) {
+                LOGGER.error("Testcase Failed");
+                return new ValidationResultInfo(this.getClass().getSimpleName(), ErrorLevel.ERROR, "Failed to create organization");
+            }
+
+            // Create another organization with same city
+            organization = FHIRUtils.createOrganization("Richard Hospital", "Sweden",city,"+41-543-73");
+            outcome = client.create().resource(organization).execute();
+            // Check if the organization was created successfully
+            if (!outcome.getCreated()) {
+                LOGGER.error("Testcase Failed");
+                return new ValidationResultInfo(this.getClass().getSimpleName(), ErrorLevel.ERROR, "Failed to create organization");
+            }
+
+            LOGGER.info("Verifying organization by city");
+            // 1. Verification of search functionality of organization by city
             Bundle bundle = client
                     .search()
                     .forResource(Organization.class)
                     .where(new StringClientParam("address-city").matchesExactly().value(city))
                     .returnBundle(Bundle.class)
                     .execute();
-            // Get current organization count
-            int orgCount = FHIRUtils.processBundle(Organization.class, bundle).size();
-
-            // Create a new organization
-            Organization organization = FHIRUtils.createOrganization("Burgers University Medical Center", "Sweden",city,"+41-123-23");
-            MethodOutcome outcome = client.create().resource(organization).execute();
-            // Check if the organization was created successfully
-            if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testFRF9Case1", ErrorLevel.ERROR, "Failed to create organization");
+            List<Organization> organizations = FHIRUtils.processBundle(Organization.class, bundle);
+            if (organizations.size() != 2) {
+                LOGGER.error("Testcase Failed");
+                return new ValidationResultInfo(this.getClass().getSimpleName(), ErrorLevel.ERROR, "Failed to search organization by city");
             }
 
-            // 1. Verification of search functionality of organization by city
-            // Search for organizations by city again
+            LOGGER.info("Verifying organization by name");
+            // 2. Verification of search functionality of organization by name
             bundle = client
                     .search()
                     .forResource(Organization.class)
-                    .where(new StringClientParam("address-city").matchesExactly().value(city))
+                    .where(new StringClientParam("name").matchesExactly().value(orgName))
                     .returnBundle(Bundle.class)
                     .execute();
-            List<Organization> organizations = FHIRUtils.processBundle(Organization.class, bundle);
-            // Verify the search functionality by checking the orgCount has increased after creation
-            if (organizations.size() != orgCount) {
-                return new ValidationResultInfo("testFRF9Case1", ErrorLevel.ERROR, "Failed to search organization by city");
+            organizations = FHIRUtils.processBundle(Organization.class, bundle);
+            if (organizations.size() != 1) {
+                LOGGER.error("Testcase Failed");
+                return new ValidationResultInfo(this.getClass().getSimpleName(), ErrorLevel.ERROR, "Failed to search organization by name");
             }
 
             // Create a new Ambulance Location resource
-            Location ambulance = FHIRUtils.createAmbulance("BUMC Ambulance", "Ambulances provided by the Burgers University Medical Center","108");
+            Location ambulance = FHIRUtils.createAmbulance("BUMC "+ambulanceName, "Ambulances provided by the Burgers University Medical Center","108", Location.LocationStatus.ACTIVE);
             outcome = client.create().resource(ambulance).execute();
             // Check if the ambulance was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testFRF9Case1", ErrorLevel.ERROR, "Failed to create ambulance");
+                LOGGER.error("Testcase Failed");
+                return new ValidationResultInfo(this.getClass().getSimpleName(), ErrorLevel.ERROR, "Failed to create ambulance");
             }
 
-            // Create another Ambulance Location resource
-            ambulance = FHIRUtils.createAmbulance("RM Ambulance", "Ambulances provided by the Richard Morris Medical Center","108");
+            // Create another Ambulance Location resource with inactive status
+            ambulance = FHIRUtils.createAmbulance("RM "+ambulanceName, "Ambulances provided by the Richard Morris Medical Center","108", Location.LocationStatus.SUSPENDED);
             outcome = client.create().resource(ambulance).execute();
             // Check if the ambulance was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testFRF9Case1", ErrorLevel.ERROR, "Failed to create ambulance");
+                LOGGER.error("Testcase Failed");
+                return new ValidationResultInfo(this.getClass().getSimpleName(), ErrorLevel.ERROR, "Failed to create ambulance");
             }
 
-            // 2. Verification of search functionality of ambulance by name
-            // Search for organizations by city again
+            LOGGER.info("Verifying ambulance by type");
+            // 3. Verification of search functionality of ambulance by name
             bundle = client
                     .search()
                     .forResource(Location.class)
-                    .where(new StringClientParam("description").contains().value("Ambulances provided by the"))
+                    .where(new StringClientParam("name").contains().value(ambulanceName))
+                    .where(Location.TYPE.exactly().code("AMB"))
                     .returnBundle(Bundle.class)
                     .execute();
             List<Location> ambulances = FHIRUtils.processBundle(Location.class, bundle);
             if (ambulances.size() != 2) {
-                return new ValidationResultInfo("testFRF9Case1", ErrorLevel.ERROR, "Failed to search ambulance by description");
+                LOGGER.error("Testcase Failed");
+                return new ValidationResultInfo(this.getClass().getSimpleName(), ErrorLevel.ERROR, "Failed to search ambulance by description");
             }
 
-            return new ValidationResultInfo("testFRF9Case1", ErrorLevel.ERROR, "Failed to search patients by Identifiers and demographics");
+            LOGGER.info("Verifying ambulance by status");
+            // 4. Verification of search functionality of ambulance by status
+            bundle = client
+                    .search()
+                    .forResource(Location.class)
+                    .where(Location.STATUS.exactly().code("suspended"))
+                    .where(new StringClientParam("name").contains().value(ambulanceName))
+                    .returnBundle(Bundle.class)
+                    .execute();
+            ambulances = FHIRUtils.processBundle(Location.class, bundle);
+            if (ambulances.size() != 1) {
+                LOGGER.error("Testcase Failed");
+                return new ValidationResultInfo(this.getClass().getSimpleName(), ErrorLevel.ERROR, "Failed to search ambulance by description");
+            }
+
+            // Pass the test case if all the above conditions are passed
+            LOGGER.info("Testcase successfully passed!");
+            return new ValidationResultInfo(this.getClass().getSimpleName(), ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);
