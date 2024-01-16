@@ -56,7 +56,7 @@ VALUES
         Now(),
         0
     ),
-(
+    (
         'specification.hmis.hmisf.3',
         'HMISF-3',
         'HMISF-3 Specification of the Health Management Information System Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-health-management-information-system-hmis)',
@@ -70,7 +70,21 @@ VALUES
         Now(),
         0
     ),
-(
+    (
+        'specification.hmis.hmisf.4',
+        'HMISF-3',
+        'HMISF-3 Specification of the Health Management Information System Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-health-management-information-system-hmis)',
+        'specification.status.active',
+        5,
+        false,
+        'component.health.management.information.system.repository',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),
+    (
         'specification.hmis.hmisf.5',
         'HMISF-5',
         'HMISF-5 Specification of the Health Management Information System Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-health-management-information-system-hmis)',
@@ -84,7 +98,7 @@ VALUES
         Now(),
         0
     ),
-(
+    (
         'specification.hmis.hmisf.6',
         'HMISF-6',
         'HMISF-6 Specification of the Health Management Information System Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-health-management-information-system-hmis)',
@@ -98,7 +112,7 @@ VALUES
         Now(),
         0
     ),
-(
+    (
         'specification.hmis.hmisf.7',
         'HMISF-7',
         'HMISF-7 Specification of the Health Management Information System Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-health-management-information-system-hmis)',
@@ -205,6 +219,22 @@ VALUES
         false,
         null,
         'specification.hmis.hmisf.3',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),
+    (
+        'testcase.hmis.hmisf.4.1',
+        'Does the system provide standard interfaces for importing data from other systems like ADX or FHIR?',
+        'Question for the HMISF-4 Specification of the Health Management Information System Repository',
+        'testcase.status.active',
+        1,
+        true,
+        false,
+        null,
+        'specification.hmis.hmisf.4',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -442,6 +472,34 @@ VALUES
         2,
         false,
         'testcase.hmis.hmisf.3.4',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),
+    (
+        'testcase.hmis.hmisf.4.1.option.1',
+        'Yes, the system provides standard interfaces for importing data from other systems.',
+        'Yes, the system provides standard interfaces for importing data from other systems.',
+        'testcase.option.status.active',
+        1,
+        true,
+        'testcase.hmis.hmisf.4.1',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),
+    (
+        'testcase.hmis.hmisf.4.1.option.2',
+        'No, the system does not provide stand interfaces for importing data from other systems.',
+        'No, the system does not provide stand interfaces for importing data from other systems.',
+        'testcase.option.status.active',
+        2,
+        false,
+        'testcase.hmis.hmisf.4.1',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
