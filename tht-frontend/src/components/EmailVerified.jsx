@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import openhie_logo from "../styles/images/logo.png";
 import congratulations_icon from "../styles/images/congratulations-icon.png";
 import { AuthenticationAPI } from "../api/AuthenticationAPI";
@@ -9,16 +9,16 @@ export default function EmailVerified() {
 	const { base64TokenId } = useParams();
 	const navigate = useNavigate();
 
-	
-
-	AuthenticationAPI.verifyEmail(base64UserEmail,base64TokenId)
-		.then((response) => {
-			console.log(response);
-			return response;
-		})
-		.catch((error) => {
-			throw error;
-		});
+	useEffect(() => {
+		AuthenticationAPI.verifyEmail(base64UserEmail, base64TokenId)
+			.then((response) => {
+				console.log(response);
+				return response;
+			})
+			.catch((error) => {
+				throw error;
+			});
+	}, []);
 
 	return (
 		<Fragment>
@@ -55,7 +55,14 @@ export default function EmailVerified() {
 									Please wait for Admin's Approval before
 									loggin in.
 								</p>
-								<button className="btn btn-primary" onClick={()=>{navigate("/login")}}>Back To Login</button>
+								<button
+									className="btn btn-primary"
+									onClick={() => {
+										navigate("/login");
+									}}
+								>
+									Back To Login
+								</button>
 							</div>
 						</div>
 					</div>
