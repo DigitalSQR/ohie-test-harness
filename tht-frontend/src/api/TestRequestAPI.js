@@ -1,3 +1,4 @@
+import { paramSerialize } from "../utils/utils";
 import api from "./configs/axiosConfigs";
 
 export const TestRequestAPI = {
@@ -35,6 +36,9 @@ export const TestRequestAPI = {
 				method: "GET",
 				params: {
 					state
+				},
+				paramsSerializer: params => {
+				  return paramSerialize(params);
 				}
 			});
 			return response.data;

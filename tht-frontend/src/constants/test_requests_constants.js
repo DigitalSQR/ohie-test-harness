@@ -35,3 +35,27 @@ export const StateBadgeClasses = {
     "component.status.inprogress": "badges-orange",
     "component.status.finished": "badges-green-dark",
 };
+
+export const TestRequestActionStateLabels = [
+    {label: "Accepted", value: "component.status.accepted"},
+    {label: "Inprogress", value: "component.status.inprogress"},
+    {label: "Finished", value: "component.status.finished"},
+];
+
+export const StateClasses = {
+    "component.status.accepted": {
+        btnClass: "btn btn-green-sm",
+        iconClass: "bi bi-play-fill",
+        btnText: "Start"
+    },
+    "component.status.inprogress": {
+        btnClass: "btn btn-orange-sm",
+        iconClass: "bi bi-play-fill",
+        btnText: "Resume"
+    },
+    "component.status.finished": {
+        btnClass: "btn btn-blue-sm",
+        iconClass: "bi bi-file-text",
+        btnText: "Report"
+    }
+};

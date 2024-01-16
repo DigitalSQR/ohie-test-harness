@@ -8,6 +8,7 @@ import { UserAPI } from "../api/UserAPI.js";
 import { useLoader } from "./loader/LoaderContext.js";
 import ComponentIdConnector from "./connectors/ComponentIdConnector/ComponentIdConnector.js";
 import { notification } from "antd";
+import { formatDate } from "../utils/utils.js";
 
 const TestingRequests = () => {
 	const testRequestStates = [...TestRequestStateLabels, { label: "All", value: '' }];
@@ -35,11 +36,6 @@ const TestingRequests = () => {
 		});
 		fetchTestRequests();
 	}, [filterState])
-
-	const formatDate = (dateString) => {
-		const options = { year: "numeric", month: "short", day: "numeric" }
-		return new Date(dateString).toLocaleDateString(undefined, options)
-	}
 
 	const changeState = (testRequestId, state) => {
 		showLoader();
