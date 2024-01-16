@@ -19,6 +19,8 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.testprocessmanagement.validator.TestRequestValidator;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
@@ -166,11 +168,17 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             TestRequestSearchFilter testRequestSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException {
+            throws OperationFailedException, DoesNotExistException {
 
-        if (!CollectionUtils.isEmpty(ids)) {
+        UserEntity principalUser = userService.getPrincipalUser(contextInfo);
+        if(principalUser.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))){
+            testRequestSearchFilter.setAssesseeId(principalUser.getId());
+        }
+
+        if(testRequestSearchFilter.isEmpty()){
             return this.searchTestRequestsById(ids, pageable);
-        } else {
+        }
+        else {
             return this.searchTestRequests(testRequestSearchFilter, pageable);
         }
     }

@@ -79,7 +79,7 @@ public interface TestRequestService {
                                                       Pageable pageable,
                                                       ContextInfo contextInfo)
             throws OperationFailedException,
-            InvalidParameterException;
+            InvalidParameterException, DoesNotExistException;
 
     /**
      * Validates a TestRequest.Depending on the value of validationType, this

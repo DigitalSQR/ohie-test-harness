@@ -157,7 +157,7 @@ public final class SQLUtils {
         stringBuilder
                 .append(tableName).append(".").append(columnName)
                 .append(" = :").append(columnName).append(" ");
-        parameters.put(columnName, columnValue.toString().toUpperCase());
+        parameters.put(columnName, columnValue.toString());
         return true;
     }
 

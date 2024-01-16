@@ -34,20 +34,27 @@ public class TestRequestSearchFilter {
     )
     private List<String> state;
 
+    @ApiParam(
+            value = "assesseeId of the testRequest"
+    )
+    private String assesseeId;
+
     public TestRequestSearchFilter() {
     }
 
     public TestRequestSearchFilter(String name,
                                    SearchType nameSearchType,
                                    List<String> state,
-                                   SearchType stateSearchType) {
+                                   SearchType stateSearchType,
+                                   String assesseeId) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
+        this.assesseeId = assesseeId;
     }
 
     public boolean isEmpty() {
-        return StringUtils.isEmpty(name) && CollectionUtils.isEmpty(state);
+        return StringUtils.isEmpty(name) && CollectionUtils.isEmpty(state) && StringUtils.isEmpty(assesseeId);
     }
 
     public String getName() {
@@ -75,5 +82,13 @@ public class TestRequestSearchFilter {
 
     public void setState(List<String> state) {
         this.state = state;
+    }
+
+    public String getAssesseeId() {
+        return assesseeId;
+    }
+
+    public void setAssesseeId(String assesseeId) {
+        this.assesseeId = assesseeId;
     }
 }
