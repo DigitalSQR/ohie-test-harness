@@ -118,6 +118,30 @@ public final class SQLUtils {
         return new PageImpl<>(entities, pageable, totalCount);
     }
 
+    public static boolean inQL(
+            String tableName,
+            String columnName,
+            List<?> columnValues,
+            Map<String, Object> parameters,
+            boolean separate,
+            StringBuilder stringBuilder) {
+        if (StringUtils.isEmpty(columnValues)) return separate;
+        if (separate) {
+            stringBuilder.append("AND ");
+        }
+        stringBuilder
+                .append(tableName).append(".").append(columnName)
+                .append(" IN (");
+        for(Object columnValue: columnValues) {
+            stringBuilder.append("'").append(columnValue.toString()).append("', ");
+        }
+        if (!columnValues.isEmpty()) {
+            stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length());
+        }
+        stringBuilder.append(")");
+        return true;
+    }
+
     public static boolean equalQL(
             String tableName,
             String columnName,
@@ -130,7 +154,7 @@ public final class SQLUtils {
             stringBuilder.append("AND ");
         }
         stringBuilder
-                .append("UPPER(").append(tableName).append(".").append(columnName).append(")")
+                .append(tableName).append(".").append(columnName)
                 .append(" = :").append(columnName).append(" ");
         parameters.put(columnName, columnValue.toString().toUpperCase());
         return true;

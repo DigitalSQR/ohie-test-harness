@@ -157,7 +157,7 @@ public class UserRestController {
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
         userEntity = userService.createUser(userEntity, contextInfo);

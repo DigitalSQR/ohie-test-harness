@@ -31,7 +31,7 @@ public class CRF3TestCase1 implements TestCase {
             LOGGER.info("Start testing CRF3TestCase1");
 
             // Create Patient resource
-            Patient newPatient = FHIRUtils.createPatient("Doe", "John", "M", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
+            Patient newPatient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
 
             // Create the Patient
             MethodOutcome patientOutcome = client.create()

@@ -61,7 +61,7 @@ public class CRWF4TestCase1 implements TestCase {
                     .forResource(Patient.class)
                     .where(Patient.RES_ID.exactly().codes(patientIds))
                     .where(new DateClientParam("birthdate").afterOrEquals().day("1958-01-29")) // Replace with the actual start date
-                    .where(new DateClientParam("birthdate").beforeOrEquals().day("1958-01-28")) // Replace with the actual end date
+                    .where(new DateClientParam("birthdate").beforeOrEquals().day("1958-02-01")) // Replace with the actual end date
                     .returnBundle(Bundle.class)
                     .execute();
             List<Patient> patients = FHIRUtils.processBundle(Patient.class, bundle);

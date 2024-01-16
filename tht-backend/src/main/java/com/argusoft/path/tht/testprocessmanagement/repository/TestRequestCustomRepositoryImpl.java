@@ -52,7 +52,7 @@ public class TestRequestCustomRepositoryImpl
                     false,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.inQL(
                     "testRequest",
                     "state",
                     searchFilter.getState(),

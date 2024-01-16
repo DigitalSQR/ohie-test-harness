@@ -68,8 +68,8 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         try {
             CustomOauth2User oauth2User = (CustomOauth2User) authentication.getPrincipal();
-            oauth2User.getCustomAttributes().put("userName", Constant.SUPER_USER_CONTEXT.getUsername());
-            UserEntity loggedInUser = createUserIfNotExists(oauth2User, Constant.SUPER_USER_CONTEXT);
+            oauth2User.getCustomAttributes().put("userName", Constant.OAUTH2_CONTEXT.getUsername());
+            UserEntity loggedInUser = createUserIfNotExists(oauth2User, Constant.OAUTH2_CONTEXT);
 
             if (Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, loggedInUser.getState())) {
 

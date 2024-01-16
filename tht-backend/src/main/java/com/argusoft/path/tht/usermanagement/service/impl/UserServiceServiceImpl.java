@@ -90,23 +90,12 @@ public class UserServiceServiceImpl implements UserService {
     @Timed(name = "registerAssessee")
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
             throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException {
-        if (Objects.equals(contextInfo.getEmail(), Constant.SUPER_USER_CONTEXT.getEmail())) {
-            //If method get called on google Oauth2 login then verification of email is not needed.
-            userEntity.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
-        } else {
-            userEntity.setState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING);
-        }
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setId(UserServiceConstants.ROLE_ID_ASSESSEE);
         userEntity.getRoles().clear();
         userEntity.getRoles().add(roleEntity);
 
         userEntity = this.createUser(userEntity, contextInfo);
-
-        //On Email verification pending send mail for the email for verification
-        if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
-            tokenVerificationService.generateTokenForUserAndSendEmailForType(userEntity.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
-        }
         return userEntity;
     }
 
@@ -175,9 +164,23 @@ public class UserServiceServiceImpl implements UserService {
                                  ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException {
+            DataValidationErrorException,
+            DoesNotExistException {
+
+        if (Objects.equals(contextInfo.getEmail(), Constant.OAUTH2_CONTEXT.getEmail())) {
+            //If method get called on google Oauth2 login then verification of email is not needed.
+            userEntity.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
+        } else {
+            userEntity.setState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING);
+        }
+
         UserValidator.validateCreateUpdateUser(this, Constant.CREATE_VALIDATION, userEntity, contextInfo);
         userEntity = userRepository.save(userEntity);
+
+        //On verification pending state, send mail for the email verification
+        if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
+            tokenVerificationService.generateTokenForUserAndSendEmailForType(userEntity.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
+        }
         return userEntity;
     }
 

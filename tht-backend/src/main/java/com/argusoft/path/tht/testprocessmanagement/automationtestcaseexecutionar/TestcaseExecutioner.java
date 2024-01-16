@@ -1,7 +1,10 @@
 package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.client.apache.GZipContentInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
+import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
@@ -30,12 +33,22 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import java.io.FileInputStream;
+import java.security.KeyStore;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -508,7 +521,7 @@ public class TestcaseExecutioner {
         testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
     }
 
-    private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) {
+    private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) throws OperationFailedException {
         FhirContext context;
         switch (contextType) {
             case "D2":
@@ -524,10 +537,71 @@ public class TestcaseExecutioner {
 
         context.getRestfulClientFactory().setConnectTimeout(60 * 1000);
         context.getRestfulClientFactory().setSocketTimeout(60 * 1000);
+
+        //Commenting this code as adding certificate is not user requirement.
+        //Add keyStore and trustStore
+        try {
+            String certificateKeyStorePath = "keystore.p12";
+            String certificateKeyStorePassword = "1234";
+
+            String certificateTrustStorePath = "keystore.p12";
+            String certificateTrustStorePassword = "1234";
+
+            FileInputStream keyStoreFileInputStream = new FileInputStream(certificateKeyStorePath);
+            KeyStore keystore = KeyStore.getInstance("PKCS12");
+            keystore.load(keyStoreFileInputStream, certificateKeyStorePassword.toCharArray());
+
+
+
+            FileInputStream trustStoreFileInputStream = new FileInputStream(certificateTrustStorePath);
+            KeyStore truststore = KeyStore.getInstance("PKCS12");
+            truststore.load(trustStoreFileInputStream, certificateTrustStorePassword.toCharArray());
+
+            SSLContext sslContext =
+                    SSLContexts
+                            .custom()
+                            .loadKeyMaterial(keystore, certificateKeyStorePassword.toCharArray())
+                            .loadTrustMaterial(truststore, new TrustSelfSignedStrategy()).build();
+
+            HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+            SSLConnectionSocketFactory sslFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+
+            CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(sslFactory).build();
+            context.getRestfulClientFactory().setHttpClient(httpClient);
+        } catch (Exception e) {
+            throw new OperationFailedException("Failed to add certificates for the keyStore/trustStore", e);
+        }
+
         IGenericClient client = context.newRestfulGenericClient(serverBaseURL);
 
-        // TODO: Add authentication credentials to the client from test Request
-        // client.registerInterceptor(new BasicAuthInterceptor(username, password));
+        //Log details of HTTP requests and responses made by the FHIR client
+        client.registerInterceptor(new LoggingInterceptor());
+
+        //Add username/password authentication credentials to the client from test Request
+        client.registerInterceptor(new BasicAuthInterceptor(username, password));
+
+        //Add token authentication credentials to the client from test Request
+        //String token = "";
+        //client.registerInterceptor(new BearerTokenAuthInterceptor(token));
+
+        //GZipContentInterceptor will handle compression
+        //client.registerInterceptor(new GZipContentInterceptor());
+
+        //Add sessionCookie authentication credentials to the client from test Request
+        //String sessionCookie = "";
+        //client.registerInterceptor(new CookieInterceptor(sessionCookie));
+
+        //Add Header parameters for all requests
+        //client.registerInterceptor(new SimpleRequestHeaderInterceptor("Custom-Header", "123"));
+
+        //The concept of "ThreadLocalCapturingInterceptor" suggests an interceptor that captures information specific to the current thread.
+        //client.registerInterceptor(new ThreadLocalCapturingInterceptor());
+
+        //This could be useful for tracking or managing requests based on user-related criteria on the server side.
+        //String theUserId = "";
+        //String theUserName = "";
+        //String theAppName = "";
+        //client.registerInterceptor(new UserInfoInterceptor(theUserId, theUserName, theAppName));
 
         return client;
     }
