@@ -13,7 +13,7 @@ import { formatDate } from "../utils/utils.js";
 const TestingRequests = () => {
 	const testRequestStates = [...TestRequestStateLabels, { label: "All", value: '' }];
 	const { showLoader, hideLoader } = useLoader();
-	const [filterState, setFilterState] = useState(TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING);
+	const [filterState, setFilterState] = useState('');
 	const [userRoles, setUserRoles] = useState([USER_ROLES.ROLE_ID_ASSESSEE]);
 	const [testRequests, setTestRequests] = useState([]);
 
