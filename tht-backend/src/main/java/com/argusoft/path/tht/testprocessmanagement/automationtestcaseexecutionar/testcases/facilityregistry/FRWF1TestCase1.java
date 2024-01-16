@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.frrepository;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.facilityregistry;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -105,6 +105,8 @@ public class FRWF1TestCase1 implements TestCase {
                 return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to search organization by name");
             }
 
+            // Pass the test case if all the above conditions are passed
+            LOGGER.info("testFRWF1Case1 Testcase successfully passed!");
             return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
