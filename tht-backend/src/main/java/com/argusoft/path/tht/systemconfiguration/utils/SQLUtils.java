@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
@@ -125,7 +126,7 @@ public final class SQLUtils {
             Map<String, Object> parameters,
             boolean separate,
             StringBuilder stringBuilder) {
-        if (StringUtils.isEmpty(columnValues)) return separate;
+        if (CollectionUtils.isEmpty(columnValues)) return separate;
         if (separate) {
             stringBuilder.append("AND ");
         }

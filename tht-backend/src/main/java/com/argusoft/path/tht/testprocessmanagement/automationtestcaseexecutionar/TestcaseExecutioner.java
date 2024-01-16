@@ -540,7 +540,7 @@ public class TestcaseExecutioner {
 
         //Commenting this code as adding certificate is not user requirement.
         //Add keyStore and trustStore
-        try {
+        /*try {
             String certificateKeyStorePath = "keystore.p12";
             String certificateKeyStorePassword = "1234";
 
@@ -570,7 +570,7 @@ public class TestcaseExecutioner {
             context.getRestfulClientFactory().setHttpClient(httpClient);
         } catch (Exception e) {
             throw new OperationFailedException("Failed to add certificates for the keyStore/trustStore", e);
-        }
+        }*/
 
         IGenericClient client = context.newRestfulGenericClient(serverBaseURL);
 
