@@ -21,11 +21,11 @@ VALUES
         (
                 'specification.cr.crf.1',
                 'CRF-1',
-                'CRF-1 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+                'CRF-1 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
                 'specification.status.active',
                 5,
                 true,
-                'component.client.repository',
+                'component.client.registry',
                 'ivasiwala@argusoft.com',
                 'ivasiwala@argusoft.com',
                 Now(),
@@ -35,11 +35,11 @@ VALUES
         (
                 'specification.cr.crf.2',
                 'CRF-2',
-                'CRF-2 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+                'CRF-2 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
                 'specification.status.active',
                 6,
                 true,
-                'component.client.repository',
+                'component.client.registry',
                 'ivasiwala@argusoft.com',
                 'ivasiwala@argusoft.com',
                 Now(),
@@ -49,11 +49,11 @@ VALUES
         (
                 'specification.cr.crf.4',
                 'CRF-4',
-                'CRF-4 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+                'CRF-4 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
                 'specification.status.active',
                 8,
                 true,
-                'component.client.repository',
+                'component.client.registry',
                 'ivasiwala@argusoft.com',
                 'ivasiwala@argusoft.com',
                 Now(),
@@ -63,11 +63,11 @@ VALUES
         (
                 'specification.cr.crf.5',
                 'CRF-5',
-                'CRF-5 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+                'CRF-5 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
                 'specification.status.active',
                 9,
                 true,
-                'component.client.repository',
+                'component.client.registry',
                 'ivasiwala@argusoft.com',
                 'ivasiwala@argusoft.com',
                 Now(),
@@ -77,11 +77,11 @@ VALUES
         (
                 'specification.cr.crf.6',
                 'CRF-6',
-                'CRF-6 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+                'CRF-6 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
                 'specification.status.active',
                 10,
                 true,
-                'component.client.repository',
+                'component.client.registry',
                 'ivasiwala@argusoft.com',
                 'ivasiwala@argusoft.com',
                 Now(),
@@ -91,11 +91,11 @@ VALUES
         (
                 'specification.cr.crf.9',
                 'CRF-9',
-                'CRF-9 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+                'CRF-9 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
                 'specification.status.active',
                 13,
                 true,
-                'component.client.repository',
+                'component.client.registry',
                 'ivasiwala@argusoft.com',
                 'ivasiwala@argusoft.com',
                 Now(),
@@ -124,7 +124,7 @@ VALUES
         (
                 'testcase.cr.crf.1.1',
                 'Can you, as a user, change the rules for deciding if two records match, like setting statistical criteria which could include algorithms that calculate the similarity of certain attributes, such as age, using statistical methods like mean, median, or standard deviation or defining rules based on factors like age, gender, or address?',
-                'Question for the CRF-1 Specification of the Client Repository',
+                'Question for the CRF-1 Specification of the Client Registry',
                 'testcase.status.active',
                 1,
                 true,
@@ -140,7 +140,7 @@ VALUES
         (
                 'testcase.cr.crf.1.2',
                 'Is there a feature in the system allowing you to view the group records before applying matching rules, potentially enhancing matching efficiency? For instance, can you classify group patients by Zip code and then apply matching rules to each group?',
-                'Question for the CRF-1 Specification of the Client Repository',
+                'Question for the CRF-1 Specification of the Client Registry',
                 'testcase.status.active',
                 2,
                 true,
@@ -156,7 +156,7 @@ VALUES
         (
                 'testcase.cr.crf.1.3',
                 'Can you see a user interface in the system that enables you to create your own matching rules or strategies for a personalized approach, such as designing rules based on both the patient''s medical condition and their geographical location?',
-                'Question for the CRF-1 Specification of the Client Repository',
+                'Question for the CRF-1 Specification of the Client Registry',
                 'testcase.status.active',
                 3,
                 true,
@@ -172,7 +172,7 @@ VALUES
         (
                 'testcase.cr.crf.1.4',
                 'In the record matching system''s interface, is there a default implementation of a matching rule or strategy provided, like a basic rule comparing names and birthdates?',
-                'Question for the CRF-1 Specification of the Client Repository',
+                'Question for the CRF-1 Specification of the Client Registry',
                 'testcase.status.active',
                 4,
                 true,
@@ -188,7 +188,7 @@ VALUES
         (
                 'testcase.cr.crf.1.5',
                 'Can you, as a user, easily change the default matching rule to suit your needs? For example, adjust the age range or redefine criteria for matching addresses?',
-                'Question for the CRF-1 Specification of the Client Repository',
+                'Question for the CRF-1 Specification of the Client Registry',
                 'testcase.status.active',
                 5,
                 true,
@@ -204,7 +204,7 @@ VALUES
         (
                 'testcase.cr.crf.1.6',
                 'Can you easily change and find the system''s settings, like how records are matched, because they are stored in a familiar place like a database or files?',
-                'Question for the CRF-1 Specification of the Client Repository',
+                'Question for the CRF-1 Specification of the Client Registry',
                 'testcase.status.active',
                 6,
                 true,
@@ -220,7 +220,7 @@ VALUES
         (
                 'testcase.cr.crf.1.7',
                 'As a user, can you easily set up matching rules step-by-step or with a guided process in the system?',
-                'Question for the CRF-1 Specification of the Client Repository',
+                'Question for the CRF-1 Specification of the Client Registry',
                 'testcase.status.active',
                 7,
                 true,
@@ -236,7 +236,7 @@ VALUES
         (
                 'testcase.cr.crf.2.1',
                 'As a user, does the system implement accurate and efficient methods for patient linking and de-duplication? For example, can you reference a specific instance where the system successfully linked and de-duplicated patient records accurately?',
-                'Question for the CRF-2 Specification of the Client Repository',
+                'Question for the CRF-2 Specification of the Client Registry',
                 'testcase.status.active',
                 1,
                 true,
@@ -252,7 +252,7 @@ VALUES
         (
                 'testcase.cr.crf.2.2',
                 'Can you, as a user, easily view merge/linkage operations in the system in a way that is both intuitive and user-friendly? For instance, have you been able to navigate the system to monitor merge/linkage operations effortlessly?',
-                'Question for the CRF-2 Specification of the Client Repository',
+                'Question for the CRF-2 Specification of the Client Registry',
                 'testcase.status.active',
                 2,
                 true,
@@ -268,7 +268,7 @@ VALUES
         (
                 'testcase.cr.crf.2.3',
                 'In the system, is there a feature that allows you to manually accept or reject merge suggestions in a straightforward and intuitive manner? Additionally, can you choose fields from either record to be merged? Have you had a scenario where you needed to manually intervene in the merging process?',
-                'Question for the CRF-2 Specification of the Client Repository',
+                'Question for the CRF-2 Specification of the Client Registry',
                 'testcase.status.active',
                 3,
                 true,
@@ -284,7 +284,7 @@ VALUES
         (
                 'testcase.cr.crf.4.1',
                 'Does the system support synchronization of patient identification numbers (IDs) with a Shared Health Record (SHR)?',
-                'Question for the CRF-4 Specification of the Client Repository',
+                'Question for the CRF-4 Specification of the Client Registry',
                 'testcase.status.active',
                 1,
                 true,
@@ -300,7 +300,7 @@ VALUES
         (
                 'testcase.cr.crf.5.1',
                 'As a user, does the system provide a user interface (UI) that allows you to review potential matches, where the system is uncertain about the match, and lets you make a manual decision on whether they are indeed the same patient?',
-                'Question for the CRF-5 Specification of the Client Repository',
+                'Question for the CRF-5 Specification of the Client Registry',
                 'testcase.status.active',
                 1,
                 true,
@@ -316,7 +316,7 @@ VALUES
         (
                 'testcase.cr.crf.5.2',
                 'In the system''s UI, can you, as a user, override matches that the system has identified as incorrect? For example, have you used the UI to correct mistakes where the system incorrectly identified two records as a match?',
-                'Question for the CRF-5 Specification of the Client Repository',
+                'Question for the CRF-5 Specification of the Client Registry',
                 'testcase.status.active',
                 2,
                 true,
@@ -332,7 +332,7 @@ VALUES
         (
                 'testcase.cr.crf.6.1',
                 'As a user, does the system allow you to modify the information used to identify patients, such as changing the attributes used for patient record? For instance, if the system initially uses name, birthdate, and address, can you choose different information for patient identification?',
-                'Question for the CRF-6 Specification of the Client Repository',
+                'Question for the CRF-6 Specification of the Client Registry',
                 'testcase.status.active',
                 1,
                 true,
@@ -348,7 +348,7 @@ VALUES
         (
                 'testcase.cr.crf.6.2',
                 'Does the system come with a pre-defined example of what a patient''s record should look like, while still allowing you the flexibility to change it if needed?',
-                'Question for the CRF-6 Specification of the Client Repository',
+                'Question for the CRF-6 Specification of the Client Registry',
                 'testcase.status.active',
                 2,
                 true,
@@ -364,7 +364,7 @@ VALUES
         (
                 'testcase.cr.crf.6.3',
                 'Can you, as a user, easily add new pieces of information (attributes) to a patient''s record? For example, if you want to include a patient''s email address, can you do so without difficulty?',
-                'Question for the CRF-6 Specification of the Client Repository',
+                'Question for the CRF-6 Specification of the Client Registry',
                 'testcase.status.active',
                 3,
                 true,
@@ -380,7 +380,7 @@ VALUES
         (
                 'testcase.cr.crf.6.4',
                 'If you want to use a different patient record model or create your own, can you easily remove the default setup and establish your own model in the system?',
-                'Question for the CRF-6 Specification of the Client Repository',
+                'Question for the CRF-6 Specification of the Client Registry',
                 'testcase.status.active',
                 4,
                 true,
@@ -396,7 +396,7 @@ VALUES
         (
                 'testcase.cr.crf.8.2',
                 'Does the system record and log details such as what was changed, when it was changed, and who made the change whenever modifications are made to the data?',
-                'Question for the CRF-8 Specification of the Client Repository',
+                'Question for the CRF-8 Specification of the Client Registry',
                 'testcase.status.active',
                 1,
                 true,
@@ -412,7 +412,7 @@ VALUES
         (
                 'testcase.cr.crf.8.3',
                 'Does the system record and log changes to settings or configurations, including information on who made the changes and what was modified?',
-                'Question for the CRF-8 Specification of the Client Repository',
+                'Question for the CRF-8 Specification of the Client Registry',
                 'testcase.status.active',
                 2,
                 true,
@@ -428,7 +428,7 @@ VALUES
         (
                 'testcase.cr.crf.8.4',
                 'Does the system log user activities, including login events, changes made, and system access, to keep track of user interactions within the system?',
-                'Question for the CRF-8 Specification of the Client Repository',
+                'Question for the CRF-8 Specification of the Client Registry',
                 'testcase.status.active',
                 3,
                 true,
@@ -444,7 +444,7 @@ VALUES
         (
                 'testcase.cr.crf.10.3',
                 'Does the system retain and remember the birth order of children within a family, accurately recording which child was born first, second, third, and so on, for family records?',
-                'Question for the CRF-10 Specification of the Client Repository',
+                'Question for the CRF-10 Specification of the Client Registry',
                 'testcase.status.active',
                 1,
                 true,
@@ -460,7 +460,7 @@ VALUES
         (
                 'testcase.cr.crf.9.1',
                 'As a user, does the system provide features for user management, allowing you to control access by deciding who can use the system, and manage users by creating, modifying, or deleting user accounts?',
-                'Question for the CRF-9 Specification of the Client Repository',
+                'Question for the CRF-9 Specification of the Client Registry',
                 'testcase.status.active',
                 1,
                 true,
@@ -476,7 +476,7 @@ VALUES
         (
                 'testcase.cr.crf.9.2',
                 'In terms of access controls, can you, as a user, define what different users can and cannot do in the system? For instance, can you ensure that some users can only view information while others have the ability to make changes, thereby enhancing the security and privacy of sensitive data?',
-                'Question for the CRF-9 Specification of the Client Repository',
+                'Question for the CRF-9 Specification of the Client Registry',
                 'testcase.status.active',
                 2,
                 true,

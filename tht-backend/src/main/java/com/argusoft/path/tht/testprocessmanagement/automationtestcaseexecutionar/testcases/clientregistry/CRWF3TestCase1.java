@@ -1,8 +1,7 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.clientrepository;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.clientregistry;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.gclient.DateClientParam;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
@@ -17,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementation of CRWF4TestCase1.
+ * Implementation of CRWF3TestCase1.
  *
  * @author Dhruv
  */
 @Component
-public class CRWF4TestCase1 implements TestCase {
+public class CRWF3TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(IGenericClient client,
@@ -43,6 +42,17 @@ public class CRWF4TestCase1 implements TestCase {
             }
             patientIds.add(outcome.getResource().getIdElement().getIdPart());
 
+            //verify patient by ID
+            Patient createdPatient = client.read()
+                    .resource(Patient.class)
+                    .withId(outcome.getResource().getIdElement().getIdPart())
+                    .execute();
+
+            if (!patient1.getBirthDate().equals(createdPatient.getBirthDate())) {
+                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to get patient by ID");
+            }
+
+            //verify patients by IDs
             Patient patient2 = FHIRUtils.createPatient("MOHR", "ALICE", "male", "1958-01-30",
                     "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-995", true, "", "666-666-6666", "alice.mohr@example.com", client);
 
@@ -56,20 +66,20 @@ public class CRWF4TestCase1 implements TestCase {
             }
             patientIds.add(outcome.getResource().getIdElement().getIdPart());
 
-            //Verify patient by demographics
             Bundle bundle = client.search()
                     .forResource(Patient.class)
                     .where(Patient.RES_ID.exactly().codes(patientIds))
-                    .where(new DateClientParam("birthdate").afterOrEquals().day("1958-01-29")) // Replace with the actual start date
-                    .where(new DateClientParam("birthdate").beforeOrEquals().day("1958-02-01")) // Replace with the actual end date
                     .returnBundle(Bundle.class)
                     .execute();
+
             List<Patient> patients = FHIRUtils.processBundle(Patient.class, bundle);
 
-            if (patients.size() != 2) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to search patients by demographics");
+            if (patients.size() == 2) {
+                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
+            } else {
+                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to get patients by IDs");
             }
-            return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
+
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);
         }

@@ -168,18 +168,19 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             TestRequestSearchFilter testRequestSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException, DoesNotExistException {
+            throws OperationFailedException, DoesNotExistException, InvalidParameterException {
 
         UserEntity principalUser = userService.getPrincipalUser(contextInfo);
-        if(principalUser.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))){
+        if (principalUser.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))) {
             testRequestSearchFilter.setAssesseeId(principalUser.getId());
         }
 
-        if(testRequestSearchFilter.isEmpty()){
-            return this.searchTestRequestsById(ids, pageable);
-        }
-        else {
+        if (!testRequestSearchFilter.isEmpty()) {
             return this.searchTestRequests(testRequestSearchFilter, pageable);
+        } else if (!CollectionUtils.isEmpty(ids)) {
+            return this.searchTestRequestsById(ids, pageable);
+        } else {
+            return this.getTestRequests(pageable, contextInfo);
         }
     }
 

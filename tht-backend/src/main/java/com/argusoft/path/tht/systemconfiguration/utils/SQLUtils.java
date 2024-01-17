@@ -133,7 +133,7 @@ public final class SQLUtils {
         stringBuilder
                 .append(tableName).append(".").append(columnName)
                 .append(" IN (");
-        for(Object columnValue: columnValues) {
+        for (Object columnValue : columnValues) {
             stringBuilder.append("'").append(columnValue.toString()).append("', ");
         }
         if (!columnValues.isEmpty()) {

@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -118,16 +117,13 @@ public class TestRequestRestController {
             InvalidParameterException, DoesNotExistException {
 
         Page<TestRequestEntity> testRequestEntities;
-
-            testRequestEntities = testRequestService
-                    .searchTestRequests(
-                            ids,
-                            testRequestSearchFilter,
-                            pageable,
-                            contextInfo);
-            return testRequestMapper.pageEntityToDto(testRequestEntities);
-
-
+        testRequestEntities = testRequestService
+                .searchTestRequests(
+                        ids,
+                        testRequestSearchFilter,
+                        pageable,
+                        contextInfo);
+        return testRequestMapper.pageEntityToDto(testRequestEntities);
     }
 
     /**

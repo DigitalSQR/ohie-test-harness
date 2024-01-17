@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.clientrepository;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.clientregistry;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -12,12 +12,12 @@ import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 
 /**
- * Implementation of CRWF2TestCase1.
+ * Implementation of the CRWF1TestCase2.
  *
  * @author Dhruv
  */
 @Component
-public class CRWF2TestCase1 implements TestCase {
+public class CRWF1TestCase2 implements TestCase {
 
     @Override
     public ValidationResultInfo test(IGenericClient client,
@@ -33,37 +33,21 @@ public class CRWF2TestCase1 implements TestCase {
 
             // Check if the patient was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Failed to create patient");
             }
 
-            String patientId = outcome.getResource().getIdElement().getIdPart();
+            Patient patientForConflict = FHIRUtils.createPatient("MOHR", "MAIDEN", "female", "1958-01-30",
+                    "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-m94", false, "IHERED-994", "555-555-5555", "maiden.mohr@example.com", client);
 
-            patient = client.read()
-                    .resource(Patient.class)
-                    .withId(patientId)
+            outcome = client.create()
+                    .resource(patientForConflict)
                     .execute();
 
-            patient.getName().get(0).getGiven().get(0).setValue("ALICE");
-
-            //update patient data.
-            outcome = client.update()
-                    .resource(patient)
-                    .execute();
-
-            if (!patientId.equals(outcome.getResource().getIdElement().getIdPart())) {
-                return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Instead of Update, Server has created new Patient");
-            }
-
-            patient = client.read()
-                    .resource(Patient.class)
-                    .withId(patientId)
-                    .execute();
-
-            //check if patient got updated or not
-            if (patient.getName().get(0).getGiven().get(0).getValue().equals("ALICE")) {
-                return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.OK, "Passed");
+            // Check if the patient was created twice?
+            if (outcome.getCreated()) {
+                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.OK, "Passed");
             } else {
-                return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Failed to update patient");
+                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Was not able to resolve patient conflict via linking patient");
             }
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);
