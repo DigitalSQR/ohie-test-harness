@@ -166,7 +166,7 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
-                <div class="custom-input mb-3">
+                {/* <div class="custom-input mb-3">
                   <label for="exampleFormControlInput1" class="form-label">
                     Company
                   </label>
@@ -182,7 +182,7 @@ export default function SignUp() {
                       aria-describedby="basic-addon1"
                     />
                   </div>
-                </div>
+                </div> */}
 
                 {/* <div>
                     <label class="custom-checkbox">
@@ -192,14 +192,14 @@ export default function SignUp() {
                     </label>
                   </div> */}
                 <div>
-                  <ReCAPTCHA
+                  {/* <ReCAPTCHA
                     sitekey="6Lf8OrIoAAAAAAKT2bArym6y1lrkkuoVVpIN0uXf"
                     style={{
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
                     }}
-                  />{" "}
+                  />{" "} */}
                 </div>
 
                 <div class="my-3">

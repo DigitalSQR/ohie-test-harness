@@ -223,7 +223,6 @@ export default function Login() {
               <div class="text-center">
                 <img src={openhie_logo} />
               </div>
-              <h4 class="my-4">Welcome back!</h4>
               <div class="custom-scrollbar">
                 <div class="custom-input mb-3">
                   <label for="exampleFormControlInput1" class="form-label">
@@ -294,7 +293,7 @@ export default function Login() {
                   >
                     Login
                   </button>
-                  <h6 style={{ textAlign: "center" }}>OR</h6>
+                  <h6 style={{ textAlign: "center" }} className="m-2">OR</h6>
                   <h4 style={{ textAlign: "center" }}>
                     <a href="/api/oauth2/authorization/google">
                     <img src={GoogleLoginIcon}/>
@@ -304,7 +303,7 @@ export default function Login() {
                 </div>
                 <div class="text-center">
                   <a href="" onClick={redirectToSignUp} class="font-weight-500 ps-2 text-blue" >
-                  Click Here to Register.{" "}
+                  Click Here to Register{" "}
                   </a>
                 </div>
               </div>
