@@ -119,7 +119,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
 
             } else if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
                 if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(userByEmail.getState())) {
-                    if(userByEmail.getRoles().stream().anyMatch(roleEntity -> roleEntity.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))) {
+                    if (userByEmail.getRoles().stream().anyMatch(roleEntity -> roleEntity.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))) {
                         userByEmail.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
                     } else {
                         userByEmail.setState(UserServiceConstants.USER_STATUS_ACTIVE);

@@ -1,31 +1,4 @@
 INSERT INTO
-    component (
-        id,
-        name,
-        description,
-        state,
-        rank,
-        created_by,
-        updated_by,
-        created_at,
-        updated_at,
-        version
-    )
-VALUES
-    (
-        'component.facility.repository',
-        'Facility Repository',
-        'Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
-        'component.status.active',
-        2,
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
-        Now(),
-        Now(),
-        0
-    );
-
-INSERT INTO
     specification (
         id,
         name,
@@ -44,11 +17,11 @@ VALUES
     (
         'specification.fr.frf.1',
         'FRF-1',
-        'FRF-1 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-1 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
         2,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -58,11 +31,11 @@ VALUES
     (
         'specification.fr.frf.2',
         'FRF-2',
-        'FRF-2 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-2 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
         3,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -72,11 +45,11 @@ VALUES
     (
         'specification.fr.frf.3',
         'FRF-3',
-        'FRF-3 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-3 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
         4,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -86,11 +59,11 @@ VALUES
     (
         'specification.fr.frf.4',
         'FRF-4',
-        'FRF-4 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-4 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
         5,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -100,11 +73,11 @@ VALUES
     (
         'specification.fr.frf.5',
         'FRF-5',
-        'FRF-5 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-5 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
         6,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -114,11 +87,11 @@ VALUES
     (
         'specification.fr.frf.6',
         'FRF-6',
-        'FRF-6 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-6 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
         7,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -128,11 +101,11 @@ VALUES
     (
         'specification.fr.frf.7',
         'FRF-7',
-        'FRF-7 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-7 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
         8,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -142,11 +115,11 @@ VALUES
     (
         'specification.fr.frf.8',
         'FRF-8',
-        'FRF-8 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-8 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
         9,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -156,11 +129,11 @@ VALUES
     (
         'specification.fr.frf.10',
         'FRF-10',
-        'FRF-10 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-10 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
-        10,
+        11,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -170,11 +143,11 @@ VALUES
     (
         'specification.fr.frf.11',
         'FRF-11',
-        'FRF-11 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-11 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
-        11,
+        12,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -184,11 +157,11 @@ VALUES
     (
         'specification.fr.frf.12',
         'FRF-12',
-        'FRF-12 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-12 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
-        12,
+        13,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -198,18 +171,17 @@ VALUES
     (
         'specification.fr.frf.13',
         'FRF-13',
-        'FRF-13 Specification of the Facility Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
+        'FRF-13 Specification of the Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
         'specification.status.active',
-        13,
+        14,
         false,
-        'component.facility.repository',
+        'component.facility.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
         0
     );
-
 
 INSERT INTO
     testcase (
@@ -485,7 +457,6 @@ VALUES
         Now(),
         0
     );
-
 
 INSERT INTO
     testcase_option (

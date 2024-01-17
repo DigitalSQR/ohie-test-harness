@@ -2,7 +2,6 @@
 --
 --@author dhruv
 --@since 2023-09-13
-
 INSERT INTO
     component (
         id,
@@ -18,9 +17,9 @@ INSERT INTO
     )
 VALUES
     (
-        'component.client.repository',
-        'Client Repository',
-        'Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+        'component.client.registry',
+        'Client Registry',
+        'Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
         'component.status.active',
         1,
         'ivasiwala@argusoft.com',
@@ -49,11 +48,11 @@ VALUES
     (
         'specification.cr.crwf.1',
         'CRWF-1',
-        'CRWF-1 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/create-patient-demographic-record-workflow-1)',
+        'CRWF-1 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/create-patient-demographic-record-workflow-1)',
         'specification.status.active',
         1,
         false,
-        'component.client.repository',
+        'component.client.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -63,11 +62,11 @@ VALUES
     (
         'specification.cr.crwf.2',
         'CRWF-2',
-        'CRWF-2 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/update-patient-demographic-record-workflow)',
+        'CRWF-2 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/update-patient-demographic-record-workflow)',
         'specification.status.active',
         2,
         false,
-        'component.client.repository',
+        'component.client.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -77,11 +76,11 @@ VALUES
     (
         'specification.cr.crwf.3',
         'CRWF-3',
-        'CRWF-3 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/query-patient-demographic-records-by-identifier-workflow)',
+        'CRWF-3 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/query-patient-demographic-records-by-identifier-workflow)',
         'specification.status.active',
         3,
         false,
-        'component.client.repository',
+        'component.client.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -91,11 +90,11 @@ VALUES
     (
         'specification.cr.crwf.4',
         'CRWF-4',
-        'CRWF-4 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/create-patient-demographic-record-workflow)',
+        'CRWF-4 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/introduction/patient-identity-management-workflows/create-patient-demographic-record-workflow)',
         'specification.status.active',
         4,
         false,
-        'component.client.repository',
+        'component.client.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -105,11 +104,11 @@ VALUES
     (
         'specification.cr.crf.3',
         'CRF-3',
-        'CRF-3 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+        'CRF-3 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
         'specification.status.active',
         7,
         true,
-        'component.client.repository',
+        'component.client.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -119,11 +118,11 @@ VALUES
     (
         'specification.cr.crf.7',
         'CRF-7',
-        'CRF-7 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+        'CRF-7 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
         'specification.status.active',
         11,
         true,
-        'component.client.repository',
+        'component.client.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -133,11 +132,11 @@ VALUES
     (
         'specification.cr.crf.8',
         'CRF-8',
-        'CRF-8 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+        'CRF-8 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
         'specification.status.active',
         12,
         true,
-        'component.client.repository',
+        'component.client.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -147,11 +146,11 @@ VALUES
     (
         'specification.cr.crf.10',
         'CRF-10',
-        'CRF-10 Specification of the Client Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
+        'CRF-10 Specification of the Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
         'specification.status.active',
         14,
         true,
-        'component.client.repository',
+        'component.client.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -180,7 +179,7 @@ VALUES
     (
         'testcase.cr.crwf.1.1',
         'Verify Create Patient',
-        'Testcase to verify create patient for specification CRWF1 of the client repository',
+        'Testcase to verify create patient for specification CRWF1 of the client registry',
         'testcase.status.active',
         1,
         false,
@@ -196,7 +195,7 @@ VALUES
     (
         'testcase.cr.crwf.1.2',
         'Verify Avoid Duplicate Patient Creation',
-        'Testcase to verify create duplication patient is getting avoided for specification CRWF1 of the client repository',
+        'Testcase to verify create duplication patient is getting avoided for specification CRWF1 of the client registry',
         'testcase.status.active',
         2,
         false,
@@ -212,7 +211,7 @@ VALUES
     (
         'testcase.cr.crwf.2.1',
         'Verify Update Patient',
-        'Testcase Verify Update Patient for Specification CRWF2 of the Client Repository',
+        'Testcase Verify Update Patient for Specification CRWF2 of the Client Registry',
         'testcase.status.active',
         1,
         false,
@@ -228,7 +227,7 @@ VALUES
     (
         'testcase.cr.crwf.3.1',
         'Verify Fetch Patient By Identifier',
-        'Testcase Fetch Patient By Identifier for Specification CRWF3 of the Client Repository',
+        'Testcase Fetch Patient By Identifier for Specification CRWF3 of the Client Registry',
         'testcase.status.active',
         1,
         false,
@@ -244,7 +243,7 @@ VALUES
     (
         'testcase.cr.crwf.4.1',
         'Verify Fetch Patient By Demographic And/Or Identifier',
-        'Testcase Verify Fetch Patient By Demographic And/Or Identifier for Specification CRWF4 of the Client Repository',
+        'Testcase Verify Fetch Patient By Demographic And/Or Identifier for Specification CRWF4 of the Client registry',
         'testcase.status.active',
         1,
         false,

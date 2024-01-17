@@ -22,34 +22,34 @@ import java.util.List;
 @Component
 public class FRF9TestCase1 implements TestCase {
 
-    public static final Logger LOGGER =  LoggerFactory.getLogger(FRF9TestCase1.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(FRF9TestCase1.class);
 
     @Override
     public ValidationResultInfo test(IGenericClient client,
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
             String testCaseName = this.getClass().getSimpleName();
-            LOGGER.info("Start testing "+testCaseName);
+            LOGGER.info("Start testing " + testCaseName);
 
-            String city = "Stockholm City"+new SecureRandom().nextInt(999999);
-            String orgName = "Burgers University Medical Center"+new SecureRandom().nextInt(999999);
-            String ambulanceName = "Ambulance"+new SecureRandom().nextInt(999999);
+            String city = "Stockholm City" + new SecureRandom().nextInt(999999);
+            String orgName = "Burgers University Medical Center" + new SecureRandom().nextInt(999999);
+            String ambulanceName = "Ambulance" + new SecureRandom().nextInt(999999);
 
             // Create a new organization
-            Organization organization = FHIRUtils.createOrganization(orgName, "Sweden",city,"+41-123-23");
+            Organization organization = FHIRUtils.createOrganization(orgName, "Sweden", city, "+41-123-23");
             MethodOutcome outcome = client.create().resource(organization).execute();
             // Check if the organization was created successfully
             if (!outcome.getCreated()) {
-                LOGGER.error(testCaseName+"Testcase Failed when creating organization");
+                LOGGER.error(testCaseName + "Testcase Failed when creating organization");
                 return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create organization");
             }
 
             // Create another organization with same city
-            organization = FHIRUtils.createOrganization("Richard Hospital", "Sweden",city,"+41-543-73");
+            organization = FHIRUtils.createOrganization("Richard Hospital", "Sweden", city, "+41-543-73");
             outcome = client.create().resource(organization).execute();
             // Check if the organization was created successfully
             if (!outcome.getCreated()) {
-                LOGGER.error(testCaseName+"Testcase Failed when creating organization");
+                LOGGER.error(testCaseName + "Testcase Failed when creating organization");
                 return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create organization");
             }
 
@@ -63,7 +63,7 @@ public class FRF9TestCase1 implements TestCase {
                     .execute();
             List<Organization> organizations = FHIRUtils.processBundle(Organization.class, bundle);
             if (organizations.size() != 2) {
-                LOGGER.error(testCaseName+"Testcase Failed when searching organization by city");
+                LOGGER.error(testCaseName + "Testcase Failed when searching organization by city");
                 return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to search organization by city");
             }
 
@@ -77,25 +77,25 @@ public class FRF9TestCase1 implements TestCase {
                     .execute();
             organizations = FHIRUtils.processBundle(Organization.class, bundle);
             if (organizations.size() != 1) {
-                LOGGER.error(testCaseName+"Testcase Failed when searching organization by name");
+                LOGGER.error(testCaseName + "Testcase Failed when searching organization by name");
                 return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to search organization by name");
             }
 
             // Create a new Ambulance Location resource
-            Location ambulance = FHIRUtils.createAmbulance("BUMC "+ambulanceName, "Ambulances provided by the Burgers University Medical Center","108", Location.LocationStatus.ACTIVE);
+            Location ambulance = FHIRUtils.createAmbulance("BUMC " + ambulanceName, "Ambulances provided by the Burgers University Medical Center", "108", Location.LocationStatus.ACTIVE);
             outcome = client.create().resource(ambulance).execute();
             // Check if the ambulance was created successfully
             if (!outcome.getCreated()) {
-                LOGGER.error(testCaseName+"Testcase Failed when creating ambulance");
+                LOGGER.error(testCaseName + "Testcase Failed when creating ambulance");
                 return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create ambulance");
             }
 
             // Create another Ambulance Location resource with inactive status
-            ambulance = FHIRUtils.createAmbulance("RM "+ambulanceName, "Ambulances provided by the Richard Morris Medical Center","108", Location.LocationStatus.SUSPENDED);
+            ambulance = FHIRUtils.createAmbulance("RM " + ambulanceName, "Ambulances provided by the Richard Morris Medical Center", "108", Location.LocationStatus.SUSPENDED);
             outcome = client.create().resource(ambulance).execute();
             // Check if the ambulance was created successfully
             if (!outcome.getCreated()) {
-                LOGGER.error(testCaseName+"Testcase Failed when creating ambulance");
+                LOGGER.error(testCaseName + "Testcase Failed when creating ambulance");
                 return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create ambulance");
             }
 
@@ -110,7 +110,7 @@ public class FRF9TestCase1 implements TestCase {
                     .execute();
             List<Location> ambulances = FHIRUtils.processBundle(Location.class, bundle);
             if (ambulances.size() != 2) {
-                LOGGER.error(testCaseName+"Testcase Failed when searching ambulance by type");
+                LOGGER.error(testCaseName + "Testcase Failed when searching ambulance by type");
                 return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to search ambulance by type");
             }
 
@@ -125,12 +125,12 @@ public class FRF9TestCase1 implements TestCase {
                     .execute();
             ambulances = FHIRUtils.processBundle(Location.class, bundle);
             if (ambulances.size() != 1) {
-                LOGGER.error(testCaseName+"Testcase Failed when searching ambulance by status");
+                LOGGER.error(testCaseName + "Testcase Failed when searching ambulance by status");
                 return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to search ambulance by status");
             }
 
             // Pass the test case if all the above conditions are passed
-            LOGGER.info(testCaseName+"Testcase successfully passed!");
+            LOGGER.info(testCaseName + "Testcase successfully passed!");
             return new ValidationResultInfo(testCaseName, ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
