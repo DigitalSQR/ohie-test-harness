@@ -261,11 +261,21 @@ body {
 .approval-action-button {
   font-weight: 500;
   font-size: 13px;
-  border-top: 1px solid #DFEFF3;
+  /* border-top: 1px solid #DFEFF3; */
   line-height: 18px;
 }
 
 .approval-action-button:hover {
-  border: 0.5px solid gray;
+  /* border: 0.5px solid gray; */
+  background: #DFEFF3;
+}
+
+.menu-like-item {
+  cursor: pointer;
+}
+.menu-like-item:hover {
+  /* background: #015f77; */
+  /* background: #0eb4b4; */
+  background: #009fc8;
 }
 /*# sourceMappingURL=style.css.map */

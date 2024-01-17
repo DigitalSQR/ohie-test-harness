@@ -9,6 +9,8 @@ import { useLoader } from "./loader/LoaderContext.js";
 import ComponentIdConnector from "./connectors/ComponentIdConnector/ComponentIdConnector.js";
 import { notification } from "antd";
 import { formatDate } from "../utils/utils.js";
+import UserIdConnector from "./connectors/UserIdConnector/UserIdConnector.jsx";
+import { useNavigate } from "react-router-dom";
 
 const TestingRequests = () => {
 	const testRequestStates = [...TestRequestStateLabels, { label: "All", value: '' }];
@@ -16,7 +18,7 @@ const TestingRequests = () => {
 	const [filterState, setFilterState] = useState(TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING);
 	const [userRoles, setUserRoles] = useState([USER_ROLES.ROLE_ID_ASSESSEE]);
 	const [testRequests, setTestRequests] = useState([]);
-
+	const navigate = useNavigate();
 
 	const fetchTestRequests = () => {
 		TestRequestAPI.getTestRequestsByState(filterState).then((res) => {
@@ -63,26 +65,37 @@ const TestingRequests = () => {
 			<div id="wrapper">
 				<div className="col-12 pt-3">
 
-					<div class="row justify-content-between">
-						<div class="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
-							<div class="d-flex align-items-baseline">
-								<span class="pe-3 text-nowrap">Status :</span>
-								<div class="mb-3">
-									<select
-										onChange={(e) => { setFilterState(e.target.value) }}
-										value={filterState}
-										class="form-select custom-select custom-select-sm"
-										aria-label="Default select example"
-									>
-										{
-											testRequestStates.map(testRequestState => (
-												<option value={testRequestState.value}>{testRequestState.label}</option>
-											))
-										}
-									</select>
+					<div class="row mb-2 justify-content-between">
+						<div class="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12">
+							<div class="custom-input custom-input-sm mb-3">
+								<div class="d-flex align-items-baseline">
+									<span class="pe-3 text-nowrap">Status :</span>
+									<div class="mb-3">
+										<select
+											onChange={(e) => { setFilterState(e.target.value) }}
+											value={filterState}
+											class="form-select custom-select custom-select-sm"
+											aria-label="Default select example"
+										>
+											{
+												testRequestStates.map(testRequestState => (
+													<option value={testRequestState.value}>{testRequestState.label}</option>
+												))
+											}
+										</select>
+									</div>
 								</div>
 							</div>
 						</div>
+						<div class="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
+							<div class="d-flex align-items-baseline justify-content-end">
+								<button onClick={() => { navigate("/dashboard/register-application") }} type="button" class="btn btn-sm btn-outline-secondary menu-like-item">
+									<i className="bi bi-plus"></i>
+									Register Application
+								</button>
+							</div>
+						</div>
+
 					</div>
 
 					<div className="table-responsive">
@@ -91,8 +104,9 @@ const TestingRequests = () => {
 								<tr>
 									<th>APP NAME</th>
 									<th>DATE OF APPLICATION</th>
-									<th>APP URL</th>
+									<th>Assessee</th>
 									<th>COMPONENTS</th>
+									<th>APP URL</th>
 									<th>STATUS</th>
 									{
 										userRoles.includes(USER_ROLES.ROLE_ID_ADMIN)
@@ -108,7 +122,7 @@ const TestingRequests = () => {
 									testRequests.length === 0 ?
 										<>
 											<tr>
-												<td className="text-center" colSpan={6}>No test requests found in the {TestRequestStateConstantNames[filterState]} stage</td>
+												<td className="text-center" colSpan={7}>No test requests found in the {TestRequestStateConstantNames[filterState]} stage</td>
 											</tr>
 										</>
 										: null
@@ -121,13 +135,14 @@ const TestingRequests = () => {
 													<>
 														<td rowSpan={testRequest.testRequestUrls.length}>{testRequest.productName}</td>
 														<td rowSpan={testRequest.testRequestUrls.length}>{formatDate(testRequest.meta.updatedAt)}</td>
+														<td rowSpan={testRequest.testRequestUrls.length}><UserIdConnector isLink={true} userId={testRequest.assesseeId} /></td>
 													</>
 													: null
 												}
-												<td>{testUrl.baseUrl}</td>
-												<td>
+												<td className="row-spaned-td">
 													<ComponentIdConnector componentId={testUrl.componentId} />
 												</td>
+												<td  className="row-spaned-td">{testUrl.baseUrl}</td>
 												{
 													index === 0 ?
 														<>
@@ -137,7 +152,7 @@ const TestingRequests = () => {
 															{
 																userRoles.includes(USER_ROLES.ROLE_ID_ADMIN)
 																	&& testRequest.state === TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ?
-																	(<td class=" no-wrap">
+																	(<td rowSpan={testRequest.testRequestUrls.length} class=" no-wrap">
 																		<button onClick={() => { changeState(testRequest.id, TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED) }}
 																			type="button" className="text-uppercase btn btn-sm approval-action-button text-uppercase">
 																			<span>
@@ -146,7 +161,7 @@ const TestingRequests = () => {
 																			</span>
 																		</button>
 																		<button onClick={() => { changeState(testRequest.id, TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED) }}
-																			type="button" className="btn btn-sm approval-action-button text-uppercase">
+																			type="button" className="mx-1 btn btn-sm approval-action-button text-uppercase">
 																			<i class="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
 																			REJECT{" "}
 																		</button>

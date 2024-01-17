@@ -188,7 +188,6 @@ const RegisterApplication = () => {
                             {component.name}
                           </label>
                         </div>
-                        {formik.errors.testRequestUrls ? <div className="text-danger">{formik.errors.testRequestUrls}</div> : null}
                       </div>
                     </div>
                     {
@@ -260,13 +259,14 @@ const RegisterApplication = () => {
                 );
               })
             }
+            {formik.errors.testRequestUrls ? <div className="text-danger">{formik.errors.testRequestUrls}</div> : null}
           </div>
 
           <div class="my-4 text-end">
             <button class="btn btn-primary btn-white py-2 font-size-14 mx-2" onClick={() => { navigate("/dashboard") }}>
               Cancel
             </button>
-            <button disabled={!formik.isValid} type="button" onClick={formik.handleSubmit} class="btn btn-primary btn-blue py-2 font-size-14">
+            <button disabled={!(formik.isValid && formik.dirty)} type="button" onClick={formik.handleSubmit} class="btn btn-primary btn-blue py-2 font-size-14">
               submit
             </button>
           </div>
