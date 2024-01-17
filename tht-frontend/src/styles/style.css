@@ -274,8 +274,8 @@ body {
   cursor: pointer;
 }
 .menu-like-item:hover {
-  /* background: #015f77; */
+  background: #015f77;
   /* background: #0eb4b4; */
-  background: #009fc8;
+  /* background: #009fc8; */
 }
 /*# sourceMappingURL=style.css.map */
