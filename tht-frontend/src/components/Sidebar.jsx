@@ -1,13 +1,13 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { log_out } from "../reducers/authReducer";
 import { AuthenticationAPI } from "../api/AuthenticationAPI";
-import { clearAuthInfo } from '../api/configs/axiosConfigs'
+import { clearAuthInfo } from "../api/configs/axiosConfigs";
 import "../scss/_sidebar.scss";
-import logo from "../styles/images/logo-white.png"
-import { useEffect, useState } from 'react';
-import { UserAPI } from '../api/UserAPI';
-import { USER_ROLES } from '../constants/role_constants';
+import logo from "../styles/images/logo-white.png";
+import { useEffect, useState } from "react";
+import { UserAPI } from "../api/UserAPI";
+import { USER_ROLES } from "../constants/role_constants";
 
 export default function Sidebar() {
   const dispatch = useDispatch();
@@ -17,11 +17,11 @@ export default function Sidebar() {
   const [activeMenuItem, setActiveMenuItem] = useState();
   const [user, setUser] = useState();
 
-  /* 
+  /*
    * This is to expand/shrink the wrapper when the side menu bar is toogled
    * To Do: Refactor the structure in such a way that margins are removed from the pages
-   * and the outlet will directly render things in the middle of the page.  
-  **/
+   * and the outlet will directly render things in the middle of the page.
+   **/
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
     let wrapper = document.getElementById("wrapper");
@@ -39,18 +39,25 @@ export default function Sidebar() {
     UserAPI.viewUser().then((user) => {
       setUser(user);
     });
-  }, [])
+  }, []);
 
   useEffect(() => {
     setActiveMenuItem(location.pathname);
     let wrapper = document.getElementById("wrapper");
     if (wrapper) {
-      isSidebarOpen ? wrapper.classList.remove("expand") : wrapper.classList.add("expand");
+      isSidebarOpen
+        ? wrapper.classList.remove("expand")
+        : wrapper.classList.add("expand");
     }
   }, [location]);
 
   return (
-    <div className={isSidebarOpen ? "sidebar-wrapper open" : "sidebar-wrapper shrink"} id="mySidenav">
+    <div
+      className={
+        isSidebarOpen ? "sidebar-wrapper open" : "sidebar-wrapper shrink"
+      }
+      id="mySidenav"
+    >
       <div className="close-sidemenu-icon" onClick={toggleSidebar}>
         <i className="bi bi-filter-left"></i>
       </div>
@@ -60,8 +67,17 @@ export default function Sidebar() {
 
       <ul className="side-menu">
         <li>
-          <a className={activeMenuItem === "/dashboard" ? "active menu-like-item" : "menu-like-item"} onClick={() => { handleMenuItemClick("/dashboard") }}>
-            <i aria-label='Dashboard' title='Dashboard' className="bi bi-columns-gap menu-left-icon"></i>
+          <a
+            className={activeMenuItem === "/dashboard" ? "active menu-like-item" : "menu-like-item"}
+            onClick={() => {
+              handleMenuItemClick("/dashboard");
+            }}
+          >
+            <i
+              aria-label="Dashboard"
+              title="Dashboard"
+              className="bi bi-columns-gap menu-left-icon"
+            ></i>
             <span> Dashboard </span>
           </a>
         </li>
@@ -71,27 +87,68 @@ export default function Sidebar() {
             <span> Testing Requests</span>
           </a>
         </li>
-        {
-          user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ?
-            <>
-              <li>
-                <a className={activeMenuItem === "/dashboard/user-registration" ? "active menu-like-item" : "menu-like-item"} onClick={() => handleMenuItemClick("/dashboard/user-registration")}>
-                  <i aria-label='User Registration' title='User Registration' className="bi bi-columns-gap menu-left-icon"></i>
-                  <span> User Registration </span>
-                </a>
-              </li>
-              <li>
-                <a className={activeMenuItem === "/dashboard/applications" ? "active menu-like-item" : "menu-like-item"} onClick={() => handleMenuItemClick("/dashboard/applications")}>
-                  <i aria-label='Applications' title='Applications' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
-                  <span> Applications </span>
-                </a>
-              </li>
-            </>
-            : null
-        }
+        {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ? (
+          <>
+            <li>
+              <a
+                className={
+                  activeMenuItem === "/dashboard/user-registration"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
+                }
+                onClick={() =>
+                  handleMenuItemClick("/dashboard/user-registration")
+                }
+              >
+                <i
+                  aria-label="User Registration"
+                  title="User Registration"
+                  className="bi bi-columns-gap menu-left-icon"
+                ></i>
+                <span> User Registration </span>
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  activeMenuItem === "/dashboard/applications" ? "active menu-like-item" : "menu-like-item"
+                }
+                onClick={() => handleMenuItemClick("/dashboard/applications")}
+              >
+                <i
+                  aria-label="Applications"
+                  title="Applications"
+                  className="bi bi-file-earmark-bar-graph menu-left-icon"
+                ></i>
+                <span> Applications </span>
+              </a>
+            </li>
+          </>
+        ) : null}
         <li>
-          <a className='menu-like-item' onClick={() => { dispatch(log_out()); }} aria-label='Logout' title='Logout'>
-            <i aria-label='Logout' title='Logout' className="bi bi-box-arrow-right menu-left-icon"></i>
+          <a
+            className={
+              activeMenuItem === "/dashboard/admin-users" ? "active menu-like-item" : "menu-like-item"
+            }
+            onClick={() => handleMenuItemClick("/dashboard/admin-users")}
+          >
+            <i className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
+            <span> Admin-users</span>
+          </a>
+        </li>
+        <li>
+          <a
+            className='menu-like-item' onClick={() => {
+              dispatch(log_out());
+            }}
+            aria-label="Logout"
+            title="Logout"
+          >
+            <i
+              aria-label="Logout"
+              title="Logout"
+              className="bi bi-box-arrow-right menu-left-icon"
+            ></i>
             <span> Logout </span>
           </a>
         </li>

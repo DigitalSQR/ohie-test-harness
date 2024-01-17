@@ -20,7 +20,9 @@ import Applications from "../components/Applications";
 import TestingRequests from "../components/TestingRequests";
 import RegisterApplication from "../components/RegisterApplication";
 import EmailVerified from "../components/EmailVerified";
-
+import UpdateAdminUser from "../components/UpdateAdminUser";
+import AdminUsers from "../components/AdminUsers";
+import AddAdminUser from "../components/AddAdminUser";
 const PrivateRoute = () => {
 	const token = useSelector((state) => state.authSlice.access_token);
 
@@ -51,11 +53,14 @@ const routes = createBrowserRouter([
 			{ path: "functional-testing", element: <FunctionalTesting /> },
 			{ path: "workflow-testing", element: <WorkFlowTesting /> },
 			{ path: "user-registration", element: <UserRegistration /> },
-			{ path: "register-application", element: <RegisterApplication />}
+			{ path: "register-application", element: <RegisterApplication />},
+      { path: "admin-users", element: <AdminUsers /> },
+      { path: "admin-users/add-admin-user", element: <AddAdminUser /> },
+      { path: "admin-users/update-admin-user", element: <UpdateAdminUser /> },
+      // { path: "admin-users/update-admin-user", element: <AdminUsers /> },
 		],
 	},
 	{ path: "/", element: <Navigate to="/login" /> },
 ]);
 
 export default routes;
-//THIS FILE WILL REPLACE THE ROUTES PRESENT IN APP.JS ROUTES
