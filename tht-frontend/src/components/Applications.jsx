@@ -14,9 +14,7 @@ import UserIdEmailConnector from "./connectors/UserIdEmailConnector/UserIdEmailC
 
 const Applications = () => {
     const testRequestStates = [...TestRequestActionStateLabels, { label: "All", value: '' }];
-    const { showLoader, hideLoader } = useLoader();
     const [filterState, setFilterState] = useState(TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED);
-    const [userRoles, setUserRoles] = useState([USER_ROLES.ROLE_ID_TESTER]);
     const [testRequests, setTestRequests] = useState([]);
     const navigate = useNavigate();
 
@@ -86,16 +84,14 @@ const Applications = () => {
                                         : null
                                 }
                                 {
-                                    testRequests.map((testRequest) => (
-                                        testRequest.testRequestUrls.map((testUrl, index) => (
-                                            <tr>
-                                                <td>{testRequest.name}</td>
-                                                <td>{testRequest.productName}</td>
-                                                <td>{formatDate(testRequest.meta.updatedAt)}</td>
-                                                <td><UserIdEmailConnector userId={testRequest.assesseeId}></UserIdEmailConnector></td>
-                                                <td><button className={StateClasses[testRequest.state]?.btnClass} onClick={() => { navigate("/dashboard/choose-test") }}> <i className={StateClasses[testRequest.state]?.iconClass}></i> {StateClasses[testRequest.state]?.btnText}</button></td>
-                                            </tr>
-                                        ))
+                                    testRequests?.map((testRequest) => (
+                                        <tr>
+                                            <td>{testRequest.name}</td>
+                                            <td>{testRequest.productName}</td>
+                                            <td>{formatDate(testRequest.meta.updatedAt)}</td>
+                                            <td><UserIdEmailConnector userId={testRequest.assesseeId}></UserIdEmailConnector></td>
+                                            <td><button className={StateClasses[testRequest.state]?.btnClass} onClick={() => { navigate("/dashboard/choose-test") }}> <i className={StateClasses[testRequest.state]?.iconClass}></i> {StateClasses[testRequest.state]?.btnText}</button></td>
+                                        </tr>
                                     ))
                                 }
                             </tbody>

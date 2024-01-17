@@ -31,7 +31,7 @@ export default function WorkFlowTesting(){
                                 <td>Client Registry - CRWF-1</td>
                                 <td>Create a blank Patient resource</td>
                                 <td>
-                                    <span class="result-pass">Pass</span>
+                                <span id="boot-icon" class="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
                                 </td>
                                 <td>22 ms</td>
                                 <td class="text-end cursor-pointer"> <i class="bi bi-chevron-right"></i>
@@ -41,23 +41,23 @@ export default function WorkFlowTesting(){
                                 <td></td>
                                 <td>Add demographic information</td>
                                 <td>
-                                    <span class="result-fail">Fail</span>
+                                <span id="boot-icon" class="bi bi-x-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(255, 0, 0)'}}></span>
                                 </td>
                                 <td>367 ms</td>
-                                <td class="text-end cursor-pointer"> <i class="bi bi-chevron-down"></i>
+                                <td class="text-end cursor-pointer"> <i class="bi bi-chevron-right"></i>
                                 </td>
                             </tr>
-                            <tr class="expand-row">
+                            {/* <tr class="expand-row">
                                 <td class=""></td>
                                 <td colspan="4">
                                     <img src={error_logo}/>
                                 </td>
-                            </tr>
+                            </tr> */}
                             <tr>
                                 <td></td>
                                 <td>Call FHIR API to create Patient resource</td>
                                 <td>
-                                    <span class="result-pass">Pass</span>
+                                    <span id="boot-icon" class="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
                                 </td>
                                 <td>217 ms</td>
                                 <td class="text-end cursor-pointer">
@@ -68,7 +68,7 @@ export default function WorkFlowTesting(){
                                 <td></td>
                                 <td>Check acknowledgement message</td>
                                 <td>
-                                    <span class="result-pass">Pass</span>
+                                    <span id="boot-icon" class="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
                                 </td>
                                 <td>564 ms</td>
                                 <td class="text-end cursor-pointer">
@@ -79,7 +79,7 @@ export default function WorkFlowTesting(){
                                 <td>Client Registry - CRWF-2</td>
                                 <td>Create a blank Patient resource</td>
                                 <td>
-                                    <span class="result-pass">Pass</span>
+                                    <span id="boot-icon" class="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
                                 </td>
                                 <td>242 ms</td>
                                 <td class="text-end cursor-pointer"> <i class="bi bi-chevron-right"></i>
@@ -89,7 +89,7 @@ export default function WorkFlowTesting(){
                                 <td></td>
                                 <td>Add demographic information</td>
                                 <td>
-                                    <span class="result-pass">Pass</span>
+                                    <span id="boot-icon" class="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
                                 </td>
                                 <td>165 ms</td>
                                 <td class="text-end cursor-pointer">
@@ -100,7 +100,8 @@ export default function WorkFlowTesting(){
                                 <td></td>
                                 <td>Check acknowledgement message</td>
                                 <td>
-                                    <span class="running">Running</span>
+                                    <div class="spinner-border text-secondary" role="status">
+                                    </div>
                                 </td>
                                 <td>165 ms</td>
                                 <td class="text-end cursor-pointer">

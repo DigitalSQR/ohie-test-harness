@@ -60,13 +60,13 @@ export default function Sidebar() {
 
       <ul className="side-menu">
         <li>
-          <a className={activeMenuItem === "/dashboard" ? "active" : ""} onClick={() => { handleMenuItemClick("/dashboard") }}>
+          <a className={activeMenuItem === "/dashboard" ? "active menu-like-item" : "menu-like-item"} onClick={() => { handleMenuItemClick("/dashboard") }}>
             <i aria-label='Dashboard' title='Dashboard' className="bi bi-columns-gap menu-left-icon"></i>
             <span> Dashboard </span>
           </a>
         </li>
         <li>
-          <a className={activeMenuItem === "/dashboard/testing-requests" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/testing-requests")}>
+          <a className={activeMenuItem === "/dashboard/testing-requests" ? "active menu-like-item" : "menu-like-item"} onClick={() => handleMenuItemClick("/dashboard/testing-requests")}>
             <i aria-label='Testing Requests' title='Testing Requests' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
             <span> Testing Requests</span>
           </a>
@@ -75,13 +75,13 @@ export default function Sidebar() {
           user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ?
             <>
               <li>
-                <a className={activeMenuItem === "/dashboard/user-registration" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/user-registration")}>
+                <a className={activeMenuItem === "/dashboard/user-registration" ? "active menu-like-item" : "menu-like-item"} onClick={() => handleMenuItemClick("/dashboard/user-registration")}>
                   <i aria-label='User Registration' title='User Registration' className="bi bi-columns-gap menu-left-icon"></i>
                   <span> User Registration </span>
                 </a>
               </li>
               <li>
-                <a className={activeMenuItem === "/dashboard/applications" ? "active" : ""} onClick={() => handleMenuItemClick("/dashboard/applications")}>
+                <a className={activeMenuItem === "/dashboard/applications" ? "active menu-like-item" : "menu-like-item"} onClick={() => handleMenuItemClick("/dashboard/applications")}>
                   <i aria-label='Applications' title='Applications' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
                   <span> Applications </span>
                 </a>
@@ -90,7 +90,7 @@ export default function Sidebar() {
             : null
         }
         <li>
-          <a onClick={() => { dispatch(log_out()); }} aria-label='Logout' title='Logout'>
+          <a className='menu-like-item' onClick={() => { dispatch(log_out()); }} aria-label='Logout' title='Logout'>
             <i aria-label='Logout' title='Logout' className="bi bi-box-arrow-right menu-left-icon"></i>
             <span> Logout </span>
           </a>

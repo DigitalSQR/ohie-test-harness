@@ -11,6 +11,7 @@ import { setDefaultToken } from "../api/configs/axiosConfigs";
 import { useSelector } from "react-redux";
 import { useLoader } from "../components/loader/LoaderContext";
 import ReCAPTCHA from "react-google-recaptcha";
+import GoogleLoginIcon from "../styles/images/GoogleLoginIcon.png";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -281,7 +282,7 @@ export default function Login() {
                     />
                     <span class="checkmark"></span>
                   </label>
-                  <a  onClick={()=>{navigate("/forgotpassword")}}>
+                  <a  href="" onClick={()=>{navigate("/forgotpassword")}}>
                     Reset Password
                   </a>
                 </div>
@@ -296,14 +297,14 @@ export default function Login() {
                   <h6 style={{ textAlign: "center" }}>OR</h6>
                   <h4 style={{ textAlign: "center" }}>
                     <a href="/api/oauth2/authorization/google">
-                      Login with Google
+                    <img src={GoogleLoginIcon}/>
+                      {/* Login with Google */}
                     </a>
                   </h4>
                 </div>
                 <div class="text-center">
-                  Dont Have an account?{" "}
-                  <a href="#" onClick={redirectToSignUp} class="font-weight-500 ps-2 text-blue" >
-                    CREATE ACCOUNT
+                  <a href="" onClick={redirectToSignUp} class="font-weight-500 ps-2 text-blue" >
+                  Click Here to Register.{" "}
                   </a>
                 </div>
               </div>
