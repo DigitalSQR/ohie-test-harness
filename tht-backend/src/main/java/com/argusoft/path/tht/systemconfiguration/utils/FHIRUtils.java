@@ -90,6 +90,37 @@ public final class FHIRUtils {
         return patient;
     }
 
+    public static Location createAmbulance(String name, String description, String phone, Location.LocationStatus status) {
+
+        Location ambulance = new Location();
+        ambulance.setName(name);
+        ambulance.setDescription(description);
+        ambulance.setMode(Location.LocationMode.KIND);
+        ambulance.setStatus(status);
+
+        // Set this location as Ambulance
+        ambulance.addType().addCoding().setCode("AMB").setSystem("http://terminology.hl7.org/CodeSystem/v3-RoleCode").setDisplay("Ambulance");
+
+        // Set contact information
+        ambulance.addTelecom().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+
+        return ambulance;
+    }
+
+    public static Organization createOrganization(String name, String country, String city, String phone) {
+
+        Organization organization = new Organization();
+        organization.setName(name);
+
+        // Set organization's address
+        organization.addAddress().setCountry(country).setCity(city);
+
+        // Set organization's contact information
+        organization.addTelecom().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+
+        return organization;
+    }
+
     public static Date parseDate(String dateStr) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
