@@ -98,12 +98,12 @@ const UserRegistration = () => {
 									</a>
 								</th>
 								<th>requested date</th>
-								<th>
+								{/* <th>
 									Company{" "}
 									<a class="ps-1" href="#v">
 										<img src={sortIcon} alt="e" />
 									</a>
-								</th>
+								</th> */}
 								<th>
 									Status{" "}
 									<a class="ps-1" href="# ">
@@ -147,7 +147,7 @@ const UserRegistration = () => {
 											<td>{user.name}</td>
 											<td>{user.email}</td>
 											<td>{formattedDate}</td>
-											<td>{user.company}</td>
+											{/* <td>{user.company}</td> */}
 											<td>
 												<span className={userBadgeClasses[user.state]}>
 													{currentStatus.toUpperCase()}
