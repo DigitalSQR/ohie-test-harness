@@ -14,39 +14,39 @@ export default function Header() {
 	return (
 		<Fragment>
 			<header>
-				<div class="pd-left-240 ps-30" id="header-col-1"></div>
-				<div class="d-flex align-items-center">
-					<div class="bell-icon">
-						<i class="bi bi-bell side-nav-toggle"></i>
+				<div className="pd-left-240 ps-30" id="header-col-1"></div>
+				<div className="d-flex align-items-center">
+					<div className="bell-icon">
+						<i className="bi bi-bell side-nav-toggle"></i>
 					</div>
-					<div class="dropdown">
+					<div className="dropdown">
 						<div
-							class="user-dropdown"
+							className="user-dropdown"
 							data-bs-toggle="dropdown"
 							aria-expanded="false"
 						>
-							<span class="user-pic">
+							<span className="user-pic">
 								<img src={avatar} />
 							</span>
-							<span class="user-name">
+							<span className="user-name">
 								{userInfo?.name}
-								<i class="bi bi-chevron-down"></i>
+								<i className="bi bi-chevron-down"></i>
 							</span>
-							<span class="font-size-12">{USER_ROLE_NAMES[userInfo?.roleIds[0]]}</span>
+							<span className="font-size-12">{USER_ROLE_NAMES[userInfo?.roleIds[0]]}</span>
 						</div>
-						<ul class="dropdown-menu">
+						<ul className="dropdown-menu">
 							<li>
-								<a class="dropdown-item" href="#">
+								<a className="dropdown-item" href="#">
 									Action
 								</a>
 							</li>
 							<li>
-								<a class="dropdown-item" href="#">
+								<a className="dropdown-item" href="#">
 									Another action
 								</a>
 							</li>
 							<li>
-								<a class="dropdown-item" href="#">
+								<a className="dropdown-item" href="#">
 									Something else here
 								</a>
 							</li>

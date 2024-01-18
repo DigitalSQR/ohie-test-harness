@@ -65,21 +65,21 @@ const TestingRequests = () => {
 			<div id="wrapper">
 				<div className="col-12 pt-3">
 
-					<div class="row mb-2 justify-content-between">
-						<div class="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12">
-							<div class="custom-input custom-input-sm mb-3">
-								<div class="d-flex align-items-baseline">
-									<span class="pe-3 text-nowrap">Status :</span>
-									<div class="mb-3">
+					<div className="row mb-2 justify-content-between">
+						<div className="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12">
+							<div className="custom-input custom-input-sm mb-3">
+								<div className="d-flex align-items-baseline">
+									<span className="pe-3 text-nowrap">Status :</span>
+									<div className="mb-3">
 										<select
 											onChange={(e) => { setFilterState(e.target.value) }}
 											value={filterState}
-											class="form-select custom-select custom-select-sm"
+											className="form-select custom-select custom-select-sm"
 											aria-label="Default select example"
 										>
 											{
 												testRequestStates.map(testRequestState => (
-													<option value={testRequestState.value}>{testRequestState.label}</option>
+													<option value={testRequestState.value} key={testRequestState.value}>{testRequestState.label}</option>
 												))
 											}
 										</select>
@@ -87,9 +87,9 @@ const TestingRequests = () => {
 								</div>
 							</div>
 						</div>
-						<div class="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
-							<div class="d-flex align-items-baseline justify-content-end">
-								<button onClick={() => { navigate("/dashboard/register-application") }} type="button" class="btn btn-sm btn-outline-secondary menu-like-item">
+						<div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
+							<div className="d-flex align-items-baseline justify-content-end">
+								<button onClick={() => { navigate("/dashboard/register-application") }} type="button" className="btn btn-sm btn-outline-secondary menu-like-item">
 									<i className="bi bi-plus"></i>
 									Register Application
 								</button>
@@ -130,7 +130,8 @@ const TestingRequests = () => {
 								{
 									testRequests.map((testRequest) => (
 										testRequest.testRequestUrls.map((testUrl, index) => (
-											<tr>
+											
+											<tr key={testUrl.username}>
 												{index === 0 ?
 													<>
 														<td rowSpan={testRequest.testRequestUrls.length}>{testRequest.productName}</td>
@@ -152,17 +153,17 @@ const TestingRequests = () => {
 															{
 																userRoles.includes(USER_ROLES.ROLE_ID_ADMIN)
 																	&& testRequest.state === TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ?
-																	(<td rowSpan={testRequest.testRequestUrls.length} class=" no-wrap">
+																	(<td rowSpan={testRequest.testRequestUrls.length} className=" no-wrap">
 																		<button onClick={() => { changeState(testRequest.id, TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED) }}
 																			type="button" className="text-uppercase btn btn-sm approval-action-button text-uppercase">
 																			<span>
-																				<i class="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+																				<i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
 																				APPROVE{" "}
 																			</span>
 																		</button>
 																		<button onClick={() => { changeState(testRequest.id, TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED) }}
 																			type="button" className="mx-1 btn btn-sm approval-action-button text-uppercase">
-																			<i class="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
+																			<i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
 																			REJECT{" "}
 																		</button>
 																	</td>)

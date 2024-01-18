@@ -146,7 +146,6 @@ const UpdateAdminUser = () => {
                   <select
                     className="form-select"
                     id="roleIds"
-                    defaultValue=""
                     value={formData.roleIds}
                     onChange={handleChange}
                   >

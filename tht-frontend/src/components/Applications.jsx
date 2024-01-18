@@ -49,12 +49,12 @@ const Applications = () => {
                                     <select
                                         onChange={(e) => { setFilterState(e.target.value) }}
                                         value={filterState}
-                                        class="form-select custom-select custom-select-sm"
+                                        className="form-select custom-select custom-select-sm"
                                         aria-label="Default select example"
                                     >
                                         {
                                             testRequestStates.map(testRequestState => (
-                                                <option value={testRequestState.value}>{testRequestState.label}</option>
+                                                <option value={testRequestState.value} key={testRequestState.value}>{testRequestState.label}</option>
                                             ))
                                         }
                                     </select>
@@ -85,7 +85,7 @@ const Applications = () => {
                                 }
                                 {
                                     testRequests?.map((testRequest) => (
-                                        <tr>
+                                        <tr key={testRequest.name}>
                                             <td>{testRequest.name}</td>
                                             <td>{testRequest.productName}</td>
                                             <td>{formatDate(testRequest.meta.updatedAt)}</td>

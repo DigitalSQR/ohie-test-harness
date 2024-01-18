@@ -6,10 +6,10 @@ export default function Footer() {
   return (
     <Fragment>
       <footer>
-        <div class="pe-2 d-sm-flex d-none">
-          Testing Harness Tool © 2023 <span class="ps-2">|</span>{" "}
+        <div className="pe-2 d-sm-flex d-none">
+          Testing Harness Tool © 2023 <span className="ps-2">|</span>{" "}
         </div>
-        <div class="pe-2">
+        <div className="pe-2">
           <img src={argusoft_logo} />
         </div>
         <div>

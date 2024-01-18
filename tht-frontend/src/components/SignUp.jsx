@@ -68,13 +68,13 @@ export default function SignUp() {
 
   return (
     <Fragment>
-      <div class="container-fluid ps-0">
-        <div class="row">
-          <div class="col-md-6 col-12 col-sm-12 p-0">
-            <div class="login-bg">
-              <div class="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
+      <div className="container-fluid ps-0">
+        <div className="row">
+          <div className="col-md-6 col-12 col-sm-12 p-0">
+            <div className="login-bg">
+              <div className="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
                 <h1>Testing Harness Test Automation</h1>
-                <p class="font-size-16 mt-3">
+                <p className="font-size-16 mt-3">
                   Experience streamlined OpenHIE standards compliance testing
                   for healthcare websites. Our tool ensures precision,
                   simplifies complexities, and empowers your projects.
@@ -83,25 +83,25 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div class="col-md-6 col-12 col-sm-12">
-            <div class="login-form-bg pt-5">
-              <div class="text-center">
+          <div className="col-md-6 col-12 col-sm-12">
+            <div className="login-form-bg pt-5">
+              <div className="text-center">
                 <img src={openhie_logo} />
               </div>
-              <h4 class="my-4">Sign Up</h4>
-              <div class="custom-scrollbar">
-                <div class="custom-input mb-3">
-                  <label for="exampleFormControlInput1" class="form-label">
+              <h4 className="my-4">Sign Up</h4>
+              <div className="custom-scrollbar">
+                <div className="custom-input mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">
                     Name
                   </label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="basic-addon1">
-                      <i class="bi bi-person"></i>
+                  <div className="input-group">
+                    <span className="input-group-text" id="basic-addon1">
+                      <i className="bi bi-person"></i>
                     </span>
                     <input
                       name="name"
                       type="text"
-                      class="form-control border-start-0 ps-0"
+                      className="form-control border-start-0 ps-0"
                       placeholder="Full name"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -109,18 +109,18 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
-                <div class="custom-input mb-3">
-                  <label for="exampleFormControlInput1" class="form-label">
+                <div className="custom-input mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">
                     Email
                   </label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="basic-addon1">
-                      <i class="bi bi-envelope"></i>
+                  <div className="input-group">
+                    <span className="input-group-text" id="basic-addon1">
+                      <i className="bi bi-envelope"></i>
                     </span>
                     <input
                       name="email"
                       type="text"
-                      class="form-control border-start-0 ps-0"
+                      className="form-control border-start-0 ps-0"
                       placeholder="Email"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -129,18 +129,18 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
-                <div class="custom-input mb-3">
-                  <label for="exampleFormControlInput1" class="form-label">
+                <div className="custom-input mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">
                     Password
                   </label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="basic-addon1">
-                      <i class="bi bi-lock"></i>
+                  <div className="input-group">
+                    <span className="input-group-text" id="basic-addon1">
+                      <i className="bi bi-lock"></i>
                     </span>
                     <input
                       name="password"
                       type="password"
-                      class="form-control border-start-0 ps-0"
+                      className="form-control border-start-0 ps-0"
                       placeholder="Password"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -148,17 +148,17 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
-                <div class="custom-input mb-3">
-                  <label for="exampleFormControlInput1" class="form-label">
+                <div className="custom-input mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">
                     Confirm Password
                   </label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="basic-addon1">
-                      <i class="bi bi-lock"></i>
+                  <div className="input-group">
+                    <span className="input-group-text" id="basic-addon1">
+                      <i className="bi bi-lock"></i>
                     </span>
                     <input
                       type="password"
-                      class="form-control border-start-0 ps-0"
+                      className="form-control border-start-0 ps-0"
                       placeholder="Confirm Password"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -166,31 +166,6 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
-                {/* <div class="custom-input mb-3">
-                  <label for="exampleFormControlInput1" class="form-label">
-                    Company
-                  </label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="basic-addon1">
-                      <i class="bi bi-building"></i>
-                    </span>
-                    <input
-                      type="text"
-                      class="form-control border-start-0 ps-0"
-                      placeholder="Company"
-                      aria-label="Username"
-                      aria-describedby="basic-addon1"
-                    />
-                  </div>
-                </div> */}
-
-                {/* <div>
-                    <label class="custom-checkbox">
-                      Im' not a robot
-                      <input type="checkbox" />
-                      <span class="checkmark"></span>
-                    </label>
-                  </div> */}
                 <div>
                   {/* <ReCAPTCHA
                     sitekey="6Lf8OrIoAAAAAAKT2bArym6y1lrkkuoVVpIN0uXf"
@@ -202,20 +177,20 @@ export default function SignUp() {
                   />{" "} */}
                 </div>
 
-                <div class="my-3">
+                <div className="my-3">
                   <button
-                    class="btn btn-primary btn-blue w-100"
+                    className="btn btn-primary btn-blue w-100"
                     onClick={SignUpHandler}
                   >
                     Sign Up
                   </button>
                 </div>
 
-                <div class="text-center">
+                <div className="text-center">
                   Already have an account?{" "}
                   <a
                     onClick={ClickHandler}
-                    class="font-weight-500 ps-2 text-blue"
+                    className="font-weight-500 ps-2 text-blue"
                     href="#"
                   >
                     SIGN IN

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import "../scss/_registrationApplication.scss"
 import { useNavigate } from "react-router-dom";
 import { useFormik } from 'formik';
@@ -112,37 +112,37 @@ const RegisterApplication = () => {
   return (
     <form>
       <div id="wrapper">
-        <div class="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
-          <div class="form-bg-white">
-            <span class="heading-line-up">Application Details</span>
+        <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
+          <div className="form-bg-white">
+            <span className="heading-line-up">Application Details</span>
 
-            <div class="row">
-              <div class="col-sm-6 col-12">
-                <div class="custom-input mb-3">
-                  <label for="name" class="form-label">
+            <div className="row">
+              <div className="col-sm-6 col-12">
+                <div className="custom-input mb-3">
+                  <label htmlFor="name" className="form-label">
                     Application Name
                   </label>
                   <input
                     id="name"
                     name="name"
                     type="text"
-                    class="form-control"
+                    className="form-control"
                     placeholder="Application Name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
                   />
                 </div>
               </div>
-              <div class="col-sm-6 col-12">
-                <div class="custom-input mb-3">
-                  <label for="productName" class="form-label">
+              <div className="col-sm-6 col-12">
+                <div className="custom-input mb-3">
+                  <label htmlFor="productName" className="form-label">
                     Product Name
                   </label>
                   <input
                     id="productName"
                     name="productName"
                     type="text"
-                    class="form-control"
+                    className="form-control"
                     placeholder="Product Name"
                     value={formik.values.productName}
                     onChange={formik.handleChange}
@@ -151,16 +151,16 @@ const RegisterApplication = () => {
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-12">
-                <div class="custom-input mb-3">
-                  <label for="description" class="form-label">
+            <div className="row">
+              <div className="col-12">
+                <div className="custom-input mb-3">
+                  <label htmlFor="description" className="form-label">
                     Application Description
                   </label>
                   <textarea
                     id="description"
                     name="description"
-                    class="form-control custom-textarea"
+                    className="form-control custom-textarea"
                     rows="3"
                     placeholder="Application Description"
                     value={formik.values.description}
@@ -173,10 +173,10 @@ const RegisterApplication = () => {
             {
               components.map((component, index) => {
                 return (
-                  <>
-                    <div class="row mt-2">
-                      <div class="col-12">
-                        <div class="field-box">
+                  <Fragment key={index}>
+                    <div className="row mt-2">
+                      <div className="col-12">
+                        <div className="field-box">
                           <input
                             id="component"
                             type="checkbox"
@@ -184,7 +184,7 @@ const RegisterApplication = () => {
                             name="component"
                             onChange={(e) => { onComponentSelected(index, e) }}
                           />
-                          <label for="component" className="form-label mx-2 align-middle">
+                          <label htmlFor="component" className="form-label mx-2 align-middle">
                             {component.name}
                           </label>
                         </div>
@@ -192,37 +192,37 @@ const RegisterApplication = () => {
                     </div>
                     {
                       formik.values.testRequestUrls.map((url, index) => {
-                        return <>
+                        return <Fragment key={index}>
                           {url.componentId == component.id ?
                             <div className="form-bg-white mt-3" >
-                              <span class="heading-line-up">{component.name} Details</span>
-                              <div class="row">
-                                <div class="col-12">
+                              <span className="heading-line-up">{component.name} Details</span>
+                              <div className="row">
+                                <div className="col-12">
                                   {" "}
-                                  <label for="username" class="form-label">
+                                  <label htmlFor="username" className="form-label">
                                     Credentials
                                   </label>
                                 </div>
-                                <div class="col-sm-6 col-12">
-                                  <div class="custom-input mb-3">
+                                <div className="col-sm-6 col-12">
+                                  <div className="custom-input mb-3">
                                     <input
                                       id="username"
                                       name={'testRequestUrls[' + index + '].username'}
                                       type="text"
-                                      class="form-control"
+                                      className="form-control"
                                       placeholder="Username"
                                       value={formik.values.testRequestUrls[index].username}
                                       onChange={formik.handleChange}
                                     />
                                   </div>
                                 </div>
-                                <div class="col-sm-6 col-12">
-                                  <div class="custom-input mb-3">
+                                <div className="col-sm-6 col-12">
+                                  <div className="custom-input mb-3">
                                     <input
                                       id="password"
                                       name={'testRequestUrls[' + index + '].password'}
                                       type="Password"
-                                      class="form-control"
+                                      className="form-control"
                                       placeholder="Password"
                                       value={formik.values.testRequestUrls[index].password}
                                       onChange={formik.handleChange}
@@ -231,18 +231,18 @@ const RegisterApplication = () => {
                                 </div>
                               </div>
 
-                              <div class="row">
-                                <div class="col-12">
-                                  <div class="custom-input mb-3">
-                                    <label for="baseUrl" class="form-label">
+                              <div className="row">
+                                <div className="col-12">
+                                  <div className="custom-input mb-3">
+                                    <label htmlFor="baseUrl" className="form-label">
                                       Base Url:{" "}
-                                      {/* <i class="bi bi-info-circle-fill cursor-pointer"></i> */}
+                                      {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
                                     </label>
                                     <input
                                       id="baseUrl"
                                       name={'testRequestUrls[' + index + '].baseUrl'}
                                       type="text"
-                                      class="form-control"
+                                      className="form-control"
                                       placeholder="../base-url/"
                                       value={formik.values.testRequestUrls[index].baseUrl}
                                       onChange={formik.handleChange}
@@ -252,21 +252,21 @@ const RegisterApplication = () => {
                               </div>
                             </div>
                             : null}
-                        </>
+                        </Fragment>
                       })
                     }
-                  </>
+                  </Fragment>
                 );
               })
             }
             {formik.errors.testRequestUrls ? <div className="text-danger">{formik.errors.testRequestUrls}</div> : null}
           </div>
 
-          <div class="my-4 text-end">
-            <button class="btn btn-primary btn-white py-2 font-size-14 mx-2" onClick={() => { navigate("/dashboard") }}>
+          <div className="my-4 text-end">
+            <button className="btn btn-primary btn-white py-2 font-size-14 mx-2" onClick={() => { navigate("/dashboard") }}>
               Cancel
             </button>
-            <button disabled={!(formik.isValid && formik.dirty)} type="button" onClick={formik.handleSubmit} class="btn btn-primary btn-blue py-2 font-size-14">
+            <button disabled={!(formik.isValid && formik.dirty)} type="button" onClick={formik.handleSubmit} className="btn btn-primary btn-blue py-2 font-size-14">
               submit
             </button>
           </div>
