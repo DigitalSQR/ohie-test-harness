@@ -20,7 +20,7 @@ const UserIdConnector = ({userId, isLink}) => {
 
     return (
         user?.name ?
-        <a onClick={() => showPopup()} href="javascript:void(0)">
+        <a onClick={() => showPopup()} href="">
             {user.name}
         </a>
         : null 

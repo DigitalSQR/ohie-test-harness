@@ -4,7 +4,7 @@ import "../scss/_registrationApplication.scss";
 import { notification } from "antd";
 import { AdminUserAPI } from "../api/AdminUserAPI";
 import { useLoader } from "../components/loader/LoaderContext";
-const RegisterAdminUser = () => {
+const AddAdminUser = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -117,11 +117,10 @@ const RegisterAdminUser = () => {
                   <select
                     className="form-select"
                     id="roleIds"
-                    defaultValue=""
                     value={formData.roleIds}
                     onChange={handleChange}
                   >
-                    <option value="" disabled>
+                    <option value="#" disabled>
                       Select Role
                     </option>
                     <option value="tester">Tester</option>
@@ -154,4 +153,4 @@ const RegisterAdminUser = () => {
   );
 };
 
-export default RegisterAdminUser;
+export default AddAdminUser;
