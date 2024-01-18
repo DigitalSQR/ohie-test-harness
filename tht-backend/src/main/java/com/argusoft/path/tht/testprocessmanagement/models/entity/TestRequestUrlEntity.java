@@ -33,6 +33,9 @@ public class TestRequestUrlEntity implements Serializable {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "fhir_version")
+    private String fhirVersion;
+
     public String getTestRequestId() {
         return testRequestId;
     }
@@ -72,4 +75,13 @@ public class TestRequestUrlEntity implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getFhirVersion() {
+        return fhirVersion;
+    }
+
+    public void setFhirVersion(String fhirVersion) {
+        this.fhirVersion = fhirVersion;
+    }
+
 }
