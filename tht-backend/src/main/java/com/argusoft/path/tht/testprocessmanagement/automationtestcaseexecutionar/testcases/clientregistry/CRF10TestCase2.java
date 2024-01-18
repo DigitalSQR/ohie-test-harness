@@ -7,17 +7,25 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.IntegerType;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 
 @Component
 public class CRF10TestCase2 implements TestCase {
     @Override
-    public ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) throws OperationFailedException {
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
+        IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
+        if(client == null) {
+            return new ValidationResultInfo("testCRF10Case2", ErrorLevel.ERROR, "Failed to get IGenericClient");
+        }
+
         Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "2001-01-05", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
         patient.setMultipleBirth(new BooleanType(true));
         patient.setMultipleBirth(new IntegerType(1));

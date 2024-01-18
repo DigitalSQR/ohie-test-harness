@@ -7,6 +7,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Location;
@@ -16,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 
 @Component
 public class FRWF1TestCase1 implements TestCase {
@@ -23,11 +26,16 @@ public class FRWF1TestCase1 implements TestCase {
     public static final Logger LOGGER = LoggerFactory.getLogger(FRWF1TestCase1.class);
 
     @Override
-    public ValidationResultInfo test(IGenericClient client,
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing FRWF1TestCase1");
             LOGGER.info("Creating facility");
+
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_FACILITY_REGISTRY_ID);
+            if(client == null) {
+                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
 
             //create organization
             Organization organization = FHIRUtils.createOrganization("Health Level Seven International", "0222", "999-999-9999",

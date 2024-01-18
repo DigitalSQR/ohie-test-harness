@@ -221,6 +221,7 @@ public class TestcaseResultValidator {
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              TestcaseResultEntity testcaseResultEntity,
                                              TestcaseResultEntity originalEntity) {
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getState(), originalEntity.getState(), "state", errors);
     }
 
     //validate create

@@ -12,10 +12,12 @@ import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepositor
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
@@ -86,77 +88,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         if (StringUtils.isEmpty(testcaseResultEntity.getId())) {
             testcaseResultEntity.setId(UUID.randomUUID().toString());
         }
+        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
         testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
-        updateTestRequestByTestcaseResultState(testcaseResultEntity.getTestRequestId(), testcaseResultEntity.getState(), contextInfo);
         return testcaseResultEntity;
-    }
-
-    protected void updateParentTestcaseResultByTestcaseResultState(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
-        if (testcaseResultEntity.getParentTestcaseResult() == null
-                || TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING.equals(testcaseResultEntity.getState())
-                || TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getParentTestcaseResult())) {
-            //If result is pending then do not change anything.
-            //If result don't have parent then skip.
-            return;
-        }
-        TestcaseResultEntity parenttestcaseResultEntity = testcaseResultEntity.getParentTestcaseResult();
-        if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS.equals(testcaseResultEntity.getState())) {
-            parenttestcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS);
-            parenttestcaseResultEntity = this.updateTestcaseResult(parenttestcaseResultEntity, contextInfo);
-            updateParentTestcaseResultByTestcaseResultState(parenttestcaseResultEntity, contextInfo);
-        } else {
-            TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
-                    null, SearchType.CONTAINING,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    parenttestcaseResultEntity.getId()
-            );
-            List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
-            if (testcaseResultEntities.stream().allMatch(testcaseResultEntity1 -> TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity1.getState()))) {
-                parenttestcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
-                parenttestcaseResultEntity.setTester(testcaseResultEntity.getTester());
-                parenttestcaseResultEntity.setSuccess(testcaseResultEntities.stream().allMatch(testcaseResultEntity1 -> testcaseResultEntity1.getSuccess()));
-                parenttestcaseResultEntity = this.updateTestcaseResult(parenttestcaseResultEntity, contextInfo);
-                updateParentTestcaseResultByTestcaseResultState(parenttestcaseResultEntity, contextInfo);
-            }
-        }
-    }
-
-    protected void updateTestRequestByTestcaseResultState(String testRequestId, String testcaseResultState, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
-        //If result is inactive then do nothing.
-        if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INACTIVE.equals(testcaseResultState)) {
-            return;
-        }
-        TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
-        //If result is in progress/pending then make testRequest inProgress.
-        if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS.equals(testcaseResultState)
-                || TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING.equals(testcaseResultState)) {
-            if (!TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(testRequestEntity.getState())) {
-                testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS);
-                testRequestService.updateTestRequest(testRequestEntity, contextInfo);
-            }
-            return;
-        }
-        //If all result are finished and testRequest is not finished then make it finished.
-        if (!TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(testRequestEntity.getState())) {
-            TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
-                    null, SearchType.CONTAINING,
-                    null,
-                    null, TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, testRequestId, testRequestId, null, null
-            );
-            List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
-            if (testcaseResultEntities.size() == 2
-                    && TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntities.get(0).getState())
-                    && TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntities.get(1).getState())) {
-
-                testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED);
-                testRequestService.updateTestRequest(testRequestEntity, contextInfo);
-            }
-        }
     }
 
     /**
@@ -180,10 +114,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 contextInfo);
 
         testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
-        updateTestRequestByTestcaseResultState(testcaseResultEntity.getTestRequestId(), testcaseResultEntity.getState(), contextInfo);
         return testcaseResultEntity;
     }
-
 
     @Timed(name = "submitTestcaseResult")
     @Override
@@ -205,21 +137,15 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
 
         testcaseResultEntity.setTestcaseOption(testcaseOptionEntity);
+        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
 
         UserEntity userEntity =
                 userService.getPrincipalUser(contextInfo);
         testcaseResultEntity.setTester(userEntity);
 
-        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
-        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
-
         testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
 
-        //Update parents
-        updateParentTestcaseResultByTestcaseResultState(testcaseResultEntity, contextInfo);
-
-        //Update TestRequest
-        updateTestRequestByTestcaseResultState(testcaseResultEntity.getTestRequestId(), testcaseResultEntity.getState(), contextInfo);
+        changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
 
         return testcaseResultEntity;
     }
@@ -324,4 +250,163 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return errors;
     }
 
+    @Override
+    public TestcaseResultEntity changeState(String testcaseResultId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        //validate given stateKey
+        if (!TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS.contains(stateKey)) {
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setElement("state");
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("provided state is not valid ");
+            errors.add(validationResultInfo);
+            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
+        }
+        TestcaseResultEntity testcaseResultEntity = this.getTestcaseResultById(testcaseResultId, contextInfo);
+        if(!stateKey.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
+            testcaseResultEntity.setMessage(null);
+            testcaseResultEntity.setHasSystemError(Boolean.FALSE);
+            testcaseResultEntity.setSuccess(Boolean.FALSE);
+            testcaseResultEntity.setSuccess(Boolean.FALSE);
+        }
+        testcaseResultEntity.setState(stateKey);
+        testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
+
+        if (!testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
+            updateChildTestcaseResult(testcaseResultEntity, contextInfo);
+        }
+        if (testcaseResultEntity.getParentTestcaseResult() != null) {
+            updateParentTestcaseResult(testcaseResultEntity.getParentTestcaseResult(), contextInfo);
+        } else {
+            updateTestRequestState(testcaseResultEntity.getTestRequestId(), contextInfo);
+        }
+        return testcaseResultEntity;
+    }
+
+    private void updateTestRequestState(
+            String testRequestId,
+            ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException,
+            DoesNotExistException,
+            DataValidationErrorException,
+            VersionMismatchException {
+        TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
+
+        TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
+                null, SearchType.CONTAINING,
+                null,
+                null,
+                TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
+                testRequestId,
+                null,
+                null,
+                null
+        );
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+        if (testcaseResultEntities.stream()
+                .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+            if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED)) {
+                testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED, contextInfo);
+            }
+        } else if (testcaseResultEntities.stream()
+                .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
+                        || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+            if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED)) {
+                testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED, contextInfo);
+            }
+        } else if (testcaseResultEntities.stream()
+                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
+            if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
+                testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, contextInfo);
+            }
+        } else if (testcaseResultEntities.stream()
+                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING))) {
+            if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
+                testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, contextInfo);
+            }
+        } else {
+            if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
+                testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, contextInfo);
+            }
+        }
+    }
+
+    private void updateChildTestcaseResult(
+            TestcaseResultEntity testcaseResultEntity,
+            ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException,
+            DoesNotExistException,
+            DataValidationErrorException,
+            VersionMismatchException {
+        if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) {
+            return;
+        }
+        TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
+                null, SearchType.CONTAINING,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                testcaseResultEntity.getId()
+        );
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+        for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
+            if (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) {
+                changeState(testcaseResult.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP, contextInfo);
+            }
+        }
+    }
+
+    private void updateParentTestcaseResult(
+            TestcaseResultEntity testcaseResultEntity,
+            ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException,
+            DoesNotExistException,
+            DataValidationErrorException,
+            VersionMismatchException {
+        TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
+                null, SearchType.CONTAINING,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                testcaseResultEntity.getId()
+        );
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+        if (testcaseResultEntities.stream()
+                .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+            if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) {
+                changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP, contextInfo);
+            }
+        } else if (testcaseResultEntities.stream()
+                .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
+                        || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+            if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
+                changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
+            }
+        } else if (testcaseResultEntities.stream()
+                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
+            if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS)) {
+                changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
+            }
+        } else if (testcaseResultEntities.stream()
+                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING))) {
+            if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING)) {
+                changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING, contextInfo);
+            }
+        } else {
+            if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT)) {
+                changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
+            }
+        }
+    }
 }

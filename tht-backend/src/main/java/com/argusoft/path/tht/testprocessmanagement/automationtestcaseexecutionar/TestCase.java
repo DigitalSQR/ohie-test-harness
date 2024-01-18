@@ -4,6 +4,8 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 
+import java.util.Map;
+
 /**
  * This interface provides contract for Testcases which can be executed by the Testcase Executioner.
  *
@@ -11,6 +13,6 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
  */
 public interface TestCase {
     public ValidationResultInfo test(
-            IGenericClient client,
+            Map<String, IGenericClient> iGenericClientMap,
             ContextInfo contextInfo) throws Exception;
 }

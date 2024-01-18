@@ -8,6 +8,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Patient;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of CRWF4TestCase1.
@@ -25,9 +27,14 @@ import java.util.List;
 public class CRWF4TestCase1 implements TestCase {
 
     @Override
-    public ValidationResultInfo test(IGenericClient client,
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
+            if(client == null) {
+                return new ValidationResultInfo("testCRWF4Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
+
             List<String> patientIds = new ArrayList<>();
             // Create a new patient resource with all demographic information
             Patient patient1 = FHIRUtils.createPatient("MOHR", "ALISSA", "female", "1958-01-30",
@@ -39,7 +46,7 @@ public class CRWF4TestCase1 implements TestCase {
 
             // Check if the patient was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo("testCRWF4Case1", ErrorLevel.ERROR, "Failed to create patient");
             }
             patientIds.add(outcome.getResource().getIdElement().getIdPart());
 
@@ -52,7 +59,7 @@ public class CRWF4TestCase1 implements TestCase {
 
             // Check if the patient was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo("testCRWF4Case1", ErrorLevel.ERROR, "Failed to create patient");
             }
             patientIds.add(outcome.getResource().getIdElement().getIdPart());
 
@@ -67,9 +74,9 @@ public class CRWF4TestCase1 implements TestCase {
             List<Patient> patients = FHIRUtils.processBundle(Patient.class, bundle);
 
             if (patients.size() != 2) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to search patients by demographics");
+                return new ValidationResultInfo("testCRWF4Case1", ErrorLevel.ERROR, "Failed to search patients by demographics");
             }
-            return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo("testCRWF4Case1", ErrorLevel.OK, "Passed");
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);
         }

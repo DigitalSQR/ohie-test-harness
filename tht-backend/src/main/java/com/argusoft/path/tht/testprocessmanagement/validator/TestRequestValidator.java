@@ -107,6 +107,92 @@ public class TestRequestValidator {
         return errors;
     }
 
+    public static void validateTestRequestStartReinitializeProcess(String testRequestId,
+                                                                   String refObjUri,
+                                                                   String refId,
+                                                                   Boolean isManual,
+                                                                   String validationTypeKey,
+                                                                   TestcaseResultService testcaseResultService,
+                                                                   ContextInfo contextInfo)
+            throws DataValidationErrorException,
+            InvalidParameterException,
+            OperationFailedException {
+        List<ValidationResultInfo> validationResultEntities
+                = validateTestRequestProcess(
+                testRequestId,
+                refObjUri,
+                refId,
+                isManual,
+                validationTypeKey,
+                testcaseResultService,
+                contextInfo);
+        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    validationResultEntities);
+        }
+    }
+
+    public static List<ValidationResultInfo> validateTestRequestProcess(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            String validationTypeKey,
+            TestcaseResultService testcaseResultService,
+            ContextInfo contextInfo)
+            throws OperationFailedException, InvalidParameterException {
+        if (StringUtils.isEmpty(testRequestId)
+                || StringUtils.isEmpty(refObjUri)
+                || StringUtils.isEmpty(refId)
+                || StringUtils.isEmpty(validationTypeKey)) {
+            throw new InvalidParameterException("inputData is missing");
+        }
+        //TODO: verify foreignKeys
+
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        if (validationTypeKey.equals(Constant.START_PROCESS_VALIDATION)) {
+            TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter();
+            searchFilter.setIsManual(Objects.equals(Boolean.TRUE, isManual));
+            searchFilter.setRefObjUri(refId);
+            searchFilter.setRefId(refObjUri);
+            searchFilter.setTestRequestId(testRequestId);
+
+            List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null, searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+            if (!testcaseResultEntities.stream().filter(testcaseResultEntity -> !testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INACTIVE)).findFirst().isPresent()) {
+                String fieldName = "inputData";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                "Process for the requested input doesn't have active testcaseResults."));
+            }
+            if (testcaseResultEntities.stream().anyMatch(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS) || testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING))) {
+                String fieldName = "inputData";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                "Process for the requested input has been already started."));
+            }
+        } else {
+            TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter();
+            searchFilter.setIsManual(Objects.equals(Boolean.TRUE, isManual));
+            searchFilter.setRefObjUri(refId);
+            searchFilter.setRefId(refObjUri);
+            searchFilter.setTestRequestId(testRequestId);
+
+            List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null, searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+            if (testcaseResultEntities.stream().anyMatch(testcaseResultEntity ->
+                    !testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED))) {
+                String fieldName = "inputData";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                "Process for the requested input is not finished yet."));
+            }
+        }
+        return errors;
+    }
+
     public static void validateTestRequestProcess(String testRequestId, String validationTypeKey, TestRequestService testRequestService, TestcaseResultService testcaseResultService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestRequestStartProcess(
@@ -322,6 +408,7 @@ public class TestRequestValidator {
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              TestRequestEntity testRequestEntity,
                                              TestRequestEntity originalEntity) {
+        ValidationUtils.validateNotUpdatable(testRequestEntity.getState(), originalEntity.getState(), "state", errors);
     }
 
     //validate create

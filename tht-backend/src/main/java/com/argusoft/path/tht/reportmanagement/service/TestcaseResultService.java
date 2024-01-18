@@ -10,6 +10,7 @@ import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -154,4 +155,19 @@ public interface TestcaseResultService {
                                                          ContextInfo contextInfo)
             throws InvalidParameterException;
 
+
+    /**
+     * change state of testcaseResult with id and giving the expected state
+     *
+     * @param testcaseResultId id of the testcaseResult
+     * @param stateKey      expected statekey
+     * @param contextInfo   ContextInfo
+     * @return DocumentEntity
+     * @throws DoesNotExistException        when document does not exists for that id
+     * @throws DataValidationErrorException when validation fails
+     */
+    public TestcaseResultEntity changeState(String testcaseResultId, String stateKey, ContextInfo contextInfo)
+            throws DoesNotExistException,
+            DataValidationErrorException,
+            InvalidParameterException, OperationFailedException, VersionMismatchException;
 }

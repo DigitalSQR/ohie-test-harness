@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.AuditEvent;
 import org.hl7.fhir.r4.model.Bundle;
@@ -17,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 
 @Component
 public class CRF3TestCase1 implements TestCase {
@@ -24,11 +27,15 @@ public class CRF3TestCase1 implements TestCase {
     public static final Logger LOGGER = LoggerFactory.getLogger(CRF3TestCase1.class);
 
     @Override
-    public ValidationResultInfo test(IGenericClient client,
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
                                      ContextInfo contextInfo) throws OperationFailedException {
 
         try {
             LOGGER.info("Start testing CRF3TestCase1");
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
+            if(client == null) {
+                return new ValidationResultInfo("testCRF3Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
 
             // Create Patient resource
             Patient newPatient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);

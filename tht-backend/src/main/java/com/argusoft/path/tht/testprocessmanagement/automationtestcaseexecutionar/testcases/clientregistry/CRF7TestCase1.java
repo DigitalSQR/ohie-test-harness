@@ -6,16 +6,24 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.OperationOutcome;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class CRF7TestCase1 implements TestCase {
     @Override
-    public ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) throws OperationFailedException {
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
 
         try {
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
+            if(client == null) {
+                return new ValidationResultInfo("testCRF7Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
+
             OperationOutcome operationOutcome = new OperationOutcome();
             operationOutcome.addIssue().setSeverity(OperationOutcome.IssueSeverity.ERROR).setDiagnostics("An error occur").setCode(OperationOutcome.IssueType.PROCESSING);
             MethodOutcome outcome = client.create().resource(operationOutcome).execute();

@@ -8,6 +8,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Location;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class FRF9TestCase1 implements TestCase {
@@ -25,11 +27,16 @@ public class FRF9TestCase1 implements TestCase {
     public static final Logger LOGGER = LoggerFactory.getLogger(FRF9TestCase1.class);
 
     @Override
-    public ValidationResultInfo test(IGenericClient client,
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
             String testCaseName = this.getClass().getSimpleName();
             LOGGER.info("Start testing " + testCaseName);
+
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_FACILITY_REGISTRY_ID);
+            if(client == null) {
+                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
 
             String city = "Stockholm City" + new SecureRandom().nextInt(999999);
             String orgName = "Burgers University Medical Center" + new SecureRandom().nextInt(999999);

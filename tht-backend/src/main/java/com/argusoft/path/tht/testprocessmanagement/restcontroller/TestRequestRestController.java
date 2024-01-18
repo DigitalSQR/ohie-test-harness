@@ -60,7 +60,7 @@ public class TestRequestRestController {
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
 
         TestRequestEntity testRequestEntity = testRequestMapper.dtoToModel(testRequestInfo);
         testRequestEntity = testRequestService.createTestRequest(testRequestEntity, contextInfo);
@@ -184,43 +184,45 @@ public class TestRequestRestController {
                 .validateTestRequest(validationTypeKey, testRequestEntity, contextInfo);
     }
 
-    @ApiOperation(value = "Start automation testing process", response = Boolean.class)
+    @ApiOperation(value = "Reinitialize automation testing process", response = Boolean.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully started automation testing process")
     })
-    @PostMapping("/start-automation-testing-process/{testRequestId}")
+    @PutMapping("/start-testing-process/{testRequestId}")
     @Transactional
-    public void startAutomationTestingProcess(
+    public void startTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo)
-            throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
-        testRequestService.startAutomationTestingProcess(testRequestId, contextInfo);
+            @PathVariable("refObjUri") String refObjUri,
+            @PathVariable("refId") String refId,
+            @RequestParam("isManual") Boolean isManual,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        testRequestService.startTestingProcess(
+                testRequestId,
+                refObjUri,
+                refId,
+                isManual,
+                contextInfo);
     }
 
     @ApiOperation(value = "Reinitialize automation testing process", response = Boolean.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully started automation testing process")
     })
-    @PostMapping("/reinitialize-automation-testing-process/{testRequestId}")
+    @PutMapping("/reinitialize-testing-process/{testRequestId}")
     @Transactional
-    public void reinitializeAutomationTestingProcess(
+    public void reinitializeTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
+            @PathVariable("refObjUri") String refObjUri,
+            @PathVariable("refId") String refId,
+            @RequestParam("isManual") Boolean isManual,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
-        testRequestService.reinitializeAutomationTestingProcess(testRequestId, contextInfo);
-    }
-
-    @ApiOperation(value = "Start manual testing process", response = Boolean.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully started manual testing process")
-    })
-    @PostMapping("/start-manual-testing-process/{testRequestId}")
-    @Transactional
-    public void startManualTestingProcess(
-            @PathVariable("testRequestId") String testRequestId,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo)
-            throws OperationFailedException, InvalidParameterException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
-        testRequestService.startManualTestingProcess(testRequestId, contextInfo);
+        testRequestService.reinitializeTestingProcess(
+                testRequestId,
+                refObjUri,
+                refId,
+                isManual,
+                contextInfo);
     }
 
     @ApiOperation(value = "To change status of TestRequest", response = DocumentInfo.class)
@@ -229,12 +231,12 @@ public class TestRequestRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PutMapping("/state/{testRequestId}/{changeState}")
+    @PatchMapping("/state/{testRequestId}/{changeState}")
     @Transactional
     public TestRequestInfo updateDocumentState(@PathVariable("testRequestId") String testRequestId,
                                                @PathVariable("changeState") String changeState,
                                                @RequestAttribute("contextInfo") ContextInfo contextInfo)
-            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException {
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         TestRequestEntity testRequestEntity = testRequestService.changeState(testRequestId, changeState, contextInfo);
         return testRequestMapper.modelToDto(testRequestEntity);
     }

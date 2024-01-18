@@ -14,5 +14,8 @@ public class ComponentServiceConstants {
     //Component states
     public static final String COMPONENT_STATUS_DRAFT = "component.status.draft";
     public static final String COMPONENT_STATUS_ACTIVE = "component.status.active";
-    public static final String COMPONENT_STATUS_INACTIVE = "component.status.inactive";
+
+    //Component Ids
+    public static final String COMPONENT_CLIENT_REGISTRY_ID = "component.client.registry";
+    public static final String COMPONENT_FACILITY_REGISTRY_ID = "component.facility.registry";
 }

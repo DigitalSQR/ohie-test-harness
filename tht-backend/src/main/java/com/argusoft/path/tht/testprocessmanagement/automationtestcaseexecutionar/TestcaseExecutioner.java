@@ -14,33 +14,26 @@ import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.filter.SpecificationSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.filter.TestcaseSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 
 /**
@@ -58,20 +51,34 @@ public class TestcaseExecutioner {
     @Autowired
     private ComponentService componentService;
     @Autowired
-    private SpecificationService specificationService;
-    @Autowired
     private TestcaseService testcaseService;
     @Autowired
     private TestcaseResultService testcaseResultService;
     @Autowired
     private TestRequestService testRequestService;
 
-    public void executeAutomationTestingByTestRequest(
-            String testRequestId,
-            ContextInfo contextInfo) throws OperationFailedException {
+    public void executeTestingProcess(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws OperationFailedException {
         try {
-            Map<String, Map<String, TestcaseResultEntity>> testcaseResultMap = createDraftTestcaseResultsByTestRequest(testRequestId, Constant.START_AUTOMATION_PROCESS_VALIDATION, contextInfo);
-            executorService.execute(() -> execute(testRequestId, testcaseResultMap, Constant.SUPER_USER_CONTEXT));
+            List<TestcaseResultEntity> testcaseResultEntities = fetchTestcaseResultsByInputs(testRequestId, refObjUri, refId, isManual, contextInfo);
+            changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING, contextInfo);
+
+            if (Objects.equals(Boolean.TRUE, isManual)) {
+                return;
+            }
+
+            TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
+            List<ComponentEntity> activeComponents = fetchActiveComponents(contextInfo).stream().filter(componentEntity ->
+                    testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> testRequestUrlEntity.getComponent().getId().equals(componentEntity.getId()))
+            ).collect(Collectors.toList());
+
+            Map<String, IGenericClient> iGenericClientMap = new HashMap<>();
+            for (ComponentEntity componentEntity : activeComponents) {
+                TestRequestUrlEntity testRequestUrlEntity = testRequestEntity.getTestRequestUrls().stream().filter(testRequestUrl -> testRequestUrl.getComponent().getId().equals(componentEntity.getId())).findFirst().get();
+                IGenericClient client = getClient(testRequestEntity.getFhirVersion(), testRequestUrlEntity.getBaseUrl(), testRequestUrlEntity.getUsername(), testRequestUrlEntity.getPassword());
+                iGenericClientMap.put(componentEntity.getId(), client);
+            }
+
+            executorService.execute(() -> execute(testcaseResultEntities, iGenericClientMap, Constant.SUPER_USER_CONTEXT));
         } catch (DataValidationErrorException e) {
             throw new OperationFailedException(e);
         } catch (InvalidParameterException | OperationFailedException | VersionMismatchException |
@@ -80,434 +87,66 @@ public class TestcaseExecutioner {
         }
     }
 
-    public void reinitializeAutomationTestingByTestRequest(
-            String testRequestId,
-            ContextInfo contextInfo) throws OperationFailedException {
+    public void reinitializeTestingProcess(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws OperationFailedException {
         try {
-            updateTestcaseResultsToInactivateByTestRequest(testRequestId, Constant.START_AUTOMATION_PROCESS_VALIDATION, contextInfo);
-            updateTestRequestToAccepted(testRequestId, contextInfo);
-        } catch (DoesNotExistException | InvalidParameterException |
-                 OperationFailedException | VersionMismatchException ex) {
+            List<TestcaseResultEntity> testcaseResultEntities = fetchTestcaseResultsByInputs(testRequestId, refObjUri, refId, isManual, contextInfo);
+            changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
+        } catch (DoesNotExistException | InvalidParameterException | OperationFailedException |
+                 VersionMismatchException ex) {
             throw new OperationFailedException("Operation failed while updating testcaseResults", ex);
         } catch (DataValidationErrorException ex) {
             throw new OperationFailedException(ex);
         }
     }
 
-    private void updateTestRequestToAccepted(String testRequestId,
-                                             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
-        TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
-        testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED);
-        testRequestService.updateTestRequest(testRequestEntity, contextInfo);
-    }
-
-    private void updateTestcaseResultsToInactivateByTestRequest(String testRequestId,
-                                                                String processTypeKey,
-                                                                ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
-        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(
-                null,
-                new TestcaseResultSearchFilter(
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        testRequestId,
-                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(processTypeKey) ? Boolean.TRUE : Boolean.FALSE,
-                        null),
-                Constant.FULL_PAGE,
-                contextInfo).getContent();
-
-        for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
-            testcaseResult.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INACTIVE);
-            testcaseResultService.updateTestcaseResult(testcaseResult, contextInfo);
-        }
-    }
-
-    public void executeManualTestingByTestRequest(
-            String testRequestId,
-            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
-        createDraftTestcaseResultsByTestRequest(testRequestId, Constant.START_MANUAL_PROCESS_VALIDATION, contextInfo);
-    }
-
-    private Map<String, Map<String, TestcaseResultEntity>> createDraftTestcaseResultsByTestRequest(String testRequestId,
-                                                                                                   String processTypeKey,
-                                                                                                   ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
-        TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
-        Map<String, Map<String, TestcaseResultEntity>> testcaseResultMap = new HashMap<>();
-        testcaseResultMap.put(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, new HashMap<>());
-        testcaseResultMap.put(ComponentServiceConstants.COMPONENT_REF_OBJ_URI, new HashMap<>());
-        testcaseResultMap.put(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI, new HashMap<>());
-        testcaseResultMap.put(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, new HashMap<>());
-        Integer counter = 1;
-
-        List<ComponentEntity> activeComponents = fetchActiveComponents(processTypeKey, contextInfo);
-
-        TestcaseResultEntity testRequestTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(
-                TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
-                testRequestEntity.getId(),
-                testRequestEntity.getId(),
-                testRequestEntity.getName(),
-                counter,
-                processTypeKey,
-                null,
-                contextInfo);
-        counter++;
-        testcaseResultMap.get(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)
-                .put(testRequestEntity.getId(), testRequestTestcaseResult);
-
-        for (ComponentEntity componentEntity : activeComponents) {
-            if (!testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> componentEntity.getId().equals(testRequestUrlEntity.getComponent().getId()))) {
-                continue;
-            }
-            TestcaseResultEntity componentTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(
-                    ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
-                    componentEntity.getId(),
-                    testRequestEntity.getId(),
-                    componentEntity.getName(),
-                    counter,
-                    processTypeKey,
-                    testRequestTestcaseResult.getId(),
-                    contextInfo);
-            testcaseResultMap.get(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)
-                    .put(componentEntity.getId(), componentTestcaseResult);
-            counter++;
-
-            List<SpecificationEntity> activeSpecifications = fetchActiveSpecifications(componentEntity.getId(), processTypeKey, contextInfo);
-            for (SpecificationEntity specificationEntity : activeSpecifications) {
-                TestcaseResultEntity specificationTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(
-                        SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
-                        specificationEntity.getId(),
-                        testRequestEntity.getId(),
-                        specificationEntity.getName(),
-                        counter,
-                        processTypeKey,
-                        componentTestcaseResult.getId(),
-                        contextInfo);
-                testcaseResultMap.get(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)
-                        .put(specificationEntity.getId(), specificationTestcaseResult);
-                counter++;
-
-                List<TestcaseEntity> activeTestcases = fetchActiveTestcases(specificationEntity.getId(), processTypeKey, contextInfo);
-                for (TestcaseEntity testcaseEntity : activeTestcases) {
-                    TestcaseResultEntity testcaseTestcaseResult = createOrFetchDraftTestCaseResultByValidationResults(
-                            TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
-                            testcaseEntity.getId(),
-                            testRequestEntity.getId(),
-                            testcaseEntity.getName(),
-                            counter,
-                            processTypeKey,
-                            specificationTestcaseResult.getId(),
-                            contextInfo);
-                    testcaseResultMap.get(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)
-                            .put(testcaseEntity.getId(), testcaseTestcaseResult);
-                    counter++;
-                }
-            }
-        }
-        return testcaseResultMap;
-    }
-
-    private List<ComponentEntity> fetchActiveComponents(String processTypeKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        return componentService.searchComponents(
-                null,
-                new ComponentSearchFilter(null,
-                        SearchType.CONTAINING,
-                        ComponentServiceConstants.COMPONENT_STATUS_ACTIVE,
-                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(processTypeKey) ? Boolean.TRUE : Boolean.FALSE),
-                Constant.FULL_PAGE_SORT_BY_RANK,
-                contextInfo).getContent();
-    }
-
-    private List<SpecificationEntity> fetchActiveSpecifications(String componentId, String processTypeKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        return specificationService.searchSpecifications(
-                null,
-                new SpecificationSearchFilter(null,
-                        SearchType.CONTAINING,
-                        SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE,
-                        componentId,
-                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(processTypeKey) ? Boolean.TRUE : Boolean.FALSE),
-                Constant.FULL_PAGE_SORT_BY_RANK,
-                contextInfo).getContent();
-    }
-
-    private List<TestcaseEntity> fetchActiveTestcases(String specificationId, String processTypeKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        return testcaseService.searchTestcases(
-                null,
-                new TestcaseSearchFilter(null,
-                        SearchType.EXACTLY,
-                        TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE,
-                        specificationId,
-                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(processTypeKey) ? Boolean.TRUE : Boolean.FALSE),
-                Constant.FULL_PAGE_SORT_BY_RANK,
-                contextInfo).getContent();
-    }
-
     @Transactional
-    private void execute(String testRequestId,
-                         Map<String, Map<String, TestcaseResultEntity>> testcaseResultMap,
+    private void execute(List<TestcaseResultEntity> testcaseResultEntities,
+                         Map<String, IGenericClient> iGenericClientMap,
                          ContextInfo contextInfo) {
-        try {
-            TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
-
-            testcaseResultMap.get(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)
-                    .put(testRequestEntity.getId(),
-                            makeTestCaseResultInProgress(
-                                    testcaseResultMap.get(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI).get(testRequestEntity.getId()),
-                                    contextInfo)
-                    );
-            List<ComponentEntity> activeComponents = fetchActiveComponents(Constant.START_AUTOMATION_PROCESS_VALIDATION, contextInfo);
-            List<ValidationResultInfo> validationResultInfos = new ArrayList<>();
-            for (ComponentEntity componentEntity : activeComponents) {
-                if (!testcaseResultMap.get(ComponentServiceConstants.COMPONENT_REF_OBJ_URI).containsKey(componentEntity.getId())) {
-                    continue;
-                }
-                TestRequestUrlEntity testRequestUrlEntity = testRequestEntity.getTestRequestUrls().stream().filter(testRequestUrl -> testRequestUrl.getComponent().getId().equals(componentEntity.getId())).findFirst().get();
-                //TODO: Move FhirVersion in testRequestUrlEntity
-                IGenericClient client = getClient(testRequestEntity.getFhirVersion(), testRequestUrlEntity.getBaseUrl(), testRequestUrlEntity.getUsername(), testRequestUrlEntity.getPassword());
-
-                validationResultInfos.add(
-                        this.testComponent(componentEntity.getId(),
-                                testcaseResultMap,
-                                client,
-                                contextInfo));
-            }
-
-            updateTestCaseResultByValidationResults(
-                    testcaseResultMap.get(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI).get(testRequestEntity.getId()),
-                    validationResultInfos,
-                    contextInfo);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo(null, ErrorLevel.ERROR, "SYSTEM_FAILURE");
-            //TODO: add system failure log and connect it with testResult by refObjUri/refId.
-            try {
-                updateTestCaseResultForSystemError(
-                        testcaseResultMap.get(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI).get(testRequestId),
-                        validationResultInfo,
-                        contextInfo);
-            } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
-                     VersionMismatchException | DoesNotExistException ex) {
-                ex.printStackTrace();
-            }
+        for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
+            this.executeTestcase(testcaseResult, iGenericClientMap, contextInfo);
         }
     }
 
-    private ValidationResultInfo testComponent(String componentId,
-                                               Map<String, Map<String, TestcaseResultEntity>> testcaseResultMap,
-                                               IGenericClient client,
-                                               ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
+    private void executeTestcase(TestcaseResultEntity testcaseResult, Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
         try {
-            testcaseResultMap.get(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)
-                    .put(componentId,
-                            makeTestCaseResultInProgress(testcaseResultMap.get(ComponentServiceConstants.COMPONENT_REF_OBJ_URI).get(componentId), contextInfo)
-                    );
-
-            List<SpecificationEntity> activeSpecifications = fetchActiveSpecifications(componentId, Constant.START_AUTOMATION_PROCESS_VALIDATION, contextInfo);
-            List<ValidationResultInfo> validationResultInfos = new ArrayList<>();
-            for (SpecificationEntity specificationEntity : activeSpecifications) {
-                if (!testcaseResultMap.get(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI).containsKey(specificationEntity.getId())) {
-                    continue;
-                }
-                validationResultInfos.add(
-                        this.testSpecification(specificationEntity.getId(),
-                                testcaseResultMap,
-                                client,
-                                contextInfo));
-            }
-
-            return updateTestCaseResultByValidationResults(
-                    testcaseResultMap.get(ComponentServiceConstants.COMPONENT_REF_OBJ_URI).get(componentId),
-                    validationResultInfos,
-                    contextInfo);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo(null, ErrorLevel.ERROR, "SYSTEM_FAILURE");
-            //TODO: add system failure log and connect it with testResult by refObjUri/refId.
-            try {
-                updateTestCaseResultForSystemError(
-                        testcaseResultMap.get(ComponentServiceConstants.COMPONENT_REF_OBJ_URI).get(componentId),
-                        validationResultInfo,
-                        contextInfo);
-            } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
-                     VersionMismatchException | DoesNotExistException ex) {
-                ex.printStackTrace();
-            }
-            return validationResultInfo;
-        }
-    }
-
-    private ValidationResultInfo testSpecification(String specificationId,
-                                                   Map<String, Map<String, TestcaseResultEntity>> testcaseResultMap,
-                                                   IGenericClient client,
-                                                   ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
-        try {
-            testcaseResultMap.get(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI).put(specificationId,
-                    makeTestCaseResultInProgress(testcaseResultMap.get(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI).get(specificationId), contextInfo)
-            );
-
-            List<TestcaseEntity> activeTestcases = fetchActiveTestcases(specificationId, Constant.START_AUTOMATION_PROCESS_VALIDATION, contextInfo);
-
-            List<ValidationResultInfo> validationResultInfos = new ArrayList<>();
-            for (TestcaseEntity testcaseEntity : activeTestcases) {
-                if (!testcaseResultMap.get(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI).containsKey(testcaseEntity.getId())) {
-                    continue;
-                }
-
-                validationResultInfos.add(this.executeTestcase(
-                        testcaseEntity,
-                        testcaseResultMap,
-                        client,
-                        contextInfo));
-            }
-
-            return updateTestCaseResultByValidationResults(
-                    testcaseResultMap.get(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI).get(specificationId),
-                    validationResultInfos,
-                    contextInfo);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo(null, ErrorLevel.ERROR, "SYSTEM_FAILURE");
-            //TODO: add system failure log and connect it with testResult by refObjUri/refId.
-            try {
-                updateTestCaseResultForSystemError(
-                        testcaseResultMap.get(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI).get(specificationId),
-                        validationResultInfo,
-                        contextInfo);
-            } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
-                     VersionMismatchException | DoesNotExistException ex) {
-                ex.printStackTrace();
-            }
-            return validationResultInfo;
-        }
-    }
-
-    private ValidationResultInfo executeTestcase(TestcaseEntity testcaseEntity,
-                                                 Map<String, Map<String, TestcaseResultEntity>> testcaseResultMap,
-                                                 IGenericClient client,
-                                                 ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
-        try {
-            testcaseResultMap.get(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI).put(testcaseEntity.getId(),
-                    makeTestCaseResultInProgress(testcaseResultMap.get(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI).get(testcaseEntity.getId()), contextInfo)
-            );
+            testcaseResultService.changeState(testcaseResult.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
+            TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseResult.getRefId(), contextInfo);
 
             TestCase testCaseExecutionService = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
-            ValidationResultInfo validationResultInfo = testCaseExecutionService.test(client, contextInfo);
+            ValidationResultInfo validationResultInfo = testCaseExecutionService.test(iGenericClientMap, contextInfo);
 
-            updateTestCaseResultByValidationResult(
-                    testcaseResultMap.get(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI).get(testcaseEntity.getId()),
-                    validationResultInfo,
-                    contextInfo);
-
-            return validationResultInfo;
+            updateTestCaseResultByValidationResult(testcaseResult, validationResultInfo, contextInfo);
         } catch (Exception e) {
             e.printStackTrace();
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI + "~" + testcaseEntity.getId(), ErrorLevel.ERROR, "SYSTEM_FAILURE");
             //TODO: add system failure log and connect it with testResult by refObjUri/refId.
             try {
-                updateTestCaseResultForSystemError(
-                        testcaseResultMap.get(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI).get(testcaseEntity.getId()),
-                        validationResultInfo,
-                        contextInfo);
+                updateTestCaseResultForSystemError(testcaseResult, contextInfo);
             } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
                      VersionMismatchException | DoesNotExistException ex) {
                 ex.printStackTrace();
             }
-            return validationResultInfo;
         }
     }
 
-    private TestcaseResultEntity makeTestCaseResultInProgress(TestcaseResultEntity testcaseResultEntity,
-                                                              ContextInfo contextInfo)
-            throws InvalidParameterException,
-            OperationFailedException,
-            DataValidationErrorException,
-            VersionMismatchException,
-            DoesNotExistException {
-        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS);
-        return testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
-    }
-
-    private TestcaseResultEntity createOrFetchDraftTestCaseResultByValidationResults(String refObjUri,
-                                                                                     String refId,
-                                                                                     String testRequestId,
-                                                                                     String name,
-                                                                                     Integer counter,
-                                                                                     String processTypeKey,
-                                                                                     String parentTestcaseResultId,
-                                                                                     ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
-        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(
-                null,
-                new TestcaseResultSearchFilter(
-                        null,
-                        null,
-                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING,
-                        null,
-                        refObjUri,
-                        refId,
-                        testRequestId,
-                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(processTypeKey) ? Boolean.TRUE : Boolean.FALSE,
-                        null),
-                Constant.FULL_PAGE,
-                contextInfo).getContent();
-
-        if (!testcaseResultEntities.isEmpty()) {
-            return testcaseResultEntities.get(0);
-        }
-
-        TestcaseResultEntity testcaseResultEntity = new TestcaseResultEntity();
-        testcaseResultEntity.setRefObjUri(refObjUri);
-        testcaseResultEntity.setRefId(refId);
-        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING);
-        testcaseResultEntity.setTestRequestId(testRequestId);
-        testcaseResultEntity.setRank(counter);
-        testcaseResultEntity.setName(name);
-        testcaseResultEntity.setManual(Constant.START_MANUAL_PROCESS_VALIDATION.equals(processTypeKey) ? Boolean.TRUE : Boolean.FALSE);
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(contextInfo.getUsername());
-        testcaseResultEntity.setTester(userEntity);
-        if (!StringUtils.isEmpty(parentTestcaseResultId)) {
-            TestcaseResultEntity parentTestcaseResult = new TestcaseResultEntity();
-            parentTestcaseResult.setId(parentTestcaseResultId);
-            testcaseResultEntity.setParentTestcaseResult(parentTestcaseResult);
-        }
-        return testcaseResultService.createTestcaseResult(testcaseResultEntity, contextInfo);
-    }
-
-    private ValidationResultInfo updateTestCaseResultByValidationResults(TestcaseResultEntity testcaseResultEntity,
-                                                                         List<ValidationResultInfo> validationResultInfos,
-                                                                         ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
-        ValidationResultInfo validationResultInfo;
-        if (ValidationUtils.containsErrors(validationResultInfos, ErrorLevel.ERROR)) {
-            validationResultInfo = new ValidationResultInfo(null, ErrorLevel.ERROR, "Failed");
-        } else {
-            validationResultInfo = new ValidationResultInfo(null, ErrorLevel.OK, "Passed");
-        }
-        updateTestCaseResultByValidationResult(testcaseResultEntity, validationResultInfo, contextInfo);
-        return validationResultInfo;
-    }
-
-    private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity,
-                                                    ValidationResultInfo validationResultInfo,
-                                                    ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
-        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
+    private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
+        testcaseResultEntity = testcaseResultService.getTestcaseResultById(testcaseResultEntity.getId(), contextInfo);
         testcaseResultEntity.setSuccess(Boolean.FALSE);
-        testcaseResultEntity.setMessage(validationResultInfo.getMessage());
+        testcaseResultEntity.setMessage("System failure");
         testcaseResultEntity.setHasSystemError(true);
         testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
+
+        testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
     }
 
-    private void updateTestCaseResultByValidationResult(TestcaseResultEntity testcaseResultEntity,
-                                                        ValidationResultInfo validationResultInfo,
-                                                        ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
-        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
-        testcaseResultEntity.setSuccess(Objects.equals(validationResultInfo.getLevel(), ErrorLevel.OK) ? Boolean.TRUE : Boolean.FALSE);
+    private void updateTestCaseResultByValidationResult(TestcaseResultEntity testcaseResultEntity, ValidationResultInfo validationResultInfo, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
+        testcaseResultEntity = testcaseResultService.getTestcaseResultById(testcaseResultEntity.getId(), contextInfo);
+
+        testcaseResultEntity.setSuccess(Objects.equals(validationResultInfo.getLevel(), ErrorLevel.OK));
         testcaseResultEntity.setMessage(validationResultInfo.getMessage());
         testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
+
+        testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
     }
 
     private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) throws OperationFailedException {
@@ -593,6 +232,62 @@ public class TestcaseExecutioner {
         //client.registerInterceptor(new UserInfoInterceptor(theUserId, theUserName, theAppName));
 
         return client;
+    }
+
+    private void changeTestcaseResultsState(List<TestcaseResultEntity> testcaseResultEntities, String newState, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+        for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
+            testcaseResultService.changeState(testcaseResult.getId(), newState, contextInfo);
+        }
+    }
+
+    private List<TestcaseResultEntity> fetchTestcaseResultsByInputs(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+        List<TestcaseResultEntity> filteredTestcaseResults;
+
+        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null, new TestcaseResultSearchFilter(null, null, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, null, null, null, testRequestId, Objects.equals(isManual, Boolean.TRUE), null), Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
+
+        Optional<TestcaseResultEntity> optionalTestcaseResultEntity = testcaseResultEntities.stream().filter(testcaseResultEntity -> {
+            return (testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT) || testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) && testcaseResultEntity.getRefObjUri().equals(refObjUri) && testcaseResultEntity.getRefId().equals(refId);
+        }).findFirst();
+
+        if (!optionalTestcaseResultEntity.isPresent()) {
+            throw new OperationFailedException("No TestcaseResult found for the inputs.");
+        }
+        TestcaseResultEntity testcaseResultEntity = optionalTestcaseResultEntity.get();
+        if (refObjUri.equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
+            filteredTestcaseResults = Arrays.asList(testcaseResultEntity);
+        } else if (refObjUri.equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
+            filteredTestcaseResults
+                    = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                    }).collect(Collectors.toList());
+        } else if (refObjUri.equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
+            List<String> specificationTestcaseResultIds = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                    }).map(tcre -> tcre.getId()).collect(Collectors.toList());
+            filteredTestcaseResults
+                    = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
+                    }).collect(Collectors.toList());
+        } else {
+            filteredTestcaseResults
+                    = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        return filteredTestcaseResults;
+    }
+
+    private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        return componentService.searchComponents(null, new ComponentSearchFilter(null, SearchType.CONTAINING, ComponentServiceConstants.COMPONENT_STATUS_ACTIVE, Boolean.FALSE), Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
     }
 
 }
