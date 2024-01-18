@@ -1,10 +1,9 @@
 package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "document")
@@ -24,6 +23,10 @@ public class DocumentEntity extends IdStateNameMetaEntity {
 
     @Column(name = "file_type")
     private String fileType;
+
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "owner_id")
+    private UserEntity owner;
 
     public Integer getOrder() {
         return order;
@@ -63,5 +66,11 @@ public class DocumentEntity extends IdStateNameMetaEntity {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
+    }
+
+    public UserEntity getOwner() { return owner; }
+
+    public void setOwner(UserEntity owner) {
+        this.owner = owner;
     }
 }
