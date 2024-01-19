@@ -33,7 +33,7 @@ public class FRWF1TestCase1 implements TestCase {
             LOGGER.info("Creating facility");
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_FACILITY_REGISTRY_ID);
-            if(client == null) {
+            if (client == null) {
                 return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 

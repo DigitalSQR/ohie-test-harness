@@ -54,7 +54,7 @@ public class TestcaseResultCustomRepositoryImpl
                     false,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "testcaseResult",
                     "state",
                     searchFilter.getState(),
@@ -62,7 +62,7 @@ public class TestcaseResultCustomRepositoryImpl
                     separate,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "tester",
                     "id",
                     searchFilter.getTesterId(),
@@ -70,7 +70,7 @@ public class TestcaseResultCustomRepositoryImpl
                     separate,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "testcaseResult",
                     "refId",
                     searchFilter.getRefId(),
@@ -78,7 +78,7 @@ public class TestcaseResultCustomRepositoryImpl
                     separate,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "testcaseResult",
                     "refObjUri",
                     searchFilter.getRefObjUri(),
@@ -86,7 +86,7 @@ public class TestcaseResultCustomRepositoryImpl
                     separate,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "testcaseResult",
                     "testRequestId",
                     searchFilter.getTestRequestId(),
@@ -94,7 +94,7 @@ public class TestcaseResultCustomRepositoryImpl
                     separate,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "testcaseResult",
                     "isManual",
                     searchFilter.getIsManual(),
@@ -102,7 +102,7 @@ public class TestcaseResultCustomRepositoryImpl
                     separate,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "parentTestcaseResult",
                     "id",
                     searchFilter.getParentTestcaseResultId(),

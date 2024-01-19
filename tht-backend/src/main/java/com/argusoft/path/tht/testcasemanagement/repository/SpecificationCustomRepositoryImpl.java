@@ -38,8 +38,7 @@ public class SpecificationCustomRepositoryImpl
         Map<String, Object> parameters = new HashMap<String, Object>();
 
         jpql = jpql.append(" FROM SpecificationEntity specification \n"
-                + "LEFT JOIN specification.component component \n"
-                + "LEFT JOIN specification.testcases testcase \n");
+                + "LEFT JOIN specification.component component \n");
 
         if (!searchFilter.isEmpty()) {
             jpql.append("WHERE \n");
@@ -54,7 +53,7 @@ public class SpecificationCustomRepositoryImpl
                     false,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "specification",
                     "state",
                     searchFilter.getState(),
@@ -63,18 +62,10 @@ public class SpecificationCustomRepositoryImpl
                     jpql);
 
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "component",
                     "id",
                     searchFilter.getComponentId(),
-                    parameters,
-                    separate,
-                    jpql);
-
-            separate = SQLUtils.likeQL(
-                    "testcase",
-                    "isManual",
-                    searchFilter.getManual(),
                     parameters,
                     separate,
                     jpql);

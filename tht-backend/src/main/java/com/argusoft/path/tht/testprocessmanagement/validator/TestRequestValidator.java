@@ -148,18 +148,16 @@ public class TestRequestValidator {
                 || StringUtils.isEmpty(validationTypeKey)) {
             throw new InvalidParameterException("inputData is missing");
         }
-        //TODO: verify foreignKeys
-
         List<ValidationResultInfo> errors = new ArrayList<>();
         if (validationTypeKey.equals(Constant.START_PROCESS_VALIDATION)) {
             TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter();
             searchFilter.setIsManual(Objects.equals(Boolean.TRUE, isManual));
-            searchFilter.setRefObjUri(refId);
-            searchFilter.setRefId(refObjUri);
+            searchFilter.setRefObjUri(refObjUri);
+            searchFilter.setRefId(refId);
             searchFilter.setTestRequestId(testRequestId);
 
             List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null, searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
-            if (!testcaseResultEntities.stream().filter(testcaseResultEntity -> !testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INACTIVE)).findFirst().isPresent()) {
+            if (testcaseResultEntities.isEmpty()) {
                 String fieldName = "inputData";
                 errors.add(
                         new ValidationResultInfo(fieldName,

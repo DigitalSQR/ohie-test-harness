@@ -192,8 +192,8 @@ public class TestRequestRestController {
     @Transactional
     public void startTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
-            @PathVariable("refObjUri") String refObjUri,
-            @PathVariable("refId") String refId,
+            @RequestParam(value = "refObjUri") String refObjUri,
+            @RequestParam(value = "refId") String refId,
             @RequestParam("isManual") Boolean isManual,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         testRequestService.startTestingProcess(
@@ -212,8 +212,8 @@ public class TestRequestRestController {
     @Transactional
     public void reinitializeTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
-            @PathVariable("refObjUri") String refObjUri,
-            @PathVariable("refId") String refId,
+            @RequestParam("refObjUri") String refObjUri,
+            @RequestParam("refId") String refId,
             @RequestParam("isManual") Boolean isManual,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException {

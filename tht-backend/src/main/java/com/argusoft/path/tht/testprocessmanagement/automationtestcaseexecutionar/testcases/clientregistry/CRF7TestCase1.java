@@ -20,7 +20,7 @@ public class CRF7TestCase1 implements TestCase {
 
         try {
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
-            if(client == null) {
+            if (client == null) {
                 return new ValidationResultInfo("testCRF7Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 

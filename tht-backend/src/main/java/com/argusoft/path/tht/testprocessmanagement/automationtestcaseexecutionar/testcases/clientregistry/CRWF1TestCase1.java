@@ -32,7 +32,7 @@ public class CRWF1TestCase1 implements TestCase {
         try {
             LOGGER.info("Start testing CRWF1TestCase1");
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
-            if(client == null) {
+            if (client == null) {
                 return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 

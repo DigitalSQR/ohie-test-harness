@@ -51,25 +51,7 @@ public final class SQLUtils {
         return true;
     }
 
-    public static boolean likeQL(
-            String tableName,
-            String columnName,
-            String columnValue,
-            Map<String, Object> parameters,
-            boolean separate,
-            StringBuilder stringBuilder) {
-        if (StringUtils.isEmpty(columnValue)) return separate;
-        if (separate) {
-            stringBuilder.append("AND ");
-        }
-        stringBuilder
-                .append(tableName).append(".").append(columnName)
-                .append(" = :").append(columnName).append(" ");
-        parameters.put(columnName, columnValue);
-        return true;
-    }
-
-    public static boolean likeQL(
+    public static boolean equalQL(
             String tableName,
             String columnName,
             Boolean columnValue,

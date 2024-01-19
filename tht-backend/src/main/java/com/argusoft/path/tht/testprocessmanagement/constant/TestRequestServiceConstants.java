@@ -15,12 +15,12 @@ public class TestRequestServiceConstants {
     public static final String TEST_REQUEST_REF_OBJ_URI = TestRequestInfo.class.getName();
 
     //TestRequest states
-    public static final String TEST_REQUEST_STATUS_PENDING = "component.status.pending";
-    public static final String TEST_REQUEST_STATUS_ACCEPTED = "component.status.accepted";
-    public static final String TEST_REQUEST_STATUS_REJECTED = "component.status.rejected";
-    public static final String TEST_REQUEST_STATUS_INPROGRESS = "component.status.inprogress";
-    public static final String TEST_REQUEST_STATUS_FINISHED = "component.status.finished";
-    public static final String TEST_REQUEST_STATUS_SKIPPED = "component.status.skipped";
+    public static final String TEST_REQUEST_STATUS_PENDING = "test.request.status.pending";
+    public static final String TEST_REQUEST_STATUS_ACCEPTED = "test.request.status.accepted";
+    public static final String TEST_REQUEST_STATUS_REJECTED = "test.request.status.rejected";
+    public static final String TEST_REQUEST_STATUS_INPROGRESS = "test.request.status.inprogress";
+    public static final String TEST_REQUEST_STATUS_FINISHED = "test.request.status.finished";
+    public static final String TEST_REQUEST_STATUS_SKIPPED = "test.request.status.skipped";
     public static List<String> TEST_REQUEST_STATUS = new ArrayList<>();
 
     static {

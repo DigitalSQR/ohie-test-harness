@@ -22,7 +22,7 @@ public class CRF10TestCase2 implements TestCase {
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
         IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
-        if(client == null) {
+        if (client == null) {
             return new ValidationResultInfo("testCRF10Case2", ErrorLevel.ERROR, "Failed to get IGenericClient");
         }
 

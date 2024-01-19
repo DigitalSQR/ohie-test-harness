@@ -53,7 +53,7 @@ public class TestcaseCustomRepositoryImpl
                     false,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "testcase",
                     "state",
                     searchFilter.getState(),
@@ -61,7 +61,7 @@ public class TestcaseCustomRepositoryImpl
                     separate,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "specification",
                     "id",
                     searchFilter.getSpecificationId(),
@@ -69,7 +69,7 @@ public class TestcaseCustomRepositoryImpl
                     separate,
                     jpql);
 
-            separate = SQLUtils.likeQL(
+            separate = SQLUtils.equalQL(
                     "testcase",
                     "isManual",
                     searchFilter.getManual(),

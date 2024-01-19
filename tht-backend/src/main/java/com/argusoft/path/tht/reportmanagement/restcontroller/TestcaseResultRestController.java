@@ -145,7 +145,7 @@ public class TestcaseResultRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    @PostMapping("/submit/{testcaseResultId}/{selectedTestcaseOptionId}")
+    @PatchMapping("/submit/{testcaseResultId}/{selectedTestcaseOptionId}")
     public TestcaseResultInfo submitTestcaseResult(
             @PathVariable("testcaseResultId") String testcaseResultId,
             @PathVariable("selectedTestcaseOptionId") String selectedTestcaseOptionId,

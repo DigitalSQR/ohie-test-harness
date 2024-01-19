@@ -287,7 +287,14 @@ public class TestcaseExecutioner {
     }
 
     private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        return componentService.searchComponents(null, new ComponentSearchFilter(null, SearchType.CONTAINING, ComponentServiceConstants.COMPONENT_STATUS_ACTIVE, Boolean.FALSE), Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
+        return componentService.searchComponents(
+                null,
+                new ComponentSearchFilter(
+                        null,
+                        SearchType.CONTAINING,
+                        ComponentServiceConstants.COMPONENT_STATUS_ACTIVE),
+                Constant.FULL_PAGE_SORT_BY_RANK,
+                contextInfo).getContent();
     }
 
 }

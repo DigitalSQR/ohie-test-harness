@@ -265,7 +265,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             throw new DataValidationErrorException("Validation Failed due to errors ", errors);
         }
         TestcaseResultEntity testcaseResultEntity = this.getTestcaseResultById(testcaseResultId, contextInfo);
-        if(!stateKey.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
+        if (!stateKey.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
             testcaseResultEntity.setMessage(null);
             testcaseResultEntity.setHasSystemError(Boolean.FALSE);
             testcaseResultEntity.setSuccess(Boolean.FALSE);
@@ -277,6 +277,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         if (!testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
             updateChildTestcaseResult(testcaseResultEntity, contextInfo);
         }
+
         if (testcaseResultEntity.getParentTestcaseResult() != null) {
             updateParentTestcaseResult(testcaseResultEntity.getParentTestcaseResult(), contextInfo);
         } else {
@@ -318,19 +319,12 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED, contextInfo);
             }
         } else if (testcaseResultEntities.stream()
-                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
-            if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
-                testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, contextInfo);
-            }
-        } else if (testcaseResultEntities.stream()
-                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING))) {
-            if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
-                testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, contextInfo);
-            }
-        } else {
+                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT))) {
             if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
                 testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, contextInfo);
             }
+        } else if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
+            testRequestService.changeState(testRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, contextInfo);
         }
     }
 
@@ -346,7 +340,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             return;
         }
         TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
-                null, SearchType.CONTAINING,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -372,7 +367,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             DataValidationErrorException,
             VersionMismatchException {
         TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
-                null, SearchType.CONTAINING,
+                null,
+                null,
                 null,
                 null,
                 null,

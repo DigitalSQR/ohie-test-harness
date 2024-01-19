@@ -34,7 +34,7 @@ public class FRF9TestCase1 implements TestCase {
             LOGGER.info("Start testing " + testCaseName);
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_FACILITY_REGISTRY_ID);
-            if(client == null) {
+            if (client == null) {
                 return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
