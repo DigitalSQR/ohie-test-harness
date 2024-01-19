@@ -11,6 +11,7 @@ import { notification } from "antd";
 import { formatDate } from "../../../utils/utils.js";
 import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.jsx";
 import { useNavigate } from "react-router-dom";
+import { store } from "../../../store/store.js";
 
 const TestingRequests = () => {
 	const testRequestStates = [...TestRequestStateLabels, { label: "All", value: '' }];
@@ -33,9 +34,9 @@ const TestingRequests = () => {
 	};
 
 	useEffect(() => {
-		UserAPI.viewUser().then((res) => {
-			setUserRoles(res.roleIds);
-		});
+		const userInfo = store.getState().userInfoSlice;
+		setUserRoles(userInfo.roleIds);
+		
 		fetchTestRequests();
 	}, [filterState])
 
