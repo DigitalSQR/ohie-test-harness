@@ -39,13 +39,20 @@ public class DocumentSearchFilter {
     )
     private String fileType;
 
-    public DocumentSearchFilter(String name, SearchType nameSearchType, String refObjUri, String refId, String state, String fileType) {
+    @ApiParam(
+            value = "ownerId of the component"
+    )
+    private String ownerId;
+
+
+    public DocumentSearchFilter(String name, SearchType nameSearchType, String refObjUri, String refId, String state, String fileType, String ownerId) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.refObjUri = refObjUri;
         this.refId = refId;
         this.state = state;
         this.fileType = fileType;
+        this.ownerId = ownerId;
     }
 
     public DocumentSearchFilter() {
@@ -105,5 +112,13 @@ public class DocumentSearchFilter {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 }

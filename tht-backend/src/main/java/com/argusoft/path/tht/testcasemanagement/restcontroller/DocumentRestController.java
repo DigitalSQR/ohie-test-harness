@@ -58,7 +58,7 @@ public class DocumentRestController {
                                        @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws InvalidFileTypeException,
             DataValidationErrorException,
-            OperationFailedException {
+            OperationFailedException, DoesNotExistException {
         DocumentEntity documentEntity = documentMapper.dtoToModel(documentInfo);
         DocumentEntity document = documentService.createDocument(documentEntity, file, getFileTypePdfPngJpeg(), contextInfo);
         documentInfo = documentMapper.modelToDto(document);

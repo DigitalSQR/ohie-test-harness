@@ -17,6 +17,8 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.DocumentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
 import com.argusoft.path.tht.testcasemanagement.validator.DocumentValidator;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Autowired
     FileService fileService;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     DocumentRepository documentRepository;
@@ -46,7 +51,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
-                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException {
+                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException {
 
         //get FileType
         String fileType = getFileType(file);
@@ -67,6 +72,10 @@ public class DocumentServiceImpl implements DocumentService {
         documentEntity.setFileId(fileDetails.getFileId());
         documentEntity.setName(fileDetails.getFileName());
         documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
+
+        UserEntity user = userService.getPrincipalUser(contextInfo);
+        documentEntity.setOwner(user);
+
         setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
 
         DocumentEntity document = documentRepository.save(documentEntity);

@@ -42,6 +42,13 @@ public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
             required = false)
     private String fileType;
 
+    @ApiModelProperty(notes = "The ownerId of the Saved File.",
+            allowEmptyValue = false,
+            example = "1",
+            dataType = "String",
+            required = true)
+    private String ownerId;
+
     public Integer getOrder() {
         return order;
     }
@@ -81,4 +88,13 @@ public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
     public void setFileType(String fileType) {
         this.fileType = fileType;
     }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
 }
