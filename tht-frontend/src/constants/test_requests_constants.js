@@ -1,59 +1,59 @@
 // state_constants.js
 
 export const TestRequestStateConstants = {
-    TEST_REQUEST_STATUS_DRAFT: "component.status.draft",
-    TEST_REQUEST_STATUS_PENDING: "component.status.pending",
-    TEST_REQUEST_STATUS_ACCEPTED: "component.status.accepted",
-    TEST_REQUEST_STATUS_REJECTED: "component.status.rejected",
-    TEST_REQUEST_STATUS_INPROGRESS: "component.status.inprogress",
-    TEST_REQUEST_STATUS_FINISHED: "component.status.finished"
+    TEST_REQUEST_STATUS_DRAFT: "test.request.status.draft",
+    TEST_REQUEST_STATUS_PENDING: "test.request.status.pending",
+    TEST_REQUEST_STATUS_ACCEPTED: "test.request.status.accepted",
+    TEST_REQUEST_STATUS_REJECTED: "test.request.status.rejected",
+    TEST_REQUEST_STATUS_INPROGRESS: "test.request.status.inprogress",
+    TEST_REQUEST_STATUS_FINISHED: "test.request.status.finished"
 };
 
 export const TestRequestStateLabels = [
-    {label: "Draft", value: "component.status.draft"},
-    {label: "Pending", value: "component.status.pending"},
-    {label: "Accepted", value: "component.status.accepted"},
-    {label: "Rejected", value: "component.status.rejected"},
-    {label: "Inprogress", value: "component.status.inprogress"},
-    {label: "Finished", value: "component.status.finished"},
+    {label: "Draft", value: "test.request.status.draft"},
+    {label: "Pending", value: "test.request.status.pending"},
+    {label: "Accepted", value: "test.request.status.accepted"},
+    {label: "Rejected", value: "test.request.status.rejected"},
+    {label: "Inprogress", value: "test.request.status.inprogress"},
+    {label: "Finished", value: "test.request.status.finished"},
 ];
 
 export const TestRequestStateConstantNames = {
-    "component.status.draft": "Draft",
-    "component.status.pending": "Pending",
-    "component.status.accepted": "Accepted",
-    "component.status.rejected": "Rejected",
-    "component.status.inprogress": "Inprogress",
-    "component.status.finished": "Finished",
+    "test.request.status.draft": "Draft",
+    "test.request.status.pending": "Pending",
+    "test.request.status.accepted": "Accepted",
+    "test.request.status.rejected": "Rejected",
+    "test.request.status.inprogress": "Inprogress",
+    "test.request.status.finished": "Finished",
 }
 
 export const StateBadgeClasses = {
-    "component.status.draft": "badges-orange",
-    "component.status.pending": "badges-orange",
-    "component.status.accepted": "badges-green-dark",
-    "component.status.rejected": "badges-orange",
-    "component.status.inprogress": "badges-orange",
-    "component.status.finished": "badges-green-dark",
+    "test.request.status.draft": "badges-orange",
+    "test.request.status.pending": "badges-orange",
+    "test.request.status.accepted": "badges-green-dark",
+    "test.request.status.rejected": "badges-orange",
+    "test.request.status.inprogress": "badges-orange",
+    "test.request.status.finished": "badges-green-dark",
 };
 
 export const TestRequestActionStateLabels = [
-    {label: "Accepted", value: "component.status.accepted"},
-    {label: "Inprogress", value: "component.status.inprogress"},
-    {label: "Finished", value: "component.status.finished"},
+    {label: "Accepted", value: "test.request.status.accepted"},
+    {label: "Inprogress", value: "test.request.status.inprogress"},
+    {label: "Finished", value: "test.request.status.finished"},
 ];
 
 export const StateClasses = {
-    "component.status.accepted": {
+    "test.request.status.accepted": {
         btnClass: "btn btn-green-sm",
         iconClass: "bi bi-play-fill",
         btnText: "Start"
     },
-    "component.status.inprogress": {
+    "test.request.status.inprogress": {
         btnClass: "btn btn-orange-sm",
         iconClass: "bi bi-play-fill",
         btnText: "Resume"
     },
-    "component.status.finished": {
+    "test.request.status.finished": {
         btnClass: "btn btn-blue-sm",
         iconClass: "bi bi-file-text",
         btnText: "Report"
