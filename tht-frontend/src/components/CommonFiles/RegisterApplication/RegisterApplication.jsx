@@ -9,6 +9,7 @@ import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
 import { notification } from "antd";
 import { TestRequestStateConstants } from "../../../constants/test_requests_constants.js";
 import { CREATE_VALIDATION } from "../../../constants/validation_constants.js";
+import { store } from "../../../store/store.js";
 
 const RegisterApplication = () => {
   const navigate = useNavigate();
@@ -16,17 +17,9 @@ const RegisterApplication = () => {
   const [components, setComponents] = useState([])
   const [userId, setUserId] = useState();
 
-  useEffect(() => {
-    showLoader();
-    UserAPI.viewUser().then((res) => {
-      setUserId(res.id);
-    }).catch((err) => {
-      notification.error({
-        placement: "bottomRight",
-        message: err.data?.message
-      })
-      hideLoader();
-    });
+  useEffect(() => {   
+    const userInfo = store.getState().userInfoSlice;
+		setUserId(userInfo.id);
 
     ComponentAPI.getCompoents().then((res) => {
       setComponents(res.content);

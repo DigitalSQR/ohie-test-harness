@@ -12,6 +12,8 @@ import { useSelector } from "react-redux";
 import { useLoader } from "../../loader/LoaderContext";
 import ReCAPTCHA from "react-google-recaptcha";
 import GoogleLoginIcon from "../../../styles/images/GoogleLoginIcon.png";
+import { UserAPI } from "../../../api/UserAPI";
+import { userinfo_success } from "../../../reducers/UserInfoReducer";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,7 +48,11 @@ export default function Login() {
         dispatch(login_success(response));
         setAuthToken(response.access_token);
         hideLoader();
-        navigate("/dashboard/");
+        UserAPI.viewUser().then((user) => {
+          dispatch(userinfo_success(user));
+          navigate("/dashboard/");
+        })
+       
       },(response)=>{ 
         hideLoader();
         console.log(response);

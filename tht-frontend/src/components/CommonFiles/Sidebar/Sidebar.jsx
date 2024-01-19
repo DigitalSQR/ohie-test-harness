@@ -8,6 +8,7 @@ import logo from "../../../styles/images/logo-white.png";
 import { useEffect, useState } from "react";
 import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLES } from "../../../constants/role_constants";
+import { store } from "../../../store/store";
 
 export default function Sidebar() {
   const dispatch = useDispatch();
@@ -36,9 +37,8 @@ export default function Sidebar() {
   };
 
   useEffect(() => {
-    UserAPI.viewUser().then((user) => {
-      setUser(user);
-    });
+    const userInfo = store.getState().userInfoSlice;
+		setUser(userInfo);    
   }, []);
 
   useEffect(() => {

@@ -3,13 +3,14 @@ import avatar from "../../../styles/images/avatar.jpg";
 import "./_header.scss";
 import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLE_NAMES } from "../../../constants/role_constants";
+import { store } from '../../../store/store';
 export default function Header() {
 	const [userInfo, setUserInfo] = useState();
 	
 	useEffect(() => {
-		UserAPI.viewUser().then(res => {
-            setUserInfo(res);
-        }).catch((error)=>{ throw error;})
+		const userInfo = store.getState().userInfoSlice;
+		setUserInfo(userInfo);
+		
 	}, []);
 	return (
 		<Fragment>

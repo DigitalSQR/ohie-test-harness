@@ -3,14 +3,14 @@ import tool_icon from "../../styles/images/tool-icon.png";
 import { useEffect, useState } from "react";
 import { UserAPI } from "../../api/UserAPI";
 import { USER_ROLES } from "../../constants/role_constants";
+import { store } from '../../store/store';
 export default function Landing() {
   const navigate = useNavigate();
   const [user, setUser] = useState();
 
   useEffect(() => {
-    UserAPI.viewUser().then((user) => {
-      setUser(user);
-    })
+    const userInfo = store.getState().userInfoSlice;
+    setUser(userInfo);  
   }, [])
 
   return (
