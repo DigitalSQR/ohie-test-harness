@@ -154,4 +154,19 @@ public interface TestcaseResultService {
                                                          ContextInfo contextInfo)
             throws InvalidParameterException;
 
+
+    /**
+     * change state of testcaseResult with id and giving the expected state
+     *
+     * @param testcaseResultId id of the testcaseResult
+     * @param stateKey         expected statekey
+     * @param contextInfo      ContextInfo
+     * @return DocumentEntity
+     * @throws DoesNotExistException        when document does not exists for that id
+     * @throws DataValidationErrorException when validation fails
+     */
+    public TestcaseResultEntity changeState(String testcaseResultId, String stateKey, ContextInfo contextInfo)
+            throws DoesNotExistException,
+            DataValidationErrorException,
+            InvalidParameterException, OperationFailedException, VersionMismatchException;
 }

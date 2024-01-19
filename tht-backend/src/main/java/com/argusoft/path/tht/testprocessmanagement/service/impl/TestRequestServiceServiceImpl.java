@@ -5,13 +5,26 @@
  */
 package com.argusoft.path.tht.testprocessmanagement.service.impl;
 
+import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
+import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestcaseExecutioner;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestSearchFilter;
@@ -34,7 +47,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This TestRequestServiceServiceImpl contains implementation for TestRequest service.
@@ -55,53 +70,71 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     private ComponentService componentService;
 
     @Autowired
+    private SpecificationService specificationService;
+
+    @Autowired
+    private TestcaseService testcaseService;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
     private TestcaseExecutioner testcaseExecutioner;
 
     @Override
-    @Timed(name = "startAutomationTestingProcess")
-    public void startAutomationTestingProcess(String testRequestId, ContextInfo contextInfo)
-            throws InvalidParameterException,
-            OperationFailedException, DataValidationErrorException {
-        TestRequestValidator.validateTestRequestProcess(
+    @Timed(name = "reinitializeTestingProcess")
+    public void reinitializeTestingProcess(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException,
+            DataValidationErrorException {
+        TestRequestValidator.validateTestRequestStartReinitializeProcess(
                 testRequestId,
-                Constant.START_AUTOMATION_PROCESS_VALIDATION,
-                this,
+                refObjUri,
+                refId,
+                isManual,
+                Constant.REINITIALIZE_PROCESS_VALIDATION,
                 testcaseResultService,
                 contextInfo);
 
-        testcaseExecutioner.executeAutomationTestingByTestRequest(testRequestId, contextInfo);
-    }
-
-    @Override
-    @Timed(name = "reinitializeAutomationTestingProcess")
-    public void reinitializeAutomationTestingProcess(String testRequestId, ContextInfo contextInfo)
-            throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
-        TestRequestValidator.validateTestRequestReinitializeProcess(
+        testcaseExecutioner.reinitializeTestingProcess(
                 testRequestId,
-                Constant.REINITIALIZE_AUTOMATION_PROCESS_VALIDATION,
-                this,
-                testcaseResultService,
+                refObjUri,
+                refId,
+                isManual,
                 contextInfo);
-        testcaseExecutioner.reinitializeAutomationTestingByTestRequest(testRequestId, contextInfo);
     }
 
     @Override
-    @Timed(name = "startManualTestingProcess")
-    public void startManualTestingProcess(String testRequestId, ContextInfo contextInfo)
+    @Timed(name = "startTestingProcess")
+    public void startTestingProcess(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException,
-            DataValidationErrorException, DoesNotExistException, VersionMismatchException {
-        TestRequestValidator.validateTestRequestProcess(
+            DataValidationErrorException {
+        TestRequestValidator.validateTestRequestStartReinitializeProcess(
                 testRequestId,
-                Constant.START_MANUAL_PROCESS_VALIDATION,
-                this,
+                refObjUri,
+                refId,
+                isManual,
+                Constant.START_PROCESS_VALIDATION,
                 testcaseResultService,
                 contextInfo);
 
-        testcaseExecutioner.executeManualTestingByTestRequest(testRequestId, contextInfo);
+        testcaseExecutioner.executeTestingProcess(
+                testRequestId,
+                refObjUri,
+                refId,
+                isManual,
+                contextInfo);
     }
 
     /**
@@ -115,16 +148,20 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                                ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
 
+        testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING);
         TestRequestValidator.validateCreateUpdateTestRequest(Constant.CREATE_VALIDATION,
                 testRequestEntity,
                 this,
                 userService,
                 componentService,
                 contextInfo);
+        UserEntity principalUser = userService.getPrincipalUser(contextInfo);
+        if (principalUser.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))) {
+            testRequestEntity.setAssessee(principalUser);
+        }
 
-        //TODO: New request will have state TEST_REQUEST_STATUS_PENDING or DRAFT by default
         //Create state change API to make this as Accepted or Rejected
         testRequestEntity = testRequestRepository.save(testRequestEntity);
         return testRequestEntity;
@@ -241,7 +278,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                                    ContextInfo contextInfo)
             throws InvalidParameterException {
         if (pageable == null) {
-            throw new InvalidParameterException("pageble is missing");
+            throw new InvalidParameterException("pageable is missing");
         }
         Page<TestRequestEntity> testRequests = testRequestRepository.findTestRequests(pageable);
         return testRequests;
@@ -263,7 +300,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Override
-    public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException {
+    public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
         List<ValidationResultInfo> errors = new ArrayList<>();
 
@@ -279,8 +316,233 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
 
         testRequestEntity.setState(stateKey);
-        testRequestRepository.save(testRequestEntity);
+        testRequestEntity = testRequestRepository.save(testRequestEntity);
 
+        changeStateCallback(testRequestEntity, contextInfo);
         return testRequestEntity;
+    }
+
+    private void changeStateCallback(TestRequestEntity testRequestEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        if (testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
+            createDraftTestcaseResultsByTestRequestAndProcessKey(testRequestEntity, contextInfo);
+        }
+    }
+
+    private void createDraftTestcaseResultsByTestRequestAndProcessKey(TestRequestEntity testRequestEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+        List<ComponentEntity> activeComponents = fetchActiveComponents(contextInfo)
+                .stream().filter(componentEntity ->
+                        testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> testRequestUrlEntity.getComponent().getId().equals(componentEntity.getId()))
+                ).collect(Collectors.toList());
+
+        Integer counter = 1;
+        List<ComponentEntity> filteredComponents = activeComponents.stream().filter(componentEntity -> {
+            return componentEntity.getSpecifications().stream().anyMatch(
+                    specificationEntity -> {
+                        return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                                && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                    && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                        });
+                    });
+        }).collect(Collectors.toList());
+        if (!filteredComponents.isEmpty()) {
+            TestcaseResultEntity testRequestTestcaseResult = createDraftTestCaseResultIfNotExists(
+                    TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
+                    testRequestEntity.getId(),
+                    testRequestEntity.getId(),
+                    testRequestEntity.getName(),
+                    counter,
+                    Boolean.FALSE,
+                    null,
+                    contextInfo);
+            counter++;
+            for (ComponentEntity componentEntity : filteredComponents) {
+                List<SpecificationEntity> filteredSpecifications = componentEntity.getSpecifications().stream().filter(specificationEntity -> {
+                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                            && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                        return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                    });
+                }).collect(Collectors.toList());
+
+                if (!filteredSpecifications.isEmpty()) {
+                    TestcaseResultEntity componentTestcaseResult = createDraftTestCaseResultIfNotExists(
+                            ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                            componentEntity.getId(),
+                            testRequestEntity.getId(),
+                            componentEntity.getName(),
+                            counter,
+                            Boolean.FALSE,
+                            testRequestTestcaseResult.getId(),
+                            contextInfo);
+                    counter++;
+                    for (SpecificationEntity specificationEntity : filteredSpecifications) {
+                        List<TestcaseEntity> filteredTestcases = specificationEntity.getTestcases().stream().filter(testcaseEntity -> {
+                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                    && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                        }).collect(Collectors.toList());
+
+                        if (!filteredTestcases.isEmpty()) {
+                            TestcaseResultEntity specificationTestcaseResult = createDraftTestCaseResultIfNotExists(
+                                    SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
+                                    specificationEntity.getId(),
+                                    testRequestEntity.getId(),
+                                    specificationEntity.getName(),
+                                    counter,
+                                    Boolean.FALSE,
+                                    componentTestcaseResult.getId(),
+                                    contextInfo);
+                            counter++;
+                            for (TestcaseEntity testcaseEntity : filteredTestcases) {
+                                createDraftTestCaseResultIfNotExists(
+                                        TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
+                                        testcaseEntity.getId(),
+                                        testRequestEntity.getId(),
+                                        testcaseEntity.getName(),
+                                        counter,
+                                        Boolean.FALSE,
+                                        specificationTestcaseResult.getId(),
+                                        contextInfo);
+                                counter++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        counter = 1;
+        filteredComponents = activeComponents.stream().filter(componentEntity -> {
+            return componentEntity.getSpecifications().stream().anyMatch(
+                    specificationEntity -> {
+                        return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                                && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                    && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                        });
+                    });
+        }).collect(Collectors.toList());
+        if (!filteredComponents.isEmpty()) {
+            TestcaseResultEntity testRequestTestcaseResult = createDraftTestCaseResultIfNotExists(
+                    TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
+                    testRequestEntity.getId(),
+                    testRequestEntity.getId(),
+                    testRequestEntity.getName(),
+                    counter,
+                    Boolean.TRUE,
+                    null,
+                    contextInfo);
+            counter++;
+            for (ComponentEntity componentEntity : filteredComponents) {
+                List<SpecificationEntity> filteredSpecifications = componentEntity.getSpecifications().stream().filter(specificationEntity -> {
+                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                            && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                        return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                    });
+                }).collect(Collectors.toList());
+
+                if (!filteredSpecifications.isEmpty()) {
+                    TestcaseResultEntity componentTestcaseResult = createDraftTestCaseResultIfNotExists(
+                            ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                            componentEntity.getId(),
+                            testRequestEntity.getId(),
+                            componentEntity.getName(),
+                            counter,
+                            Boolean.TRUE,
+                            testRequestTestcaseResult.getId(),
+                            contextInfo);
+                    counter++;
+                    for (SpecificationEntity specificationEntity : filteredSpecifications) {
+                        List<TestcaseEntity> filteredTestcases = specificationEntity.getTestcases().stream().filter(testcaseEntity -> {
+                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                    && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                        }).collect(Collectors.toList());
+
+                        if (!filteredTestcases.isEmpty()) {
+                            TestcaseResultEntity specificationTestcaseResult = createDraftTestCaseResultIfNotExists(
+                                    SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
+                                    specificationEntity.getId(),
+                                    testRequestEntity.getId(),
+                                    specificationEntity.getName(),
+                                    counter,
+                                    Boolean.TRUE,
+                                    componentTestcaseResult.getId(),
+                                    contextInfo);
+                            counter++;
+                            for (TestcaseEntity testcaseEntity : filteredTestcases) {
+                                createDraftTestCaseResultIfNotExists(
+                                        TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
+                                        testcaseEntity.getId(),
+                                        testRequestEntity.getId(),
+                                        testcaseEntity.getName(),
+                                        counter,
+                                        Boolean.TRUE,
+                                        specificationTestcaseResult.getId(),
+                                        contextInfo);
+                                counter++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        return componentService.searchComponents(
+                null,
+                new ComponentSearchFilter(null,
+                        SearchType.CONTAINING,
+                        ComponentServiceConstants.COMPONENT_STATUS_ACTIVE),
+                Constant.FULL_PAGE_SORT_BY_RANK,
+                contextInfo).getContent();
+    }
+
+    private TestcaseResultEntity createDraftTestCaseResultIfNotExists(String refObjUri,
+                                                                      String refId,
+                                                                      String testRequestId,
+                                                                      String name,
+                                                                      Integer counter,
+                                                                      Boolean isManual,
+                                                                      String parentTestcaseResultId,
+                                                                      ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(
+                null,
+                new TestcaseResultSearchFilter(
+                        null,
+                        null,
+                        null,
+                        null,
+                        refObjUri,
+                        refId,
+                        testRequestId,
+                        isManual,
+                        null),
+                Constant.FULL_PAGE,
+                contextInfo).getContent();
+
+        if (!testcaseResultEntities.isEmpty()) {
+            return testcaseResultEntities.get(0);
+        }
+
+        TestcaseResultEntity testcaseResultEntity = new TestcaseResultEntity();
+        testcaseResultEntity.setRefObjUri(refObjUri);
+        testcaseResultEntity.setRefId(refId);
+        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
+        testcaseResultEntity.setTestRequestId(testRequestId);
+        testcaseResultEntity.setRank(counter);
+        testcaseResultEntity.setName(name);
+        testcaseResultEntity.setManual(isManual);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(contextInfo.getUsername());
+        testcaseResultEntity.setTester(userEntity);
+        if (!StringUtils.isEmpty(parentTestcaseResultId)) {
+            TestcaseResultEntity parentTestcaseResult = new TestcaseResultEntity();
+            parentTestcaseResult.setId(parentTestcaseResultId);
+            testcaseResultEntity.setParentTestcaseResult(parentTestcaseResult);
+        }
+        return testcaseResultService.createTestcaseResult(testcaseResultEntity, contextInfo);
     }
 }

@@ -38,7 +38,7 @@ public interface TestRequestService {
                                                ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException;
+            DataValidationErrorException, DoesNotExistException;
 
     /**
      * Updates an existing TestRequest.
@@ -133,22 +133,18 @@ public interface TestRequestService {
             throws InvalidParameterException;
 
     /**
-     * start automation testing process.
-     *
-     * @param testRequestId testRequestWhich needs to be tested
-     * @param contextInfo   information containing the principalId and locale
-     *                      information about the caller of service operation
-     */
-    public void startAutomationTestingProcess(String testRequestId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException;
-
-    /**
      * reinitialize automation testing process by killing process and make testcase results draft again.
      *
      * @param testRequestId testRequestWhich needs to be tested
      * @param contextInfo   information containing the principalId and locale
      *                      information about the caller of service operation
      */
-    public void reinitializeAutomationTestingProcess(String testRequestId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException;
+    public void reinitializeTestingProcess(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException;
 
     /**
      * start manual testing process.
@@ -157,7 +153,16 @@ public interface TestRequestService {
      * @param contextInfo   information containing the principalId and locale
      *                      information about the caller of service operation
      */
-    public void startManualTestingProcess(String testRequestId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException;
+    public void startTestingProcess(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            ContextInfo contextInfo)
+            throws InvalidParameterException,
+            OperationFailedException,
+            DataValidationErrorException;
+
 
     /**
      * change state of testRequest with id and giving the expected state
@@ -169,6 +174,6 @@ public interface TestRequestService {
      * @throws DoesNotExistException        when document does not exists for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException;
+    public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
 }

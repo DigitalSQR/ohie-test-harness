@@ -7,6 +7,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Patient;
@@ -14,12 +15,18 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class CRF8TestCase1 implements TestCase {
     @Override
-    public ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) throws OperationFailedException {
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
         try {
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
+            if (client == null) {
+                return new ValidationResultInfo("testCRF8Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
+
 //            Initial birthdate
             String birthDate = "1990-01-01";
             Patient patient = FHIRUtils.createPatient("Doe", "John", "M", birthDate, "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);

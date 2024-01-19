@@ -7,11 +7,14 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * Implementation of the CRWF1TestCase1.
@@ -24,10 +27,14 @@ public class CRWF1TestCase1 implements TestCase {
     public static final Logger LOGGER = LoggerFactory.getLogger(CRWF1TestCase1.class);
 
     @Override
-    public ValidationResultInfo test(IGenericClient client,
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
                                      ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing CRWF1TestCase1");
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
+            if (client == null) {
+                return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
 
             LOGGER.info("Creating patient");
             // Create a new patient resource with all demographic information

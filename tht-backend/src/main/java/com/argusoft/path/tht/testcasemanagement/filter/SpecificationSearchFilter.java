@@ -36,36 +36,21 @@ public class SpecificationSearchFilter {
     )
     private String componentId;
 
-    @ApiParam(
-            value = "isManual of the specification"
-    )
-    private Boolean isManual;
-
     public SpecificationSearchFilter() {
     }
 
     public SpecificationSearchFilter(String name,
                                      SearchType nameSearchType,
                                      String state,
-                                     String componentId,
-                                     Boolean isManual) {
+                                     String componentId) {
         this.name = name;
         this.nameSearchType = nameSearchType;
         this.state = state;
         this.componentId = componentId;
-        this.isManual = isManual;
     }
 
     public boolean isEmpty() {
-        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state) && StringUtils.isEmpty(componentId) && isManual == null;
-    }
-
-    public Boolean getManual() {
-        return isManual;
-    }
-
-    public void setManual(Boolean manual) {
-        isManual = manual;
+        return StringUtils.isEmpty(name) && StringUtils.isEmpty(state) && StringUtils.isEmpty(componentId);
     }
 
     public String getName() {
