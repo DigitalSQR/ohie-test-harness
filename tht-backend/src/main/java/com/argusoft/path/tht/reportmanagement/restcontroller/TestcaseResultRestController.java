@@ -5,7 +5,7 @@
  */
 package com.argusoft.path.tht.reportmanagement.restcontroller;
 
-import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -112,25 +111,13 @@ public class TestcaseResultRestController {
     })
     @GetMapping("")
     public Page<TestcaseResultInfo> searchTestcaseResults(
-            @RequestParam(name = "id", required = false) List<String> ids,
-            TestcaseResultSearchFilter TestcaseResultSearchFilter,
+            TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter,
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
-
-        Page<TestcaseResultEntity> TestcaseResultEntities;
-        if (!TestcaseResultSearchFilter.isEmpty()
-                || !CollectionUtils.isEmpty(ids)) {
-            TestcaseResultEntities = testcaseResultService
-                    .searchTestcaseResults(
-                            ids,
-                            TestcaseResultSearchFilter,
-                            pageable,
-                            contextInfo);
-            return testcaseResultMapper.pageEntityToDto(TestcaseResultEntities);
-        }
-        return this.getTestcaseResults(pageable, contextInfo);
+        Page<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, pageable, contextInfo);
+        return testcaseResultMapper.pageEntityToDto(testcaseResultEntities);
     }
 
     /**

@@ -3,8 +3,10 @@ package com.argusoft.path.tht.testcasemanagement.restcontroller;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.DocumentMapper;
@@ -16,6 +18,8 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -80,18 +84,20 @@ public class DocumentRestController {
     }
 
 
-    @ApiOperation(value = "View a list of documents by refObjectUri and refId", response = DocumentInfo.class)
+
+    @ApiOperation(value = "View available Document with supplied id", response = DocumentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved documents by refObjectUri and refId"),
+            @ApiResponse(code = 200, message = "Successfully retrieved Document"),
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    @GetMapping
-    public List<DocumentInfo> getDocumentsByRefObjectUriAndRefObjectId(@RequestParam("refObjectUri") String refObjectUri,
-                                                                       @RequestParam("refId") String refId,
-                                                                       @RequestAttribute("contextInfo") ContextInfo contextInfo) {
-        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = documentService.getDocumentsByRefObjectUriAndRefObjectId(refObjectUri, refId, contextInfo);
-        return documentMapper.modelToDto(documentsByRefObjectUriAndRefObjectId);
+    @GetMapping("")
+    public Page<DocumentInfo> getSearchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter,
+                                                Pageable pageable,
+                                                @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException {
+        Page<DocumentEntity> documentBySearchFilter = documentService.searchDocument(exampleDocumentSearchFilter, pageable,contextInfo);
+        return documentMapper.pageEntityToDto(documentBySearchFilter);
     }
 
     @ApiOperation(value = "To change status of Document", response = DocumentInfo.class)

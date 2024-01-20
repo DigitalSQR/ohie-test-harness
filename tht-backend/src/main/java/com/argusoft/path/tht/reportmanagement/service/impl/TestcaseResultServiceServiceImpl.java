@@ -6,14 +6,13 @@
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
-import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -32,8 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -159,39 +158,23 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     @Override
     @Timed(name = "searchTestcaseResults")
     public Page<TestcaseResultEntity> searchTestcaseResults(
-            List<String> ids,
-            TestcaseResultSearchFilter testcaseResultSearchFilter,
+            TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException {
+            throws InvalidParameterException {
 
-        if (!CollectionUtils.isEmpty(ids)) {
-            return this.searchTestcaseResultsById(ids, pageable);
-        } else {
-            return this.searchTestcaseResults(testcaseResultSearchFilter, pageable);
-        }
+        Specification<TestcaseResultEntity> testcaseEntitySpecification = testcaseResultCriteriaSearchFilter.buildSpecification();
+        return testcaseResultRepository.findAll(testcaseEntitySpecification,pageable);
     }
 
-    private Page<TestcaseResultEntity> searchTestcaseResults(
-            TestcaseResultSearchFilter testcaseResultSearchFilter,
-            Pageable pageable)
-            throws OperationFailedException {
-
-        Page<TestcaseResultEntity> testcaseResults = testcaseResultRepository.advanceTestcaseResultSearch(
-                testcaseResultSearchFilter,
-                pageable);
-        return testcaseResults;
-    }
-
-    private Page<TestcaseResultEntity> searchTestcaseResultsById(
-            List<String> ids,
-            Pageable pageable) {
-
-        List<TestcaseResultEntity> testcaseResults
-                = testcaseResultRepository.findTestcaseResultsByIds(ids);
-        return new PageImpl<>(testcaseResults,
-                pageable,
-                testcaseResults.size());
+    @Override
+    @Timed(name = "searchTestcaseResults")
+    public List<TestcaseResultEntity> searchTestcaseResults(
+            TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
+        Specification<TestcaseResultEntity> testcaseResultEntitySpecification = testcaseResultCriteriaSearchFilter.buildSpecification();
+        return testcaseResultRepository.findAll(testcaseResultEntitySpecification);
     }
 
     /**
@@ -296,17 +279,12 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             VersionMismatchException {
         TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
 
-        TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
-                null, SearchType.CONTAINING,
-                null,
-                null,
-                TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
-                testRequestId,
-                null,
-                null,
-                null
-        );
-        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+        TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+        searchFilter.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+        searchFilter.setRefId(testRequestId);
+
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(searchFilter, contextInfo);
+
         if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED)) {
@@ -339,18 +317,12 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) {
             return;
         }
-        TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                testcaseResultEntity.getId()
-        );
-        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+
+        TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+        searchFilter.setParentTestcaseResultId(testcaseResultEntity.getId());
+
+
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(searchFilter, contextInfo);
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
             if (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) {
                 changeState(testcaseResult.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP, contextInfo);
@@ -366,18 +338,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             DoesNotExistException,
             DataValidationErrorException,
             VersionMismatchException {
-        TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                testcaseResultEntity.getId()
-        );
-        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+        TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+        searchFilter.setParentTestcaseResultId(testcaseResultEntity.getId());
+
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(searchFilter, contextInfo);
         if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) {

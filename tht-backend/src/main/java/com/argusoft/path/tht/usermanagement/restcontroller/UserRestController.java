@@ -10,7 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -224,25 +223,13 @@ public class UserRestController {
     })
     @GetMapping("")
     public Page<UserInfo> searchUsers(
-            @RequestParam(name = "id", required = false) List<String> ids,
-            UserSearchFilter userSearchFilter,
+            UserSearchCriteriaFilter userSearchFilter,
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
-
-        Page<UserEntity> userEntities;
-        if (!userSearchFilter.isEmpty()
-                || !CollectionUtils.isEmpty(ids)) {
-            userEntities = userService
-                    .searchUsers(
-                            ids,
-                            userSearchFilter,
-                            pageable,
-                            contextInfo);
-            return userMapper.pageEntityToDto(userEntities);
-        }
-        return this.getUsers(pageable, contextInfo);
+        Page<UserEntity> userEntities = this.userService.searchUsers(userSearchFilter, pageable, contextInfo);
+        return userMapper.pageEntityToDto(userEntities);
     }
 
     /**

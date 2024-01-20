@@ -9,6 +9,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEnti
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -22,13 +23,9 @@ import java.util.List;
  */
 @Repository
 public interface TestcaseOptionRepository
-        extends JpaRepository<TestcaseOptionEntity, String>, TestcaseOptionCustomRepository {
+        extends JpaRepository<TestcaseOptionEntity, String>, JpaSpecificationExecutor<TestcaseOptionEntity> {
 
     @Query("SELECT DISTINCT entity FROM TestcaseOptionEntity entity \n")
     public Page<TestcaseOptionEntity> findTestcaseOptions(Pageable pageable);
-
-    @Query("SELECT DISTINCT entity FROM TestcaseOptionEntity entity \n"
-            + " WHERE entity.id IN (:ids)")
-    public List<TestcaseOptionEntity> findTestcaseOptionsByIds(@Param("ids") List<String> ids);
 
 }

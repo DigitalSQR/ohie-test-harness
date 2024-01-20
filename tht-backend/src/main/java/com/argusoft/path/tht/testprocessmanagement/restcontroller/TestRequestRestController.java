@@ -9,7 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
-import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestSearchFilter;
+import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.mapper.TestRequestMapper;
@@ -109,20 +109,13 @@ public class TestRequestRestController {
     })
     @GetMapping("")
     public Page<TestRequestInfo> searchTestRequests(
-            @RequestParam(name = "id", required = false) List<String> ids,
-            TestRequestSearchFilter testRequestSearchFilter,
+            TestRequestCriteriaSearchFilter testRequestSearchFilter,
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException, DoesNotExistException {
 
-        Page<TestRequestEntity> testRequestEntities;
-        testRequestEntities = testRequestService
-                .searchTestRequests(
-                        ids,
-                        testRequestSearchFilter,
-                        pageable,
-                        contextInfo);
+        Page<TestRequestEntity> testRequestEntities = testRequestService.searchTestRequests(testRequestSearchFilter, pageable, contextInfo);
         return testRequestMapper.pageEntityToDto(testRequestEntities);
     }
 

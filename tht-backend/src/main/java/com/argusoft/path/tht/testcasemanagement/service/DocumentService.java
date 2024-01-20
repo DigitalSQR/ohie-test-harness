@@ -3,10 +3,14 @@ package com.argusoft.path.tht.testcasemanagement.service;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,28 +50,11 @@ public interface DocumentService {
      */
     public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException;
 
-    /**
-     * gets Document By associated fileId
-     *
-     * @param fileId      Id of file
-     * @param contextInfo ContextInfo
-     * @return DocumentEntity
-     * @throws DoesNotExistException when document does not exists with that associated file Id
-     */
-    public DocumentEntity getDocumentByFileId(String fileId, ContextInfo contextInfo) throws DoesNotExistException;
+
+    public Page<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException;
 
 
-    /**
-     * gets Document By RefObjectUri and RefObjectId
-     *
-     * @param refObjectUri RefObjectUri for that document should be fetched
-     * @param refObjectId  RefObjectId for that document should be fetched
-     * @param contextInfo  ContextInfo
-     * @return list of documentEntity
-     */
-    public List<DocumentEntity> getDocumentsByRefObjectUriAndRefObjectId(String refObjectUri,
-                                                                         String refObjectId,
-                                                                         ContextInfo contextInfo);
+    public List<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, ContextInfo contextInfo) throws InvalidParameterException;
 
 
     /**

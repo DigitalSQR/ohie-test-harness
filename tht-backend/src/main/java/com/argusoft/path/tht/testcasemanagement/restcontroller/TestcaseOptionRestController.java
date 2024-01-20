@@ -8,7 +8,7 @@ package com.argusoft.path.tht.testcasemanagement.restcontroller;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseOptionInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseOptionMapper;
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -111,24 +110,14 @@ public class TestcaseOptionRestController {
     @GetMapping("")
     public Page<TestcaseOptionInfo> searchTestcaseOptions(
             @RequestParam(name = "id", required = false) List<String> ids,
-            TestcaseOptionSearchFilter testcaseOptionSearchFilter,
+            TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
 
-        Page<TestcaseOptionEntity> testcaseOptionEntities;
-        if (!testcaseOptionSearchFilter.isEmpty()
-                || !CollectionUtils.isEmpty(ids)) {
-            testcaseOptionEntities = TestcaseOptionService
-                    .searchTestcaseOptions(
-                            ids,
-                            testcaseOptionSearchFilter,
-                            pageable,
-                            contextInfo);
-            return TestcaseOptionMapper.pageEntityToDto(testcaseOptionEntities);
-        }
-        return this.getTestcaseOptions(pageable, contextInfo);
+        Page<TestcaseOptionEntity> testcaseOptionEntities = TestcaseOptionService.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, pageable, contextInfo);
+        return TestcaseOptionMapper.pageEntityToDto(testcaseOptionEntities);
     }
 
     /**

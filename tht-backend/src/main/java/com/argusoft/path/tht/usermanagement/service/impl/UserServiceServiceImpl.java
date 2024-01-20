@@ -11,8 +11,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
-import com.argusoft.path.tht.usermanagement.filter.RoleSearchFilter;
-import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
+import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntity;
@@ -28,11 +28,10 @@ import io.astefanutti.metrics.aspectj.Metrics;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -209,39 +208,26 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     @Timed(name = "searchUsers")
     public Page<UserEntity> searchUsers(
-            List<String> ids,
-            UserSearchFilter userSearchFilter,
+            UserSearchCriteriaFilter userSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException,
+            throws
             InvalidParameterException {
-        if (!CollectionUtils.isEmpty(ids)) {
-            return this.searchUsersById(ids, pageable);
-        } else {
-            return this.searchUsers(userSearchFilter, pageable);
-        }
+        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildSpecification();
+        return this.userRepository.findAll(userEntitySpecification,pageable);
     }
 
-    public Page<UserEntity> searchUsers(
-            UserSearchFilter userSearchFilter,
-            Pageable pageable)
-            throws OperationFailedException {
-
-        Page<UserEntity> users = userRepository.advanceUserSearch(
-                userSearchFilter,
-                pageable);
-        return users;
+    @Override
+    @Timed(name = "searchUsers")
+    public List<UserEntity> searchUsers(
+            UserSearchCriteriaFilter userSearchFilter,
+            ContextInfo contextInfo)
+            throws
+            InvalidParameterException {
+        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildSpecification();
+        return this.userRepository.findAll(userEntitySpecification);
     }
 
-    public Page<UserEntity> searchUsersById(
-            List<String> ids,
-            Pageable pageable) {
-        List<UserEntity> users
-                = userRepository.findUsersByIds(ids);
-        return new PageImpl<>(users,
-                pageable,
-                users.size());
-    }
 
     /**
      * {@inheritdoc}
@@ -325,38 +311,24 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     @Timed(name = "searchRoles")
     public Page<RoleEntity> searchRoles(
-            List<String> ids,
-            RoleSearchFilter roleSearchFilter,
+            RoleSearchCriteriaFilter roleSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException,
+            throws
             InvalidParameterException {
-        if (!CollectionUtils.isEmpty(ids)) {
-            return this.searchRolesById(ids, pageable);
-        } else {
-            return this.searchRoles(roleSearchFilter, pageable);
-        }
+        Specification<RoleEntity> roleEntitySpecification = roleSearchFilter.buildSpecification();
+        return roleRepository.findAll(roleEntitySpecification,pageable);
     }
 
-    public Page<RoleEntity> searchRoles(
-            RoleSearchFilter roleSearchFilter,
-            Pageable pageable)
-            throws OperationFailedException {
-
-        Page<RoleEntity> roles = roleRepository.advanceRoleSearch(
-                roleSearchFilter,
-                pageable);
-        return roles;
-    }
-
-    public Page<RoleEntity> searchRolesById(
-            List<String> ids,
-            Pageable pageable) {
-        List<RoleEntity> roles
-                = roleRepository.findRolesByIds(ids);
-        return new PageImpl<>(roles,
-                pageable,
-                roles.size());
+    @Override
+    @Timed(name = "searchRoles")
+    public List<RoleEntity> searchRoles(
+            RoleSearchCriteriaFilter roleSearchFilter,
+            ContextInfo contextInfo)
+            throws
+            InvalidParameterException {
+        Specification<RoleEntity> roleEntitySpecification = roleSearchFilter.buildSpecification();
+        return roleRepository.findAll(roleEntitySpecification);
     }
 
     /**

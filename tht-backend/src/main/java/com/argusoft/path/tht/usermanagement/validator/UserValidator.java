@@ -10,7 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
-import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -90,11 +90,11 @@ public class UserValidator {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || userEntity.getId() != null)
                 && userEntity.getEmail() != null) {
-            UserSearchFilter searchFilter = new UserSearchFilter();
+            UserSearchCriteriaFilter searchFilter = new UserSearchCriteriaFilter();
             searchFilter.setEmail(userEntity.getEmail());
+
             Page<UserEntity> userEntities = userService
                     .searchUsers(
-                            null,
                             searchFilter,
                             Constant.TWO_VALUE_PAGE,
                             contextInfo);

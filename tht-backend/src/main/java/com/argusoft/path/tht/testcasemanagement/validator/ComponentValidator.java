@@ -9,12 +9,11 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
-import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -213,15 +212,11 @@ public class ComponentValidator {
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || componentEntity.getId() != null)
-                && StringUtils.isEmpty(componentEntity.getName())) {
-            ComponentSearchFilter searchFilter = new ComponentSearchFilter();
-            searchFilter.setName(componentEntity.getName());
-            Page<ComponentEntity> componentEntities = componentService
-                    .searchComponents(
-                            null,
-                            searchFilter,
-                            Constant.TWO_VALUE_PAGE,
-                            contextInfo);
+                && StringUtils.hasLength(componentEntity.getName())) {
+
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+            componentCriteriaSearchFilter.setName(componentEntity.getName());
+            List<ComponentEntity> componentEntities = componentService.searchComponents(componentCriteriaSearchFilter, contextInfo);
 
             // if info found with same name than and not current id
             boolean flag

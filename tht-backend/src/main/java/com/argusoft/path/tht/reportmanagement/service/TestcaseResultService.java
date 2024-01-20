@@ -5,7 +5,7 @@
  */
 package com.argusoft.path.tht.reportmanagement.service;
 
-import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
@@ -86,7 +86,7 @@ public interface TestcaseResultService {
      * Retrieves a list of TestcaseResults corresponding to the given TestcaseResult Name.The
      * returned list may be in any order with unique set.
      *
-     * @param ids                        list of ids to retrieve
+     *
      * @param testcaseResultSearchFilter
      * @param pageable                   Contains Index number of the Page, Max size of the single
      *                                   page,Name of the field for sorting and sortDirection sorting direction
@@ -96,9 +96,26 @@ public interface TestcaseResultService {
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request
      */
-    public Page<TestcaseResultEntity> searchTestcaseResults(List<String> ids,
-                                                            TestcaseResultSearchFilter testcaseResultSearchFilter,
+    public Page<TestcaseResultEntity> searchTestcaseResults(TestcaseResultCriteriaSearchFilter testcaseResultSearchFilter,
                                                             Pageable pageable,
+                                                            ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException;
+
+
+    /**
+     * Retrieves a list of TestcaseResults corresponding to the given TestcaseResult Name.The
+     * returned list may be in any order with unique set.
+     *
+     *
+     * @param testcaseResultSearchFilter
+     * @param contextInfo                information containing the principalId and locale
+     *                                   information about the caller of service operation
+     * @return a list of TestcaseResult name start with given TestcaseResultName found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     */
+    public List<TestcaseResultEntity> searchTestcaseResults(TestcaseResultCriteriaSearchFilter testcaseResultSearchFilter,
                                                             ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;

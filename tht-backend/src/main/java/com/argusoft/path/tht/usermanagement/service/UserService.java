@@ -8,8 +8,8 @@ package com.argusoft.path.tht.usermanagement.service;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.usermanagement.filter.RoleSearchFilter;
-import com.argusoft.path.tht.usermanagement.filter.UserSearchFilter;
+import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
+import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -81,7 +81,7 @@ public interface UserService {
      * Retrieves a list of Users corresponding to the given User Name.The
      * returned list may be in any order with unique set.
      *
-     * @param ids              list of ids to retrieve
+     *
      * @param userSearchFilter
      * @param pageable         Contains Index number of the Page, Max size of the single
      *                         page,Name of the field for sorting and sortDirection sorting direction
@@ -93,9 +93,28 @@ public interface UserService {
      * @throws OperationFailedException  unable to complete request
      * @throws PermissionDeniedException an authorization failure occurred
      */
-    public Page<UserEntity> searchUsers(List<String> ids,
-                                        UserSearchFilter userSearchFilter,
+    public Page<UserEntity> searchUsers(UserSearchCriteriaFilter userSearchFilter,
                                         Pageable pageable,
+                                        ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException;
+
+
+    /**
+     * Retrieves a list of Users corresponding to the given User Name.The
+     * returned list may be in any order with unique set.
+     *
+     *
+     * @param userSearchFilter
+     *
+     * @param contextInfo      information containing the principalId and locale
+     *                         information about the caller of service operation
+     * @return a list of User name start with given UserName found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     *
+     */
+    public List<UserEntity> searchUsers(UserSearchCriteriaFilter userSearchFilter,
                                         ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
@@ -171,9 +190,13 @@ public interface UserService {
             DoesNotExistException;
 
 
-    public Page<RoleEntity> searchRoles(List<String> ids,
-                                        RoleSearchFilter roleSearchFilter,
+    public Page<RoleEntity> searchRoles(RoleSearchCriteriaFilter roleSearchFilter,
                                         Pageable pageable,
+                                        ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException;
+
+    public List<RoleEntity> searchRoles(RoleSearchCriteriaFilter roleSearchFilter,
                                         ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;

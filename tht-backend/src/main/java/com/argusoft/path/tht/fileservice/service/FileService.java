@@ -24,6 +24,11 @@ public class FileService {
 
     static String RESOURCE_FOLDER;
 
+    @Value("${tht-file.location}")
+    public void setResourceFolder(String value) {
+        RESOURCE_FOLDER = value;
+    }
+
     public static FileDetails storeFile(MultipartFile multipartFile,
                                         MultipartFileTypeTesterPredicate multipartFilePredicateToValidateFile)
             throws IOException, InvalidFileTypeException {
@@ -109,10 +114,6 @@ public class FileService {
         }
     }
 
-    @Value("${tht-file.location}")
-    public void setResourceFolder(String value) {
-        RESOURCE_FOLDER = value;
-    }
 
 }
 

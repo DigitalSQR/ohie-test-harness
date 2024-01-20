@@ -8,11 +8,13 @@ import com.argusoft.path.tht.fileservice.service.FileService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.DocumentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.DocumentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
@@ -21,6 +23,9 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,14 +81,18 @@ public class DocumentServiceImpl implements DocumentService {
         UserEntity user = userService.getPrincipalUser(contextInfo);
         documentEntity.setOwner(user);
 
-        setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
+        try {
+            setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
+        } catch (InvalidParameterException e) {
+            throw new RuntimeException(e);
+        }
 
         DocumentEntity document = documentRepository.save(documentEntity);
         return document;
     }
 
-    private void setOrderBasedOnRefObjIdAndUri(DocumentEntity documentEntity, ContextInfo contextInfo) {
-        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = this.getDocumentsByRefObjectUriAndRefObjectId(documentEntity.getRefObjUri(), documentEntity.getRefId(), contextInfo);
+    private void setOrderBasedOnRefObjIdAndUri(DocumentEntity documentEntity, ContextInfo contextInfo) throws InvalidParameterException {
+        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = this.getDocumentsByRefObjectUriAndRefObjectId(documentEntity.getRefId(), documentEntity.getRefObjUri(),contextInfo);
         int size = documentsByRefObjectUriAndRefObjectId.size();
         documentEntity.setOrder(size + 1);
     }
@@ -120,14 +129,15 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity getDocumentByFileId(String fileId, ContextInfo contextInfo) throws DoesNotExistException {
-        Optional<DocumentEntity> documentById = documentRepository.findDocumentByFileId(fileId);
-        return documentById.orElseThrow(() -> new DoesNotExistException("DocumentEntity does not found with fileId : " + fileId));
+    public Page<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException {
+        Specification<DocumentEntity> documentEntityExample = exampleDocumentSearchFilter.buildSpecification();
+        return documentRepository.findAll(documentEntityExample,pageable);
     }
 
     @Override
-    public List<DocumentEntity> getDocumentsByRefObjectUriAndRefObjectId(String refObjectUri, String refObjectId, ContextInfo contextInfo) {
-        return documentRepository.findDocumentByRefObjectUriAndId(refObjectUri, refObjectId);
+    public List<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, ContextInfo contextInfo) throws InvalidParameterException {
+        Specification<DocumentEntity> documentEntityExample = exampleDocumentSearchFilter.buildSpecification();
+        return documentRepository.findAll(documentEntityExample);
     }
 
     @Override
@@ -139,9 +149,12 @@ public class DocumentServiceImpl implements DocumentService {
         String refObjUri = document.getRefObjUri();
         String refId = document.getRefId();
 
-        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId
-                = this.getDocumentsByRefObjectUriAndRefObjectId(refObjUri, refId, contextInfo);
-
+        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = null;
+        try {
+            documentsByRefObjectUriAndRefObjectId = getDocumentsByRefObjectUriAndRefObjectId(refObjUri, refId, contextInfo);
+        } catch (InvalidParameterException e) {
+            //TODO add logger
+        }
 
         TreeMap<Integer, DocumentEntity> documentEntityTreeMap = new TreeMap<>();
         for (int i = 1; i <= documentsByRefObjectUriAndRefObjectId.size(); i++) {
@@ -169,6 +182,14 @@ public class DocumentServiceImpl implements DocumentService {
         return document;
     }
 
+    private List<DocumentEntity> getDocumentsByRefObjectUriAndRefObjectId(String refObjUri, String refId, ContextInfo contextInfo) throws InvalidParameterException {
+        DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
+        documentCriteriaSearchFilter.setRefObjUri(refObjUri);
+        documentCriteriaSearchFilter.setRefId(refId);
+
+        return this.searchDocument(documentCriteriaSearchFilter, contextInfo);
+    }
+
     @Override
     public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
 
@@ -189,10 +210,26 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public ByteArrayResource getByteArrayResourceByFileId(String fileId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
-        DocumentEntity documentByFileId = this.getDocumentByFileId(fileId, contextInfo);
+    public ByteArrayResource getByteArrayResourceByFileId(String fileId, ContextInfo contextInfo) throws OperationFailedException {
+        List<DocumentEntity> documentEntities = new ArrayList<>();
+        try {
+            documentEntities = getDocumentsByFileId(fileId, contextInfo);
+        } catch (InvalidParameterException e) {
+            throw new OperationFailedException("Error fetching document by fileId",e);
+            //ADD LOGGER
+        }
+
+        DocumentEntity documentByFileId = documentEntities.get(0);
         String documentFileId = documentByFileId.getFileId();
         byte[] fileContentByFilePathAndFileName = getFileContentByFileId(documentFileId);
         return new ByteArrayResource(fileContentByFilePathAndFileName);
+    }
+
+    private List<DocumentEntity> getDocumentsByFileId(String fileId, ContextInfo contextInfo) throws InvalidParameterException {
+        DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
+        documentCriteriaSearchFilter.setFileId(fileId);
+        List<DocumentEntity> documentEntities;
+        documentEntities = this.searchDocument(documentCriteriaSearchFilter, contextInfo);
+        return documentEntities;
     }
 }

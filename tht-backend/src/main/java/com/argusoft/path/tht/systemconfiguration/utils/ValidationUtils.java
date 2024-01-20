@@ -667,6 +667,26 @@ public final class ValidationUtils {
         );
     }
 
+    public static boolean arePairsNullConsistent(Object... variables) {
+        boolean hasNonNull = false;
+        boolean hasNull = false;
+
+        for (Object variableValue : variables) {
+            if (variableValue != null) {
+                hasNonNull = true;
+            } else {
+                hasNull = true;
+            }
+
+            if (hasNonNull && hasNull) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
     public static <T> boolean isAnyNull(T... objects) {
         for (T obj : objects) {
             if (obj == null) {

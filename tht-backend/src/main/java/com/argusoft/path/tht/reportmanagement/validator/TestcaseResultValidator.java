@@ -1,7 +1,7 @@
 package com.argusoft.path.tht.reportmanagement.validator;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
-import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
@@ -268,14 +268,13 @@ public class TestcaseResultValidator {
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || testcaseResultEntity.getId() != null)) {
-            TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter();
+            TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
             searchFilter.setTestRequestId(testcaseResultEntity.getTestRequestId());
             searchFilter.setRefId(testcaseResultEntity.getRefId());
             searchFilter.setRefObjUri(testcaseResultEntity.getRefObjUri());
-            searchFilter.setIsManual(Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual()));
+            searchFilter.setManual(Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual()));
             Page<TestcaseResultEntity> testcaseResultEntities = testcaseResultService
                     .searchTestcaseResults(
-                            null,
                             searchFilter,
                             Constant.TWO_VALUE_PAGE,
                             contextInfo);

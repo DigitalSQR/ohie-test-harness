@@ -12,7 +12,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.SpecificationSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.SpecificationRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
@@ -23,10 +23,9 @@ import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -43,7 +42,7 @@ import java.util.UUID;
 public class SpecificationServiceServiceImpl implements SpecificationService {
 
     @Autowired
-    SpecificationRepository SpecificationRepository;
+    SpecificationRepository specificationRepository;
 
     @Autowired
     TestcaseService testcaseService;
@@ -74,7 +73,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         if (StringUtils.isEmpty(specificationEntity.getId())) {
             specificationEntity.setId(UUID.randomUUID().toString());
         }
-        specificationEntity = SpecificationRepository.save(specificationEntity);
+        specificationEntity = specificationRepository.save(specificationEntity);
         return specificationEntity;
     }
 
@@ -100,8 +99,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
                 contextInfo);
 
         Optional<SpecificationEntity> specificationOptional
-                = SpecificationRepository.findById(specificationEntity.getId());
-        specificationEntity = SpecificationRepository.save(specificationEntity);
+                = specificationRepository.findById(specificationEntity.getId());
+        specificationEntity = specificationRepository.save(specificationEntity);
         return specificationEntity;
     }
 
@@ -113,40 +112,27 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
     @Override
     @Timed(name = "searchSpecifications")
     public Page<SpecificationEntity> searchSpecifications(
-            List<String> ids,
-            SpecificationSearchFilter specificationSearchFilter,
+            SpecificationCriteriaSearchFilter specificationSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException {
+            throws InvalidParameterException {
 
-        if (!CollectionUtils.isEmpty(ids)) {
-            return this.searchSpecificationsById(ids, pageable);
-        } else {
-            return this.searchSpecifications(specificationSearchFilter, pageable);
-        }
+        Specification<SpecificationEntity> specificationEntitySpecification = specificationSearchFilter.buildSpecification();
+        return specificationRepository.findAll(specificationEntitySpecification,pageable);
     }
 
-    private Page<SpecificationEntity> searchSpecifications(
-            SpecificationSearchFilter specificationSearchFilter,
-            Pageable pageable)
-            throws OperationFailedException {
 
-        Page<SpecificationEntity> Specifications = SpecificationRepository.advanceSpecificationSearch(
-                specificationSearchFilter,
-                pageable);
-        return Specifications;
+    @Override
+    @Timed(name = "searchSpecifications")
+    public List<SpecificationEntity> searchSpecifications(
+            SpecificationCriteriaSearchFilter specificationSearchFilter,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
+
+        Specification<SpecificationEntity> specificationEntitySpecification = specificationSearchFilter.buildSpecification();
+        return specificationRepository.findAll(specificationEntitySpecification);
     }
 
-    private Page<SpecificationEntity> searchSpecificationsById(
-            List<String> ids,
-            Pageable pageable) {
-
-        List<SpecificationEntity> specifications
-                = SpecificationRepository.findSpecificationsByIds(ids);
-        return new PageImpl<>(specifications,
-                pageable,
-                specifications.size());
-    }
 
     /**
      * {@inheritdoc}
@@ -163,7 +149,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             throw new InvalidParameterException("SpecificationId is missing");
         }
         Optional<SpecificationEntity> SpecificationOptional
-                = SpecificationRepository.findById(specificationId);
+                = specificationRepository.findById(specificationId);
         if (!SpecificationOptional.isPresent()) {
             throw new DoesNotExistException("Specification by id :"
                     + specificationId
@@ -185,7 +171,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         if (pageable == null) {
             throw new InvalidParameterException("pageble is missing");
         }
-        Page<SpecificationEntity> specifications = SpecificationRepository.findSpecifications(pageable);
+        Page<SpecificationEntity> specifications = specificationRepository.findSpecifications(pageable);
         return specifications;
     }
 

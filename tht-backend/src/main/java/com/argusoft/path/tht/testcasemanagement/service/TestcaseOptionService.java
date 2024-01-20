@@ -8,7 +8,7 @@ package com.argusoft.path.tht.testcasemanagement.service;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,8 +64,8 @@ public interface TestcaseOptionService {
      * Retrieves a list of TestcaseOptions corresponding to the given TestcaseOption Name.The
      * returned list may be in any order with unique set.
      *
-     * @param ids                        list of ids to retrieve
-     * @param testcaseOptionSearchFilter
+     *
+     * @param testcaseOptionCriteriaSearchFilter
      * @param pageable                   Contains Index number of the Page, Max size of the single
      *                                   page,Name of the field for sorting and sortDirection sorting direction
      * @param contextInfo                information containing the principalId and locale
@@ -74,9 +74,26 @@ public interface TestcaseOptionService {
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request
      */
-    public Page<TestcaseOptionEntity> searchTestcaseOptions(List<String> ids,
-                                                            TestcaseOptionSearchFilter testcaseOptionSearchFilter,
+    public Page<TestcaseOptionEntity> searchTestcaseOptions(TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
                                                             Pageable pageable,
+                                                            ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException;
+
+    /**
+     * Retrieves a list of TestcaseOptions corresponding to the given TestcaseOption Name.The
+     * returned list may be in any order with unique set.
+     *
+     *
+     * @param testcaseOptionCriteriaSearchFilter
+     *
+     * @param contextInfo                information containing the principalId and locale
+     *                                   information about the caller of service operation
+     * @return a list of TestcaseOption name start with given TestcaseOptionName found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     */
+    public List<TestcaseOptionEntity> searchTestcaseOptions(TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
                                                             ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;

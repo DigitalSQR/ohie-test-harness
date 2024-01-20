@@ -54,6 +54,13 @@ logging:
     org.springframework.web: INFO
     com.argusoft.path.tht: INFO
     org.flywaydb.core: INFO
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
 
 exception:
   stack-trace:

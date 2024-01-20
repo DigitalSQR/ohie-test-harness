@@ -12,7 +12,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.ComponentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
@@ -22,10 +22,9 @@ import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -42,7 +41,7 @@ import java.util.UUID;
 public class ComponentServiceServiceImpl implements ComponentService {
 
     @Autowired
-    ComponentRepository ComponentRepository;
+    ComponentRepository componentRepository;
 
     @Autowired
     private SpecificationService specificationService;
@@ -69,7 +68,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
         if (StringUtils.isEmpty(componentEntity.getId())) {
             componentEntity.setId(UUID.randomUUID().toString());
         }
-        componentEntity = ComponentRepository.save(componentEntity);
+        componentEntity = componentRepository.save(componentEntity);
         return componentEntity;
     }
 
@@ -93,8 +92,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
                 contextInfo);
 
         Optional<ComponentEntity> componentOptional
-                = ComponentRepository.findById(componentEntity.getId());
-        componentEntity = ComponentRepository.save(componentEntity);
+                = componentRepository.findById(componentEntity.getId());
+        componentEntity = componentRepository.save(componentEntity);
         return componentEntity;
     }
 
@@ -106,39 +105,22 @@ public class ComponentServiceServiceImpl implements ComponentService {
     @Override
     @Timed(name = "searchComponents")
     public Page<ComponentEntity> searchComponents(
-            List<String> ids,
-            ComponentSearchFilter componentSearchFilter,
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException {
-
-        if (!CollectionUtils.isEmpty(ids)) {
-            return this.searchComponentsById(ids, pageable);
-        } else {
-            return this.searchComponents(componentSearchFilter, pageable);
-        }
+            throws InvalidParameterException {
+        Specification<ComponentEntity> componentEntitySpecification = componentCriteriaSearchFilter.buildSpecification();
+        return this.componentRepository.findAll(componentEntitySpecification,pageable);
     }
 
-    private Page<ComponentEntity> searchComponents(
-            ComponentSearchFilter componentSearchFilter,
-            Pageable pageable)
-            throws OperationFailedException {
-
-        Page<ComponentEntity> Components = ComponentRepository.advanceComponentSearch(
-                componentSearchFilter,
-                pageable);
-        return Components;
-    }
-
-    private Page<ComponentEntity> searchComponentsById(
-            List<String> ids,
-            Pageable pageable) {
-
-        List<ComponentEntity> components
-                = ComponentRepository.findComponentsByIds(ids);
-        return new PageImpl<>(components,
-                pageable,
-                components.size());
+    @Override
+    @Timed(name = "searchComponents")
+    public List<ComponentEntity> searchComponents(
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
+        Specification<ComponentEntity> componentEntitySpecification = componentCriteriaSearchFilter.buildSpecification();
+        return this.componentRepository.findAll(componentEntitySpecification);
     }
 
     /**
@@ -156,7 +138,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             throw new InvalidParameterException("ComponentId is missing");
         }
         Optional<ComponentEntity> ComponentOptional
-                = ComponentRepository.findById(componentId);
+                = componentRepository.findById(componentId);
         if (!ComponentOptional.isPresent()) {
             throw new DoesNotExistException("Component by id :"
                     + componentId
@@ -178,7 +160,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
         if (pageable == null) {
             throw new InvalidParameterException("pageble is missing");
         }
-        Page<ComponentEntity> components = ComponentRepository.findComponents(pageable);
+        Page<ComponentEntity> components = componentRepository.findComponents(pageable);
         return components;
     }
 

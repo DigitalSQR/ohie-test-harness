@@ -8,7 +8,7 @@ package com.argusoft.path.tht.testcasemanagement.restcontroller;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.TestcaseSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseMapper;
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,10 +36,10 @@ import java.util.List;
 public class TestcaseRestController {
 
     @Autowired
-    private TestcaseService TestcaseService;
+    private TestcaseService testcaseService;
 
     @Autowired
-    private TestcaseMapper TestcaseMapper;
+    private TestcaseMapper testcaseMapper;
 
     /**
      * We can expose this API in future if needed.
@@ -63,9 +62,9 @@ public class TestcaseRestController {
             InvalidParameterException,
             DataValidationErrorException {
 
-        TestcaseEntity testcaseEntity = TestcaseMapper.dtoToModel(testcaseInfo);
-        testcaseEntity = TestcaseService.createTestcase(testcaseEntity, contextInfo);
-        return TestcaseMapper.modelToDto(testcaseEntity);
+        TestcaseEntity testcaseEntity = testcaseMapper.dtoToModel(testcaseInfo);
+        testcaseEntity = testcaseService.createTestcase(testcaseEntity, contextInfo);
+        return testcaseMapper.modelToDto(testcaseEntity);
 
     }
 
@@ -92,9 +91,9 @@ public class TestcaseRestController {
             VersionMismatchException,
             DataValidationErrorException {
 
-        TestcaseEntity testcaseEntity = TestcaseMapper.dtoToModel(testcaseInfo);
-        testcaseEntity = TestcaseService.updateTestcase(testcaseEntity, contextInfo);
-        return TestcaseMapper.modelToDto(testcaseEntity);
+        TestcaseEntity testcaseEntity = testcaseMapper.dtoToModel(testcaseInfo);
+        testcaseEntity = testcaseService.updateTestcase(testcaseEntity, contextInfo);
+        return testcaseMapper.modelToDto(testcaseEntity);
     }
 
     /**
@@ -111,25 +110,14 @@ public class TestcaseRestController {
     })
     @GetMapping("")
     public Page<TestcaseInfo> searchTestcases(
-            @RequestParam(name = "id", required = false) List<String> ids,
-            TestcaseSearchFilter testcaseSearchFilter,
+            TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter,
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
 
-        Page<TestcaseEntity> testcaseEntities;
-        if (!testcaseSearchFilter.isEmpty()
-                || !CollectionUtils.isEmpty(ids)) {
-            testcaseEntities = TestcaseService
-                    .searchTestcases(
-                            ids,
-                            testcaseSearchFilter,
-                            pageable,
-                            contextInfo);
-            return TestcaseMapper.pageEntityToDto(testcaseEntities);
-        }
-        return this.getTestcases(pageable, contextInfo);
+        Page<TestcaseEntity> testcaseEntities = testcaseService.searchTestcases(testcaseCriteriaSearchFilter, pageable, contextInfo);
+        return testcaseMapper.pageEntityToDto(testcaseEntities);
     }
 
     /**
@@ -151,8 +139,8 @@ public class TestcaseRestController {
             throws DoesNotExistException,
             InvalidParameterException {
 
-        TestcaseEntity testcaseById = TestcaseService.getTestcaseById(testcaseId, contextInfo);
-        return TestcaseMapper.modelToDto(testcaseById);
+        TestcaseEntity testcaseById = testcaseService.getTestcaseById(testcaseId, contextInfo);
+        return testcaseMapper.modelToDto(testcaseById);
     }
 
     /**
@@ -164,8 +152,8 @@ public class TestcaseRestController {
             Pageable pageable,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Page<TestcaseEntity> testcases = TestcaseService.getTestcases(pageable, contextInfo);
-        return TestcaseMapper.pageEntityToDto(testcases);
+        Page<TestcaseEntity> testcases = testcaseService.getTestcases(pageable, contextInfo);
+        return testcaseMapper.pageEntityToDto(testcases);
     }
 
     /**
@@ -185,8 +173,8 @@ public class TestcaseRestController {
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        TestcaseEntity testcaseEntity = TestcaseMapper.dtoToModel(testcaseInfo);
-        return TestcaseService
+        TestcaseEntity testcaseEntity = testcaseMapper.dtoToModel(testcaseInfo);
+        return testcaseService
                 .validateTestcase(validationTypeKey, testcaseEntity, contextInfo);
     }
 
