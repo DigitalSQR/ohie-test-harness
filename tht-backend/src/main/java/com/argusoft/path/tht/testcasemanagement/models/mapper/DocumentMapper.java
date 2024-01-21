@@ -4,6 +4,7 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -20,32 +21,15 @@ public interface DocumentMapper {
 
     DocumentMapper INSTANCE = Mappers.getMapper(DocumentMapper.class);
 
-    @Mapping(source = "owner", target = "ownerId", qualifiedByName = "setToOwnerId")
+    @Mapping(source = "owner.id", target = "ownerId")
     DocumentInfo modelToDto(DocumentEntity componentEntity);
 
-    @Mapping(source = "ownerId", target = "owner", qualifiedByName = "setToOwner")
+    @InheritInverseConfiguration
     DocumentEntity dtoToModel(DocumentInfo componentEntity);
 
     List<DocumentEntity> dtoToModel(List<DocumentInfo> documentInfos);
 
     List<DocumentInfo> modelToDto(List<DocumentEntity> documentEntities);
-
-
-    @Named("setToOwnerId")
-    default String setToOwnerId(UserEntity owner) {
-        if (owner == null) return null;
-        return owner.getId();
-    }
-
-    @Named("setToOwner")
-    default UserEntity setToOwner(String ownerId) {
-        if (StringUtils.isEmpty(ownerId)) {
-            return null;
-        }
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(ownerId);
-        return userEntity;
-    }
 
     default Page<DocumentInfo> pageEntityToDto(Page<DocumentEntity> page) {
         List<DocumentEntity> documentEntities = page.getContent();

@@ -24,9 +24,9 @@ public interface TestcaseResultMapper {
 
     TestcaseResultMapper INSTANCE = Mappers.getMapper(TestcaseResultMapper.class);
 
-    @Mapping(source = "tester", target = "testerId")
-    @Mapping(source = "testcaseOption", target = "testcaseOptionId")
-    @Mapping(source = "parentTestcaseResult", target = "parentTestcaseResultId")
+    @Mapping(source = "tester.id", target = "testerId")
+    @Mapping(source = "testcaseOption.id", target = "testcaseOptionId")
+    @Mapping(source = "parentTestcaseResult.id", target = "parentTestcaseResultId")
     TestcaseResultInfo modelToDto(TestcaseResultEntity testcaseResultEntity);
 
     @InheritInverseConfiguration
@@ -43,46 +43,4 @@ public interface TestcaseResultMapper {
         return new PageImpl<>(testcaseResultDtoList, page.getPageable(), page.getTotalElements());
     }
 
-    default String setToTesterId(UserEntity userEntity) {
-        if (userEntity == null) return null;
-        return userEntity.getId();
-    }
-
-    default UserEntity setToTester(String testerId) {
-        if (StringUtils.isEmpty(testerId)) {
-            return null;
-        }
-        UserEntity userEntity = new UserEntity();
-        userEntity.setId(testerId);
-        return userEntity;
-    }
-
-    default String setToTestcaseOptionId(TestcaseOptionEntity testcaseOptionEntity) {
-        if (testcaseOptionEntity == null) return null;
-        return testcaseOptionEntity.getId();
-    }
-
-    default TestcaseOptionEntity setToTestcaseOption(String testcaseOptionId) {
-        if (StringUtils.isEmpty(testcaseOptionId)) {
-            return null;
-        }
-        TestcaseOptionEntity testcaseOptionEntity = new TestcaseOptionEntity();
-        testcaseOptionEntity.setId(testcaseOptionId);
-        return testcaseOptionEntity;
-    }
-
-
-    default String setToParentTestcaseResultId(TestcaseResultEntity parentTestcaseResult) {
-        if (parentTestcaseResult == null) return null;
-        return parentTestcaseResult.getId();
-    }
-
-    default TestcaseResultEntity setToParentTestcaseResult(String parentTestcaseResultId) {
-        if (StringUtils.isEmpty(parentTestcaseResultId)) {
-            return null;
-        }
-        TestcaseResultEntity testcaseOptionEntity = new TestcaseResultEntity();
-        testcaseOptionEntity.setId(parentTestcaseResultId);
-        return testcaseOptionEntity;
-    }
 }
