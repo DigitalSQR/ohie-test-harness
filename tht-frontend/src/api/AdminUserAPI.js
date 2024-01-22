@@ -49,15 +49,13 @@ export const AdminUserAPI = {
     }
   },
 
-  fetchAllUsers: async function (sortFieldName="createdAt", sortDirection="desc", currentPage, pageSize) {
+  fetchAllUsers: async function (sortFieldName="createdAt", sortDirection="desc") {
     try {
       const response = await api.request({
         url: `/user`,
         method: "GET",
         params: {
-          sort: `${sortFieldName},${sortDirection}`,
-          page:currentPage,
-          size:pageSize
+          sort: `${sortFieldName},${sortDirection}`
         },
       });
       return response.data;

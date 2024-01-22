@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Pagination } from "@mui/material";
 import { Button, Modal } from "antd";
 import sortIcon from "../../../styles/images/sort-icon.png";
+
 const AdminUsers = () => {
   const navigate = useNavigate();
   const [adminUsers, setAdminUsers] = useState([]);
@@ -19,11 +20,12 @@ const AdminUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [currentPageUsers, setCurrentPageUsers] = useState([]);
 
   const handleOk = () => {
     AdminUserAPI.updateUserState(deleteUserId, "user.status.inactive")
       .then(() => {
-        getAllUsers(sortFieldName, sortDirection,currentPage);
+        getAllUsers();
         setIsModalOpen(false);
       })
       .catch((error) => {
@@ -31,33 +33,31 @@ const AdminUsers = () => {
         setIsModalOpen(false);
       });
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  useEffect(() => {
-    getAllUsers(sortFieldName, sortDirection,currentPage);
-  }, []);
 
-  const getAllUsers = (sortFieldName,sortDirection,currentPage) => {
+  useEffect(() => {
+    getAllUsers();
+  }, [currentPage, pageSize, sortFieldName, sortDirection]);
+
+  const getAllUsers = () => {
     AdminUserAPI.fetchAllUsers(
       sortFieldName,
-      sortDirection[sortFieldName],
-      currentPage-1,
-      pageSize
-    )
-      .then((data) => {
-        const activeUsers = data.content
-          .filter((user) => user.state !== "user.status.inactive")
-          .map((user) => ({
-            ...user,
-            roleIds: [user.roleIds[0].slice(5)],
-          }));
-        setAdminUsers(activeUsers);
-        setTotalPages(data.totalPages)
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      sortDirection[sortFieldName]
+    ).then((data) => {
+      const activeUsers = data.content.filter(
+        (user) => user?.state !== "user.status.inactive"
+      );
+      setTotalPages(Math.ceil(activeUsers.length / pageSize));
+      
+      setAdminUsers(activeUsers);
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const activeUsersSlice = activeUsers.slice(startIndex, endIndex);
+      setCurrentPageUsers(activeUsersSlice);
+    });
   };
 
   const handleEdit = (userId) => {
@@ -68,19 +68,20 @@ const AdminUsers = () => {
     setIsModalOpen(true);
     setDeleteUserId(userId);
   };
+
   const handleSort = (sortFieldName) => {
     setSortFieldName(sortFieldName);
     const newSortDirection = { ...sortDirection };
     newSortDirection[sortFieldName] =
       sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
-    getAllUsers(sortFieldName, newSortDirection, currentPage);
+    getAllUsers();
   };
 
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
-    getAllUsers(sortFieldName,sortDirection,newPage);
   };
+
   return (
     <div>
       <div id="wrapper">
@@ -136,7 +137,7 @@ const AdminUsers = () => {
                 </tr>
               </thead>
               <tbody>
-                {adminUsers.map((user) => (
+                {currentPageUsers?.map((user) => (
                   <tr key={user.id}>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
