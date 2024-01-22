@@ -20,7 +20,7 @@ public class TestRequestUrlEntity implements Serializable {
     private String testRequestId;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {})
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "component_id")
     private ComponentEntity component;
 

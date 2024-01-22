@@ -24,7 +24,7 @@ public class DocumentEntity extends IdStateNameMetaEntity {
     @Column(name = "file_type")
     private String fileType;
 
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "owner_id")
     private UserEntity owner;
 

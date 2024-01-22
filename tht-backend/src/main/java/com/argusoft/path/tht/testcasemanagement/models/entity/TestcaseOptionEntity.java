@@ -24,7 +24,7 @@ public class TestcaseOptionEntity extends IdStateNameMetaEntity {
     @Column(name = "is_success")
     private Boolean isSuccess;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {})
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "testcase_id")
     private TestcaseEntity testcase;
 

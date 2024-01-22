@@ -150,6 +150,7 @@ public class TestcaseExecutioner {
 
     private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) throws OperationFailedException {
         FhirContext context;
+        if(contextType == null) { contextType = "R4"; }
         switch (contextType) {
             case "D2":
                 context = FhirContext.forDstu2();
