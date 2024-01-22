@@ -110,19 +110,23 @@ public class TestcaseExecutioner {
     }
 
     private void executeTestcase(TestcaseResultEntity testcaseResult, Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
+        // start date for test case
+        long startDateForTestCase = System.currentTimeMillis();
         try {
             testcaseResultService.changeState(testcaseResult.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
             TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseResult.getRefId(), contextInfo);
 
             TestCase testCaseExecutionService = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
+            // start date for test case
+            startDateForTestCase = System.currentTimeMillis();
             ValidationResultInfo validationResultInfo = testCaseExecutionService.test(iGenericClientMap, contextInfo);
 
-            updateTestCaseResultByValidationResult(testcaseResult, validationResultInfo, contextInfo);
+            updateTestCaseResultByValidationResult(testcaseResult, validationResultInfo, startDateForTestCase, contextInfo);
         } catch (Exception e) {
             e.printStackTrace();
             //TODO: add system failure log and connect it with testResult by refObjUri/refId.
             try {
-                updateTestCaseResultForSystemError(testcaseResult, contextInfo);
+                updateTestCaseResultForSystemError(testcaseResult, startDateForTestCase, contextInfo);
             } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
                      VersionMismatchException | DoesNotExistException ex) {
                 ex.printStackTrace();
@@ -130,21 +134,24 @@ public class TestcaseExecutioner {
         }
     }
 
-    private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
+    private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity, long startDate, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         testcaseResultEntity = testcaseResultService.getTestcaseResultById(testcaseResultEntity.getId(), contextInfo);
         testcaseResultEntity.setSuccess(Boolean.FALSE);
         testcaseResultEntity.setMessage("System failure");
         testcaseResultEntity.setHasSystemError(true);
+        // Store total duration in milliseconds
+        testcaseResultEntity.setDuration(System.currentTimeMillis()-startDate);
         testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
 
         testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
     }
 
-    private void updateTestCaseResultByValidationResult(TestcaseResultEntity testcaseResultEntity, ValidationResultInfo validationResultInfo, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
+    private void updateTestCaseResultByValidationResult(TestcaseResultEntity testcaseResultEntity, ValidationResultInfo validationResultInfo, long startDate, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         testcaseResultEntity = testcaseResultService.getTestcaseResultById(testcaseResultEntity.getId(), contextInfo);
-
         testcaseResultEntity.setSuccess(Objects.equals(validationResultInfo.getLevel(), ErrorLevel.OK));
         testcaseResultEntity.setMessage(validationResultInfo.getMessage());
+        // Store total duration in milliseconds
+        testcaseResultEntity.setDuration(System.currentTimeMillis()-startDate);
         testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
 
         testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);

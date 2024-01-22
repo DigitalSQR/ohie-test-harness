@@ -59,6 +59,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @JoinColumn(name = "testcase_option_id")
     private TestcaseOptionEntity testcaseOption;
 
+    @Column(name = "duration")
+    private Long duration;
+
     public Integer getRank() {
         return rank;
     }
@@ -154,4 +157,8 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     public void setParentTestcaseResult(TestcaseResultEntity parentTestcaseResult) {
         this.parentTestcaseResult = parentTestcaseResult;
     }
+
+    public Long getDuration() { return duration; }
+
+    public void setDuration(Long duration) { this.duration = duration; }
 }
