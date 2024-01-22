@@ -26,18 +26,18 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @Column(name = "evaluation_version_id")
     private String evaluationVersionId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {})
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "assessee_id")
     private UserEntity assessee;
 
     @Column(name = "product_name")
     private String productName;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {})
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "approver_id")
     private UserEntity approver;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @OneToMany(cascade = {CascadeType.ALL})
     private Set<TestRequestUrlEntity> testRequestUrls;
 
     public String getEvaluationVersionId() {

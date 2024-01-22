@@ -23,11 +23,11 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "rank")
     private Integer rank;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {})
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "tester_id")
     private UserEntity tester;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {})
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "parent_test_case_result_id")
     private TestcaseResultEntity parentTestcaseResult;
 
@@ -55,7 +55,7 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "is_success")
     private Boolean isSuccess;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {})
+    @ManyToOne(cascade = {})
     @JoinColumn(name = "testcase_option_id")
     private TestcaseOptionEntity testcaseOption;
 

@@ -23,7 +23,7 @@ public class ComponentEntity extends IdStateNameMetaEntity {
     @Column(name = "rank")
     private Integer rank;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "component", cascade = {})
+    @OneToMany(mappedBy = "component", cascade = {})
     private Set<SpecificationEntity> specifications;
 
     public Integer getRank() {
