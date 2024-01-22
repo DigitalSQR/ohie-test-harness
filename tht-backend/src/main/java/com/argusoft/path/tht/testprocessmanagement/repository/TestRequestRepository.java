@@ -9,6 +9,7 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,7 @@ import java.util.List;
  */
 @Repository
 public interface TestRequestRepository
-        extends JpaRepository<TestRequestEntity, String>, TestRequestCustomRepository {
+        extends JpaRepository<TestRequestEntity, String>, JpaSpecificationExecutor<TestRequestEntity> {
 
     @Query("SELECT DISTINCT entity FROM TestRequestEntity entity \n")
     public Page<TestRequestEntity> findTestRequests(Pageable pageable);

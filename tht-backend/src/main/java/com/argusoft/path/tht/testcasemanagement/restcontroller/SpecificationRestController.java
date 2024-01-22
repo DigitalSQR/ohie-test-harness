@@ -8,7 +8,7 @@ package com.argusoft.path.tht.testcasemanagement.restcontroller;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.SpecificationSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.SpecificationMapper;
@@ -21,7 +21,6 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,10 +36,10 @@ import java.util.List;
 public class SpecificationRestController {
 
     @Autowired
-    private SpecificationService SpecificationService;
+    private SpecificationService specificationService;
 
     @Autowired
-    private SpecificationMapper SpecificationMapper;
+    private SpecificationMapper specificationMapper;
 
     /**
      * We can expose this API in future if needed.
@@ -63,9 +62,9 @@ public class SpecificationRestController {
             InvalidParameterException,
             DataValidationErrorException {
 
-        SpecificationEntity specificationEntity = SpecificationMapper.dtoToModel(specificationInfo);
-        specificationEntity = SpecificationService.createSpecification(specificationEntity, contextInfo);
-        return SpecificationMapper.modelToDto(specificationEntity);
+        SpecificationEntity specificationEntity = specificationMapper.dtoToModel(specificationInfo);
+        specificationEntity = specificationService.createSpecification(specificationEntity, contextInfo);
+        return specificationMapper.modelToDto(specificationEntity);
 
     }
 
@@ -91,9 +90,9 @@ public class SpecificationRestController {
             VersionMismatchException,
             DataValidationErrorException {
 
-        SpecificationEntity specificationEntity = SpecificationMapper.dtoToModel(specificationInfo);
-        specificationEntity = SpecificationService.updateSpecification(specificationEntity, contextInfo);
-        return SpecificationMapper.modelToDto(specificationEntity);
+        SpecificationEntity specificationEntity = specificationMapper.dtoToModel(specificationInfo);
+        specificationEntity = specificationService.updateSpecification(specificationEntity, contextInfo);
+        return specificationMapper.modelToDto(specificationEntity);
     }
 
     /**
@@ -110,25 +109,13 @@ public class SpecificationRestController {
     })
     @GetMapping("")
     public Page<SpecificationInfo> searchSpecifications(
-            @RequestParam(name = "id", required = false) List<String> ids,
-            SpecificationSearchFilter specificationSearchFilter,
+            SpecificationCriteriaSearchFilter specificationSearchFilter,
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
-
-        Page<SpecificationEntity> specificationEntities;
-        if (!specificationSearchFilter.isEmpty()
-                || !CollectionUtils.isEmpty(ids)) {
-            specificationEntities = SpecificationService
-                    .searchSpecifications(
-                            ids,
-                            specificationSearchFilter,
-                            pageable,
-                            contextInfo);
-            return SpecificationMapper.pageEntityToDto(specificationEntities);
-        }
-        return this.getSpecifications(pageable, contextInfo);
+        Page<SpecificationEntity> specificationEntities = specificationService.searchSpecifications(specificationSearchFilter, pageable, contextInfo);
+        return specificationMapper.pageEntityToDto(specificationEntities);
     }
 
     /**
@@ -150,8 +137,8 @@ public class SpecificationRestController {
             throws DoesNotExistException,
             InvalidParameterException {
 
-        SpecificationEntity specificationById = SpecificationService.getSpecificationById(specificationId, contextInfo);
-        return SpecificationMapper.modelToDto(specificationById);
+        SpecificationEntity specificationById = specificationService.getSpecificationById(specificationId, contextInfo);
+        return specificationMapper.modelToDto(specificationById);
     }
 
     /**
@@ -163,8 +150,8 @@ public class SpecificationRestController {
             Pageable pageable,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Page<SpecificationEntity> specifications = SpecificationService.getSpecifications(pageable, contextInfo);
-        return SpecificationMapper.pageEntityToDto(specifications);
+        Page<SpecificationEntity> specifications = specificationService.getSpecifications(pageable, contextInfo);
+        return specificationMapper.pageEntityToDto(specifications);
     }
 
     /**
@@ -184,8 +171,8 @@ public class SpecificationRestController {
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        SpecificationEntity specificationEntity = SpecificationMapper.dtoToModel(specificationInfo);
-        return SpecificationService
+        SpecificationEntity specificationEntity = specificationMapper.dtoToModel(specificationInfo);
+        return specificationService
                 .validateSpecification(validationTypeKey, specificationEntity, contextInfo);
     }
 

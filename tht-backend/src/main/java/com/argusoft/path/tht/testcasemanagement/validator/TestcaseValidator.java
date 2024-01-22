@@ -9,13 +9,12 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.filter.TestcaseSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -288,15 +287,12 @@ public class TestcaseValidator {
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || testcaseEntity.getId() != null)
-                && StringUtils.isEmpty(testcaseEntity.getName())) {
-            TestcaseSearchFilter searchFilter = new TestcaseSearchFilter();
-            searchFilter.setName(testcaseEntity.getName());
-            Page<TestcaseEntity> testcaseEntities = testcaseService
-                    .searchTestcases(
-                            null,
-                            searchFilter,
-                            Constant.TWO_VALUE_PAGE,
-                            contextInfo);
+                && StringUtils.hasLength(testcaseEntity.getName())) {
+
+            TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter = new TestcaseCriteriaSearchFilter();
+            testcaseCriteriaSearchFilter.setName(testcaseEntity.getName());
+
+            List<TestcaseEntity> testcaseEntities = testcaseService.searchTestcases(testcaseCriteriaSearchFilter, contextInfo);
 
             // if info found with same name than and not current id
             boolean flag

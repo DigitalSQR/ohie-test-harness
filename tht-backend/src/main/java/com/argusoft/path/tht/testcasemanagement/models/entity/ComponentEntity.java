@@ -7,10 +7,7 @@ package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +23,7 @@ public class ComponentEntity extends IdStateNameMetaEntity {
     @Column(name = "rank")
     private Integer rank;
 
-    @OneToMany(mappedBy = "component", cascade = {})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "component", cascade = {})
     private Set<SpecificationEntity> specifications;
 
     public Integer getRank() {

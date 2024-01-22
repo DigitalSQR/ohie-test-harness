@@ -8,7 +8,7 @@ package com.argusoft.path.tht.testcasemanagement.service;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,19 +64,34 @@ public interface ComponentService {
      * Retrieves a list of Components corresponding to the given Component Name.The
      * returned list may be in any order with unique set.
      *
-     * @param ids                   list of ids to retrieve
-     * @param componentSearchFilter
-     * @param pageable              Contains Index number of the Page, Max size of the single
-     *                              page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo           information containing the principalId and locale
-     *                              information about the caller of service operation
+     * @param componentCriteriaSearchFilter
+     * @param pageable                      Contains Index number of the Page, Max size of the single
+     *                                      page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo                   information containing the principalId and locale
+     *                                      information about the caller of service operation
      * @return a list of Component name start with given ComponentName found
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request
      */
-    public Page<ComponentEntity> searchComponents(List<String> ids,
-                                                  ComponentSearchFilter componentSearchFilter,
+    public Page<ComponentEntity> searchComponents(ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
                                                   Pageable pageable,
+                                                  ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException;
+
+
+    /**
+     * Retrieves a list of Components corresponding to the given Component Name.The
+     * returned list may be in any order with unique set.
+     *
+     * @param componentCriteriaSearchFilter
+     * @param contextInfo                   information containing the principalId and locale
+     *                                      information about the caller of service operation
+     * @return a list of Component name start with given ComponentName found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     */
+    public List<ComponentEntity> searchComponents(ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
                                                   ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;

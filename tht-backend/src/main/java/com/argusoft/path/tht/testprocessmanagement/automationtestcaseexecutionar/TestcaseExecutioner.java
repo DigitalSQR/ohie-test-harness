@@ -5,19 +5,18 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
-import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
@@ -243,7 +242,12 @@ public class TestcaseExecutioner {
     private List<TestcaseResultEntity> fetchTestcaseResultsByInputs(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
-        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null, new TestcaseResultSearchFilter(null, null, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, null, null, null, testRequestId, Objects.equals(isManual, Boolean.TRUE), null), Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
+        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+        testcaseResultCriteriaSearchFilter.setStates(Collections.singletonList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT));
+        testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
+        testcaseResultCriteriaSearchFilter.setManual(Objects.equals(isManual, Boolean.TRUE));
+
+        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
 
         Optional<TestcaseResultEntity> optionalTestcaseResultEntity = testcaseResultEntities.stream().filter(testcaseResultEntity -> {
             return (testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT) || testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) && testcaseResultEntity.getRefObjUri().equals(refObjUri) && testcaseResultEntity.getRefId().equals(refId);
@@ -287,14 +291,9 @@ public class TestcaseExecutioner {
     }
 
     private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        return componentService.searchComponents(
-                null,
-                new ComponentSearchFilter(
-                        null,
-                        SearchType.CONTAINING,
-                        ComponentServiceConstants.COMPONENT_STATUS_ACTIVE),
-                Constant.FULL_PAGE_SORT_BY_RANK,
-                contextInfo).getContent();
+        ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+        componentCriteriaSearchFilter.setState(Collections.singletonList(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE));
+        return componentService.searchComponents(componentCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
     }
 
 }

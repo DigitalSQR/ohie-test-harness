@@ -6,19 +6,18 @@
 package com.argusoft.path.tht.testprocessmanagement.service.impl;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
-import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
@@ -27,7 +26,7 @@ import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestcaseExecutioner;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
-import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestSearchFilter;
+import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
@@ -39,16 +38,12 @@ import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -201,46 +196,25 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     @Override
     @Timed(name = "searchTestRequests")
     public Page<TestRequestEntity> searchTestRequests(
-            List<String> ids,
-            TestRequestSearchFilter testRequestSearchFilter,
+            TestRequestCriteriaSearchFilter testRequestSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException, DoesNotExistException, InvalidParameterException {
+            throws InvalidParameterException {
 
-        UserEntity principalUser = userService.getPrincipalUser(contextInfo);
-        if (principalUser.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))) {
-            testRequestSearchFilter.setAssesseeId(principalUser.getId());
-        }
-
-        if (!testRequestSearchFilter.isEmpty()) {
-            return this.searchTestRequests(testRequestSearchFilter, pageable);
-        } else if (!CollectionUtils.isEmpty(ids)) {
-            return this.searchTestRequestsById(ids, pageable);
-        } else {
-            return this.getTestRequests(pageable, contextInfo);
-        }
+        Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildSpecification();
+        return testRequestRepository.findAll(testRequestEntitySpecification, pageable);
     }
 
-    private Page<TestRequestEntity> searchTestRequests(
-            TestRequestSearchFilter testRequestSearchFilter,
-            Pageable pageable)
-            throws OperationFailedException {
 
-        Page<TestRequestEntity> testRequests = testRequestRepository.advanceTestRequestSearch(
-                testRequestSearchFilter,
-                pageable);
-        return testRequests;
-    }
+    @Override
+    @Timed(name = "searchTestRequests")
+    public List<TestRequestEntity> searchTestRequests(
+            TestRequestCriteriaSearchFilter testRequestSearchFilter,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
 
-    private Page<TestRequestEntity> searchTestRequestsById(
-            List<String> ids,
-            Pageable pageable) {
-
-        List<TestRequestEntity> testRequests
-                = testRequestRepository.findTestRequestsByIds(ids);
-        return new PageImpl<>(testRequests,
-                pageable,
-                testRequests.size());
+        Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildSpecification();
+        return testRequestRepository.findAll(testRequestEntitySpecification);
     }
 
     /**
@@ -358,12 +332,14 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             counter++;
             for (ComponentEntity componentEntity : filteredComponents) {
                 List<SpecificationEntity> filteredSpecifications = componentEntity.getSpecifications().stream().filter(specificationEntity -> {
-                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
-                            && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
-                        return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                    });
-                }).collect(Collectors.toList());
+                            return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                                    && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                                return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                        && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                            });
+                        })
+                        .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                        .collect(Collectors.toList());
 
                 if (!filteredSpecifications.isEmpty()) {
                     TestcaseResultEntity componentTestcaseResult = createDraftTestCaseResultIfNotExists(
@@ -378,9 +354,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     counter++;
                     for (SpecificationEntity specificationEntity : filteredSpecifications) {
                         List<TestcaseEntity> filteredTestcases = specificationEntity.getTestcases().stream().filter(testcaseEntity -> {
-                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                    && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                        }).collect(Collectors.toList());
+                                    return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                            && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                                })
+                                .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                                .collect(Collectors.toList());
 
                         if (!filteredTestcases.isEmpty()) {
                             TestcaseResultEntity specificationTestcaseResult = createDraftTestCaseResultIfNotExists(
@@ -436,12 +414,14 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             counter++;
             for (ComponentEntity componentEntity : filteredComponents) {
                 List<SpecificationEntity> filteredSpecifications = componentEntity.getSpecifications().stream().filter(specificationEntity -> {
-                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
-                            && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
-                        return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                    });
-                }).collect(Collectors.toList());
+                            return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                                    && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                                return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                        && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                            });
+                        })
+                        .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                        .collect(Collectors.toList());
 
                 if (!filteredSpecifications.isEmpty()) {
                     TestcaseResultEntity componentTestcaseResult = createDraftTestCaseResultIfNotExists(
@@ -456,9 +436,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     counter++;
                     for (SpecificationEntity specificationEntity : filteredSpecifications) {
                         List<TestcaseEntity> filteredTestcases = specificationEntity.getTestcases().stream().filter(testcaseEntity -> {
-                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                    && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                        }).collect(Collectors.toList());
+                                    return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                            && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                                })
+                                .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                                .collect(Collectors.toList());
 
                         if (!filteredTestcases.isEmpty()) {
                             TestcaseResultEntity specificationTestcaseResult = createDraftTestCaseResultIfNotExists(
@@ -491,13 +473,9 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        return componentService.searchComponents(
-                null,
-                new ComponentSearchFilter(null,
-                        SearchType.CONTAINING,
-                        ComponentServiceConstants.COMPONENT_STATUS_ACTIVE),
-                Constant.FULL_PAGE_SORT_BY_RANK,
-                contextInfo).getContent();
+        ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+        componentCriteriaSearchFilter.setState(Collections.singletonList(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE));
+        return componentService.searchComponents(componentCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
     }
 
     private TestcaseResultEntity createDraftTestCaseResultIfNotExists(String refObjUri,
@@ -508,18 +486,15 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                                                       Boolean isManual,
                                                                       String parentTestcaseResultId,
                                                                       ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+
+        TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+        searchFilter.setRefObjUri(refObjUri);
+        searchFilter.setRefId(refId);
+        searchFilter.setTestRequestId(testRequestId);
+        searchFilter.setManual(isManual);
+
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(
-                null,
-                new TestcaseResultSearchFilter(
-                        null,
-                        null,
-                        null,
-                        null,
-                        refObjUri,
-                        refId,
-                        testRequestId,
-                        isManual,
-                        null),
+                searchFilter,
                 Constant.FULL_PAGE,
                 contextInfo).getContent();
 

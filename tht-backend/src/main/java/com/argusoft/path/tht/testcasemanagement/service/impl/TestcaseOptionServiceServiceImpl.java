@@ -12,7 +12,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.TestcaseOptionRepository;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
@@ -22,10 +22,9 @@ import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -42,7 +41,7 @@ import java.util.UUID;
 public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
     @Autowired
-    TestcaseOptionRepository TestcaseOptionRepository;
+    TestcaseOptionRepository testcaseOptionRepository;
 
     @Autowired
     TestcaseService testcaseService;
@@ -69,7 +68,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         if (StringUtils.isEmpty(testcaseOptionEntity.getId())) {
             testcaseOptionEntity.setId(UUID.randomUUID().toString());
         }
-        testcaseOptionEntity = TestcaseOptionRepository.save(testcaseOptionEntity);
+        testcaseOptionEntity = testcaseOptionRepository.save(testcaseOptionEntity);
         return testcaseOptionEntity;
     }
 
@@ -93,8 +92,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
                 contextInfo);
 
         Optional<TestcaseOptionEntity> testcaseOptionOptional
-                = TestcaseOptionRepository.findById(testcaseOptionEntity.getId());
-        testcaseOptionEntity = TestcaseOptionRepository.save(testcaseOptionEntity);
+                = testcaseOptionRepository.findById(testcaseOptionEntity.getId());
+        testcaseOptionEntity = testcaseOptionRepository.save(testcaseOptionEntity);
         return testcaseOptionEntity;
     }
 
@@ -106,39 +105,23 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
     @Override
     @Timed(name = "searchTestcaseOptions")
     public Page<TestcaseOptionEntity> searchTestcaseOptions(
-            List<String> ids,
-            TestcaseOptionSearchFilter testcaseOptionSearchFilter,
+            TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             Pageable pageable,
             ContextInfo contextInfo)
-            throws OperationFailedException {
-
-        if (!CollectionUtils.isEmpty(ids)) {
-            return this.searchTestcaseOptionsById(ids, pageable);
-        } else {
-            return this.searchTestcaseOptions(testcaseOptionSearchFilter, pageable);
-        }
+            throws InvalidParameterException {
+        Specification<TestcaseOptionEntity> testcaseOptionEntitySpecification = testcaseOptionCriteriaSearchFilter.buildSpecification();
+        return testcaseOptionRepository.findAll(testcaseOptionEntitySpecification, pageable);
     }
 
-    private Page<TestcaseOptionEntity> searchTestcaseOptions(
-            TestcaseOptionSearchFilter testcaseOptionSearchFilter,
-            Pageable pageable)
-            throws OperationFailedException {
 
-        Page<TestcaseOptionEntity> TestcaseOptions = TestcaseOptionRepository.advanceTestcaseOptionSearch(
-                testcaseOptionSearchFilter,
-                pageable);
-        return TestcaseOptions;
-    }
-
-    private Page<TestcaseOptionEntity> searchTestcaseOptionsById(
-            List<String> ids,
-            Pageable pageable) {
-
-        List<TestcaseOptionEntity> testcaseOptions
-                = TestcaseOptionRepository.findTestcaseOptionsByIds(ids);
-        return new PageImpl<>(testcaseOptions,
-                pageable,
-                testcaseOptions.size());
+    @Override
+    @Timed(name = "searchTestcaseOptions")
+    public List<TestcaseOptionEntity> searchTestcaseOptions(
+            TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
+        Specification<TestcaseOptionEntity> testcaseOptionEntitySpecification = testcaseOptionCriteriaSearchFilter.buildSpecification();
+        return testcaseOptionRepository.findAll(testcaseOptionEntitySpecification);
     }
 
     /**
@@ -156,7 +139,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             throw new InvalidParameterException("TestcaseOptionId is missing");
         }
         Optional<TestcaseOptionEntity> TestcaseOptionOptional
-                = TestcaseOptionRepository.findById(testcaseOptionId);
+                = testcaseOptionRepository.findById(testcaseOptionId);
         if (!TestcaseOptionOptional.isPresent()) {
             throw new DoesNotExistException("TestcaseOption by id :"
                     + testcaseOptionId
@@ -178,7 +161,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         if (pageable == null) {
             throw new InvalidParameterException("pageble is missing");
         }
-        Page<TestcaseOptionEntity> testcaseOptions = TestcaseOptionRepository.findTestcaseOptions(pageable);
+        Page<TestcaseOptionEntity> testcaseOptions = testcaseOptionRepository.findTestcaseOptions(pageable);
         return testcaseOptions;
     }
 

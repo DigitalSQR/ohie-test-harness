@@ -8,7 +8,7 @@ package com.argusoft.path.tht.testcasemanagement.service;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.SpecificationSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,7 +64,6 @@ public interface SpecificationService {
      * Retrieves a list of Specifications corresponding to the given Specification Name.The
      * returned list may be in any order with unique set.
      *
-     * @param ids                       list of ids to retrieve
      * @param specificationSearchFilter
      * @param pageable                  Contains Index number of the Page, Max size of the single
      *                                  page,Name of the field for sorting and sortDirection sorting direction
@@ -74,9 +73,25 @@ public interface SpecificationService {
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request
      */
-    public Page<SpecificationEntity> searchSpecifications(List<String> ids,
-                                                          SpecificationSearchFilter specificationSearchFilter,
+    public Page<SpecificationEntity> searchSpecifications(SpecificationCriteriaSearchFilter specificationSearchFilter,
                                                           Pageable pageable,
+                                                          ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException;
+
+
+    /**
+     * Retrieves a list of Specifications corresponding to the given Specification Name.The
+     * returned list may be in any order with unique set.
+     *
+     * @param specificationSearchFilter
+     * @param contextInfo               information containing the principalId and locale
+     *                                  information about the caller of service operation
+     * @return a list of Specification name start with given SpecificationName found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     */
+    public List<SpecificationEntity> searchSpecifications(SpecificationCriteriaSearchFilter specificationSearchFilter,
                                                           ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;

@@ -8,7 +8,7 @@ package com.argusoft.path.tht.testprocessmanagement.service;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestSearchFilter;
+import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -64,7 +64,6 @@ public interface TestRequestService {
      * Retrieves a list of TestRequests corresponding to the given TestRequest Name.The
      * returned list may be in any order with unique set.
      *
-     * @param ids                     list of ids to retrieve
      * @param testRequestSearchFilter
      * @param pageable                Contains Index number of the Page, Max size of the single
      *                                page,Name of the field for sorting and sortDirection sorting direction
@@ -74,9 +73,25 @@ public interface TestRequestService {
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request
      */
-    public Page<TestRequestEntity> searchTestRequests(List<String> ids,
-                                                      TestRequestSearchFilter testRequestSearchFilter,
+    public Page<TestRequestEntity> searchTestRequests(TestRequestCriteriaSearchFilter testRequestSearchFilter,
                                                       Pageable pageable,
+                                                      ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException, DoesNotExistException;
+
+
+    /**
+     * Retrieves a list of TestRequests corresponding to the given TestRequest Name.The
+     * returned list may be in any order with unique set.
+     *
+     * @param testRequestSearchFilter
+     * @param contextInfo             information containing the principalId and locale
+     *                                information about the caller of service operation
+     * @return a list of TestRequest name start with given TestRequestName found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     */
+    public List<TestRequestEntity> searchTestRequests(TestRequestCriteriaSearchFilter testRequestSearchFilter,
                                                       ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException, DoesNotExistException;

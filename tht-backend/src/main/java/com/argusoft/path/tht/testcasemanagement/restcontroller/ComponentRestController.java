@@ -8,7 +8,7 @@ package com.argusoft.path.tht.testcasemanagement.restcontroller;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.ComponentMapper;
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,10 +36,10 @@ import java.util.List;
 public class ComponentRestController {
 
     @Autowired
-    private ComponentService ComponentService;
+    private ComponentService componentService;
 
     @Autowired
-    private ComponentMapper ComponentMapper;
+    private ComponentMapper componentMapper;
 
     /**
      * We can expose this API in future if needed.
@@ -63,9 +62,9 @@ public class ComponentRestController {
             InvalidParameterException,
             DataValidationErrorException {
 
-        ComponentEntity componentEntity = ComponentMapper.dtoToModel(componentInfo);
-        componentEntity = ComponentService.createComponent(componentEntity, contextInfo);
-        return ComponentMapper.modelToDto(componentEntity);
+        ComponentEntity componentEntity = componentMapper.dtoToModel(componentInfo);
+        componentEntity = componentService.createComponent(componentEntity, contextInfo);
+        return componentMapper.modelToDto(componentEntity);
 
     }
 
@@ -91,9 +90,9 @@ public class ComponentRestController {
             VersionMismatchException,
             DataValidationErrorException {
 
-        ComponentEntity componentEntity = ComponentMapper.dtoToModel(componentInfo);
-        componentEntity = ComponentService.updateComponent(componentEntity, contextInfo);
-        return ComponentMapper.modelToDto(componentEntity);
+        ComponentEntity componentEntity = componentMapper.dtoToModel(componentInfo);
+        componentEntity = componentService.updateComponent(componentEntity, contextInfo);
+        return componentMapper.modelToDto(componentEntity);
     }
 
     /**
@@ -110,25 +109,14 @@ public class ComponentRestController {
     })
     @GetMapping("")
     public Page<ComponentInfo> searchComponents(
-            @RequestParam(name = "id", required = false) List<String> ids,
-            ComponentSearchFilter componentSearchFilter,
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
 
-        Page<ComponentEntity> componentEntities;
-        if (!componentSearchFilter.isEmpty()
-                || !CollectionUtils.isEmpty(ids)) {
-            componentEntities = ComponentService
-                    .searchComponents(
-                            ids,
-                            componentSearchFilter,
-                            pageable,
-                            contextInfo);
-            return ComponentMapper.pageEntityToDto(componentEntities);
-        }
-        return this.getComponents(pageable, contextInfo);
+        Page<ComponentEntity> componentEntities = componentService.searchComponents(componentCriteriaSearchFilter, pageable, contextInfo);
+        return componentMapper.pageEntityToDto(componentEntities);
     }
 
     /**
@@ -150,8 +138,8 @@ public class ComponentRestController {
             throws DoesNotExistException,
             InvalidParameterException {
 
-        ComponentEntity componentById = ComponentService.getComponentById(componentId, contextInfo);
-        return ComponentMapper.modelToDto(componentById);
+        ComponentEntity componentById = componentService.getComponentById(componentId, contextInfo);
+        return componentMapper.modelToDto(componentById);
     }
 
     /**
@@ -163,8 +151,8 @@ public class ComponentRestController {
             Pageable pageable,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Page<ComponentEntity> components = ComponentService.getComponents(pageable, contextInfo);
-        return ComponentMapper.pageEntityToDto(components);
+        Page<ComponentEntity> components = componentService.getComponents(pageable, contextInfo);
+        return componentMapper.pageEntityToDto(components);
     }
 
     /**
@@ -184,8 +172,8 @@ public class ComponentRestController {
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        ComponentEntity componentEntity = ComponentMapper.dtoToModel(componentInfo);
-        return ComponentService
+        ComponentEntity componentEntity = componentMapper.dtoToModel(componentInfo);
+        return componentService
                 .validateComponent(validationTypeKey, componentEntity, contextInfo);
     }
 

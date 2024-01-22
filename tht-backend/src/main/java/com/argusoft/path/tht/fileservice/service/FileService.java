@@ -98,7 +98,6 @@ public class FileService {
         }
     }
 
-
     public static boolean validateFileTypeWithAllowedTypes(MultipartFile file, List<String> allowedTypes)
             throws InvalidFileTypeException, OperationFailedException {
 
@@ -113,6 +112,7 @@ public class FileService {
     public void setResourceFolder(String value) {
         RESOURCE_FOLDER = value;
     }
+
 
 }
 

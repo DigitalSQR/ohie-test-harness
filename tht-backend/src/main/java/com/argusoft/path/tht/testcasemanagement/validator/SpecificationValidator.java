@@ -9,13 +9,12 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.filter.SpecificationSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import org.springframework.data.domain.Page;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -223,14 +222,10 @@ public class SpecificationValidator {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || specificationEntity.getId() != null)
                 && StringUtils.isEmpty(specificationEntity.getName())) {
-            SpecificationSearchFilter searchFilter = new SpecificationSearchFilter();
-            searchFilter.setName(specificationEntity.getName());
-            Page<SpecificationEntity> specificationEntities = specificationService
-                    .searchSpecifications(
-                            null,
-                            searchFilter,
-                            Constant.TWO_VALUE_PAGE,
-                            contextInfo);
+
+            SpecificationCriteriaSearchFilter specificationCriteriaSearchFilter = new SpecificationCriteriaSearchFilter();
+            specificationCriteriaSearchFilter.setName(specificationEntity.getName());
+            List<SpecificationEntity> specificationEntities = specificationService.searchSpecifications(specificationCriteriaSearchFilter, contextInfo);
 
             // if info found with same name than and not current id
             boolean flag

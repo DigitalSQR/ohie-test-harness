@@ -1,12 +1,11 @@
 package com.argusoft.path.tht.testprocessmanagement.validator;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
-import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultSearchFilter;
+import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -23,6 +22,7 @@ import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -77,17 +77,15 @@ public class TestRequestValidator {
                             contextInfo);
             if (!Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey)
                     && Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
-                TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
-                        null, SearchType.CONTAINING,
-                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED,
-                        null,
-                        TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
-                        testRequestId,
-                        testRequestId,
-                        Boolean.FALSE,
-                        null
-                );
-                List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+
+                TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+                searchFilter.setStates(Collections.singletonList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED));
+                searchFilter.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+                searchFilter.setRefId(testRequestId);
+                searchFilter.setManual(Boolean.FALSE);
+
+                List<TestcaseResultEntity> testcaseResultEntities =
+                        testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
                 if (testcaseResultEntities.isEmpty()) {
                     String fieldName = "testRequestId";
                     errors.add(
@@ -150,13 +148,13 @@ public class TestRequestValidator {
         }
         List<ValidationResultInfo> errors = new ArrayList<>();
         if (validationTypeKey.equals(Constant.START_PROCESS_VALIDATION)) {
-            TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter();
-            searchFilter.setIsManual(Objects.equals(Boolean.TRUE, isManual));
+            TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+            searchFilter.setManual(Objects.equals(Boolean.TRUE, isManual));
             searchFilter.setRefObjUri(refObjUri);
             searchFilter.setRefId(refId);
             searchFilter.setTestRequestId(testRequestId);
 
-            List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null, searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+            List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
             if (testcaseResultEntities.isEmpty()) {
                 String fieldName = "inputData";
                 errors.add(
@@ -172,13 +170,13 @@ public class TestRequestValidator {
                                 "Process for the requested input has been already started."));
             }
         } else {
-            TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter();
-            searchFilter.setIsManual(Objects.equals(Boolean.TRUE, isManual));
+            TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+            searchFilter.setManual(Objects.equals(Boolean.TRUE, isManual));
             searchFilter.setRefObjUri(refId);
             searchFilter.setRefId(refObjUri);
             searchFilter.setTestRequestId(testRequestId);
 
-            List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(null, searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+            List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
             if (testcaseResultEntities.stream().anyMatch(testcaseResultEntity ->
                     !testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED))) {
                 String fieldName = "inputData";
@@ -189,21 +187,6 @@ public class TestRequestValidator {
             }
         }
         return errors;
-    }
-
-    public static void validateTestRequestProcess(String testRequestId, String validationTypeKey, TestRequestService testRequestService, TestcaseResultService testcaseResultService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
-        List<ValidationResultInfo> validationResultEntities
-                = validateTestRequestStartProcess(
-                testRequestId,
-                validationTypeKey,
-                testRequestService,
-                testcaseResultService,
-                contextInfo);
-        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
-                    validationResultEntities);
-        }
     }
 
     public static List<ValidationResultInfo> validateTestRequestStartProcess(
@@ -219,16 +202,14 @@ public class TestRequestValidator {
                     .getTestRequestById(testRequestId,
                             contextInfo);
             if (!Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
-                TestcaseResultSearchFilter searchFilter = new TestcaseResultSearchFilter(
-                        null, SearchType.CONTAINING,
-                        null,
-                        null,
-                        TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
-                        testRequestId,
-                        testRequestId,
-                        Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey) ? Boolean.TRUE : Boolean.FALSE, null
-                );
-                List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(new ArrayList<>(), searchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+
+
+                TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+                searchFilter.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+                searchFilter.setRefId(testRequestId);
+                searchFilter.setManual(Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey) ? Boolean.TRUE : Boolean.FALSE);
+
+                List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
                 if (!testcaseResultEntities.isEmpty()) {
                     String fieldName = "testRequestId";
                     errors.add(
