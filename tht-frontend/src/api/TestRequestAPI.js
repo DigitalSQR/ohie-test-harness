@@ -29,13 +29,16 @@ export const TestRequestAPI = {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}
 	},
-	getTestRequestsByState: async function (state) {
+	getTestRequestsByState: async function (state, sortFieldName="createdAt", sortDirection="desc", currentPage, pageSize) {
 		try {
 			const response = await api.request({
 				url: `/test-request`,
 				method: "GET",
 				params: {
-					state
+					state,
+					sort: `${sortFieldName},${sortDirection}`,
+					page:currentPage,
+					size:pageSize
 				},
 				paramsSerializer: params => {
 				  return paramSerialize(params);
