@@ -26,7 +26,9 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlE
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -44,7 +46,6 @@ import java.util.stream.Collectors;
 @Component
 public class TestcaseExecutioner {
 
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
@@ -77,7 +78,7 @@ public class TestcaseExecutioner {
                 iGenericClientMap.put(componentEntity.getId(), client);
             }
 
-            executorService.execute(() -> execute(testcaseResultEntities, iGenericClientMap, Constant.SUPER_USER_CONTEXT));
+            execute(testcaseResultEntities, iGenericClientMap, Constant.SUPER_USER_CONTEXT);
         } catch (DataValidationErrorException e) {
             throw new OperationFailedException(e);
         } catch (InvalidParameterException | OperationFailedException | VersionMismatchException |
@@ -98,7 +99,8 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Async
     private void execute(List<TestcaseResultEntity> testcaseResultEntities,
                          Map<String, IGenericClient> iGenericClientMap,
                          ContextInfo contextInfo) {

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "token_verification")
 public class TokenVerificationEntity extends IdStateMetaEntity {
 
-    @OneToOne(cascade = {})
+    @OneToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userEntity;
 
