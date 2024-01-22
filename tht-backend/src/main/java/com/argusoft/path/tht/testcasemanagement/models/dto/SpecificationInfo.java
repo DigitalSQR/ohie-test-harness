@@ -39,12 +39,19 @@ public class SpecificationInfo extends IdStateNameMetaInfo implements Serializab
             required = true)
     private String componentId;
 
-    @ApiModelProperty(notes = "The isFunctional of the testcase",
+    @ApiModelProperty(notes = "The isFunctional of the specification",
             allowEmptyValue = false,
             example = "true",
             dataType = "Boolean",
             required = false)
     private Boolean isFunctional;
+
+    @ApiModelProperty(notes = "The isRequired of the specification",
+            allowEmptyValue = false,
+            example = "false",
+            dataType = "Boolean",
+            required = true)
+    private Boolean isRequired;
 
     public Integer getRank() {
         return rank;
@@ -76,5 +83,13 @@ public class SpecificationInfo extends IdStateNameMetaInfo implements Serializab
 
     public void setComponentId(String componentId) {
         this.componentId = componentId;
+    }
+
+    public Boolean getRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(Boolean required) {
+        isRequired = required;
     }
 }

@@ -29,6 +29,9 @@ public class UserEntity extends IdStateMetaEntity {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "company_name")
+    private String companyName;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = {})
     @JoinTable(
             name = "role_tht_user",
@@ -58,6 +61,14 @@ public class UserEntity extends IdStateMetaEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public Set<RoleEntity> getRoles() {

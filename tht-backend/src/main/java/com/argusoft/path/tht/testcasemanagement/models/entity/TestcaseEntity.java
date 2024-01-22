@@ -24,9 +24,6 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     @Column(name = "is_manual")
     private Boolean isManual;
 
-    @Column(name = "is_required")
-    private Boolean isRequired;
-
     @Column(name = "bean_name")
     private String beanName;
 
@@ -56,14 +53,6 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
 
     public void setManual(Boolean manual) {
         isManual = manual;
-    }
-
-    public Boolean getRequired() {
-        return isRequired;
-    }
-
-    public void setRequired(Boolean required) {
-        isRequired = required;
     }
 
     public SpecificationEntity getSpecification() {
