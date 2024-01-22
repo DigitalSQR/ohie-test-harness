@@ -5,7 +5,7 @@ import "./admin-user.scss";
 import { useNavigate } from "react-router-dom";
 import { Pagination } from "@mui/material";
 import { Button, Modal } from "antd";
-import sortIcon from "../../../styles/images/sort-icon.png"
+import sortIcon from "../../../styles/images/sort-icon.png";
 const AdminUsers = () => {
   const navigate = useNavigate();
   const [adminUsers, setAdminUsers] = useState([]);
@@ -17,7 +17,7 @@ const AdminUsers = () => {
   });
   const [sortFieldName, setSortFieldName] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(4);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
   const handleOk = () => {
@@ -169,14 +169,16 @@ const AdminUsers = () => {
         >
           <p>Are you sure you want to delete?</p>
         </Modal>
-        <Pagination
-          className="pagination-ui"
-          count={totalPages}
-          page={currentPage}
-          onChange={handleChangePage}
-          variant="outlined"
-          shape="rounded"
-        />
+        {totalPages > 1 && (
+          <Pagination
+            className="pagination-ui"
+            count={totalPages}
+            page={currentPage}
+            onChange={handleChangePage}
+            variant="outlined"
+            shape="rounded"
+          />
+        )}
       </div>
     </div>
   );

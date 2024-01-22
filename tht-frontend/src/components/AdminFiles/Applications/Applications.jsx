@@ -8,96 +8,177 @@ import { TestRequestAPI } from '../../../api/TestRequestAPI.js';
 import { notification } from "antd";
 import { formatDate } from '../../../utils/utils.js';
 import UserIdEmailConnector from "../../connectors/UserIdEmailConnector/UserIdEmailConnector.js";
-
+import { Pagination } from "@mui/material";
 const Applications = () => {
     const testRequestStates = [...TestRequestActionStateLabels, { label: "All", value: '' }];
     const [filterState, setFilterState] = useState(TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED);
-    const [testRequests, setTestRequests] = useState([]);
-    const navigate = useNavigate();
+  const [testRequests, setTestRequests] = useState([]);
+  const [sortDirection, setSortDirection] = useState({
+    name: "desc",
+    email: "desc",
+  });
+  const [sortFieldName, setSortFieldName] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        var state = filterState;
+  useEffect(() => {
+    var state = filterState;
         if (!state || state == '') {
             state = TestRequestActionStateLabels.map(state => state.value);
-        }
-        if (state) {
-            TestRequestAPI.getTestRequestsByState(state)
-                .then((res) => {
-                    setTestRequests(res.content);
-                }).catch((err) => {
-                    notification.error({
-                        placement: "bottomRight",
-                        message: 'Oops! Error fetching test requests!'
-                    });
-                    console.log(err);
-                });
-        }
-    }, [filterState])
+    }
+    if (state) {
+      getAllTestRequests(
+        filterState,
+        sortFieldName,
+        sortDirection,
+        currentPage
+      );
+    }
+  }, [filterState]);
 
-    return (
-        <div>
-            <div id="wrapper">
-                <div className="col-12">
-                    <div className="row mb-2 justify-content-between">
-                        <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
-                            <div className="d-flex align-items-baseline">
-                                <span className="pe-3 text-nowrap">Status :</span>
-                                <div className="mb-3">
-                                    <select
+  const getAllTestRequests = (
+    filterState,
+    sortFieldName,
+    sortDirection,
+    currentPage
+  ) => {
+    TestRequestAPI.getTestRequestsByState(
+      filterState,
+      sortFieldName,
+      sortDirection[sortFieldName],
+      currentPage - 1,
+      pageSize
+    )
+      .then((res) => {
+        setTestRequests(res.content);
+        setTotalPages(res.totalPages);
+      })
+      .catch((err) => {
+        notification.error({
+          placement: "bottomRight",
+          message: "Oops! Error fetching test requests!",
+        });
+        console.log(err);
+      });
+  };
+
+  const handleSort = (sortFieldName) => {
+    setSortFieldName(sortFieldName);
+    const newSortDirection = { ...sortDirection };
+    newSortDirection[sortFieldName] =
+      sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
+    setSortDirection(newSortDirection);
+    getAllTestRequests(
+      filterState,
+      sortFieldName,
+      newSortDirection,
+      currentPage
+    );
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+    getAllTestRequests(filterState, sortFieldName, sortDirection, newPage);
+  };
+
+  return (
+    <div>
+      <div id="wrapper">
+        <div className="col-12">
+          <div className="row mb-2 justify-content-between">
+            <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
+              <div className="d-flex align-items-baseline">
+                <span className="pe-3 text-nowrap">Status :</span>
+                <div className="mb-3">
+                  <select
                                         onChange={(e) => { setFilterState(e.target.value) }}
-                                        value={filterState}
-                                        className="form-select custom-select custom-select-sm"
-                                        aria-label="Default select example"
-                                    >
-                                        {
-                                            testRequestStates.map(testRequestState => (
-                                                <option value={testRequestState.value} key={testRequestState.value}>{testRequestState.label}</option>
-                                            ))
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="table-responsive">
-                        <table className=" data-table">
-                            <thead>
-                                <tr>
-                                    <th>APP NAME <a className="ps-1" href="#"><img src={sortIcon} alt="Sort" /></a></th>
-                                    <th>COMPANY NAME <a className="ps-1" href="#"><img src={sortIcon} alt="Sort" /></a></th>
-                                    <th>DATE OF APPLICATION</th>
-                                    <th>EMAIL ID <a className="ps-1" href="#"><img src={sortIcon} alt="Sort" /></a></th>
-                                    <th>CHOOSE ACTION</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    testRequests.length === 0 ?
-                                        <>
-                                            <tr>
-                                                <td className="text-center" colSpan={5}>No test requests found. Register one or wait for test request to be approved</td>
-                                            </tr>
-                                        </>
-                                        : null
-                                }
-                                {
-                                    testRequests?.map((testRequest) => (
-                                        <tr key={testRequest.name}>
-                                            <td>{testRequest.name}</td>
-                                            <td>{testRequest.productName}</td>
-                                            <td>{formatDate(testRequest.meta.updatedAt)}</td>
+                    value={filterState}
+                    className="form-select custom-select custom-select-sm"
+                    aria-label="Default select example"
+                  >
+                    {testRequestStates.map((testRequestState) => (
+                      <option
+                        value={testRequestState.value}
+                        key={testRequestState.value}
+                      >
+                        {testRequestState.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="table-responsive">
+            <table className=" data-table">
+              <thead>
+                <tr>
+                  <th>
+                    APP NAME{" "}
+                    <a className="ps-1" href="#">
+                      <img
+                        src={sortIcon}
+                        alt="Sort"
+                        onClick={() => handleSort("name")}
+                      />
+                    </a>
+                  </th>
+                  <th>
+                    COMPANY NAME{" "}
+                    <a className="ps-1" href="#">
+                      <img
+                        src={sortIcon}
+                        alt="Sort"
+                        onClick={() => handleSort("productName")}
+                      />
+                    </a>
+                  </th>
+                  <th>DATE OF APPLICATION</th>
+                  <th>
+                    EMAIL ID <a className="ps-1" href="#"></a>
+                  </th>
+                  <th>CHOOSE ACTION</th>
+                </tr>
+              </thead>
+              <tbody>
+                {testRequests.length === 0 ? (
+                  <>
+                    <tr>
+                      <td className="text-center" colSpan={5}>
+                        No test requests found. Register one or wait for test
+                        request to be approved
+                      </td>
+                    </tr>
+                  </>
+                ) : null}
+                {testRequests?.map((testRequest) => (
+                  <tr key={testRequest.name}>
+                    <td>{testRequest.name}</td>
+                    <td>{testRequest.productName}</td>
+                    <td>{formatDate(testRequest.meta.updatedAt)}</td>
                                             <td><UserIdEmailConnector userId={testRequest.assesseeId}></UserIdEmailConnector></td>
                                             <td><button className={StateClasses[testRequest.state]?.btnClass} onClick={() => { navigate("/dashboard/choose-test") }}> <i className={StateClasses[testRequest.state]?.iconClass}></i> {StateClasses[testRequest.state]?.btnText}</button></td>
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-    )
-}
+        {totalPages > 1 && (
+          <Pagination
+            className="pagination-ui"
+            count={totalPages}
+            page={currentPage}
+            onChange={handleChangePage}
+            variant="outlined"
+            shape="rounded"
+          />
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default Applications;
