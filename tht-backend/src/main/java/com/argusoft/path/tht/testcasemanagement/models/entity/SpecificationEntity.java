@@ -33,6 +33,9 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "specification", cascade = {})
     private Set<TestcaseEntity> testcases;
 
+    @Column(name = "is_required")
+    private Boolean isRequired;
+
     public Integer getRank() {
         return rank;
     }
@@ -66,5 +69,21 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
 
     public void setTestcases(Set<TestcaseEntity> testcases) {
         this.testcases = testcases;
+    }
+
+    public Boolean getFunctional() {
+        return isFunctional;
+    }
+
+    public void setFunctional(Boolean functional) {
+        isFunctional = functional;
+    }
+
+    public Boolean getRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(Boolean required) {
+        isRequired = required;
     }
 }

@@ -40,8 +40,6 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "message")
     private String message;
 
-
-    //TODO: make it entity
     @Column(name = "test_request_id")
     private String testRequestId;
 
@@ -50,6 +48,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     @Column(name = "is_manual")
     private Boolean isManual;
+
+    @Column(name = "is_required")
+    private Boolean isRequired;
 
     @Column(name = "is_success")
     private Boolean isSuccess;
@@ -140,6 +141,14 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     public TestcaseResultEntity getParentTestcaseResult() {
         return parentTestcaseResult;
+    }
+
+    public Boolean getRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(Boolean required) {
+        isRequired = required;
     }
 
     public void setParentTestcaseResult(TestcaseResultEntity parentTestcaseResult) {

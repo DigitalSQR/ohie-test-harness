@@ -26,6 +26,13 @@ public class UserInfo extends IdStateMetaInfo implements Serializable {
             required = true)
     private String name;
 
+    @ApiModelProperty(notes = "The companyName for User model",
+            allowEmptyValue = false,
+            example = "Argusoft",
+            dataType = "String",
+            required = true)
+    private String companyName;
+
     @ApiModelProperty(notes = "The email for User model",
             allowEmptyValue = false,
             example = "abc@egov.com",
@@ -69,6 +76,14 @@ public class UserInfo extends IdStateMetaInfo implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public Set<String> getRoleIds() {

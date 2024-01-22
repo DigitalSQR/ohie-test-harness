@@ -34,10 +34,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This TestcaseResultServiceServiceImpl contains implementation for TestcaseResult service.
@@ -344,12 +341,22 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) {
+                testcaseResultEntity.setSuccess(Boolean.TRUE);
+                updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP, contextInfo);
             }
         } else if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
+                if(testcaseResultEntities.stream()
+                        .anyMatch(tre->{ return tre.getRequired() && !Objects.equals(tre.getSuccess(), Boolean.TRUE);})) {
+                    testcaseResultEntity.setSuccess(Boolean.FALSE);
+                    updateTestcaseResult(testcaseResultEntity, contextInfo);
+                } else {
+                    testcaseResultEntity.setSuccess(Boolean.TRUE);
+                    updateTestcaseResult(testcaseResultEntity, contextInfo);
+                }
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
             }
         } else if (testcaseResultEntities.stream()

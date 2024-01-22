@@ -327,6 +327,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     testRequestEntity.getName(),
                     counter,
                     Boolean.FALSE,
+                    Boolean.TRUE,
                     null,
                     contextInfo);
             counter++;
@@ -349,6 +350,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                             componentEntity.getName(),
                             counter,
                             Boolean.FALSE,
+                            Boolean.TRUE,
                             testRequestTestcaseResult.getId(),
                             contextInfo);
                     counter++;
@@ -368,6 +370,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                     specificationEntity.getName(),
                                     counter,
                                     Boolean.FALSE,
+                                    specificationEntity.getRequired(),
                                     componentTestcaseResult.getId(),
                                     contextInfo);
                             counter++;
@@ -379,6 +382,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                         testcaseEntity.getName(),
                                         counter,
                                         Boolean.FALSE,
+                                        specificationEntity.getRequired(),
                                         specificationTestcaseResult.getId(),
                                         contextInfo);
                                 counter++;
@@ -409,6 +413,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     testRequestEntity.getName(),
                     counter,
                     Boolean.TRUE,
+                    Boolean.TRUE,
                     null,
                     contextInfo);
             counter++;
@@ -431,6 +436,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                             componentEntity.getName(),
                             counter,
                             Boolean.TRUE,
+                            Boolean.TRUE,
                             testRequestTestcaseResult.getId(),
                             contextInfo);
                     counter++;
@@ -450,6 +456,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                     specificationEntity.getName(),
                                     counter,
                                     Boolean.TRUE,
+                                    specificationEntity.getRequired(),
                                     componentTestcaseResult.getId(),
                                     contextInfo);
                             counter++;
@@ -461,6 +468,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                         testcaseEntity.getName(),
                                         counter,
                                         Boolean.TRUE,
+                                        specificationEntity.getRequired(),
                                         specificationTestcaseResult.getId(),
                                         contextInfo);
                                 counter++;
@@ -484,6 +492,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                                                       String name,
                                                                       Integer counter,
                                                                       Boolean isManual,
+                                                                      Boolean isRequired,
                                                                       String parentTestcaseResultId,
                                                                       ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
@@ -510,6 +519,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         testcaseResultEntity.setRank(counter);
         testcaseResultEntity.setName(name);
         testcaseResultEntity.setManual(isManual);
+        testcaseResultEntity.setRequired(isRequired);
         UserEntity userEntity = new UserEntity();
         userEntity.setId(contextInfo.getUsername());
         testcaseResultEntity.setTester(userEntity);

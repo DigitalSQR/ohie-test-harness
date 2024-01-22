@@ -66,6 +66,13 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = true)
     private Boolean hasSystemError;
 
+    @ApiModelProperty(notes = "The isRequired of the TestcaseResult",
+            allowEmptyValue = false,
+            example = "false",
+            dataType = "Boolean",
+            required = true)
+    private Boolean isRequired;
+    
     @ApiModelProperty(notes = "The isManual of the TestcaseResult",
             allowEmptyValue = false,
             example = "false",
@@ -180,5 +187,13 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
 
     public void setSuccess(Boolean success) {
         isSuccess = success;
+    }
+
+    public Boolean getRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(Boolean required) {
+        isRequired = required;
     }
 }
