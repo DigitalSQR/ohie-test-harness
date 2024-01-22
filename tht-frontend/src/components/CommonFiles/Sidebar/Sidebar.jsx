@@ -68,7 +68,11 @@ export default function Sidebar() {
       <ul className="side-menu">
         <li>
           <a
-            className={activeMenuItem === "/dashboard" ? "active menu-like-item" : "menu-like-item"}
+            className={
+              activeMenuItem === "/dashboard"
+                ? "active menu-like-item"
+                : "menu-like-item"
+            }
             onClick={() => {
               handleMenuItemClick("/dashboard");
             }}
@@ -82,8 +86,19 @@ export default function Sidebar() {
           </a>
         </li>
         <li>
-          <a className={activeMenuItem === "/dashboard/testing-requests" ? "active menu-like-item" : "menu-like-item"} onClick={() => handleMenuItemClick("/dashboard/testing-requests")}>
-            <i aria-label='Testing Requests' title='Testing Requests' className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
+          <a
+            className={
+              activeMenuItem === "/dashboard/testing-requests"
+                ? "active menu-like-item"
+                : "menu-like-item"
+            }
+            onClick={() => handleMenuItemClick("/dashboard/testing-requests")}
+          >
+            <i
+              aria-label="Testing Requests"
+              title="Testing Requests"
+              className="bi bi-file-earmark-bar-graph menu-left-icon"
+            ></i>
             <span> Testing Requests</span>
           </a>
         </li>
@@ -111,7 +126,9 @@ export default function Sidebar() {
             <li>
               <a
                 className={
-                  activeMenuItem === "/dashboard/applications" ? "active menu-like-item" : "menu-like-item"
+                  activeMenuItem === "/dashboard/applications"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
                 }
                 onClick={() => handleMenuItemClick("/dashboard/applications")}
               >
@@ -125,20 +142,25 @@ export default function Sidebar() {
             </li>
           </>
         ) : null}
+        {user?.roleIds?.includes("role.admin") && (
+          <li>
+            <a
+              className={
+                activeMenuItem === "/dashboard/admin-users"
+                  ? "active menu-like-item"
+                  : "menu-like-item"
+              }
+              onClick={() => handleMenuItemClick("/dashboard/admin-users")}
+            >
+              <i className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
+              <span> Admin-users</span>
+            </a>
+          </li>
+        )}
         <li>
           <a
-            className={
-              activeMenuItem === "/dashboard/admin-users" ? "active menu-like-item" : "menu-like-item"
-            }
-            onClick={() => handleMenuItemClick("/dashboard/admin-users")}
-          >
-            <i className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
-            <span> Admin-users</span>
-          </a>
-        </li>
-        <li>
-          <a
-            className='menu-like-item' onClick={() => {
+            className="menu-like-item"
+            onClick={() => {
               dispatch(log_out());
             }}
             aria-label="Logout"
