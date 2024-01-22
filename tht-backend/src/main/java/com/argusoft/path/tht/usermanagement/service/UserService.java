@@ -81,7 +81,6 @@ public interface UserService {
      * Retrieves a list of Users corresponding to the given User Name.The
      * returned list may be in any order with unique set.
      *
-     *
      * @param userSearchFilter
      * @param pageable         Contains Index number of the Page, Max size of the single
      *                         page,Name of the field for sorting and sortDirection sorting direction
@@ -104,15 +103,12 @@ public interface UserService {
      * Retrieves a list of Users corresponding to the given User Name.The
      * returned list may be in any order with unique set.
      *
-     *
      * @param userSearchFilter
-     *
      * @param contextInfo      information containing the principalId and locale
      *                         information about the caller of service operation
      * @return a list of User name start with given UserName found
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request
-     *
      */
     public List<UserEntity> searchUsers(UserSearchCriteriaFilter userSearchFilter,
                                         ContextInfo contextInfo)

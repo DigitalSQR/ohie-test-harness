@@ -1,13 +1,10 @@
 package com.argusoft.path.tht.testcasemanagement.filter;
 
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import io.swagger.annotations.ApiParam;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -50,16 +47,16 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
     protected List<Predicate> buildPredicates(Root<TestcaseEntity> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getName())){
+        if (StringUtils.hasLength(getName())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
-        if(!CollectionUtils.isEmpty(getStates())){
+        if (!CollectionUtils.isEmpty(getStates())) {
             predicates.add(criteriaBuilder.in(root.get("state")).value(getStates()));
         }
 
-        if(getManual()!=null){
-            predicates.add(criteriaBuilder.equal(root.get("isManual"),getManual()));
+        if (getManual() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("isManual"), getManual()));
         }
 
         if (getSpecificationId() != null) {

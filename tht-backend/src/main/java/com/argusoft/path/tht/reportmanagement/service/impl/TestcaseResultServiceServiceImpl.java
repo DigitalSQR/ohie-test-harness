@@ -29,7 +29,6 @@ import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -164,7 +163,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             throws InvalidParameterException {
 
         Specification<TestcaseResultEntity> testcaseEntitySpecification = testcaseResultCriteriaSearchFilter.buildSpecification();
-        return testcaseResultRepository.findAll(testcaseEntitySpecification,pageable);
+        return testcaseResultRepository.findAll(testcaseEntitySpecification, pageable);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.argusoft.path.tht.systemconfiguration.examplefilter;
 
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;

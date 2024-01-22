@@ -202,7 +202,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throws InvalidParameterException {
 
         Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildSpecification();
-        return testRequestRepository.findAll(testRequestEntitySpecification,pageable);
+        return testRequestRepository.findAll(testRequestEntitySpecification, pageable);
     }
 
 
@@ -332,12 +332,14 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             counter++;
             for (ComponentEntity componentEntity : filteredComponents) {
                 List<SpecificationEntity> filteredSpecifications = componentEntity.getSpecifications().stream().filter(specificationEntity -> {
-                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
-                            && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
-                        return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                    });
-                }).collect(Collectors.toList());
+                            return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                                    && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                                return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                        && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                            });
+                        })
+                        .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                        .collect(Collectors.toList());
 
                 if (!filteredSpecifications.isEmpty()) {
                     TestcaseResultEntity componentTestcaseResult = createDraftTestCaseResultIfNotExists(
@@ -352,9 +354,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     counter++;
                     for (SpecificationEntity specificationEntity : filteredSpecifications) {
                         List<TestcaseEntity> filteredTestcases = specificationEntity.getTestcases().stream().filter(testcaseEntity -> {
-                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                    && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                        }).collect(Collectors.toList());
+                                    return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                            && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                                })
+                                .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                                .collect(Collectors.toList());
 
                         if (!filteredTestcases.isEmpty()) {
                             TestcaseResultEntity specificationTestcaseResult = createDraftTestCaseResultIfNotExists(
@@ -410,12 +414,14 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             counter++;
             for (ComponentEntity componentEntity : filteredComponents) {
                 List<SpecificationEntity> filteredSpecifications = componentEntity.getSpecifications().stream().filter(specificationEntity -> {
-                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
-                            && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
-                        return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                    });
-                }).collect(Collectors.toList());
+                            return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                                    && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                                return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                        && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                            });
+                        })
+                        .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                        .collect(Collectors.toList());
 
                 if (!filteredSpecifications.isEmpty()) {
                     TestcaseResultEntity componentTestcaseResult = createDraftTestCaseResultIfNotExists(
@@ -430,9 +436,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     counter++;
                     for (SpecificationEntity specificationEntity : filteredSpecifications) {
                         List<TestcaseEntity> filteredTestcases = specificationEntity.getTestcases().stream().filter(testcaseEntity -> {
-                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                    && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                        }).collect(Collectors.toList());
+                                    return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
+                                            && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                                })
+                                .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                                .collect(Collectors.toList());
 
                         if (!filteredTestcases.isEmpty()) {
                             TestcaseResultEntity specificationTestcaseResult = createDraftTestCaseResultIfNotExists(
@@ -467,7 +475,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
         componentCriteriaSearchFilter.setState(Collections.singletonList(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE));
-        return componentService.searchComponents(componentCriteriaSearchFilter,Constant.FULL_PAGE_SORT_BY_RANK,contextInfo).getContent();
+        return componentService.searchComponents(componentCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
     }
 
     private TestcaseResultEntity createDraftTestCaseResultIfNotExists(String refObjUri,

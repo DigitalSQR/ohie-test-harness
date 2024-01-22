@@ -1,12 +1,9 @@
 package com.argusoft.path.tht.testcasemanagement.filter;
 
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -47,11 +44,11 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     protected List<Predicate> buildPredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getName())){
+        if (StringUtils.hasLength(getName())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
-        if(!CollectionUtils.isEmpty(getState())){
+        if (!CollectionUtils.isEmpty(getState())) {
             predicates.add(criteriaBuilder.in(root.get("state")).value(state));
         }
 

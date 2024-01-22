@@ -1,10 +1,8 @@
 package com.argusoft.path.tht.reportmanagement.filter;
 
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.util.CollectionUtils;
@@ -68,11 +66,11 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     protected List<Predicate> buildPredicates(Root<TestcaseResultEntity> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getName())){
+        if (StringUtils.hasLength(getName())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
-        if(!CollectionUtils.isEmpty(getStates())){
+        if (!CollectionUtils.isEmpty(getStates())) {
             predicates.add(criteriaBuilder.in(root.get("state")).value(getStates()));
         }
 
@@ -81,25 +79,25 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
             predicates.add(criteriaBuilder.equal(ownerJoin.get("id"), getTesterId()));
         }
 
-        if(StringUtils.hasLength(getRefObjUri())){
-            predicates.add(criteriaBuilder.equal(root.get("refObjUri"),getRefObjUri()));
+        if (StringUtils.hasLength(getRefObjUri())) {
+            predicates.add(criteriaBuilder.equal(root.get("refObjUri"), getRefObjUri()));
         }
 
-        if(StringUtils.hasLength(getRefId())){
-            predicates.add(criteriaBuilder.equal(root.get("refId"),getRefId()));
+        if (StringUtils.hasLength(getRefId())) {
+            predicates.add(criteriaBuilder.equal(root.get("refId"), getRefId()));
         }
 
-        if(StringUtils.hasLength(getTestRequestId())){
-            predicates.add(criteriaBuilder.equal(root.get("testRequestId"),getTestRequestId()));
+        if (StringUtils.hasLength(getTestRequestId())) {
+            predicates.add(criteriaBuilder.equal(root.get("testRequestId"), getTestRequestId()));
         }
 
-        if(StringUtils.hasLength(getParentTestcaseResultId())){
+        if (StringUtils.hasLength(getParentTestcaseResultId())) {
             Join<TestcaseResultEntity, TestcaseResultEntity> joinTable = root.join("parentTestcaseResult");
             predicates.add(criteriaBuilder.equal(joinTable.get("id"), getParentTestcaseResultId()));
         }
 
-        if(getManual()!=null){
-            predicates.add(criteriaBuilder.equal(root.get("isManual"),getManual()));
+        if (getManual() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("isManual"), getManual()));
         }
 
         return predicates;

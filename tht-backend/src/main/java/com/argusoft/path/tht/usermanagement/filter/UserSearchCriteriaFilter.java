@@ -1,16 +1,13 @@
 package com.argusoft.path.tht.usermanagement.filter;
 
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -45,7 +42,7 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     protected List<Predicate> buildPredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getName())){
+        if (StringUtils.hasLength(getName())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
         }
 
@@ -53,8 +50,8 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
             predicates.add(criteriaBuilder.in(root.get("state")).value(getStates()));
         }
 
-        if(StringUtils.hasLength(getEmail())){
-            predicates.add(criteriaBuilder.equal(root.get("email"),getEmail()));
+        if (StringUtils.hasLength(getEmail())) {
+            predicates.add(criteriaBuilder.equal(root.get("email"), getEmail()));
         }
 
         return predicates;

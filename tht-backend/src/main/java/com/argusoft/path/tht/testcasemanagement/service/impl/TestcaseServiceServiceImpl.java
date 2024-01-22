@@ -118,7 +118,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             ContextInfo contextInfo)
             throws InvalidParameterException {
         Specification<TestcaseEntity> testcaseEntitySpecification = testcaseSearchFilter.buildSpecification();
-        return this.testcaseRepository.findAll(testcaseEntitySpecification,pageable);
+        return this.testcaseRepository.findAll(testcaseEntitySpecification, pageable);
     }
 
 

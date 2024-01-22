@@ -6,7 +6,6 @@ import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -17,7 +16,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 
 @Component
 public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<DocumentEntity> {
@@ -60,7 +58,7 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
 
     @Override
     public void validateSearchFilter() throws InvalidParameterException {
-        if(ValidationUtils.arePairsNullConsistent(refObjUri,refId)){
+        if (ValidationUtils.arePairsNullConsistent(refObjUri, refId)) {
             throw new InvalidParameterException("refObjUri and refId must either be null or non-null");
         }
     }
@@ -68,20 +66,20 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     protected List<Predicate> buildPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getName())){
+        if (StringUtils.hasLength(getName())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
         }
 
-        if(StringUtils.hasLength(getRefObjUri())){
-            predicates.add(criteriaBuilder.equal(root.get("refObjUri"),refObjUri));
+        if (StringUtils.hasLength(getRefObjUri())) {
+            predicates.add(criteriaBuilder.equal(root.get("refObjUri"), refObjUri));
         }
 
-        if(StringUtils.hasLength(getRefId())){
-            predicates.add(criteriaBuilder.equal(root.get("refId"),refId));
+        if (StringUtils.hasLength(getRefId())) {
+            predicates.add(criteriaBuilder.equal(root.get("refId"), refId));
         }
 
-        if(StringUtils.hasLength(getFileId())){
-            predicates.add(criteriaBuilder.equal(root.get("fileId"),fileId));
+        if (StringUtils.hasLength(getFileId())) {
+            predicates.add(criteriaBuilder.equal(root.get("fileId"), fileId));
         }
 
         if (!CollectionUtils.isEmpty(state)) {

@@ -84,7 +84,6 @@ public class DocumentRestController {
     }
 
 
-
     @ApiOperation(value = "View available Document with supplied id", response = DocumentInfo.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved Document"),
@@ -96,7 +95,7 @@ public class DocumentRestController {
     public Page<DocumentInfo> getSearchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter,
                                                 Pageable pageable,
                                                 @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException {
-        Page<DocumentEntity> documentBySearchFilter = documentService.searchDocument(exampleDocumentSearchFilter, pageable,contextInfo);
+        Page<DocumentEntity> documentBySearchFilter = documentService.searchDocument(exampleDocumentSearchFilter, pageable, contextInfo);
         return documentMapper.pageEntityToDto(documentBySearchFilter);
     }
 

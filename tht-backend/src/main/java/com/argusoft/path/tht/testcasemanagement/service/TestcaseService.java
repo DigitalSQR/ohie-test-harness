@@ -65,10 +65,10 @@ public interface TestcaseService {
      * returned list may be in any order with unique set.
      *
      * @param testcaseCriteriaSearchFilter
-     * @param pageable             Contains Index number of the Page, Max size of the single
-     *                             page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo          information containing the principalId and locale
-     *                             information about the caller of service operation
+     * @param pageable                     Contains Index number of the Page, Max size of the single
+     *                                     page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo                  information containing the principalId and locale
+     *                                     information about the caller of service operation
      * @return a list of Testcase name start with given TestcaseName found
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request
@@ -83,11 +83,9 @@ public interface TestcaseService {
      * Retrieves a list of Testcases corresponding to the given Testcase Name.The
      * returned list may be in any order with unique set.
      *
-     *
      * @param testcaseCriteriaSearchFilter
-     *
-     * @param contextInfo          information containing the principalId and locale
-     *                             information about the caller of service operation
+     * @param contextInfo                  information containing the principalId and locale
+     *                                     information about the caller of service operation
      * @return a list of Testcase name start with given TestcaseName found
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request

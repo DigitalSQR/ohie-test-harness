@@ -1,9 +1,7 @@
 package com.argusoft.path.tht.testprocessmanagement.filter;
 
-import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -36,7 +34,6 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     private String assesseeId;
 
 
-
     @Override
     public void validateSearchFilter() throws InvalidParameterException {
 
@@ -46,11 +43,11 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     protected List<Predicate> buildPredicates(Root<TestRequestEntity> root, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getName())){
+        if (StringUtils.hasLength(getName())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
-        if(!CollectionUtils.isEmpty(getStates())){
+        if (!CollectionUtils.isEmpty(getStates())) {
             predicates.add(criteriaBuilder.in(root.get("state")).value(getStates()));
         }
 

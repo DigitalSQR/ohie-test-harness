@@ -189,21 +189,6 @@ public class TestRequestValidator {
         return errors;
     }
 
-    public static void validateTestRequestProcess(String testRequestId, String validationTypeKey, TestRequestService testRequestService, TestcaseResultService testcaseResultService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
-        List<ValidationResultInfo> validationResultEntities
-                = validateTestRequestStartProcess(
-                testRequestId,
-                validationTypeKey,
-                testRequestService,
-                testcaseResultService,
-                contextInfo);
-        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
-                    validationResultEntities);
-        }
-    }
-
     public static List<ValidationResultInfo> validateTestRequestStartProcess(
             String testRequestId,
             String validationTypeKey,

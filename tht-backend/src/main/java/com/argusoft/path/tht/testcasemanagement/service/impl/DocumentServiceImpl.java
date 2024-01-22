@@ -92,7 +92,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private void setOrderBasedOnRefObjIdAndUri(DocumentEntity documentEntity, ContextInfo contextInfo) throws InvalidParameterException {
-        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = this.getDocumentsByRefObjectUriAndRefObjectId(documentEntity.getRefId(), documentEntity.getRefObjUri(),contextInfo);
+        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = this.getDocumentsByRefObjectUriAndRefObjectId(documentEntity.getRefId(), documentEntity.getRefObjUri(), contextInfo);
         int size = documentsByRefObjectUriAndRefObjectId.size();
         documentEntity.setOrder(size + 1);
     }
@@ -131,7 +131,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public Page<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException {
         Specification<DocumentEntity> documentEntityExample = exampleDocumentSearchFilter.buildSpecification();
-        return documentRepository.findAll(documentEntityExample,pageable);
+        return documentRepository.findAll(documentEntityExample, pageable);
     }
 
     @Override
@@ -215,7 +215,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             documentEntities = getDocumentsByFileId(fileId, contextInfo);
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("Error fetching document by fileId",e);
+            throw new OperationFailedException("Error fetching document by fileId", e);
             //ADD LOGGER
         }
 

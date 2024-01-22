@@ -64,12 +64,11 @@ public interface ComponentService {
      * Retrieves a list of Components corresponding to the given Component Name.The
      * returned list may be in any order with unique set.
      *
-     *
      * @param componentCriteriaSearchFilter
-     * @param pageable              Contains Index number of the Page, Max size of the single
-     *                              page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo           information containing the principalId and locale
-     *                              information about the caller of service operation
+     * @param pageable                      Contains Index number of the Page, Max size of the single
+     *                                      page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo                   information containing the principalId and locale
+     *                                      information about the caller of service operation
      * @return a list of Component name start with given ComponentName found
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request
@@ -86,8 +85,8 @@ public interface ComponentService {
      * returned list may be in any order with unique set.
      *
      * @param componentCriteriaSearchFilter
-     * @param contextInfo           information containing the principalId and locale
-     *                              information about the caller of service operation
+     * @param contextInfo                   information containing the principalId and locale
+     *                                      information about the caller of service operation
      * @return a list of Component name start with given ComponentName found
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request

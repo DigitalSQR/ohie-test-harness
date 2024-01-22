@@ -24,11 +24,6 @@ public class FileService {
 
     static String RESOURCE_FOLDER;
 
-    @Value("${tht-file.location}")
-    public void setResourceFolder(String value) {
-        RESOURCE_FOLDER = value;
-    }
-
     public static FileDetails storeFile(MultipartFile multipartFile,
                                         MultipartFileTypeTesterPredicate multipartFilePredicateToValidateFile)
             throws IOException, InvalidFileTypeException {
@@ -103,7 +98,6 @@ public class FileService {
         }
     }
 
-
     public static boolean validateFileTypeWithAllowedTypes(MultipartFile file, List<String> allowedTypes)
             throws InvalidFileTypeException, OperationFailedException {
 
@@ -112,6 +106,11 @@ public class FileService {
         } catch (InvalidParameterException e) {
             throw new OperationFailedException("File validation failed due to InvalidParameterException : " + e.getMessage(), e);
         }
+    }
+
+    @Value("${tht-file.location}")
+    public void setResourceFolder(String value) {
+        RESOURCE_FOLDER = value;
     }
 
 

@@ -214,7 +214,7 @@ public class UserServiceServiceImpl implements UserService {
             throws
             InvalidParameterException {
         Specification<UserEntity> userEntitySpecification = userSearchFilter.buildSpecification();
-        return this.userRepository.findAll(userEntitySpecification,pageable);
+        return this.userRepository.findAll(userEntitySpecification, pageable);
     }
 
     @Override
@@ -317,7 +317,7 @@ public class UserServiceServiceImpl implements UserService {
             throws
             InvalidParameterException {
         Specification<RoleEntity> roleEntitySpecification = roleSearchFilter.buildSpecification();
-        return roleRepository.findAll(roleEntitySpecification,pageable);
+        return roleRepository.findAll(roleEntitySpecification, pageable);
     }
 
     @Override

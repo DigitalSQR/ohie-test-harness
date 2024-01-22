@@ -2,15 +2,12 @@ package com.argusoft.path.tht.reportmanagement.models.mapper;
 
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 

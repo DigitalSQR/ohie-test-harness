@@ -24,7 +24,7 @@ public class DocumentEntity extends IdStateNameMetaEntity {
     @Column(name = "file_type")
     private String fileType;
 
-    @ManyToOne(cascade = {},fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private UserEntity owner;
 
@@ -68,7 +68,9 @@ public class DocumentEntity extends IdStateNameMetaEntity {
         this.fileType = fileType;
     }
 
-    public UserEntity getOwner() { return owner; }
+    public UserEntity getOwner() {
+        return owner;
+    }
 
     public void setOwner(UserEntity owner) {
         this.owner = owner;

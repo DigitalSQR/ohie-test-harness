@@ -64,7 +64,6 @@ public interface TestRequestService {
      * Retrieves a list of TestRequests corresponding to the given TestRequest Name.The
      * returned list may be in any order with unique set.
      *
-     *
      * @param testRequestSearchFilter
      * @param pageable                Contains Index number of the Page, Max size of the single
      *                                page,Name of the field for sorting and sortDirection sorting direction
@@ -84,8 +83,6 @@ public interface TestRequestService {
     /**
      * Retrieves a list of TestRequests corresponding to the given TestRequest Name.The
      * returned list may be in any order with unique set.
-     *
-     *
      *
      * @param testRequestSearchFilter
      * @param contextInfo             information containing the principalId and locale

@@ -118,7 +118,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             throws InvalidParameterException {
 
         Specification<SpecificationEntity> specificationEntitySpecification = specificationSearchFilter.buildSpecification();
-        return specificationRepository.findAll(specificationEntitySpecification,pageable);
+        return specificationRepository.findAll(specificationEntitySpecification, pageable);
     }
 
 

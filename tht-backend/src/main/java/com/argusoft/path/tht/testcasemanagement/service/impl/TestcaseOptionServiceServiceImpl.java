@@ -110,7 +110,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             ContextInfo contextInfo)
             throws InvalidParameterException {
         Specification<TestcaseOptionEntity> testcaseOptionEntitySpecification = testcaseOptionCriteriaSearchFilter.buildSpecification();
-        return testcaseOptionRepository.findAll(testcaseOptionEntitySpecification,pageable);
+        return testcaseOptionRepository.findAll(testcaseOptionEntitySpecification, pageable);
     }
 
 

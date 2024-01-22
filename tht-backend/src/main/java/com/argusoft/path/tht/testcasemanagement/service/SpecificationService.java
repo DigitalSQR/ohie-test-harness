@@ -64,7 +64,6 @@ public interface SpecificationService {
      * Retrieves a list of Specifications corresponding to the given Specification Name.The
      * returned list may be in any order with unique set.
      *
-     *
      * @param specificationSearchFilter
      * @param pageable                  Contains Index number of the Page, Max size of the single
      *                                  page,Name of the field for sorting and sortDirection sorting direction
@@ -85,9 +84,7 @@ public interface SpecificationService {
      * Retrieves a list of Specifications corresponding to the given Specification Name.The
      * returned list may be in any order with unique set.
      *
-     *
      * @param specificationSearchFilter
-     *
      * @param contextInfo               information containing the principalId and locale
      *                                  information about the caller of service operation
      * @return a list of Specification name start with given SpecificationName found

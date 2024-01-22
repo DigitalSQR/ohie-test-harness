@@ -86,7 +86,6 @@ public interface TestcaseResultService {
      * Retrieves a list of TestcaseResults corresponding to the given TestcaseResult Name.The
      * returned list may be in any order with unique set.
      *
-     *
      * @param testcaseResultSearchFilter
      * @param pageable                   Contains Index number of the Page, Max size of the single
      *                                   page,Name of the field for sorting and sortDirection sorting direction
@@ -106,7 +105,6 @@ public interface TestcaseResultService {
     /**
      * Retrieves a list of TestcaseResults corresponding to the given TestcaseResult Name.The
      * returned list may be in any order with unique set.
-     *
      *
      * @param testcaseResultSearchFilter
      * @param contextInfo                information containing the principalId and locale

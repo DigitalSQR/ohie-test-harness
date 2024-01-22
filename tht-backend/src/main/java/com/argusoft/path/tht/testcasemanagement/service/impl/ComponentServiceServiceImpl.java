@@ -110,7 +110,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             ContextInfo contextInfo)
             throws InvalidParameterException {
         Specification<ComponentEntity> componentEntitySpecification = componentCriteriaSearchFilter.buildSpecification();
-        return this.componentRepository.findAll(componentEntitySpecification,pageable);
+        return this.componentRepository.findAll(componentEntitySpecification, pageable);
     }
 
     @Override
