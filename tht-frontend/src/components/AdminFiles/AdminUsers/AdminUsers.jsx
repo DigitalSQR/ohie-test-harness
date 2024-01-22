@@ -3,16 +3,27 @@ import { AdminUserAPI } from "../../../api/AdminUserAPI";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import "./admin-user.scss";
 import { useNavigate } from "react-router-dom";
+import { Pagination } from "@mui/material";
 import { Button, Modal } from "antd";
+import sortIcon from "../../../styles/images/sort-icon.png"
 const AdminUsers = () => {
   const navigate = useNavigate();
   const [adminUsers, setAdminUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState();
+  const [sortDirection, setSortDirection] = useState({
+    name: "desc",
+    email: "desc",
+  });
+  const [sortFieldName, setSortFieldName] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(4);
+  const [totalPages, setTotalPages] = useState(1);
+
   const handleOk = () => {
     AdminUserAPI.updateUserState(deleteUserId, "user.status.inactive")
       .then(() => {
-        getAllUsers();
+        getAllUsers(sortFieldName, sortDirection,currentPage);
         setIsModalOpen(false);
       })
       .catch((error) => {
@@ -24,22 +35,25 @@ const AdminUsers = () => {
     setIsModalOpen(false);
   };
   useEffect(() => {
-    getAllUsers();
+    getAllUsers(sortFieldName, sortDirection,currentPage);
   }, []);
 
-  const getAllUsers = () => {
-    AdminUserAPI.fetchAllUsers()
+  const getAllUsers = (sortFieldName,sortDirection,currentPage) => {
+    AdminUserAPI.fetchAllUsers(
+      sortFieldName,
+      sortDirection[sortFieldName],
+      currentPage-1,
+      pageSize
+    )
       .then((data) => {
-        const sortedUsers = data.content.sort(
-          (a, b) => new Date(b.meta.createdAt) - new Date(a.meta.createdAt)
-        );
-        const activeUsers = sortedUsers
+        const activeUsers = data.content
           .filter((user) => user.state !== "user.status.inactive")
           .map((user) => ({
             ...user,
-            roleIds: [user.roleIds[0].slice(5)], // Fix the typo and reassign to user.roleIds
+            roleIds: [user.roleIds[0].slice(5)],
           }));
         setAdminUsers(activeUsers);
+        setTotalPages(data.totalPages)
       })
       .catch((error) => {
         console.log(error);
@@ -54,7 +68,19 @@ const AdminUsers = () => {
     setIsModalOpen(true);
     setDeleteUserId(userId);
   };
+  const handleSort = (sortFieldName) => {
+    setSortFieldName(sortFieldName);
+    const newSortDirection = { ...sortDirection };
+    newSortDirection[sortFieldName] =
+      sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
+    setSortDirection(newSortDirection);
+    getAllUsers(sortFieldName, newSortDirection, currentPage);
+  };
 
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+    getAllUsers(sortFieldName,sortDirection,newPage);
+  };
   return (
     <div>
       <div id="wrapper">
@@ -85,14 +111,32 @@ const AdminUsers = () => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>NAME</th>
-                  <th>EMAIL</th>
+                  <th>
+                    NAME
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("name")}
+                    >
+                      <img src={sortIcon} alt="e" />
+                    </a>
+                  </th>
+                  <th>
+                    EMAIL
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("email")}
+                    >
+                      <img src={sortIcon} alt="e" />
+                    </a>
+                  </th>
                   <th>ROLE</th>
                   <th>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
-                {adminUsers?.map((user) => (
+                {adminUsers.map((user) => (
                   <tr key={user.id}>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
@@ -117,15 +161,23 @@ const AdminUsers = () => {
             </table>
           </div>
         </div>
+        <Modal
+          title="Deletion Confirmation"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <p>Are you sure you want to delete?</p>
+        </Modal>
+        <Pagination
+          className="pagination-ui"
+          count={totalPages}
+          page={currentPage}
+          onChange={handleChangePage}
+          variant="outlined"
+          shape="rounded"
+        />
       </div>
-      <Modal
-        title="Deletion Confirmation"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>Are you sure you want to delete?</p>
-      </Modal>
     </div>
   );
 };

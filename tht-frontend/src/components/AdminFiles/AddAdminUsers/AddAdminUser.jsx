@@ -120,7 +120,7 @@ const AddAdminUser = () => {
                     value={formData.roleIds}
                     onChange={handleChange}
                   >
-                    <option value="#" disabled>
+                    <option value="#" >
                       Select Role
                     </option>
                     <option value="tester">Tester</option>

@@ -26,17 +26,6 @@ export const AdminUserAPI = {
       throw error;
     }
   },
-  fetchAllUsers: async function () {
-    try {
-      const response = await api.request({
-        url: `/user`,
-        method: "GET",
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
   fetchUserDetails: async function (userId) {
     try {
       const response = await api.request({
@@ -48,11 +37,28 @@ export const AdminUserAPI = {
       throw error;
     }
   },
-  updateUserState: async function (userId,changeState) {
+  updateUserState: async function (userId, changeState) {
     try {
       const response = await api.request({
         url: `/user/state/${userId}/${changeState}`,
         method: "PUT",
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  fetchAllUsers: async function (sortFieldName="createdAt", sortDirection="desc", currentPage, pageSize) {
+    try {
+      const response = await api.request({
+        url: `/user`,
+        method: "GET",
+        params: {
+          sort: `${sortFieldName},${sortDirection}`,
+          page:currentPage,
+          size:pageSize
+        },
       });
       return response.data;
     } catch (error) {
