@@ -26,11 +26,11 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     @Column(name = "is_functional")
     private Boolean isFunctional;
 
-    @ManyToOne(cascade = {})
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "component_id")
     private ComponentEntity component;
 
-    @OneToMany(mappedBy = "specification", cascade = {})
+    @OneToMany(mappedBy = "specification", cascade = {}, fetch = FetchType.LAZY)
     private Set<TestcaseEntity> testcases;
 
     @Column(name = "is_required")

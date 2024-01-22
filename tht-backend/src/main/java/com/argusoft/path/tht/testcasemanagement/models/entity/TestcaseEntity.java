@@ -27,7 +27,7 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     @Column(name = "bean_name")
     private String beanName;
 
-    @ManyToOne(cascade = {})
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "specification_id")
     private SpecificationEntity specification;
 
