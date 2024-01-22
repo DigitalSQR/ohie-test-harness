@@ -37,9 +37,6 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @JoinColumn(name = "approver_id")
     private UserEntity approver;
 
-    @Column(name = "fhir_version")
-    private String fhirVersion;
-
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private Set<TestRequestUrlEntity> testRequestUrls;
 
@@ -73,14 +70,6 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
 
     public void setApprover(UserEntity approver) {
         this.approver = approver;
-    }
-
-    public String getFhirVersion() {
-        return fhirVersion;
-    }
-
-    public void setFhirVersion(String fhirVersion) {
-        this.fhirVersion = fhirVersion;
     }
 
     public Set<TestRequestUrlEntity> getTestRequestUrls() {

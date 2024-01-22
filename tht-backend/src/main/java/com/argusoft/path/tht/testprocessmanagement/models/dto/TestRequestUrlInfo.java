@@ -44,14 +44,22 @@ public class TestRequestUrlInfo implements Serializable {
             required = true)
     private String baseUrl;
 
+    @ApiModelProperty(notes = "The fhirVersion of the testRequest",
+            allowEmptyValue = false,
+            example = "1",
+            dataType = "String",
+            required = true)
+    private String fhirVersion;
+
     public TestRequestUrlInfo() {
     }
 
-    public TestRequestUrlInfo(String componentId, String baseUrl, String username, String password) {
+    public TestRequestUrlInfo(String componentId, String baseUrl, String username, String password, String fhirVersion) {
         this.componentId = componentId;
         this.username = username;
         this.password = password;
         this.baseUrl = baseUrl;
+        this.fhirVersion = fhirVersion;
     }
 
     public String getComponentId() {
@@ -84,5 +92,13 @@ public class TestRequestUrlInfo implements Serializable {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    public String getFhirVersion() {
+        return fhirVersion;
+    }
+
+    public void setFhirVersion(String fhirVersion) {
+        this.fhirVersion = fhirVersion;
     }
 }

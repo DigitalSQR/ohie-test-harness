@@ -47,13 +47,6 @@ public class TestRequestInfo extends IdStateNameMetaInfo implements Serializable
             required = true)
     private String approverId;
 
-    @ApiModelProperty(notes = "The fhirVersion of the testRequest",
-            allowEmptyValue = false,
-            example = "1",
-            dataType = "String",
-            required = true)
-    private String fhirVersion;
-
     @ApiModelProperty(notes = "The testRequestUrls of the testRequest",
             allowEmptyValue = false,
             example = "1",
@@ -104,11 +97,4 @@ public class TestRequestInfo extends IdStateNameMetaInfo implements Serializable
         this.approverId = approverId;
     }
 
-    public String getFhirVersion() {
-        return fhirVersion;
-    }
-
-    public void setFhirVersion(String fhirVersion) {
-        this.fhirVersion = fhirVersion;
-    }
 }

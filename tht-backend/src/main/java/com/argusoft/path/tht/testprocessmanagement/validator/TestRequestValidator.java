@@ -462,9 +462,6 @@ public class TestRequestValidator {
         if (testRequestEntity.getEvaluationVersionId() != null) {
             testRequestEntity.setEvaluationVersionId(testRequestEntity.getEvaluationVersionId().trim());
         }
-        if (testRequestEntity.getFhirVersion() != null) {
-            testRequestEntity.setFhirVersion(testRequestEntity.getFhirVersion().trim());
-        }
         testRequestEntity.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> {
             if (testRequestUrlEntity.getBaseUrl() != null) {
                 testRequestUrlEntity.setBaseUrl(testRequestUrlEntity.getBaseUrl().trim());
@@ -474,6 +471,9 @@ public class TestRequestValidator {
             }
             if (testRequestUrlEntity.getPassword() != null) {
                 testRequestUrlEntity.setPassword(testRequestUrlEntity.getPassword().trim());
+            }
+            if (testRequestUrlEntity.getFhirVersion() != null) {
+                testRequestUrlEntity.setFhirVersion(testRequestUrlEntity.getFhirVersion().trim());
             }
         });
     }

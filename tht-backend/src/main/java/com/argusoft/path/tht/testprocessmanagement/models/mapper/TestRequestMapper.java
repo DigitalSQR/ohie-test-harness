@@ -52,7 +52,8 @@ public interface TestRequestMapper {
                     return new TestRequestUrlInfo(testRequestUrl.getComponent().getId(),
                             testRequestUrl.getBaseUrl(),
                             testRequestUrl.getUsername(),
-                            testRequestUrl.getPassword());
+                            testRequestUrl.getPassword(),
+                            testRequestUrl.getFhirVersion());
                 })
                 .collect(Collectors.toSet());
     }
@@ -65,6 +66,7 @@ public interface TestRequestMapper {
                     testRequestUrlEntity.setBaseUrl(testRequestUrl.getBaseUrl());
                     testRequestUrlEntity.setUsername(testRequestUrl.getUsername());
                     testRequestUrlEntity.setPassword(testRequestUrl.getPassword());
+                    testRequestUrlEntity.setFhirVersion(testRequestUrl.getFhirVersion());
 
                     ComponentEntity componentEntity = new ComponentEntity();
                     componentEntity.setId(testRequestUrl.getComponentId());
