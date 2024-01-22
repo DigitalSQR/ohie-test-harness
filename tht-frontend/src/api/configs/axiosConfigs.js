@@ -3,28 +3,28 @@ import {
   refreshTokenSuccess,
   refreshTokenFailure,
 } from "../../reducers/authReducer";
-import { persistor, store } from '../../store/store';
+import { persistor, store } from "../../store/store";
 const api = axios.create({
-  baseURL: "http://localhost:8081/api", // Replace with your API endpoint
-  //http://192.1.200.226:8081/api - server url
+  baseURL: process.env.REACT_APP_HOST || "http://192.1.200.226:8081/api"
 });
 const defaultToken = `Basic dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==`;
 api.defaults.headers.common["Authorization"] = defaultToken;
 
 export const setDefaultToken = () => {
   api.defaults.headers.common["Authorization"] = defaultToken;
-}
+};
 
 export const clearAuthInfo = () => {
   setDefaultToken();
-  persistor.purge()
-  .then(() => {
-    console.log('Local storage purged successfully');
-  })
-  .catch(error => {
-    console.error('Error purging local storage:', error);
-  });
-}
+  persistor
+    .purge()
+    .then(() => {
+      console.log("Local storage purged successfully");
+    })
+    .catch((error) => {
+      console.error("Error purging local storage:", error);
+    });
+};
 
 // Function to set the authentication token in the request headers
 export const setAuthToken = (token) => {
@@ -38,15 +38,18 @@ export const setAuthToken = (token) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response.status === 401 && error.response.data.error === 'invalid_token') {
+    if (
+      error.response.status === 401 &&
+      error.response.data.error === "invalid_token"
+    ) {
       error.config._retry = true;
       try {
         const refresh_token = store.getState().authSlice.refresh_token; // Use the correct reducer name
         const isKeepMeLogin = store.getState().authSlice.isKeepLogin;
         if (refresh_token != null && isKeepMeLogin === true) {
           const refreshTokenModel = {
-            refresh_token: refresh_token+'',
-            grant_type: "refresh_token", 
+            refresh_token: refresh_token + "",
+            grant_type: "refresh_token",
           };
           setDefaultToken();
           const response = await api.request({
@@ -56,20 +59,22 @@ api.interceptors.response.use(
           });
           store.dispatch(refreshTokenSuccess(response.data));
           setAuthToken(response.data.access_token);
-          error.config.headers['Authorization'] = `Bearer ${response.data.access_token}`;
-          return api.request(error.config);          
+          error.config.headers[
+            "Authorization"
+          ] = `Bearer ${response.data.access_token}`;
+          return api.request(error.config);
         } else {
           store.dispatch(refreshTokenFailure());
           window.location.href = "/login";
           return Promise.reject(error);
-       //   return Promise.reject(error);
+          //   return Promise.reject(error);
         }
       } catch (refreshError) {
         store.dispatch(refreshTokenFailure());
         window.location.href = "/login";
 
         return Promise.reject(error);
-      //  return Promise.reject(error);
+        //  return Promise.reject(error);
       }
     }
 
