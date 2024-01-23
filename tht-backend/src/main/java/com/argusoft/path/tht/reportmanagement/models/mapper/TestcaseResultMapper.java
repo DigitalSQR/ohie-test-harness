@@ -3,6 +3,7 @@ package com.argusoft.path.tht.reportmanagement.models.mapper;
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -27,6 +28,7 @@ public interface TestcaseResultMapper {
     @Mapping(source = "tester", target = "testerId")
     @Mapping(source = "testcaseOption", target = "testcaseOptionId")
     @Mapping(source = "parentTestcaseResult", target = "parentTestcaseResultId")
+    @Mapping(source = "testRequest", target = "testRequestId")
     TestcaseResultInfo modelToDto(TestcaseResultEntity testcaseResultEntity);
 
     @InheritInverseConfiguration
@@ -71,7 +73,6 @@ public interface TestcaseResultMapper {
         return testcaseOptionEntity;
     }
 
-
     default String setToParentTestcaseResultId(TestcaseResultEntity parentTestcaseResult) {
         if (parentTestcaseResult == null) return null;
         return parentTestcaseResult.getId();
@@ -84,5 +85,20 @@ public interface TestcaseResultMapper {
         TestcaseResultEntity testcaseOptionEntity = new TestcaseResultEntity();
         testcaseOptionEntity.setId(parentTestcaseResultId);
         return testcaseOptionEntity;
+    }
+
+
+    default String setToTestRequestId(TestRequestEntity testRequestEntity) {
+        if (testRequestEntity == null) return null;
+        return testRequestEntity.getId();
+    }
+
+    default TestRequestEntity setToTestRequest(String testRequestId) {
+        if (StringUtils.isEmpty(testRequestId)) {
+            return null;
+        }
+        TestRequestEntity testRequestEntity = new TestRequestEntity();
+        testRequestEntity.setId(testRequestId);
+        return testRequestEntity;
     }
 }
