@@ -55,9 +55,6 @@ public class ContextInfo extends User implements Serializable {
         super("username", "password", new ArrayList<>());
     }
 
-    public ContextInfo(OAuth2User oAuth2User) {
-        super(oAuth2User.getAttribute("email"), "password", oAuth2User.getAuthorities());
-    }
 
     public ContextInfo(
             String email,
