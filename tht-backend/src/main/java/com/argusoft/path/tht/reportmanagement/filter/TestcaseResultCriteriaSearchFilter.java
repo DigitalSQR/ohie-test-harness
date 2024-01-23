@@ -103,10 +103,6 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
             predicates.add(criteriaBuilder.equal(root.get("refId"), getRefId()));
         }
 
-        if (StringUtils.hasLength(getTestRequestId())) {
-            predicates.add(criteriaBuilder.equal(root.get("testRequestId"), getTestRequestId()));
-        }
-
         if (StringUtils.hasLength(getParentTestcaseResultId())) {
             Join<TestcaseResultEntity, TestcaseResultEntity> joinTable = root.join("parentTestcaseResult");
             predicates.add(criteriaBuilder.equal(joinTable.get("id"), getParentTestcaseResultId()));
@@ -128,11 +124,12 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
         if (contextInfo.isAssessee()) {
             Join<TestRequestEntity, UserEntity> joinTableWithUserEntity = joinTableWithTestRequest.join("assessee");
             predicates.add(criteriaBuilder.equal(joinTableWithUserEntity.get("id"), contextInfo.getUsername()));
-        } else {
-            if (getTestRequestId() != null) {
-                predicates.add(criteriaBuilder.equal(joinTableWithTestRequest.get("id"), getTestRequestId()));
-            }
         }
+
+        if (getTestRequestId() != null) {
+            predicates.add(criteriaBuilder.equal(joinTableWithTestRequest.get("id"), getTestRequestId()));
+        }
+
 
         return predicates;
     }
