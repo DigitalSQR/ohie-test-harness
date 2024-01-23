@@ -1079,8 +1079,8 @@ VALUES
         ),
         (
                 'testcase.cr.crf.8.3.option.1',
-                'Yes, the system logs user activities such as login events, changes made, and system access to maintain a record of user interactions.',
-                'Yes, the system logs user activities such as login events, changes made, and system access to maintain a record of user interactions.',
+                'Yes, the system records and logs changes to settings or configurations, including information on who made the changes and what was modified.',
+                'Yes, the system records and logs changes to settings or configurations, including information on who made the changes and what was modified.',
                 'testcase.option.status.active',
                 1,
                 true,
@@ -1093,8 +1093,8 @@ VALUES
         ),
         (
                 'testcase.cr.crf.8.3.option.2',
-                'No, the system does not log user activities, including login events, changes made, or system access, and does not maintain a record of user interactions.',
-                'No, the system does not log user activities, including login events, changes made, or system access, and does not maintain a record of user interactions.',
+                'No, the system does not record and log changes to settings or configurations, including information on who made the changes and what was modified.',
+                'No, the system does not record and log changes to settings or configurations, including information on who made the changes and what was modified.',
                 'testcase.option.status.active',
                 2,
                 false,
@@ -1105,6 +1105,34 @@ VALUES
                 Now(),
                 0
         ),
+        (
+                        'testcase.cr.crf.8.4.option.1',
+                        'Yes, the system logs user activities such as login events, changes made, and system access to maintain a record of user interactions.',
+                        'Yes, the system logs user activities such as login events, changes made, and system access to maintain a record of user interactions.',
+                        'testcase.option.status.active',
+                        1,
+                        true,
+                        'testcase.cr.crf.8.3',
+                        'ivasiwala@argusoft.com',
+                        'ivasiwala@argusoft.com',
+                        Now(),
+                        Now(),
+                        0
+                ),
+                (
+                        'testcase.cr.crf.8.4.option.2',
+                        'No, the system does not log user activities, including login events, changes made, or system access, and does not maintain a record of user interactions.',
+                        'No, the system does not log user activities, including login events, changes made, and system access, to keep track of user interactions within the system.',
+                        'testcase.option.status.active',
+                        2,
+                        false,
+                        'testcase.cr.crf.8.4',
+                        'ivasiwala@argusoft.com',
+                        'ivasiwala@argusoft.com',
+                        Now(),
+                        Now(),
+                        0
+                ),
         (
                 'testcase.cr.crf.10.3.option.1',
                 'Yes, the system accurately retains and remembers the birth order of children within a family, recording the sequence in which they were born for family records.',
