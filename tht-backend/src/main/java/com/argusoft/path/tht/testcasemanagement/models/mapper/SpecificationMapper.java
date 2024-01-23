@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.testcasemanagement.models.mapper;
 
 import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import org.mapstruct.InheritInverseConfiguration;
@@ -9,6 +10,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -24,7 +26,7 @@ public interface SpecificationMapper {
 
     SpecificationMapper INSTANCE = Mappers.getMapper(SpecificationMapper.class);
 
-    @Mapping(source = "component.id", target = "componentId")
+    @Mapping(source = "component", target = "componentId")
     @Mapping(source = "testcases", target = "testcaseIds")
     SpecificationInfo modelToDto(SpecificationEntity specificationEntity);
 
@@ -58,5 +60,18 @@ public interface SpecificationMapper {
                 .collect(Collectors.toSet());
     }
 
+    default String setToComponentId(ComponentEntity componentEntity) {
+        if (componentEntity == null) return null;
+        return componentEntity.getId();
+    }
+
+    default ComponentEntity setToComponent(String componentId) {
+        if (StringUtils.isEmpty(componentId)) {
+            return null;
+        }
+        ComponentEntity componentEntity = new ComponentEntity();
+        componentEntity.setId(componentId);
+        return componentEntity;
+    }
 
 }
