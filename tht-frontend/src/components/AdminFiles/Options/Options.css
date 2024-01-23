@@ -1,0 +1,17 @@
+.options-container {
+    display: flex;
+    flex-direction: column; /* Options will be rendered vertically */
+  }
+  
+  .option-item {
+    display: flex;
+    align-items: flex-start; /* Align items (radio button and label) vertically in each option-item */
+    margin-bottom: 10px; /* Adjust margin as needed to separate each option-item */
+  }
+  
+  input[type="radio"] {
+    margin-right: 8px; /* Adjust margin to create space between radio button and label */
+    margin-top: 4px;
+    margin-left: 2px; /* Adjust margin to vertically align the radio button with the first line of the option */
+  }
+  

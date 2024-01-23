@@ -53,7 +53,7 @@ export const TestRequestAPI = {
 		try {
 			const response = await api.request({
 				url: `/test-request/state/${id}/${state}`,
-				method: "PUT"
+				method: "PATCH"
 			});
 			return response.data;
 		} catch (error) {

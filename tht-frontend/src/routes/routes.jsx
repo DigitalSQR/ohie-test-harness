@@ -21,6 +21,7 @@ import EmailVerified from "../components/UserFiles/EmailVerified";
 import UpdateAdminUser from "../components/AdminFiles/UpdateAdminUser/UpdateAdminUser";
 import AdminUsers from "../components/AdminFiles/AdminUsers/AdminUsers";
 import AddAdminUser from "../components/AdminFiles/AddAdminUsers/AddAdminUser";
+import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
 const PrivateRoute = () => {
 	const token = useSelector((state) => state.authSlice.access_token);
 
@@ -45,8 +46,8 @@ const routes = createBrowserRouter([
 			{ path: "", element: <Landing /> },
 			{ path: "testing-requests", element: <TestingRequests /> },
 			{ path: "applications", element: <Applications /> },
-			{ path: "choose-test", element: <ChooseTest /> },
-			{ path: "functional-testing", element: <FunctionalTesting /> },
+			{ path: "choose-test/:testRequestId", element: <ChooseTest />, },
+			{ path: "manual-testing/:testRequestId", element: <ManualTesting /> },
 			{ path: "workflow-testing", element: <WorkFlowTesting /> },
 			{ path: "user-registration", element: <UserRegistration /> },
 			{ path: "register-application", element: <RegisterApplication />},
