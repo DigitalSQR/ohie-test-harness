@@ -109,7 +109,6 @@ public class TestcaseOptionRestController {
     })
     @GetMapping("")
     public Page<TestcaseOptionInfo> searchTestcaseOptions(
-            @RequestParam(name = "id", required = false) List<String> ids,
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             Pageable pageable,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)

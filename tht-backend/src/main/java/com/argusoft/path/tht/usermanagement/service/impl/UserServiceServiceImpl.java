@@ -213,7 +213,7 @@ public class UserServiceServiceImpl implements UserService {
             ContextInfo contextInfo)
             throws
             InvalidParameterException {
-        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildSpecification();
+        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildSpecification(contextInfo);
         return this.userRepository.findAll(userEntitySpecification, pageable);
     }
 
@@ -224,7 +224,7 @@ public class UserServiceServiceImpl implements UserService {
             ContextInfo contextInfo)
             throws
             InvalidParameterException {
-        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildSpecification();
+        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildSpecification(contextInfo);
         return this.userRepository.findAll(userEntitySpecification);
     }
 
@@ -243,14 +243,11 @@ public class UserServiceServiceImpl implements UserService {
         if (StringUtils.isEmpty(userId)) {
             throw new InvalidParameterException("userId is missing");
         }
-        Optional<UserEntity> userOptional
-                = userRepository.findById(userId);
-        if (!userOptional.isPresent()) {
-            throw new DoesNotExistException("User by id :"
-                    + userId
-                    + Constant.NOT_FOUND);
-        }
-        return userOptional.get();
+        UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter(userId);
+        List<UserEntity> userEntities = this.searchUsers(userSearchCriteriaFilter, contextInfo);
+        return userEntities.stream()
+                .findFirst()
+                .orElseThrow(() -> new DoesNotExistException("User does not found with id : " + userId));
     }
 
     /**
@@ -292,15 +289,8 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     @Timed(name = "getPrincipalUser")
     public UserEntity getPrincipalUser(ContextInfo contextInfo)
-            throws DoesNotExistException {
-        Optional<UserEntity> userOptional
-                = userRepository.findById(contextInfo.getUsername());
-        if (!userOptional.isPresent()) {
-            throw new DoesNotExistException("user by id :"
-                    + contextInfo.getUsername()
-                    + Constant.NOT_FOUND);
-        }
-        return userOptional.get();
+            throws DoesNotExistException, InvalidParameterException {
+       return this.getUserById(contextInfo.getUsername(),contextInfo);
     }
 
     /**
@@ -316,7 +306,7 @@ public class UserServiceServiceImpl implements UserService {
             ContextInfo contextInfo)
             throws
             InvalidParameterException {
-        Specification<RoleEntity> roleEntitySpecification = roleSearchFilter.buildSpecification();
+        Specification<RoleEntity> roleEntitySpecification = roleSearchFilter.buildSpecification(contextInfo);
         return roleRepository.findAll(roleEntitySpecification, pageable);
     }
 
@@ -327,7 +317,7 @@ public class UserServiceServiceImpl implements UserService {
             ContextInfo contextInfo)
             throws
             InvalidParameterException {
-        Specification<RoleEntity> roleEntitySpecification = roleSearchFilter.buildSpecification();
+        Specification<RoleEntity> roleEntitySpecification = roleSearchFilter.buildSpecification(contextInfo);
         return roleRepository.findAll(roleEntitySpecification);
     }
 
@@ -344,18 +334,13 @@ public class UserServiceServiceImpl implements UserService {
             OperationFailedException,
             InvalidParameterException {
         if (StringUtils.isEmpty(roleId)) {
-            throw new DoesNotExistException("User by id :"
-                    + roleId
-                    + Constant.NOT_FOUND);
+            throw new InvalidParameterException("roleId can not be empty");
         }
-        Optional<RoleEntity> roleOptional
-                = roleRepository.findById(roleId);
-        if (!roleOptional.isPresent()) {
-            throw new DoesNotExistException("User by id :"
-                    + roleId
-                    + Constant.NOT_FOUND);
-        }
-        return roleOptional.get();
+        RoleSearchCriteriaFilter roleSearchCriteriaFilter = new RoleSearchCriteriaFilter(roleId);
+        List<RoleEntity> roleEntities = this.searchRoles(roleSearchCriteriaFilter, contextInfo);
+        return roleEntities.stream()
+                .findFirst()
+                .orElseThrow(() -> new DoesNotExistException("Role does not found with id : " + roleId));
     }
 
     /**

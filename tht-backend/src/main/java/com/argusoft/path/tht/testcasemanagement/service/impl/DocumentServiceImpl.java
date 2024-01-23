@@ -78,13 +78,18 @@ public class DocumentServiceImpl implements DocumentService {
         documentEntity.setName(fileDetails.getFileName());
         documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
 
-        UserEntity user = userService.getPrincipalUser(contextInfo);
+        UserEntity user = null;
+        try {
+            user = userService.getPrincipalUser(contextInfo);
+        } catch (InvalidParameterException e) {
+            throw new OperationFailedException("InvalidParameterException while fetching principal User while saving document ",e);
+        }
         documentEntity.setOwner(user);
 
         try {
             setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
         } catch (InvalidParameterException e) {
-            throw new RuntimeException(e);
+            throw new OperationFailedException("InvalidParameterException while saving document ",e);
         }
 
         DocumentEntity document = documentRepository.save(documentEntity);
@@ -123,25 +128,35 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException {
-        Optional<DocumentEntity> documentById = documentRepository.findById(documentId);
-        return documentById.orElseThrow(() -> new DoesNotExistException("DocumentEntity does not found with id : " + documentId));
+    public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
+        
+        DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter(documentId);
+        try {
+            List<DocumentEntity> documentEntities = this.searchDocument(documentCriteriaSearchFilter, contextInfo);
+            return documentEntities.stream()
+                    .findFirst()
+                    .orElseThrow(() -> new DoesNotExistException("DocumentEntity does not found with id : " + documentId));
+
+        } catch (InvalidParameterException e) {
+            throw new OperationFailedException("InvalidParameterException while getting document ",e);
+        }
+
     }
 
     @Override
     public Page<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException {
-        Specification<DocumentEntity> documentEntityExample = exampleDocumentSearchFilter.buildSpecification();
+        Specification<DocumentEntity> documentEntityExample = exampleDocumentSearchFilter.buildSpecification(contextInfo);
         return documentRepository.findAll(documentEntityExample, pageable);
     }
 
     @Override
     public List<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, ContextInfo contextInfo) throws InvalidParameterException {
-        Specification<DocumentEntity> documentEntityExample = exampleDocumentSearchFilter.buildSpecification();
+        Specification<DocumentEntity> documentEntityExample = exampleDocumentSearchFilter.buildSpecification(contextInfo);
         return documentRepository.findAll(documentEntityExample);
     }
 
     @Override
-    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
+    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
 
         DocumentValidator.validateDocumentOrder(orderId);
         DocumentEntity document = this.getDocument(documentId, contextInfo);
@@ -191,7 +206,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
+    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
 
         DocumentValidator.validateDocumentStateKey(stateKey);
 

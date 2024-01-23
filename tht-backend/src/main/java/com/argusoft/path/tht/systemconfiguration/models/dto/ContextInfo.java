@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.systemconfiguration.models.dto;
 
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import io.swagger.annotations.ApiParam;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -42,6 +43,14 @@ public class ContextInfo extends User implements Serializable {
     )
     private String email;
 
+    private Boolean isAssessee;
+
+    private Boolean isTester;
+
+    private Boolean isAdmin;
+
+    private String principalId;
+
     public ContextInfo() {
         super("username", "password", new ArrayList<>());
     }
@@ -67,6 +76,9 @@ public class ContextInfo extends User implements Serializable {
                 accountNonLocked,
                 authorities);
         this.email = email;
+        setIsAssessee();
+        setIsAdmin();
+        setIsTester();
     }
 
     public Date getCurrentDate() {
@@ -132,6 +144,26 @@ public class ContextInfo extends User implements Serializable {
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         return super.getAuthorities();
+    }
+
+    private void setIsAssessee(){
+        this.isAssessee = this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().contains(UserServiceConstants.ROLE_ID_ASSESSEE));
+    }
+
+    private void setIsAdmin(){
+        this.isAdmin = this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().contains(UserServiceConstants.ROLE_ID_ADMIN));
+    }
+
+    private void setIsTester(){
+        this.isTester = this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().contains(UserServiceConstants.ROLE_ID_TESTER));
+    }
+
+    public boolean isAssessee(){
+        return isAssessee;
+    }
+
+    public boolean isTesterOrAdmin(){
+        return isTester || isAdmin;
     }
 
 }

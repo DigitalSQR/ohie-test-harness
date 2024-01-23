@@ -304,8 +304,13 @@ public class UserRestController {
     @GetMapping("/principal")
     public UserInfo getPrincipalUser(@RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, DoesNotExistException {
-        UserEntity principalUser = userService
-                .getPrincipalUser(contextInfo);
+        UserEntity principalUser = null;
+        try {
+            principalUser = userService
+                    .getPrincipalUser(contextInfo);
+        } catch (InvalidParameterException e) {
+            throw new OperationFailedException("InvalidParameterException while fetching principal User ",e);
+        }
         return userMapper.modelToDto(principalUser);
     }
 

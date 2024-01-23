@@ -48,7 +48,7 @@ public interface DocumentService {
      * @return DocumentEntity
      * @throws DoesNotExistException when document does not exists for that specific id
      */
-    public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException;
+    public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException;
 
 
     public Page<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException;
@@ -67,7 +67,7 @@ public interface DocumentService {
      * @throws DoesNotExistException        when document Does not exist for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException;
+    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException;
 
     /**
      * change state of document with id and giving the expected state
@@ -79,7 +79,7 @@ public interface DocumentService {
      * @throws DoesNotExistException        when document does not exists for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException;
+    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException;
 
 
     /**

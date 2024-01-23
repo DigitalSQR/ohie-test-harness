@@ -78,7 +78,7 @@ public class DocumentRestController {
     })
     @GetMapping("/{documentId}")
     public DocumentInfo getDocument(@PathVariable("documentId") String documentId,
-                                    @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException {
+                                    @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
         DocumentEntity document = documentService.getDocument(documentId, contextInfo);
         return documentMapper.modelToDto(document);
     }
@@ -110,7 +110,7 @@ public class DocumentRestController {
     public DocumentInfo updateDocumentState(@PathVariable("documentId") String documentId,
                                             @PathVariable("changeState") String changeState,
                                             @RequestAttribute("contextInfo") ContextInfo contextInfo)
-            throws DoesNotExistException, DataValidationErrorException {
+            throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
         DocumentEntity documentEntity = documentService.changeState(documentId, changeState, contextInfo);
         return documentMapper.modelToDto(documentEntity);
     }
@@ -125,7 +125,7 @@ public class DocumentRestController {
     @Transactional
     public DocumentInfo changeDocumentOrder(@PathVariable("documentId") String documentId,
                                             @PathVariable("orderId") Integer orderId,
-                                            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException {
+                                            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
         DocumentEntity updatedDocumentEntity = documentService.changeOrder(documentId, orderId, contextInfo);
         return documentMapper.modelToDto(updatedDocumentEntity);
     }

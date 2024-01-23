@@ -2,6 +2,7 @@ package com.argusoft.path.tht.testcasemanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -19,6 +20,8 @@ import java.util.List;
 
 @Component
 public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<DocumentEntity> {
+
+    private String id;
 
     @ApiParam(
             value = "name of the document"
@@ -55,6 +58,9 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     public DocumentCriteriaSearchFilter() {
     }
 
+    public DocumentCriteriaSearchFilter(String id) {
+        this.id = id;
+    }
 
     @Override
     public void validateSearchFilter() throws InvalidParameterException {
@@ -63,8 +69,12 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
         }
     }
 
-    protected List<Predicate> buildPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder) {
+    protected List<Predicate> buildPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
+
+        if(StringUtils.hasLength(getPrimaryId())){
+            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+        }
 
         if (StringUtils.hasLength(getName())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
@@ -86,10 +96,23 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
             predicates.add(criteriaBuilder.in(root.get("state")).value(state));
         }
 
-        if (getOwnerId() != null) {
-            Join<DocumentEntity, UserEntity> ownerJoin = root.join("owner");
-            predicates.add(criteriaBuilder.equal(ownerJoin.get("id"), getOwnerId()));
+        return predicates;
+    }
+
+    @Override
+    protected List<Predicate> buildAuthorizationPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        List<Predicate> predicates = new ArrayList<>();
+
+        Join<DocumentEntity, UserEntity> joinTable = root.join("owner");
+
+        if (contextInfo.isAssessee()) {
+            predicates.add(criteriaBuilder.equal(joinTable.get("id"), contextInfo.getUsername()));
+        } else {
+            if (getOwnerId() != null) {
+                predicates.add(criteriaBuilder.equal(joinTable.get("id"), getOwnerId()));
+            }
         }
+
         return predicates;
     }
 
@@ -140,5 +163,13 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
 
     public void setFileId(String fileId) {
         this.fileId = fileId;
+    }
+
+    public String getPrimaryId() {
+        return id;
+    }
+
+    public void setPrimaryId(String id) {
+        this.id = id;
     }
 }

@@ -91,8 +91,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
                 testcaseOptionEntity,
                 contextInfo);
 
-        Optional<TestcaseOptionEntity> testcaseOptionOptional
-                = testcaseOptionRepository.findById(testcaseOptionEntity.getId());
         testcaseOptionEntity = testcaseOptionRepository.save(testcaseOptionEntity);
         return testcaseOptionEntity;
     }
@@ -109,7 +107,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             Pageable pageable,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Specification<TestcaseOptionEntity> testcaseOptionEntitySpecification = testcaseOptionCriteriaSearchFilter.buildSpecification();
+        Specification<TestcaseOptionEntity> testcaseOptionEntitySpecification = testcaseOptionCriteriaSearchFilter.buildSpecification(contextInfo);
         return testcaseOptionRepository.findAll(testcaseOptionEntitySpecification, pageable);
     }
 
@@ -120,7 +118,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Specification<TestcaseOptionEntity> testcaseOptionEntitySpecification = testcaseOptionCriteriaSearchFilter.buildSpecification();
+        Specification<TestcaseOptionEntity> testcaseOptionEntitySpecification = testcaseOptionCriteriaSearchFilter.buildSpecification(contextInfo);
         return testcaseOptionRepository.findAll(testcaseOptionEntitySpecification);
     }
 
@@ -138,14 +136,11 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         if (StringUtils.isEmpty(testcaseOptionId)) {
             throw new InvalidParameterException("TestcaseOptionId is missing");
         }
-        Optional<TestcaseOptionEntity> TestcaseOptionOptional
-                = testcaseOptionRepository.findById(testcaseOptionId);
-        if (!TestcaseOptionOptional.isPresent()) {
-            throw new DoesNotExistException("TestcaseOption by id :"
-                    + testcaseOptionId
-                    + Constant.NOT_FOUND);
-        }
-        return TestcaseOptionOptional.get();
+        TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter = new TestcaseOptionCriteriaSearchFilter(testcaseOptionId);
+        List<TestcaseOptionEntity> testcaseOptionEntities = this.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, contextInfo);
+        return testcaseOptionEntities.stream()
+                .findFirst()
+                .orElseThrow(() -> new DoesNotExistException("Testcase does not found with id : " + testcaseOptionId));
     }
 
     /**

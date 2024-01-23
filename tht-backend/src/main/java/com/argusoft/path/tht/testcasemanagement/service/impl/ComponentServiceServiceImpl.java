@@ -91,8 +91,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
                 componentEntity,
                 contextInfo);
 
-        Optional<ComponentEntity> componentOptional
-                = componentRepository.findById(componentEntity.getId());
         componentEntity = componentRepository.save(componentEntity);
         return componentEntity;
     }
@@ -109,7 +107,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             Pageable pageable,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Specification<ComponentEntity> componentEntitySpecification = componentCriteriaSearchFilter.buildSpecification();
+        Specification<ComponentEntity> componentEntitySpecification = componentCriteriaSearchFilter.buildSpecification(contextInfo);
         return this.componentRepository.findAll(componentEntitySpecification, pageable);
     }
 
@@ -119,7 +117,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Specification<ComponentEntity> componentEntitySpecification = componentCriteriaSearchFilter.buildSpecification();
+        Specification<ComponentEntity> componentEntitySpecification = componentCriteriaSearchFilter.buildSpecification(contextInfo);
         return this.componentRepository.findAll(componentEntitySpecification);
     }
 
@@ -137,14 +135,11 @@ public class ComponentServiceServiceImpl implements ComponentService {
         if (StringUtils.isEmpty(componentId)) {
             throw new InvalidParameterException("ComponentId is missing");
         }
-        Optional<ComponentEntity> ComponentOptional
-                = componentRepository.findById(componentId);
-        if (!ComponentOptional.isPresent()) {
-            throw new DoesNotExistException("Component by id :"
-                    + componentId
-                    + Constant.NOT_FOUND);
-        }
-        return ComponentOptional.get();
+        ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter(componentId);
+        List<ComponentEntity> componentEntities = this.searchComponents(componentCriteriaSearchFilter, contextInfo);
+        return componentEntities.stream()
+                .findFirst()
+                .orElseThrow(() -> new DoesNotExistException("component does not found with id : " + componentId));
     }
 
     /**
