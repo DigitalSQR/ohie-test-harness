@@ -159,7 +159,7 @@ public interface TestRequestService {
             String refObjUri,
             String refId,
             Boolean isManual,
-            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException;
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException;
 
     /**
      * start manual testing process.
@@ -176,7 +176,7 @@ public interface TestRequestService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException,
-            DataValidationErrorException;
+            DataValidationErrorException, DoesNotExistException;
 
 
     /**

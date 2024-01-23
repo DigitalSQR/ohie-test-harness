@@ -94,7 +94,7 @@ public class DocumentRestController {
     @GetMapping("")
     public Page<DocumentInfo> getSearchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter,
                                                 Pageable pageable,
-                                                @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException {
+                                                @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
         Page<DocumentEntity> documentBySearchFilter = documentService.searchDocument(exampleDocumentSearchFilter, pageable, contextInfo);
         return documentMapper.pageEntityToDto(documentBySearchFilter);
     }

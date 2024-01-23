@@ -19,6 +19,8 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -26,7 +28,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class TestRequestValidator {
+
+
+    private static RefObjUriAndIdValidator refObjUriAndIdValidator;
+    @Autowired
+    public void setRefObjUriAndIdValidator(RefObjUriAndIdValidator refObjUriAndIdValidator){
+        TestRequestValidator.refObjUriAndIdValidator = refObjUriAndIdValidator;
+    }
 
     public static void validateCreateUpdateTestRequest(String validationTypeKey, TestRequestEntity testRequestEntity, TestRequestService testRequestService, UserService userService, ComponentService componentService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntities
@@ -114,7 +124,7 @@ public class TestRequestValidator {
                                                                    ContextInfo contextInfo)
             throws DataValidationErrorException,
             InvalidParameterException,
-            OperationFailedException {
+            OperationFailedException, DoesNotExistException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestRequestProcess(
                 testRequestId,
@@ -139,13 +149,16 @@ public class TestRequestValidator {
             String validationTypeKey,
             TestcaseResultService testcaseResultService,
             ContextInfo contextInfo)
-            throws OperationFailedException, InvalidParameterException {
+            throws OperationFailedException, InvalidParameterException, DoesNotExistException {
         if (StringUtils.isEmpty(testRequestId)
                 || StringUtils.isEmpty(refObjUri)
                 || StringUtils.isEmpty(refId)
                 || StringUtils.isEmpty(validationTypeKey)) {
             throw new InvalidParameterException("inputData is missing");
         }
+
+        refObjUriAndIdValidator.refObjUriAndIdValidation(refObjUri, refId, contextInfo);
+
         List<ValidationResultInfo> errors = new ArrayList<>();
         if (validationTypeKey.equals(Constant.START_PROCESS_VALIDATION)) {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();

@@ -19,6 +19,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.DocumentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
 import com.argusoft.path.tht.testcasemanagement.validator.DocumentValidator;
+import com.argusoft.path.tht.testprocessmanagement.validator.RefObjUriAndIdValidator;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     DocumentRepository documentRepository;
 
+    @Autowired
+    RefObjUriAndIdValidator refObjUriAndIdValidator;
+
     private static byte[] getFileContentByFileId(String fileId) throws OperationFailedException {
         byte[] fileContentByFilePathAndFileName;
         try {
@@ -56,7 +60,10 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
-                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException {
+                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException {
+
+        //validating the refId and refObjUri
+        refObjUriAndIdValidator.refObjUriAndIdValidation(documentEntity.getRefObjUri(), documentEntity.getRefId(), contextInfo);
 
         //get FileType
         String fileType = getFileType(file);
@@ -91,7 +98,7 @@ public class DocumentServiceImpl implements DocumentService {
         return document;
     }
 
-    private void setOrderBasedOnRefObjIdAndUri(DocumentEntity documentEntity, ContextInfo contextInfo) throws InvalidParameterException {
+    private void setOrderBasedOnRefObjIdAndUri(DocumentEntity documentEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
         List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = this.getDocumentsByRefObjectUriAndRefObjectId(documentEntity.getRefId(), documentEntity.getRefObjUri(), contextInfo);
         int size = documentsByRefObjectUriAndRefObjectId.size();
         documentEntity.setOrder(size + 1);
@@ -129,13 +136,17 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public Page<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException {
+    public Page<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+        //validating the refId and refObjUri
+        refObjUriAndIdValidator.refObjUriAndIdValidation(exampleDocumentSearchFilter.getRefObjUri(), exampleDocumentSearchFilter.getRefId(), contextInfo);
         Specification<DocumentEntity> documentEntityExample = exampleDocumentSearchFilter.buildSpecification();
         return documentRepository.findAll(documentEntityExample, pageable);
     }
 
     @Override
-    public List<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, ContextInfo contextInfo) throws InvalidParameterException {
+    public List<DocumentEntity> searchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+        //validating the refId and refObjUri
+        refObjUriAndIdValidator.refObjUriAndIdValidation(exampleDocumentSearchFilter.getRefObjUri(), exampleDocumentSearchFilter.getRefId(), contextInfo);
         Specification<DocumentEntity> documentEntityExample = exampleDocumentSearchFilter.buildSpecification();
         return documentRepository.findAll(documentEntityExample);
     }
@@ -182,7 +193,7 @@ public class DocumentServiceImpl implements DocumentService {
         return document;
     }
 
-    private List<DocumentEntity> getDocumentsByRefObjectUriAndRefObjectId(String refObjUri, String refId, ContextInfo contextInfo) throws InvalidParameterException {
+    private List<DocumentEntity> getDocumentsByRefObjectUriAndRefObjectId(String refObjUri, String refId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
         DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
         documentCriteriaSearchFilter.setRefObjUri(refObjUri);
         documentCriteriaSearchFilter.setRefId(refId);
@@ -214,7 +225,7 @@ public class DocumentServiceImpl implements DocumentService {
         List<DocumentEntity> documentEntities = new ArrayList<>();
         try {
             documentEntities = getDocumentsByFileId(fileId, contextInfo);
-        } catch (InvalidParameterException e) {
+        } catch (InvalidParameterException | DoesNotExistException e) {
             throw new OperationFailedException("Error fetching document by fileId", e);
             //ADD LOGGER
         }
@@ -225,7 +236,7 @@ public class DocumentServiceImpl implements DocumentService {
         return new ByteArrayResource(fileContentByFilePathAndFileName);
     }
 
-    private List<DocumentEntity> getDocumentsByFileId(String fileId, ContextInfo contextInfo) throws InvalidParameterException {
+    private List<DocumentEntity> getDocumentsByFileId(String fileId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
         DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
         documentCriteriaSearchFilter.setFileId(fileId);
         List<DocumentEntity> documentEntities;

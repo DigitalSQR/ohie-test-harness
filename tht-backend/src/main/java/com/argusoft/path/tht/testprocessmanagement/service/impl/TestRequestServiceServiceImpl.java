@@ -86,7 +86,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
         TestRequestValidator.validateTestRequestStartReinitializeProcess(
                 testRequestId,
                 refObjUri,
@@ -114,7 +114,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
         TestRequestValidator.validateTestRequestStartReinitializeProcess(
                 testRequestId,
                 refObjUri,
