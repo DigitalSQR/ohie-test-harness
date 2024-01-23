@@ -72,7 +72,7 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             dataType = "Boolean",
             required = true)
     private Boolean isRequired;
-    
+
     @ApiModelProperty(notes = "The isManual of the TestcaseResult",
             allowEmptyValue = false,
             example = "false",
@@ -204,7 +204,11 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
         isRequired = required;
     }
 
-    public Long getDuration() { return duration; }
+    public Long getDuration() {
+        return duration;
+    }
 
-    public void setDuration(Long duration) { this.duration = duration; }
+    public void setDuration(Long duration) {
+        this.duration = duration;
+    }
 }

@@ -352,8 +352,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 Long duration = testcaseResultEntities.stream()
                         .filter(tcr -> tcr.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED))
                         .map(TestcaseResultEntity::getDuration).reduce(0L, Long::sum);
-                if(testcaseResultEntities.stream()
-                        .anyMatch(tre->{ return tre.getRequired() && !Objects.equals(tre.getSuccess(), Boolean.TRUE);})) {
+                if (testcaseResultEntities.stream()
+                        .anyMatch(tre -> {
+                            return tre.getRequired() && !Objects.equals(tre.getSuccess(), Boolean.TRUE);
+                        })) {
                     testcaseResultEntity.setSuccess(Boolean.FALSE);
                 } else {
                     testcaseResultEntity.setSuccess(Boolean.TRUE);

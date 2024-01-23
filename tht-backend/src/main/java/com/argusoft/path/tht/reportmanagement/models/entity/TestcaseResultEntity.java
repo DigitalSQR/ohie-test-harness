@@ -146,6 +146,10 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         return parentTestcaseResult;
     }
 
+    public void setParentTestcaseResult(TestcaseResultEntity parentTestcaseResult) {
+        this.parentTestcaseResult = parentTestcaseResult;
+    }
+
     public Boolean getRequired() {
         return isRequired;
     }
@@ -154,11 +158,11 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         isRequired = required;
     }
 
-    public void setParentTestcaseResult(TestcaseResultEntity parentTestcaseResult) {
-        this.parentTestcaseResult = parentTestcaseResult;
+    public Long getDuration() {
+        return duration;
     }
 
-    public Long getDuration() { return duration; }
-
-    public void setDuration(Long duration) { this.duration = duration; }
+    public void setDuration(Long duration) {
+        this.duration = duration;
+    }
 }

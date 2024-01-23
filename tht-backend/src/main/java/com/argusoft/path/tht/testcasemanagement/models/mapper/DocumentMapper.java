@@ -2,12 +2,14 @@ package com.argusoft.path.tht.testcasemanagement.models.mapper;
 
 import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ public interface DocumentMapper {
 
     DocumentMapper INSTANCE = Mappers.getMapper(DocumentMapper.class);
 
-    @Mapping(source = "owner.id", target = "ownerId")
+    @Mapping(source = "owner", target = "ownerId")
     DocumentInfo modelToDto(DocumentEntity componentEntity);
 
     @InheritInverseConfiguration
@@ -33,4 +35,17 @@ public interface DocumentMapper {
         return new PageImpl<>(documentInfoList, page.getPageable(), page.getTotalElements());
     }
 
+    default String setToOwnerId(UserEntity owner) {
+        if (owner == null) return null;
+        return owner.getId();
+    }
+
+    default UserEntity setToOwner(String ownerId) {
+        if (StringUtils.isEmpty(ownerId)) {
+            return null;
+        }
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(ownerId);
+        return userEntity;
+    }
 }

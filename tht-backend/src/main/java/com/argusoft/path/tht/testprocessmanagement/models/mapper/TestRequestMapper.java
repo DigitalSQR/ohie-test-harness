@@ -5,12 +5,15 @@ import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestUrlInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -26,12 +29,14 @@ public interface TestRequestMapper {
 
     TestRequestMapper INSTANCE = Mappers.getMapper(TestRequestMapper.class);
 
-    @Mapping(source = "approver.id", target = "approverId")
-    @Mapping(source = "assessee.id", target = "assesseeId")
+    @Mapping(source = "approver", target = "approverId", qualifiedByName = "setToApproverId")
+    @Mapping(source = "assessee", target = "assesseeId", qualifiedByName = "setToAssesseeId")
     @Mapping(source = "testRequestEntity", target = "testRequestUrls")
     TestRequestInfo modelToDto(TestRequestEntity testRequestEntity);
 
     @InheritInverseConfiguration
+    @Mapping(source = "approverId", target = "approver", qualifiedByName = "setToApprover")
+    @Mapping(source = "assesseeId", target = "assessee", qualifiedByName = "setToAssessee")
     @Mapping(source = "testRequestInfo", target = "testRequestUrls")
     TestRequestEntity dtoToModel(TestRequestInfo testRequestInfo);
 
@@ -75,6 +80,38 @@ public interface TestRequestMapper {
                     return testRequestUrlEntity;
                 })
                 .collect(Collectors.toSet());
+    }
+
+    @Named("setToApproverId")
+    default String setToApproverId(UserEntity approver) {
+        if (approver == null) return null;
+        return approver.getId();
+    }
+
+    @Named("setToApprover")
+    default UserEntity setToApprover(String approverId) {
+        if (StringUtils.isEmpty(approverId)) {
+            return null;
+        }
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(approverId);
+        return userEntity;
+    }
+
+    @Named("setToAssesseeId")
+    default String setToAssesseeId(UserEntity assessee) {
+        if (assessee == null) return null;
+        return assessee.getId();
+    }
+
+    @Named("setToAssessee")
+    default UserEntity setToAssessee(String assesseeId) {
+        if (StringUtils.isEmpty(assesseeId)) {
+            return null;
+        }
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(assesseeId);
+        return userEntity;
     }
 
 }

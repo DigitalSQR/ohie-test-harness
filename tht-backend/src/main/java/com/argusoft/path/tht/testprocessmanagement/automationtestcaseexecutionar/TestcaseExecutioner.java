@@ -32,8 +32,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 
@@ -140,7 +138,7 @@ public class TestcaseExecutioner {
         testcaseResultEntity.setMessage("System failure");
         testcaseResultEntity.setHasSystemError(true);
         // Store total duration in milliseconds
-        testcaseResultEntity.setDuration(System.currentTimeMillis()-startDate);
+        testcaseResultEntity.setDuration(System.currentTimeMillis() - startDate);
         testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
 
         testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
@@ -151,7 +149,7 @@ public class TestcaseExecutioner {
         testcaseResultEntity.setSuccess(Objects.equals(validationResultInfo.getLevel(), ErrorLevel.OK));
         testcaseResultEntity.setMessage(validationResultInfo.getMessage());
         // Store total duration in milliseconds
-        testcaseResultEntity.setDuration(System.currentTimeMillis()-startDate);
+        testcaseResultEntity.setDuration(System.currentTimeMillis() - startDate);
         testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
 
         testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
@@ -159,7 +157,9 @@ public class TestcaseExecutioner {
 
     private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) throws OperationFailedException {
         FhirContext context;
-        if(contextType == null) { contextType = "R4"; }
+        if (contextType == null) {
+            contextType = "R4";
+        }
         switch (contextType) {
             case "D2":
                 context = FhirContext.forDstu2();
