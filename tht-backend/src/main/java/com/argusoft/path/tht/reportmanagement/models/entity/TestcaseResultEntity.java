@@ -7,6 +7,7 @@ package com.argusoft.path.tht.reportmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 
 import javax.persistence.*;
@@ -40,8 +41,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "message")
     private String message;
 
-    @Column(name = "test_request_id")
-    private String testRequestId;
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "test_request_id")
+    private TestRequestEntity testRequest;
 
     @Column(name = "has_system_error")
     private Boolean hasSystemError;
@@ -110,12 +112,12 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         this.hasSystemError = hasSystemError;
     }
 
-    public String getTestRequestId() {
-        return testRequestId;
+    public TestRequestEntity getTestRequest() {
+        return testRequest;
     }
 
-    public void setTestRequestId(String testRequestId) {
-        this.testRequestId = testRequestId;
+    public void setTestRequest(TestRequestEntity testRequest) {
+        this.testRequest = testRequest;
     }
 
     public Boolean getManual() {

@@ -515,7 +515,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         testcaseResultEntity.setRefObjUri(refObjUri);
         testcaseResultEntity.setRefId(refId);
         testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
-        testcaseResultEntity.setTestRequestId(testRequestId);
+
+        TestRequestEntity testRequestEntity = new TestRequestEntity();
+        testRequestEntity.setId(testRequestId);
+        testcaseResultEntity.setTestRequest(testRequestEntity);
+
         testcaseResultEntity.setRank(counter);
         testcaseResultEntity.setName(name);
         testcaseResultEntity.setManual(isManual);
