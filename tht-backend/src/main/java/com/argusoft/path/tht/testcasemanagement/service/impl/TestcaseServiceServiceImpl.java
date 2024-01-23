@@ -75,6 +75,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         if (StringUtils.isEmpty(testcaseEntity.getId())) {
             testcaseEntity.setId(UUID.randomUUID().toString());
         }
+        testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_DRAFT);
         testcaseEntity = testcaseRepository.save(testcaseEntity);
         return testcaseEntity;
     }
