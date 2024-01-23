@@ -349,14 +349,17 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
+                Long duration = testcaseResultEntities.stream()
+                        .filter(tcr -> tcr.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED))
+                        .map(TestcaseResultEntity::getDuration).reduce(0L, Long::sum);
                 if(testcaseResultEntities.stream()
                         .anyMatch(tre->{ return tre.getRequired() && !Objects.equals(tre.getSuccess(), Boolean.TRUE);})) {
                     testcaseResultEntity.setSuccess(Boolean.FALSE);
-                    updateTestcaseResult(testcaseResultEntity, contextInfo);
                 } else {
                     testcaseResultEntity.setSuccess(Boolean.TRUE);
-                    updateTestcaseResult(testcaseResultEntity, contextInfo);
                 }
+                testcaseResultEntity.setDuration(duration);
+                updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
             }
         } else if (testcaseResultEntities.stream()

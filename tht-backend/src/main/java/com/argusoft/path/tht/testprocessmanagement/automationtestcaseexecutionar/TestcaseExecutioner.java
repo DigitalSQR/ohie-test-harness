@@ -117,7 +117,7 @@ public class TestcaseExecutioner {
             TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseResult.getRefId(), contextInfo);
 
             TestCase testCaseExecutionService = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
-            // start date for test case
+            // Overwrite the date to be more accurate
             startDateForTestCase = System.currentTimeMillis();
             ValidationResultInfo validationResultInfo = testCaseExecutionService.test(iGenericClientMap, contextInfo);
 
