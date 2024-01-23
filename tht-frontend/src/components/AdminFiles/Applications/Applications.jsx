@@ -159,7 +159,7 @@ const Applications = () => {
                     <td>{testRequest.productName}</td>
                     <td>{formatDate(testRequest.meta.updatedAt)}</td>
                                             <td><UserIdEmailConnector userId={testRequest.assesseeId}></UserIdEmailConnector></td>
-                                            <td><button className={StateClasses[testRequest.state]?.btnClass} onClick={() => { navigate("/dashboard/choose-test") }}> <i className={StateClasses[testRequest.state]?.iconClass}></i> {StateClasses[testRequest.state]?.btnText}</button></td>
+                                            <td><button className={StateClasses[testRequest.state]?.btnClass} onClick={() => { navigate(`/dashboard/choose-test/${testRequest.id}`) }}> <i className={StateClasses[testRequest.state]?.iconClass}></i> {StateClasses[testRequest.state]?.btnText}</button></td>
                   </tr>
                 ))}
               </tbody>
