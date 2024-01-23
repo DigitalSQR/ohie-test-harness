@@ -141,6 +141,9 @@ const UserRegistration = () => {
                     <img src={sortIcon} alt="e" />
                   </a>
                 </th>
+                <th>
+                  Company
+                </th>
                 <th>requested date</th>
                 <th>
                   Status
@@ -184,6 +187,7 @@ const UserRegistration = () => {
                     <tr>
                       <td>{user.name}</td>
                       <td>{user.email}</td>
+                      <td>{user.companyName}</td>
                       <td>{formattedDate}</td>
                       <td>
                         <span className={userBadgeClasses[user.state]}>

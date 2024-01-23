@@ -12,6 +12,7 @@ export default function SignUp() {
     email: "",
     name: "",
     password: "",
+    companyName:""
   });
   const [confirmPassword, setconfirmPassword] = useState("");
   const handleInputChange = (e) => {
@@ -125,6 +126,25 @@ export default function SignUp() {
                       aria-label="Username"
                       aria-describedby="basic-addon1"
                       //   className="email"
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+                <div className="custom-input mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">
+                    Company
+                  </label>
+                  <div className="input-group">
+                    <span className="input-group-text" id="basic-addon1">
+                      <i className="bi bi-envelope"></i>
+                    </span>
+                    <input
+                      name="companyName"
+                      type="text"
+                      className="form-control border-start-0 ps-0"
+                      placeholder="companyName"
+                      aria-label="Username"
+                      aria-describedby="basic-addon1"
                       onChange={handleInputChange}
                     />
                   </div>
