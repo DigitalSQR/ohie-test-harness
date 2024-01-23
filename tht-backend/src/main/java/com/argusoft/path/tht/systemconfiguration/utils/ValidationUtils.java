@@ -695,7 +695,7 @@ public final class ValidationUtils {
 
 
     // check if particular status present for a given service
-    public static void statusPresent(List<String> serviceList,String stateKey,List<ValidationResultInfo> errors) throws DataValidationErrorException{
+    public static void statusPresent(List<String> serviceList,String stateKey,List<ValidationResultInfo> errors){
 
         if (!serviceList.contains(stateKey)) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
@@ -703,19 +703,17 @@ public final class ValidationUtils {
             validationResultInfo.setLevel(ErrorLevel.ERROR);
             validationResultInfo.setMessage("provided state is not valid ");
             errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
         }
     }
 
     //check if transition from one state to other is possible
-    public static void transitionValid(Multimap<String,String> serviceMap ,String currentState, String nextState,List<ValidationResultInfo> errors) throws DataValidationErrorException {
+    public static void transitionValid(Multimap<String,String> serviceMap ,String currentState, String nextState,List<ValidationResultInfo> errors){
         if (!serviceMap.containsKey(currentState) || !serviceMap.get(currentState).contains(nextState)) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setElement("state");
             validationResultInfo.setLevel(ErrorLevel.ERROR);
             validationResultInfo.setMessage("provided transition is not valid "+currentState);
             errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
         }
     }
 }

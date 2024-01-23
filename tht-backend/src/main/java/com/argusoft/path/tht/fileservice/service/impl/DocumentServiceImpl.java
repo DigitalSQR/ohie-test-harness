@@ -76,6 +76,7 @@ public class DocumentServiceImpl implements DocumentService {
         //set FileId to DocumentEntity as it is UUID
         documentEntity.setFileId(fileDetails.getFileId());
         documentEntity.setName(fileDetails.getFileName());
+        documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
 
         UserEntity user = null;
         try {
@@ -90,7 +91,6 @@ public class DocumentServiceImpl implements DocumentService {
         } catch (InvalidParameterException e) {
             throw new OperationFailedException("InvalidParameterException while saving document ",e);
         }
-
         DocumentEntity document = documentRepository.save(documentEntity);
         return document;
     }

@@ -237,6 +237,9 @@ public class UserValidator {
                                              UserEntity originalEntity) {
         //email can't be update
         ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
+
+        // state can't be updated
+        ValidationUtils.validateNotUpdatable(userEntity.getState(), originalEntity.getState(), "state", errors);
     }
 
     //validate create

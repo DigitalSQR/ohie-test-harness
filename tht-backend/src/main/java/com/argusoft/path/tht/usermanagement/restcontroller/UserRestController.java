@@ -199,7 +199,7 @@ public class UserRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PutMapping("/state/{userId}/{changeState}")
+    @PatchMapping("/state/{userId}/{changeState}")
     @Transactional
     public UserInfo updateUserState(@PathVariable("userId") String userId,
                                         @PathVariable("changeState") String changeState,

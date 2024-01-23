@@ -164,6 +164,7 @@ public class TestcaseOptionValidator {
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              TestcaseOptionEntity testcaseOptionEntity,
                                              TestcaseOptionEntity originalEntity) {
+        // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseOptionEntity.getState(), originalEntity.getState(), "state", errors);
     }
 

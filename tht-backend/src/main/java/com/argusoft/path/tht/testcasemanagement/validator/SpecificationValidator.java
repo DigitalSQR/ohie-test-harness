@@ -181,6 +181,7 @@ public class SpecificationValidator {
                                              SpecificationEntity specificationEntity,
                                              SpecificationService specificationService,
                                              SpecificationEntity originalEntity) {
+        // state can't be updated
         ValidationUtils.validateNotUpdatable(specificationEntity.getState(), originalEntity.getState(), "state", errors);
     }
 

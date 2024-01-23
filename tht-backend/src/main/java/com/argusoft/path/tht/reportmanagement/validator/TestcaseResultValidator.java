@@ -252,6 +252,7 @@ public class TestcaseResultValidator {
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              TestcaseResultEntity testcaseResultEntity,
                                              TestcaseResultEntity originalEntity) {
+        // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseResultEntity.getState(), originalEntity.getState(), "state", errors);
     }
 

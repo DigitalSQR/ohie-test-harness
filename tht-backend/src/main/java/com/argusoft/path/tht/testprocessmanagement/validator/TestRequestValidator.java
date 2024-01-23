@@ -404,6 +404,7 @@ public class TestRequestValidator {
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              TestRequestEntity testRequestEntity,
                                              TestRequestEntity originalEntity) {
+        // state can't be updated
         ValidationUtils.validateNotUpdatable(testRequestEntity.getState(), originalEntity.getState(), "state", errors);
     }
 
