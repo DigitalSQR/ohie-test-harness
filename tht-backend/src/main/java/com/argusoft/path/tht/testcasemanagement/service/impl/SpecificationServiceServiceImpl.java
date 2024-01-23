@@ -98,8 +98,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
                 specificationEntity,
                 contextInfo);
 
-        Optional<SpecificationEntity> specificationOptional
-                = specificationRepository.findById(specificationEntity.getId());
         specificationEntity = specificationRepository.save(specificationEntity);
         return specificationEntity;
     }
@@ -117,7 +115,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             ContextInfo contextInfo)
             throws InvalidParameterException {
 
-        Specification<SpecificationEntity> specificationEntitySpecification = specificationSearchFilter.buildSpecification();
+        Specification<SpecificationEntity> specificationEntitySpecification = specificationSearchFilter.buildSpecification(contextInfo);
         return specificationRepository.findAll(specificationEntitySpecification, pageable);
     }
 
@@ -129,7 +127,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             ContextInfo contextInfo)
             throws InvalidParameterException {
 
-        Specification<SpecificationEntity> specificationEntitySpecification = specificationSearchFilter.buildSpecification();
+        Specification<SpecificationEntity> specificationEntitySpecification = specificationSearchFilter.buildSpecification(contextInfo);
         return specificationRepository.findAll(specificationEntitySpecification);
     }
 
@@ -148,14 +146,11 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         if (StringUtils.isEmpty(specificationId)) {
             throw new InvalidParameterException("SpecificationId is missing");
         }
-        Optional<SpecificationEntity> SpecificationOptional
-                = specificationRepository.findById(specificationId);
-        if (!SpecificationOptional.isPresent()) {
-            throw new DoesNotExistException("Specification by id :"
-                    + specificationId
-                    + Constant.NOT_FOUND);
-        }
-        return SpecificationOptional.get();
+        SpecificationCriteriaSearchFilter specificationCriteriaSearchFilter = new SpecificationCriteriaSearchFilter(specificationId);
+        List<SpecificationEntity> specificationEntities = this.searchSpecifications(specificationCriteriaSearchFilter, contextInfo);
+        return specificationEntities.stream()
+                .findFirst()
+                .orElseThrow(() -> new DoesNotExistException("Specification does not found with id : " + specificationId));
     }
 
     /**

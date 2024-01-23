@@ -182,8 +182,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 componentService,
                 contextInfo);
 
-        Optional<TestRequestEntity> testRequestOptional
-                = testRequestRepository.findById(testRequestEntity.getId());
         testRequestEntity = testRequestRepository.save(testRequestEntity);
         return testRequestEntity;
     }
@@ -201,7 +199,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             ContextInfo contextInfo)
             throws InvalidParameterException {
 
-        Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildSpecification();
+        Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildSpecification(contextInfo);
         return testRequestRepository.findAll(testRequestEntitySpecification, pageable);
     }
 
@@ -213,7 +211,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             ContextInfo contextInfo)
             throws InvalidParameterException {
 
-        Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildSpecification();
+        Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildSpecification(contextInfo);
         return testRequestRepository.findAll(testRequestEntitySpecification);
     }
 
@@ -231,14 +229,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         if (StringUtils.isEmpty(testRequestId)) {
             throw new InvalidParameterException("TestRequestId is missing");
         }
-        Optional<TestRequestEntity> testRequestOptional
-                = testRequestRepository.findById(testRequestId);
-        if (!testRequestOptional.isPresent()) {
-            throw new DoesNotExistException("TestRequest by id :"
-                    + testRequestId
-                    + Constant.NOT_FOUND);
-        }
-        return testRequestOptional.get();
+        TestRequestCriteriaSearchFilter testRequestCriteriaSearchFilter = new TestRequestCriteriaSearchFilter(testRequestId);
+        List<TestRequestEntity> testRequestEntities = this.searchTestRequests(testRequestCriteriaSearchFilter, contextInfo);
+        return testRequestEntities.stream()
+                .findFirst()
+                .orElseThrow(() -> new DoesNotExistException("TestRequest does not found with id : " + testRequestId));
     }
 
     /**

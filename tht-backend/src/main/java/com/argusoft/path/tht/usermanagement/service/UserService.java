@@ -183,7 +183,7 @@ public interface UserService {
      */
     public UserEntity getPrincipalUser(ContextInfo contextInfo)
             throws OperationFailedException,
-            DoesNotExistException;
+            DoesNotExistException, InvalidParameterException;
 
 
     public Page<RoleEntity> searchRoles(RoleSearchCriteriaFilter roleSearchFilter,

@@ -2,6 +2,7 @@ package com.argusoft.path.tht.testcasemanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import io.swagger.annotations.ApiParam;
@@ -18,6 +19,8 @@ import java.util.List;
 
 @Component
 public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFilter<TestcaseOptionEntity> {
+
+    private String id;
 
     @ApiParam(
             value = "name of the testcaseOption"
@@ -38,9 +41,15 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     }
 
+    public TestcaseOptionCriteriaSearchFilter(String id) {
+        this.id = id;
+    }
+
+    public TestcaseOptionCriteriaSearchFilter() {
+    }
 
     @Override
-    protected List<Predicate> buildPredicates(Root<TestcaseOptionEntity> root, CriteriaBuilder criteriaBuilder) {
+    protected List<Predicate> buildPredicates(Root<TestcaseOptionEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getName())) {
@@ -56,7 +65,16 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
             predicates.add(criteriaBuilder.equal(componentJoin.get("id"), getTestcaseId()));
         }
 
+        if(StringUtils.hasLength(getPrimaryId())){
+            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+        }
+
         return predicates;
+    }
+
+    @Override
+    protected List<Predicate> buildAuthorizationPredicates(Root<TestcaseOptionEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        return null;
     }
 
     public String getName() {
@@ -81,5 +99,13 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     public void setTestcaseId(String testcaseId) {
         this.testcaseId = testcaseId;
+    }
+
+    public String getPrimaryId() {
+        return id;
+    }
+
+    public void setPrimaryId(String id) {
+        this.id = id;
     }
 }

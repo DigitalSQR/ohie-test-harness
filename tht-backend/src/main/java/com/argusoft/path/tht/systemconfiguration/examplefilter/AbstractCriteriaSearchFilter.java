@@ -1,39 +1,50 @@
 package com.argusoft.path.tht.systemconfiguration.examplefilter;
 
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
 public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchFilter<T> {
     @Override
-    public Specification<T> buildSpecification() throws InvalidParameterException {
+    public Specification<T> buildSpecification(ContextInfo contextInfo) throws InvalidParameterException {
         validateSearchFilter();
         return (root, query, criteriaBuilder) -> {
-            BiFunction<Root<T>, CriteriaBuilder, Predicate> predicateFunction = preparePredicate();
+            BiFunction<Root<T>, CriteriaBuilder, Predicate> predicateFunction = preparePredicate(contextInfo);
             return predicateFunction.apply(root, criteriaBuilder);
         };
     }
 
     @Override
-    public BiFunction<Root<T>, CriteriaBuilder, Predicate> buildPredicate() throws InvalidParameterException {
+    public BiFunction<Root<T>, CriteriaBuilder, Predicate> buildPredicate(ContextInfo contextInfo) throws InvalidParameterException {
         validateSearchFilter();
-        return this.preparePredicate();
+        return this.preparePredicate(contextInfo);
     }
 
 
-    protected BiFunction<Root<T>, CriteriaBuilder, Predicate> preparePredicate() {
+    protected BiFunction<Root<T>, CriteriaBuilder, Predicate> preparePredicate(ContextInfo contextInfo) {
         return (root, criteriaBuilder) -> {
-            List<Predicate> predicates = buildPredicates(root, criteriaBuilder);
+            List<Predicate> predicates = buildPredicates(root, criteriaBuilder, contextInfo);
+            List<Predicate> authorizationPredicates = buildAuthorizationPredicates(root, criteriaBuilder, contextInfo);
+
+            if(!CollectionUtils.isEmpty(authorizationPredicates)){
+                predicates.addAll(authorizationPredicates);
+            }
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 
-    protected abstract List<Predicate> buildPredicates(Root<T> root, CriteriaBuilder criteriaBuilder);
+    protected abstract List<Predicate> buildPredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo);
+
+    protected abstract List<Predicate> buildAuthorizationPredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo);
 
     protected abstract void validateSearchFilter() throws InvalidParameterException;
 

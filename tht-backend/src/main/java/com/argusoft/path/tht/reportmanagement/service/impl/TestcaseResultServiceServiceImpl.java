@@ -128,7 +128,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         //Submit testcaseResult.
         TestcaseResultEntity testcaseResultEntity
-                = testcaseResultRepository.findById(testcaseResultId).get();
+                = this.getTestcaseResultById(testcaseResultId,contextInfo);
 
         TestcaseOptionEntity testcaseOptionEntity
                 = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
@@ -161,7 +161,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             ContextInfo contextInfo)
             throws InvalidParameterException {
 
-        Specification<TestcaseResultEntity> testcaseEntitySpecification = testcaseResultCriteriaSearchFilter.buildSpecification();
+        Specification<TestcaseResultEntity> testcaseEntitySpecification = testcaseResultCriteriaSearchFilter.buildSpecification(contextInfo);
         return testcaseResultRepository.findAll(testcaseEntitySpecification, pageable);
     }
 
@@ -171,7 +171,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Specification<TestcaseResultEntity> testcaseResultEntitySpecification = testcaseResultCriteriaSearchFilter.buildSpecification();
+        Specification<TestcaseResultEntity> testcaseResultEntitySpecification = testcaseResultCriteriaSearchFilter.buildSpecification(contextInfo);
         return testcaseResultRepository.findAll(testcaseResultEntitySpecification);
     }
 
@@ -189,14 +189,11 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         if (StringUtils.isEmpty(testcaseResultId)) {
             throw new InvalidParameterException("TestcaseResultId is missing");
         }
-        Optional<TestcaseResultEntity> testcaseResultOptional
-                = testcaseResultRepository.findById(testcaseResultId);
-        if (!testcaseResultOptional.isPresent()) {
-            throw new DoesNotExistException("TestcaseResult by id :"
-                    + testcaseResultId
-                    + Constant.NOT_FOUND);
-        }
-        return testcaseResultOptional.get();
+        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter(testcaseResultId);
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
+        return testcaseResultEntities.stream()
+                .findFirst()
+                .orElseThrow(() -> new DoesNotExistException("TestcaseResult does not found with id : " + testcaseResultId));
     }
 
     /**

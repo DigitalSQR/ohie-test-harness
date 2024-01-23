@@ -2,6 +2,7 @@ package com.argusoft.path.tht.usermanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.util.CollectionUtils;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserEntity> {
 
+    private String id;
 
     @ApiParam(
             value = "name of the user"
@@ -37,10 +39,20 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
 
     }
 
+    public UserSearchCriteriaFilter(String id) {
+        this.id = id;
+    }
+
+    public UserSearchCriteriaFilter() {
+    }
 
     @Override
-    protected List<Predicate> buildPredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder) {
+    protected List<Predicate> buildPredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
+
+        if(StringUtils.hasLength(getPrimaryId())){
+            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+        }
 
         if (StringUtils.hasLength(getName())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
@@ -55,6 +67,11 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         }
 
         return predicates;
+    }
+
+    @Override
+    protected List<Predicate> buildAuthorizationPredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        return null;
     }
 
     public String getName() {
@@ -79,5 +96,13 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPrimaryId() {
+        return id;
+    }
+
+    public void setPrimaryId(String id) {
+        this.id = id;
     }
 }

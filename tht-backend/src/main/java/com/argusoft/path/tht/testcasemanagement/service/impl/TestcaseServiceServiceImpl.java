@@ -99,8 +99,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
                 applicationContext,
                 contextInfo);
 
-        Optional<TestcaseEntity> testcaseOptional
-                = testcaseRepository.findById(testcaseEntity.getId());
         testcaseEntity = testcaseRepository.save(testcaseEntity);
         return testcaseEntity;
     }
@@ -117,7 +115,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             Pageable pageable,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Specification<TestcaseEntity> testcaseEntitySpecification = testcaseSearchFilter.buildSpecification();
+        Specification<TestcaseEntity> testcaseEntitySpecification = testcaseSearchFilter.buildSpecification(contextInfo);
         return this.testcaseRepository.findAll(testcaseEntitySpecification, pageable);
     }
 
@@ -128,7 +126,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             TestcaseCriteriaSearchFilter testcaseSearchFilter,
             ContextInfo contextInfo)
             throws InvalidParameterException {
-        Specification<TestcaseEntity> testcaseEntitySpecification = testcaseSearchFilter.buildSpecification();
+        Specification<TestcaseEntity> testcaseEntitySpecification = testcaseSearchFilter.buildSpecification(contextInfo);
         return this.testcaseRepository.findAll(testcaseEntitySpecification);
     }
 
@@ -146,14 +144,11 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         if (StringUtils.isEmpty(testcaseId)) {
             throw new InvalidParameterException("TestcaseId is missing");
         }
-        Optional<TestcaseEntity> TestcaseOptional
-                = testcaseRepository.findById(testcaseId);
-        if (!TestcaseOptional.isPresent()) {
-            throw new DoesNotExistException("Testcase by id :"
-                    + testcaseId
-                    + Constant.NOT_FOUND);
-        }
-        return TestcaseOptional.get();
+        TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter = new TestcaseCriteriaSearchFilter(testcaseId);
+        List<TestcaseEntity> testcaseEntities = this.searchTestcases(testcaseCriteriaSearchFilter, contextInfo);
+        return testcaseEntities.stream()
+                .findFirst()
+                .orElseThrow(() -> new DoesNotExistException("Testcase does not found with id : " + testcaseId));
     }
 
     /**

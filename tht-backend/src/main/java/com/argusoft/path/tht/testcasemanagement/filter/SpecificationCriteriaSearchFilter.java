@@ -2,6 +2,7 @@ package com.argusoft.path.tht.testcasemanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import io.swagger.annotations.ApiParam;
@@ -18,6 +19,8 @@ import java.util.List;
 
 @Component
 public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFilter<SpecificationEntity> {
+
+    private String id;
 
     @ApiParam(
             value = "name of the specification"
@@ -39,10 +42,20 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
 
     }
 
+    public SpecificationCriteriaSearchFilter() {
+    }
+
+    public SpecificationCriteriaSearchFilter(String id) {
+        this.id = id;
+    }
 
     @Override
-    protected List<Predicate> buildPredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder) {
+    protected List<Predicate> buildPredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
+
+        if(StringUtils.hasLength(getPrimaryId())){
+            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+        }
 
         if (StringUtils.hasLength(getName())) {
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
@@ -58,6 +71,11 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
         }
 
         return predicates;
+    }
+
+    @Override
+    protected List<Predicate> buildAuthorizationPredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        return null;
     }
 
     public String getName() {
@@ -82,5 +100,13 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
 
     public void setComponentId(String componentId) {
         this.componentId = componentId;
+    }
+
+    public String getPrimaryId() {
+        return id;
+    }
+
+    public void setPrimaryId(String id) {
+        this.id = id;
     }
 }
