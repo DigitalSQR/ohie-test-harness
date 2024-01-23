@@ -281,7 +281,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         String currentState = testRequestEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(TestcaseServiceConstants.TESTCASE_STATUS_MAP,currentState,stateKey,errors);
+        ValidationUtils.transitionValid(TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP,currentState,stateKey,errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(

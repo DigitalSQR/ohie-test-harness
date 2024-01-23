@@ -148,7 +148,7 @@ public class UserServiceServiceImpl implements UserService {
         String oldState = userEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(ComponentServiceConstants.COMPONENT_STATUS_MAP,oldState,stateKey,errors);
+        ValidationUtils.transitionValid(UserServiceConstants.USER_STATUS_MAP,oldState,stateKey,errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(

@@ -52,20 +52,7 @@ public class DocumentValidator {
         }
     }
 
-    public static void validateDocumentStateKey(String stateKey) throws DataValidationErrorException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
 
-        //validate given stateKey
-        boolean contains = DocumentServiceConstants.DOCUMENT_STATUS.contains(stateKey);
-        if (!contains) {
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setElement("stateKey");
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("provided stateKey is not valid ");
-            errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
-        }
-    }
 
     public static void validateDocumentOrder(Integer orderId) throws DataValidationErrorException {
         List<ValidationResultInfo> errors = new ArrayList<>();
