@@ -201,7 +201,7 @@ public class UserRestController {
     })
     @PutMapping("/state/{userId}/{changeState}")
     @Transactional
-    public UserInfo updateDocumentState(@PathVariable("userId") String userId,
+    public UserInfo updateUserState(@PathVariable("userId") String userId,
                                         @PathVariable("changeState") String changeState,
                                         @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {

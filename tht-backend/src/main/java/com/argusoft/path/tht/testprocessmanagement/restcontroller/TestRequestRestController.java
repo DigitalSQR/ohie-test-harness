@@ -226,7 +226,7 @@ public class TestRequestRestController {
     })
     @PatchMapping("/state/{testRequestId}/{changeState}")
     @Transactional
-    public TestRequestInfo updateDocumentState(@PathVariable("testRequestId") String testRequestId,
+    public TestRequestInfo updateTestRequestState(@PathVariable("testRequestId") String testRequestId,
                                                @PathVariable("changeState") String changeState,
                                                @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {

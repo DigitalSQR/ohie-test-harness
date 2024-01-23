@@ -14,6 +14,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
@@ -274,15 +275,19 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         //validate given stateKey
-        if (!TestRequestServiceConstants.TEST_REQUEST_STATUS.contains(stateKey)) {
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setElement("state");
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("provided state is not valid ");
-            errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
-        }
+        ValidationUtils.statusPresent(TestRequestServiceConstants.TEST_REQUEST_STATUS,stateKey,errors);
+
         TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
+        String currentState = testRequestEntity.getState();
+
+        //validate transition
+        ValidationUtils.transitionValid(TestcaseServiceConstants.TESTCASE_STATUS_MAP,currentState,stateKey,errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
 
         testRequestEntity.setState(stateKey);
         testRequestEntity = testRequestRepository.save(testRequestEntity);

@@ -6,15 +6,15 @@ import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
 import com.argusoft.path.tht.fileservice.service.FileService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.fileservice.repository.DocumentRepository;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
@@ -76,7 +76,6 @@ public class DocumentServiceImpl implements DocumentService {
         //set FileId to DocumentEntity as it is UUID
         documentEntity.setFileId(fileDetails.getFileId());
         documentEntity.setName(fileDetails.getFileName());
-        documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
 
         UserEntity user = null;
         try {
@@ -206,14 +205,28 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    public DocumentEntity changeState(String documentID, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
 
-        DocumentValidator.validateDocumentStateKey(stateKey);
+        //validate given stateKey
+        ValidationUtils.statusPresent(DocumentServiceConstants.DOCUMENT_STATUS,stateKey,errors);
 
-        DocumentEntity document = this.getDocument(documentId, contextInfo);
-        document.setState(stateKey);
-        documentRepository.save(document);
-        return document;
+        DocumentEntity documentEntity = this.getDocument(documentID, contextInfo);
+        String currentState = documentEntity.getState();
+
+        //validate transition
+        ValidationUtils.transitionValid(DocumentServiceConstants.DOCUMENT_STATUS_MAP,currentState,stateKey,errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
+
+        documentEntity.setState(stateKey);
+        documentEntity = documentRepository.save(documentEntity);
+
+        return documentEntity;
     }
 
     @Override

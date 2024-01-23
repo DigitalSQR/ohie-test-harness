@@ -1,10 +1,7 @@
 package com.argusoft.path.tht.fileservice.service;
 
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
@@ -79,7 +76,7 @@ public interface DocumentService {
      * @throws DoesNotExistException        when document does not exists for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException;
+    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException ,InvalidParameterException, OperationFailedException, VersionMismatchException;
 
 
     /**

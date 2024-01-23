@@ -7,9 +7,12 @@ package com.argusoft.path.tht.usermanagement.service.impl;
 
 import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
@@ -34,6 +37,7 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -135,11 +139,23 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     @Timed(name = "changeState")
     public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
         //validate given stateKey
-        UserValidator.validateStateKey(stateKey);
+        ValidationUtils.statusPresent(UserServiceConstants.USER_STATUS,stateKey,errors);
 
         UserEntity userEntity = this.getUserById(userId, contextInfo);
         String oldState = userEntity.getState();
+
+        //validate transition
+        ValidationUtils.transitionValid(ComponentServiceConstants.COMPONENT_STATUS_MAP,oldState,stateKey,errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
+
         userEntity.setState(stateKey);
         userEntity = this.updateUser(userEntity, contextInfo);
         sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity);

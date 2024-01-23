@@ -1,6 +1,8 @@
 package com.argusoft.path.tht.reportmanagement.constant;
 
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,5 +29,13 @@ public class TestcaseResultServiceConstants {
         TESTCASE_RESULT_STATUS.add(TESTCASE_RESULT_STATUS_PENDING);
         TESTCASE_RESULT_STATUS.add(TESTCASE_RESULT_STATUS_INPROGRESS);
         TESTCASE_RESULT_STATUS.add(TESTCASE_RESULT_STATUS_FINISHED);
+    }
+
+    public static final Multimap<String, String> TESTCASE_RESULT_STATUS_MAP = ArrayListMultimap.create();
+
+    static {
+        TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_DRAFT, TESTCASE_RESULT_STATUS_PENDING);
+        TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_PENDING, TESTCASE_RESULT_STATUS_INPROGRESS);
+        TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_INPROGRESS, TESTCASE_RESULT_STATUS_FINISHED);
     }
 }

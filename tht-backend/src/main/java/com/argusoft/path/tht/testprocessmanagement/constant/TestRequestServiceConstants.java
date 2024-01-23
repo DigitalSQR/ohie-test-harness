@@ -1,9 +1,13 @@
 package com.argusoft.path.tht.testprocessmanagement.constant;
 
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Constant for TestRequestService.
@@ -29,5 +33,14 @@ public class TestRequestServiceConstants {
         TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_REJECTED);
         TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_INPROGRESS);
         TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_FINISHED);
+    }
+
+    public static final Multimap<String, String> TEST_REQUEST_STATUS_MAP = ArrayListMultimap.create();
+
+    static {
+        TEST_REQUEST_STATUS_MAP.put(TEST_REQUEST_STATUS_PENDING, TEST_REQUEST_STATUS_ACCEPTED);
+        TEST_REQUEST_STATUS_MAP.put(TEST_REQUEST_STATUS_PENDING, TEST_REQUEST_STATUS_REJECTED);
+        TEST_REQUEST_STATUS_MAP.put(TEST_REQUEST_STATUS_ACCEPTED, TEST_REQUEST_STATUS_INPROGRESS);
+        TEST_REQUEST_STATUS_MAP.put(TEST_REQUEST_STATUS_INPROGRESS, TEST_REQUEST_STATUS_FINISHED);
     }
 }

@@ -10,6 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -146,5 +147,8 @@ public interface ComponentService {
     public Page<ComponentEntity> getComponents(Pageable pageable,
                                                ContextInfo contextInfo)
             throws InvalidParameterException;
+
+    public ComponentEntity changeState(String componentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
 
 }

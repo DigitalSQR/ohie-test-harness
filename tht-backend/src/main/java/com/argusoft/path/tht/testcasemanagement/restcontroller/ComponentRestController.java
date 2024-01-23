@@ -10,9 +10,12 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
+import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.ComponentMapper;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -177,4 +180,20 @@ public class ComponentRestController {
                 .validateComponent(validationTypeKey, componentEntity, contextInfo);
     }
 
+
+    @ApiOperation(value = "To change status of Component", response = DocumentInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated Component"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/state/{componentId}/{changeState}")
+    @Transactional
+    public ComponentInfo updateComponentState(@PathVariable("componentId") String componentId,
+                                               @PathVariable("changeState") String changeState,
+                                               @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        ComponentEntity componentEntity = componentService.changeState(componentId, changeState, contextInfo);
+        return componentMapper.modelToDto(componentEntity);
+    }
 }

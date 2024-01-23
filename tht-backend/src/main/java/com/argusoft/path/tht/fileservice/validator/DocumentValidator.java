@@ -56,7 +56,7 @@ public class DocumentValidator {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         //validate given stateKey
-        boolean contains = DocumentServiceConstants.documentStatuses.contains(stateKey);
+        boolean contains = DocumentServiceConstants.DOCUMENT_STATUS.contains(stateKey);
         if (!contains) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setElement("stateKey");

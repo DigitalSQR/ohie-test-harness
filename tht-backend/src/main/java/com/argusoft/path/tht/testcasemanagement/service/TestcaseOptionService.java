@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -145,5 +146,9 @@ public interface TestcaseOptionService {
     public Page<TestcaseOptionEntity> getTestcaseOptions(Pageable pageable,
                                                          ContextInfo contextInfo)
             throws InvalidParameterException;
+
+
+    public TestcaseOptionEntity changeState(String testcaseOptionId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
 
 }
