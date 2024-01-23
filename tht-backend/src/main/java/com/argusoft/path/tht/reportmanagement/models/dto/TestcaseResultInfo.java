@@ -101,6 +101,13 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = true)
     private String parentTestcaseResultId;
 
+    @ApiModelProperty(notes = "The duration of the TestcaseResult in milliseconds",
+            allowEmptyValue = true,
+            example = "duration in milliseconds",
+            dataType = "Long",
+            required = false)
+    private Long duration;
+
     public String getParentTestcaseResultId() {
         return parentTestcaseResultId;
     }
@@ -196,4 +203,8 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
     public void setRequired(Boolean required) {
         isRequired = required;
     }
+
+    public Long getDuration() { return duration; }
+
+    public void setDuration(Long duration) { this.duration = duration; }
 }
