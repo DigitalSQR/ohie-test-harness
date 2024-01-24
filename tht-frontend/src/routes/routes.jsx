@@ -21,7 +21,8 @@ import EmailVerified from "../components/UserFiles/EmailVerified";
 import UpdateAdminUser from "../components/AdminFiles/UpdateAdminUser/UpdateAdminUser";
 import AdminUsers from "../components/AdminFiles/AdminUsers/AdminUsers";
 import AddAdminUser from "../components/AdminFiles/AddAdminUsers/AddAdminUser";
-import ComponentList from "../components/TestcaseConfig/ComponentList";
+import ComponentList from "../components/TestcaseConfig/ComponentList/ComponentList";
+
 import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
 const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);

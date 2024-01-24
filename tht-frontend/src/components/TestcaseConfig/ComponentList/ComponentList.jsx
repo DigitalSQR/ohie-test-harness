@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./componentList.scss";
 import { EditOutlined } from "@ant-design/icons";
-import { ComponentAPI } from "../../api/ComponentAPI";
+import { ComponentAPI } from "../../../api/ComponentAPI";
 import { notification } from "antd";
 
 const ComponentList = () => {
