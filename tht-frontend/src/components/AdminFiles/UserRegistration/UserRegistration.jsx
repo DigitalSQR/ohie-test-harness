@@ -5,6 +5,7 @@ import { UserAPI } from "../../../api/UserAPI";
 import { notification } from "antd";
 import { Pagination } from "@mui/material";
 import { userBadgeClasses } from "../../../constants/user_constants";
+import { useLoader } from "../../loader/LoaderContext";
 const UserRegistration = () => {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [filter, setFilter] = useState("");
@@ -19,16 +20,17 @@ const UserRegistration = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const pendingstate = "user.status.approval.pending";
-
+  const { showLoader, hideLoader } = useLoader();
   const fetchUserByState = (
     sortFieldName,
     sortDirection,
     currentPage,
     pageSize
   ) => {
- 
+    showLoader()
     UserAPI.getUserByState(sortFieldName, sortDirection, currentPage, pageSize)
       .then((res) => {
+        hideLoader();
         setAvailableUsers(res.content);
         setTotalPages(res.totalPages);
       })
@@ -52,8 +54,10 @@ const UserRegistration = () => {
   };
 
   const changeState = (userId, state, newState) => {
+    showLoader()
     UserAPI.changeState(userId, state)
       .then((res) => {
+        hideLoader()
         notification.success({
           description: `Request has been ${newState}`,
           placement: "bottom-left",
@@ -141,9 +145,7 @@ const UserRegistration = () => {
                     <img src={sortIcon} alt="e" />
                   </a>
                 </th>
-                <th>
-                  Company
-                </th>
+                <th>Company</th>
                 <th>requested date</th>
                 <th>
                   Status
@@ -246,14 +248,16 @@ const UserRegistration = () => {
           </table>
         </div>
       </div>
-      <Pagination
-        className="pagination-ui"
-        count={totalPages}
-        page={currentPage}
-        onChange={handleChangePage}
-        variant="outlined"
-        shape="rounded"
-      />
+      {totalPages > 1 && (
+        <Pagination
+          className="pagination-ui"
+          count={totalPages}
+          page={currentPage}
+          onChange={handleChangePage}
+          variant="outlined"
+          shape="rounded"
+        />
+      )}
     </div>
   );
 };

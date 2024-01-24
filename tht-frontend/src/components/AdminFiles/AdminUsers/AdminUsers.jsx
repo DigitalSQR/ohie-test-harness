@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Pagination } from "@mui/material";
 import { Button, Modal } from "antd";
 import sortIcon from "../../../styles/images/sort-icon.png";
-
+import { useLoader } from "../../loader/LoaderContext";
 const AdminUsers = () => {
   const navigate = useNavigate();
   const [adminUsers, setAdminUsers] = useState([]);
@@ -21,11 +21,13 @@ const AdminUsers = () => {
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPageUsers, setCurrentPageUsers] = useState([]);
-
+  const { showLoader, hideLoader } = useLoader();
   const handleOk = () => {
+    showLoader();
     AdminUserAPI.updateUserState(deleteUserId, "user.status.inactive")
       .then(() => {
         getAllUsers();
+        hideLoader();
         setIsModalOpen(false);
       })
       .catch((error) => {
@@ -43,12 +45,15 @@ const AdminUsers = () => {
   }, [currentPage, pageSize, sortFieldName, sortDirection]);
 
   const getAllUsers = () => {
+    showLoader();
     AdminUserAPI.fetchAllUsers(
       sortFieldName,
       sortDirection[sortFieldName]
     ).then((data) => {
+      console.log(data);
+      hideLoader();
       const activeUsers = data.content.filter(
-        (user) => user?.state !== "user.status.inactive"
+        (user) => user?.state !== "user.status.inactive" && user?.roleIds[0]!=="role.assessee"
       );
       setTotalPages(Math.ceil(activeUsers.length / pageSize));
       
@@ -141,7 +146,7 @@ const AdminUsers = () => {
                   <tr key={user.id}>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
-                    <td>{user.roleIds[0]}</td>
+                    <td>{user.roleIds[0].replace("role.","").toUpperCase()}</td>
                     <td className="action-icons-container">
                       <span
                         className="action-icon"

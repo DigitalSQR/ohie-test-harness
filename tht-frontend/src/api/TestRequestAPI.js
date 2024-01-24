@@ -31,15 +31,16 @@ export const TestRequestAPI = {
 	},
 	getTestRequestsByState: async function (state, sortFieldName="createdAt", sortDirection="desc", currentPage, pageSize) {
 		try {
+			const params={
+				state,
+				sort: `${sortFieldName},${sortDirection}`,
+			}
+			if(currentPage) params.currentPage=currentPage;
+			if(pageSize) params.pageSize=pageSize;
 			const response = await api.request({
 				url: `/test-request`,
 				method: "GET",
-				params: {
-					state,
-					sort: `${sortFieldName},${sortDirection}`,
-					page:currentPage,
-					size:pageSize
-				},
+				params,
 				paramsSerializer: params => {
 				  return paramSerialize(params);
 				}
