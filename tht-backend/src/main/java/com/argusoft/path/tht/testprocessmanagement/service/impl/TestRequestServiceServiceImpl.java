@@ -334,7 +334,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                         && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
                             });
                         })
-                        .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                        .sorted(Comparator.comparing(SpecificationEntity::getRank))
                         .collect(Collectors.toList());
 
                 if (!filteredSpecifications.isEmpty()) {
@@ -354,7 +354,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                     return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
                                             && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
                                 })
-                                .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                                .sorted(Comparator.comparing(TestcaseEntity::getRank))
                                 .collect(Collectors.toList());
 
                         if (!filteredTestcases.isEmpty()) {
@@ -420,7 +420,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                         && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
                             });
                         })
-                        .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                        .sorted(Comparator.comparing(SpecificationEntity::getRank))
                         .collect(Collectors.toList());
 
                 if (!filteredSpecifications.isEmpty()) {
@@ -440,7 +440,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                     return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
                                             && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
                                 })
-                                .sorted((a, b) -> b.getRank().compareTo(a.getRank()))
+                                .sorted(Comparator.comparing(TestcaseEntity::getRank))
                                 .collect(Collectors.toList());
 
                         if (!filteredTestcases.isEmpty()) {
