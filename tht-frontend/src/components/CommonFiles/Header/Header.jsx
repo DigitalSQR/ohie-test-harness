@@ -19,9 +19,9 @@ export default function Header() {
 			<header>
 				<div className="pd-left-240 ps-30" id="header-col-1"></div>
 				<div className="d-flex align-items-center">
-					<div className="bell-icon">
+					{/* <div className="bell-icon">
 						<i className="bi bi-bell side-nav-toggle"></i>
-					</div>
+					</div> */}
 					<div className="dropdown">
 						<div
 							className="user-dropdown"

@@ -153,7 +153,7 @@ export default function Sidebar() {
               onClick={() => handleMenuItemClick("/dashboard/admin-users")}
             >
               <i className="bi bi-columns-gap menu-left-icon  "></i>
-              <span> Admin-users</span>
+              <span> Admin Users</span>
             </a>
           </li>
         )}
