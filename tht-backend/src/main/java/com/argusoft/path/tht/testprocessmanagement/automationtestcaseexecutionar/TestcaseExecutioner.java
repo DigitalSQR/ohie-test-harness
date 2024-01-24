@@ -253,7 +253,7 @@ public class TestcaseExecutioner {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
-        testcaseResultCriteriaSearchFilter.setStates(Collections.singletonList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT));
+        testcaseResultCriteriaSearchFilter.setState(Collections.singletonList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT));
         testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
         testcaseResultCriteriaSearchFilter.setManual(Objects.equals(isManual, Boolean.TRUE));
 

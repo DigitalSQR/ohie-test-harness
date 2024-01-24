@@ -56,8 +56,8 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
-        if (!CollectionUtils.isEmpty(getStates())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(getStates()));
+        if (!CollectionUtils.isEmpty(getState())) {
+            predicates.add(criteriaBuilder.in(root.get("state")).value(getState()));
         }
 
         if (getTestcaseId() != null) {
@@ -85,11 +85,11 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
         this.name = name;
     }
 
-    public List<String> getStates() {
+    public List<String> getState() {
         return states;
     }
 
-    public void setStates(List<String> states) {
+    public void setState(List<String> states) {
         this.states = states;
     }
 
