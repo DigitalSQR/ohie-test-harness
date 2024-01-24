@@ -1,7 +1,7 @@
-package com.argusoft.path.tht.testcasemanagement.models.mapper;
+package com.argusoft.path.tht.fileservice.models.mapper;
 
-import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
+import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
+import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;

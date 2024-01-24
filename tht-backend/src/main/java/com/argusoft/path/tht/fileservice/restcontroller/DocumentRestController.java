@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testcasemanagement.restcontroller;
+package com.argusoft.path.tht.fileservice.restcontroller;
 
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
@@ -6,11 +6,11 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import com.argusoft.path.tht.testcasemanagement.filter.DocumentCriteriaSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
-import com.argusoft.path.tht.testcasemanagement.models.mapper.DocumentMapper;
-import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
+import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
+import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
+import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
+import com.argusoft.path.tht.fileservice.models.mapper.DocumentMapper;
+import com.argusoft.path.tht.fileservice.service.DocumentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

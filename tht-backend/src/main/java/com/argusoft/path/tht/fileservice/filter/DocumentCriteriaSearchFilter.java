@@ -1,10 +1,10 @@
-package com.argusoft.path.tht.testcasemanagement.filter;
+package com.argusoft.path.tht.fileservice.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
+import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;

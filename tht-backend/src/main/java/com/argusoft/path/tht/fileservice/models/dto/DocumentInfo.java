@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testcasemanagement.models.dto;
+package com.argusoft.path.tht.fileservice.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;

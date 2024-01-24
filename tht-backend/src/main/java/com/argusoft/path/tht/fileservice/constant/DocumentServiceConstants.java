@@ -1,6 +1,6 @@
-package com.argusoft.path.tht.testcasemanagement.constant;
+package com.argusoft.path.tht.fileservice.constant;
 
-import com.argusoft.path.tht.testcasemanagement.models.dto.DocumentInfo;
+import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 
 import java.util.ArrayList;
 import java.util.List;

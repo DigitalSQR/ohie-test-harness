@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testcasemanagement.validator;
+package com.argusoft.path.tht.fileservice.validator;
 
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
@@ -7,8 +7,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.DocumentServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
+import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
+import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
