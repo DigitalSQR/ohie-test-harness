@@ -56,7 +56,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
-                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException {
+                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException {
 
         //get FileType
         String fileType = getFileType(file);

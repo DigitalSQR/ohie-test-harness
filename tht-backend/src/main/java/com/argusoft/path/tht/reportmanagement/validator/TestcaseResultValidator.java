@@ -17,15 +17,26 @@ import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstant
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
+import com.argusoft.path.tht.testprocessmanagement.validator.RefObjectUriAndRefIdValidator;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class TestcaseResultValidator {
+
+    private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
+
+    @Autowired
+    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
+        TestcaseResultValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
+    }
 
     public static List<ValidationResultInfo> validateCreateUpdateTestCaseResult(String validationTypeKey, TestcaseResultService testcaseResultService, UserService userService, TestcaseOptionService testcaseOptionService, TestRequestService testRequestService, TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
@@ -118,6 +129,9 @@ public class TestcaseResultValidator {
             default:
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
+
+        //for refId and refObjUri
+        refObjectUriAndRefIdValidator.refObjectUriAndRefIdValidation(testcaseResultEntity.getRefObjUri(), testcaseResultEntity.getRefId(), contextInfo, errors);
 
         // For : Id
         validateTestcaseResultEntityId(testcaseResultEntity,

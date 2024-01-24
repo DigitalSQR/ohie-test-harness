@@ -4,6 +4,7 @@ import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceCons
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
+import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
@@ -19,6 +20,8 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -26,7 +29,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class TestRequestValidator {
+
+    private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
+
+    @Autowired
+    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
+        TestRequestValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
+    }
 
     public static void validateCreateUpdateTestRequest(String validationTypeKey, TestRequestEntity testRequestEntity, TestRequestService testRequestService, UserService userService, ComponentService componentService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntities
@@ -147,6 +158,12 @@ public class TestRequestValidator {
             throw new InvalidParameterException("inputData is missing");
         }
         List<ValidationResultInfo> errors = new ArrayList<>();
+
+        refObjectUriAndRefIdValidator.refObjectUriAndRefIdValidation(refObjUri, refId, contextInfo, errors);
+        if(!errors.isEmpty()){
+            return errors;
+        }
+
         if (validationTypeKey.equals(Constant.START_PROCESS_VALIDATION)) {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
             searchFilter.setManual(Objects.equals(Boolean.TRUE, isManual));

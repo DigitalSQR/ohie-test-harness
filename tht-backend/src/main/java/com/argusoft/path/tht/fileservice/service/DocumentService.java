@@ -37,7 +37,7 @@ public interface DocumentService {
      */
     public DocumentEntity createDocument(DocumentEntity documentEntity,
                                          MultipartFile file,
-                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException;
+                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException;
 
 
     /**
