@@ -61,8 +61,8 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
-        if (!CollectionUtils.isEmpty(getStates())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(getStates()));
+        if (!CollectionUtils.isEmpty(getState())) {
+            predicates.add(criteriaBuilder.in(root.get("state")).value(getState()));
         }
 
         return predicates;
@@ -94,11 +94,11 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
         this.name = name;
     }
 
-    public List<String> getStates() {
+    public List<String> getState() {
         return states;
     }
 
-    public void setStates(List<String> states) {
+    public void setState(List<String> states) {
         this.states = states;
     }
 

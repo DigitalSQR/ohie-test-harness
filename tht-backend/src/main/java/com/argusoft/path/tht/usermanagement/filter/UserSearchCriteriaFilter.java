@@ -58,8 +58,8 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
         }
 
-        if (!CollectionUtils.isEmpty(getStates())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(getStates()));
+        if (!CollectionUtils.isEmpty(getState())) {
+            predicates.add(criteriaBuilder.in(root.get("state")).value(getState()));
         }
 
         if (StringUtils.hasLength(getEmail())) {
@@ -82,11 +82,11 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         this.name = name;
     }
 
-    public List<String> getStates() {
+    public List<String> getState() {
         return states;
     }
 
-    public void setStates(List<String> states) {
+    public void setState(List<String> states) {
         this.states = states;
     }
 

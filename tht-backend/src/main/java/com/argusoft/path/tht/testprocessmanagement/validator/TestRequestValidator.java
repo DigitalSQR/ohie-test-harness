@@ -79,7 +79,7 @@ public class TestRequestValidator {
                     && Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
 
                 TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
-                searchFilter.setStates(Collections.singletonList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED));
+                searchFilter.setState(Collections.singletonList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED));
                 searchFilter.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
                 searchFilter.setRefId(testRequestId);
                 searchFilter.setManual(Boolean.FALSE);
