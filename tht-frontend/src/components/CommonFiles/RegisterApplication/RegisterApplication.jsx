@@ -21,7 +21,7 @@ const RegisterApplication = () => {
     const userInfo = store.getState().userInfoSlice;
 		setUserId(userInfo.id);
 
-    ComponentAPI.getCompoents().then((res) => {
+    ComponentAPI.getComponents().then((res) => {
       setComponents(res.content);
       hideLoader();
     }).catch((err) => {
