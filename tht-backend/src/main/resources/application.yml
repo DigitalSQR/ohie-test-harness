@@ -41,6 +41,7 @@ spring:
             scope:
               - email
               - profile
+            redirect-uri: https://tht.argusoft.com/api/login/oauth2/code/google
 server:
   servlet:
     context-path: /api
