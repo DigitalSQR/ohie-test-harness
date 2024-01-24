@@ -21,12 +21,13 @@ import EmailVerified from "../components/UserFiles/EmailVerified";
 import UpdateAdminUser from "../components/AdminFiles/UpdateAdminUser/UpdateAdminUser";
 import AdminUsers from "../components/AdminFiles/AdminUsers/AdminUsers";
 import AddAdminUser from "../components/AdminFiles/AddAdminUsers/AddAdminUser";
+import ComponentList from "../components/TestcaseConfig/ComponentList";
 import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
 const PrivateRoute = () => {
-	const token = useSelector((state) => state.authSlice.access_token);
+  const token = useSelector((state) => state.authSlice.access_token);
 
-	const isAuthenticated = !!token;
-	return isAuthenticated ? <Dashboard /> : <Navigate to="/login" />;
+  const isAuthenticated = !!token;
+  return isAuthenticated ? <Dashboard /> : <Navigate to="/login" />;
 };
 
 const routes = createBrowserRouter([
@@ -54,10 +55,10 @@ const routes = createBrowserRouter([
       { path: "admin-users", element: <AdminUsers /> },
       { path: "admin-users/add-admin-user", element: <AddAdminUser /> },
       { path: "admin-users/update-admin-user", element: <UpdateAdminUser /> },
-      // { path: "admin-users/update-admin-user", element: <AdminUsers /> },
-		],
-	},
-	{ path: "/", element: <Navigate to="/login" /> },
+      { path: "testcase-config", element: <ComponentList /> },
+    ],
+  },
+  { path: "/", element: <Navigate to="/login" /> },
 ]);
 
 export default routes;
