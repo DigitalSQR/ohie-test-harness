@@ -38,7 +38,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
-		setUser(userInfo);    
+    setUser(userInfo);
   }, []);
 
   useEffect(() => {
@@ -158,6 +158,23 @@ export default function Sidebar() {
           </li>
         )}
         {/* <li>
+          <a
+            className={
+              activeMenuItem === "/dashboard/testcase-config"
+                ? "active menu-like-item"
+                : "menu-like-item"
+            }
+            onClick={() => handleMenuItemClick("/dashboard/testcase-config")}
+          >
+            <i
+              aria-label="Testcase Config"
+              title="Testcase Config"
+              className="bi bi-file-earmark-bar-graph menu-left-icon"
+            ></i>
+            <span> Testcase Config </span>
+          </a>
+        </li>
+        <li>
           <a
             className="menu-like-item"
             onClick={() => {
