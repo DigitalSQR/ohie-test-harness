@@ -3,21 +3,11 @@ import functional_logo from "../../../styles/images/functional-testing.png";
 import { useNavigate, useParams } from "react-router-dom";
 import "./choose-test.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 export default function ChooseTest() {
 	const [isManual, setIsManual] = useState(false);
 	const { testRequestId } = useParams();
-	const ManualTests = () => {
-		console.log("manual bleh");
-		setIsManual(true);
-		TestResultAPI.getTestCases(testRequestId, isManual)
-			.then((response) => {
-				// console.log(response);
-			})
-			.catch((error) => {
-				throw error;
-			});
-	};
+
 	const navigate = useNavigate();
 	return (
 		<div id="wrapper">
@@ -34,7 +24,6 @@ export default function ChooseTest() {
 							navigate(
 								`/dashboard/manual-testing/${testRequestId}`
 							);
-							ManualTests();
 						}}
 					>
 						<div className="icon-box">

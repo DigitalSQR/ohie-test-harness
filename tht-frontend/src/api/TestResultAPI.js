@@ -6,7 +6,7 @@ export const TestResultAPI = {
 			const response = await api.request({
 				url: `/testcase-result`,
 				method: "GET",
-				params: { testRequestId: trid, manual:true, sort: "rank,asc" },
+				params: { testRequestId: trid, manual:true,size:"50",sort: "rank"},
 			});
 			// console.log(response);
 			return response.data;
@@ -19,7 +19,7 @@ export const TestResultAPI = {
 			const response = await api.request({
 				url: `/testcase-result`,
 				method: "GET",
-				params: { parentTestcaseResultId: parentTestcaseResultId },
+				params: { parentTestcaseResultId: parentTestcaseResultId,sort: "rank" },
 			});
 			// console.log(response);
 			return response.data;

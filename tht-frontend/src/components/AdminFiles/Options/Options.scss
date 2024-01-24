@@ -1,0 +1,51 @@
+.custom-multiselect {
+  margin: 15px 15px 0;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.field-box {
+  border-radius: 6px;
+  background: #F0F3F5;
+  padding: 10px 15px;
+  padding-bottom: 15px;
+  margin-bottom: 10px;
+  // width: 49%;
+}
+
+.field-checkbox input[type="checkbox"] {
+  display: none;
+}
+
+.field-checkbox input[type="checkbox"] + label {
+  line-height: 13px;
+  display: inline-block;
+}
+
+.field-checkbox input[type="checkbox"] + label:before {
+  content: " ";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: #dce4e7;
+  border: 1px solid #dce4e7;
+  border-radius: 50%;
+  transition: background 0.5s, color 0.5s;
+  margin-right: 5px;
+  vertical-align: middle;
+  line-height: 20px;
+  text-align: center;
+}
+
+.field-checkbox input[type="checkbox"]:checked .field-box {
+  border: 1px solid #4db5e3;
+  background: #d1edff;
+}
+
+.field-checkbox input[type="checkbox"]:checked + label:before {
+  background: #fff;
+  color: #009fc8;
+  content: "\F272";
+  font-family: bootstrap-icons !important;
+}
