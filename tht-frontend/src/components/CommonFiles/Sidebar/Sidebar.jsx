@@ -152,12 +152,12 @@ export default function Sidebar() {
               }
               onClick={() => handleMenuItemClick("/dashboard/admin-users")}
             >
-              <i className="bi bi-file-earmark-bar-graph menu-left-icon"></i>
+              <i className="bi bi-columns-gap menu-left-icon  "></i>
               <span> Admin-users</span>
             </a>
           </li>
         )}
-        <li>
+        {/* <li>
           <a
             className="menu-like-item"
             onClick={() => {
@@ -173,7 +173,7 @@ export default function Sidebar() {
             ></i>
             <span> Logout </span>
           </a>
-        </li>
+        </li> */}
       </ul>
     </div>
   );

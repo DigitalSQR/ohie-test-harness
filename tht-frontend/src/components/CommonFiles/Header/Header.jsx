@@ -3,14 +3,16 @@ import avatar from "../../../styles/images/avatar.jpg";
 import "./_header.scss";
 import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLE_NAMES } from "../../../constants/role_constants";
-import { store } from '../../../store/store';
+import { store } from "../../../store/store";
+import { log_out } from "../../../reducers/authReducer";
+import { useDispatch } from "react-redux";
+
 export default function Header() {
 	const [userInfo, setUserInfo] = useState();
-	
+	const dispatch = useDispatch();
 	useEffect(() => {
 		const userInfo = store.getState().userInfoSlice;
 		setUserInfo(userInfo);
-		
 	}, []);
 	return (
 		<Fragment>
@@ -33,22 +35,18 @@ export default function Header() {
 								{userInfo?.name}
 								<i className="bi bi-chevron-down"></i>
 							</span>
-							<span className="font-size-12">{USER_ROLE_NAMES[userInfo?.roleIds[0]]}</span>
+							<span className="font-size-12">
+								{USER_ROLE_NAMES[userInfo?.roleIds[0]]}
+							</span>
 						</div>
 						<ul className="dropdown-menu">
-							<li>
+							<li
+								onClick={() => {
+									dispatch(log_out());
+								}}
+							>
 								<a className="dropdown-item" href="#">
-									Action
-								</a>
-							</li>
-							<li>
-								<a className="dropdown-item" href="#">
-									Another action
-								</a>
-							</li>
-							<li>
-								<a className="dropdown-item" href="#">
-									Something else here
+									Log Out
 								</a>
 							</li>
 						</ul>

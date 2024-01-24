@@ -23,6 +23,7 @@ export default function ManualTesting() {
 			.then((res) => {
 				setTestId(res.content[0].id);
 				setManualQuestions(res.content);
+				setComponentId(res.content[1].id)
 				console.log(res.content);
 			})
 			.catch((error) => {
@@ -60,6 +61,8 @@ export default function ManualTesting() {
 			<Select
 				onChange={(val) => setComponentId(val)}
 				style={{ width: "145px", marginBottom: "10px" }}
+				defaultOpen={componentId}
+				defaultValue={"Client Registry"}
 			>
 				{manualQuestions
 					.filter((components) => {
