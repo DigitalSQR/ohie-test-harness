@@ -5,6 +5,8 @@ import { useLoader } from "../loader/LoaderContext";
 import { useNavigate } from "react-router-dom";
 import { setAuthToken } from "../../api/configs/axiosConfigs";
 import { message, notification } from "antd";
+import { UserAPI } from "../../api/UserAPI";
+import { userinfo_success } from "../../reducers/UserInfoReducer";
 
 export default function GoogleAuth() {
 	const { showLoader, hideLoader } = useLoader();
@@ -22,6 +24,12 @@ export default function GoogleAuth() {
 			hideLoader();
 			dispatch(login_success(result));
 			setAuthToken(result.access_token);
+			UserAPI.viewUser().then((user) => {
+                dispatch(userinfo_success(user));
+                navigate("/dashboard/");
+                hideLoader();
+            })
+
 			navigate("/dashboard");
 		} else if (result.message) {
 			hideLoader();
