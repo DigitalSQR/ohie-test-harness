@@ -42,15 +42,15 @@ export const UserAPI = {
     pageSize = 10
   ) {
     try {
-      console.log(sortFieldName, sortDirection);
+      const params={
+				sort: `${sortFieldName},${sortDirection}`,
+			}
+			if(pageNumber) params.pageNumber=pageNumber;
+			if(pageSize) params.pageSize=pageSize;
       const response = await api.request({
         url: `/user`,
         method: "GET",
-        params: {
-          sort: `${sortFieldName},${sortDirection}`,
-          page: pageNumber - 1,
-          size: pageSize,
-        },
+        params
       });
       return response.data;
     } catch (error) {

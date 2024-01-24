@@ -9,6 +9,7 @@ import { notification } from "antd";
 import { formatDate } from '../../../utils/utils.js';
 import UserIdEmailConnector from "../../connectors/UserIdEmailConnector/UserIdEmailConnector.js";
 import { Pagination } from "@mui/material";
+import { useLoader } from "../../loader/LoaderContext";
 const Applications = () => {
     const testRequestStates = [...TestRequestActionStateLabels, { label: "All", value: '' }];
     const [filterState, setFilterState] = useState(TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED);
@@ -21,6 +22,7 @@ const Applications = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const { showLoader, hideLoader } = useLoader();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,6 +46,7 @@ const Applications = () => {
     sortDirection,
     currentPage
   ) => {
+    showLoader();
     TestRequestAPI.getTestRequestsByState(
       filterState,
       sortFieldName,
@@ -52,6 +55,7 @@ const Applications = () => {
       pageSize
     )
       .then((res) => {
+        hideLoader();
         setTestRequests(res.content);
         setTotalPages(res.totalPages);
       })
