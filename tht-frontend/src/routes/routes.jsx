@@ -21,9 +21,10 @@ import EmailVerified from "../components/UserFiles/EmailVerified";
 import UpdateAdminUser from "../components/AdminFiles/UpdateAdminUser/UpdateAdminUser";
 import AdminUsers from "../components/AdminFiles/AdminUsers/AdminUsers";
 import AddAdminUser from "../components/AdminFiles/AddAdminUsers/AddAdminUser";
-import ComponentList from "../components/TestcaseConfig/ComponentList/ComponentList";
+import ComponentList from "../components/TestcaseConfig/ComponentList";
 
 import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
+import ComponentSpecification from "../components/TestcaseConfig/ComponentSpecification/ComponentSpecification";
 const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
 
@@ -32,31 +33,41 @@ const PrivateRoute = () => {
 };
 
 const routes = createBrowserRouter([
-	{ path: "/waiting", element: <WaitingPage /> },
-	{ path: "/login", element: <Login /> },
-	{ path: "/SignUp", element: <SignUp /> },
-	{ path: "/CongratulationsPage", element: <CongratulationsPage /> },
-	{ path: "application-report/:testRequestId", element: <ApplicationReport /> },
-	{ path: "/google/success", element: <GoogleAuth /> },
-	{ path: "/forgotpassword", element: <ForgotPassword /> },
-	{ path: "/reset/cred/:base64UserEmail/:base64TokenId", element: <UpdatePassword /> },
-	{path:"/email/verify/:base64UserEmail/:base64TokenId",element:<EmailVerified/>},
-	{
-		path: "/dashboard",
-		element: <PrivateRoute />,
-		children: [
-			{ path: "", element: <Landing /> },
-			{ path: "testing-requests", element: <TestingRequests /> },
-			{ path: "applications", element: <Applications /> },
-			{ path: "choose-test/:testRequestId", element: <ChooseTest />, },
-			{ path: "manual-testing/:testRequestId", element: <ManualTesting /> },
-			{ path: "workflow-testing", element: <WorkFlowTesting /> },
-			{ path: "user-registration", element: <UserRegistration /> },
-			{ path: "register-application", element: <RegisterApplication />},
+  { path: "/waiting", element: <WaitingPage /> },
+  { path: "/login", element: <Login /> },
+  { path: "/SignUp", element: <SignUp /> },
+  { path: "/CongratulationsPage", element: <CongratulationsPage /> },
+  { path: "application-report/:testRequestId", element: <ApplicationReport /> },
+  { path: "/google/success", element: <GoogleAuth /> },
+  { path: "/forgotpassword", element: <ForgotPassword /> },
+  {
+    path: "/reset/cred/:base64UserEmail/:base64TokenId",
+    element: <UpdatePassword />,
+  },
+  {
+    path: "/email/verify/:base64UserEmail/:base64TokenId",
+    element: <EmailVerified />,
+  },
+  {
+    path: "/dashboard",
+    element: <PrivateRoute />,
+    children: [
+      { path: "", element: <Landing /> },
+      { path: "testing-requests", element: <TestingRequests /> },
+      { path: "applications", element: <Applications /> },
+      { path: "choose-test/:testRequestId", element: <ChooseTest /> },
+      { path: "manual-testing/:testRequestId", element: <ManualTesting /> },
+      { path: "workflow-testing", element: <WorkFlowTesting /> },
+      { path: "user-registration", element: <UserRegistration /> },
+      { path: "register-application", element: <RegisterApplication /> },
       { path: "admin-users", element: <AdminUsers /> },
       { path: "admin-users/add-admin-user", element: <AddAdminUser /> },
       { path: "admin-users/update-admin-user", element: <UpdateAdminUser /> },
       { path: "testcase-config", element: <ComponentList /> },
+      {
+        path: "component-specification/:componentId",
+        element: <ComponentSpecification />,
+      },
     ],
   },
   { path: "/", element: <Navigate to="/login" /> },
