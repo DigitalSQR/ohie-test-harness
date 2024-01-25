@@ -7,6 +7,7 @@ import { store } from "../../../store/store";
 import { log_out } from "../../../reducers/authReducer";
 import { useDispatch } from "react-redux";
 
+
 export default function Header() {
 	const [userInfo, setUserInfo] = useState();
 	const dispatch = useDispatch();
@@ -36,7 +37,7 @@ export default function Header() {
 								<i className="bi bi-chevron-down"></i>
 							</span>
 							<span className="font-size-12">
-								{userInfo?.roleIds && USER_ROLE_NAMES[userInfo?.roleIds[0]]}
+								{USER_ROLE_NAMES[userInfo?.roleIds[0]]}
 							</span>
 						</div>
 						<ul className="dropdown-menu">
