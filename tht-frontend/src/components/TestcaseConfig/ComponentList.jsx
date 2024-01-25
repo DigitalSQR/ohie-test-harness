@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./componentList.scss";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
-import { ComponentAPI } from "../../../api/ComponentAPI";
+import { ComponentAPI } from "../../api/ComponentAPI";
 import { notification } from "antd";
-import { useLoader } from "../../loader/LoaderContext";
+import {useLoader} from "../loader/LoaderContext"
 const ComponentList = () => {
   const navigate = useNavigate();
   const [components, setComponents] = useState([]);
