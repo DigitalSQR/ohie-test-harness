@@ -6,7 +6,12 @@ export const TestResultAPI = {
 			const response = await api.request({
 				url: `/testcase-result`,
 				method: "GET",
-				params: { testRequestId: trid, manual:true,size:"50",sort: "rank"},
+				params: {
+					testRequestId: trid,
+					manual: true,
+					size: "50",
+					sort: "rank",
+				},
 			});
 			// console.log(response);
 			return response.data;
@@ -14,14 +19,18 @@ export const TestResultAPI = {
 			throw error;
 		}
 	},
-	getQuestions: async function (parentTestcaseResultId) {
+	getQuestions: async function (parentTestcaseResultId,currentPage) {
 		try {
 			const response = await api.request({
 				url: `/testcase-result`,
 				method: "GET",
-				params: { parentTestcaseResultId: parentTestcaseResultId,sort: "rank" },
+				params: {
+					parentTestcaseResultId: parentTestcaseResultId,
+					sort: "rank",
+					size: 1,
+					page:currentPage
+				},
 			});
-			// console.log(response);
 			return response.data;
 		} catch (error) {
 			throw error;
@@ -30,15 +39,13 @@ export const TestResultAPI = {
 
 	getTestCaseOptions: async function (testcaseId) {
 		try {
-			console.log(testcaseId);
 			const response = await api.request({
 				url: "/testcase-option",
 				method: "GET",
 				params: {
-					testcaseId:testcaseId
+					testcaseId: testcaseId,
 				},
 			});
-			// console.log(response);
 			return response.data;
 		} catch (error) {
 			throw error;
