@@ -36,7 +36,7 @@ export default function Header() {
 								<i className="bi bi-chevron-down"></i>
 							</span>
 							<span className="font-size-12">
-								{USER_ROLE_NAMES[userInfo?.roleIds[0]]}
+								{userInfo?.roleIds && USER_ROLE_NAMES[userInfo?.roleIds[0]]}
 							</span>
 						</div>
 						<ul className="dropdown-menu">

@@ -1,24 +1,38 @@
 import { Fragment, useEffect, useState } from "react";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import Options from "../Options/Options";
+import { Pagination } from "@mui/material";
+import { useLoader } from "../../loader/LoaderContext";
 
 export default function TestCase(props) {
 	const { specificationId, testRequestId } = props;
 	const [manualQuestions, setManualQuestions] = useState([]);
-	useEffect(() => {
-		TestResultAPI.getQuestions(specificationId)
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPage, setTotalPage] = useState(1);
+	const {showLoader,hideLoader} = useLoader();
+	const handlePageChange = (event, page) => {
+		showLoader();
+		setCurrentPage(page);
+		fetchQuestions(page);
+		hideLoader();
+	};
+
+
+	const fetchQuestions = (currentPage) => {
+		TestResultAPI.getQuestions(specificationId,currentPage-1)
 			.then((res) => {
+				console.log(res);
+				setTotalPage(res.totalPages);
 				setManualQuestions(res.content);
 			})
 			.catch((error) => {
 				throw error;
 			});
+	};
+	useEffect(() => {
+		fetchQuestions(currentPage);
 	}, []);
 
-	// const question = manualQuestions.filter((questions) => {
-	// 	return questions.parentTestcaseResultId == specificationId;
-	// });
-	console.log(specificationId);
 	return (
 		<Fragment>
 			<div className="col-12 non-fuctional-requirement">
@@ -33,11 +47,21 @@ export default function TestCase(props) {
 					</div>
 					{manualQuestions.map((question) => {
 						const segments = question.refId.split(".");
-						const Specification = segments.slice(-3).join(".").toUpperCase();
+						const Specification = segments
+							.slice(-3)
+							.join(".")
+							.toUpperCase();
 						return (
 							<div className="row question-box" key={question.id}>
-								<div className="col-12 p-0 question">
-									<h2><b>{Specification + " " +  question.name + " "}</b></h2>
+								<div className=" col-md-9 col-12 p-0 question">
+									<h2>
+										<b>
+											{Specification +
+												" " +
+												question.name +
+												" "}
+										</b>
+									</h2>
 									<Options refId={question.refId}></Options>
 								</div>
 							</div>
@@ -45,6 +69,13 @@ export default function TestCase(props) {
 					})}
 				</div>
 			</div>
+			<Pagination
+				style={{ display: "flex", justifyContent: "center" }}
+				count={totalPage}
+				page={currentPage}
+				color="primary"
+				onChange={handlePageChange}
+			/>
 		</Fragment>
 	);
 }
