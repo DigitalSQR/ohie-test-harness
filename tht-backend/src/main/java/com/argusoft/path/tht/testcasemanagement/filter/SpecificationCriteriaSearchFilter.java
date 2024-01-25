@@ -5,15 +5,13 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +35,11 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     )
     private String componentId;
 
+    @ApiParam(
+            value = "isManual of the testcase"
+    )
+    private Boolean isManual;
+
     @Override
     public void validateSearchFilter() throws InvalidParameterException {
 
@@ -47,6 +50,13 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
 
     public SpecificationCriteriaSearchFilter(String id) {
         this.id = id;
+    }
+
+    @Override
+    protected void modifyCriteriaQuery(Root<SpecificationEntity> root, CriteriaQuery<?> query) {
+        if(getManual()!=null) {
+            query.distinct(true);
+        }
     }
 
     @Override
@@ -68,6 +78,11 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
         if (getComponentId() != null) {
             Join<SpecificationEntity, ComponentEntity> componentJoin = root.join("component");
             predicates.add(criteriaBuilder.equal(componentJoin.get("id"), getComponentId()));
+        }
+
+        if (getManual() != null) {
+            Join<SpecificationEntity, TestcaseEntity> componentJoin = root.join("testcases");
+            predicates.add(criteriaBuilder.equal(componentJoin.get("isManual"), getManual()));
         }
 
         return predicates;
@@ -108,5 +123,13 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
 
     public void setPrimaryId(String id) {
         this.id = id;
+    }
+
+    public Boolean getManual() {
+        return isManual;
+    }
+
+    public void setManual(Boolean manual) {
+        isManual = manual;
     }
 }

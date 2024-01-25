@@ -6,30 +6,28 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
 public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchFilter<T> {
     @Override
-    public Specification<T> buildSpecification(ContextInfo contextInfo) throws InvalidParameterException {
+    public final Specification<T> buildSpecification(ContextInfo contextInfo) throws InvalidParameterException {
         validateSearchFilter();
         return (root, query, criteriaBuilder) -> {
             BiFunction<Root<T>, CriteriaBuilder, Predicate> predicateFunction = preparePredicate(contextInfo);
+            modifyCriteriaQuery(root,query);
             return predicateFunction.apply(root, criteriaBuilder);
         };
     }
 
-    @Override
-    public BiFunction<Root<T>, CriteriaBuilder, Predicate> buildPredicate(ContextInfo contextInfo) throws InvalidParameterException {
-        validateSearchFilter();
-        return this.preparePredicate(contextInfo);
+    protected void modifyCriteriaQuery(Root<T> root, CriteriaQuery<?> query) {
     }
 
 
-    protected BiFunction<Root<T>, CriteriaBuilder, Predicate> preparePredicate(ContextInfo contextInfo) {
+    protected final BiFunction<Root<T>, CriteriaBuilder, Predicate> preparePredicate(ContextInfo contextInfo) {
         return (root, criteriaBuilder) -> {
             List<Predicate> predicates = buildPredicates(root, criteriaBuilder, contextInfo);
             List<Predicate> authorizationPredicates = buildAuthorizationPredicates(root, criteriaBuilder, contextInfo);
