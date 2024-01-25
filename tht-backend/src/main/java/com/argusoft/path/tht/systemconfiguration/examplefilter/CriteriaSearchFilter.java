@@ -13,6 +13,5 @@ public interface CriteriaSearchFilter<T> {
 
     Specification<T> buildSpecification(ContextInfo contextInfo) throws InvalidParameterException;
 
-    BiFunction<Root<T>, CriteriaBuilder, Predicate> buildPredicate(ContextInfo contextInfo) throws InvalidParameterException;
 
 }
