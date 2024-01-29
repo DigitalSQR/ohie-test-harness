@@ -141,6 +141,7 @@ public class FRF9TestCase1 implements TestCase {
             return new ValidationResultInfo(testCaseName, ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
+            LOGGER.error("caught OperationFailedException in FRF9TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

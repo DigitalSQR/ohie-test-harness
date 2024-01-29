@@ -28,6 +28,8 @@ import com.argusoft.path.tht.usermanagement.validator.UserValidator;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +51,8 @@ import java.util.Optional;
 @Service
 @Metrics(registry = "UserServiceServiceImpl")
 public class UserServiceServiceImpl implements UserService {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(UserServiceServiceImpl.class);
 
     @Autowired
     UserRepository userRepository;
@@ -81,6 +85,7 @@ public class UserServiceServiceImpl implements UserService {
             throws DoesNotExistException {
         Optional<UserEntity> userOptional = userRepository.findUserByEmail(email);
         if (!userOptional.isPresent()) {
+            LOGGER.error("caught DoesNotExistException in UserServiceServiceImpl ");
             throw new DoesNotExistException("User by email :"
                     + email
                     + Constant.NOT_FOUND);
@@ -109,6 +114,7 @@ public class UserServiceServiceImpl implements UserService {
             userByEmail = this.getUserByEmail(userEmail, contextInfo);
             TokenVerificationEntity tokenVerification = tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.FORGOT_PASSWORD.getKey(), contextInfo);
         } catch (Exception e) {
+            LOGGER.error("caught Exception in UserServiceServiceImpl ",e);
             // ignore it, no need to show that they are not exists in DB
             //TODO add log
         }
@@ -256,6 +262,7 @@ public class UserServiceServiceImpl implements UserService {
             throws DoesNotExistException,
             InvalidParameterException {
         if (StringUtils.isEmpty(userId)) {
+            LOGGER.error("caught InvalidParameterException in UserServiceServiceImpl ");
             throw new InvalidParameterException("userId is missing");
         }
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter(userId);
@@ -349,6 +356,7 @@ public class UserServiceServiceImpl implements UserService {
             OperationFailedException,
             InvalidParameterException {
         if (StringUtils.isEmpty(roleId)) {
+            LOGGER.error("caught InvalidParameterException in UserServiceServiceImpl ");
             throw new InvalidParameterException("roleId can not be empty");
         }
         RoleSearchCriteriaFilter roleSearchCriteriaFilter = new RoleSearchCriteriaFilter(roleId);

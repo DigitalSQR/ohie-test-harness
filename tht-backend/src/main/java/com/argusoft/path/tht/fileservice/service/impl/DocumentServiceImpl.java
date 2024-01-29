@@ -19,6 +19,8 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,8 @@ import java.util.*;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
     @Autowired
     FileService fileService;
@@ -47,6 +51,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             fileContentByFilePathAndFileName = FileService.getFileContentByFilePathAndFileName(null, fileId);
         } catch (IOException e) {
+            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
             throw new OperationFailedException("Exception occurred due to I/O Exception", e);
         }
         return fileContentByFilePathAndFileName;
@@ -68,6 +73,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             fileDetails = storeFileAndGetFileDetails(file, validationAllowedTypes);
         } catch (InvalidFileTypeException e) {
+            LOGGER.error("caught InvalidFileTypeException in DocumentServiceImpl ", e);
             DocumentValidator.setErrorMessageForFileType(e);
         }
 
@@ -80,15 +86,18 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             user = userService.getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("InvalidParameterException while fetching principal User while saving document ", e);
+            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
+            throw new OperationFailedException("InvalidParameterException while fetching principal User while saving document ",e);
         }
         documentEntity.setOwner(user);
 
         try {
             setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("InvalidParameterException while saving document ", e);
+            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
+            throw new OperationFailedException("InvalidParameterException while saving document ",e);
         }
+
         DocumentEntity document = documentRepository.save(documentEntity);
         return document;
     }
@@ -105,6 +114,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             fileDetails = FileService.storeFile(file, multipartFileTypeTesterPredicate);
         } catch (IOException e) {
+            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
             throw new OperationFailedException("Operation Failed due to IOException", e);
         }
         return fileDetails;
@@ -120,6 +130,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             return FileService.detectInputStreamTypeWithTika(file.getInputStream());
         } catch (IOException e) {
+            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
             throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
         }
     }
@@ -135,7 +146,8 @@ public class DocumentServiceImpl implements DocumentService {
                     .orElseThrow(() -> new DoesNotExistException("DocumentEntity does not found with id : " + documentId));
 
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("InvalidParameterException while getting document ", e);
+            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
+            throw new OperationFailedException("InvalidParameterException while getting document ",e);
         }
 
     }
@@ -165,6 +177,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             documentsByRefObjectUriAndRefObjectId = getDocumentsByRefObjectUriAndRefObjectId(refObjUri, refId, contextInfo);
         } catch (InvalidParameterException e) {
+            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
             //TODO add logger
         }
 
@@ -241,6 +254,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             documentEntities = getDocumentsByFileId(fileId, contextInfo);
         } catch (InvalidParameterException e) {
+            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
             throw new OperationFailedException("Error fetching document by fileId", e);
             //ADD LOGGER
         }

@@ -13,6 +13,8 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,6 +44,8 @@ import java.util.stream.Collectors;
 @Metrics(registry = "CustomUserDetailService")
 public class CustomUserDetailService implements UserDetailsService {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(CustomUserDetailService.class);
+
     @Autowired
     private UserService userService;
 
@@ -55,22 +59,27 @@ public class CustomUserDetailService implements UserDetailsService {
             try {
                 UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
                 if (StringUtils.isEmpty(user.getPassword()) || !Objects.equals(user.getPassword(), password)) {
+                    LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
                     throw new UsernameNotFoundException("Credential are incorrect.");
                 }
 
                 //If User is not active
                 if (!Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, user.getState())) {
                     if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
+                        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
                         throw new UsernameNotFoundException("Pending email verification.") {
                         };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, user.getState())) {
+                        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
                         throw new UsernameNotFoundException("Pending admin approval.") {
                         };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_REJECTED, user.getState())) {
+                        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
                         throw new UsernameNotFoundException("Admin approval has been rejected.") {
                         };
                     } else {
                         //Only state left is UserServiceConstants.USER_STATUS_INACTIVE.
+                        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
                         throw new UsernameNotFoundException("User is inactive.") {
                         };
                     }
@@ -91,10 +100,12 @@ public class CustomUserDetailService implements UserDetailsService {
                         authorities);
 
             } catch (NumberFormatException | DoesNotExistException e) {
+                LOGGER.error("caught DoesNotExistException in CustomUserDetailService ", e);
                 throw new UsernameNotFoundException("Credential are incorrect.") {
                 };
             }
         }
+        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
         throw new UsernameNotFoundException("requestAttributes is incorrect") {
         };
     }

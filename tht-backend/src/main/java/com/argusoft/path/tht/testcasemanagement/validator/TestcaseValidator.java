@@ -14,6 +14,8 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
@@ -21,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestcaseValidator {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseValidator.class);
 
     public static void validateCreateUpdateTestCase(String validationTypeKey, TestcaseEntity testcaseEntity, TestcaseService testcaseService, SpecificationService specificationService, ApplicationContext applicationContext, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
@@ -31,6 +35,7 @@ public class TestcaseValidator {
                 applicationContext,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in TestcaseValidator ");
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
@@ -45,9 +50,11 @@ public class TestcaseValidator {
                                                               ApplicationContext applicationContext,
                                                               ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         if (testcaseEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseValidator ");
             throw new InvalidParameterException("testcaseEntity is missing");
         }
         if (StringUtils.isEmpty(validationTypeKey)) {
+            LOGGER.error("caught InvalidParameterException in TestcaseValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
         }
         // VALIDATE
@@ -77,6 +84,7 @@ public class TestcaseValidator {
                                 .getTestcaseById(testcaseEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
+                        LOGGER.error("caught DoesNotExistException in TestcaseValidator ");
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
@@ -98,6 +106,7 @@ public class TestcaseValidator {
                 validateCreateTestcase(errors, testcaseEntity, testcaseService, contextInfo);
                 break;
             default:
+                LOGGER.error("caught InvalidParameterException in TestcaseValidator ");
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
@@ -172,6 +181,7 @@ public class TestcaseValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in TestcaseValidator ", ex);
                 // This is ok because created id should be unique
             }
         }
@@ -217,6 +227,7 @@ public class TestcaseValidator {
         try {
             TestCase cRTestCases = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
         } catch (Exception e) {
+            LOGGER.error("caught Exception in TestcaseValidator ", e);
             errors
                     .add(new ValidationResultInfo("beanName",
                             ErrorLevel.ERROR,
@@ -272,6 +283,7 @@ public class TestcaseValidator {
                         specificationService.getSpecificationById(testcaseEntity.getSpecification().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in TestcaseValidator ", ex);
                 String fieldName = "specification";
                 errors.add(
                         new ValidationResultInfo(fieldName,

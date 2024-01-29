@@ -7,6 +7,8 @@ package com.argusoft.path.tht.systemconfiguration.utils;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r4.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +22,8 @@ import java.util.List;
  * @author Dhruv
  */
 public final class FHIRUtils {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(FHIRUtils.class);
 
     public static <T> List<T> processBundle(Class<T> type, Bundle bundle) {
         List<T> resources = new ArrayList<>();
@@ -126,6 +130,7 @@ public final class FHIRUtils {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             return dateFormat.parse(dateStr);
         } catch (ParseException e) {
+            LOGGER.error("caught ParseException in FHIRUtils ", e);
             throw new RuntimeException("Error parsing date", e);
         }
     }

@@ -13,6 +13,8 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ import java.util.Set;
 
 public class TestcaseOptionValidator {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseOptionValidator.class);
+
     public static void validateCreateUpdateTestcaseOption(String validationTypeKey, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, TestcaseOptionEntity testcaseOptionEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestcaseOption(validationTypeKey,
@@ -30,6 +34,7 @@ public class TestcaseOptionValidator {
                 testcaseService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in TestcaseOptionValidator ");
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
@@ -39,9 +44,11 @@ public class TestcaseOptionValidator {
 
     public static List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey, TestcaseOptionEntity testcaseOptionEntity, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         if (testcaseOptionEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseOptionValidator ");
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
         if (StringUtils.isEmpty(validationTypeKey)) {
+            LOGGER.error("caught InvalidParameterException in TestcaseOptionValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
         }
         // VALIDATE
@@ -70,6 +77,7 @@ public class TestcaseOptionValidator {
                                 .getTestcaseOptionById(testcaseOptionEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
+                        LOGGER.error("caught DoesNotExistException in TestcaseOptionValidator ", ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
@@ -91,6 +99,7 @@ public class TestcaseOptionValidator {
                 validateCreateTestcaseOption(errors, testcaseOptionEntity, testcaseOptionService, contextInfo);
                 break;
             default:
+                LOGGER.error("caught InvalidParameterException in TestcaseOptionValidator ");
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
@@ -122,6 +131,7 @@ public class TestcaseOptionValidator {
                         testcaseService.getTestcaseById(testcaseOptionEntity.getTestcase().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in TestcaseOptionValidator ", ex);
                 String fieldName = "testcase";
                 errors.add(
                         new ValidationResultInfo(fieldName,
@@ -185,6 +195,7 @@ public class TestcaseOptionValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in TestcaseOptionValidator ", ex);
                 // This is ok because created id should be unique
             }
         }

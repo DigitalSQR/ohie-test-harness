@@ -15,6 +15,8 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -23,6 +25,9 @@ import java.util.List;
 import java.util.Set;
 
 public class SpecificationValidator {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(SpecificationValidator.class);
+
     public static void validateCreateUpdateSpecification(String validationTypeKey, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, SpecificationEntity specificationEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateSpecification(validationTypeKey,
@@ -32,6 +37,7 @@ public class SpecificationValidator {
                 componentService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in SpecificationValidator ");
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
@@ -41,9 +47,11 @@ public class SpecificationValidator {
 
     public static List<ValidationResultInfo> validateSpecification(String validationTypeKey, SpecificationEntity specificationEntity, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         if (specificationEntity == null) {
+            LOGGER.error("caught InvalidParameterException in SpecificationValidator ");
             throw new InvalidParameterException("specificationEntity is missing");
         }
         if (StringUtils.isEmpty(validationTypeKey)) {
+            LOGGER.error("caught InvalidParameterException in SpecificationValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
         }
         // VALIDATE
@@ -73,6 +81,7 @@ public class SpecificationValidator {
                                 .getSpecificationById(specificationEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
+                        LOGGER.error("caught DoesNotExistException in SpecificationValidator ", ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
@@ -124,6 +133,7 @@ public class SpecificationValidator {
             try {
                 testcaseEntitySet.add(testcaseService.getTestcaseById(item.getId(), contextInfo));
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in SpecificationValidator ", ex);
                 String fieldName = "testcase";
                 errors.add(
                         new ValidationResultInfo(fieldName,
@@ -139,6 +149,7 @@ public class SpecificationValidator {
                         componentService.getComponentById(specificationEntity.getComponent().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in SpecificationValidator ", ex);
                 String fieldName = "component";
                 errors.add(
                         new ValidationResultInfo(fieldName,
@@ -202,6 +213,7 @@ public class SpecificationValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in SpecificationValidator ", ex);
                 // This is ok because created id should be unique
             }
         }

@@ -24,6 +24,8 @@ import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
@@ -43,6 +45,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class TestcaseExecutioner {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseExecutioner.class);
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -78,9 +82,11 @@ public class TestcaseExecutioner {
 
             execute(testcaseResultEntities, iGenericClientMap, Constant.SUPER_USER_CONTEXT);
         } catch (DataValidationErrorException e) {
+            LOGGER.error("caught DataValidationException in TestcaseExecutioner ", e);
             throw new OperationFailedException(e);
         } catch (InvalidParameterException | OperationFailedException | VersionMismatchException |
                  DoesNotExistException e) {
+            LOGGER.error("caught OperationFailedException in TestcaseExecutioner ", e);
             throw new OperationFailedException(e.getMessage(), e);
         }
     }
@@ -91,8 +97,10 @@ public class TestcaseExecutioner {
             changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
         } catch (DoesNotExistException | InvalidParameterException | OperationFailedException |
                  VersionMismatchException ex) {
+            LOGGER.error("caught OperationFailedException in TestcaseExecutioner ", ex);
             throw new OperationFailedException("Operation failed while updating testcaseResults", ex);
         } catch (DataValidationErrorException ex) {
+            LOGGER.error("caught DataValidationErrorException in TestcaseExecutioner ", ex);
             throw new OperationFailedException(ex);
         }
     }
@@ -121,12 +129,14 @@ public class TestcaseExecutioner {
 
             updateTestCaseResultByValidationResult(testcaseResult, validationResultInfo, startDateForTestCase, contextInfo);
         } catch (Exception e) {
+            LOGGER.error("caught Exception in TestcaseExecutioner ", e);
             e.printStackTrace();
             //TODO: add system failure log and connect it with testResult by refObjUri/refId.
             try {
                 updateTestCaseResultForSystemError(testcaseResult, startDateForTestCase, contextInfo);
             } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
                      VersionMismatchException | DoesNotExistException ex) {
+                LOGGER.error("caught Exception in TestcaseExecutioner ", e);
                 ex.printStackTrace();
             }
         }

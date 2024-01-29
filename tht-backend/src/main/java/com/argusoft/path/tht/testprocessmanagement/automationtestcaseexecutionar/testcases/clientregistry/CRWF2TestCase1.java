@@ -10,6 +10,8 @@ import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.Patient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -21,6 +23,8 @@ import java.util.Map;
  */
 @Component
 public class CRWF2TestCase1 implements TestCase {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(CRWF2TestCase1.class);
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
@@ -74,6 +78,7 @@ public class CRWF2TestCase1 implements TestCase {
                 return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Failed to update patient");
             }
         } catch (Exception ex) {
+            LOGGER.error("caught OperationFailedException in CRWF2TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

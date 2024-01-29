@@ -10,6 +10,8 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.KeyCategory;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.google.common.collect.Multimap;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +32,8 @@ import java.util.regex.Pattern;
  * @author Dhruv
  */
 public final class ValidationUtils {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(ValidationUtils.class);
 
     public static final String PROVIDED_KEY = "Provided key:";
 
@@ -125,6 +129,7 @@ public final class ValidationUtils {
                             maxValue == null ? null : maxValue.floatValue(),
                             errors);
                 } catch (NumberFormatException e) {
+                    LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
@@ -144,6 +149,7 @@ public final class ValidationUtils {
                             maxValue == null ? null : maxValue.floatValue(),
                             errors);
                 } catch (NumberFormatException e) {
+                    LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
@@ -175,6 +181,7 @@ public final class ValidationUtils {
                             maxValue == null ? null : maxValue.intValue(),
                             errors);
                 } catch (NumberFormatException e) {
+                    LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
@@ -199,6 +206,7 @@ public final class ValidationUtils {
                 try {
                     sdf.parse(value);
                 } catch (ParseException e) {
+                    LOGGER.error("caught ParseException in ValidationUtils ", e);
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
@@ -235,6 +243,7 @@ public final class ValidationUtils {
                         maxValue,
                         errors);
             } catch (NumberFormatException e) {
+                LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
@@ -368,6 +377,7 @@ public final class ValidationUtils {
             try {
                 Integer.parseInt(field);
             } catch (NumberFormatException e) {
+                LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
@@ -391,6 +401,7 @@ public final class ValidationUtils {
             try {
                 Long.parseLong(field);
             } catch (NumberFormatException e) {
+                LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
@@ -500,6 +511,7 @@ public final class ValidationUtils {
             List<ValidationResultInfo> validationResultInfos
     ) throws DataValidationErrorException {
         if (ValidationUtils.containsErrors(validationResultInfos, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in ValidationUtils ");
             throw new DataValidationErrorException("Error(s) occurred validating", validationResultInfos);
         }
     }
