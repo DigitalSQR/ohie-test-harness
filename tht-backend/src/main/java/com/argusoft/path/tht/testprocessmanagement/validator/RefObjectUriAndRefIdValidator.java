@@ -64,13 +64,12 @@ public class RefObjectUriAndRefIdValidator {
     public void  refObjectUriAndRefIdValidation(String refObjUri, String refId,
                                           ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, OperationFailedException {
 
-        if (StringUtils.isEmpty(refId)
-                || StringUtils.isEmpty(refObjUri)) {
-            String fieldName = "refId and refObjUri";
+        if (StringUtils.hasLength(refObjUri)) {
+            String fieldName = "refObjUri";
             errors.add(
                     new ValidationResultInfo(fieldName,
                             ErrorLevel.ERROR,
-                            "input parameter is empty"));
+                            "input parameter refObjUri is empty"));
             return;
         }
 
@@ -79,25 +78,32 @@ public class RefObjectUriAndRefIdValidator {
             errors.add(
                     new ValidationResultInfo(fieldName,
                             ErrorLevel.ERROR,
-                            "The refId supplied provided does not exists"));
+                            "The refObjUri provided does not exists"));
             return;
         }
 
         try{
             if(refObjUri.equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)){
                 componentService.getComponentById(refId, contextInfo);
+
             } else if (refObjUri.equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
                 specificationService.getSpecificationById(refId, contextInfo);
+
             } else if (refObjUri.equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
                 testcaseService.getTestcaseById(refId, contextInfo);
+
             } else if (refObjUri.equals(TestcaseOptionServiceConstants.TESTCASE_OPTION_REF_OBJ_URI)) {
                 testcaseOptionService.getTestcaseOptionById(refId, contextInfo);
+
             } else if (refObjUri.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_REF_OBJ_URI)) {
                 testcaseResultService.getTestcaseResultById(refId, contextInfo);
+
             } else if (refObjUri.equals(DocumentServiceConstants.DOCUMENT_REF_OBJ_URI)) {
                 documentService.getDocument(refId, contextInfo);
-            }else {
+
+            } else if (refObjUri.equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)) {
                 testRequestService.getTestRequestById(refId, contextInfo);
+
             }
 
 
@@ -112,5 +118,4 @@ public class RefObjectUriAndRefIdValidator {
                             "The refId supplied for " + entity + " does not exists"));
         }
     }
-
 }
