@@ -6,12 +6,12 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.ComponentRepository;
@@ -27,8 +27,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -176,4 +176,33 @@ public class ComponentServiceServiceImpl implements ComponentService {
         return errors;
     }
 
+    @Override
+    public ComponentEntity changeState(String componentID, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        //validate given stateKey
+        ValidationUtils.statusPresent(ComponentServiceConstants.COMPONENT_STATUS, stateKey, errors);
+
+        ComponentEntity componentEntity = this.getComponentById(componentID, contextInfo);
+
+        String currentState = componentEntity.getState();
+
+        //validate transition
+        ValidationUtils.transitionValid(ComponentServiceConstants.COMPONENT_STATUS_MAP, currentState, stateKey, errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
+
+        componentEntity.setState(stateKey);
+        componentEntity = componentRepository.save(componentEntity);
+
+        return componentEntity;
+    }
+
+
 }
+
+

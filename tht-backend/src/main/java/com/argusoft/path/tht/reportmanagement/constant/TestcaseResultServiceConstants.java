@@ -1,6 +1,8 @@
 package com.argusoft.path.tht.reportmanagement.constant;
 
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class TestcaseResultServiceConstants {
     public static final String TESTCASE_RESULT_STATUS_PENDING = "testcase.result.status.pending";
     public static final String TESTCASE_RESULT_STATUS_INPROGRESS = "testcase.result.status.inprogress";
     public static final String TESTCASE_RESULT_STATUS_FINISHED = "testcase.result.status.finished";
+    public static final Multimap<String, String> TESTCASE_RESULT_STATUS_MAP = ArrayListMultimap.create();
     public static List<String> TESTCASE_RESULT_STATUS = new ArrayList<>();
 
     static {
@@ -27,5 +30,13 @@ public class TestcaseResultServiceConstants {
         TESTCASE_RESULT_STATUS.add(TESTCASE_RESULT_STATUS_PENDING);
         TESTCASE_RESULT_STATUS.add(TESTCASE_RESULT_STATUS_INPROGRESS);
         TESTCASE_RESULT_STATUS.add(TESTCASE_RESULT_STATUS_FINISHED);
+    }
+
+    static {
+        TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_DRAFT, TESTCASE_RESULT_STATUS_PENDING);
+        TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_PENDING, TESTCASE_RESULT_STATUS_INPROGRESS);
+        TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_PENDING, TESTCASE_RESULT_STATUS_SKIP);
+        TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_SKIP, TESTCASE_RESULT_STATUS_PENDING);
+        TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_INPROGRESS, TESTCASE_RESULT_STATUS_FINISHED);
     }
 }

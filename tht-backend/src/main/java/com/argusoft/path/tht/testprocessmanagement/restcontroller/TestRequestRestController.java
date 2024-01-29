@@ -5,10 +5,10 @@
  */
 package com.argusoft.path.tht.testprocessmanagement.restcontroller;
 
+import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
@@ -226,9 +226,9 @@ public class TestRequestRestController {
     })
     @PatchMapping("/state/{testRequestId}/{changeState}")
     @Transactional
-    public TestRequestInfo updateDocumentState(@PathVariable("testRequestId") String testRequestId,
-                                               @PathVariable("changeState") String changeState,
-                                               @RequestAttribute("contextInfo") ContextInfo contextInfo)
+    public TestRequestInfo updateTestRequestState(@PathVariable("testRequestId") String testRequestId,
+                                                  @PathVariable("changeState") String changeState,
+                                                  @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         TestRequestEntity testRequestEntity = testRequestService.changeState(testRequestId, changeState, contextInfo);
         return testRequestMapper.modelToDto(testRequestEntity);

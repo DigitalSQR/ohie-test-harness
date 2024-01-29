@@ -147,4 +147,7 @@ public interface SpecificationService {
                                                        ContextInfo contextInfo)
             throws InvalidParameterException;
 
+
+    public SpecificationEntity changeState(String specificationId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
 }

@@ -6,12 +6,12 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.TestcaseOptionRepository;
@@ -27,8 +27,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -68,7 +68,9 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         if (StringUtils.isEmpty(testcaseOptionEntity.getId())) {
             testcaseOptionEntity.setId(UUID.randomUUID().toString());
         }
+        testcaseOptionEntity.setState(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_DRAFT);
         testcaseOptionEntity = testcaseOptionRepository.save(testcaseOptionEntity);
+
         return testcaseOptionEntity;
     }
 
@@ -175,5 +177,29 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         return errors;
     }
 
+    @Override
+    public TestcaseOptionEntity changeState(String testcaseOptionId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
 
+        //validate given stateKey
+        ValidationUtils.statusPresent(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS, stateKey, errors);
+
+        TestcaseOptionEntity testcaseOptionEntity = this.getTestcaseOptionById(testcaseOptionId, contextInfo);
+
+        String currentState = testcaseOptionEntity.getState();
+
+        //validate transition
+        ValidationUtils.transitionValid(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_MAP, currentState, stateKey, errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
+
+        testcaseOptionEntity.setState(stateKey);
+        testcaseOptionEntity = testcaseOptionRepository.save(testcaseOptionEntity);
+
+        return testcaseOptionEntity;
+    }
 }

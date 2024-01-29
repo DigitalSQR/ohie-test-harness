@@ -6,12 +6,12 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.TestcaseRepository;
@@ -28,8 +28,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 
@@ -184,4 +184,28 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         return errors;
     }
 
+    @Override
+    public TestcaseEntity changeState(String testcaseId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        //validate given stateKey
+        ValidationUtils.statusPresent(TestcaseServiceConstants.TESTCASE_STATUS, stateKey, errors);
+
+        TestcaseEntity testcaseEntity = this.getTestcaseById(testcaseId, contextInfo);
+        String currentState = testcaseEntity.getState();
+
+        //validate transition
+        ValidationUtils.transitionValid(TestcaseServiceConstants.TESTCASE_STATUS_MAP, currentState, stateKey, errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
+
+        testcaseEntity.setState(stateKey);
+        testcaseEntity = testcaseRepository.save(testcaseEntity);
+
+        return testcaseEntity;
+    }
 }

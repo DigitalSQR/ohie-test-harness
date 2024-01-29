@@ -147,4 +147,7 @@ public interface ComponentService {
                                                ContextInfo contextInfo)
             throws InvalidParameterException;
 
+    public ComponentEntity changeState(String componentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
+
 }

@@ -9,7 +9,6 @@ import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import io.swagger.annotations.ApiParam;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -143,23 +142,23 @@ public class ContextInfo extends User implements Serializable {
         return super.getAuthorities();
     }
 
-    private void setIsAssessee(){
+    private void setIsAssessee() {
         this.isAssessee = this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().contains(UserServiceConstants.ROLE_ID_ASSESSEE));
     }
 
-    private void setIsAdmin(){
+    private void setIsAdmin() {
         this.isAdmin = this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().contains(UserServiceConstants.ROLE_ID_ADMIN));
     }
 
-    private void setIsTester(){
+    private void setIsTester() {
         this.isTester = this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().contains(UserServiceConstants.ROLE_ID_TESTER));
     }
 
-    public boolean isAssessee(){
+    public boolean isAssessee() {
         return isAssessee;
     }
 
-    public boolean isTesterOrAdmin(){
+    public boolean isTesterOrAdmin() {
         return isTester || isAdmin;
     }
 

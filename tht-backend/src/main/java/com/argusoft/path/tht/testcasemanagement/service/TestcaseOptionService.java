@@ -146,4 +146,8 @@ public interface TestcaseOptionService {
                                                          ContextInfo contextInfo)
             throws InvalidParameterException;
 
+
+    public TestcaseOptionEntity changeState(String testcaseOptionId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
+
 }

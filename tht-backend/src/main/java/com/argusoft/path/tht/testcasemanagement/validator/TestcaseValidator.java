@@ -189,6 +189,9 @@ public class TestcaseValidator {
                                              TestcaseEntity originalEntity) {
         //className can't be updatable
         ValidationUtils.validateNotUpdatable(testcaseEntity.getBeanName(), originalEntity.getBeanName(), "beanName", errors);
+
+        // state can't be updated
+        ValidationUtils.validateNotUpdatable(testcaseEntity.getState(), originalEntity.getState(), "state", errors);
     }
 
     //Validation For :Id

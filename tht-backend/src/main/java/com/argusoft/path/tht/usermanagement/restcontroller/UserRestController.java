@@ -199,11 +199,11 @@ public class UserRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PutMapping("/state/{userId}/{changeState}")
+    @PatchMapping("/state/{userId}/{changeState}")
     @Transactional
-    public UserInfo updateDocumentState(@PathVariable("userId") String userId,
-                                        @PathVariable("changeState") String changeState,
-                                        @RequestAttribute("contextInfo") ContextInfo contextInfo)
+    public UserInfo updateUserState(@PathVariable("userId") String userId,
+                                    @PathVariable("changeState") String changeState,
+                                    @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         UserEntity userEntity = userService.changeState(userId, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
@@ -309,7 +309,7 @@ public class UserRestController {
             principalUser = userService
                     .getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("InvalidParameterException while fetching principal User ",e);
+            throw new OperationFailedException("InvalidParameterException while fetching principal User ", e);
         }
         return userMapper.modelToDto(principalUser);
     }

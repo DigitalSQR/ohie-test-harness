@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.testcasemanagement.restcontroller;
 
+import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -178,4 +179,20 @@ public class TestcaseRestController {
                 .validateTestcase(validationTypeKey, testcaseEntity, contextInfo);
     }
 
+
+    @ApiOperation(value = "To change status of Testcase", response = DocumentInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated Testcase"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/state/{testcaseId}/{changeState}")
+    @Transactional
+    public TestcaseInfo updateTestcaseState(@PathVariable("testcaseId") String testcaseId,
+                                            @PathVariable("changeState") String changeState,
+                                            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        TestcaseEntity testcaseEntity = testcaseService.changeState(testcaseId, changeState, contextInfo);
+        return testcaseMapper.modelToDto(testcaseEntity);
+    }
 }

@@ -237,6 +237,9 @@ public class UserValidator {
                                              UserEntity originalEntity) {
         //email can't be update
         ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
+
+        // state can't be updated
+        ValidationUtils.validateNotUpdatable(userEntity.getState(), originalEntity.getState(), "state", errors);
     }
 
     //validate create
@@ -311,17 +314,17 @@ public class UserValidator {
                 errors);
     }
 
-    //validate given stateKey
-    public static void validateStateKey(String stateKey) throws DataValidationErrorException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
-        boolean contains = UserServiceConstants.userStates.contains(stateKey);
-        if (!contains) {
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setElement("stateKey");
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("provided stateKey is not valid ");
-            errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
-        }
-    }
+//    //validate given stateKey
+//    public static void validateStateKey(String stateKey) throws DataValidationErrorException {
+//        List<ValidationResultInfo> errors = new ArrayList<>();
+//        boolean contains = UserServiceConstants.userStates.contains(stateKey);
+//        if (!contains) {
+//            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+//            validationResultInfo.setElement("stateKey");
+//            validationResultInfo.setLevel(ErrorLevel.ERROR);
+//            validationResultInfo.setMessage("provided stateKey is not valid ");
+//            errors.add(validationResultInfo);
+//            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
+//        }
+//    }
 }

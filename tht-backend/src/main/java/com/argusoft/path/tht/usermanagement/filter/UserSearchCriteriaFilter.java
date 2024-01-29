@@ -34,11 +34,6 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     private String email;
 
 
-    @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
     public UserSearchCriteriaFilter(String id) {
         this.id = id;
     }
@@ -47,10 +42,15 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     }
 
     @Override
+    public void validateSearchFilter() throws InvalidParameterException {
+
+    }
+
+    @Override
     protected List<Predicate> buildPredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getPrimaryId())){
+        if (StringUtils.hasLength(getPrimaryId())) {
             predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
         }
 

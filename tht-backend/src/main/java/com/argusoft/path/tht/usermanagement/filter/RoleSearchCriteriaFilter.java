@@ -22,11 +22,6 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
     )
     private String name;
 
-    @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
     public RoleSearchCriteriaFilter(String id) {
         this.id = id;
     }
@@ -35,10 +30,15 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
     }
 
     @Override
+    public void validateSearchFilter() throws InvalidParameterException {
+
+    }
+
+    @Override
     protected List<Predicate> buildPredicates(Root<RoleEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getPrimaryId())){
+        if (StringUtils.hasLength(getPrimaryId())) {
             predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
         }
 

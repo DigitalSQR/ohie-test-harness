@@ -8,7 +8,6 @@ package com.argusoft.path.tht.systemconfiguration.exceptioncontroller.controller
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.restcontroller.ComponentRestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,55 +42,55 @@ public class ExceptionController {
 
     @ExceptionHandler(value = OperationFailedException.class)
     public ResponseEntity<Object> handleException(OperationFailedException exception) {
-        LOGGER.error("caught OperationFailedException in ControllerAdvice ",exception);
+        LOGGER.error("caught OperationFailedException in ControllerAdvice ", exception);
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = DoesNotExistException.class)
     public ResponseEntity<Object> handleException(DoesNotExistException exception) {
-        LOGGER.error("caught DoesNotExistException in ControllerAdvice ",exception);
+        LOGGER.error("caught DoesNotExistException in ControllerAdvice ", exception);
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = VersionMismatchException.class)
     public ResponseEntity<Object> handleException(VersionMismatchException exception) {
-        LOGGER.error("caught VersionMismatchException in ControllerAdvice ",exception);
+        LOGGER.error("caught VersionMismatchException in ControllerAdvice ", exception);
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = DataValidationErrorException.class)
     public ResponseEntity<Object> handleException(DataValidationErrorException exception) {
-        LOGGER.error("caught DataValidationErrorException in ControllerAdvice ",exception);
+        LOGGER.error("caught DataValidationErrorException in ControllerAdvice ", exception);
         return new ResponseEntity<>(exception.getValidationResults(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = InvalidParameterException.class)
     public ResponseEntity<Object> handleException(InvalidParameterException exception) {
-        LOGGER.error("caught InvalidParameterException in ControllerAdvice ",exception);
+        LOGGER.error("caught InvalidParameterException in ControllerAdvice ", exception);
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = PropertyReferenceException.class)
     public ResponseEntity<Object> handleException(PropertyReferenceException exception) {
-        LOGGER.error("caught PropertyReferenceException in ControllerAdvice ",exception);
+        LOGGER.error("caught PropertyReferenceException in ControllerAdvice ", exception);
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<Object> handleException(ObjectOptimisticLockingFailureException exception) {
-        LOGGER.error("caught ObjectOptimisticLockingFailureException in ControllerAdvice ",exception);
+        LOGGER.error("caught ObjectOptimisticLockingFailureException in ControllerAdvice ", exception);
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = NullPointerException.class)
     public ResponseEntity<Object> handleNullPointerException(NullPointerException exception) {
-        LOGGER.error("caught NullPointerException in ControllerAdvice ",exception);
+        LOGGER.error("caught NullPointerException in ControllerAdvice ", exception);
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Object> handleExceptionToJustPrintLog(Exception exception) throws Exception {
-        LOGGER.error("caught Exception in ControllerAdvice ",exception);
+        LOGGER.error("caught Exception in ControllerAdvice ", exception);
         throw exception;
     }
 

@@ -4,21 +4,19 @@ package com.argusoft.path.tht.fileservice.service.impl;
 import com.argusoft.path.tht.fileservice.FileDetails;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
-import com.argusoft.path.tht.fileservice.service.FileService;
-import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.fileservice.repository.DocumentRepository;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
+import com.argusoft.path.tht.fileservice.service.FileService;
 import com.argusoft.path.tht.fileservice.validator.DocumentValidator;
+import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,16 +80,15 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             user = userService.getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("InvalidParameterException while fetching principal User while saving document ",e);
+            throw new OperationFailedException("InvalidParameterException while fetching principal User while saving document ", e);
         }
         documentEntity.setOwner(user);
 
         try {
             setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("InvalidParameterException while saving document ",e);
+            throw new OperationFailedException("InvalidParameterException while saving document ", e);
         }
-
         DocumentEntity document = documentRepository.save(documentEntity);
         return document;
     }
@@ -129,7 +126,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentEntity getDocument(String documentId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
-        
+
         DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter(documentId);
         try {
             List<DocumentEntity> documentEntities = this.searchDocument(documentCriteriaSearchFilter, contextInfo);
@@ -138,7 +135,7 @@ public class DocumentServiceImpl implements DocumentService {
                     .orElseThrow(() -> new DoesNotExistException("DocumentEntity does not found with id : " + documentId));
 
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("InvalidParameterException while getting document ",e);
+            throw new OperationFailedException("InvalidParameterException while getting document ", e);
         }
 
     }
@@ -206,14 +203,28 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    public DocumentEntity changeState(String documentID, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
 
-        DocumentValidator.validateDocumentStateKey(stateKey);
+        //validate given stateKey
+        ValidationUtils.statusPresent(DocumentServiceConstants.DOCUMENT_STATUS, stateKey, errors);
 
-        DocumentEntity document = this.getDocument(documentId, contextInfo);
-        document.setState(stateKey);
-        documentRepository.save(document);
-        return document;
+        DocumentEntity documentEntity = this.getDocument(documentID, contextInfo);
+        String currentState = documentEntity.getState();
+
+        //validate transition
+        ValidationUtils.transitionValid(DocumentServiceConstants.DOCUMENT_STATUS_MAP, currentState, stateKey, errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
+
+        documentEntity.setState(stateKey);
+        documentEntity = documentRepository.save(documentEntity);
+
+        return documentEntity;
     }
 
     @Override

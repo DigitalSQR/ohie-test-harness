@@ -33,11 +33,6 @@ public class TestcaseResultValidator {
 
     private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
 
-    @Autowired
-    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
-        TestcaseResultValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
-    }
-
     public static List<ValidationResultInfo> validateCreateUpdateTestCaseResult(String validationTypeKey, TestcaseResultService testcaseResultService, UserService userService, TestcaseOptionService testcaseOptionService, TestRequestService testRequestService, TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestCaseResult(validationTypeKey,
@@ -252,6 +247,7 @@ public class TestcaseResultValidator {
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              TestcaseResultEntity testcaseResultEntity,
                                              TestcaseResultEntity originalEntity) {
+        // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseResultEntity.getState(), originalEntity.getState(), "state", errors);
     }
 
@@ -430,5 +426,10 @@ public class TestcaseResultValidator {
                                     + "exists"));
         }
         return errors;
+    }
+
+    @Autowired
+    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
+        TestcaseResultValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
     }
 }

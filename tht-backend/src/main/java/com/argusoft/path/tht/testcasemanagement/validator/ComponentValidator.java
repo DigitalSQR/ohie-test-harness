@@ -173,6 +173,8 @@ public class ComponentValidator {
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              ComponentEntity componentEntity,
                                              ComponentEntity originalEntity) {
+        // state can't be updated
+        ValidationUtils.validateNotUpdatable(componentEntity.getState(), originalEntity.getState(), "state", errors);
     }
 
     //validate create
