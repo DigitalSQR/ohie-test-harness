@@ -1,26 +1,42 @@
-package com.argusoft.path.tht.testcasemanagement.validator;
+package com.argusoft.path.tht.fileservice.validator;
 
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.DocumentServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
+import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
+import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
+import com.argusoft.path.tht.testprocessmanagement.validator.RefObjectUriAndRefIdValidator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@Component
 public class DocumentValidator {
+
+    private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
+
+    @Autowired
+    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
+        DocumentValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
+    }
 
     public static void validateDocumentEntity(String validationTypeKey,
                                               DocumentEntity documentEntity,
-                                              ContextInfo contextInfo) throws DataValidationErrorException {
+                                              ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> errors = new ArrayList<>();
+
+        refObjectUriAndRefIdValidator.refObjectUriAndRefIdValidation(documentEntity.getRefObjUri(), documentEntity.getRefId(), contextInfo, errors);
+
         validateRequired(documentEntity, errors);
         switch (validationTypeKey) {
             case Constant.CREATE_VALIDATION:

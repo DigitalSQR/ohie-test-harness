@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testcasemanagement.models.entity;
+package com.argusoft.path.tht.fileservice.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;

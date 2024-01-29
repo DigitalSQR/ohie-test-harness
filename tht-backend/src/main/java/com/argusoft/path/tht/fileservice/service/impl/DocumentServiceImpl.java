@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testcasemanagement.service.impl;
+package com.argusoft.path.tht.fileservice.service.impl;
 
 
 import com.argusoft.path.tht.fileservice.FileDetails;
@@ -13,12 +13,12 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.DocumentServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.filter.DocumentCriteriaSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.entity.DocumentEntity;
-import com.argusoft.path.tht.testcasemanagement.repository.DocumentRepository;
-import com.argusoft.path.tht.testcasemanagement.service.DocumentService;
-import com.argusoft.path.tht.testcasemanagement.validator.DocumentValidator;
+import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
+import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
+import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
+import com.argusoft.path.tht.fileservice.repository.DocumentRepository;
+import com.argusoft.path.tht.fileservice.service.DocumentService;
+import com.argusoft.path.tht.fileservice.validator.DocumentValidator;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
-                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException {
+                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException {
 
         //get FileType
         String fileType = getFileType(file);
