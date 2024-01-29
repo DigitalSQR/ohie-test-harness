@@ -64,7 +64,7 @@ public class RefObjectUriAndRefIdValidator {
     public void  refObjectUriAndRefIdValidation(String refObjUri, String refId,
                                           ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, OperationFailedException {
 
-        if (StringUtils.hasLength(refObjUri)) {
+        if (!StringUtils.hasLength(refObjUri)) {
             String fieldName = "refObjUri";
             errors.add(
                     new ValidationResultInfo(fieldName,
