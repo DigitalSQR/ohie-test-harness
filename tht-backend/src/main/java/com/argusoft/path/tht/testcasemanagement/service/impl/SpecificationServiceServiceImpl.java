@@ -73,6 +73,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         if (StringUtils.isEmpty(specificationEntity.getId())) {
             specificationEntity.setId(UUID.randomUUID().toString());
         }
+        specificationEntity.setState(SpecificationServiceConstants.SPECIFICATION_STATUS_DRAFT);
         specificationEntity = specificationRepository.save(specificationEntity);
         return specificationEntity;
     }
