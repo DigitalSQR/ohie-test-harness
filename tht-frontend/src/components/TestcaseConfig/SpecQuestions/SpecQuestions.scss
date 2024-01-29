@@ -1,0 +1,43 @@
+.question-container {
+  margin-bottom: 20px;
+  padding: 10px;
+  display: flex;
+  gap: 20vw;
+  justify-content: space-between;
+}
+
+.question-content {
+  flex: 1;
+}
+
+.question h3 {
+  margin-bottom: 10px;
+}
+
+.options-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.option {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.question-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap:20px;
+}
+
+.edit-icon {
+  margin-bottom: 5px;
+}
+
+.badges-green-dark {
+  background-color: #28a745;
+  color: #fff;
+  padding: 5px;
+  border-radius: 3px;
+}
