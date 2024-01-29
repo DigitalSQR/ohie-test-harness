@@ -51,7 +51,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             fileContentByFilePathAndFileName = FileService.getFileContentByFilePathAndFileName(null, fileId);
         } catch (IOException e) {
-            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
+            LOGGER.error("caught IOException in DocumentServiceImpl ", e);
             throw new OperationFailedException("Exception occurred due to I/O Exception", e);
         }
         return fileContentByFilePathAndFileName;
@@ -86,7 +86,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             user = userService.getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
-            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
+            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
             throw new OperationFailedException("InvalidParameterException while fetching principal User while saving document ",e);
         }
         documentEntity.setOwner(user);
@@ -94,7 +94,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
         } catch (InvalidParameterException e) {
-            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
+            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
             throw new OperationFailedException("InvalidParameterException while saving document ",e);
         }
 
@@ -114,7 +114,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             fileDetails = FileService.storeFile(file, multipartFileTypeTesterPredicate);
         } catch (IOException e) {
-            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
+            LOGGER.error("caught IOException in DocumentServiceImpl ", e);
             throw new OperationFailedException("Operation Failed due to IOException", e);
         }
         return fileDetails;
@@ -130,7 +130,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             return FileService.detectInputStreamTypeWithTika(file.getInputStream());
         } catch (IOException e) {
-            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
+            LOGGER.error("caught IOException in DocumentServiceImpl ", e);
             throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
         }
     }
@@ -146,7 +146,7 @@ public class DocumentServiceImpl implements DocumentService {
                     .orElseThrow(() -> new DoesNotExistException("DocumentEntity does not found with id : " + documentId));
 
         } catch (InvalidParameterException e) {
-            LOGGER.error("caught OperationFailedException in DocumentServiceImpl ", e);
+            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
             throw new OperationFailedException("InvalidParameterException while getting document ",e);
         }
 
