@@ -12,7 +12,7 @@ export const SpecificationAPI = {
       });
       return response.data;
     } catch (error) {
-      throw error; // You can choose to re-throw the error or handle it in a specific way
+      throw error;
     }
   },
 };

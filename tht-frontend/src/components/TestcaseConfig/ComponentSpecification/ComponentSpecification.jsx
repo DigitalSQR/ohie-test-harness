@@ -1,29 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "./ComponentSpecification.scss";
-import { useParams } from "react-router-dom";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons"; // Assuming you're using Ant Design icons
+import { useNavigate, useParams } from "react-router-dom";
+import { EditOutlined} from "@ant-design/icons";
 import { useLoader } from "../../loader/LoaderContext";
 import { SpecificationAPI } from "../../../api/SpecificationAPI";
 const ComponentSpecification = () => {
+  const navigate = useNavigate();
   const { componentId } = useParams();
   const [activeTab, setActiveTab] = useState("Automation");
-  const [manualComponents, setManualComponents] = useState([{ name: "def" }]);
-  const [specifications, setSpecifications]=useState();
-  const [automationComponents, setAutomationComponents] = useState([
-    { name: "abc" },
-  ]);
+  const [specifications, setSpecifications] = useState();
   const { showLoader, hideLoader } = useLoader();
   const openTab = (tabName) => {
     setActiveTab(tabName);
     if (tabName === "Automation") {
       fetchData(false);
     } else {
-      fetchData(true)
-    } 
+      fetchData(true);
+    }
   };
   useEffect(() => {
     fetchData(false);
   }, []);
+
+  const handleEdit = (specificationId) => {
+    if (activeTab === "Manual") {
+      navigate(`/dashboard/manual-testcases/${specificationId}`);
+    }
+  };
 
   const fetchData = async (manual) => {
     showLoader();
@@ -34,8 +37,6 @@ const ComponentSpecification = () => {
     setSpecifications(resp.content);
     hideLoader();
   };
-  const components =
-    activeTab === "Automation" ? automationComponents : manualComponents;
   return (
     <div id="wrapper">
       <div className="tabs">
@@ -69,7 +70,9 @@ const ComponentSpecification = () => {
                   <td>{specification.name}</td>
                   <td className="action-icons-container">
                     <span className="action-icon">
-                      <EditOutlined />
+                      <EditOutlined
+                        onClick={() => handleEdit(specification.id)}
+                      />
                     </span>
                     <span className="badges-green-dark">ACTIVE</span>
                   </td>

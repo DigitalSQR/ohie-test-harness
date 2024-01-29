@@ -21,10 +21,11 @@ import EmailVerified from "../components/UserFiles/EmailVerified";
 import UpdateAdminUser from "../components/AdminFiles/UpdateAdminUser/UpdateAdminUser";
 import AdminUsers from "../components/AdminFiles/AdminUsers/AdminUsers";
 import AddAdminUser from "../components/AdminFiles/AddAdminUsers/AddAdminUser";
-import ComponentList from "../components/TestcaseConfig/ComponentList";
+import ComponentList from "../components/TestcaseConfig/ComponentList/ComponentList";
 
 import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
 import ComponentSpecification from "../components/TestcaseConfig/ComponentSpecification/ComponentSpecification";
+import ManualTestCases from "../components/TestcaseConfig/SpecQuestions/SpecQuestions";
 const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
 
@@ -67,6 +68,10 @@ const routes = createBrowserRouter([
       {
         path: "component-specification/:componentId",
         element: <ComponentSpecification />,
+      },
+      {
+        path: "manual-testcases/:specificationId",
+        element: <ManualTestCases />,
       },
     ],
   },
