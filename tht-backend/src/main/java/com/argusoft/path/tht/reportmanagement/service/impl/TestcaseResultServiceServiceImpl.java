@@ -244,6 +244,12 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         //validate transition
         ValidationUtils.transitionValid(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP,currentState,stateKey,errors);
 
+        if (ValidationUtils.containsErrors(errors,ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
+
         if (!stateKey.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
             testcaseResultEntity.setMessage(null);
             testcaseResultEntity.setHasSystemError(Boolean.FALSE);

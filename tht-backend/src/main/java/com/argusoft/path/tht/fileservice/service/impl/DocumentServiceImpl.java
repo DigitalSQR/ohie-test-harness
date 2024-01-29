@@ -217,7 +217,7 @@ public class DocumentServiceImpl implements DocumentService {
         //validate transition
         ValidationUtils.transitionValid(DocumentServiceConstants.DOCUMENT_STATUS_MAP,currentState,stateKey,errors);
 
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+        if (ValidationUtils.containsErrors(errors,ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     errors);

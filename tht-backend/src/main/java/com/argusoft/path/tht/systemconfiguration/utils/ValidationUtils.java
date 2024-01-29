@@ -712,7 +712,7 @@ public final class ValidationUtils {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setElement("state");
             validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("provided transition is not valid "+currentState);
+            validationResultInfo.setMessage("provided transition is not valid ");
             errors.add(validationResultInfo);
         }
     }
