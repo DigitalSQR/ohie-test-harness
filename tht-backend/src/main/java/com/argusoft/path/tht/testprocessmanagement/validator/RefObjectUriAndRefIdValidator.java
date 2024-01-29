@@ -29,28 +29,6 @@ import java.util.List;
 @Component
 public class RefObjectUriAndRefIdValidator {
 
-    @Autowired
-    private ComponentService componentService;
-
-    @Autowired
-    private SpecificationService specificationService;
-
-    @Autowired
-    private TestcaseService testcaseService;
-
-    @Autowired
-    private TestcaseOptionService testcaseOptionService;
-
-    @Autowired
-    private TestcaseResultService testcaseResultService;
-
-    @Autowired
-    private DocumentService documentService;
-
-    @Autowired
-    private TestRequestService testRequestService;
-
-
     List<String> refObjUriList = List.of(
             ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
             DocumentServiceConstants.DOCUMENT_REF_OBJ_URI,
@@ -60,9 +38,23 @@ public class RefObjectUriAndRefIdValidator {
             TestcaseOptionServiceConstants.TESTCASE_OPTION_REF_OBJ_URI,
             TestcaseResultServiceConstants.TESTCASE_RESULT_REF_OBJ_URI
     );
+    @Autowired
+    private ComponentService componentService;
+    @Autowired
+    private SpecificationService specificationService;
+    @Autowired
+    private TestcaseService testcaseService;
+    @Autowired
+    private TestcaseOptionService testcaseOptionService;
+    @Autowired
+    private TestcaseResultService testcaseResultService;
+    @Autowired
+    private DocumentService documentService;
+    @Autowired
+    private TestRequestService testRequestService;
 
-    public void  refObjectUriAndRefIdValidation(String refObjUri, String refId,
-                                          ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, OperationFailedException {
+    public void refObjectUriAndRefIdValidation(String refObjUri, String refId,
+                                               ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(refObjUri)) {
             String fieldName = "refObjUri";
@@ -73,7 +65,7 @@ public class RefObjectUriAndRefIdValidator {
             return;
         }
 
-        if(!refObjUriList.contains(refObjUri)){
+        if (!refObjUriList.contains(refObjUri)) {
             String fieldName = "refObjUri";
             errors.add(
                     new ValidationResultInfo(fieldName,
@@ -82,8 +74,8 @@ public class RefObjectUriAndRefIdValidator {
             return;
         }
 
-        try{
-            if(refObjUri.equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)){
+        try {
+            if (refObjUri.equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
                 componentService.getComponentById(refId, contextInfo);
 
             } else if (refObjUri.equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
@@ -107,8 +99,8 @@ public class RefObjectUriAndRefIdValidator {
             }
 
 
-        }catch (DoesNotExistException ex){
-            int startIndex = refObjUri.lastIndexOf(".")+1;
+        } catch (DoesNotExistException ex) {
+            int startIndex = refObjUri.lastIndexOf(".") + 1;
             int endIndex = refObjUri.indexOf("Info");
             String entity = refObjUri.substring(startIndex, endIndex);
             String fieldName = "refId";

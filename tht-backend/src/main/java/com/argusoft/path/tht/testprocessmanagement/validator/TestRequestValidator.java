@@ -4,7 +4,6 @@ import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceCons
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
-import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
@@ -33,11 +32,6 @@ import java.util.Objects;
 public class TestRequestValidator {
 
     private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
-
-    @Autowired
-    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
-        TestRequestValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
-    }
 
     public static void validateCreateUpdateTestRequest(String validationTypeKey, TestRequestEntity testRequestEntity, TestRequestService testRequestService, UserService userService, ComponentService componentService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntities
@@ -160,7 +154,7 @@ public class TestRequestValidator {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         refObjectUriAndRefIdValidator.refObjectUriAndRefIdValidation(refObjUri, refId, contextInfo, errors);
-        if(!errors.isEmpty()){
+        if (!errors.isEmpty()) {
             return errors;
         }
 
@@ -318,7 +312,6 @@ public class TestRequestValidator {
         return errors;
 
     }
-
 
     private static void validateCommonForeignKey(TestRequestEntity testRequestEntity,
                                                  List<ValidationResultInfo> errors,
@@ -494,5 +487,10 @@ public class TestRequestValidator {
                 testRequestUrlEntity.setFhirVersion(testRequestUrlEntity.getFhirVersion().trim());
             }
         });
+    }
+
+    @Autowired
+    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
+        TestRequestValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
     }
 }

@@ -5,9 +5,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Constant for ComponentService.
@@ -27,7 +25,7 @@ public class ComponentServiceConstants {
     //Component Ids
     public static final String COMPONENT_CLIENT_REGISTRY_ID = "component.client.registry";
     public static final String COMPONENT_FACILITY_REGISTRY_ID = "component.facility.registry";
-
+    public static final Multimap<String, String> COMPONENT_STATUS_MAP = ArrayListMultimap.create();
     public static List<String> COMPONENT_STATUS = new ArrayList<>();
 
     static {
@@ -35,8 +33,6 @@ public class ComponentServiceConstants {
         COMPONENT_STATUS.add(COMPONENT_STATUS_ACTIVE);
         COMPONENT_STATUS.add(COMPONENT_STATUS_DRAFT);
     }
-
-    public static final Multimap<String, String> COMPONENT_STATUS_MAP = ArrayListMultimap.create();
 
     static {
         COMPONENT_STATUS_MAP.put(COMPONENT_STATUS_DRAFT, COMPONENT_STATUS_ACTIVE);

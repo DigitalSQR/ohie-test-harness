@@ -5,11 +5,11 @@
  */
 package com.argusoft.path.tht.testcasemanagement.restcontroller;
 
+import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
-import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.SpecificationMapper;
@@ -187,8 +187,8 @@ public class SpecificationRestController {
     @PatchMapping("/state/{specificationId}/{changeState}")
     @Transactional
     public SpecificationInfo updateSpecificationState(@PathVariable("componentId") String specificationId,
-                                                  @PathVariable("changeState") String changeState,
-                                                  @RequestAttribute("contextInfo") ContextInfo contextInfo)
+                                                      @PathVariable("changeState") String changeState,
+                                                      @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         SpecificationEntity specificationEntity = specificationService.changeState(specificationId, changeState, contextInfo);
         return specificationMapper.modelToDto(specificationEntity);

@@ -4,7 +4,6 @@ import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
@@ -62,11 +61,6 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     )
     private Boolean isManual;
 
-    @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
     public TestcaseResultCriteriaSearchFilter(String id) {
         this.id = id;
     }
@@ -75,10 +69,15 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     }
 
     @Override
+    public void validateSearchFilter() throws InvalidParameterException {
+
+    }
+
+    @Override
     protected List<Predicate> buildPredicates(Root<TestcaseResultEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getPrimaryId())){
+        if (StringUtils.hasLength(getPrimaryId())) {
             predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
         }
 

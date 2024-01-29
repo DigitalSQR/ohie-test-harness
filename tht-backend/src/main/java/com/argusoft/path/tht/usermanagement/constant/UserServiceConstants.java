@@ -27,6 +27,7 @@ public class UserServiceConstants {
     public static final String EMAIL_REGEX =
             "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
     public static final List<String> USER_STATUS = new ArrayList<>();
+    public static final Multimap<String, String> USER_STATUS_MAP = ArrayListMultimap.create();
 
     static {
         USER_STATUS.add(USER_STATUS_VERIFICATION_PENDING);
@@ -35,8 +36,6 @@ public class UserServiceConstants {
         USER_STATUS.add(USER_STATUS_REJECTED);
         USER_STATUS.add(USER_STATUS_INACTIVE);
     }
-
-    public static final Multimap<String, String> USER_STATUS_MAP = ArrayListMultimap.create();
 
     static {
         USER_STATUS_MAP.put(USER_STATUS_VERIFICATION_PENDING, USER_STATUS_APPROVAL_PENDING);

@@ -5,17 +5,15 @@
  */
 package com.argusoft.path.tht.testcasemanagement.restcontroller;
 
+import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
-import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.ComponentMapper;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
-import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -190,8 +188,8 @@ public class ComponentRestController {
     @PatchMapping("/state/{componentId}/{changeState}")
     @Transactional
     public ComponentInfo updateComponentState(@PathVariable("componentId") String componentId,
-                                               @PathVariable("changeState") String changeState,
-                                               @RequestAttribute("contextInfo") ContextInfo contextInfo)
+                                              @PathVariable("changeState") String changeState,
+                                              @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         ComponentEntity componentEntity = componentService.changeState(componentId, changeState, contextInfo);
         return componentMapper.modelToDto(componentEntity);

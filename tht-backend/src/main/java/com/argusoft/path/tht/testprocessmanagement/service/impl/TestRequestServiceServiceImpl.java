@@ -275,13 +275,13 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         //validate given stateKey
-        ValidationUtils.statusPresent(TestRequestServiceConstants.TEST_REQUEST_STATUS,stateKey,errors);
+        ValidationUtils.statusPresent(TestRequestServiceConstants.TEST_REQUEST_STATUS, stateKey, errors);
 
         TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
         String currentState = testRequestEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP,currentState,stateKey,errors);
+        ValidationUtils.transitionValid(TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, currentState, stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(

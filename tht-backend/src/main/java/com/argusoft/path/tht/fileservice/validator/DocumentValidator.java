@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.fileservice.validator;
 
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
+import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
@@ -9,8 +10,6 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
-import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testprocessmanagement.validator.RefObjectUriAndRefIdValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,11 +23,6 @@ import java.util.List;
 public class DocumentValidator {
 
     private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
-
-    @Autowired
-    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
-        DocumentValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
-    }
 
     public static void validateDocumentEntity(String validationTypeKey,
                                               DocumentEntity documentEntity,
@@ -52,8 +46,6 @@ public class DocumentValidator {
         }
     }
 
-
-
     public static void validateDocumentOrder(Integer orderId) throws DataValidationErrorException {
         List<ValidationResultInfo> errors = new ArrayList<>();
         if (orderId < 0) {
@@ -72,7 +64,6 @@ public class DocumentValidator {
         ValidationUtils.validateRequired(documentEntity.getRefObjUri(), "refObjUri", errors);
     }
 
-
     public static void setErrorMessageForFileType(InvalidFileTypeException e) throws DataValidationErrorException {
         ValidationResultInfo error = new ValidationResultInfo();
         error.setMessage(e.getMessage());
@@ -80,5 +71,10 @@ public class DocumentValidator {
         error.setStackTrace(Arrays.toString(e.getStackTrace()));
         error.setElement("fileType");
         throw new DataValidationErrorException(e.getMessage(), Collections.singletonList(error));
+    }
+
+    @Autowired
+    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
+        DocumentValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
     }
 }

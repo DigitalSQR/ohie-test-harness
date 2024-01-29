@@ -12,7 +12,6 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
@@ -142,13 +141,13 @@ public class UserServiceServiceImpl implements UserService {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         //validate given stateKey
-        ValidationUtils.statusPresent(UserServiceConstants.USER_STATUS,stateKey,errors);
+        ValidationUtils.statusPresent(UserServiceConstants.USER_STATUS, stateKey, errors);
 
         UserEntity userEntity = this.getUserById(userId, contextInfo);
         String oldState = userEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(UserServiceConstants.USER_STATUS_MAP,oldState,stateKey,errors);
+        ValidationUtils.transitionValid(UserServiceConstants.USER_STATUS_MAP, oldState, stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -306,7 +305,7 @@ public class UserServiceServiceImpl implements UserService {
     @Timed(name = "getPrincipalUser")
     public UserEntity getPrincipalUser(ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException {
-       return this.getUserById(contextInfo.getUsername(),contextInfo);
+        return this.getUserById(contextInfo.getUsername(), contextInfo);
     }
 
     /**

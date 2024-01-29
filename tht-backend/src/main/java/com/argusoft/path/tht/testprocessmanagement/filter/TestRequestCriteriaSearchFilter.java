@@ -37,11 +37,6 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     private String assesseeId;
 
 
-    @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
     public TestRequestCriteriaSearchFilter(String id) {
         this.id = id;
     }
@@ -50,10 +45,15 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     }
 
     @Override
+    public void validateSearchFilter() throws InvalidParameterException {
+
+    }
+
+    @Override
     protected List<Predicate> buildPredicates(Root<TestRequestEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getPrimaryId())){
+        if (StringUtils.hasLength(getPrimaryId())) {
             predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
         }
 
@@ -76,7 +76,7 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
 
         if (contextInfo.isAssessee()) {
             predicates.add(criteriaBuilder.equal(joinTable.get("id"), contextInfo.getUsername()));
-        } else{
+        } else {
             if (getAssesseeId() != null) {
                 predicates.add(criteriaBuilder.equal(joinTable.get("id"), getAssesseeId()));
             }

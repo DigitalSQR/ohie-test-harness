@@ -27,7 +27,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This ComponentServiceServiceImpl contains implementation for Component service.
@@ -179,14 +181,14 @@ public class ComponentServiceServiceImpl implements ComponentService {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         //validate given stateKey
-        ValidationUtils.statusPresent(ComponentServiceConstants.COMPONENT_STATUS,stateKey,errors);
+        ValidationUtils.statusPresent(ComponentServiceConstants.COMPONENT_STATUS, stateKey, errors);
 
         ComponentEntity componentEntity = this.getComponentById(componentID, contextInfo);
 
         String currentState = componentEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(ComponentServiceConstants.COMPONENT_STATUS_MAP,currentState,stateKey,errors);
+        ValidationUtils.transitionValid(ComponentServiceConstants.COMPONENT_STATUS_MAP, currentState, stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(

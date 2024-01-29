@@ -30,11 +30,6 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
     )
     private List<String> state;
 
-    @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
     public ComponentCriteriaSearchFilter(String id) {
         this.id = id;
     }
@@ -43,10 +38,15 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
     }
 
     @Override
+    public void validateSearchFilter() throws InvalidParameterException {
+
+    }
+
+    @Override
     protected List<Predicate> buildPredicates(Root<ComponentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getPrimaryId())){
+        if (StringUtils.hasLength(getPrimaryId())) {
             predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
         }
 

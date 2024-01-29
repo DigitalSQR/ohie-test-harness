@@ -202,8 +202,8 @@ public class UserRestController {
     @PatchMapping("/state/{userId}/{changeState}")
     @Transactional
     public UserInfo updateUserState(@PathVariable("userId") String userId,
-                                        @PathVariable("changeState") String changeState,
-                                        @RequestAttribute("contextInfo") ContextInfo contextInfo)
+                                    @PathVariable("changeState") String changeState,
+                                    @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         UserEntity userEntity = userService.changeState(userId, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
@@ -309,7 +309,7 @@ public class UserRestController {
             principalUser = userService
                     .getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("InvalidParameterException while fetching principal User ",e);
+            throw new OperationFailedException("InvalidParameterException while fetching principal User ", e);
         }
         return userMapper.modelToDto(principalUser);
     }

@@ -36,16 +36,16 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
     )
     private String testcaseId;
 
-    @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
     public TestcaseOptionCriteriaSearchFilter(String id) {
         this.id = id;
     }
 
     public TestcaseOptionCriteriaSearchFilter() {
+    }
+
+    @Override
+    public void validateSearchFilter() throws InvalidParameterException {
+
     }
 
     @Override
@@ -65,7 +65,7 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
             predicates.add(criteriaBuilder.equal(componentJoin.get("id"), getTestcaseId()));
         }
 
-        if(StringUtils.hasLength(getPrimaryId())){
+        if (StringUtils.hasLength(getPrimaryId())) {
             predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
         }
 

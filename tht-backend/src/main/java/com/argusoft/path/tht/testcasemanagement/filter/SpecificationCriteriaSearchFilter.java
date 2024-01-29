@@ -40,11 +40,6 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     )
     private Boolean isManual;
 
-    @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
     public SpecificationCriteriaSearchFilter() {
     }
 
@@ -53,8 +48,13 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     }
 
     @Override
+    public void validateSearchFilter() throws InvalidParameterException {
+
+    }
+
+    @Override
     protected void modifyCriteriaQuery(Root<SpecificationEntity> root, CriteriaQuery<?> query) {
-        if(getManual()!=null) {
+        if (getManual() != null) {
             query.distinct(true);
         }
     }
@@ -63,7 +63,7 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     protected List<Predicate> buildPredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if(StringUtils.hasLength(getPrimaryId())){
+        if (StringUtils.hasLength(getPrimaryId())) {
             predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
         }
 

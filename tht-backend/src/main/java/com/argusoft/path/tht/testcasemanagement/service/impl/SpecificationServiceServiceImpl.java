@@ -11,12 +11,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
-import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
-import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.SpecificationRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
@@ -34,7 +30,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -195,14 +190,14 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         //validate given stateKey
-        ValidationUtils.statusPresent(SpecificationServiceConstants.SPECIFICATION_STATUS,stateKey,errors);
+        ValidationUtils.statusPresent(SpecificationServiceConstants.SPECIFICATION_STATUS, stateKey, errors);
 
         SpecificationEntity specificationEntity = this.getSpecificationById(specificationId, contextInfo);
 
         String currentState = specificationEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(SpecificationServiceConstants.SPECIFICATION_STATUS_MAP,currentState,stateKey,errors);
+        ValidationUtils.transitionValid(SpecificationServiceConstants.SPECIFICATION_STATUS_MAP, currentState, stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(

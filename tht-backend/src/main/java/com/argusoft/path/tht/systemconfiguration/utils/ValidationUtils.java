@@ -10,14 +10,18 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.KeyCategory;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import org.springframework.util.StringUtils;
 import com.google.common.collect.Multimap;
+import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -695,7 +699,7 @@ public final class ValidationUtils {
 
 
     // check if particular status present for a given service
-    public static void statusPresent(List<String> serviceList,String stateKey,List<ValidationResultInfo> errors){
+    public static void statusPresent(List<String> serviceList, String stateKey, List<ValidationResultInfo> errors) {
 
         if (!serviceList.contains(stateKey)) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
@@ -707,7 +711,7 @@ public final class ValidationUtils {
     }
 
     //check if transition from one state to other is possible
-    public static void transitionValid(Multimap<String,String> serviceMap ,String currentState, String nextState,List<ValidationResultInfo> errors){
+    public static void transitionValid(Multimap<String, String> serviceMap, String currentState, String nextState, List<ValidationResultInfo> errors) {
         if (!serviceMap.containsKey(currentState) || !serviceMap.get(currentState).contains(nextState)) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setElement("state");
