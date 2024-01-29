@@ -29,6 +29,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -318,6 +320,16 @@ public class UserRestController {
             throw new OperationFailedException("InvalidParameterException while fetching principal User ",e);
         }
         return userMapper.modelToDto(principalUser);
+    }
+
+
+    @GetMapping("/sendEmail")
+    public void sendEmail() throws MessagingException, IOException {
+
+//        emailService.verifyEmailMessage("ishaneshah@argusoft.com", "Ishita shaneshah", "templates/verification-email.html");
+//        emailService.forgotPasswordMessage("ishaneshah@argusoft.com","Ishita shaneshah", "templates/reset-password-email.html");
+        emailService.accountApprovedMessage("ishaneshah@argusoft.com","Ishita shaneshah");
+
     }
 
 }

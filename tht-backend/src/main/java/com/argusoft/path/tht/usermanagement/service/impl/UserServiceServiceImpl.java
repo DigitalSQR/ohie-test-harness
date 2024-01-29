@@ -60,6 +60,7 @@ public class UserServiceServiceImpl implements UserService {
     @Autowired
     RoleRepository roleRepository;
 
+
     @Autowired
     private TokenVerificationService tokenVerificationService;
 
@@ -68,6 +69,7 @@ public class UserServiceServiceImpl implements UserService {
 
     @Autowired
     private EmailService emailService;
+
 
     /**
      * {@inheritdoc}
@@ -378,5 +380,7 @@ public class UserServiceServiceImpl implements UserService {
         Page<RoleEntity> roles = roleRepository.findRoles(pageable);
         return roles;
     }
+
+
 
 }
