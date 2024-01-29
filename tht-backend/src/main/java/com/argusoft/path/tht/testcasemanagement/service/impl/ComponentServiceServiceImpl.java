@@ -66,7 +66,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
         if (StringUtils.isEmpty(componentEntity.getId())) {
             componentEntity.setId(UUID.randomUUID().toString());
         }
-
         componentEntity = componentRepository.save(componentEntity);
         return componentEntity;
     }

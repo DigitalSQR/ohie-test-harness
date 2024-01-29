@@ -76,7 +76,6 @@ public class DocumentServiceImpl implements DocumentService {
         //set FileId to DocumentEntity as it is UUID
         documentEntity.setFileId(fileDetails.getFileId());
         documentEntity.setName(fileDetails.getFileName());
-        documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
 
         UserEntity user = null;
         try {
