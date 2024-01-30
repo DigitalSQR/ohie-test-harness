@@ -146,7 +146,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
 
-        changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
+        if(!TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())) {
+            changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
+        }
 
         return testcaseResultEntity;
     }
