@@ -187,7 +187,7 @@ public class TestRequestRestController {
             @PathVariable("testRequestId") String testRequestId,
             @RequestParam(value = "refObjUri") String refObjUri,
             @RequestParam(value = "refId") String refId,
-            @RequestParam("isManual") Boolean isManual,
+            @RequestParam("manual") Boolean isManual,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         testRequestService.startTestingProcess(
                 testRequestId,
