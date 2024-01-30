@@ -81,8 +81,8 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
         }
 
         if (getManual() != null) {
-            Join<SpecificationEntity, TestcaseEntity> componentJoin = root.join("testcases");
-            predicates.add(criteriaBuilder.equal(componentJoin.get("isManual"), getManual()));
+            Join<SpecificationEntity, TestcaseEntity> testcaseEntityJoin = root.join("testcases");
+            predicates.add(criteriaBuilder.equal(testcaseEntityJoin.get("isManual"), getManual()));
         }
 
         return predicates;
