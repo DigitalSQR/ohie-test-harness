@@ -67,7 +67,6 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<ComponentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        setComponentEntityRoot(root);
         return null;
     }
 

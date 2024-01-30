@@ -78,7 +78,6 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<TestcaseOptionEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        setTestcaseOptionEntityRoot(root);
         return null;
     }
 
@@ -120,6 +119,7 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     private void setTestcaseOptionEntityRoot(Root<TestcaseOptionEntity> testcaseOptionEntityRoot) {
         this.testcaseOptionEntityRoot = testcaseOptionEntityRoot;
+        testcaseOptionEntityTestcaseEntityJoin = null;
     }
 
     public Join<TestcaseOptionEntity, TestcaseEntity> getTestcaseOptionEntityTestcaseEntityJoin() {

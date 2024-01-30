@@ -54,7 +54,6 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<RoleEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        setRoleEntityRoot(root);
         return null;
     }
 

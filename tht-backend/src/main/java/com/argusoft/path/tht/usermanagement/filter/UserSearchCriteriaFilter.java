@@ -73,7 +73,6 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        setUserEntityRoot(root);
         return null;
     }
 

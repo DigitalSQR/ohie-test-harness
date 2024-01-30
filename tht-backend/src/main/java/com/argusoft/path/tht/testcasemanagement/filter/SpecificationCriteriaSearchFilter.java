@@ -95,7 +95,6 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        this.setSpecificationEntityRoot(root);
         return null;
     }
 
@@ -145,6 +144,8 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
 
     private void setSpecificationEntityRoot(Root<SpecificationEntity> specificationEntityRoot) {
         this.specificationEntityRoot = specificationEntityRoot;
+        this.specificationEntityComponentEntityJoin = null;
+        this.specificationEntityTestcaseEntityJoin = null;
     }
 
     private Join<SpecificationEntity, ComponentEntity> getSpecificationEntityComponentEntityJoin() {

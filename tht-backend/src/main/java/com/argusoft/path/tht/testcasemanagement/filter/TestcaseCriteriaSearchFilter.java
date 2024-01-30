@@ -137,6 +137,7 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
     private void setTestcaseEntityRoot(Root<TestcaseEntity> testcaseEntityRoot) {
         this.testcaseEntityRoot = testcaseEntityRoot;
+        this.testcaseEntitySpecificationEntityJoin = null;
     }
 
     public Join<TestcaseEntity, SpecificationEntity> getTestcaseEntitySpecificationEntityJoin() {

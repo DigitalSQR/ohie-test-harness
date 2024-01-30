@@ -133,7 +133,6 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<TestcaseResultEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        this.setTestcaseResultEntityRoot(root);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -224,6 +223,11 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     private void setTestcaseResultEntityRoot(Root<TestcaseResultEntity> testcaseResultEntityRoot) {
         this.testcaseResultEntityRoot = testcaseResultEntityRoot;
+        testcaseResultEntityUserEntityJoin = null;
+        testcaseResultEntityTestcaseResultEntityJoin = null;
+        testcaseResultEntityTestRequestEntityJoin = null;
+        testRequestEntityUserEntityJoinWithTestcaseResultJoin = null;
+
     }
 
     public Join<TestcaseResultEntity, UserEntity> getTestcaseResultEntityUserEntityJoinForTester() {
@@ -243,7 +247,7 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     public Join<TestcaseResultEntity, TestRequestEntity> getTestcaseResultEntityTestRequestEntityJoin() {
         if(testcaseResultEntityTestRequestEntityJoin == null){
-            testcaseResultEntityTestcaseResultEntityJoin =  getTestcaseResultEntityRoot().join("testRequest");
+            testcaseResultEntityTestRequestEntityJoin =  getTestcaseResultEntityRoot().join("testRequest");
         }
         return testcaseResultEntityTestRequestEntityJoin;
     }

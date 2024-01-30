@@ -125,6 +125,7 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
 
     private void setDocumentEntityRoot(Root<DocumentEntity> documentEntityRoot) {
         this.documentEntityRoot = documentEntityRoot;
+        this.documentEntityUserEntityJoin = null;
     }
 
     private Join<DocumentEntity, UserEntity> getDocumentEntityUserEntityJoin() {

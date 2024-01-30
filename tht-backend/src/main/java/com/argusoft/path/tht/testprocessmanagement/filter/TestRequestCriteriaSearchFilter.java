@@ -74,7 +74,6 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<TestRequestEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        this.setTestRequestEntityRoot(root);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -128,6 +127,7 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
 
     private void setTestRequestEntityRoot(Root<TestRequestEntity> testRequestEntityRoot) {
         this.testRequestEntityRoot = testRequestEntityRoot;
+        this.testRequestEntityUserEntityJoin = null;
     }
 
     public Join<TestRequestEntity, UserEntity> getTestRequestEntityUserEntityJoin() {

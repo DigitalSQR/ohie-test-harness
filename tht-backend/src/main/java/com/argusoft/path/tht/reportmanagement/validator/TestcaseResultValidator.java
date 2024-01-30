@@ -408,7 +408,7 @@ public class TestcaseResultValidator {
                     .getTestcaseOptionById(selectedTestcaseOptionId,
                             contextInfo);
 
-            if (!originalEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)
+            if (originalEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)
                     && !testcaseOption.getTestcase().getId().equals(originalEntity.getRefId())
             ) {
                 String fieldName = "selectedTestcaseOptionId";
