@@ -118,14 +118,15 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     protected List<Predicate> buildAuthorizationPredicates(Root<TestcaseResultEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        Join<TestcaseResultEntity, TestRequestEntity> joinTableWithTestRequest = root.join("testRequest");
 
         if (contextInfo.isAssessee()) {
+            Join<TestcaseResultEntity, TestRequestEntity> joinTableWithTestRequest = root.join("testRequest");
             Join<TestRequestEntity, UserEntity> joinTableWithUserEntity = joinTableWithTestRequest.join("assessee");
             predicates.add(criteriaBuilder.equal(joinTableWithUserEntity.get("id"), contextInfo.getUsername()));
         }
 
         if (getTestRequestId() != null) {
+            Join<TestcaseResultEntity, TestRequestEntity> joinTableWithTestRequest = root.join("testRequest");
             predicates.add(criteriaBuilder.equal(joinTableWithTestRequest.get("id"), getTestRequestId()));
         }
 

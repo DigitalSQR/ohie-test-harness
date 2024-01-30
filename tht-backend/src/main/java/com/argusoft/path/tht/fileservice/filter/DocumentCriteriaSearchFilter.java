@@ -103,12 +103,14 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     protected List<Predicate> buildAuthorizationPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        Join<DocumentEntity, UserEntity> joinTable = root.join("owner");
+
 
         if (contextInfo.isAssessee()) {
+            Join<DocumentEntity, UserEntity> joinTable = root.join("owner");
             predicates.add(criteriaBuilder.equal(joinTable.get("id"), contextInfo.getUsername()));
         } else {
             if (getOwnerId() != null) {
+                Join<DocumentEntity, UserEntity> joinTable = root.join("owner");
                 predicates.add(criteriaBuilder.equal(joinTable.get("id"), getOwnerId()));
             }
         }
