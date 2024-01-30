@@ -30,6 +30,8 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
     )
     private List<String> state;
 
+    private Root<ComponentEntity> componentEntityRoot;
+
     public ComponentCriteriaSearchFilter(String id) {
         this.id = id;
     }
@@ -44,18 +46,19 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
 
     @Override
     protected List<Predicate> buildPredicates(Root<ComponentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        setComponentEntityRoot(root);
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getPrimaryId())) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+            predicates.add(criteriaBuilder.equal(getComponentEntityRoot().get("id"), getPrimaryId()));
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getComponentEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(getState()));
+            predicates.add(criteriaBuilder.in(getComponentEntityRoot().get("state")).value(getState()));
         }
 
 
@@ -64,6 +67,7 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<ComponentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        setComponentEntityRoot(root);
         return null;
     }
 
@@ -90,5 +94,13 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
 
     public void setPrimaryId(String id) {
         this.id = id;
+    }
+
+    private Root<ComponentEntity> getComponentEntityRoot() {
+        return componentEntityRoot;
+    }
+
+    private void setComponentEntityRoot(Root<ComponentEntity> componentEntityRoot) {
+        this.componentEntityRoot = componentEntityRoot;
     }
 }

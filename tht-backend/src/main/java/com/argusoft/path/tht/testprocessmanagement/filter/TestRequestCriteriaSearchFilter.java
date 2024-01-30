@@ -36,6 +36,8 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     )
     private String assesseeId;
 
+    Root<TestRequestEntity> testRequestEntityRoot;
+    Join<TestRequestEntity,UserEntity> testRequestEntityUserEntityJoin;
 
     public TestRequestCriteriaSearchFilter(String id) {
         this.id = id;
@@ -51,18 +53,20 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
 
     @Override
     protected List<Predicate> buildPredicates(Root<TestRequestEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        this.setTestRequestEntityRoot(root);
+
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getPrimaryId())) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+            predicates.add(criteriaBuilder.equal(getTestRequestEntityRoot().get("id"), getPrimaryId()));
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(getState()));
+            predicates.add(criteriaBuilder.in(getTestRequestEntityRoot().get("state")).value(getState()));
         }
 
         return predicates;
@@ -70,17 +74,15 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<TestRequestEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        this.setTestRequestEntityRoot(root);
+
         List<Predicate> predicates = new ArrayList<>();
 
-
-
         if (contextInfo.isAssessee()) {
-            Join<TestcaseEntity, UserEntity> joinTable = root.join("assessee");
-            predicates.add(criteriaBuilder.equal(joinTable.get("id"), contextInfo.getUsername()));
+            predicates.add(criteriaBuilder.equal(this.getTestRequestEntityUserEntityJoin().get("id"), contextInfo.getUsername()));
         } else {
             if (getAssesseeId() != null) {
-                Join<TestcaseEntity, UserEntity> joinTable = root.join("assessee");
-                predicates.add(criteriaBuilder.equal(joinTable.get("id"), getAssesseeId()));
+                predicates.add(criteriaBuilder.equal(this.getTestRequestEntityUserEntityJoin().get("id"), getAssesseeId()));
             }
         }
 
@@ -118,5 +120,20 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
 
     public void setPrimaryId(String id) {
         this.id = id;
+    }
+
+    private Root<TestRequestEntity> getTestRequestEntityRoot() {
+        return testRequestEntityRoot;
+    }
+
+    private void setTestRequestEntityRoot(Root<TestRequestEntity> testRequestEntityRoot) {
+        this.testRequestEntityRoot = testRequestEntityRoot;
+    }
+
+    public Join<TestRequestEntity, UserEntity> getTestRequestEntityUserEntityJoin() {
+        if(testRequestEntityUserEntityJoin==null){
+            testRequestEntityUserEntityJoin = getTestRequestEntityRoot().join("assessee");
+        }
+        return testRequestEntityUserEntityJoin;
     }
 }

@@ -36,6 +36,10 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
     )
     private String testcaseId;
 
+    private Root<TestcaseOptionEntity> testcaseOptionEntityRoot;
+
+    private Join<TestcaseOptionEntity, TestcaseEntity> testcaseOptionEntityTestcaseEntityJoin;
+
     public TestcaseOptionCriteriaSearchFilter(String id) {
         this.id = id;
     }
@@ -50,23 +54,23 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     @Override
     protected List<Predicate> buildPredicates(Root<TestcaseOptionEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        setTestcaseOptionEntityRoot(root);
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestcaseOptionEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(getState()));
+            predicates.add(criteriaBuilder.in(getTestcaseOptionEntityRoot().get("state")).value(getState()));
         }
 
         if (getTestcaseId() != null) {
-            Join<TestcaseOptionEntity, TestcaseEntity> componentJoin = root.join("testcase");
-            predicates.add(criteriaBuilder.equal(componentJoin.get("id"), getTestcaseId()));
+            predicates.add(criteriaBuilder.equal(getTestcaseOptionEntityTestcaseEntityJoin().get("id"), getTestcaseId()));
         }
 
         if (StringUtils.hasLength(getPrimaryId())) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+            predicates.add(criteriaBuilder.equal(getTestcaseOptionEntityRoot().get("id"), getPrimaryId()));
         }
 
         return predicates;
@@ -74,6 +78,7 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<TestcaseOptionEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        setTestcaseOptionEntityRoot(root);
         return null;
     }
 
@@ -107,5 +112,20 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     public void setPrimaryId(String id) {
         this.id = id;
+    }
+
+    private Root<TestcaseOptionEntity> getTestcaseOptionEntityRoot() {
+        return testcaseOptionEntityRoot;
+    }
+
+    private void setTestcaseOptionEntityRoot(Root<TestcaseOptionEntity> testcaseOptionEntityRoot) {
+        this.testcaseOptionEntityRoot = testcaseOptionEntityRoot;
+    }
+
+    public Join<TestcaseOptionEntity, TestcaseEntity> getTestcaseOptionEntityTestcaseEntityJoin() {
+        if(testcaseOptionEntityTestcaseEntityJoin == null){
+            testcaseOptionEntityTestcaseEntityJoin = getTestcaseOptionEntityRoot().join("testcase");
+        }
+        return testcaseOptionEntityTestcaseEntityJoin;
     }
 }

@@ -61,6 +61,18 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     )
     private Boolean isManual;
 
+
+    private Root<TestcaseResultEntity> testcaseResultEntityRoot;
+
+    private Join<TestcaseResultEntity, UserEntity> testcaseResultEntityUserEntityJoin;
+
+    private Join<TestcaseResultEntity, TestcaseResultEntity> testcaseResultEntityTestcaseResultEntityJoin;
+
+    private Join<TestcaseResultEntity, TestRequestEntity> testcaseResultEntityTestRequestEntityJoin;
+
+    private Join<TestRequestEntity, UserEntity> testRequestEntityUserEntityJoinWithTestcaseResultJoin;
+
+
     public TestcaseResultCriteriaSearchFilter(String id) {
         this.id = id;
     }
@@ -75,40 +87,45 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     @Override
     protected List<Predicate> buildPredicates(Root<TestcaseResultEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        this.setTestcaseResultEntityRoot(root);
+
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getPrimaryId())) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+            predicates.add(criteriaBuilder.equal(this.getTestcaseResultEntityRoot().get("id"), getPrimaryId()));
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getTestcaseResultEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(getState()));
+            predicates.add(criteriaBuilder.in(this.getTestcaseResultEntityRoot().get("state")).value(getState()));
         }
 
         if (getTesterId() != null) {
-            Join<TestcaseResultEntity, UserEntity> ownerJoin = root.join("tester");
-            predicates.add(criteriaBuilder.equal(ownerJoin.get("id"), getTesterId()));
+            predicates.add(criteriaBuilder.equal(getTestcaseResultEntityUserEntityJoinForTester().get("id"), getTesterId()));
         }
 
         if (StringUtils.hasLength(getRefObjUri())) {
-            predicates.add(criteriaBuilder.equal(root.get("refObjUri"), getRefObjUri()));
+            predicates.add(criteriaBuilder.equal(this.getTestcaseResultEntityRoot().get("refObjUri"), getRefObjUri()));
         }
 
         if (StringUtils.hasLength(getRefId())) {
-            predicates.add(criteriaBuilder.equal(root.get("refId"), getRefId()));
+            predicates.add(criteriaBuilder.equal(this.getTestcaseResultEntityRoot().get("refId"), getRefId()));
         }
 
         if (StringUtils.hasLength(getParentTestcaseResultId())) {
-            Join<TestcaseResultEntity, TestcaseResultEntity> joinTable = root.join("parentTestcaseResult");
-            predicates.add(criteriaBuilder.equal(joinTable.get("id"), getParentTestcaseResultId()));
+            predicates.add(criteriaBuilder.equal(this.getTestcaseResultEntityTestcaseResultEntityJoin().get("id"), getParentTestcaseResultId()));
         }
 
         if (getManual() != null) {
-            predicates.add(criteriaBuilder.equal(root.get("isManual"), getManual()));
+            predicates.add(criteriaBuilder.equal(getTestcaseResultEntityRoot().get("isManual"), getManual()));
+        }
+
+        if (getTestRequestId() != null) {
+            Join<TestcaseResultEntity, TestRequestEntity> joinTableWithTestRequest = this.getTestcaseResultEntityTestRequestEntityJoin();
+            predicates.add(criteriaBuilder.equal(joinTableWithTestRequest.get("id"), getTestRequestId()));
         }
 
         return predicates;
@@ -116,20 +133,14 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<TestcaseResultEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        this.setTestcaseResultEntityRoot(root);
+
         List<Predicate> predicates = new ArrayList<>();
 
-
         if (contextInfo.isAssessee()) {
-            Join<TestcaseResultEntity, TestRequestEntity> joinTableWithTestRequest = root.join("testRequest");
-            Join<TestRequestEntity, UserEntity> joinTableWithUserEntity = joinTableWithTestRequest.join("assessee");
+            Join<TestRequestEntity, UserEntity> joinTableWithUserEntity = this.getTestRequestEntityUserEntityJoinWithTestcaseResultJoin();
             predicates.add(criteriaBuilder.equal(joinTableWithUserEntity.get("id"), contextInfo.getUsername()));
         }
-
-        if (getTestRequestId() != null) {
-            Join<TestcaseResultEntity, TestRequestEntity> joinTableWithTestRequest = root.join("testRequest");
-            predicates.add(criteriaBuilder.equal(joinTableWithTestRequest.get("id"), getTestRequestId()));
-        }
-
 
         return predicates;
     }
@@ -205,5 +216,42 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     public void setPrimaryId(String id) {
         this.id = id;
+    }
+
+    private Root<TestcaseResultEntity> getTestcaseResultEntityRoot() {
+        return testcaseResultEntityRoot;
+    }
+
+    private void setTestcaseResultEntityRoot(Root<TestcaseResultEntity> testcaseResultEntityRoot) {
+        this.testcaseResultEntityRoot = testcaseResultEntityRoot;
+    }
+
+    public Join<TestcaseResultEntity, UserEntity> getTestcaseResultEntityUserEntityJoinForTester() {
+        if(this.testcaseResultEntityUserEntityJoin == null){
+            this.testcaseResultEntityUserEntityJoin = getTestcaseResultEntityRoot().join("tester");
+        }
+        return testcaseResultEntityUserEntityJoin;
+    }
+
+
+    public Join<TestcaseResultEntity, TestcaseResultEntity> getTestcaseResultEntityTestcaseResultEntityJoin() {
+        if(testcaseResultEntityTestcaseResultEntityJoin == null){
+            testcaseResultEntityTestcaseResultEntityJoin = getTestcaseResultEntityRoot().join("parentTestcaseResult");
+        }
+        return testcaseResultEntityTestcaseResultEntityJoin;
+    }
+
+    public Join<TestcaseResultEntity, TestRequestEntity> getTestcaseResultEntityTestRequestEntityJoin() {
+        if(testcaseResultEntityTestRequestEntityJoin == null){
+            testcaseResultEntityTestcaseResultEntityJoin =  getTestcaseResultEntityRoot().join("testRequest");
+        }
+        return testcaseResultEntityTestRequestEntityJoin;
+    }
+
+    public Join<TestRequestEntity, UserEntity> getTestRequestEntityUserEntityJoinWithTestcaseResultJoin() {
+        if(testRequestEntityUserEntityJoinWithTestcaseResultJoin == null){
+            testRequestEntityUserEntityJoinWithTestcaseResultJoin = getTestcaseResultEntityTestRequestEntityJoin().join("assessee");
+        }
+        return testRequestEntityUserEntityJoinWithTestcaseResultJoin;
     }
 }

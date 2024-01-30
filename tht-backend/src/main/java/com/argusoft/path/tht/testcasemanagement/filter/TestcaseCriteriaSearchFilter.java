@@ -5,6 +5,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import io.swagger.annotations.ApiParam;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -41,6 +42,10 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
     )
     private Boolean isManual;
 
+    private Root<TestcaseEntity> testcaseEntityRoot;
+
+    private Join<TestcaseEntity, SpecificationEntity> testcaseEntitySpecificationEntityJoin;
+
     public TestcaseCriteriaSearchFilter(String id) {
         this.id = id;
     }
@@ -55,27 +60,27 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
     @Override
     protected List<Predicate> buildPredicates(Root<TestcaseEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        setTestcaseEntityRoot(root);
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getPrimaryId())) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+            predicates.add(criteriaBuilder.equal(getTestcaseEntityRoot().get("id"), getPrimaryId()));
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestcaseEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(getState()));
+            predicates.add(criteriaBuilder.in(getTestcaseEntityRoot().get("state")).value(getState()));
         }
 
         if (getManual() != null) {
-            predicates.add(criteriaBuilder.equal(root.get("isManual"), getManual()));
+            predicates.add(criteriaBuilder.equal(getTestcaseEntityRoot().get("isManual"), getManual()));
         }
 
         if (getSpecificationId() != null) {
-            Join<TestcaseEntity, SpecificationEntity> joinTable = root.join("specification");
-            predicates.add(criteriaBuilder.equal(joinTable.get("id"), getSpecificationId()));
+            predicates.add(criteriaBuilder.equal(getTestcaseEntitySpecificationEntityJoin().get("id"), getSpecificationId()));
         }
 
         return predicates;
@@ -124,5 +129,20 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
     public void setPrimaryId(String id) {
         this.id = id;
+    }
+
+    private Root<TestcaseEntity> getTestcaseEntityRoot() {
+        return testcaseEntityRoot;
+    }
+
+    private void setTestcaseEntityRoot(Root<TestcaseEntity> testcaseEntityRoot) {
+        this.testcaseEntityRoot = testcaseEntityRoot;
+    }
+
+    public Join<TestcaseEntity, SpecificationEntity> getTestcaseEntitySpecificationEntityJoin() {
+        if(testcaseEntitySpecificationEntityJoin == null){
+            testcaseEntitySpecificationEntityJoin = getTestcaseEntityRoot().join("specification");
+        }
+        return testcaseEntitySpecificationEntityJoin;
     }
 }
