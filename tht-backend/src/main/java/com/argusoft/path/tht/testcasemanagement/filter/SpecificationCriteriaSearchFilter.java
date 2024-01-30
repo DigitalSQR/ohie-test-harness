@@ -40,6 +40,11 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     )
     private Boolean isManual;
 
+    private Root<SpecificationEntity> specificationEntityRoot;
+    private Join<SpecificationEntity, ComponentEntity> specificationEntityComponentEntityJoin;
+
+    private Join<SpecificationEntity, TestcaseEntity> specificationEntityTestcaseEntityJoin;
+
     public SpecificationCriteriaSearchFilter() {
     }
 
@@ -61,28 +66,28 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
 
     @Override
     protected List<Predicate> buildPredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        this.setSpecificationEntityRoot(root);
+
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getPrimaryId())) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+            predicates.add(criteriaBuilder.equal(this.getSpecificationEntityRoot().get("id"), getPrimaryId()));
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getSpecificationEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(state));
+            predicates.add(criteriaBuilder.in(this.getSpecificationEntityRoot().get("state")).value(state));
         }
 
         if (getComponentId() != null) {
-            Join<SpecificationEntity, ComponentEntity> componentJoin = root.join("component");
-            predicates.add(criteriaBuilder.equal(componentJoin.get("id"), getComponentId()));
+            predicates.add(criteriaBuilder.equal(this.getSpecificationEntityComponentEntityJoin().get("id"), getComponentId()));
         }
 
         if (getManual() != null) {
-            Join<SpecificationEntity, TestcaseEntity> testcaseEntityJoin = root.join("testcases");
-            predicates.add(criteriaBuilder.equal(testcaseEntityJoin.get("isManual"), getManual()));
+            predicates.add(criteriaBuilder.equal(this.getSpecificationEntityTestcaseEntityJoin().get("isManual"), getManual()));
         }
 
         return predicates;
@@ -131,5 +136,29 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
 
     public void setManual(Boolean manual) {
         isManual = manual;
+    }
+
+    private Root<SpecificationEntity> getSpecificationEntityRoot() {
+        return specificationEntityRoot;
+    }
+
+    private void setSpecificationEntityRoot(Root<SpecificationEntity> specificationEntityRoot) {
+        this.specificationEntityRoot = specificationEntityRoot;
+        this.specificationEntityComponentEntityJoin = null;
+        this.specificationEntityTestcaseEntityJoin = null;
+    }
+
+    private Join<SpecificationEntity, ComponentEntity> getSpecificationEntityComponentEntityJoin() {
+        if(this.specificationEntityComponentEntityJoin == null){
+            this.specificationEntityComponentEntityJoin = getSpecificationEntityRoot().join("component");
+        }
+        return specificationEntityComponentEntityJoin;
+    }
+
+    private Join<SpecificationEntity, TestcaseEntity> getSpecificationEntityTestcaseEntityJoin() {
+        if(this.specificationEntityTestcaseEntityJoin == null){
+            this.specificationEntityTestcaseEntityJoin = getSpecificationEntityRoot().join("testcases");
+        }
+        return specificationEntityTestcaseEntityJoin;
     }
 }

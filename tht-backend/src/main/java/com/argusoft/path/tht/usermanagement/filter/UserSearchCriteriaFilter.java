@@ -33,6 +33,7 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     )
     private String email;
 
+    private Root<UserEntity> userEntityRoot;
 
     public UserSearchCriteriaFilter(String id) {
         this.id = id;
@@ -48,22 +49,23 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
 
     @Override
     protected List<Predicate> buildPredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        setUserEntityRoot(root);
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getPrimaryId())) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+            predicates.add(criteriaBuilder.equal(getUserEntityRoot().get("id"), getPrimaryId()));
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(getState()));
+            predicates.add(criteriaBuilder.in(getUserEntityRoot().get("state")).value(getState()));
         }
 
         if (StringUtils.hasLength(getEmail())) {
-            predicates.add(criteriaBuilder.equal(root.get("email"), getEmail()));
+            predicates.add(criteriaBuilder.equal(getUserEntityRoot().get("email"), getEmail()));
         }
 
         return predicates;
@@ -104,5 +106,13 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
 
     public void setPrimaryId(String id) {
         this.id = id;
+    }
+
+    private Root<UserEntity> getUserEntityRoot() {
+        return userEntityRoot;
+    }
+
+    private void setUserEntityRoot(Root<UserEntity> userEntityRoot) {
+        this.userEntityRoot = userEntityRoot;
     }
 }

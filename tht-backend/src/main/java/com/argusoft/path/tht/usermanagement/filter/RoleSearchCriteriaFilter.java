@@ -22,6 +22,8 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
     )
     private String name;
 
+    private Root<RoleEntity> roleEntityRoot;
+
     public RoleSearchCriteriaFilter(String id) {
         this.id = id;
     }
@@ -36,14 +38,15 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
 
     @Override
     protected List<Predicate> buildPredicates(Root<RoleEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        setRoleEntityRoot(root);
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getPrimaryId())) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+            predicates.add(criteriaBuilder.equal(getRoleEntityRoot().get("id"), getPrimaryId()));
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getRoleEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
         }
 
         return predicates;
@@ -68,5 +71,13 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
 
     public void setPrimaryId(String id) {
         this.id = id;
+    }
+
+    private Root<RoleEntity> getRoleEntityRoot() {
+        return roleEntityRoot;
+    }
+
+    private void setRoleEntityRoot(Root<RoleEntity> roleEntityRoot) {
+        this.roleEntityRoot = roleEntityRoot;
     }
 }

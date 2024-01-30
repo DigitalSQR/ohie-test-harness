@@ -54,6 +54,10 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     )
     private List<String> state;
 
+    private Root<DocumentEntity> documentEntityRoot;
+
+    private Join<DocumentEntity,UserEntity> documentEntityUserEntityJoin;
+
 
     public DocumentCriteriaSearchFilter() {
     }
@@ -70,30 +74,31 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     }
 
     protected List<Predicate> buildPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        this.setDocumentEntityRoot(root);
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getPrimaryId())) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), getPrimaryId()));
+            predicates.add(criteriaBuilder.equal(this.getDocumentEntityRoot().get("id"), getPrimaryId()));
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getDocumentEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
         }
 
         if (StringUtils.hasLength(getRefObjUri())) {
-            predicates.add(criteriaBuilder.equal(root.get("refObjUri"), refObjUri));
+            predicates.add(criteriaBuilder.equal(this.getDocumentEntityRoot().get("refObjUri"), refObjUri));
         }
 
         if (StringUtils.hasLength(getRefId())) {
-            predicates.add(criteriaBuilder.equal(root.get("refId"), refId));
+            predicates.add(criteriaBuilder.equal(this.getDocumentEntityRoot().get("refId"), refId));
         }
 
         if (StringUtils.hasLength(getFileId())) {
-            predicates.add(criteriaBuilder.equal(root.get("fileId"), fileId));
+            predicates.add(criteriaBuilder.equal(this.getDocumentEntityRoot().get("fileId"), fileId));
         }
 
         if (!CollectionUtils.isEmpty(state)) {
-            predicates.add(criteriaBuilder.in(root.get("state")).value(state));
+            predicates.add(criteriaBuilder.in(this.getDocumentEntityRoot().get("state")).value(state));
         }
 
         return predicates;
@@ -103,21 +108,32 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     protected List<Predicate> buildAuthorizationPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-
-
         if (contextInfo.isAssessee()) {
-            Join<DocumentEntity, UserEntity> joinTable = root.join("owner");
-            predicates.add(criteriaBuilder.equal(joinTable.get("id"), contextInfo.getUsername()));
+            predicates.add(criteriaBuilder.equal(this.getDocumentEntityUserEntityJoin().get("id"), contextInfo.getUsername()));
         } else {
             if (getOwnerId() != null) {
-                Join<DocumentEntity, UserEntity> joinTable = root.join("owner");
-                predicates.add(criteriaBuilder.equal(joinTable.get("id"), getOwnerId()));
+                predicates.add(criteriaBuilder.equal(this.getDocumentEntityUserEntityJoin().get("id"), getOwnerId()));
             }
         }
 
         return predicates;
     }
 
+    private Root<DocumentEntity> getDocumentEntityRoot() {
+        return documentEntityRoot;
+    }
+
+    private void setDocumentEntityRoot(Root<DocumentEntity> documentEntityRoot) {
+        this.documentEntityRoot = documentEntityRoot;
+        this.documentEntityUserEntityJoin = null;
+    }
+
+    private Join<DocumentEntity, UserEntity> getDocumentEntityUserEntityJoin() {
+        if(documentEntityUserEntityJoin==null){
+            documentEntityUserEntityJoin = getDocumentEntityRoot().join("owner");
+        }
+        return documentEntityUserEntityJoin;
+    }
 
     public String getName() {
         return name;
