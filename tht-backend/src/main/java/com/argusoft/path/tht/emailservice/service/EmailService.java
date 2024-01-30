@@ -27,20 +27,8 @@ public class EmailService {
 
 
     @Async
-    public void sendSimpleMessage(
-            String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("noreply@baeldung.com");
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        javaMailSender.send(message);
-    }
-
-
-    @Async
     public void sendMessage(
-            String to, String subject,String htmlContent) throws MessagingException, IOException {
+            String to, String subject,String htmlContent) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setFrom("noreply@baeldung.com");

@@ -17,6 +17,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -137,7 +139,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
                                                                            String tokenType,
                                                                            ContextInfo contextInfo) throws DoesNotExistException,
             InvalidParameterException,
-            OperationFailedException {
+            OperationFailedException, MessagingException, IOException {
 
         checkForValidTokenTypeWithVerifyingInEnum(tokenType);
 
@@ -162,9 +164,10 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         String emailIdBase64 = new String(Base64.encodeBase64(userById.getEmail().getBytes()));
 
         if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
-            emailService.sendSimpleMessage(userById.getEmail(), "Verify your email id", "https://tht.argusoft.com/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+            emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         } else if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
-            emailService.sendSimpleMessage(userById.getEmail(), "Reset Your Password", "https://tht.argusoft.com/reset/cred/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+            emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+
         }
 
         return tokenVerification;

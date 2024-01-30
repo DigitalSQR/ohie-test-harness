@@ -38,6 +38,8 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -98,7 +100,7 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     @Timed(name = "registerAssessee")
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
-            throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException {
+            throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException, MessagingException, IOException {
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.setId(UserServiceConstants.ROLE_ID_ASSESSEE);
         userEntity.getRoles().clear();
@@ -169,9 +171,10 @@ public class UserServiceServiceImpl implements UserService {
         return userEntity;
     }
 
-    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity) {
+    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity) throws MessagingException, IOException {
         if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
-            emailService.sendSimpleMessage(userEntity.getEmail(), "Account Request Approved!", "Your Account Request Has Been Approved Successfully!");
+            emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
+
         }
     }
 
@@ -187,7 +190,7 @@ public class UserServiceServiceImpl implements UserService {
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException,
-            DoesNotExistException {
+            DoesNotExistException, MessagingException, IOException {
 
         if (Objects.equals(contextInfo.getEmail(), Constant.OAUTH2_CONTEXT.getEmail())) {
             //If method get called on google Oauth2 login then verification of email is not needed.

@@ -91,7 +91,7 @@ public class UserRestController {
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException {
+            DataValidationErrorException, DoesNotExistException, MessagingException, IOException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
         userEntity = userService.registerAssessee(userEntity, contextInfo);
@@ -163,7 +163,7 @@ public class UserRestController {
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException {
+            DataValidationErrorException, DoesNotExistException, MessagingException, IOException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
         userEntity = userService.createUser(userEntity, contextInfo);
@@ -208,10 +208,10 @@ public class UserRestController {
     })
     @PatchMapping("/state/{userId}/{changeState}")
     @Transactional
-    public UserInfo updateUserState(@PathVariable("userId") String userId,
-                                    @PathVariable("changeState") String changeState,
-                                    @RequestAttribute("contextInfo") ContextInfo contextInfo)
-            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+    public UserInfo updateDocumentState(@PathVariable("userId") String userId,
+                                        @PathVariable("changeState") String changeState,
+                                        @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         UserEntity userEntity = userService.changeState(userId, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
     }
@@ -322,14 +322,5 @@ public class UserRestController {
         return userMapper.modelToDto(principalUser);
     }
 
-
-    @GetMapping("/sendEmail")
-    public void sendEmail() throws MessagingException, IOException {
-
-//        emailService.verifyEmailMessage("ishaneshah@argusoft.com", "Ishita shaneshah", "templates/verification-email.html");
-//        emailService.forgotPasswordMessage("ishaneshah@argusoft.com","Ishita shaneshah", "templates/reset-password-email.html");
-        emailService.accountApprovedMessage("ishaneshah@argusoft.com","Ishita shaneshah");
-
-    }
 
 }
