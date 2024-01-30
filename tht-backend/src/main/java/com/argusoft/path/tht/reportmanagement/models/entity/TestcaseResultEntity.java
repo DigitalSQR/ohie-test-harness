@@ -64,6 +64,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "duration")
     private Long duration;
 
+    @Column(name = "grade")
+    private String grade;
+
     public Integer getRank() {
         return rank;
     }
@@ -166,5 +169,13 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     public void setDuration(Long duration) {
         this.duration = duration;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 }

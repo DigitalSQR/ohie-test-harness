@@ -6,6 +6,7 @@
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
+import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
@@ -63,6 +64,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private GradeEvaluator gradeEvaluator;
 
     /**
      * {@inheritdoc}
@@ -384,6 +388,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                     testcaseResultEntity.setSuccess(Boolean.TRUE);
                 }
                 testcaseResultEntity.setDuration(duration);
+                testcaseResultEntity.setGrade(gradeEvaluator.evaluate(testcaseResultEntity.getId(), contextInfo));
                 updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
             }

@@ -6,13 +6,14 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface GradeService {
 
     List<GradeEntity> getAllGrades(ContextInfo contextInfo);
 
-    GradeEntity getGradeBasedOnPercentageRange(Integer percentage, ContextInfo contextInfo);
+    Optional<GradeEntity> getGradeBasedOnPercentageRange(Integer percentage, ContextInfo contextInfo);
 
     GradeEntity updateGrade(GradeEntity gradeEntity, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException;
 

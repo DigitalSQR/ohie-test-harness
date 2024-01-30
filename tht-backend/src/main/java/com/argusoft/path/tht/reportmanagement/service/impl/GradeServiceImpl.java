@@ -36,7 +36,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public GradeEntity getGradeBasedOnPercentageRange(Integer percentage, ContextInfo contextInfo) {
+    public Optional<GradeEntity> getGradeBasedOnPercentageRange(Integer percentage, ContextInfo contextInfo) {
         return gradeRepository.getGradeBasedOnActualPercentage(percentage);
     }
 

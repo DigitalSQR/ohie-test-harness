@@ -108,6 +108,13 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = false)
     private Long duration;
 
+    @ApiModelProperty(notes = "The grade of the TestcaseResult",
+            allowEmptyValue = true,
+            example = "A",
+            dataType = "String",
+            required = false)
+    private String grade;
+
     public String getParentTestcaseResultId() {
         return parentTestcaseResultId;
     }
@@ -210,5 +217,13 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
 
     public void setDuration(Long duration) {
         this.duration = duration;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 }
