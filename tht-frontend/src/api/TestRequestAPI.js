@@ -29,6 +29,17 @@ export const TestRequestAPI = {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}
 	},
+	getTestRequestsById: async function (testRequestId) {
+		try {
+			const response = await api.request({
+				url: `/test-request/${testRequestId}`,
+				method: "GET",
+			});
+			return response.data;
+		} catch (error) {
+			throw error; // You can choose to re-throw the error or handle it in a specific way
+		}
+	},
 	getTestRequestsByState: async function (state, sortFieldName="createdAt", sortDirection="desc", currentPage, pageSize) {
 		try {
 			const params={

@@ -1,18 +1,27 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import "./_table.scss";
 import "./applications.scss";
-import sortIcon from '../../../styles/images/sort-icon.png'
-import { useNavigate } from 'react-router-dom';
-import { StateClasses, TestRequestActionStateLabels, TestRequestStateConstants } from '../../../constants/test_requests_constants.js';
-import { TestRequestAPI } from '../../../api/TestRequestAPI.js';
+import sortIcon from "../../../styles/images/sort-icon.png";
+import { useNavigate } from "react-router-dom";
+import {
+  StateClasses,
+  TestRequestActionStateLabels,
+  TestRequestStateConstants,
+} from "../../../constants/test_requests_constants.js";
+import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
 import { notification } from "antd";
-import { formatDate } from '../../../utils/utils.js';
+import { formatDate } from "../../../utils/utils.js";
 import UserIdEmailConnector from "../../connectors/UserIdEmailConnector/UserIdEmailConnector.js";
 import { Pagination } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
 const Applications = () => {
-    const testRequestStates = [...TestRequestActionStateLabels, { label: "All", value: '' }];
-    const [filterState, setFilterState] = useState(TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED);
+  const testRequestStates = [
+    ...TestRequestActionStateLabels,
+    { label: "All", value: "" },
+  ];
+  const [filterState, setFilterState] = useState(
+    TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED
+  );
   const [testRequests, setTestRequests] = useState([]);
   const [sortDirection, setSortDirection] = useState({
     name: "desc",
@@ -27,8 +36,8 @@ const Applications = () => {
 
   useEffect(() => {
     var state = filterState;
-        if (!state || state == '') {
-            state = TestRequestActionStateLabels.map(state => state.value);
+    if (!state || state == "") {
+      state = TestRequestActionStateLabels.map((state) => state.value);
     }
     if (state) {
       getAllTestRequests(
@@ -87,6 +96,10 @@ const Applications = () => {
     getAllTestRequests(filterState, sortFieldName, sortDirection, newPage);
   };
 
+  const viewReport=(testRequestId)=>{
+    navigate(`/application-report/${testRequestId}`)
+  }
+
   return (
     <div>
       <div id="wrapper">
@@ -97,7 +110,9 @@ const Applications = () => {
                 <span className="pe-3 text-nowrap">Status :</span>
                 <div className="mb-3">
                   <select
-                                        onChange={(e) => { setFilterState(e.target.value) }}
+                    onChange={(e) => {
+                      setFilterState(e.target.value);
+                    }}
                     value={filterState}
                     className="form-select custom-select custom-select-sm"
                     aria-label="Default select example"
@@ -162,8 +177,26 @@ const Applications = () => {
                     <td>{testRequest.name}</td>
                     <td>{testRequest.productName}</td>
                     <td>{formatDate(testRequest.meta.updatedAt)}</td>
-                                            <td><UserIdEmailConnector userId={testRequest.assesseeId}></UserIdEmailConnector></td>
-                                            <td><button className={StateClasses[testRequest.state]?.btnClass} onClick={() => { navigate(`/dashboard/choose-test/${testRequest.id}`) }}> <i className={StateClasses[testRequest.state]?.iconClass}></i> {StateClasses[testRequest.state]?.btnText}</button></td>
+                    <td>
+                      <UserIdEmailConnector
+                        userId={testRequest.assesseeId}
+                      ></UserIdEmailConnector>
+                    </td>
+                    <td>
+                      <button
+                        className={StateClasses[testRequest.state]?.btnClass}
+                        onClick={() => {
+                          navigate(`/dashboard/choose-test/${testRequest.id}`);
+                        }}
+                      >
+                        {" "}
+                        <i
+                          className={StateClasses[testRequest.state]?.iconClass}
+                        ></i>{" "}
+                        {StateClasses[testRequest.state]?.btnText}
+                      </button>
+                      <button className="report" onClick={()=>viewReport(testRequest.id)}>View Report</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

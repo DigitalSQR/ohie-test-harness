@@ -51,4 +51,20 @@ export const TestResultAPI = {
 			throw error;
 		}
 	},
+
+	getTestCaseResultById: async function (testRequestId) {
+		try {
+		  const response = await api.request({
+			url: "/testcase-result",
+			method: "GET",
+			params: {
+			  testRequestId: testRequestId,
+			},
+		  });
+		  return response.data;
+		} catch (error) {
+		  throw error;
+		}
+	  }
+	  
 };

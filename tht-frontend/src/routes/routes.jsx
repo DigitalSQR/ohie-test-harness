@@ -34,7 +34,7 @@ const routes = createBrowserRouter([
 	{ path: "/login", element: <Login /> },
 	{ path: "/SignUp", element: <SignUp /> },
 	{ path: "/CongratulationsPage", element: <CongratulationsPage /> },
-	{ path: "application-report", element: <ApplicationReport /> },
+	{ path: "application-report/:testRequestId", element: <ApplicationReport /> },
 	{ path: "/google/success", element: <GoogleAuth /> },
 	{ path: "/forgotpassword", element: <ForgotPassword /> },
 	{ path: "/reset/cred/:base64UserEmail/:base64TokenId", element: <UpdatePassword /> },
