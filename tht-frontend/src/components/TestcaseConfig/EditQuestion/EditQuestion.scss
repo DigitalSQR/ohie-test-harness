@@ -1,0 +1,117 @@
+@import "../../../scss/variables";
+
+#wrapper {
+    transition: 0.5s;
+    margin-left: 230px;
+    padding: 90px 30px;
+    position: relative;
+    min-height: calc(100vh - 64px);
+  
+    @media (max-width: 767.98px) {
+      margin-left: 40px;
+    }
+  
+    @media only screen and (min-width: 601px) and (max-width: 1024px) {
+      /* Add your custom styles for medium screens */
+    }
+  
+    @media only screen and (min-width: 1025px) {
+      /* Add your custom styles for large screens */
+    }
+  }
+
+.smaller-button {
+    width: 80px;
+    padding: 0 5px;
+  }
+  
+  .bolder-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .non-resizable {
+    resize: none;
+  }
+  .my-5 {
+    margin-bottom: 3rem; 
+  }
+  
+  
+  @media only screen and (max-width: 600px) {
+    .col-auto,
+    .col {
+      width: 100%;
+      margin: 0 0 10px 0;
+    }
+  
+    .col-md-1,
+    .col-md-9,
+    .col-md-2 {
+      width: 100%;
+    }
+  
+    .text-center {
+      text-align: center;
+    }
+  
+    .align-items-center,
+    .align-items-start {
+      align-items: center;
+    }
+  
+    .smaller-button {
+      width: 100%;
+    }
+  }
+  @media only screen and (max-width: 600px) {
+    .col-auto,
+    .col {
+      width: 100%;
+      margin: 0 0 10px 0;
+    }
+  
+    .col-md-1,
+    .col-md-9,
+    .col-md-2 {
+      width: 100%;
+    }
+  
+    .text-center {
+      text-align: center;
+    }
+  
+    .align-items-center,
+    .align-items-start {
+      align-items: center;
+    }
+  
+    .smaller-button {
+      width: 100%;
+    }
+  }  
+
+  .badges-green-dark {
+    display: inline-block;
+    background: $color-green-40;
+    color: $color-white;
+    border-radius: 4px;
+    padding: 0px 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+    margin-left: 8px;
+  }
+  .badges-orange {
+    display: inline-block;
+    background: #ff8a65;
+    color: #fff;
+    border-radius: 4px;
+    padding: 0px 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+  }

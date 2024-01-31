@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { TestCaseAPI } from "../../../api/TestCaseAPI";
 import { useLoader } from "../../loader/LoaderContext";
 import { EditOutlined } from "@ant-design/icons";
@@ -7,26 +7,48 @@ import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
 import "./SpecQuestions.scss";
 const ManualTestCases = () => {
   const { specificationId } = useParams();
+  const navigate = useNavigate();
+
   const { showLoader, hideLoader } = useLoader();
   const [questions, setQuestions] = useState();
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleUpdate = (question) => {
+    console.log(question);
+    navigate(`/dashboard/edit-question`, {
+      state: {
+        testcase: question,
+      },
+    });
+  };
+
   const fetchData = async () => {
     try {
       showLoader();
       const resp = await TestCaseAPI.getTestCasesBySpecificationId(
         specificationId
       );
+      console.log(resp.content[0].id);
       const questionPromises = resp.content.map(async (testcase) => {
         try {
           const optionsResp = await fetchTestCaseOptions(testcase.id);
           const options = optionsResp
             .map((option) => {
-              return { name: option.name, rank: option.rank };
+              return {
+                metaVersion: option.meta.version,
+                id: option.id,
+                name: option.name,
+                rank: option.rank,
+              };
             })
             .sort((a, b) => a.rank - b.rank);
           return {
+            id: testcase.id,
+            metaVersion: testcase.meta.version,
+            description: testcase.description,
             question: testcase.name,
             rank: testcase.rank,
             options,
@@ -41,6 +63,7 @@ const ManualTestCases = () => {
       });
       const questionResults = await Promise.all(questionPromises);
       const sortedQuestions = questionResults.sort((a, b) => a.rank - b.rank);
+      console.log(sortedQuestions);
       setQuestions(sortedQuestions);
       const filteredQuestions = questionResults.filter(
         (question) => question !== null
@@ -77,7 +100,7 @@ const ManualTestCases = () => {
           </div>
           <div className="question-actions">
             <span className="edit-icon">
-              <EditOutlined />
+              <EditOutlined onClick={() => handleUpdate(question)} />
             </span>
             <span className="badges-green-dark">ACTIVE</span>
           </div>
