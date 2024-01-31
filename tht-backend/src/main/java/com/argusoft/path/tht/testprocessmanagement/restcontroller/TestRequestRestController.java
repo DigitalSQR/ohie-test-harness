@@ -182,7 +182,6 @@ public class TestRequestRestController {
             @ApiResponse(code = 200, message = "Successfully started automation testing process")
     })
     @PutMapping("/start-testing-process/{testRequestId}")
-    @Transactional
     public void startTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
             @RequestParam(value = "refObjUri") String refObjUri,

@@ -26,9 +26,7 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlE
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -55,13 +53,26 @@ public class TestcaseExecutioner {
     @Autowired
     private TestRequestService testRequestService;
 
+    @Autowired
+    private TestcaseExecutionStarter testcaseExecutionStarter;
+
     public void executeTestingProcess(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws OperationFailedException {
+        
+            TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = changeStateAndPrepareIgenericClient(testRequestId, refObjUri, refId, isManual, contextInfo);
+            if (testcaseResultEntitiesAndIgenericClient == null) return;
+
+            testcaseExecutionStarter.startExecution(testcaseResultEntitiesAndIgenericClient.testcaseResultEntities(), testcaseResultEntitiesAndIgenericClient.iGenericClientMap(), Constant.SUPER_USER_CONTEXT);
+        
+    }
+
+    @Transactional
+    public TestcaseResultEntitiesAndIgenericClient changeStateAndPrepareIgenericClient(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws OperationFailedException {
         try {
             List<TestcaseResultEntity> testcaseResultEntities = fetchTestcaseResultsByInputs(testRequestId, refObjUri, refId, isManual, contextInfo);
             changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING, contextInfo);
 
             if (Objects.equals(Boolean.TRUE, isManual)) {
-                return;
+                return null;
             }
 
             TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
@@ -75,14 +86,17 @@ public class TestcaseExecutioner {
                 IGenericClient client = getClient(testRequestUrlEntity.getFhirVersion(), testRequestUrlEntity.getBaseUrl(), testRequestUrlEntity.getUsername(), testRequestUrlEntity.getPassword());
                 iGenericClientMap.put(componentEntity.getId(), client);
             }
-
-            execute(testcaseResultEntities, iGenericClientMap, Constant.SUPER_USER_CONTEXT);
+            TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = new TestcaseResultEntitiesAndIgenericClient(testcaseResultEntities, iGenericClientMap);
+            return testcaseResultEntitiesAndIgenericClient;
         } catch (DataValidationErrorException e) {
             throw new OperationFailedException(e);
         } catch (InvalidParameterException | OperationFailedException | VersionMismatchException |
                  DoesNotExistException e) {
             throw new OperationFailedException(e.getMessage(), e);
         }
+    }
+
+    private record TestcaseResultEntitiesAndIgenericClient(List<TestcaseResultEntity> testcaseResultEntities, Map<String, IGenericClient> iGenericClientMap) {
     }
 
     public void reinitializeTestingProcess(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws OperationFailedException {
@@ -97,9 +111,8 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Async
-    private void execute(List<TestcaseResultEntity> testcaseResultEntities,
+
+    public void execute(List<TestcaseResultEntity> testcaseResultEntities,
                          Map<String, IGenericClient> iGenericClientMap,
                          ContextInfo contextInfo) {
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
