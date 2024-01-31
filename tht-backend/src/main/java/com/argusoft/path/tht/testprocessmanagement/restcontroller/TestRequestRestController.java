@@ -144,19 +144,6 @@ public class TestRequestRestController {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    public Page<TestRequestInfo> getTestRequests(
-            Pageable pageable,
-            ContextInfo contextInfo)
-            throws InvalidParameterException {
-        Page<TestRequestEntity> testRequests = testRequestService.getTestRequests(pageable, contextInfo);
-        return testRequestMapper.pageEntityToDto(testRequests);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @ApiOperation(value = "View a list of validation errors for TestRequest", response = List.class)
     @ApiResponses(value = {

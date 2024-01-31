@@ -130,23 +130,6 @@ public interface TestcaseOptionService {
             throws DoesNotExistException,
             InvalidParameterException;
 
-    /**
-     * Retrieves a list of TestcaseOptions.The returned list may be in any order with
-     * unique set.
-     *
-     * @param pageable    Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-     * @return a list of TestcaseOption
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
-     */
-    public Page<TestcaseOptionEntity> getTestcaseOptions(Pageable pageable,
-                                                         ContextInfo contextInfo)
-            throws InvalidParameterException;
-
-
     public TestcaseOptionEntity changeState(String testcaseOptionId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
 

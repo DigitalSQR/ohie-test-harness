@@ -264,19 +264,6 @@ public class UserRestController {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    public Page<UserInfo> getUsers(
-            Pageable pageable,
-            ContextInfo contextInfo)
-            throws InvalidParameterException {
-        Page<UserEntity> users = userService.getUsers(pageable, contextInfo);
-        return userMapper.pageEntityToDto(users);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @ApiOperation(value = "View a list of validation errors for user", response = List.class)
     @ApiResponses(value = {

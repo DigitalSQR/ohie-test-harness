@@ -131,23 +131,6 @@ public interface SpecificationService {
             throws DoesNotExistException,
             InvalidParameterException;
 
-    /**
-     * Retrieves a list of Specifications.The returned list may be in any order with
-     * unique set.
-     *
-     * @param pageable    Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-     * @return a list of Specification
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
-     */
-    public Page<SpecificationEntity> getSpecifications(Pageable pageable,
-                                                       ContextInfo contextInfo)
-            throws InvalidParameterException;
-
-
     public SpecificationEntity changeState(String specificationId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
 }

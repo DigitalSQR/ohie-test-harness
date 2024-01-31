@@ -131,22 +131,6 @@ public interface ComponentService {
             throws DoesNotExistException,
             InvalidParameterException;
 
-    /**
-     * Retrieves a list of Components.The returned list may be in any order with
-     * unique set.
-     *
-     * @param pageable    Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-     * @return a list of Component
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
-     */
-    public Page<ComponentEntity> getComponents(Pageable pageable,
-                                               ContextInfo contextInfo)
-            throws InvalidParameterException;
-
     public ComponentEntity changeState(String componentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
 
