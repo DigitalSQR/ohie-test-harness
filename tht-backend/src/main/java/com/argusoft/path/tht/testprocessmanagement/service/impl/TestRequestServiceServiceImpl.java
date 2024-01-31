@@ -159,7 +159,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
 
         //Create state change API to make this as Accepted or Rejected
-        testRequestEntity = testRequestRepository.save(testRequestEntity);
+        testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
         return testRequestEntity;
     }
 
@@ -183,7 +183,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 componentService,
                 contextInfo);
 
-        testRequestEntity = testRequestRepository.save(testRequestEntity);
+        testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
         return testRequestEntity;
     }
 
@@ -290,7 +290,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
 
         testRequestEntity.setState(stateKey);
-        testRequestEntity = testRequestRepository.save(testRequestEntity);
+        testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
 
         changeStateCallback(testRequestEntity, contextInfo);
         return testRequestEntity;

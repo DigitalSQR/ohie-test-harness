@@ -98,7 +98,7 @@ public class DocumentServiceImpl implements DocumentService {
             throw new OperationFailedException("InvalidParameterException while saving document ",e);
         }
 
-        DocumentEntity document = documentRepository.save(documentEntity);
+        DocumentEntity document = documentRepository.saveAndFlush(documentEntity);
         return document;
     }
 
@@ -195,7 +195,7 @@ public class DocumentServiceImpl implements DocumentService {
                 if (foundTheInBetweenDocumentEntity) {
                     DocumentEntity documentEntity = integerDocumentEntityEntry.getValue();
                     documentEntity.setOrder(integerDocumentEntityEntry.getKey() + 1);
-                    documentRepository.save(documentEntity);
+                    documentRepository.saveAndFlush(documentEntity);
                 }
             }
             document.setOrder(orderId);
@@ -203,7 +203,7 @@ public class DocumentServiceImpl implements DocumentService {
             document.setOrder(documentsByRefObjectUriAndRefObjectId.size() + 2);
         }
 
-        documentRepository.save(document);
+        documentRepository.saveAndFlush(document);
         return document;
     }
 
@@ -235,7 +235,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
 
         documentEntity.setState(stateKey);
-        documentEntity = documentRepository.save(documentEntity);
+        documentEntity = documentRepository.saveAndFlush(documentEntity);
 
         return documentEntity;
     }

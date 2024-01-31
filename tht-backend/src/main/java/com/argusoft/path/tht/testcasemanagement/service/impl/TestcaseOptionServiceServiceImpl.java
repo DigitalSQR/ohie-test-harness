@@ -70,7 +70,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             testcaseOptionEntity.setId(UUID.randomUUID().toString());
         }
         testcaseOptionEntity.setState(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_DRAFT);
-        testcaseOptionEntity = testcaseOptionRepository.save(testcaseOptionEntity);
+        testcaseOptionEntity = testcaseOptionRepository.saveAndFlush(testcaseOptionEntity);
 
         return testcaseOptionEntity;
     }
@@ -101,7 +101,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
             for(TestcaseOptionEntity entity: testcaseOptionList){
                 entity.setSuccess(entity.getId().equals(testcaseOptionEntity.getId()));
-                testcaseOptionRepository.save(entity);
+                testcaseOptionRepository.saveAndFlush(entity);
             }
         }
         else{
@@ -216,7 +216,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         }
 
         testcaseOptionEntity.setState(stateKey);
-        testcaseOptionEntity = testcaseOptionRepository.save(testcaseOptionEntity);
+        testcaseOptionEntity = testcaseOptionRepository.saveAndFlush(testcaseOptionEntity);
 
         return testcaseOptionEntity;
     }

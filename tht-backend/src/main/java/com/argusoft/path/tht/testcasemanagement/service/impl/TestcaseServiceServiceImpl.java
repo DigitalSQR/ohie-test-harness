@@ -76,7 +76,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             testcaseEntity.setId(UUID.randomUUID().toString());
         }
         testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_DRAFT);
-        testcaseEntity = testcaseRepository.save(testcaseEntity);
+        testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
         return testcaseEntity;
     }
 
@@ -100,7 +100,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
                 applicationContext,
                 contextInfo);
 
-        testcaseEntity = testcaseRepository.save(testcaseEntity);
+        testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
         return testcaseEntity;
     }
 
@@ -205,7 +205,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         }
 
         testcaseEntity.setState(stateKey);
-        testcaseEntity = testcaseRepository.save(testcaseEntity);
+        testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
 
         return testcaseEntity;
     }

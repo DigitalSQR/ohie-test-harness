@@ -69,7 +69,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             componentEntity.setId(UUID.randomUUID().toString());
         }
         componentEntity.setState(ComponentServiceConstants.COMPONENT_STATUS_DRAFT);
-        componentEntity = componentRepository.save(componentEntity);
+        componentEntity = componentRepository.saveAndFlush(componentEntity);
         return componentEntity;
     }
 
@@ -92,7 +92,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
                 componentEntity,
                 contextInfo);
 
-        componentEntity = componentRepository.save(componentEntity);
+        componentEntity = componentRepository.saveAndFlush(componentEntity);
         return componentEntity;
     }
 
@@ -198,7 +198,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
         }
 
         componentEntity.setState(stateKey);
-        componentEntity = componentRepository.save(componentEntity);
+        componentEntity = componentRepository.saveAndFlush(componentEntity);
 
         return componentEntity;
     }
