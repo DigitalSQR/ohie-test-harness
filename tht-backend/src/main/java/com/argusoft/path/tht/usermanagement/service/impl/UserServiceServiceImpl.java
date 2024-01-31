@@ -285,19 +285,6 @@ public class UserServiceServiceImpl implements UserService {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getUsers")
-    public Page<UserEntity> getUsers(Pageable pageable,
-                                     ContextInfo contextInfo) {
-        Page<UserEntity> users = userRepository.findUsers(pageable);
-        return users;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @Override
     @Timed(name = "validateUser")

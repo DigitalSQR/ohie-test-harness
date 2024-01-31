@@ -90,9 +90,7 @@ public interface UserService {
      *                         information about the caller of service operation
      * @return a list of User name start with given UserName found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws MissingParameterException name or contextInfo is missing or null
      * @throws OperationFailedException  unable to complete request
-     * @throws PermissionDeniedException an authorization failure occurred
      */
     public Page<UserEntity> searchUsers(UserSearchCriteriaFilter userSearchFilter,
                                         Pageable pageable,
@@ -146,33 +144,12 @@ public interface UserService {
      * @return a list of User
      * @throws DoesNotExistException     a userId in userIds not found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws MissingParameterException userId or contextInfo is missing or
-     *                                   null
      * @throws OperationFailedException  unable to complete request
-     * @throws PermissionDeniedException an authorization failure occurred
      */
     public UserEntity getUserById(String userId,
                                   ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException;
-
-    /**
-     * Retrieves a list of Users.The returned list may be in any order with
-     * unique set.
-     *
-     * @param pageable    Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-     * @return a list of User
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws MissingParameterException contextInfo is missing or null
-     * @throws OperationFailedException  unable to complete request
-     * @throws PermissionDeniedException an authorization failure occurred
-     */
-    public Page<UserEntity> getUsers(Pageable pageable,
-                                     ContextInfo contextInfo)
-            throws InvalidParameterException;
 
     /**
      * get logged in uses detail

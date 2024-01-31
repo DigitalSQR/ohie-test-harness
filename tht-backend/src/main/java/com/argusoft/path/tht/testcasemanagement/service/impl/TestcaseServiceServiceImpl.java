@@ -21,6 +21,10 @@ import com.argusoft.path.tht.testcasemanagement.validator.TestcaseValidator;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.cache.annotation.CacheEvict;
+// import org.springframework.cache.annotation.CachePut;
+// import org.springframework.cache.annotation.Cacheable;
+// import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +63,11 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      */
     @Override
     @Timed(name = "createTestcase")
+    // @Caching(evict = {
+    //         @CacheEvict(value = "searchTestcases", allEntries = true),
+    //         @CacheEvict(value = "searchTestcasesList", allEntries = true),
+    //         @CacheEvict(value = "getTestcases", allEntries = true)
+    // })
     public TestcaseEntity createTestcase(TestcaseEntity testcaseEntity,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
@@ -87,6 +96,15 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      */
     @Override
     @Timed(name = "updateTestcase")
+    // @Caching(
+    //         evict = {
+    //                 @CacheEvict(value = "searchTestcases", allEntries = true),
+    //                 @CacheEvict(value = "searchTestcasesList", allEntries = true),
+    //                 @CacheEvict(value = "getTestcases", allEntries = true)
+    //         }, put = {
+    //         @CachePut(value = "getTestcaseById",
+    //                 key = "#testcaseEntity.getId()")
+    // })
     public TestcaseEntity updateTestcase(TestcaseEntity testcaseEntity,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
@@ -111,6 +129,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      */
     @Override
     @Timed(name = "searchTestcases")
+    // @Cacheable(value = "searchTestcases", key = "{ #testcaseSearchFilter, #pageable }")
     public Page<TestcaseEntity> searchTestcases(
             TestcaseCriteriaSearchFilter testcaseSearchFilter,
             Pageable pageable,
@@ -122,7 +141,8 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
 
 
     @Override
-    @Timed(name = "searchTestcases")
+    @Timed(name = "searchTestcasesList")
+    // @Cacheable(value = "searchTestcasesList", key = "#testcaseSearchFilter")
     public List<TestcaseEntity> searchTestcases(
             TestcaseCriteriaSearchFilter testcaseSearchFilter,
             ContextInfo contextInfo)
@@ -138,6 +158,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      */
     @Override
     @Timed(name = "getTestcaseById")
+    // @Cacheable(value = "getTestcaseById", key = "#testcaseId")
     public TestcaseEntity getTestcaseById(String testcaseId,
                                           ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -150,23 +171,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         return testcaseEntities.stream()
                 .findFirst()
                 .orElseThrow(() -> new DoesNotExistException("Testcase does not found with id : " + testcaseId));
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getTestcases")
-    public Page<TestcaseEntity> getTestcases(Pageable pageable,
-                                             ContextInfo contextInfo)
-            throws InvalidParameterException {
-        if (pageable == null) {
-            throw new InvalidParameterException("pageble is missing");
-        }
-        Page<TestcaseEntity> testcases = testcaseRepository.findTestcases(pageable);
-        return testcases;
     }
 
     /**
@@ -186,6 +190,16 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     }
 
     @Override
+    @Timed(name = "changeState")
+    // @Caching(
+    //         evict = {
+    //                 @CacheEvict(value = "searchTestcases", allEntries = true),
+    //                 @CacheEvict(value = "searchTestcasesList", allEntries = true),
+    //                 @CacheEvict(value = "getTestcases", allEntries = true)
+    //         }, put = {
+    //         @CachePut(value = "getTestcaseById",
+    //                 key = "#testcaseId")
+    // })
     public TestcaseEntity changeState(String testcaseId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 

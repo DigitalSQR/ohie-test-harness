@@ -22,6 +22,10 @@ import com.argusoft.path.tht.testcasemanagement.validator.SpecificationValidator
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.cache.annotation.CacheEvict;
+// import org.springframework.cache.annotation.CachePut;
+// import org.springframework.cache.annotation.Cacheable;
+// import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -57,6 +61,11 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     @Timed(name = "createSpecification")
+    // @Caching(evict = {
+    //         @CacheEvict(value = "searchSpecifications", allEntries = true),
+    //         @CacheEvict(value = "searchSpecificationsList", allEntries = true),
+    //         @CacheEvict(value = "getSpecifications", allEntries = true)
+    // })
     public SpecificationEntity createSpecification(SpecificationEntity specificationEntity,
                                                    ContextInfo contextInfo)
             throws OperationFailedException,
@@ -85,6 +94,15 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     @Timed(name = "updateSpecification")
+    // @Caching(
+    //         evict = {
+    //                 @CacheEvict(value = "searchSpecifications", allEntries = true),
+    //                 @CacheEvict(value = "searchSpecificationsList", allEntries = true),
+    //                 @CacheEvict(value = "getSpecifications", allEntries = true)
+    //         }, put = {
+    //         @CachePut(value = "getSpecificationById",
+    //                 key = "#specificationEntity.getId()")
+    // })
     public SpecificationEntity updateSpecification(SpecificationEntity specificationEntity,
                                                    ContextInfo contextInfo)
             throws OperationFailedException,
@@ -110,6 +128,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     @Timed(name = "searchSpecifications")
+    // @Cacheable(value = "searchSpecifications", key = "{ #specificationSearchFilter, #pageable }")
     public Page<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
             Pageable pageable,
@@ -122,7 +141,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
 
     @Override
-    @Timed(name = "searchSpecifications")
+    @Timed(name = "searchSpecificationsList")
+    // @Cacheable(value = "searchSpecificationsList", key = "#specificationSearchFilter")
     public List<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
             ContextInfo contextInfo)
@@ -140,6 +160,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     @Timed(name = "getSpecificationById")
+    // @Cacheable(value = "getSpecificationById", key = "#specificationId")
     public SpecificationEntity getSpecificationById(String specificationId,
                                                     ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -152,23 +173,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         return specificationEntities.stream()
                 .findFirst()
                 .orElseThrow(() -> new DoesNotExistException("Specification does not found with id : " + specificationId));
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getSpecifications")
-    public Page<SpecificationEntity> getSpecifications(Pageable pageable,
-                                                       ContextInfo contextInfo)
-            throws InvalidParameterException {
-        if (pageable == null) {
-            throw new InvalidParameterException("pageble is missing");
-        }
-        Page<SpecificationEntity> specifications = specificationRepository.findSpecifications(pageable);
-        return specifications;
     }
 
     /**
@@ -187,6 +191,16 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
     }
 
     @Override
+    // @Timed(name = "changeState")
+    // @Caching(
+    //         evict = {
+    //                 @CacheEvict(value = "searchSpecifications", allEntries = true),
+    //                 @CacheEvict(value = "searchSpecificationsList", allEntries = true),
+    //                 @CacheEvict(value = "getSpecifications", allEntries = true)
+    //         }, put = {
+    //         @CachePut(value = "getSpecificationById",
+    //                 key = "#specificationId")
+    // })
     public SpecificationEntity changeState(String specificationId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 

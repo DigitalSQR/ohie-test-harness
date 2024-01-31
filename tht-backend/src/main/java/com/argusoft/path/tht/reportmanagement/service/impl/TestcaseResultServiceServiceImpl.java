@@ -211,23 +211,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getTestcaseResults")
-    public Page<TestcaseResultEntity> getTestcaseResults(Pageable pageable,
-                                                         ContextInfo contextInfo)
-            throws InvalidParameterException {
-        if (pageable == null) {
-            throw new InvalidParameterException("pageble is missing");
-        }
-        Page<TestcaseResultEntity> testcaseResults = testcaseResultRepository.findTestcaseResults(pageable);
-        return testcaseResults;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @Override
     @Timed(name = "validateTestcaseResult")
