@@ -48,12 +48,9 @@ public class ContextInfo extends User implements Serializable {
 
     private Boolean isAdmin;
 
-    private String principalId;
-
     public ContextInfo() {
         super("username", "password", new ArrayList<>());
     }
-
 
     public ContextInfo(
             String email,
