@@ -145,19 +145,6 @@ public class TestcaseOptionRestController {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    public Page<TestcaseOptionInfo> getTestcaseOptions(
-            Pageable pageable,
-            ContextInfo contextInfo)
-            throws InvalidParameterException {
-        Page<TestcaseOptionEntity> testcaseOptions = TestcaseOptionService.getTestcaseOptions(pageable, contextInfo);
-        return TestcaseOptionMapper.pageEntityToDto(testcaseOptions);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @ApiOperation(value = "View a list of validation errors for TestcaseOption", response = List.class)
     @ApiResponses(value = {
