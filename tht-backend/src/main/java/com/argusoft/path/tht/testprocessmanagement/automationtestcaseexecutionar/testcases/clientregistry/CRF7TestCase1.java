@@ -9,12 +9,17 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.OperationOutcome;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
 public class CRF7TestCase1 implements TestCase {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(CRF7TestCase1.class);
+
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
 
@@ -50,6 +55,7 @@ public class CRF7TestCase1 implements TestCase {
             }
 
         } catch (Exception ex) {
+            LOGGER.error("caught OperationFailedException in CRF7TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

@@ -13,6 +13,8 @@ import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Patient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -20,6 +22,9 @@ import java.util.Map;
 
 @Component
 public class CRF10TestCase1 implements TestCase {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(CRF10TestCase1.class);
+
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
         try {
@@ -53,6 +58,7 @@ public class CRF10TestCase1 implements TestCase {
 
             return new ValidationResultInfo("testCRF10case1", ErrorLevel.ERROR, "Failed to create related person with given relationship ");
         } catch (Exception ex) {
+            LOGGER.error("caught OperationFailedException in CRF10TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

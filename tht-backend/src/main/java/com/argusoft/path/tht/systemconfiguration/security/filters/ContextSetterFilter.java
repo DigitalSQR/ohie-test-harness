@@ -6,6 +6,8 @@
 package com.argusoft.path.tht.systemconfiguration.security.filters;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +32,8 @@ import java.util.Calendar;
  */
 @Component
 public class ContextSetterFilter extends OncePerRequestFilter {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(ContextSetterFilter.class);
 
     @Autowired
     private DefaultTokenServices defaultTokenServices;
@@ -58,6 +62,7 @@ public class ContextSetterFilter extends OncePerRequestFilter {
                 contextInfo = ((ContextInfo) authority.getPrincipal());
                 SecurityContextHolder.getContext().setAuthentication(authority);
             } catch (AuthenticationException | InvalidTokenException e) {
+                LOGGER.error("caught Exception in ContextSetterFilter ", e);
                 SecurityContextHolder.getContext().setAuthentication(null);
                 contextInfo = new ContextInfo();
             }

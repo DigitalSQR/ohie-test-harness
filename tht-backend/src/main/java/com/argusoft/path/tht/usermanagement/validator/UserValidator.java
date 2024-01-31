@@ -15,6 +15,8 @@ import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import java.util.Set;
 
 public class UserValidator {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(UserValidator.class);
+
     public static void validateUpdatePasswordInfoAgainstNullValues(UpdatePasswordInfo updatePasswordInfo) throws DataValidationErrorException {
         List<ValidationResultInfo> errors = new ArrayList<>();
         ValidationUtils.validateRequired(updatePasswordInfo.getBase64TokenId(), "base64TokenId", errors);
@@ -31,6 +35,7 @@ public class UserValidator {
         ValidationUtils.validateRequired(updatePasswordInfo.getNewPassword(), "newPassword", errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in UserValidator ");
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     errors);
@@ -45,6 +50,7 @@ public class UserValidator {
                 userEntity,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in UserValidator ");
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntitys);
@@ -71,6 +77,7 @@ public class UserValidator {
                 roleEntitySet.add(userService.getRoleById(item.getId(), contextInfo));
             } catch (DoesNotExistException | InvalidParameterException |
                      OperationFailedException ex) {
+                LOGGER.error("caught DoesNotExistException in UserValidator ", ex);
                 String fieldName = "roles";
                 errors.add(
                         new ValidationResultInfo(fieldName,
@@ -151,6 +158,7 @@ public class UserValidator {
                                 .getUserById(userEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
+                        LOGGER.error("caught DoesNotExistException in UserValidator ", ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
@@ -172,6 +180,7 @@ public class UserValidator {
                 validateCreateUser(userService, errors, userEntity, contextInfo);
                 break;
             default:
+                LOGGER.error("caught InvalidParameterException in UserValidator ");
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
@@ -235,8 +244,6 @@ public class UserValidator {
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              UserEntity userEntity,
                                              UserEntity originalEntity) {
-        //email can't be update
-        ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
 
         // state can't be updated
         ValidationUtils.validateNotUpdatable(userEntity.getState(), originalEntity.getState(), "state", errors);
@@ -258,6 +265,7 @@ public class UserValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in UserValidator ", ex);
                 // This is ok because created id should be unique
             }
         }

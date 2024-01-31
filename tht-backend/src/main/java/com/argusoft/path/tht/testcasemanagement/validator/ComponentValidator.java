@@ -14,6 +14,8 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import java.util.Set;
 
 public class ComponentValidator {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(ComponentValidator.class);
 
     public static void validateCreateUpdateComponent(String validationTypeKey, ComponentService componentService, SpecificationService specificationService, ComponentEntity componentEntity, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntities
@@ -32,6 +35,7 @@ public class ComponentValidator {
                 specificationService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in ComponentValidator ");
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
@@ -47,9 +51,11 @@ public class ComponentValidator {
             throws InvalidParameterException,
             OperationFailedException {
         if (componentEntity == null) {
+            LOGGER.error("caught InvalidParameterException in ComponentValidator ");
             throw new InvalidParameterException("componentEntity is missing");
         }
         if (StringUtils.isEmpty(validationTypeKey)) {
+            LOGGER.error("caught InvalidParameterException in ComponentValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
         }
         // VALIDATE
@@ -79,6 +85,7 @@ public class ComponentValidator {
                                 .getComponentById(componentEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
+                        LOGGER.error("caught DoesNotExistException in ComponentValidator ", ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
@@ -100,6 +107,7 @@ public class ComponentValidator {
                 validateCreateComponent(errors, componentEntity, componentService, contextInfo);
                 break;
             default:
+                LOGGER.error("caught InvalidParameterException in ComponentValidator ");
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
@@ -130,6 +138,7 @@ public class ComponentValidator {
             try {
                 specificationEntitySet.add(specificationService.getSpecificationById(item.getId(), contextInfo));
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in ComponentValidator ", ex);
                 String fieldName = "specification";
                 errors.add(
                         new ValidationResultInfo(fieldName,
@@ -194,6 +203,7 @@ public class ComponentValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in ComponentValidator ", ex);
                 // This is ok because created id should be unique
             }
         }

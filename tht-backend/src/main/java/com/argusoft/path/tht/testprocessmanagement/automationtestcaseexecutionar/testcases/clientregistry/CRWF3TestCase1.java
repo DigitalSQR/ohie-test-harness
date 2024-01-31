@@ -11,6 +11,8 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Patient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,6 +26,8 @@ import java.util.Map;
  */
 @Component
 public class CRWF3TestCase1 implements TestCase {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(CRWF3TestCase1.class);
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
@@ -88,6 +92,7 @@ public class CRWF3TestCase1 implements TestCase {
             }
 
         } catch (Exception ex) {
+            LOGGER.error("caught OperationFailedException in CRWF3TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

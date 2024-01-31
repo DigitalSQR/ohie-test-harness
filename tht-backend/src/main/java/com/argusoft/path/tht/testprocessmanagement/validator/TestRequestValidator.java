@@ -19,6 +19,8 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -31,6 +33,8 @@ import java.util.Objects;
 @Component
 public class TestRequestValidator {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestRequestValidator.class);
+
     private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
 
     public static void validateCreateUpdateTestRequest(String validationTypeKey, TestRequestEntity testRequestEntity, TestRequestService testRequestService, UserService userService, ComponentService componentService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
@@ -42,6 +46,7 @@ public class TestRequestValidator {
                 componentService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in TestRequestValidator ");
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
@@ -52,6 +57,7 @@ public class TestRequestValidator {
     public static void validateTestRequestReinitializeProcess(String testRequestId, String validationTypeKey, TestRequestService testRequestService, TestcaseResultService testcaseResultService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
 
         if (StringUtils.isEmpty(testRequestId)) {
+            LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
             throw new InvalidParameterException("testRequestId is missing");
         }
         List<ValidationResultInfo> validationResultEntities
@@ -62,6 +68,7 @@ public class TestRequestValidator {
                 testcaseResultService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in TestRequestValidator ");
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
@@ -100,6 +107,7 @@ public class TestRequestValidator {
                 }
             }
         } catch (DoesNotExistException | InvalidParameterException ex) {
+            LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
             String fieldName = "testRequestId";
             errors.add(
                     new ValidationResultInfo(fieldName,
@@ -130,6 +138,7 @@ public class TestRequestValidator {
                 testcaseResultService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+            LOGGER.error("caught DataValidationErrorException in TestRequestValidator ");
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
@@ -149,6 +158,7 @@ public class TestRequestValidator {
                 || StringUtils.isEmpty(refObjUri)
                 || StringUtils.isEmpty(refId)
                 || StringUtils.isEmpty(validationTypeKey)) {
+            LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
             throw new InvalidParameterException("inputData is missing");
         }
         List<ValidationResultInfo> errors = new ArrayList<>();
@@ -230,6 +240,7 @@ public class TestRequestValidator {
                 }
             }
         } catch (DoesNotExistException | InvalidParameterException ex) {
+            LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
             String fieldName = "testRequestId";
             errors.add(
                     new ValidationResultInfo(fieldName,
@@ -248,9 +259,11 @@ public class TestRequestValidator {
                                                                  ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (testRequestEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
         if (StringUtils.isEmpty(validationTypeKey)) {
+            LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
         }
         // VALIDATE
@@ -279,6 +292,7 @@ public class TestRequestValidator {
                                 .getTestRequestById(testRequestEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
+                        LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
@@ -300,6 +314,7 @@ public class TestRequestValidator {
                 validateCreateTestRequest(errors, testRequestEntity, testRequestService, contextInfo);
                 break;
             default:
+                LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
@@ -327,6 +342,7 @@ public class TestRequestValidator {
                         userService.getUserById(testRequestEntity.getApprover().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
                 String fieldName = "approver";
                 errors.add(
                         new ValidationResultInfo(fieldName,
@@ -340,6 +356,7 @@ public class TestRequestValidator {
                         userService.getUserById(testRequestEntity.getAssessee().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
                 String fieldName = "assessee";
                 errors.add(
                         new ValidationResultInfo(fieldName,
@@ -354,6 +371,7 @@ public class TestRequestValidator {
                         testRequestUrlEntity.setComponent(componentService.getComponentById(testRequestUrlEntity.getComponent().getId(), contextInfo));
                     }
                 } catch (DoesNotExistException | InvalidParameterException ex) {
+                    LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
                     String fieldName = "testRequestUrls.component";
                     errors.add(
                             new ValidationResultInfo(fieldName,
@@ -418,6 +436,7 @@ public class TestRequestValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
                 // This is ok because created id should be unique
             }
         }

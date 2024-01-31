@@ -21,6 +21,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +40,8 @@ import java.util.List;
 @RequestMapping("/user")
 @Api(value = "REST API for User services", tags = {"User API"})
 public class UserRestController {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(UserRestController.class);
 
     @Autowired
     private UserService userService;
@@ -108,6 +112,7 @@ public class UserRestController {
         try {
             isVerified = tokenVerificationService.verifyUserToken(base64TokenId, base64UserEmail, false, contextInfo);
         } catch (DoesNotExistException e) {
+            LOGGER.error("caught DoesNotExistException in UserRestController ", e);
             // return false as it is
         }
         vris.setLevel(isVerified ? ErrorLevel.OK : ErrorLevel.ERROR);
@@ -309,7 +314,8 @@ public class UserRestController {
             principalUser = userService
                     .getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
-            throw new OperationFailedException("InvalidParameterException while fetching principal User ", e);
+            LOGGER.error("caught InvalidParameterException in UserRestController ", e);
+            throw new OperationFailedException("InvalidParameterException while fetching principal User ",e);
         }
         return userMapper.modelToDto(principalUser);
     }

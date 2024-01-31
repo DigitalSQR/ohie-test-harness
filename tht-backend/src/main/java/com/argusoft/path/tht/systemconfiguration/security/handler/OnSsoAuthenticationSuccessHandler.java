@@ -13,6 +13,8 @@ import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,6 +42,8 @@ import java.util.stream.Collectors;
  */
 @Component
 public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(OnSsoAuthenticationSuccessHandler.class);
 
     @Autowired
     private DefaultTokenServices defaultTokenServices;
@@ -147,6 +151,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                 response.sendRedirect(s);
             }
         } catch (Exception e) {
+            LOGGER.error("caught Exception in OnSsoAuthenticationSuccessHandler ", e);
             //TODO: Add appropriate message.
             response.setStatus(500);
             e.printStackTrace();
@@ -157,6 +162,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
         try {
             return userService.getUserByEmail(oauth2User.<String>getAttribute("email"), contextInfo);
         } catch (DoesNotExistException ex) {
+            LOGGER.error("caught DoesNotExistException in OnSsoAuthenticationSuccessHandler ", ex);
             //If user not exists then create as Assessee.
             UserEntity userEntity = new UserEntity();
             userEntity.setEmail(oauth2User.<String>getAttribute("email"));

@@ -81,6 +81,7 @@ public class CRF3TestCase1 implements TestCase {
 
             return new ValidationResultInfo("testCRF3", ErrorLevel.OK, "Passed");
         } catch (Exception ex) {
+            LOGGER.error("caught OperationFailedException in CRF3TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }
