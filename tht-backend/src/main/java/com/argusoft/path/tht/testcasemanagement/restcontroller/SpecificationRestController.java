@@ -145,19 +145,6 @@ public class SpecificationRestController {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    public Page<SpecificationInfo> getSpecifications(
-            Pageable pageable,
-            ContextInfo contextInfo)
-            throws InvalidParameterException {
-        Page<SpecificationEntity> specifications = specificationService.getSpecifications(pageable, contextInfo);
-        return specificationMapper.pageEntityToDto(specifications);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @ApiOperation(value = "View a list of validation errors for Specification", response = List.class)
     @ApiResponses(value = {

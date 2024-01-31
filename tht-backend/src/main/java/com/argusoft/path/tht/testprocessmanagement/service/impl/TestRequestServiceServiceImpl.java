@@ -271,23 +271,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getTestRequests")
-    public Page<TestRequestEntity> getTestRequests(Pageable pageable,
-                                                   ContextInfo contextInfo)
-            throws InvalidParameterException {
-        if (pageable == null) {
-            throw new InvalidParameterException("pageable is missing");
-        }
-        Page<TestRequestEntity> testRequests = testRequestRepository.findTestRequests(pageable);
-        return testRequests;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @Override
     @Timed(name = "validateTestRequest")
