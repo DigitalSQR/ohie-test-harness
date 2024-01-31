@@ -228,7 +228,7 @@ public class TestcaseExecutioner {
         client.registerInterceptor(new LoggingInterceptor());
 
         //Add username/password authentication credentials to the client from test Request
-        client.registerInterceptor(new BasicAuthInterceptor(username, password));
+//        client.registerInterceptor(new BasicAuthInterceptor(username, password));
 
         //Add token authentication credentials to the client from test Request
         //String token = "";

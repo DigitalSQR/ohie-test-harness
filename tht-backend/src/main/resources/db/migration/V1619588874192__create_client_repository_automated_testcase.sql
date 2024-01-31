@@ -215,6 +215,21 @@ VALUES
         0
     ),
     (
+        'testcase.cr.crwf.1.3',
+        'Verify Patient Creation using Gherkin',
+        'Testcase to Verify Patient Creation using Gherkin',
+        'testcase.status.active',
+        3,
+        false,
+        'CRWF1TestCase3',
+        'specification.cr.crwf.1',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),
+    (
         'testcase.cr.crwf.2.1',
         'Verify Update Patient',
         'Testcase Verify Update Patient for Specification CRWF2 of the Client Registry',
