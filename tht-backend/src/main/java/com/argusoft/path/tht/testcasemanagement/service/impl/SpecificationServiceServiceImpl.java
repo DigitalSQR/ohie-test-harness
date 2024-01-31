@@ -74,7 +74,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             specificationEntity.setId(UUID.randomUUID().toString());
         }
         specificationEntity.setState(SpecificationServiceConstants.SPECIFICATION_STATUS_DRAFT);
-        specificationEntity = specificationRepository.save(specificationEntity);
+        specificationEntity = specificationRepository.saveAndFlush(specificationEntity);
         return specificationEntity;
     }
 
@@ -99,7 +99,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
                 specificationEntity,
                 contextInfo);
 
-        specificationEntity = specificationRepository.save(specificationEntity);
+        specificationEntity = specificationRepository.saveAndFlush(specificationEntity);
         return specificationEntity;
     }
 
@@ -207,7 +207,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         }
 
         specificationEntity.setState(stateKey);
-        specificationEntity = specificationRepository.save(specificationEntity);
+        specificationEntity = specificationRepository.saveAndFlush(specificationEntity);
 
         return specificationEntity;
     }

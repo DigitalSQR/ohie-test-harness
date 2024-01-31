@@ -195,7 +195,7 @@ public class UserServiceServiceImpl implements UserService {
         }
 
         UserValidator.validateCreateUpdateUser(this, Constant.CREATE_VALIDATION, userEntity, contextInfo);
-        userEntity = userRepository.save(userEntity);
+        userEntity = userRepository.saveAndFlush(userEntity);
 
         //On verification pending state, send mail for the email verification
         if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
@@ -217,7 +217,7 @@ public class UserServiceServiceImpl implements UserService {
             VersionMismatchException,
             DataValidationErrorException, InvalidParameterException {
         UserValidator.validateCreateUpdateUser(this, Constant.UPDATE_VALIDATION, userEntity, contextInfo);
-        userEntity = userRepository.save(userEntity);
+        userEntity = userRepository.saveAndFlush(userEntity);
         return userEntity;
     }
 

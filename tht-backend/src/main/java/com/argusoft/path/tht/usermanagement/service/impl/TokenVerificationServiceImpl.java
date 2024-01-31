@@ -50,7 +50,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     @Override
     @Timed(name = "createTokenVerification")
     public TokenVerificationEntity createTokenVerification(TokenVerificationEntity tokenVerificationEntity, ContextInfo contextInfo) {
-        return tokenVerificationRepository.save(tokenVerificationEntity);
+        return tokenVerificationRepository.saveAndFlush(tokenVerificationEntity);
     }
 
     @Override
@@ -184,7 +184,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     public TokenVerificationEntity updateTokenVerificationEntity(String tokenId, TokenVerificationEntity tokenVerification, ContextInfo contextInfo) throws DoesNotExistException {
         TokenVerificationEntity tokenById = this.getTokenById(tokenId, contextInfo);
         tokenVerification.setId(tokenById.getId());
-        tokenVerification = tokenVerificationRepository.save(tokenVerification);
+        tokenVerification = tokenVerificationRepository.saveAndFlush(tokenVerification);
         return tokenVerification;
     }
 }

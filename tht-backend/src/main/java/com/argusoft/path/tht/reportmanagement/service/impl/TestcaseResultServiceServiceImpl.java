@@ -89,7 +89,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             testcaseResultEntity.setId(UUID.randomUUID().toString());
         }
         testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
-        testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
+        testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
         return testcaseResultEntity;
     }
 
@@ -114,7 +114,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 testcaseResultEntity,
                 contextInfo);
 
-        testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
+        testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
         return testcaseResultEntity;
     }
 
@@ -144,7 +144,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 userService.getPrincipalUser(contextInfo);
         testcaseResultEntity.setTester(userEntity);
 
-        testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
+        testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
 
         if(!TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())) {
             changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
@@ -268,7 +268,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         }
 
         testcaseResultEntity.setState(stateKey);
-        testcaseResultEntity = testcaseResultRepository.save(testcaseResultEntity);
+        testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
 
         if (!testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
             updateChildTestcaseResult(testcaseResultEntity, contextInfo);
