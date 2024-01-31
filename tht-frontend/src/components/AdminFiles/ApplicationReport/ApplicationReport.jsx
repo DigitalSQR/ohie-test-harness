@@ -2,16 +2,29 @@ import React, { useEffect, useState } from "react";
 import Header from "../../CommonFiles/Header/Header";
 import "./application-report.scss";
 import Footer from "../../CommonFiles/Footer/Footer";
-import { useNavigate } from "react-router-dom";
-import api from "../../../api/configs/axiosConfigs";
+import { useNavigate, useParams } from "react-router-dom";
 import html2pdf from "html2pdf.js";
+import { TestRequestAPI } from "../../../api/TestRequestAPI";
+import { TestResultAPI } from "../../../api/TestResultAPI";
+import { UserAPI } from "../../../api/UserAPI";
+import { formatDate } from "../../../utils/utils.js";
+import { useLoader } from "../../loader/LoaderContext";
 const ApplicationReport = () => {
+  const { testRequestId } = useParams();
   const navigate = useNavigate();
   const [groupedData, setGroupedData] = useState({});
+  const [testRequest, setTestRequest] = useState();
+  const [user, setUser] = useState();
+  const { showLoader, hideLoader } = useLoader();
   useEffect(() => {
-    fetchData();
+    fetchTestCaseResultData();
+    fetchTestCaseRequestData();
   }, []);
 
+  const fetchUserDetails = async (userId) => {
+    const response = await UserAPI.getUserById(userId);
+    setUser({ name: response.name, email: response.email });
+  };
   const generatePDF = () => {
     const element = document.getElementById("report");
 
@@ -29,15 +42,18 @@ const ApplicationReport = () => {
     });
   };
 
-  const fetchData = async () => {
+  const fetchTestCaseRequestData = async () => {
+    const response = await TestRequestAPI.getTestRequestsById(testRequestId);
+    fetchUserDetails(response.assesseeId);
+    setTestRequest(response);
+    hideLoader();
+  };
+
+  const fetchTestCaseResultData = async () => {
+    showLoader();
     try {
-      const apiUrl =
-        "testcase-result?testRequestId=d9262cea-cc1a-4ab2-af65-57a77a3b77bd";
-      const response = await api.request({
-        url: apiUrl,
-        method: "GET",
-      });
-      const grouped = response.data.content.reduce((acc, item) => {
+      const response = await TestResultAPI.getTestCaseResultById(testRequestId);
+      const grouped = response.content.reduce((acc, item) => {
         if (item.refObjUri.split(".").pop() === "ComponentInfo") {
           if (!acc[item.id]) {
             acc[item.id] = {
@@ -81,12 +97,12 @@ const ApplicationReport = () => {
             <div className="col-12">
               <div className="d-flex align-items-center justify-content-between flex-wrap mb-4">
                 <h2>
-                  Application Report - <span>MedPlat</span>{" "}
+                  Application Report - <span>{testRequest?.name}</span>{" "}
                 </h2>
                 <div>
                   <button
                     onClick={() => {
-                      navigate("/dashboard/");
+                      navigate("/dashboard/applications");
                     }}
                     className="btn btn-link  py-2 font-size-14"
                   >
@@ -106,22 +122,26 @@ const ApplicationReport = () => {
                     <div className="row">
                       <div className="col-lg-3 col-md-6 col-12 mb-4">
                         <p>
-                          Assessee Name:<span>Ravi Shankar</span>
+                          Assessee Name:<span>{user?.name}</span>
                         </p>
                       </div>
                       <div className="col-lg-3 col-md-6 col-12 mb-4">
                         <p>
-                          Email ID:<span>rs@gmail.com</span>
+                          Email:
+                          <span>{user?.email}</span>
                         </p>
                       </div>
                       <div className="col-lg-3 col-md-6 col-12 mb-4">
                         <p>
-                          Company name:<span>ARGUSOFT</span>
+                          Company name:<span>{testRequest?.productName}</span>
                         </p>
                       </div>
                       <div className="col-lg-3 col-md-6 col-12 mb-4">
                         <p>
-                          Application Date:<span>12 November 2023</span>
+                          Application Date:
+                          <span>
+                            {formatDate(testRequest?.meta?.updatedAt)}
+                          </span>
                         </p>
                       </div>
                       <div className="col-12">
@@ -146,7 +166,7 @@ const ApplicationReport = () => {
                       </div>
                       <div className="col-lg-11 col-md-10 col-12 details">
                         <p>
-                          The <b> Medplat </b> system is <b> Compliant</b> to{" "}
+                          The <b> {testRequest?.name} </b> system is <b> Compliant</b> to{" "}
                           <b>
                             {" "}
                             Client Registry and Non-functional requirements{" "}
@@ -171,6 +191,7 @@ const ApplicationReport = () => {
                           <tr>
                             <th className="col-3">COMPONENTS</th>
                             <th>SPECIFICATIONS</th>
+                            <th>STATUS</th>
                             <th>RESULTS</th>
                           </tr>
                         </thead>
@@ -191,6 +212,12 @@ const ApplicationReport = () => {
                                     </td>
                                     <td>
                                       {component.requiredSpecification[0]?.name}
+                                    </td>
+                                    <td>
+                                      {component.requiredSpecification[0]?.state
+                                        .split(".")
+                                        .pop()
+                                        .toUpperCase()}
                                     </td>
                                     <td
                                       className={
@@ -227,6 +254,12 @@ const ApplicationReport = () => {
                                       >
                                         <td></td>
                                         <td>{specification.name}</td>
+                                        <td>
+                                          {specification.state
+                                            .split(".")
+                                            .pop()
+                                            .toUpperCase()}
+                                        </td>
                                         <td
                                           className={
                                             specification.success
@@ -269,6 +302,7 @@ const ApplicationReport = () => {
                           <tr>
                             <th className="col-3">COMPONENTS</th>
                             <th>SPECIFICATIONS</th>
+                            <th>Status</th>
                             <th>RESULTS</th>
                             <th>GRADE</th>
                           </tr>
@@ -294,6 +328,12 @@ const ApplicationReport = () => {
                                         component.nonRequiredSpecifications[0]
                                           ?.name
                                       }
+                                    </td>
+                                    <td>
+                                      {component.nonRequiredSpecifications[0]?.state
+                                        .split(".")
+                                        .pop()
+                                        .toUpperCase()}
                                     </td>
                                     <td
                                       className={
@@ -333,6 +373,12 @@ const ApplicationReport = () => {
                                       >
                                         <td></td>
                                         <td>{specification.name}</td>
+                                        <td>
+                                          {specification.state
+                                            .split(".")
+                                            .pop()
+                                            .toUpperCase()}
+                                        </td>
                                         <td
                                           className={
                                             specification.success
