@@ -10,9 +10,9 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.KeyCategory;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.collect.Multimap;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -728,7 +728,7 @@ public final class ValidationUtils {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setElement("state");
             validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("provided transition is not valid ");
+            validationResultInfo.setMessage("provided transition is not valid [Current state : " + currentState + " , Next state : " + nextState + " ]");
             errors.add(validationResultInfo);
         }
     }

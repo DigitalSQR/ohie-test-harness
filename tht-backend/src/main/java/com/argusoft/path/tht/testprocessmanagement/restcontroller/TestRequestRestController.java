@@ -206,7 +206,7 @@ public class TestRequestRestController {
             @PathVariable("testRequestId") String testRequestId,
             @RequestParam("refObjUri") String refObjUri,
             @RequestParam("refId") String refId,
-            @RequestParam("isManual") Boolean isManual,
+            @RequestParam("manual") Boolean isManual,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
         testRequestService.reinitializeTestingProcess(

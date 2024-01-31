@@ -107,7 +107,7 @@ public class TestcaseExecutioner {
 
     public void reinitializeTestingProcess(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws OperationFailedException {
         try {
-            List<TestcaseResultEntity> testcaseResultEntities = fetchTestcaseResultsByInputs(testRequestId, refObjUri, refId, isManual, contextInfo);
+            List<TestcaseResultEntity> testcaseResultEntities = fetchTestcaseResultsByInputsForManual(testRequestId, refObjUri, refId, isManual, contextInfo);
             changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
         } catch (DoesNotExistException | InvalidParameterException | OperationFailedException |
                  VersionMismatchException ex) {
@@ -268,15 +268,67 @@ public class TestcaseExecutioner {
 
     private void changeTestcaseResultsState(List<TestcaseResultEntity> testcaseResultEntities, String newState, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
-            testcaseResultService.changeState(testcaseResult.getId(), newState, contextInfo);
+            if(!newState.equals(testcaseResult.getState())) {
+                testcaseResultService.changeState(testcaseResult.getId(), newState, contextInfo);
+            }
         }
+    }
+
+    private List<TestcaseResultEntity> fetchTestcaseResultsByInputsForManual(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+        List<TestcaseResultEntity> filteredTestcaseResults;
+
+        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+        testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
+        testcaseResultCriteriaSearchFilter.setManual(Objects.equals(isManual, Boolean.TRUE));
+
+        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
+
+        Optional<TestcaseResultEntity> optionalTestcaseResultEntity = testcaseResultEntities.stream().filter(testcaseResultEntity -> {
+            return testcaseResultEntity.getRefObjUri().equals(refObjUri) && testcaseResultEntity.getRefId().equals(refId);
+        }).findFirst();
+
+        if (!optionalTestcaseResultEntity.isPresent()) {
+            throw new OperationFailedException("No TestcaseResult found for the inputs.");
+        }
+        TestcaseResultEntity testcaseResultEntity = optionalTestcaseResultEntity.get();
+        if (refObjUri.equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
+            filteredTestcaseResults = Arrays.asList(testcaseResultEntity);
+        } else if (refObjUri.equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
+            filteredTestcaseResults
+                    = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                    }).collect(Collectors.toList());
+        } else if (refObjUri.equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
+            List<String> specificationTestcaseResultIds = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                    }).map(tcre -> tcre.getId()).collect(Collectors.toList());
+            filteredTestcaseResults
+                    = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
+                    }).collect(Collectors.toList());
+        } else {
+            filteredTestcaseResults
+                    = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        return filteredTestcaseResults;
     }
 
     private List<TestcaseResultEntity> fetchTestcaseResultsByInputs(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
-        testcaseResultCriteriaSearchFilter.setState(Collections.singletonList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT));
+        testcaseResultCriteriaSearchFilter.setState(Arrays.asList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP));
         testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
         testcaseResultCriteriaSearchFilter.setManual(Objects.equals(isManual, Boolean.TRUE));
 
@@ -320,7 +372,7 @@ public class TestcaseExecutioner {
                     .collect(Collectors.toList());
         }
 
-        return filteredTestcaseResults;
+        return filteredTestcaseResults.stream().filter(testcaseResultEntity1 -> testcaseResultEntity1.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT)).collect(Collectors.toList());
     }
 
     private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
