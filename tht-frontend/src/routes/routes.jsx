@@ -26,6 +26,7 @@ import ComponentList from "../components/TestcaseConfig/ComponentList/ComponentL
 import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
 import ComponentSpecification from "../components/TestcaseConfig/ComponentSpecification/ComponentSpecification";
 import ManualTestCases from "../components/TestcaseConfig/SpecQuestions/SpecQuestions";
+import EditQuestion from "../components/TestcaseConfig/EditQuestion/EditQuestion";
 const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
 
@@ -73,6 +74,7 @@ const routes = createBrowserRouter([
         path: "manual-testcases/:specificationId",
         element: <ManualTestCases />,
       },
+      { path: "edit-question", element: <EditQuestion /> },
     ],
   },
   { path: "/", element: <Navigate to="/login" /> },
