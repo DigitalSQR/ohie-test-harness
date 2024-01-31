@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TestcaseValidator {
 
@@ -181,15 +182,15 @@ public class TestcaseValidator {
     private static void validateCommonRequired(TestcaseEntity testcaseEntity,
                                                List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testcaseEntity.getSpecification(), "specification", errors);
+        if(Objects.equals(Boolean.TRUE, testcaseEntity.getManual())) {
+            ValidationUtils.validateRequired(testcaseEntity.getBeanName(), "beanName", errors);
+        }
     }
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              TestcaseEntity testcaseEntity,
                                              TestcaseEntity originalEntity) {
-        //className can't be updatable
-        ValidationUtils.validateNotUpdatable(testcaseEntity.getBeanName(), originalEntity.getBeanName(), "beanName", errors);
-
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseEntity.getState(), originalEntity.getState(), "state", errors);
     }
@@ -214,6 +215,9 @@ public class TestcaseValidator {
     private static void validateTestcaseEntityClassName(TestcaseEntity testcaseEntity,
                                                         ApplicationContext applicationContext,
                                                         List<ValidationResultInfo> errors) {
+        if(StringUtils.isEmpty(testcaseEntity.getBeanName())) {
+            return;
+        }
         try {
             TestCase cRTestCases = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
         } catch (Exception e) {
