@@ -8,9 +8,11 @@ package com.argusoft.path.tht.reportmanagement.models.entity;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * This model is mapped to user table in database.
@@ -63,6 +65,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     @Column(name = "duration")
     private Long duration;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Set<TestResultOptionEntity> testResultOptions;
 
     public Integer getRank() {
         return rank;
@@ -166,5 +171,13 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     public void setDuration(Long duration) {
         this.duration = duration;
+    }
+
+    public Set<TestResultOptionEntity> getTestResultOption() {
+        return testResultOptions;
+    }
+
+    public void setTestResultOption(Set<TestResultOptionEntity> testResultOptions) {
+        this.testResultOptions = testResultOptions;
     }
 }

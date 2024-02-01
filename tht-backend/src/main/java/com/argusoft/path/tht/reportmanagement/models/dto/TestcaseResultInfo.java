@@ -6,9 +6,12 @@
 package com.argusoft.path.tht.reportmanagement.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestUrlInfo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This info is for TestcaseResult DTO that contains all the TestcaseResult model's data.
@@ -107,6 +110,25 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             dataType = "Long",
             required = false)
     private Long duration;
+
+    @ApiModelProperty(notes = "The testResultOption of the testcaseResult",
+            allowEmptyValue = false,
+            example = "1",
+            dataType = "Set<TestResultOptionInfo>",
+            required = true)
+    private Set<TestResultOptionInfo> testResultOptions;
+
+    public Set<TestResultOptionInfo> getTestResultOptions() {
+        if (testResultOptions == null) {
+            testResultOptions = new HashSet<>();
+        }
+        return testResultOptions;
+    }
+
+    public void setTestResultOptions(Set<TestResultOptionInfo> testResultOptions) {
+        this.testResultOptions = testResultOptions;
+    }
+
 
     public String getParentTestcaseResultId() {
         return parentTestcaseResultId;
