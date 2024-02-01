@@ -3,12 +3,14 @@ package com.argusoft.path.tht.usermanagement.filter;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -33,7 +35,14 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     )
     private String email;
 
+    @ApiParam(
+            value = "role of the user"
+    )
+    private String role;
+
     private Root<UserEntity> userEntityRoot;
+
+    private Join<UserEntity, RoleEntity> userEntityRoleEntityJoin;
 
     public UserSearchCriteriaFilter(String id) {
         this.id = id;
@@ -66,6 +75,10 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
 
         if (StringUtils.hasLength(getEmail())) {
             predicates.add(criteriaBuilder.equal(getUserEntityRoot().get("email"), getEmail()));
+        }
+
+        if(StringUtils.hasLength(getRole())){
+            predicates.add(criteriaBuilder.equal(this.getUserEntityRoleEntityJoin().get("id"),getRole()));
         }
 
         return predicates;
@@ -108,11 +121,29 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         this.id = id;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     private Root<UserEntity> getUserEntityRoot() {
         return userEntityRoot;
     }
 
     private void setUserEntityRoot(Root<UserEntity> userEntityRoot) {
         this.userEntityRoot = userEntityRoot;
+        this.userEntityRoleEntityJoin = null;
     }
+
+    private Join<UserEntity, RoleEntity> getUserEntityRoleEntityJoin() {
+        if(userEntityRoleEntityJoin==null){
+            userEntityRoleEntityJoin = getUserEntityRoot().join("roles");
+        }
+        return userEntityRoleEntityJoin;
+    }
+
+
 }
