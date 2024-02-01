@@ -9,7 +9,7 @@ export const TestResultAPI = {
 				params: {
 					testRequestId: trid,
 					manual: true,
-					size: "50",
+					size: "100",
 					sort: "rank",
 				},
 			});
@@ -19,7 +19,7 @@ export const TestResultAPI = {
 			throw error;
 		}
 	},
-	getQuestions: async function (parentTestcaseResultId,currentPage) {
+	getQuestions: async function (parentTestcaseResultId, currentPage) {
 		try {
 			const response = await api.request({
 				url: `/testcase-result`,
@@ -28,7 +28,7 @@ export const TestResultAPI = {
 					parentTestcaseResultId: parentTestcaseResultId,
 					sort: "rank",
 					size: 1,
-					page:currentPage
+					page: currentPage,
 				},
 			});
 			return response.data;
@@ -51,20 +51,44 @@ export const TestResultAPI = {
 			throw error;
 		}
 	},
-
-	getTestCaseResultById: async function (testRequestId) {
+	saveOptions: async function (testcaseResultId, selectedTestcaseOptionId) {
 		try {
-		  const response = await api.request({
-			url: "/testcase-result",
-			method: "GET",
-			params: {
-			  testRequestId: testRequestId,
-			},
-		  });
-		  return response.data;
+			const response = await api.request({
+				url: `testcase-result/submit/${testcaseResultId}/${selectedTestcaseOptionId}`,
+				method: "PATCH",
+			});
+			console.log("The saveOptions result is ", response.data);
+			return response.data;
 		} catch (error) {
-		  throw error;
+			throw error;
 		}
-	  }
-	  
+	},
+	fetchCasesForProgressBar: async function (params) {
+		try {
+			const response = await api.request({
+				url: "/testcase-result",
+				method: "GET",
+				params: params,
+			});
+			return response;
+		} catch (error) {
+			throw error;
+		}
+	},
+	startTests: async function (params) {
+		try {
+			const response = await api.request({
+				url: `/test-request/start-testing-process/${params.testRequestId}`,
+				method: "PUT",
+				params:{
+					manual:params.manual,
+					refId:params.testRequestId,
+					refObjUri:params.TESTREQUEST_REFOBJURI,
+					testRequestId:params.testRequestId
+				}
+			});
+		} catch (error) {
+			throw error;
+		}
+	},
 };
