@@ -27,7 +27,7 @@ const UserRegistration = () => {
     currentPage,
     pageSize
   ) => {
-    showLoader()
+    showLoader();
     UserAPI.getUserByState(sortFieldName, sortDirection, currentPage, pageSize)
       .then((res) => {
         hideLoader();
@@ -54,10 +54,10 @@ const UserRegistration = () => {
   };
 
   const changeState = (userId, state, newState) => {
-    showLoader()
+    showLoader();
     UserAPI.changeState(userId, state)
       .then((res) => {
-        hideLoader()
+        hideLoader();
         notification.success({
           description: `Request has been ${newState}`,
           placement: "bottom-left",
@@ -125,7 +125,7 @@ const UserRegistration = () => {
           <table className=" data-table">
             <thead>
               <tr>
-                <th>
+                <th className="col-2">
                   NAME
                   <a
                     className="ps-1"
@@ -135,7 +135,7 @@ const UserRegistration = () => {
                     <img src={sortIcon} alt="e" />
                   </a>
                 </th>
-                <th>
+                <th className="col-2">
                   Email
                   <a
                     className="ps-1"
@@ -145,9 +145,9 @@ const UserRegistration = () => {
                     <img src={sortIcon} alt="e" />
                   </a>
                 </th>
-                <th>Company</th>
-                <th>requested date</th>
-                <th>
+                <th className="col-2">Company</th>
+                <th className="col-2">requested date</th>
+                <th className="col-2">
                   Status
                   <a
                     className="ps-1"
@@ -157,7 +157,7 @@ const UserRegistration = () => {
                     <img src={sortIcon} alt="e" />
                   </a>
                 </th>
-                <th>CHOOSE ACTION</th>
+                <th className="col-2">CHOOSE ACTION</th>
               </tr>
             </thead>
             <tbody>
