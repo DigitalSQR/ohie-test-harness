@@ -66,9 +66,13 @@ public class GradeEvaluator {
             }
 
             int totalElements = testcaseResultEntities.size();
-            int successElements = (int) testcaseResultEntities.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).count();
-
-            Integer percentage = getPercentage(successElements,totalElements);
+            int successElements = (int) testcaseResultEntities.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess()) && testcaseResultEntity.getRequired()).count();
+            int percentage;
+            if(totalElements == 0){
+                percentage = 100;
+            }else {
+                percentage = getPercentage(successElements, totalElements);
+            }
             Optional<GradeEntity> gradeBasedOnPercentageRange = gradeService.getGradeBasedOnPercentageRange(percentage, contextInfo);
             grade = gradeBasedOnPercentageRange.map(GradeEntity::getGrade).orElse(null);
 
