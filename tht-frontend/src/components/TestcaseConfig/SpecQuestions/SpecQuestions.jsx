@@ -31,7 +31,7 @@ const ManualTestCases = () => {
       const resp = await TestCaseAPI.getTestCasesBySpecificationId(
         specificationId
       );
-      console.log(resp.content[0].id);
+      console.log(resp);
       const questionPromises = resp.content.map(async (testcase) => {
         try {
           const optionsResp = await fetchTestCaseOptions(testcase.id);
@@ -42,6 +42,7 @@ const ManualTestCases = () => {
             description: testcase.description,
             question: testcase.name,
             rank: testcase.rank,
+            testcase,
             options,
           };
         } catch (optionsError) {

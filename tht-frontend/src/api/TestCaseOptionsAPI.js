@@ -21,7 +21,18 @@ export const TestCaseOptionsAPI = {
         method: "PUT",
         data,
       });
-      console.log(response);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  editTestCaseOptionsState: async function (data) {
+    try {
+      const response = await api.request({
+        url: `/testcase-option/state/{testcaseOptionId}/{changeState}`,
+        method: "PATCH",
+        data,
+      });
       return response.data;
     } catch (error) {
       throw error;

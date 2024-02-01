@@ -4,14 +4,15 @@ import { Button, Select, notification } from "antd";
 import "./EditQuestion.scss";
 import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
 import { useLoader } from "../../loader/LoaderContext";
+import { TestCaseAPI } from "../../../api/TestCaseAPI";
 
 const { Option } = Select;
 
 const EditQuestion = () => {
   const location = useLocation();
-  const { testcase } = location.state;
+  let { testcase } = location.state;
   const { showLoader, hideLoader } = useLoader();
-
+  const [loading, setLoading] = useState(false);
   const [editedQuestion, setEditedQuestion] = useState(testcase.question);
   const [editedOptions, setEditedOptions] = useState(
     testcase.options.map((option) => ({
@@ -22,13 +23,20 @@ const EditQuestion = () => {
       changesMade: false,
     }))
   );
+  const [questionChanged, setQuestionChanged] = useState(false);
+
   const [changesMade, setChangesMade] = useState(false);
 
   const handleChange = () => {};
 
   const handleQuestionChange = (newValue) => {
     setEditedQuestion(newValue);
-    setChangesMade(true);
+
+    // Check if the new value is different from the original question
+    setQuestionChanged(newValue !== testcase.question);
+
+    // Enable/disable Save button based on the questionChanged state
+    setChangesMade(newValue !== testcase.question);
   };
 
   const handleOptionChange = (index, newValue) => {
@@ -56,6 +64,40 @@ const EditQuestion = () => {
     setChangesMade(true);
   };
 
+  const handleSaveQuestion = async () => {
+    try {
+      setLoading(true);
+      showLoader();
+
+      const body = {
+        ...testcase.testcase,
+        meta: {
+          version: testcase.testcase.meta?.version,
+        },
+        name: editedQuestion,
+      };
+      const resp = await TestCaseAPI.editTestCaseName(body);
+      console.log(resp);
+
+      notification.success({
+        placement: "bottomRight",
+        message: "Question saved successfully",
+      });
+
+      await fetchTestCaseQuestion();
+    } catch (error) {
+      console.error("Error saving question:", error);
+
+      notification.error({
+        placement: "bottomRight",
+        message: "Failed to save question",
+      });
+    } finally {
+      setLoading(false);
+      hideLoader();
+    }
+  };
+
   const handleSaveOption = async (index) => {
     try {
       showLoader();
@@ -77,7 +119,7 @@ const EditQuestion = () => {
         message: "Option saved successfully",
       });
 
-      await fetchData();
+      await fetchTestCaseOptions();
     } catch (error) {
       console.error("Error saving option:", error);
 
@@ -90,7 +132,7 @@ const EditQuestion = () => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchTestCaseOptions = async () => {
     try {
       showLoader();
 
@@ -114,11 +156,38 @@ const EditQuestion = () => {
         }))
       );
     } catch (error) {
-      console.error("Error loadd option:", error);
+      console.error("Error loading options:", error);
 
       notification.error({
         placement: "bottomRight",
-        message: "Failed to loadd option",
+        message: "Failed to load options",
+      });
+    } finally {
+      hideLoader();
+    }
+  };
+
+  const fetchTestCaseQuestion = async () => {
+    try {
+      showLoader();
+
+      const testcaseId = testcase.id;
+
+      const resp = await TestCaseAPI.getTestCasesById(testcaseId);
+
+      testcase.testcase = {
+        ...testcase.testcase,
+        ...resp,
+      };
+
+      console.log(testcase.testcase);
+      setEditedQuestion(resp.name);
+    } catch (error) {
+      console.error("Error loading options:", error);
+
+      notification.error({
+        placement: "bottomRight",
+        message: "Failed to load options",
       });
     } finally {
       hideLoader();
@@ -135,15 +204,23 @@ const EditQuestion = () => {
             </b>
           </div>
         </div>
-        <div>
-          <div className="row mb-2 justify-content-between align-items-center my-5">
-            <label className="col-auto">Question:</label>
-            <textarea
-              className="col mx-3 ml-5 form-control non-resizable"
-              rows="4"
-              value={editedQuestion}
-              onChange={(e) => handleQuestionChange(e.target.value)}
-            />
+        <div className="row mb-2 justify-content-between align-items-center my-5">
+          <label className="col-auto">Question:</label>
+          <textarea
+            className="col mx-3 ml-5 form-control non-resizable"
+            rows="4"
+            value={editedQuestion}
+            onChange={(e) => handleQuestionChange(e.target.value)}
+          />
+          <div className="col-md-2 text-center">
+            <Button
+              className="smaller-button"
+              type="primary"
+              onClick={handleSaveQuestion}
+              disabled={!changesMade || loading}
+            >
+              Save
+            </Button>
           </div>
         </div>
         <div className="my-5">
