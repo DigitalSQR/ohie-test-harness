@@ -69,7 +69,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/metrics/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
-                .antMatchers("/user/sendEmail").permitAll()
                 .anyRequest().authenticated();
 
         http.headers().frameOptions().and()
