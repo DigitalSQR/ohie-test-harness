@@ -12,11 +12,9 @@ const ManualTestCases = () => {
   const { showLoader, hideLoader } = useLoader();
   const [questions, setQuestions] = useState();
 
-
   useEffect(() => {
     fetchData();
   }, []);
-
 
   const handleUpdate = (question) => {
     console.log(question);
@@ -33,7 +31,6 @@ const ManualTestCases = () => {
       const resp = await TestCaseAPI.getTestCasesBySpecificationId(
         specificationId
       );
-      console.log(resp.content[0].id);
       console.log(resp.content[0].id);
       const questionPromises = resp.content.map(async (testcase) => {
         try {
