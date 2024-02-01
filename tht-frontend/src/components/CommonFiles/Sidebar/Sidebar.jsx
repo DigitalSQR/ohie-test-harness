@@ -120,7 +120,7 @@ export default function Sidebar() {
                   title="User Registration"
                   className="bi bi-columns-gap menu-left-icon"
                 ></i>
-                <span> User Registration </span>
+                <span> Assessee </span>
               </a>
             </li>
             <li>
