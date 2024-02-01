@@ -117,7 +117,7 @@ const AdminUsers = () => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>
+                  <th className="col-3">
                     NAME
                     <a
                       className="ps-1"
@@ -127,7 +127,7 @@ const AdminUsers = () => {
                       <img src={sortIcon} alt="e" />
                     </a>
                   </th>
-                  <th>
+                  <th className="col-3">
                     EMAIL
                     <a
                       className="ps-1"
@@ -137,8 +137,8 @@ const AdminUsers = () => {
                       <img src={sortIcon} alt="e" />
                     </a>
                   </th>
-                  <th>ROLE</th>
-                  <th>ACTIONS</th>
+                  <th className="col-3">ROLE</th>
+                  <th className="col-3">ACTIONS</th>
                 </tr>
               </thead>
               <tbody>

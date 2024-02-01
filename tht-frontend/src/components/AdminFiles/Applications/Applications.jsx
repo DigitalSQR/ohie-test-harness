@@ -134,7 +134,7 @@ const Applications = () => {
             <table className=" data-table">
               <thead>
                 <tr>
-                  <th>
+                  <th className="col-2">
                     APP NAME{" "}
                     <a className="ps-1" href="#">
                       <img
@@ -144,7 +144,7 @@ const Applications = () => {
                       />
                     </a>
                   </th>
-                  <th>
+                  <th className="col-2">
                     COMPANY NAME{" "}
                     <a className="ps-1" href="#">
                       <img
@@ -154,11 +154,11 @@ const Applications = () => {
                       />
                     </a>
                   </th>
-                  <th>DATE OF APPLICATION</th>
-                  <th>
+                  <th className="col-2">DATE OF APPLICATION</th>
+                  <th className="col-2">
                     EMAIL ID <a className="ps-1" href="#"></a>
                   </th>
-                  <th>CHOOSE ACTION</th>
+                  <th className="col-2">CHOOSE ACTION</th>
                 </tr>
               </thead>
               <tbody>

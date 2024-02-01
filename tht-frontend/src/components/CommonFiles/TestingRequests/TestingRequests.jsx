@@ -125,21 +125,16 @@ const TestingRequests = () => {
             <table className=" data-table">
               <thead>
                 <tr>
-                  <th>APP NAME</th>
-                  <th>DATE OF APPLICATION</th>
-                  <th>Assessee</th>
-                  <th>COMPONENTS</th>
-                  <th>APP URL</th>
-                  <th>STATUS</th>
-                  {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) &&
-                  (filterState ===
-                    TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ||
-                    filterState ===
-                      TestRequestStateConstants.TEST_REQUEST_STATUS_DRAFT) ? (
-                    <th>Action</th>
-                  ) : null}
+                  <th className="col-2">APP NAME</th>
+                  <th className="col-2">DATE OF APPLICATION</th>
+                  <th className="col-2">Assessee</th>
+                  <th className="col-2">COMPONENTS</th>
+                  <th className="col-2">APP URL</th>
+                  <th className="col-2">STATUS</th>
+                  <th className="col-2">ACTION</th>
                 </tr>
               </thead>
+
               <tbody>
                 {testRequests.length === 0 ? (
                   <>
