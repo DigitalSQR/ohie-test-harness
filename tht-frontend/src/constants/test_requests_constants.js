@@ -10,7 +10,7 @@ export const TestRequestStateConstants = {
 };
 
 export const TestRequestStateLabels = [
-    {label: "Draft", value: "test.request.status.draft"},
+    // {label: "Draft", value: "test.request.status.draft"},
     {label: "Pending", value: "test.request.status.pending"},
     {label: "Accepted", value: "test.request.status.accepted"},
     {label: "Rejected", value: "test.request.status.rejected"},

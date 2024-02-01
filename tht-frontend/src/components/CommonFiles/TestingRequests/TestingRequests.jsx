@@ -24,7 +24,7 @@ const TestingRequests = () => {
   ];
   const { showLoader, hideLoader } = useLoader();
   const [filterState, setFilterState] = useState(
-    TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING
+    ""
   );
   const [userRoles, setUserRoles] = useState([USER_ROLES.ROLE_ID_ASSESSEE]);
   const [testRequests, setTestRequests] = useState([]);
