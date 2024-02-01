@@ -35,16 +35,7 @@ const ManualTestCases = () => {
       const questionPromises = resp.content.map(async (testcase) => {
         try {
           const optionsResp = await fetchTestCaseOptions(testcase.id);
-          const options = optionsResp
-            .map((option) => {
-              return {
-                metaVersion: option.meta.version,
-                id: option.id,
-                name: option.name,
-                rank: option.rank,
-              };
-            })
-            .sort((a, b) => a.rank - b.rank);
+          const options = optionsResp.sort((a, b) => a.rank - b.rank);
           return {
             id: testcase.id,
             metaVersion: testcase.meta.version,

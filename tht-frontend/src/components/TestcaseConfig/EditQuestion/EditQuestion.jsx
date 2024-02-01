@@ -16,7 +16,7 @@ const EditQuestion = () => {
   const [editedOptions, setEditedOptions] = useState(
     testcase.options.map((option) => ({
       label: option.name,
-      metaVersion: option.metaVersion,
+      metaVersion: option.meta.version,
       checked: false,
       status: "Active",
       changesMade: false,
@@ -60,13 +60,11 @@ const EditQuestion = () => {
     try {
       showLoader();
 
-      const optionId = testcase.options[index].id;
-
       const body = {
+        ...testcase.options[index],
         meta: {
           version: editedOptions[index].metaVersion,
         },
-        id: optionId,
         name: editedOptions[index].label,
         testcaseId: testcase.id,
       };
@@ -102,23 +100,14 @@ const EditQuestion = () => {
         testcaseId
       );
 
-      const options = resp.content
-        .map((option) => {
-          return {
-            metaVersion: option.meta.version,
-            id: option.id,
-            name: option.name,
-            rank: option.rank,
-          };
-        })
-        .sort((a, b) => a.rank - b.rank);
+      const options = resp.content.sort((a, b) => a.rank - b.rank);
 
       testcase.options = options;
 
       setEditedOptions(
         options.map((option) => ({
           label: option.name,
-          metaVersion: option.metaVersion,
+          metaVersion: option.meta.version,
           checked: false,
           status: "Active",
           changesMade: false,
