@@ -28,7 +28,7 @@ export const UserAPI = {
     try {
       const response = await api.request({
         url: `/user/state/${userId}/${state}`,
-        method: "PUT",
+        method: "PATCH",
       });
       return response;
     } catch (error) {
