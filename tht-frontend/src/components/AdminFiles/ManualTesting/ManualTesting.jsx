@@ -8,7 +8,7 @@ import pdf_logo from "../../../styles/images/pdf.png";
 import img_logo from "../../../styles/images/img.png";
 import question_img_logo from "../../../styles/images/question-img.png";
 import "./functional-testing.scss";
-import { Tabs } from "antd";
+import { Tabs, notification } from "antd";
 import { Select } from "antd";
 import { Option } from "antd/es/mentions";
 import TestCase from "../TestCase/TestCase";
@@ -17,13 +17,14 @@ export default function ManualTesting() {
 	const [testId, setTestId] = useState();
 	const [manualQuestions, setManualQuestions] = useState([]);
 	const [componentId, setComponentId] = useState();
+	const [activeSpecification, setActiveSpecification] = useState();
 	const { Item } = Tabs;
 	useEffect(() => {
 		TestResultAPI.getTestCases(testRequestId)
 			.then((res) => {
 				setTestId(res.content[0].id);
 				setManualQuestions(res.content);
-				setComponentId(res.content[1].id)
+				setComponentId(res.content[1].id);
 				console.log(res.content);
 			})
 			.catch((error) => {
@@ -36,8 +37,23 @@ export default function ManualTesting() {
 	// 	return options.content;
 	// };
 
+	const nextSpecification = (rank) => {
+		const nextEntry = manualQuestions.filter((entry) => {
+			return entry.rank == rank;
+		});
+		if(nextEntry[0]!=undefined){
+		setActiveSpecification(nextEntry[0].id);
+		}else{
+			notification.info({
+				description:"No more questions remaining.",
+				placement:"bottomRight"
+			})
+		}
+	};
+
 	const getSpecifications = () => {
 		const items = [];
+	
 		manualQuestions
 			.filter(
 				(specification) =>
@@ -49,6 +65,7 @@ export default function ManualTesting() {
 					id: specification.id, // i changed it from specification to specification.id
 				});
 			});
+		
 
 		return items;
 	};
@@ -80,14 +97,12 @@ export default function ManualTesting() {
 					})}
 			</Select>
 			{!!componentId && (
-				<Tabs>
+				<Tabs activeKey={activeSpecification} onChange={(val)=>{setActiveSpecification(val)}}>
 					{getSpecifications().map((specification) => (
-						<Item
-							key={specification.title}
-							tab={specification.title}
-						>
+						<Item  key={specification.id} tab={specification.title}>
 							<TestCase
-								specificationId={specification.id} testRequestId={testRequestId}
+								specificationId={specification.id}
+								nextSpecification={nextSpecification}
 							></TestCase>
 						</Item>
 					))}

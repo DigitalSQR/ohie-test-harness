@@ -48,7 +48,7 @@ const routes = createBrowserRouter([
 			{ path: "applications", element: <Applications /> },
 			{ path: "choose-test/:testRequestId", element: <ChooseTest />, },
 			{ path: "manual-testing/:testRequestId", element: <ManualTesting /> },
-			{ path: "workflow-testing", element: <WorkFlowTesting /> },
+			{ path: "workflow-testing/:testRequestId", element: <WorkFlowTesting /> },
 			{ path: "user-registration", element: <UserRegistration /> },
 			{ path: "register-application", element: <RegisterApplication />},
       { path: "admin-users", element: <AdminUsers /> },

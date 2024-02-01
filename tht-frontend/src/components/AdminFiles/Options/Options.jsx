@@ -4,10 +4,10 @@ import "./Options.scss";
 import { useLoader } from "../../loader/LoaderContext";
 
 export default function Options(props) {
-	const { refId } = props;
+	const { refId,setSelectedOption,testcaseOptionId } = props;
 	const [options, setOptions] = useState([]);
-	const [selectedOption, setSelectedOption] = useState(null);
-	const {showLoader,hideLoader} = useLoader();
+	const [currentOption, setCurrentOption] = useState();
+	const { showLoader, hideLoader } = useLoader();
 
 	useEffect(() => {
 		showLoader();
@@ -20,8 +20,15 @@ export default function Options(props) {
 			.catch((error) => {
 				throw error;
 			});
+				setCurrentOption(testcaseOptionId);
+				setSelectedOption(testcaseOptionId);
+			
 	}, []);
 
+	const handleChange = (e) => {
+		setCurrentOption(e.target.value);
+		setSelectedOption(e.target.value);
+	}
 	return (
 		<div className="custom-multiselect field-checkbox">
 			{options.map((option) => (
@@ -32,9 +39,9 @@ export default function Options(props) {
 							id={option.id}
 							name={option.name}
 							value={option.id}
-							checked={selectedOption === option.id}
-							onChange={(e) => setSelectedOption(e.target.value)}
-							/>
+							checked={currentOption === option.id}
+							onChange={handleChange}
+						/>
 						<label htmlFor={option.id}>{option.name}</label>
 					</div>
 				</div>

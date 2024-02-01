@@ -3,12 +3,136 @@ import functional_logo from "../../../styles/images/functional-testing.png";
 import { useNavigate, useParams } from "react-router-dom";
 import "./choose-test.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
+import { notification, Progress, Button } from "antd";
+import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
+import { handleErrorResponse } from "../../../utils/utils";
 export default function ChooseTest() {
-	const [isManual, setIsManual] = useState(false);
 	const { testRequestId } = useParams();
-
+	const { TESTCASE_REFOBJURI, TESTREQUEST_REFOBJURI } = RefObjUriConstants;
+	const [manualEntries, setManualEntries] = useState([]);
+	// const [resumeManualTest, setResumeManualTest] = useState(false);
+	// const [resumeAutomatedTest, setResumeAutomatedTest] = useState(false);
+	const [manualProgress, setManualProgress] = useState(0);
+	const [automatedProgress, setAutomatedProgress] = useState(0);
+	const [totalManualTestcaseResults, setTotalManualTestcaseResults] =
+		useState(0);
+	const [totalAutomatedTestcaseResults, setTotalAutomatedTestcaseResults] =
+		useState(0);
+	// let totalManualTestcaseResults;
+	// let totalAutomatedTestcaseResults;
+	const [testcaseResults, setTestCaseResults] = useState([]);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		console.log("In use Effect => ", totalManualTestcaseResults);
+		const completedManualTestcaseResults = testcaseResults.filter(
+			(tescaseResults) =>
+				tescaseResults.manual == true &&
+				(tescaseResults.state ==
+					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
+					tescaseResults.state ==
+						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED)
+		).length;
+
+		if (totalManualTestcaseResults !== 0) {
+			setManualProgress(
+				(completedManualTestcaseResults / totalManualTestcaseResults) *
+					100
+			);
+		}
+	}, [totalManualTestcaseResults]);
+
+	useEffect(() => {
+		var total = testcaseResults.filter(
+			(totalTestCaseResults) =>
+				totalTestCaseResults.manual == true &&
+				totalTestCaseResults.state !==
+					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
+		).length;
+		setTotalManualTestcaseResults(total);
+		console.log("manutotal ",total)
+
+		// console.log(totalManualTestcaseResults);
+		var automatedTotal = 
+			testcaseResults.filter(
+				(totalTestCaseResults) =>
+					totalTestCaseResults.manual == false &&
+					totalTestCaseResults.state !==
+						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
+			).length
+		
+		setTotalAutomatedTestcaseResults(automatedTotal);
+				console.log("auto total ",automatedTotal);
+
+		// console.log(completedManualTestcaseResults);
+	}, [testcaseResults]);
+	useEffect(() => {
+		const completedAutomatedTestcaseResults = testcaseResults.filter(
+			(tescaseResults) =>
+				tescaseResults.manual == false &&
+				(tescaseResults.state ==
+					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
+					tescaseResults.state ==
+						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED)
+		).length;
+		// console.log(completedManualTestcaseResults);
+		console.log(completedAutomatedTestcaseResults);
+
+		if (totalAutomatedTestcaseResults !== 0) {
+			setAutomatedProgress(
+				(completedAutomatedTestcaseResults /
+					totalAutomatedTestcaseResults) *
+					100
+			);
+		}
+	}, [totalAutomatedTestcaseResults]);
+
+	const loadProgress = () => {
+		const params = {
+			testRequestId: testRequestId,
+			refObjUri: TESTCASE_REFOBJURI,
+		};
+		TestResultAPI.fetchCasesForProgressBar(params)
+			.then((res) => {
+				setTestCaseResults(res.data.content);
+			})
+			.catch((error) => {
+				throw error;
+			});
+	};
+	const handleStartTesting = (manual, link) => {
+		const params = { testRequestId, TESTREQUEST_REFOBJURI, manual };
+		TestResultAPI.startTests(params)
+			.then((response) => {
+				console.log(response);
+				notification.success({
+					description: `${response}`,
+					placement: "bottomRight",
+				});
+				loadProgress();
+
+			})
+			.catch((error) => {
+				console.log(error);
+				notification.info({
+					description: handleErrorResponse(error.response.data),
+					placement: "bottomRight",
+				});
+			});
+
+	};
+	//finish 2 or skip 3 5 / 50 not draft
+	//50 60
+	useEffect(() => {
+		loadProgress();
+	}, []);
+
+	useEffect(() => {
+		console.log("manualProgress updated to:", manualProgress);
+	}, [manualProgress]);
+
 	return (
 		<div id="wrapper">
 			<div className="col-12 pt-3">
@@ -18,14 +142,7 @@ export default function ChooseTest() {
 				</p>
 
 				<div className="d-flex flex-wrap">
-					<div
-						className="testing-grid"
-						onClick={() => {
-							navigate(
-								`/dashboard/manual-testing/${testRequestId}`
-							);
-						}}
-					>
+					<div className="testing-grid">
 						<div className="icon-box">
 							<img src={functional_logo} />
 						</div>
@@ -37,6 +154,37 @@ export default function ChooseTest() {
 									Guideline.
 								</a>
 							</p>
+							{totalManualTestcaseResults == 0 && (
+								<button
+									className="btn btn-primary  btn-sm"
+									style={{ alignItems: "flex-end" }}
+									onClick={() => {
+										handleStartTesting(
+											true,
+											"manual-testing"
+										);
+									}}
+								>
+									Start Testing
+								</button>
+							)}
+							{totalManualTestcaseResults != 0 && (
+								<Fragment>
+									<Progress
+										percent={Math.floor(manualProgress)}
+									/>
+									<Button
+										onClick={() =>
+											navigate(
+												`/dashboard/manual-testing/${testRequestId}`
+											)
+										}
+									>
+										Resume
+									</Button>
+								</Fragment>
+							)}
+
 							{/* <div className="progress-bar-line"> */}
 							{/* <div className="progress-fill"></div> */}
 							{/* <div className="progress-value">20%</div>  */}
@@ -45,7 +193,7 @@ export default function ChooseTest() {
 					</div>
 					<div
 						className="testing-grid"
-						onClick={() => navigate("/dashboard/workflow-testing")}
+						// onClick={() => navigate("/dashboard/workflow-testing")}
 					>
 						<div className="icon-box">
 							<img src={workflow_logo} />
@@ -58,6 +206,31 @@ export default function ChooseTest() {
 									Guideline.
 								</a>
 							</p>
+							{totalAutomatedTestcaseResults == 0 && (
+								<button
+									className="btn btn-primary small btn-sm"
+									style={{ alignItems: "flex-end" }}
+									onClick={() => {
+										handleStartTesting(false);
+									}}
+								>
+									Start Testing
+								</button>
+							)}
+							{totalAutomatedTestcaseResults != 0 && (
+								<Fragment>
+									<Progress percent={automatedProgress} />
+									<Button
+										onClick={() =>
+											navigate(
+												`/dashboard/workflow-testing/${testRequestId}`
+											)
+										}
+									>
+										Resume
+									</Button>
+								</Fragment>
+							)}
 							{/* <div className="progress-bar-line"></div> */}
 						</div>
 					</div>
