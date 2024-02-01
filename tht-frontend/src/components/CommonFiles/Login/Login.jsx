@@ -50,7 +50,7 @@ export default function Login() {
         hideLoader();
         UserAPI.viewUser().then((user) => {
           dispatch(userinfo_success(user));
-          navigate("/dashboard/");
+          navigate("/dashboard");
         })
        
       },(response)=>{ 
