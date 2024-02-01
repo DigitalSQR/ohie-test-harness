@@ -197,11 +197,11 @@ const UserRegistration = () => {
                         </span>
                       </td>
                       <td className=" no-wrap">
-                        {user.state === pendingstate && (
+                        {user.state === "user.status.pending" && (
                           <Fragment>
                             <button
                               type="button"
-                              className="btn  btn-sm text-uppercase approval-action-button"
+                              className="btn btn-sm text-uppercase approval-action-button"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -211,16 +211,16 @@ const UserRegistration = () => {
                               }}
                             >
                               <i
-                                className="bi bi-check-circle-fill text-green-50 font-weight-light  font-size-16"
+                                className="bi bi-check-circle-fill text-green-50 font-weight-light font-size-16"
                                 style={{
-                                  fontWeight: "lighter  !important",
+                                  fontWeight: "lighter !important",
                                 }}
                               ></i>{" "}
                               APPROVE
                             </button>
                             <button
                               type="button"
-                              className="btn  btn-sm text-uppercase approval-action-button"
+                              className="btn btn-sm text-uppercase approval-action-button"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -230,14 +230,58 @@ const UserRegistration = () => {
                               }}
                             >
                               <i
-                                className="bi bi-x-circle-fill text-red font-size-16l  font-weight-light  font-size-16"
+                                className="bi bi-x-circle-fill text-red font-size-16l font-weight-light font-size-16"
                                 style={{
-                                  fontWeight: "lighter  !important",
+                                  fontWeight: "lighter !important",
                                 }}
                               ></i>{" "}
                               REJECT
                             </button>
                           </Fragment>
+                        )}
+
+                        {user.state === "user.status.active" && (
+                          <button
+                            type="button"
+                            className="btn btn-sm text-uppercase approval-action-button"
+                            onClick={() => {
+                              changeState(
+                                user.id,
+                                "user.status.inactive",
+                                "Inactive"
+                              );
+                            }}
+                          >
+                            <i
+                              className="bi bi-x-circle-fill text-red font-size-16l font-weight-light font-size-16"
+                              style={{
+                                fontWeight: "lighter !important",
+                              }}
+                            ></i>{" "}
+                            DISABLE
+                          </button>
+                        )}
+
+                        {user.state === "user.status.inactive" && (
+                          <button
+                            type="button"
+                            className="btn btn-sm text-uppercase approval-action-button"
+                            onClick={() => {
+                              changeState(
+                                user.id,
+                                "user.status.active",
+                                "Active"
+                              );
+                            }}
+                          >
+                            <i
+                              className="bi bi-check-circle-fill text-green-50 font-weight-light font-size-16"
+                              style={{
+                                fontWeight: "lighter !important",
+                              }}
+                            ></i>{" "}
+                            Enable
+                          </button>
                         )}
                       </td>
                     </tr>
