@@ -72,18 +72,7 @@ const ApplicationReport = () => {
         }
         return acc;
       }, {});
-
-      const sortedComponents = Object.values(grouped).sort(
-        (a, b) => a.rank - b.rank
-      );
-
-      // Sort the specifications array within each component based on rank
-      sortedComponents.forEach((component) => {
-        component.requiredSpecification.sort((a, b) => a.rank - b.rank);
-        component.nonRequiredSpecifications.sort((a, b) => a.rank - b.rank);
-      });
-
-      setGroupedData(sortedComponents);
+      setGroupedData(grouped);
     } catch (error) {
       console.log(error);
     }
@@ -166,7 +155,8 @@ const ApplicationReport = () => {
                       </div>
                       <div className="col-lg-11 col-md-10 col-12 details">
                         <p>
-                          The <b> {testRequest?.name} </b> system is <b> Compliant</b> to{" "}
+                          The <b> {testRequest?.name} </b> system is{" "}
+                          <b> Compliant</b> to{" "}
                           <b>
                             {" "}
                             Client Registry and Non-functional requirements{" "}
@@ -206,9 +196,7 @@ const ApplicationReport = () => {
                                     }
                                   >
                                     <td>
-                                      {index % 2 === 0 ? (
-                                        <b>{component.name}</b>
-                                      ) : null}
+                                      <b>{component.name}</b>
                                     </td>
                                     <td>
                                       {component.requiredSpecification[0]?.name}
@@ -319,9 +307,7 @@ const ApplicationReport = () => {
                                     }
                                   >
                                     <td>
-                                      {index % 2 === 0 ? (
-                                        <b>{component.name}</b>
-                                      ) : null}
+                                      <b>{component.name}</b>
                                     </td>
                                     <td>
                                       {

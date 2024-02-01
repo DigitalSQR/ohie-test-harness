@@ -1,121 +1,163 @@
-import error_logo from "../../../styles/images/error.png";
-import "./workflow-testing.scss";
+import React, { useEffect, useState } from "react";
 import { notification } from "antd";
-export default function WorkFlowTesting(){
-    const clickHandler = () => {
-        notification.info({
-            placement:"botton-right",
-            description:"No actions yet"
-        })
+import "./workflow-testing.scss";
+import { TestResultAPI } from "../../../api/TestResultAPI";
+import { useLoader } from "../../loader/LoaderContext";
+import { useParams } from "react-router-dom";
+import passImg from "../../../styles/images/success.svg";
+import failImg from "../../../styles/images/failure.svg";
+export default function WorkFlowTesting() {
+  const { testRequestId } = useParams();
+  const { showLoader, hideLoader } = useLoader();
+  const [data, setData] = useState({});
+  const clickHandler = () => {
+    notification.info({
+      placement: "bottom-right",
+      description: "No actions yet",
+    });
+  };
+  const getResultDisplay = (state, success) => {
+    if (state == "testcase.result.status.finished") {
+      if (success == true) {
+        return <img className="finished" src={passImg} alt="PASS" />;
+      } else {
+        return <img className="finished" src={failImg} alt="FAIL" />;
+      }
+    } else if (state == "testcase.result.status.pending") {
+      return <div class="spinner-border" role="status"></div>;
+    } else if (state == "testcase.result.status.inprogress") {
+      return <div class="spinner-border" role="status"></div>;
     }
-    return (
-        <div className="Workflow-testing-wrapper">
-        <div className="container">
-            <div className="col-12">
-                <div className="d-flex justify-content-end mb-3">
-                    <button className="btn btn-start"> <i className="bi bi-play-fill"></i> Start</button>
-                </div>
-                <div className="table-responsive mb-5">
-                    <table className=" data-table">
-                        <thead>
-                            <tr>
-                                <th>COMPONENTS</th>
-                                <th>TEST CASES</th>
-                                <th>RESULT</th>
-                                <th>DURATION</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Client Registry - CRWF-1</td>
-                                <td>Create a blank Patient resource</td>
-                                <td>
-                                <span id="boot-icon" className="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
-                                </td>
-                                <td>22 ms</td>
-                                <td className="text-end cursor-pointer"> <i className="bi bi-chevron-right"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>Add demographic information</td>
-                                <td>
-                                <span id="boot-icon" className="bi bi-x-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(255, 0, 0)'}}></span>
-                                </td>
-                                <td>367 ms</td>
-                                <td className="text-end cursor-pointer"> <i className="bi bi-chevron-right"></i>
-                                </td>
-                            </tr>
-                            {/* <tr className="expand-row">
-                                <td className=""></td>
-                                <td colspan="4">
-                                    <img src={error_logo}/>
-                                </td>
-                            </tr> */}
-                            <tr>
-                                <td></td>
-                                <td>Call FHIR API to create Patient resource</td>
-                                <td>
-                                    <span id="boot-icon" className="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
-                                </td>
-                                <td>217 ms</td>
-                                <td className="text-end cursor-pointer">
-                                    <i className="bi bi-chevron-right"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>Check acknowledgement message</td>
-                                <td>
-                                    <span id="boot-icon" className="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
-                                </td>
-                                <td>564 ms</td>
-                                <td className="text-end cursor-pointer">
-                                    <i className="bi bi-chevron-right"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Client Registry - CRWF-2</td>
-                                <td>Create a blank Patient resource</td>
-                                <td>
-                                    <span id="boot-icon" className="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
-                                </td>
-                                <td>242 ms</td>
-                                <td className="text-end cursor-pointer"> <i className="bi bi-chevron-right"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>Add demographic information</td>
-                                <td>
-                                    <span id="boot-icon" className="bi bi-check-circle-fill" style={{fontSize: 2+'rem', color: 'rgb(0, 128, 55)'}}></span>
-                                </td>
-                                <td>165 ms</td>
-                                <td className="text-end cursor-pointer">
-                                    <i className="bi bi-chevron-right"></i>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>Check acknowledgement message</td>
-                                <td>
-                                    <div className="spinner-border text-secondary" role="status">
-                                    </div>
-                                </td>
-                                <td>165 ms</td>
-                                <td className="text-end cursor-pointer">
-                                    <i className="bi bi-chevron-right"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div className="d-flex justify-content-center">
-                    <button onClick={clickHandler} className="btn btn-primary btn-blue py-2 font-size-14">Generate report</button>
-                </div>
-            </div>
+  };
+  const fetchTestCaseResultData = async () => {
+    showLoader();
+    try {
+      const response = await TestResultAPI.getTestCaseResultById(
+        testRequestId,
+        false
+      );
+      const grouped = response.content.reduce((acc, item) => {
+        if (item.refObjUri.split(".").pop() === "ComponentInfo") {
+          if (!acc[item.id]) {
+            acc[item.id] = {
+              ...item,
+              specifications: [],
+            };
+          }
+        } else if (item.refObjUri.split(".").pop() === "SpecificationInfo") {
+          const componentId = item.parentTestcaseResultId;
+          if (!acc[componentId]) {
+            acc[componentId] = {
+              specifications: [],
+            };
+          }
+          acc[componentId].specifications.push({
+            [item.id]: { ...item, testCases: [] },
+          });
+        } else if (item.refObjUri.split(".").pop() === "TestcaseInfo") {
+          const specificationId = item.parentTestcaseResultId;
+
+          Object.entries(acc).forEach(([cmpId, value]) => {
+            const specification = value.specifications.find(
+              (spec) => Object.keys(spec)[0] === specificationId
+            );
+            if (specification) {
+              specification[specificationId].testCases.push(item);
+            }
+          });
+        }
+        return acc;
+      }, {});
+      setData(grouped);
+      hideLoader();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTestCaseResultData();
+  }, []);
+  return (
+    <div className="Workflow-testing-wrapper">
+      <div className="container">
+        <div className="col-12">
+          <div className="table-responsive mb-5">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Specification</th>
+                  <th>Test Cases</th>
+                  <th>Result</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(data)?.map(([componentId, component]) => [
+                  // Component row
+                  <tr
+                    key={`component-${componentId}`}
+                    className="component-row"
+                  >
+                    <td>{component?.name}</td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                      {getResultDisplay(component?.state, component?.success)}
+                    </td>
+                    <td>{component?.duration} ms</td>
+                  </tr>,
+                  ...component?.specifications?.map((specification) => [
+                    <tr
+                      key={`specification-${specification?.id}`}
+                      className="specification-row"
+                    >
+                      <td></td>
+                      <td>
+                        {specification[Object.keys(specification)[0]].name}
+                      </td>
+                      <td></td>
+                      <td>
+                        {getResultDisplay(
+                          specification[Object.keys(specification)[0]].state,
+                          specification[Object.keys(specification)[0]].success
+                        )}
+                      </td>
+                      <td>{component?.duration} ms</td>
+                    </tr>,
+
+                    ...specification[
+                      Object.keys(specification)[0]
+                    ].testCases?.map((testcase) => [
+                      <tr
+                        key={`testcase-${testcase?.id}`}
+                        className="specification-row"
+                      >
+                        <td></td>
+                        <td></td>
+                        <td>{testcase?.name}</td>
+                        <td>
+                          {getResultDisplay(testcase?.state, testcase?.success)}
+                        </td>
+                        <td>{component?.duration} ms</td>
+                      </tr>,
+                    ]),
+                  ]),
+                ])}
+              </tbody>
+            </table>
+          </div>
+          <div className="d-flex justify-content-center">
+            <button
+              onClick={clickHandler}
+              className="btn btn-primary btn-blue py-2 font-size-14"
+            >
+              Generate report
+            </button>
+          </div>
         </div>
+      </div>
     </div>
-    )
+  );
 }

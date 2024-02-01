@@ -91,4 +91,28 @@ export const TestResultAPI = {
 			throw error;
 		}
 	},
+	getTestCaseResultById: async function (testRequestId, manual) {
+		try {
+		  const params = {
+			testRequestId: testRequestId,
+			sort: "rank",
+		  };
+	  
+		  if (manual !== null && manual !== undefined) {
+			params.manual = manual;
+		  }
+	  
+		  const response = await api.request({
+			url: "/testcase-result",
+			method: "GET",
+			params: params,
+		  });
+	  
+		  return response.data;
+		} catch (error) {
+		  throw error;
+		}
+	  }
+	  
+
 };
