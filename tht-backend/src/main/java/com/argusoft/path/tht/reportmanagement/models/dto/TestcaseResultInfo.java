@@ -6,7 +6,6 @@
 package com.argusoft.path.tht.reportmanagement.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
-import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestUrlInfo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;

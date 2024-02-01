@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * This model is to provide identifier for the testRequestUrl table.
+ * This model is to provide identifier for the testResultOptionEntity table.
  *
  * @author Aastha
  */

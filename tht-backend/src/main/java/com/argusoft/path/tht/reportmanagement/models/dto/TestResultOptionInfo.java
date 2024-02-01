@@ -11,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
- * This info is for TestcaseResult DTO that contains all the TestcaseResult model's data.
+ * This info is for TestResultOption DTO that contains all the TestResultOption model's data.
  *
  * @author Aastha
  */

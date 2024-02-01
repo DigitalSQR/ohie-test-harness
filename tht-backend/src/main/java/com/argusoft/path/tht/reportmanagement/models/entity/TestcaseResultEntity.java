@@ -8,7 +8,6 @@ package com.argusoft.path.tht.reportmanagement.models.entity;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
-import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 
 import javax.persistence.*;

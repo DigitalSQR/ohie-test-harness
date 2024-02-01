@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.reportmanagement.models.entity;
 
-import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 
 import javax.persistence.*;
 import java.io.Serializable;
