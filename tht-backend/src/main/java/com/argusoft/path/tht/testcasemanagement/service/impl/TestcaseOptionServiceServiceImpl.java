@@ -94,24 +94,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
                 testcaseOptionEntity,
                 contextInfo);
 
-        if(testcaseOptionEntity.getSuccess()){
-            TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter = new TestcaseOptionCriteriaSearchFilter();
-            testcaseOptionCriteriaSearchFilter.setTestcaseId(testcaseOptionEntity.getTestcase().getId());
-            List<TestcaseOptionEntity> testcaseOptionList = this.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, contextInfo);
-
-            for(TestcaseOptionEntity entity: testcaseOptionList){
-                entity.setSuccess(entity.getId().equals(testcaseOptionEntity.getId()));
-                testcaseOptionRepository.saveAndFlush(entity);
-            }
-        }
-        else{
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("TestcaseOption Can't be set to false, Try setting true to correct option so that other options will be automatically set to false ");
-            validationResultInfo.setElement("isSuccess");
-            throw new DataValidationErrorException("TestcaseOption Can't be set to false, Try setting true to correct option so that other options will be automatically set to false ", Collections.singletonList(validationResultInfo));
-        }
-
+        testcaseOptionEntity = testcaseOptionRepository.save(testcaseOptionEntity);
         return testcaseOptionEntity;
     }
 

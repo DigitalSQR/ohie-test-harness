@@ -9,6 +9,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
@@ -17,10 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class TestcaseOptionValidator {
 
@@ -61,6 +60,8 @@ public class TestcaseOptionValidator {
 
         // check Common ForeignKey
         validateCommonForeignKey(testcaseOptionEntity, testcaseService, errors, contextInfo);
+
+        validateOptionsForCorrectness(testcaseOptionEntity, errors, testcaseOptionService, contextInfo);
 
         // check Common Unique
         validateCommonUnique(testcaseOptionEntity,
@@ -117,6 +118,28 @@ public class TestcaseOptionValidator {
                 errors);
         return errors;
 
+    }
+
+
+    private static void validateOptionsForCorrectness(TestcaseOptionEntity testcaseOption, List<ValidationResultInfo> errors, TestcaseOptionService testcaseOptionService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter = new TestcaseOptionCriteriaSearchFilter();
+        testcaseOptionCriteriaSearchFilter.setTestcaseId(testcaseOption.getTestcase().getId());
+        testcaseOptionCriteriaSearchFilter.setState(Collections.singletonList(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_ACTIVE));
+        List<TestcaseOptionEntity> testcaseOptionList = testcaseOptionService.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, contextInfo);
+
+        testcaseOptionList.removeIf(option -> option.getId().equals(testcaseOption.getId()));
+
+        testcaseOptionList.add(testcaseOption);
+
+        boolean isAnyTrue = testcaseOptionList.stream().anyMatch(testcaseOption1 -> testcaseOption1.getSuccess().equals(Boolean.TRUE));
+
+        if(!isAnyTrue){
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("One of the testcase option must be true");
+            validationResultInfo.setElement("isSuccess");
+            errors.add(validationResultInfo);
+        }
     }
 
     private static void validateCommonForeignKey(TestcaseOptionEntity testcaseOptionEntity
