@@ -29,6 +29,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -89,7 +91,7 @@ public class UserRestController {
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException {
+            DataValidationErrorException, DoesNotExistException, MessagingException, IOException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
         userEntity = userService.registerAssessee(userEntity, contextInfo);
@@ -161,7 +163,7 @@ public class UserRestController {
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException {
+            DataValidationErrorException, DoesNotExistException, MessagingException, IOException {
 
         UserEntity userEntity = userMapper.dtoToModel(userInfo);
         userEntity = userService.createUser(userEntity, contextInfo);
@@ -206,10 +208,10 @@ public class UserRestController {
     })
     @PatchMapping("/state/{userId}/{changeState}")
     @Transactional
-    public UserInfo updateUserState(@PathVariable("userId") String userId,
-                                    @PathVariable("changeState") String changeState,
-                                    @RequestAttribute("contextInfo") ContextInfo contextInfo)
-            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+    public UserInfo updateDocumentState(@PathVariable("userId") String userId,
+                                        @PathVariable("changeState") String changeState,
+                                        @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         UserEntity userEntity = userService.changeState(userId, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
     }
@@ -319,5 +321,6 @@ public class UserRestController {
         }
         return userMapper.modelToDto(principalUser);
     }
+
 
 }

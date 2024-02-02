@@ -16,6 +16,8 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -52,7 +54,7 @@ public interface UserService {
                                  ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException;
+            DataValidationErrorException, DoesNotExistException, MessagingException, IOException;
 
     public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
             throws DoesNotExistException;
@@ -212,7 +214,7 @@ public interface UserService {
             throws DoesNotExistException,
             OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException;
+            DataValidationErrorException, MessagingException, IOException;
 
     public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo);
 
@@ -228,6 +230,6 @@ public interface UserService {
      * @throws DoesNotExistException        when user does not exists for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public UserEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+    public UserEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException;
 
 }

@@ -30,8 +30,10 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -158,7 +160,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
         }
     }
 
-    private UserEntity createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException {
+    private UserEntity createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException, MessagingException, IOException {
         try {
             return userService.getUserByEmail(oauth2User.<String>getAttribute("email"), contextInfo);
         } catch (DoesNotExistException ex) {
