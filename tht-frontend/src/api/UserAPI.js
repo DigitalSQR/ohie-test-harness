@@ -40,7 +40,8 @@ export const UserAPI = {
     sortDirection = "desc",
     pageNumber = 1,
     pageSize = 10,
-    state
+    state,
+    role
   ) {
     try {
       const params={
@@ -49,6 +50,7 @@ export const UserAPI = {
 			if(pageNumber) params.pageNumber=pageNumber;
 			if(pageSize) params.pageSize=pageSize;  
       if(state)params.state=state;
+      if(role)params.role=role;
       const response = await api.request({
         url: `/user`,
         method: "GET",

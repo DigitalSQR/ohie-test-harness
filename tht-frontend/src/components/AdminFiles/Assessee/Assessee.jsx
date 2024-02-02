@@ -19,6 +19,7 @@ const Assessee = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [role,setRole] = useState("role.assessee"); 
   const pendingstate = "user.status.approval.pending";
   const { showLoader, hideLoader } = useLoader();
   const fetchUserByState = (
@@ -28,10 +29,11 @@ const Assessee = () => {
     pageSize,
     state
   ) => {
-    showLoader()
-    UserAPI.getUserByState(sortFieldName, sortDirection, currentPage, pageSize,state)
+    showLoader();
+    UserAPI.getUserByState(sortFieldName, sortDirection, currentPage, pageSize,state,role)
       .then((res) => {
         hideLoader();
+        console.log("the users are put here ",res)
         setAvailableUsers(res.content);
         setTotalPages(res.totalPages);
       })
