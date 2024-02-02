@@ -40,12 +40,7 @@ const Applications = () => {
       state = TestRequestActionStateLabels.map((state) => state.value);
     }
     if (state) {
-      getAllTestRequests(
-        filterState,
-        sortFieldName,
-        sortDirection,
-        currentPage
-      );
+      getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
     }
   }, [filterState]);
 
@@ -96,9 +91,9 @@ const Applications = () => {
     getAllTestRequests(filterState, sortFieldName, sortDirection, newPage);
   };
 
-  const viewReport=(testRequestId)=>{
-    navigate(`/application-report/${testRequestId}`)
-  }
+  const viewReport = (testRequestId) => {
+    navigate(`/application-report/${testRequestId}`);
+  };
 
   return (
     <div>
@@ -158,7 +153,7 @@ const Applications = () => {
                   <th className="col-2">
                     EMAIL ID <a className="ps-1" href="#"></a>
                   </th>
-                  <th className="col-2">CHOOSE ACTION</th>
+                  <th className="col-4">CHOOSE ACTION</th>
                 </tr>
               </thead>
               <tbody>
@@ -195,7 +190,12 @@ const Applications = () => {
                         ></i>{" "}
                         {StateClasses[testRequest.state]?.btnText}
                       </button>
-                      <button className="report" onClick={()=>viewReport(testRequest.id)}>View Report</button>
+                      <button
+                        className="report"
+                        onClick={() => viewReport(testRequest.id)}
+                      >
+                        View Report
+                      </button>
                     </td>
                   </tr>
                 ))}

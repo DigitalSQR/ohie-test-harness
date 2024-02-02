@@ -129,7 +129,7 @@ const Assessee = () => {
           <table className=" data-table">
             <thead>
               <tr>
-                <th>
+                <th className="col-1.8">
                   NAME
                   <a
                     className="ps-1"
@@ -139,7 +139,7 @@ const Assessee = () => {
                     <img src={sortIcon} alt="e" />
                   </a>
                 </th>
-                <th>
+                <th className="col-1.8">
                   Email
                   <a
                     className="ps-1"
@@ -149,9 +149,9 @@ const Assessee = () => {
                     <img src={sortIcon} alt="e" />
                   </a>
                 </th>
-                <th>Company</th>
-                <th>requested date</th>
-                <th>
+                <th className="col-1.8">Company</th>
+                <th className="col-1.8">requested date</th>
+                <th className="col-1.8">
                   Status
                   <a
                     className="ps-1"
@@ -161,7 +161,7 @@ const Assessee = () => {
                     <img src={sortIcon} alt="e" />
                   </a>
                 </th>
-                <th>CHOOSE ACTION</th>
+                <th className="col-3">CHOOSE ACTION</th>
               </tr>
             </thead>
             <tbody>
