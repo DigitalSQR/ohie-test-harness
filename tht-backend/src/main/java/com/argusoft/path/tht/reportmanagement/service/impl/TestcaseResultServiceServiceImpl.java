@@ -292,8 +292,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             VersionMismatchException {
 
         TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
-        searchFilter.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
-        searchFilter.setRefId(testRequestEntity.getId());
+        searchFilter.setTestRequestId(testRequestEntity.getId());
 
         List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(searchFilter, contextInfo);
 
@@ -309,7 +308,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 testRequestService.changeState(testRequestEntity.getId(), TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED, contextInfo);
             }
         } else if (testcaseResultEntities.stream()
-                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT))) {
+                .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT))) {
             if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
                 testRequestService.changeState(testRequestEntity.getId(), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, contextInfo);
             }
