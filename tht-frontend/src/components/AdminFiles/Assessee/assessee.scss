@@ -196,6 +196,18 @@
   line-height: 22px;
 }
 
+.badges-red {
+  display: inline-block;
+  background: $color-red; 
+  color: $color-white;
+  border-radius: 4px;
+  padding: 0px 20px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
 .no-wrap {
   white-space: nowrap;
 }
