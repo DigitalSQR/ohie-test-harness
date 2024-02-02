@@ -14,7 +14,7 @@ export const TestRequestStateLabels = [
     {label: "Pending", value: "test.request.status.pending"},
     {label: "Accepted", value: "test.request.status.accepted"},
     {label: "Rejected", value: "test.request.status.rejected"},
-    {label: "Inprogress", value: "test.request.status.inprogress"},
+    {label: "In Progress", value: "test.request.status.inprogress"},
     {label: "Finished", value: "test.request.status.finished"},
 ];
 
@@ -23,7 +23,7 @@ export const TestRequestStateConstantNames = {
     "test.request.status.pending": "Pending",
     "test.request.status.accepted": "Accepted",
     "test.request.status.rejected": "Rejected",
-    "test.request.status.inprogress": "Inprogress",
+    "test.request.status.inprogress": "In Progress",
     "test.request.status.finished": "Finished",
 }
 
@@ -38,7 +38,7 @@ export const StateBadgeClasses = {
 
 export const TestRequestActionStateLabels = [
     {label: "Accepted", value: "test.request.status.accepted"},
-    {label: "Inprogress", value: "test.request.status.inprogress"},
+    {label: "In Progress", value: "test.request.status.inprogress"},
     {label: "Finished", value: "test.request.status.finished"},
 ];
 
@@ -59,3 +59,11 @@ export const StateClasses = {
         btnText: "Report"
     }
 };
+
+export const stateTransitionMap = {
+    'test.request.status.pending': ['test.request.status.accepted', 'test.request.status.rejected'],
+    'test.request.status.accepted': ['test.request.status.inprogress', 'test.request.status.finished', 'test.request.status.skipped'],
+    'test.request.status.inprogress': ['test.request.status.skipped'],
+    'test.request.status.skipped': ['test.request.status.accepted'],
+    'test.request.status.rejected': ['test.request.status.accepted']
+  };
