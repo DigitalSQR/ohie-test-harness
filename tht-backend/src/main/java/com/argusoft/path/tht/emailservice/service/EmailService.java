@@ -1,7 +1,9 @@
 package com.argusoft.path.tht.emailservice.service;
 
+import com.argusoft.path.tht.systemconfiguration.security.handler.OnSsoAuthenticationSuccessHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -9,12 +11,10 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
 /**
  * Email Service to do operations related to email.
  *
@@ -22,6 +22,8 @@ import java.nio.file.Path;
  */
 @Service
 public class EmailService {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -40,26 +42,49 @@ public class EmailService {
         javaMailSender.send(message);
     }
 
-    public void verifyEmailMessage(String to,String username,String link) throws MessagingException, IOException {
+    @Async
+    public void verifyEmailMessage(String to,String username,String link) {
         String subject="Verify your email id";
         String templateFileName="templates/verification-email.html";
-        String htmlContent = readHtmlFile(templateFileName,username,link);
-        sendMessage(to,subject,htmlContent);
+        String htmlContent = null;
+        try {
+            htmlContent = readHtmlFile(templateFileName,username,link);
+            sendMessage(to,subject,htmlContent);
+        } catch (IOException e) {
+            LOGGER.error("Error sending Account Approved Message because of IOException ",e);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending Account Approved Message because of MessagingException ",e);
+        }
     }
 
-    public void forgotPasswordMessage(String to,String username,String link) throws MessagingException, IOException {
+    @Async
+    public void forgotPasswordMessage(String to,String username,String link) {
         String subject="Reset your password";
         String templateFileName="templates/reset-password-email.html";
-        String htmlContent = readHtmlFile(templateFileName,username,link);
-        sendMessage(to,subject,htmlContent);
-
+        String htmlContent = null;
+        try {
+            htmlContent = readHtmlFile(templateFileName,username,link);
+            sendMessage(to,subject,htmlContent);
+        } catch (IOException e) {
+            LOGGER.error("Error sending Account Approved Message because of IOException ",e);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending Account Approved Message because of MessagingException ",e);
+        }
     }
 
-    public void accountApprovedMessage(String to,String username) throws MessagingException, IOException {
+    @Async
+    public void accountApprovedMessage(String to,String username) {
         String subject="Account approval";
         String templateFileName="templates/account-approval-email.html";
-        String htmlContent = readHtmlFile(templateFileName,username,null);
-        sendMessage(to,subject,htmlContent);
+        String htmlContent = null;
+        try {
+            htmlContent = readHtmlFile(templateFileName,username,null);
+            sendMessage(to,subject,htmlContent);
+        } catch (IOException e) {
+            LOGGER.error("Error sending Account Approved Message because of IOException ",e);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending Account Approved Message because of MessagingException ",e);
+        }
 
     }
     private String readHtmlFile(String fileName,String username,String link) throws IOException {
