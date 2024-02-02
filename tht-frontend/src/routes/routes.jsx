@@ -13,7 +13,7 @@ import WorkFlowTesting from "../components/AdminFiles/WorkflowTesting/WorkflowTe
 import GoogleAuth from "../components/UserFiles/GoogleAuth";
 import ForgotPassword from "../components/CommonFiles/ForgotPassword";
 import UpdatePassword from "../components/UserFiles/UpdatePassword";
-import UserRegistration from "../components/AdminFiles/UserRegistration/UserRegistration";
+import Assessee from "../components/AdminFiles/Assessee/Assessee";
 import Applications from "../components/AdminFiles/Applications/Applications";
 import TestingRequests from "../components/CommonFiles/TestingRequests/TestingRequests";
 import RegisterApplication from "../components/CommonFiles/RegisterApplication/RegisterApplication";
@@ -49,7 +49,7 @@ const routes = createBrowserRouter([
 			{ path: "choose-test/:testRequestId", element: <ChooseTest />, },
 			{ path: "manual-testing/:testRequestId", element: <ManualTesting /> },
 			{ path: "workflow-testing/:testRequestId", element: <WorkFlowTesting /> },
-			{ path: "user-registration", element: <UserRegistration /> },
+			{ path: "assessee", element: <Assessee /> },
 			{ path: "register-application", element: <RegisterApplication />},
       { path: "admin-users", element: <AdminUsers /> },
       { path: "admin-users/add-admin-user", element: <AddAdminUser /> },

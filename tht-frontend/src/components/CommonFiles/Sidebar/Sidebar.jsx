@@ -107,12 +107,12 @@ export default function Sidebar() {
             <li>
               <a
                 className={
-                  activeMenuItem === "/dashboard/user-registration"
+                  activeMenuItem === "/dashboard/assessee"
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }
                 onClick={() =>
-                  handleMenuItemClick("/dashboard/user-registration")
+                  handleMenuItemClick("/dashboard/assessee")
                 }
               >
                 <i

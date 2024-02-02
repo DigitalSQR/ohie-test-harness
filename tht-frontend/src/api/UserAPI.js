@@ -39,14 +39,16 @@ export const UserAPI = {
     sortFieldName = "createdAt",
     sortDirection = "desc",
     pageNumber = 1,
-    pageSize = 10
+    pageSize = 10,
+    state
   ) {
     try {
       const params={
 				sort: `${sortFieldName},${sortDirection}`,
 			}
 			if(pageNumber) params.pageNumber=pageNumber;
-			if(pageSize) params.pageSize=pageSize;
+			if(pageSize) params.pageSize=pageSize;  
+      if(state)params.state=state;
       const response = await api.request({
         url: `/user`,
         method: "GET",
