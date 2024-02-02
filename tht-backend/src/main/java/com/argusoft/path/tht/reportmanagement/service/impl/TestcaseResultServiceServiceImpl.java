@@ -65,9 +65,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private GradeEvaluator gradeEvaluator;
-
     /**
      * {@inheritdoc}
      *
@@ -388,7 +385,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                     testcaseResultEntity.setSuccess(Boolean.TRUE);
                 }
                 testcaseResultEntity.setDuration(duration);
-                testcaseResultEntity.setGrade(gradeEvaluator.evaluate(testcaseResultEntity.getId(), contextInfo));
                 updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
             }
