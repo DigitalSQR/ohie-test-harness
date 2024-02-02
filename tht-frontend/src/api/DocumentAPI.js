@@ -23,10 +23,7 @@ export const DocumentAPI = {
 				url: `/document/file/${documentId}`,
 				method: "GET",
                 responseType: 'arraybuffer'
-                // data,
-                // headers: {
-                //     'content-type': 'multipart/form-data',
-                // },
+                
 			}).then((response) => {
                 let blob = new Blob([response.data], { type:"application/pdf" })
                 let link = document.createElement('a')
@@ -34,6 +31,33 @@ export const DocumentAPI = {
                 link.download = name || 'data.pdf';
                 link.click()
             })
+		} catch (error) {
+			throw error; // You can choose to re-throw the error or handle it in a specific way
+		}
+	},
+	changeDocumentState: async function (documentId, changeState) {
+		try {
+			const response = await api.request({
+				url: `/document/state/${documentId}/${changeState}`,
+				method: "PATCH",
+			});
+			return response.data;
+		} catch (error) {
+			throw error; // You can choose to re-throw the error or handle it in a specific way
+		}
+	},
+	getDocumentsByRefObjUriAndRefId: async function (refObjUri, refId, state) {
+		try {
+			const response = await api.request({
+				url: `/document`,
+				method: "GET",
+                params: {
+					refObjUri,
+					refId,
+					state
+				},
+			});
+			return response.data;
 		} catch (error) {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}

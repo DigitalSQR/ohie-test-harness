@@ -1,12 +1,14 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import Options from "../Options/Options";
 import { Pagination } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
-import { notification } from "antd";
+import { Button, notification } from "antd";
 import "./testcase.scss";
 import { DocumentAPI } from "../../../api/DocumentAPI";
 import { fileTypeIcon } from "../../../utils/utils";
+import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
+import { DOCUMENT_STATE_ACTIVE, DOCUMENT_STATE_INACTIVE } from "../../../constants/document_constants";
 export default function TestCase(props) {
 	const { specificationId, nextSpecification } = props;
 	const [manualQuestions, setManualQuestions] = useState([]);
@@ -16,6 +18,8 @@ export default function TestCase(props) {
 	const [selectedOption, setSelectedOption] = useState();
 	const [files, setFiles] = useState([]);
 	const [uploadedFiles, setUploadedFiles] = useState([]);
+	const [uploadQuestion, setUploadedQuestion] = useState({});
+	const fileInputRef = useRef(null);
 	const handlePageChange = (event, page) => {
 		showLoader();
 		setCurrentPage(page);
@@ -68,46 +72,121 @@ export default function TestCase(props) {
 				throw error;
 			});
 	};
+	
 	useEffect(() => {
 		fetchQuestions(currentPage);
 	}, []);
+
+	useEffect(() => {
+		if (manualQuestions.length > 0) {
+			DocumentAPI.getDocumentsByRefObjUriAndRefId(RefObjUriConstants.TESTCASE_RESULT_REFOBJURI, manualQuestions[0].id, DOCUMENT_STATE_ACTIVE)
+			.then((res) => {
+				setUploadedFiles(res.content);
+			}).catch((err) => {
+				notification.error({
+					message: "Error Loading Files!",
+					placement: "bottomRight"
+				});
+			});
+		}
+	}, [manualQuestions])
 
 	const addAttachment = () => {
 		var file = document.getElementById("my-file");
 		if (file) file.click();
 	};
 
-	const handleChange = (event) => {
-		setFiles([...event.target.files]);
-	};
-
-	const onUpload = (event) => {
+	const addFiles = (event, question, index) => {
 		event.preventDefault();
-		files.forEach((file) => {
-			const formData = new FormData();
-			formData.append(`file`, file);
-			formData.append(`fileName`, file.name);
-			formData.append("refId", "abcabc");
-			formData.append("refObjUri", "abcabc");
-			DocumentAPI.uploadDocument(formData)
-				.then((res) => {
-					console.log(res);
-					setUploadedFiles((prevFiles) => [
-						...prevFiles,
-						{ name: res.name, id: res.id, fileType: res.fileType },
-					]);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
+		setFiles([...event.target.files]);
+		setUploadedQuestion({
+			...question,
+			index
 		});
 	};
+
+	useEffect(() => {
+		if (files.length > 0) {
+			files.forEach((file) => {
+				uploadDocuments(file, uploadQuestion, uploadQuestion.index);
+			});
+		}
+	}, [uploadQuestion]);
+
+	const uploadDocuments = (file, question, index) => {
+		const formData = new FormData();
+		formData.append(`file`, file);
+		formData.append(`fileName`, file.name);
+		formData.append("refId", question?.id);
+		formData.append("refObjUri", RefObjUriConstants.TESTCASE_RESULT_REFOBJURI);
+		DocumentAPI.uploadDocument(formData)
+			.then((res) => {
+				console.log(res);
+				setUploadedFiles((prevFiles) => [
+					...prevFiles,
+					{ name: res.name, id: res.id, fileType: res.fileType },
+				]);
+				const newFiles = [...files];
+				newFiles.splice(index, 1);
+				setFiles(newFiles);
+				notification.success({
+					message: `Document Uploaded!`,
+					placement: "bottomRight"
+				});
+			}).catch((err) => {
+				let msg = err.response.data?.message || err.response.data[0].message;
+				notification.error({
+					message: `${msg}`,
+					placement: "bottomRight"
+				})
+			});
+	};
+
+	const deleteFile = (file, index) => {
+		if (file.id) {
+			// delete from db (DocumentAPI)
+			DocumentAPI.changeDocumentState(file.id, DOCUMENT_STATE_INACTIVE)
+				.then((res) => {
+					notification.success({
+						message: 'Document Removed',
+						placement: "bottomRight"
+					});
+					setUploadedFiles((prev) => {
+						return prev.filter(doc => doc.id !== file.id);
+					})
+				}).catch((err) => {
+					let msg = err.response.data?.message || err.response.data[0].message;
+					notification.error({
+						message: `${msg}`,
+						placement: "bottomRight"
+					})
+				});
+		} else {
+			// Remove from files 
+			setFiles((prev) => {
+				let newFiles = [...prev];
+				newFiles = newFiles.splice(index, 1);
+				return newFiles;
+			})
+		}
+	};
+
+	useEffect(() => {
+		if (files.length == 0 && fileInputRef.current) {
+			fileInputRef.current.value = '';
+		}
+	}, [files]);
 
 	const downloadFile = (file) => {
 		DocumentAPI.downloadDocument(file.id, file.name).catch((err) => {
 			console.error(err.data.message);
 		});
 	};
+
+	useEffect(() => {
+		console.log("the uploaded docs include ", uploadedFiles);
+	}, [uploadedFiles]);
+
 	return (
 		<Fragment>
 			<div className="col-12 non-fuctional-requirement">
@@ -131,7 +210,7 @@ export default function TestCase(props) {
 							<div className="row question-box" key={question.id}>
 								{/* <div className="col-md-9 col-12 p-0 question">  for the image space*/}
 
-								<div className=" col-12 p-0 question">
+								<div className="col-md-9 col-12 p-0 question">
 									<h2>
 										<b>
 											{Specification +
@@ -147,92 +226,134 @@ export default function TestCase(props) {
 											question.testcaseOptionId
 										}
 									></Options>
-								</div>
-								<div className="col-md-9 col-12 p-0"></div>
-								{/* Photos upload code below */}
-								<div className="mb-3">
-									<div
-										className="cst-btn-group btn-group"
-										role="group"
-										aria-label="Basic example"
-										style={{ margin: "0 15px" }}
-									>
-										<input
-											type="file"
-											multiple
-											name="my_file"
-											id="my-file"
-											onChange={handleChange}
-											style={{
-												visibility: "hidden",
-												width: "0",
-											}}
-										></input>
-										<button
-											type="button"
-											className="btn cst-btn-default"
-											onClick={addAttachment}
+									{/* Photos upload code below */}
+									<div className="doc-badge-wrapper">
+										{uploadedFiles.map((file) => (
+											<div
+												type="button"
+												key={file.id}
+												className="doc-badge"
+											>
+												<img
+													src={fileTypeIcon(
+														file.fileType
+													)}
+												/>
+												<span> {file.name} </span>
+												<span
+													type="button"
+													title="Download File"
+													className="mx-2 font-size-14"
+													onClick={() => downloadFile(file)}
+												>
+													<i class="bi bi-cloud-download"></i>
+												</span>
+												<span
+													type="button"
+													title="Remove File"
+													className="mx-2 font-size-14"
+													onClick={() => deleteFile(file)}
+												>
+													<i class="bi bi-trash3"></i>
+												</span>
+											</div>
+										))}
+									</div>
+									<div className="text-center mb-3">
+										<div
+											className="cst-btn-group btn-group"
+											role="group"
+											aria-label="Basic example"
+											style={{ margin: "0 15px" }}
 										>
-											<i
+											<input
+												type="file"
+												ref={fileInputRef}
+												name="my_file"
+												id="my-file"
+												onChange={(e) => { addFiles(e, question, index) }}
 												style={{
-													transform:
-														"rotate(-45.975deg)",
+													visibility: "hidden",
+													width: "0",
 												}}
-												className="bi bi-paperclip"
-											></i>
-											Add Attachments
-										</button>
+											></input>
+											<button
+												type="button"
+												className="btn cst-btn-default"
+												onClick={addAttachment}
+											>
+												<i
+													style={{
+														transform:
+															"rotate(-45.975deg)",
+													}}
+													className="bi bi-paperclip"
+												></i>
+												Add Attachments
+											</button>
+											<button
+												type="button"
+												className="btn cst-btn-default"
+											>
+												<i className="bi bi-chat-right-text"></i>
+												Add Notes
+											</button>
+										</div>
+									</div>
+									{/* <div className="doc-badge-wrapper">
+										{files.map((file, index) => (
+											<div
+												key={file.name}
+												className="doc-badge"
+											>
+												<img
+													src={fileTypeIcon(
+														file.type
+													)}
+												/>
+												<span> {file.name} </span>
+												<span
+													onClick={(e) =>
+														onUpload(
+															e,
+															question,
+															index
+														)
+													}
+													type="button"
+													title="Upload File"
+													className="mx-2 font-size-14"
+												>
+													<i class="bi bi-upload"></i>
+												</span>
+												<span
+													type="button"
+													title="Remove File"
+													className="mx-2 font-size-14"
+													onClick={() => deleteFile(file, index)}
+												>
+													<i class="bi bi-trash3"></i>
+												</span>
+											</div>
+										))}
+									</div> */}
+									<div className="text-center mb-3">
 										<button
-											type="button"
-											className="btn cst-btn-default"
+											className=" btn btn-primary"
+											onClick={() => {
+												handleSaveandNext(
+													question.id,
+													currentPage,
+													question.rank,
+													index
+												);
+											}}
 										>
-											<i className="bi bi-chat-right-text"></i>
-											Add Notes
+											Save and Next
 										</button>
 									</div>
+									{/* Photos upload code above */}
 								</div>
-								<div className="doc-badge-wrapper">
-									{uploadedFiles.map((file) => (
-										<div
-											type="button"
-											key={file.id}
-											className="doc-badge"
-											onClick={() => downloadFile(file)}
-										>
-											<img
-												src={fileTypeIcon(
-													file.fileType
-												)}
-											/>
-											<p> {file.name} </p>
-										</div>
-									))}
-									<button
-										type="button"
-										className="btn btn-sm btn-primary"
-										onClick={onUpload}
-									>
-										Upload
-									</button>
-								
-								</div>
-								{/* Photos upload code above */}
-
-								<span>
-									<button
-										className="btn btn-primary"
-										onClick={() => {
-											handleSaveandNext(
-												question.id,
-												currentPage,
-												question.rank,
-												index
-											);
-										}}
-									>
-										Save and Next
-									</button>
-								</span>
 							</div>
 						);
 					})}
