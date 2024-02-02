@@ -166,7 +166,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
             emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         } else if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
-            emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+            emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/reset/cred/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
 
         }
 
