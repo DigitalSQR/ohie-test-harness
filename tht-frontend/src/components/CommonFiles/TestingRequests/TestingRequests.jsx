@@ -143,7 +143,7 @@ const TestingRequests = () => {
                   <th className="col-2">DATE OF APPLICATION</th>
                   <th className="col-2">Assessee</th>
                   <th className="col-2">STATUS</th>
-                  <th className="col-2"><span className={userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && 'mx-2'}>Actions</span></th>
+                  <th className="col-2"><span className="mx-5">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -179,9 +179,9 @@ const TestingRequests = () => {
                           {TestRequestStateConstantNames[testRequest.state]}
                         </span>
                       </td>
-                      <td className=" no-wrap"
+                      <td className=" no-wrap text-end"
                       >
-                        {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) ?
+                        {(userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && testRequest.state == TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING) ?
                           <>
                             <button
                               onClick={() => {
