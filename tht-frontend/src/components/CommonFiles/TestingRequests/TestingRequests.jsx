@@ -139,11 +139,11 @@ const TestingRequests = () => {
             <table className=" data-table">
               <thead>
                 <tr>
-                  <th className="col-2">APP NAME</th>
-                  <th className="col-2">DATE OF APPLICATION</th>
-                  <th className="col-2">Assessee</th>
-                  <th className="col-2">STATUS</th>
-                  <th className="col-2"><span className="mx-5">Actions</span></th>
+                  <th className="col-2.4">APP NAME</th>
+                  <th className="col-2.4">DATE OF APPLICATION</th>
+                  <th className="col-2.4">Assessee</th>
+                  <th className="col-2.4">STATUS</th>
+                  <th className="col-2.4"><span className={userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && 'mx-2'}>Actions</span></th>
                 </tr>
               </thead>
               <tbody>
