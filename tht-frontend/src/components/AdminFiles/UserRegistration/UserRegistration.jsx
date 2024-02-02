@@ -31,6 +31,7 @@ const UserRegistration = () => {
     UserAPI.getUserByState(sortFieldName, sortDirection, currentPage, pageSize)
       .then((res) => {
         hideLoader();
+        console.log(res)
         setAvailableUsers(res.content);
         setTotalPages(res.totalPages);
       })
