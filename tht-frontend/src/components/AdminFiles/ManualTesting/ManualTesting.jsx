@@ -18,6 +18,7 @@ export default function ManualTesting() {
 	const [manualQuestions, setManualQuestions] = useState([]);
 	const [componentId, setComponentId] = useState();
 	const [activeSpecification, setActiveSpecification] = useState();
+	const [defaultValue, setDefaultValue] = useState();
 	const { Item } = Tabs;
 	useEffect(() => {
 		TestResultAPI.getTestCases(testRequestId)
@@ -25,6 +26,8 @@ export default function ManualTesting() {
 				setTestId(res.content[0].id);
 				setManualQuestions(res.content);
 				setComponentId(res.content[1].id);
+				console.log(res.content[1].id);
+				setDefaultValue(res.content[1].name);
 				console.log(res.content);
 			})
 			.catch((error) => {
@@ -41,19 +44,19 @@ export default function ManualTesting() {
 		const nextEntry = manualQuestions.filter((entry) => {
 			return entry.rank == rank;
 		});
-		if(nextEntry[0]!=undefined){
-		setActiveSpecification(nextEntry[0].id);
-		}else{
+		if (nextEntry[0] != undefined) {
+			setActiveSpecification(nextEntry[0].id);
+		} else {
 			notification.info({
-				description:"No more questions remaining.",
-				placement:"bottomRight"
-			})
+				description: "No more questions remaining.",
+				placement: "bottomRight",
+			});
 		}
 	};
 
 	const getSpecifications = () => {
 		const items = [];
-	
+
 		manualQuestions
 			.filter(
 				(specification) =>
@@ -65,9 +68,16 @@ export default function ManualTesting() {
 					id: specification.id, // i changed it from specification to specification.id
 				});
 			});
-		
 
 		return items;
+	};
+
+	const onComponentChange = (val) => {
+		setComponentId(val);
+		const index = manualQuestions.findIndex(
+			(specification) => specification.parentTestcaseResultId == val
+		);
+		setActiveSpecification(manualQuestions[index].id);
 	};
 
 	return (
@@ -76,9 +86,8 @@ export default function ManualTesting() {
 				<b>Select Component : </b>
 			</span>
 			<Select
-				onChange={(val) => setComponentId(val)}
+				onChange={onComponentChange}
 				style={{ width: "145px", marginBottom: "10px" }}
-				defaultOpen={componentId}
 				defaultValue={"Client Registry"}
 			>
 				{manualQuestions
@@ -97,9 +106,14 @@ export default function ManualTesting() {
 					})}
 			</Select>
 			{!!componentId && (
-				<Tabs activeKey={activeSpecification} onChange={(val)=>{setActiveSpecification(val)}}>
+				<Tabs
+					activeKey={activeSpecification}
+					onChange={(val) => {
+						setActiveSpecification(val);
+					}}
+				>
 					{getSpecifications().map((specification) => (
-						<Item  key={specification.id} tab={specification.title}>
+						<Item key={specification.id} tab={specification.title}>
 							<TestCase
 								specificationId={specification.id}
 								nextSpecification={nextSpecification}
