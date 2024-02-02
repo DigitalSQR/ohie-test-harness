@@ -11,6 +11,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,14 +63,20 @@ public class EmailService {
 
     }
     private String readHtmlFile(String fileName,String username,String link) throws IOException {
-        ClassPathResource resource = new ClassPathResource(fileName);
-        Path path = resource.getFile().toPath();
-        String htmlContent=Files.readString(path, StandardCharsets.UTF_8);
-        htmlContent = htmlContent.replace("${username}", username);
-        if(link!=null){
-            htmlContent=htmlContent.replace("${link}",link);
+        try (InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName)) {
+            if (stream == null) {
+                throw new IOException("File not found: " + fileName);
+            }
+            byte[] binaryData = stream.readAllBytes();
+            String htmlContent = new String(binaryData, StandardCharsets.UTF_8);
+            htmlContent = htmlContent.replace("${username}", username);
+
+            if (link != null) {
+                htmlContent = htmlContent.replace("${link}", link);
+            }
+
+            return htmlContent;
         }
-        return htmlContent;
     }
 
 
