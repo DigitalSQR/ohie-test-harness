@@ -111,7 +111,7 @@ export default function Login() {
               <div className="text-center">
                 <img src={openhie_logo} />
               </div>
-              <div className="custom-scrollbar">
+              <div className="custom-scrollbar sm-cut">
                 <div className="custom-input mb-3">
                   <label htmlFor="exampleFormControlInput1" className="form-label">
                     Email

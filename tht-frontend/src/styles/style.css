@@ -218,6 +218,10 @@ h6 {
   height: calc(100vh - 240px);
 }
 
+.custom-scrollbar.sm-cut {
+  height: calc(100vh - 120px);
+}
+
 @media (max-width: 767px) {
   .custom-scrollbar {
     height: auto;
@@ -277,5 +281,10 @@ body {
   background: #015f77;
   /* background: #0eb4b4; */
   /* background: #009fc8; */
+}
+
+.hiddenRow {
+  padding: 0 !important;
+  visibility: none !important;
 }
 /*# sourceMappingURL=style.css.map */

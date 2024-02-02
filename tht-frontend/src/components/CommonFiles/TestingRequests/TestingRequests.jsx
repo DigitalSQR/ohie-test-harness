@@ -74,6 +74,20 @@ const TestingRequests = () => {
       });
   };
 
+  const toggleRow = (trid) => {
+    setTestRequests((trs) => {
+      return trs.map(tr => {
+        // tr.class = 'hide';
+        if (tr.id === trid) {
+          tr.class = tr.class === 'show' ? 'hide' : 'show';
+        } else {
+          tr.class = 'hide';
+        }
+        return tr;
+      });
+    });
+  }
+
   return (
     <div>
       <div id="wrapper">
@@ -128,13 +142,10 @@ const TestingRequests = () => {
                   <th className="col-2">APP NAME</th>
                   <th className="col-2">DATE OF APPLICATION</th>
                   <th className="col-2">Assessee</th>
-                  <th className="col-2">COMPONENTS</th>
-                  <th className="col-2">APP URL</th>
                   <th className="col-2">STATUS</th>
-                  <th className="col-2">ACTION</th>
+                  <th className="col-2"><span className={userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && 'mx-2'}>Actions</span></th>
                 </tr>
               </thead>
-
               <tbody>
                 {testRequests.length === 0 ? (
                   <>
@@ -147,80 +158,96 @@ const TestingRequests = () => {
                   </>
                 ) : null}
                 {testRequests.map((testRequest) =>
-                  testRequest.testRequestUrls.map((testUrl, index) => (
-                    <tr key={testUrl.username}>
-                      {index === 0 ? (
-                        <>
-                          <td rowSpan={testRequest.testRequestUrls.length}>
-                            {testRequest.productName}
-                          </td>
-                          <td rowSpan={testRequest.testRequestUrls.length}>
-                            {formatDate(testRequest.meta.updatedAt)}
-                          </td>
-                          <td rowSpan={testRequest.testRequestUrls.length}>
-                            <UserIdConnector
-                              isLink={true}
-                              userId={testRequest.assesseeId}
-                            />
-                          </td>
-                        </>
-                      ) : null}
-                      <td className="row-spaned-td">
-                        <ComponentIdConnector
-                          componentId={testUrl.componentId}
+                  <>
+                    <tr key={testRequest.id}>
+                      <td>
+                        {testRequest.productName}
+                      </td>
+                      <td>
+                        {formatDate(testRequest.meta.updatedAt)}
+                      </td>
+                      <td>
+                        <UserIdConnector
+                          isLink={true}
+                          userId={testRequest.assesseeId}
                         />
                       </td>
-                      <td className="row-spaned-td">{testUrl.baseUrl}</td>
-                      {index === 0 ? (
-                        <>
-                          <td rowSpan={testRequest.testRequestUrls.length}>
-                            <span
-                              className={StateBadgeClasses[testRequest.state]}
+                      <td >
+                        <span
+                          className={StateBadgeClasses[testRequest.state]}
+                        >
+                          {TestRequestStateConstantNames[testRequest.state]}
+                        </span>
+                      </td>
+                      <td className=" no-wrap"
+                      >
+                        {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) ?
+                          <>
+                            <button
+                              onClick={() => {
+                                changeState(
+                                  testRequest.id,
+                                  TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED
+                                );
+                              }}
+                              type="button"
+                              className="text-uppercase btn btn-sm approval-action-button text-uppercase"
                             >
-                              {TestRequestStateConstantNames[testRequest.state]}
-                            </span>
-                          </td>
-                          {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) &&
-                          testRequest.state ===
-                            TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
-                            <td
-                              rowSpan={testRequest.testRequestUrls.length}
-                              className=" no-wrap"
+                              <span>
+                                <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                                APPROVE{" "}
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => {
+                                changeState(
+                                  testRequest.id,
+                                  TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED
+                                );
+                              }}
+                              type="button"
+                              className="mx-1 btn btn-sm approval-action-button text-uppercase"
                             >
-                              <button
-                                onClick={() => {
-                                  changeState(
-                                    testRequest.id,
-                                    TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED
-                                  );
-                                }}
-                                type="button"
-                                className="text-uppercase btn btn-sm approval-action-button text-uppercase"
-                              >
-                                <span>
-                                  <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
-                                  APPROVE{" "}
-                                </span>
-                              </button>
-                              <button
-                                onClick={() => {
-                                  changeState(
-                                    testRequest.id,
-                                    TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED
-                                  );
-                                }}
-                                type="button"
-                                className="mx-1 btn btn-sm approval-action-button text-uppercase"
-                              >
-                                <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                                REJECT{" "}
-                              </button>
-                            </td>
-                          ) : null}
-                        </>
-                      ) : null}
+                              <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
+                              REJECT{" "}
+                            </button>
+                          </>
+                          : null
+                        }
+                        <span onClick={() => toggleRow(testRequest.id)} type="button" className="approval-action-button">
+                          {testRequest.class === 'show' ? <i class="bi bi-chevron-double-down"></i> : <i class="bi bi-chevron-double-right"></i>}
+                        </span>
+                      </td>
                     </tr>
-                  ))
+                    <tr key={"collapseable--" + testRequest.id}>
+                      <td colSpan="5" className="hiddenRow m-0 field-box">
+                        <div className={"collapse " + testRequest.class} id="Accordion">
+                          <div className="mx-5 my-3">
+                            <table className="data-table">
+                              <thead>
+                                <tr>
+                                  <th className="col-2">Component</th>
+                                  <th className="col-2">Base Url</th>
+                                  <th className="col-2">Username</th>
+                                  <th className="col-2">Password</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {testRequest.testRequestUrls.length > 0 && testRequest.testRequestUrls.map(testUrls => (
+                                  <tr>
+                                    <td><ComponentIdConnector componentId={testUrls.componentId}></ComponentIdConnector></td>
+                                    <td>{testUrls.baseUrl}</td>
+                                    <td>{testUrls.username}</td>
+                                    <td>{testUrls.password}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </>
                 )}
               </tbody>
             </table>
