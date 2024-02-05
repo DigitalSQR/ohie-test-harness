@@ -46,8 +46,8 @@ export const TestRequestAPI = {
 				state,
 				sort: `${sortFieldName},${sortDirection}`,
 			}
-			if(currentPage) params.currentPage=currentPage;
-			if(pageSize) params.pageSize=pageSize;
+			if(currentPage) params.page=currentPage;
+			if(pageSize) params.size=pageSize;
 			const response = await api.request({
 				url: `/test-request`,
 				method: "GET",

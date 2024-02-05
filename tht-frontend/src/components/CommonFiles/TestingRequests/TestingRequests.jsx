@@ -16,26 +16,43 @@ import { formatDate } from "../../../utils/utils.js";
 import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.jsx";
 import { useNavigate } from "react-router-dom";
 import { store } from "../../../store/store.js";
-
+import { Pagination } from "@mui/material";
+import sortIcon from "../../../styles/images/sort-icon.png";
 const TestingRequests = () => {
   const testRequestStates = [
     ...TestRequestStateLabels,
     { label: "All", value: "" },
   ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
   const { showLoader, hideLoader } = useLoader();
-  const [filterState, setFilterState] = useState(
-    ""
-  );
+  const [filterState, setFilterState] = useState("");
   const [userRoles, setUserRoles] = useState([USER_ROLES.ROLE_ID_ASSESSEE]);
   const [testRequests, setTestRequests] = useState([]);
   const navigate = useNavigate();
-
-  const fetchTestRequests = () => {
+  const [sortDirection, setSortDirection] = useState({
+    name: "desc",
+    email: "desc",
+  });
+  const [sortFieldName, setSortFieldName] = useState("createdAt");
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+    fetchTestRequests(newPage);
+  };
+  const fetchTestRequests = (newPage) => {
     showLoader();
-    TestRequestAPI.getTestRequestsByState(filterState)
+    TestRequestAPI.getTestRequestsByState(
+      filterState,
+      sortFieldName,
+      sortDirection[sortFieldName],
+      newPage - 1,
+      pageSize
+    )
       .then((res) => {
         hideLoader();
         setTestRequests(res.content);
+        setTotalPages(res.totalPages);
       })
       .catch((err) => {
         notification.error({
@@ -50,8 +67,17 @@ const TestingRequests = () => {
     const userInfo = store.getState().userInfoSlice;
     setUserRoles(userInfo.roleIds);
 
-    fetchTestRequests();
+    fetchTestRequests(currentPage);
   }, [filterState]);
+
+  const handleSort = (sortFieldName) => {
+    setSortFieldName(sortFieldName);
+    const newSortDirection = { ...sortDirection };
+    newSortDirection[sortFieldName] =
+      sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
+    setSortDirection(newSortDirection);
+    fetchTestRequests(currentPage);
+  };
 
   const changeState = (testRequestId, state) => {
     showLoader();
@@ -61,7 +87,7 @@ const TestingRequests = () => {
           placement: "bottomRight",
           message: "Status updated successfully!",
         });
-        fetchTestRequests();
+        fetchTestRequests(currentPage);
         hideLoader();
       })
       .catch((err) => {
@@ -76,17 +102,17 @@ const TestingRequests = () => {
 
   const toggleRow = (trid) => {
     setTestRequests((trs) => {
-      return trs.map(tr => {
+      return trs.map((tr) => {
         // tr.class = 'hide';
         if (tr.id === trid) {
-          tr.class = tr.class === 'show' ? 'hide' : 'show';
+          tr.class = tr.class === "show" ? "hide" : "show";
         } else {
-          tr.class = 'hide';
+          tr.class = "hide";
         }
         return tr;
       });
     });
-  }
+  };
 
   return (
     <div>
@@ -139,11 +165,37 @@ const TestingRequests = () => {
             <table className=" data-table">
               <thead>
                 <tr>
-                  <th className="col-2.4">APP NAME</th>
-                  <th className="col-2.4">DATE OF APPLICATION</th>
+                  <th className="col-2.4">
+                    APP NAME{" "}
+                    <a className="ps-1" href="#">
+                      <img
+                        src={sortIcon}
+                        alt="Sort"
+                        onClick={() => handleSort("productName")}
+                      />
+                    </a>
+                  </th>
+                  <th className="col-2.4">
+                    DATE OF APPLICATION{" "}
+                    <a className="ps-1" href="#">
+                      <img
+                        src={sortIcon}
+                        alt="Sort"
+                        onClick={() => handleSort("createdAt")}
+                      />
+                    </a>
+                  </th>
                   <th className="col-2.4">Assessee</th>
                   <th className="col-2.4">STATUS</th>
-                  <th className="col-2.4"><span className={userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && 'mx-2'}>Actions</span></th>
+                  <th className="col-2.4">
+                    <span
+                      className={
+                        userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && "mx-2"
+                      }
+                    >
+                      Actions
+                    </span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -157,31 +209,26 @@ const TestingRequests = () => {
                     </tr>
                   </>
                 ) : null}
-                {testRequests.map((testRequest) =>
+                {testRequests.map((testRequest) => (
                   <>
                     <tr key={testRequest.id}>
-                      <td>
-                        {testRequest.productName}
-                      </td>
-                      <td>
-                        {formatDate(testRequest.meta.updatedAt)}
-                      </td>
+                      <td>{testRequest.productName}</td>
+                      <td>{formatDate(testRequest.meta.updatedAt)}</td>
                       <td>
                         <UserIdConnector
                           isLink={true}
                           userId={testRequest.assesseeId}
                         />
                       </td>
-                      <td >
-                        <span
-                          className={StateBadgeClasses[testRequest.state]}
-                        >
+                      <td>
+                        <span className={StateBadgeClasses[testRequest.state]}>
                           {TestRequestStateConstantNames[testRequest.state]}
                         </span>
                       </td>
-                      <td className=" no-wrap text-end"
-                      >
-                        {(userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && testRequest.state == TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING) ?
+                      <td className=" no-wrap text-end">
+                        {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+                        testRequest.state ==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
                           <>
                             <button
                               onClick={() => {
@@ -212,16 +259,26 @@ const TestingRequests = () => {
                               REJECT{" "}
                             </button>
                           </>
-                          : null
-                        }
-                        <span onClick={() => toggleRow(testRequest.id)} type="button" className="approval-action-button">
-                          {testRequest.class === 'show' ? <i class="bi bi-chevron-double-down"></i> : <i class="bi bi-chevron-double-right"></i>}
+                        ) : null}
+                        <span
+                          onClick={() => toggleRow(testRequest.id)}
+                          type="button"
+                          className="approval-action-button"
+                        >
+                          {testRequest.class === "show" ? (
+                            <i class="bi bi-chevron-double-down"></i>
+                          ) : (
+                            <i class="bi bi-chevron-double-right"></i>
+                          )}
                         </span>
                       </td>
                     </tr>
                     <tr key={"collapseable--" + testRequest.id}>
                       <td colSpan="5" className="hiddenRow m-0 field-box">
-                        <div className={"collapse " + testRequest.class} id="Accordion">
+                        <div
+                          className={"collapse " + testRequest.class}
+                          id="Accordion"
+                        >
                           <div className="mx-5 my-3">
                             <table className="data-table">
                               <thead>
@@ -233,14 +290,21 @@ const TestingRequests = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                {testRequest.testRequestUrls.length > 0 && testRequest.testRequestUrls.map(testUrls => (
-                                  <tr>
-                                    <td><ComponentIdConnector componentId={testUrls.componentId}></ComponentIdConnector></td>
-                                    <td>{testUrls.baseUrl}</td>
-                                    <td>{testUrls.username}</td>
-                                    <td>{testUrls.password}</td>
-                                  </tr>
-                                ))}
+                                {testRequest.testRequestUrls.length > 0 &&
+                                  testRequest.testRequestUrls.map(
+                                    (testUrls) => (
+                                      <tr>
+                                        <td>
+                                          <ComponentIdConnector
+                                            componentId={testUrls.componentId}
+                                          ></ComponentIdConnector>
+                                        </td>
+                                        <td>{testUrls.baseUrl}</td>
+                                        <td>{testUrls.username}</td>
+                                        <td>{testUrls.password}</td>
+                                      </tr>
+                                    )
+                                  )}
                               </tbody>
                             </table>
                           </div>
@@ -248,11 +312,21 @@ const TestingRequests = () => {
                       </td>
                     </tr>
                   </>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
         </div>
+        {totalPages > 1 && (
+          <Pagination
+            className="pagination-ui"
+            count={totalPages}
+            page={currentPage}
+            onChange={handleChangePage}
+            variant="outlined"
+            shape="rounded"
+          />
+        )}
       </div>
     </div>
   );
