@@ -15,6 +15,7 @@
     "axios": "^1.5.0",
     "bootstrap": "^5.3.2",
     "bootstrap-icons": "^1.11.3",
+    "react-bootstrap-validation": "^0.1.11",
     "css-loader": "^6.8.1",
     "formik": "^2.4.5",
     "html2canvas": "^1.4.1",
