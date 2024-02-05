@@ -19,9 +19,7 @@ const Applications = () => {
     ...TestRequestActionStateLabels,
     { label: "All", value: "" },
   ];
-  const [filterState, setFilterState] = useState(
-    TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED
-  );
+  const [filterState, setFilterState] = useState("");
   const [testRequests, setTestRequests] = useState([]);
   const [sortDirection, setSortDirection] = useState({
     name: "desc",
@@ -61,6 +59,7 @@ const Applications = () => {
       .then((res) => {
         hideLoader();
         setTestRequests(res.content);
+        console.log(res.content);
         setTotalPages(res.totalPages);
       })
       .catch((err) => {
@@ -178,18 +177,30 @@ const Applications = () => {
                       ></UserIdEmailConnector>
                     </td>
                     <td>
-                      <button
-                        className={StateClasses[testRequest.state]?.btnClass}
-                        onClick={() => {
-                          navigate(`/dashboard/choose-test/${testRequest.id}`);
-                        }}
-                      >
-                        {" "}
-                        <i
-                          className={StateClasses[testRequest.state]?.iconClass}
-                        ></i>{" "}
-                        {StateClasses[testRequest.state]?.btnText}
-                      </button>
+                      {testRequest.state !== "test.request.status.finished" ? (
+                        <button
+                          className={StateClasses[testRequest.state]?.btnClass}
+                          onClick={() => {
+                            navigate(
+                              `/dashboard/choose-test/${testRequest.id}`
+                            );
+                          }}
+                        >
+                          {" "}
+                          <i
+                            className={
+                              StateClasses[testRequest.state]?.iconClass
+                            }
+                          ></i>{" "}
+                          {StateClasses[testRequest.state]?.btnText}
+                        </button>
+                      ) : (
+                        <button
+                          className={StateClasses[testRequest.state]?.btnClass}
+                        >
+                          FINISHED
+                        </button>
+                      )}
                       <button
                         className="report"
                         onClick={() => viewReport(testRequest.id)}
