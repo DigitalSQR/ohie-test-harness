@@ -30,7 +30,7 @@ export default function Header() {
 							aria-expanded="false"
 						>
 							<span className="user-pic">
-								<img src={avatar} />
+								{/* <img src={avatar} /> */}
 							</span>
 							<span className="user-name">
 								{userInfo?.name}

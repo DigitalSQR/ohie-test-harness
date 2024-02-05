@@ -38,7 +38,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
-		setUser(userInfo);    
+    setUser(userInfo);
   }, []);
 
   useEffect(() => {
@@ -85,23 +85,6 @@ export default function Sidebar() {
             <span> Dashboard </span>
           </a>
         </li>
-        <li>
-          <a
-            className={
-              activeMenuItem === "/dashboard/testing-requests"
-                ? "active menu-like-item"
-                : "menu-like-item"
-            }
-            onClick={() => handleMenuItemClick("/dashboard/testing-requests")}
-          >
-            <i
-              aria-label="Testing Requests"
-              title="Testing Requests"
-              className="bi bi-file-earmark-bar-graph menu-left-icon"
-            ></i>
-            <span> Testing Requests</span>
-          </a>
-        </li>
         {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ? (
           <>
             <li>
@@ -111,9 +94,7 @@ export default function Sidebar() {
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }
-                onClick={() =>
-                  handleMenuItemClick("/dashboard/assessee")
-                }
+                onClick={() => handleMenuItemClick("/dashboard/assessee")}
               >
                 <i
                   aria-label="User Registration"
@@ -121,6 +102,25 @@ export default function Sidebar() {
                   className="bi bi-columns-gap menu-left-icon"
                 ></i>
                 <span> Assessee </span>
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  activeMenuItem === "/dashboard/testing-requests"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
+                }
+                onClick={() =>
+                  handleMenuItemClick("/dashboard/testing-requests")
+                }
+              >
+                <i
+                  aria-label="Testing Requests"
+                  title="Testing Requests"
+                  className="bi bi-file-earmark-bar-graph menu-left-icon"
+                ></i>
+                <span> Testing Requests</span>
               </a>
             </li>
             <li>

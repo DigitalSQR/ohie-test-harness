@@ -1,15 +1,19 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import openhie_logo from "../../styles/images/logo.png";
 import congratulations_icon from "../../styles/images/congratulations-icon.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 export default function CongratulationsPage() {
   const navigate = useNavigate();
+  const params = useParams();
   return (
     <Fragment>
       <div className="container-fluid ps-0">
         <div className="row">
           <div className="col-md-6 col-12 col-sm-12 p-0">
-            <div className="login-bg">
+            <div
+              className="login-bg"  style={{ height: "max(100vh,100%)", overflowY: "hidden" }}
+             
+            >
               <div className="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
                 <h1>Testing Harness Test Automation</h1>
                 <p className="font-size-16 mt-3">
@@ -26,7 +30,7 @@ export default function CongratulationsPage() {
               <div className="text-center">
                 <img src={openhie_logo} />
               </div>
-              <div className="custom-scrollbar">
+              <div>
                 <div className="text-center my-4">
                   <img src={congratulations_icon} />
                 </div>
@@ -47,7 +51,7 @@ export default function CongratulationsPage() {
                 <p className="my-4">
                   Once your account is approved by our admin, you will receive
                   another email on the registered email{" "}
-                  <span className="fw-bold">johnsmith@gmail.com</span>
+                  <span className="fw-bold">{params.email}</span>
                 </p>
 
                 <p>
@@ -56,7 +60,10 @@ export default function CongratulationsPage() {
                   </a>{" "}
                   Verification link.
                 </p>
-                <button className="btn btn-primary btn-blue w-100 mt-4" onClick={()=>navigate("/login")}>
+                <button
+                  className="btn btn-primary btn-blue w-100 my-4"
+                  onClick={() => navigate("/login")}
+                >
                   LOGIN
                 </button>
               </div>
