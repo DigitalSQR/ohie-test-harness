@@ -33,7 +33,7 @@ export default function SignUp() {
         .then(
           (result) => {
             hideLoader();
-            navigate("/CongratulationsPage");
+            navigate(`/CongratulationsPage/${formData}`);
           },
           (result) => {
             hideLoader();
@@ -72,7 +72,7 @@ export default function SignUp() {
       <div className="container-fluid ps-0">
         <div className="row">
           <div className="col-md-6 col-12 col-sm-12 p-0">
-            <div className="login-bg">
+          <div className="login-bg" style={{ height: "max(100vh,100%)", overflowY: "hidden" }}>
               <div className="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
                 <h1>Testing Harness Test Automation</h1>
                 <p className="font-size-16 mt-3">
@@ -90,7 +90,7 @@ export default function SignUp() {
                 <img src={openhie_logo} />
               </div>
               <h4 className="my-4">Sign Up</h4>
-              <div className="custom-scrollbar">
+              <div>
                 <div className="custom-input mb-3">
                   <label htmlFor="exampleFormControlInput1" className="form-label">
                     Name
@@ -199,14 +199,14 @@ export default function SignUp() {
 
                 <div className="my-3">
                   <button
-                    className="btn btn-primary btn-blue w-100"
+                    className="btn btn-primary btn-blue w-100 mt-5"
                     onClick={SignUpHandler}
                   >
                     Sign Up
                   </button>
                 </div>
 
-                <div className="text-center">
+                <div className="text-center mb-5">
                   Already have an account?{" "}
                   <a
                     onClick={ClickHandler}
