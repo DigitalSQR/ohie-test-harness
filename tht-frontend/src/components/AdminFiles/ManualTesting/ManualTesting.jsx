@@ -26,29 +26,27 @@ export default function ManualTesting() {
 				setTestId(res.content[0].id);
 				setManualQuestions(res.content);
 				setComponentId(res.content[1].id);
-				console.log(res.content[1].id);
 				setDefaultValue(res.content[1].name);
-				console.log(res.content);
 			})
 			.catch((error) => {
 				throw error;
 			});
 	}, []);
 
-	// const getOptions = async (testcaseId) => {
-	// 	var options = await TestResultAPI.getTestCaseOptions(testcaseId);
-	// 	return options.content;
-	// };
-
-	const nextSpecification = (rank) => {
-		const nextEntry = manualQuestions.filter((entry) => {
+	const nextSpecification = (rank, nextRefId) => {
+		const nextSpecification = manualQuestions.filter((entry) => {
 			return entry.rank == rank;
 		});
-		if (nextEntry[0] != undefined) {
-			setActiveSpecification(nextEntry[0].id);
+		console.log("the next specification ", nextSpecification);
+		// console.log(nextSpecification[0].refId)
+		if (
+			nextSpecification[0] != undefined &&
+			nextSpecification[0]?.refId.includes(nextRefId)
+		) {
+			setActiveSpecification(nextSpecification[0].id);
 		} else {
 			notification.info({
-				description: "No more questions remaining.",
+				description: "This was the last question",
 				placement: "bottomRight",
 			});
 		}
@@ -113,7 +111,10 @@ export default function ManualTesting() {
 					}}
 				>
 					{getSpecifications().map((specification) => (
-						<Item key={specification.id} tab={specification.title}>
+						<Item
+							key={specification.id}
+							tab={specification.title}
+						>
 							<TestCase
 								specificationId={specification.id}
 								nextSpecification={nextSpecification}
