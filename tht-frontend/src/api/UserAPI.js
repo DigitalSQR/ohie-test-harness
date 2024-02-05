@@ -47,8 +47,8 @@ export const UserAPI = {
       const params={
 				sort: `${sortFieldName},${sortDirection}`,
 			}
-			if(pageNumber) params.pageNumber=pageNumber;
-			if(pageSize) params.pageSize=pageSize;  
+			if(pageNumber) params.page=pageNumber;
+			if(pageSize) params.size=pageSize;  
       if(state)params.state=state;
       if(role)params.role=role;
       const response = await api.request({
