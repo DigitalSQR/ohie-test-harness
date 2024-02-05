@@ -12,6 +12,13 @@ export default function Landing() {
   const [userChartData, setUserChartData] = useState([]);
   const [testRequestChartData, setTestRequestChartData] = useState([]);
 
+  const [userInfo, setUserInfo] = useState();
+
+  useEffect(() => {
+    const userInfo = store.getState().userInfoSlice;
+    setUserInfo(userInfo);
+  }, []);
+
   useEffect(() => {
     const fetchUserData = async () => {
       const response = await UserAPI.getUsers();
@@ -107,31 +114,30 @@ export default function Landing() {
             </div>
           )}
         </div>
-
         <div className="row mt-5">
-          <div className="col-md-6">
-            <h5 className="mb-3 text-center">User Status Pie Chart</h5>
-            <div style={{ maxWidth: "400px", margin: "0 auto" }}>
-            <ApexChart
-              options={userOptions}
-              series={userSeries}
-              type="pie"
-              width="100%"
-            />
-
-          </div>
-          </div>
-
+          {!userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
+            <div className="col-md-6">
+              <h5 className="mb-3 text-center">User Status Pie Chart</h5>
+              <div style={{ maxWidth: "400px", margin: "0 auto" }}>
+                <ApexChart
+                  options={userOptions}
+                  series={userSeries}
+                  type="pie"
+                  width="100%"
+                />
+              </div>
+            </div>
+          )}
           <div className="col-md-6">
             <h5 className="mb-3 text-center">Test Request Status Pie Chart</h5>
             <div style={{ maxWidth: "400px", margin: "0 auto" }}>
-            <ApexChart
-              options={testRequestOptions}
-              series={testRequestSeries}
-              type="pie"
-              width="100%"
-            />
-          </div>
+              <ApexChart
+                options={testRequestOptions}
+                series={testRequestSeries}
+                type="pie"
+                width="100%"
+              />
+            </div>
           </div>
         </div>
       </div>
