@@ -3,7 +3,10 @@ import { useDispatch } from "react-redux";
 import "./Login.css";
 import openhie_logo from "../../../styles/images/logo.png";
 import { useNavigate } from "react-router-dom";
-import { login_success, setIsKeepLoginState } from "../../../reducers/authReducer";
+import {
+  login_success,
+  setIsKeepLoginState,
+} from "../../../reducers/authReducer";
 import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 import { notification } from "antd";
 import { setAuthToken } from "../../../api/configs/axiosConfigs";
@@ -44,22 +47,25 @@ export default function Login() {
   const handleLogin = async () => {
     showLoader();
     AuthenticationAPI.doLogin(new URLSearchParams(formData))
-      .then((response) => {
-        dispatch(login_success(response));
-        setAuthToken(response.access_token);
-        hideLoader();
-        UserAPI.viewUser().then((user) => {
-          dispatch(userinfo_success(user));
-          navigate("/dashboard");
-        })
-       
-      },(response)=>{ 
-        hideLoader();
-        console.log(response);
-        notification.error({
-        placement: "bottomRight",
-        description: `${response.response.data.error_description}`,
-      });})
+      .then(
+        (response) => {
+          dispatch(login_success(response));
+          setAuthToken(response.access_token);
+          hideLoader();
+          UserAPI.viewUser().then((user) => {
+            dispatch(userinfo_success(user));
+            navigate("/dashboard");
+          });
+        },
+        (response) => {
+          hideLoader();
+          console.log(response);
+          notification.error({
+            placement: "bottomRight",
+            description: `${response.response.data.error_description}`,
+          });
+        }
+      )
       .catch((error) => {
         // Handle the error here
         hideLoader();
@@ -70,10 +76,10 @@ export default function Login() {
         });
       });
   };
- 
+
   const redirectToSignUp = async () => {
     navigate("/SignUp");
-  }
+  };
   const setOrUnsetKeepMeLogin = (event) => {
     const { checked } = event.target;
     setIsKeepLogin(checked);
@@ -113,7 +119,10 @@ export default function Login() {
               </div>
               <div className="custom-scrollbar sm-cut">
                 <div className="custom-input mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label"
+                  >
                     Email
                   </label>
                   <div className="input-group">
@@ -135,7 +144,10 @@ export default function Login() {
                   </div>
                 </div>
                 <div className="custom-input mb-3">
-                  <label htmlFor="exampleFormControlInput2" className="form-label">
+                  <label
+                    htmlFor="exampleFormControlInput2"
+                    className="form-label"
+                  >
                     Password
                   </label>
                   <div className="input-group">
@@ -169,7 +181,12 @@ export default function Login() {
                     />
                     <span className="checkmark"></span>
                   </label>
-                  <a  href="" onClick={()=>{navigate("/forgotpassword")}}>
+                  <a
+                    href=""
+                    onClick={() => {
+                      navigate("/forgotpassword");
+                    }}
+                  >
                     Reset Password
                   </a>
                 </div>
@@ -181,17 +198,23 @@ export default function Login() {
                   >
                     Login
                   </button>
-                  <h6 style={{ textAlign: "center" }} className="m-2">OR</h6>
+                  <h6 style={{ textAlign: "center" }} className="m-2">
+                    OR
+                  </h6>
                   <h4 style={{ textAlign: "center" }}>
                     <a href="/api/oauth2/authorization/google">
-                    <img src={GoogleLoginIcon}/>
+                      <img src={GoogleLoginIcon} />
                       {/* Login with Google */}
                     </a>
                   </h4>
                 </div>
                 <div className="text-center">
-                  <a href="" onClick={redirectToSignUp} className="font-weight-500 ps-2 text-blue" >
-                  Click Here to Register{" "}
+                  <a
+                    href=""
+                    onClick={redirectToSignUp}
+                    className="font-weight-500 ps-2 text-blue"
+                  >
+                    Click Here to Register{" "}
                   </a>
                 </div>
               </div>

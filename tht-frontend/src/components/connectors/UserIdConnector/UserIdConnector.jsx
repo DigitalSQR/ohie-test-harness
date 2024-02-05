@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLES, USER_ROLE_NAMES } from "../../../constants/role_constants";
 import { userStateConstantNames } from "../../../constants/user_constants";
-import Button from "react-bootstrap/Button";
-import { Modal } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 const UserIdConnector = ({ userId, isLink }) => {
   const [user, setUser] = useState();
   const [show, setShow] = useState(false);
