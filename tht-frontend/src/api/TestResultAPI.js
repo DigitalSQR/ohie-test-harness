@@ -57,7 +57,6 @@ export const TestResultAPI = {
 				url: `testcase-result/submit/${testcaseResultId}/${selectedTestcaseOptionId}`,
 				method: "PATCH",
 			});
-			console.log("The saveOptions result is ", response.data);
 			return response.data;
 		} catch (error) {
 			throw error;

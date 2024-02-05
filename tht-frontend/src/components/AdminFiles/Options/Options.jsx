@@ -13,7 +13,7 @@ export default function Options(props) {
 		showLoader();
 		TestResultAPI.getTestCaseOptions(refId)
 			.then((res) => {
-				console.log(res.content);
+				// console.log(res.content);
 				setOptions(res.content);
 				hideLoader();
 			})

@@ -28,14 +28,10 @@ export default function TestCase(props) {
 		setSelectedOption(null);
 	};
 
-	const handleSaveandNext = (id, currentPage, rank, index) => {
-		console.log(
-			currentPage,
-			rank,
-			index,
-			totalPage,
-			manualQuestions.length
-		);
+	const handleSaveandNext = (id, currentPage, rank,refId) => {
+
+		const nextRefid = refId.split('.').slice(1,2).join('.');
+
 		if (selectedOption == null) {
 			notification.error({
 				description: "No answers selected",
@@ -47,7 +43,7 @@ export default function TestCase(props) {
 					console.log(res);
 					if (currentPage == totalPage) {
 						console.log("arrives in the last page");
-						nextSpecification(rank + 1);
+						nextSpecification(rank + 1,nextRefid);
 					} else if (currentPage < totalPage) {
 						setCurrentPage((currentPage) => {
 							return currentPage + 1;
@@ -64,7 +60,7 @@ export default function TestCase(props) {
 	const fetchQuestions = (currentPage) => {
 		TestResultAPI.getQuestions(specificationId, currentPage - 1)
 			.then((res) => {
-				console.log(res);
+				// console.log(res);
 				setTotalPage(res.totalPages);
 				setManualQuestions(res.content);
 			})
@@ -200,7 +196,6 @@ export default function TestCase(props) {
 						</div>
 					</div>
 					{manualQuestions.map((question, index) => {
-						console.log(question.testcaseOptionId);
 						const segments = question.refId.split(".");
 						const Specification = segments
 							.slice(-3)
@@ -246,7 +241,7 @@ export default function TestCase(props) {
 													className="mx-2 font-size-14"
 													onClick={() => downloadFile(file)}
 												>
-													<i class="bi bi-cloud-download"></i>
+													<i className="bi bi-cloud-download"></i>
 												</span>
 												<span
 													type="button"
@@ -254,7 +249,7 @@ export default function TestCase(props) {
 													className="mx-2 font-size-14"
 													onClick={() => deleteFile(file)}
 												>
-													<i class="bi bi-trash3"></i>
+													<i className="bi bi-trash3"></i>
 												</span>
 											</div>
 										))}
@@ -345,7 +340,7 @@ export default function TestCase(props) {
 													question.id,
 													currentPage,
 													question.rank,
-													index
+													question.refId
 												);
 											}}
 										>

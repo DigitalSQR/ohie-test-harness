@@ -108,7 +108,7 @@ export default function ChooseTest() {
 			.then((response) => {
 				console.log(response);
 				notification.success({
-					description: `${response}`,
+					description: "Test Started Successfully",
 					placement: "bottomRight",
 				});
 				loadProgress();
