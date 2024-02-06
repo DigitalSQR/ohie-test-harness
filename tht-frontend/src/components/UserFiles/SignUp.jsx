@@ -33,7 +33,8 @@ export default function SignUp() {
         .then(
           (result) => {
             hideLoader();
-            navigate(`/CongratulationsPage/${formData}`);
+            navigate(`/CongratulationsPage/${result.email}
+            `);
           },
           (result) => {
             hideLoader();
