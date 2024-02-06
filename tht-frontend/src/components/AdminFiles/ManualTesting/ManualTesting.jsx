@@ -114,7 +114,7 @@ export default function ManualTesting() {
 				</ol>
 			</nav>
 			<span>
-				<b>Select Component : </b>
+				<b>Component </b>
 			</span>
 			<Select
 				onChange={onComponentChange}

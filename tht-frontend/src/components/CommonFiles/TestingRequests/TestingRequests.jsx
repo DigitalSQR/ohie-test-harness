@@ -225,52 +225,56 @@ const TestingRequests = () => {
                           {TestRequestStateConstantNames[testRequest.state]}
                         </span>
                       </td>
-                      <td className=" no-wrap text-end">
-                        {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) &&
-                        testRequest.state ==
-                          TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
-                          <>
-                            <button
-                              onClick={() => {
-                                changeState(
-                                  testRequest.id,
-                                  TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED
-                                );
-                              }}
-                              type="button"
-                              className="text-uppercase btn btn-sm approval-action-button text-uppercase"
-                            >
-                              <span>
-                                <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
-                                APPROVE{" "}
-                              </span>
-                            </button>
-                            <button
-                              onClick={() => {
-                                changeState(
-                                  testRequest.id,
-                                  TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED
-                                );
-                              }}
-                              type="button"
-                              className="mx-1 btn btn-sm approval-action-button text-uppercase"
-                            >
-                              <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                              REJECT{" "}
-                            </button>
-                          </>
-                        ) : null}
-                        <span
-                          onClick={() => toggleRow(testRequest.id)}
-                          type="button"
-                          className="approval-action-button"
-                        >
-                          {testRequest.class === "show" ? (
-                            <i class="bi bi-chevron-double-down"></i>
-                          ) : (
-                            <i class="bi bi-chevron-double-right"></i>
-                          )}
-                        </span>
+                      <td className="no-wrap text-end">
+                        <div className="d-flex align-items-center justify-content-between">
+                          <div>
+                            {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+                              testRequest.state ==
+                                TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING && (
+                                <div className="d-flex">
+                                  <button
+                                    onClick={() => {
+                                      changeState(
+                                        testRequest.id,
+                                        TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED
+                                      );
+                                    }}
+                                    type="button"
+                                    className="text-uppercase btn btn-sm approval-action-button text-uppercase"
+                                  >
+                                    <span>
+                                      <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                                      APPROVE{" "}
+                                    </span>
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      changeState(
+                                        testRequest.id,
+                                        TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED
+                                      );
+                                    }}
+                                    type="button"
+                                    className="mx-1 btn btn-sm approval-action-button text-uppercase"
+                                  >
+                                    <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
+                                    REJECT{" "}
+                                  </button>
+                                </div>
+                              )}
+                          </div>
+                          <span
+                            onClick={() => toggleRow(testRequest.id)}
+                            type="button"
+                            className="approval-action-button"
+                          >
+                            {testRequest.class === "show" ? (
+                              <i class="bi bi-chevron-double-down"></i>
+                            ) : (
+                              <i class="bi bi-chevron-double-right"></i>
+                            )}
+                          </span>
+                        </div>
                       </td>
                     </tr>
                     <tr key={"collapseable--" + testRequest.id}>

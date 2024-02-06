@@ -189,7 +189,7 @@ export default function ChooseTest() {
 							</p>
 							{totalManualTestcaseResults == 0 && (
 								<button
-									className="btn btn-primary  btn-sm"
+									className="btn btn-primary  btn-sm mt-4"
 									style={{ alignItems: "flex-end" }}
 									onClick={() => {
 										handleStartTesting(
@@ -240,7 +240,7 @@ export default function ChooseTest() {
 							</p>
 							{totalAutomatedTestcaseResults == 0 && (
 								<button
-									className="btn btn-primary small btn-sm"
+									className="btn btn-primary small btn-sm mt-4"
 									style={{ alignItems: "flex-end" }}
 									onClick={() => {
 										handleStartTesting(false);
