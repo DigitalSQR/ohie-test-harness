@@ -169,7 +169,7 @@ const Applications = () => {
                 {testRequests?.map((testRequest) => (
                   <tr key={testRequest.name}>
                     <td>{testRequest.name}</td>
-                    <td>{testRequest.productName}</td>
+                    <td>{testRequest.productName !== "" ? testRequest.productName : '-'}</td>
                     <td>{formatDate(testRequest.meta.updatedAt)}</td>
                     <td>
                       <UserIdEmailConnector
