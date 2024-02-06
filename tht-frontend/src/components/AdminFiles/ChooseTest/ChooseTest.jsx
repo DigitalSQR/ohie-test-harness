@@ -8,25 +8,24 @@ import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { notification, Progress, Button } from "antd";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
 import { handleErrorResponse } from "../../../utils/utils";
+import { TestRequestAPI } from "../../../api/TestRequestAPI";
 export default function ChooseTest() {
 	const { testRequestId } = useParams();
 	const { TESTCASE_REFOBJURI, TESTREQUEST_REFOBJURI } = RefObjUriConstants;
 	const [manualEntries, setManualEntries] = useState([]);
-	// const [resumeManualTest, setResumeManualTest] = useState(false);
-	// const [resumeAutomatedTest, setResumeAutomatedTest] = useState(false);
+	const [testcaseName, setTestCaseName] = useState();
 	const [manualProgress, setManualProgress] = useState(0);
 	const [automatedProgress, setAutomatedProgress] = useState(0);
 	const [totalManualTestcaseResults, setTotalManualTestcaseResults] =
 		useState(0);
 	const [totalAutomatedTestcaseResults, setTotalAutomatedTestcaseResults] =
 		useState(0);
-	// let totalManualTestcaseResults;
-	// let totalAutomatedTestcaseResults;
+
 	const [testcaseResults, setTestCaseResults] = useState([]);
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		console.log("In use Effect => ", totalManualTestcaseResults);
+		// console.log("In use Effect => ", totalManualTestcaseResults);
 		const completedManualTestcaseResults = testcaseResults.filter(
 			(tescaseResults) =>
 				tescaseResults.manual == true &&
@@ -52,22 +51,22 @@ export default function ChooseTest() {
 					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
 		).length;
 		setTotalManualTestcaseResults(total);
-		console.log("manutotal ",total)
+		// console.log("manutotal ", total);
 
 		// console.log(totalManualTestcaseResults);
-		var automatedTotal = 
-			testcaseResults.filter(
-				(totalTestCaseResults) =>
-					totalTestCaseResults.manual == false &&
-					totalTestCaseResults.state !==
-						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
-			).length
-		
+		var automatedTotal = testcaseResults.filter(
+			(totalTestCaseResults) =>
+				totalTestCaseResults.manual == false &&
+				totalTestCaseResults.state !==
+					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
+		).length;
+
 		setTotalAutomatedTestcaseResults(automatedTotal);
-				console.log("auto total ",automatedTotal);
+		console.log("auto total ", automatedTotal);
 
 		// console.log(completedManualTestcaseResults);
 	}, [testcaseResults]);
+
 	useEffect(() => {
 		const completedAutomatedTestcaseResults = testcaseResults.filter(
 			(tescaseResults) =>
@@ -78,7 +77,7 @@ export default function ChooseTest() {
 						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED)
 		).length;
 		// console.log(completedManualTestcaseResults);
-		console.log(completedAutomatedTestcaseResults);
+		console.log("completed automate", completedAutomatedTestcaseResults);
 
 		if (totalAutomatedTestcaseResults !== 0) {
 			setAutomatedProgress(
@@ -112,7 +111,6 @@ export default function ChooseTest() {
 					placement: "bottomRight",
 				});
 				loadProgress();
-
 			})
 			.catch((error) => {
 				console.log(error);
@@ -121,12 +119,38 @@ export default function ChooseTest() {
 					placement: "bottomRight",
 				});
 			});
-
 	};
 	//finish 2 or skip 3 5 / 50 not draft
 	//50 60
+	const testCaseResultInfo = () => {
+		TestRequestAPI.getTestRequestsById(testRequestId)
+			.then((res) => {
+				console.log("testrequestinfo", res);
+				setTestCaseName(res.productname);
+			})
+			.catch(() => {
+				notification.error({
+					description: "Oops something went wrong!",
+					placement: "bottomRight",
+				});
+			});
+	};
+	const testCaseInfo = () => {
+		TestRequestAPI.getTestRequestsById(testRequestId)
+			.then((res) => {
+				console.log("testrequestinfo", res);
+				setTestCaseName(res.productName);
+			})
+			.catch(() => {
+				notification.error({
+					description: "Oops something went wrong!",
+					placement: "bottomRight",
+				});
+			});
+	};
 	useEffect(() => {
 		loadProgress();
+		testCaseInfo();
 	}, []);
 
 	useEffect(() => {
@@ -136,11 +160,20 @@ export default function ChooseTest() {
 	return (
 		<div id="wrapper">
 			<div className="col-12 pt-3">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item">
+							<a href="/dashboard/applications">Applications</a>
+						</li>
+						<li class="breadcrumb-item active" aria-current="page">
+							{testcaseName}
+						</li>
+					</ol>
+				</nav>
 				<h5>Choose Testing Type</h5>
 				<p className="text-gray">
 					Select the type to start testing application with OpenHIE.{" "}
 				</p>
-
 				<div className="d-flex flex-wrap">
 					<div className="testing-grid">
 						<div className="icon-box">
@@ -193,7 +226,6 @@ export default function ChooseTest() {
 					</div>
 					<div
 						className="testing-grid"
-						// onClick={() => navigate("/dashboard/workflow-testing")}
 					>
 						<div className="icon-box">
 							<img src={workflow_logo} />
@@ -223,7 +255,7 @@ export default function ChooseTest() {
 									<Button
 										onClick={() =>
 											navigate(
-												`/dashboard/workflow-testing/${testRequestId}`
+												`/dashboard/automated-testing/${testRequestId}`
 											)
 										}
 									>

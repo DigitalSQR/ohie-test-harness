@@ -29,9 +29,9 @@ export default function TestCase(props) {
 	};
 
 	const handleSaveandNext = (id, currentPage, rank,refId) => {
-
+		console.log(currentPage,rank)
 		const nextRefid = refId.split('.').slice(1,2).join('.');
-
+		console.log(nextRefid);
 		if (selectedOption == null) {
 			notification.error({
 				description: "No answers selected",
@@ -254,7 +254,7 @@ export default function TestCase(props) {
 											</div>
 										))}
 									</div>
-									<div className="text-center mb-3">
+									<div className="text-end mb-3">
 										<div
 											className="cst-btn-group btn-group"
 											role="group"
@@ -332,9 +332,9 @@ export default function TestCase(props) {
 											</div>
 										))}
 									</div> */}
-									<div className="text-center mb-3">
+									<div className="text-end mb-3">
 										<button
-											className=" btn btn-primary"
+											className="cst-btn-group btn btn-primary"
 											onClick={() => {
 												handleSaveandNext(
 													question.id,
