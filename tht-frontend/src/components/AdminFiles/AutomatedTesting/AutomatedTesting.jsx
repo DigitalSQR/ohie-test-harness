@@ -83,7 +83,7 @@ export default function AutomatedTesting() {
 		TestRequestAPI.getTestRequestsById(testRequestId)
 			.then((res) => {
 				console.log("testrequestinfo", res);
-				setTestCaseName(res.productName);
+				setTestCaseName(res.name);
 			})
 			.catch(() => {
 				notification.error({

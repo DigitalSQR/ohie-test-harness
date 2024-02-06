@@ -27,7 +27,7 @@ export default function ManualTesting() {
 		TestRequestAPI.getTestRequestsById(testRequestId)
 			.then((res) => {
 				console.log("testrequestinfo", res);
-				setTestCaseName(res.productName);
+				setTestCaseName(res.name);
 			})
 			.catch(() => {
 				notification.error({
@@ -138,6 +138,7 @@ export default function ManualTesting() {
 			</Select>
 			{!!componentId && (
 				<Tabs
+					type="card"
 					activeKey={activeSpecification}
 					onChange={(val) => {
 						setActiveSpecification(val);

@@ -139,7 +139,7 @@ export default function ChooseTest() {
 		TestRequestAPI.getTestRequestsById(testRequestId)
 			.then((res) => {
 				console.log("testrequestinfo", res);
-				setTestCaseName(res.productName);
+				setTestCaseName(res.name);
 			})
 			.catch(() => {
 				notification.error({
@@ -224,9 +224,7 @@ export default function ChooseTest() {
 							{/* </div> */}
 						</div>
 					</div>
-					<div
-						className="testing-grid"
-					>
+					<div className="testing-grid">
 						<div className="icon-box">
 							<img src={workflow_logo} />
 						</div>
