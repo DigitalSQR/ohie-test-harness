@@ -3,7 +3,6 @@ package com.argusoft.path.tht.testprocessmanagement.filter;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
@@ -19,25 +18,21 @@ import java.util.List;
 
 public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilter<TestRequestEntity> {
 
+    Root<TestRequestEntity> testRequestEntityRoot;
+    Join<TestRequestEntity, UserEntity> testRequestEntityUserEntityJoin;
     private String id;
-
     @ApiParam(
             value = "name of the testRequest"
     )
     private String name;
-
     @ApiParam(
             value = "state of the testRequest"
     )
     private List<String> states;
-
     @ApiParam(
             value = "assesseeId of the testRequest"
     )
     private String assesseeId;
-
-    Root<TestRequestEntity> testRequestEntityRoot;
-    Join<TestRequestEntity,UserEntity> testRequestEntityUserEntityJoin;
 
     public TestRequestCriteriaSearchFilter(String id) {
         this.id = id;
@@ -131,7 +126,7 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     }
 
     public Join<TestRequestEntity, UserEntity> getTestRequestEntityUserEntityJoin() {
-        if(testRequestEntityUserEntityJoin==null){
+        if (testRequestEntityUserEntityJoin == null) {
             testRequestEntityUserEntityJoin = getTestRequestEntityRoot().join("assessee");
         }
         return testRequestEntityUserEntityJoin;

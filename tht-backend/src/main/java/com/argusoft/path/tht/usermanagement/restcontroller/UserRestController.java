@@ -317,7 +317,7 @@ public class UserRestController {
                     .getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
             LOGGER.error("caught InvalidParameterException in UserRestController ", e);
-            throw new OperationFailedException("InvalidParameterException while fetching principal User ",e);
+            throw new OperationFailedException("InvalidParameterException while fetching principal User ", e);
         }
         return userMapper.modelToDto(principalUser);
     }

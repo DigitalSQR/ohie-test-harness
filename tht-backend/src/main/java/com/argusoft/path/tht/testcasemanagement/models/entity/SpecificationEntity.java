@@ -44,14 +44,6 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
         this.rank = rank;
     }
 
-    public Boolean getIsFunctional() {
-        return isFunctional;
-    }
-
-    public void setIsFunctional(Boolean isFunctional) {
-        this.isFunctional = isFunctional;
-    }
-
     public ComponentEntity getComponent() {
         return component;
     }

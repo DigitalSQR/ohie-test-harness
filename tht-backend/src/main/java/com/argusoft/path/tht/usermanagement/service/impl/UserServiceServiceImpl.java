@@ -118,7 +118,7 @@ public class UserServiceServiceImpl implements UserService {
             userByEmail = this.getUserByEmail(userEmail, contextInfo);
             TokenVerificationEntity tokenVerification = tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.FORGOT_PASSWORD.getKey(), contextInfo);
         } catch (Exception e) {
-            LOGGER.error("caught Exception in UserServiceServiceImpl ",e);
+            LOGGER.error("caught Exception in UserServiceServiceImpl ", e);
             // ignore it, no need to show that they are not exists in DB
             //TODO add log
         }
@@ -383,7 +383,6 @@ public class UserServiceServiceImpl implements UserService {
         Page<RoleEntity> roles = roleRepository.findRoles(pageable);
         return roles;
     }
-
 
 
 }

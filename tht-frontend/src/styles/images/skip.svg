@@ -1,0 +1,7 @@
+<svg fill="#FF9800" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="12" cy="12" r="12"/>
+  <g fill="#fff">
+    <polygon points="6,16 10,12.5 6,9"/>
+    <polygon points="13,16 17,12.5 13,9"/>
+  </g>
+</svg>

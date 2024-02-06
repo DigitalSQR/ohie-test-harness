@@ -221,4 +221,41 @@ public class TestcaseResultRestController {
         TestcaseResultEntity testcaseResultEntity = testcaseResultService.changeState(testcaseResultId, changeState, contextInfo);
         return testcaseResultMapper.modelToDto(testcaseResultEntity);
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @ApiOperation(value = "Retrieves a TestcaseResult corresponding to the given filters", response = TestcaseResultInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResult"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/status/{testcaseResultId}")
+    public TestcaseResultInfo getTestcaseResultStatus(
+            @PathVariable("testcaseResultId") String testcaseResultId,
+            @RequestParam(value = "manual", required = false) Boolean isManual,
+            @RequestParam(value = "automated", required = false) Boolean isAutomated,
+            @RequestParam(value ="required", required = false) Boolean isRequired,
+            @RequestParam(value ="recommended", required = false) Boolean isRecommended,
+            @RequestParam(value ="workflow", required = false) Boolean isWorkflow,
+            @RequestParam(value = "functional", required = false) Boolean isFunctional,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException,
+            InvalidParameterException, OperationFailedException {
+
+        TestcaseResultEntity testcaseResultById = testcaseResultService.getTestcaseResultStatus(
+                testcaseResultId,
+                isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
+                contextInfo);
+        return testcaseResultMapper.modelToDto(testcaseResultById);
+    }
 }

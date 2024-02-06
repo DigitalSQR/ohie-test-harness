@@ -54,74 +54,15 @@ public class TestRequestValidator {
         }
     }
 
-    public static void validateTestRequestReinitializeProcess(String testRequestId, String validationTypeKey, TestRequestService testRequestService, TestcaseResultService testcaseResultService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
-
-        if (StringUtils.isEmpty(testRequestId)) {
-            LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
-            throw new InvalidParameterException("testRequestId is missing");
-        }
-        List<ValidationResultInfo> validationResultEntities
-                = validateTestRequestReinitialize(
-                testRequestId,
-                validationTypeKey,
-                testRequestService,
-                testcaseResultService,
-                contextInfo);
-        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error("caught DataValidationErrorException in TestRequestValidator ");
-            throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
-                    validationResultEntities);
-        }
-    }
-
-    private static List<ValidationResultInfo> validateTestRequestReinitialize(
-            String testRequestId,
-            String validationTypeKey,
-            TestRequestService testRequestService,
-            TestcaseResultService testcaseResultService,
-            ContextInfo contextInfo)
-            throws OperationFailedException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
-        try {
-            TestRequestEntity originalEntity = testRequestService
-                    .getTestRequestById(testRequestId,
-                            contextInfo);
-            if (!Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey)
-                    && Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
-
-                TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
-                searchFilter.setState(Collections.singletonList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED));
-                searchFilter.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
-                searchFilter.setRefId(testRequestId);
-                searchFilter.setManual(Boolean.FALSE);
-
-                List<TestcaseResultEntity> testcaseResultEntities =
-                        testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
-                if (testcaseResultEntities.isEmpty()) {
-                    String fieldName = "testRequestId";
-                    errors.add(
-                            new ValidationResultInfo(fieldName,
-                                    ErrorLevel.ERROR,
-                                    "Automation process for The supplied testRequestId hasn't been finished yet."));
-                }
-            }
-        } catch (DoesNotExistException | InvalidParameterException ex) {
-            LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
-            String fieldName = "testRequestId";
-            errors.add(
-                    new ValidationResultInfo(fieldName,
-                            ErrorLevel.ERROR,
-                            "The testRequestId supplied for the start process does not "
-                                    + "exists"));
-        }
-        return errors;
-    }
-
     public static void validateTestRequestStartReinitializeProcess(String testRequestId,
                                                                    String refObjUri,
                                                                    String refId,
                                                                    Boolean isManual,
+                                                                   Boolean isAutomated,
+                                                                   Boolean isRequired,
+                                                                   Boolean isRecommended,
+                                                                   Boolean isWorkflow,
+                                                                   Boolean isFunctional,
                                                                    String validationTypeKey,
                                                                    TestcaseResultService testcaseResultService,
                                                                    ContextInfo contextInfo)
@@ -134,6 +75,11 @@ public class TestRequestValidator {
                 refObjUri,
                 refId,
                 isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
                 validationTypeKey,
                 testcaseResultService,
                 contextInfo);
@@ -150,6 +96,11 @@ public class TestRequestValidator {
             String refObjUri,
             String refId,
             Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
             String validationTypeKey,
             TestcaseResultService testcaseResultService,
             ContextInfo contextInfo)
@@ -170,7 +121,12 @@ public class TestRequestValidator {
 
         if (validationTypeKey.equals(Constant.START_PROCESS_VALIDATION)) {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
-            searchFilter.setManual(Objects.equals(Boolean.TRUE, isManual));
+            searchFilter.setManual(isManual);
+            searchFilter.setAutomated(isAutomated);
+            searchFilter.setRequired(isRequired);
+            searchFilter.setRecommended(isRecommended);
+            searchFilter.setWorkflow(isWorkflow);
+            searchFilter.setFunctional(isFunctional);
             searchFilter.setRefObjUri(refObjUri);
             searchFilter.setRefId(refId);
             searchFilter.setTestRequestId(testRequestId);
@@ -183,7 +139,7 @@ public class TestRequestValidator {
                                 ErrorLevel.ERROR,
                                 "Process for the requested input doesn't have active testcaseResults."));
             }
-            if (testcaseResultEntities.stream().anyMatch(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS) || testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING))) {
+            if (testcaseResultEntities.stream().anyMatch(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
                 String fieldName = "inputData";
                 errors.add(
                         new ValidationResultInfo(fieldName,
@@ -192,7 +148,12 @@ public class TestRequestValidator {
             }
         } else {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
-            searchFilter.setManual(Objects.equals(Boolean.TRUE, isManual));
+            searchFilter.setManual(isManual);
+            searchFilter.setAutomated(isAutomated);
+            searchFilter.setRequired(isRequired);
+            searchFilter.setRecommended(isRecommended);
+            searchFilter.setFunctional(isFunctional);
+            searchFilter.setWorkflow(isWorkflow);
             searchFilter.setRefObjUri(refId);
             searchFilter.setRefId(refObjUri);
             searchFilter.setTestRequestId(testRequestId);
@@ -206,47 +167,6 @@ public class TestRequestValidator {
                                 ErrorLevel.ERROR,
                                 "Process for the requested input is not finished yet."));
             }
-        }
-        return errors;
-    }
-
-    public static List<ValidationResultInfo> validateTestRequestStartProcess(
-            String testRequestId,
-            String validationTypeKey,
-            TestRequestService testRequestService,
-            TestcaseResultService testcaseResultService,
-            ContextInfo contextInfo)
-            throws OperationFailedException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
-        try {
-            TestRequestEntity originalEntity = testRequestService
-                    .getTestRequestById(testRequestId,
-                            contextInfo);
-            if (!Objects.equals(originalEntity.getState(), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
-
-
-                TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
-                searchFilter.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
-                searchFilter.setRefId(testRequestId);
-                searchFilter.setManual(Constant.START_MANUAL_PROCESS_VALIDATION.equals(validationTypeKey) ? Boolean.TRUE : Boolean.FALSE);
-
-                List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
-                if (!testcaseResultEntities.isEmpty()) {
-                    String fieldName = "testRequestId";
-                    errors.add(
-                            new ValidationResultInfo(fieldName,
-                                    ErrorLevel.ERROR,
-                                    "Process for The supplied testRequestId has been already started."));
-                }
-            }
-        } catch (DoesNotExistException | InvalidParameterException ex) {
-            LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
-            String fieldName = "testRequestId";
-            errors.add(
-                    new ValidationResultInfo(fieldName,
-                            ErrorLevel.ERROR,
-                            "The testRequestId supplied for the start process does not "
-                                    + "exists"));
         }
         return errors;
     }

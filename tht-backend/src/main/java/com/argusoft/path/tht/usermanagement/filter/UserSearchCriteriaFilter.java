@@ -77,8 +77,8 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
             predicates.add(criteriaBuilder.equal(getUserEntityRoot().get("email"), getEmail()));
         }
 
-        if(StringUtils.hasLength(getRole())){
-            predicates.add(criteriaBuilder.equal(this.getUserEntityRoleEntityJoin().get("id"),getRole()));
+        if (StringUtils.hasLength(getRole())) {
+            predicates.add(criteriaBuilder.equal(this.getUserEntityRoleEntityJoin().get("id"), getRole()));
         }
 
         return predicates;
@@ -139,7 +139,7 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     }
 
     private Join<UserEntity, RoleEntity> getUserEntityRoleEntityJoin() {
-        if(userEntityRoleEntityJoin==null){
+        if (userEntityRoleEntityJoin == null) {
             userEntityRoleEntityJoin = getUserEntityRoot().join("roles");
         }
         return userEntityRoleEntityJoin;

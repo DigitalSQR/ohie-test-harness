@@ -142,14 +142,35 @@
 .compliance-card .c-card-body .data-table td i {
   margin-left: 7px;
 }
-.compliance-card .c-card-body .data-table td.pass {
+.compliance-card .c-card-body .data-table td.green {
   color: #0ab39c;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
 }
-.compliance-card .c-card-body .data-table td.fail {
+.compliance-card .c-card-body .data-table td.red {
   color: #f66;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.compliance-card .c-card-body .data-table td.grey {
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.compliance-card .c-card-body .data-table td.orange {
+  color: #ff8a65;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.compliance-card .c-card-body .data-table td.blue {
+  color: #009fc8;
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
@@ -164,19 +185,8 @@
   font-weight: 600;
 }
 
-.gradeA {
+.grade {
   background-color: #66bb6a;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 22px;
-  padding: 4px 10px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
-.gradeB {
-  background-color: #d36d80;
   color: #fff;
   font-size: 13px;
   font-weight: 700;

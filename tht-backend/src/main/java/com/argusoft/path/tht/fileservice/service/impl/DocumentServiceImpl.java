@@ -87,7 +87,7 @@ public class DocumentServiceImpl implements DocumentService {
             user = userService.getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
             LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
-            throw new OperationFailedException("InvalidParameterException while fetching principal User while saving document ",e);
+            throw new OperationFailedException("InvalidParameterException while fetching principal User while saving document ", e);
         }
         documentEntity.setOwner(user);
 
@@ -95,7 +95,7 @@ public class DocumentServiceImpl implements DocumentService {
             setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
         } catch (InvalidParameterException e) {
             LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
-            throw new OperationFailedException("InvalidParameterException while saving document ",e);
+            throw new OperationFailedException("InvalidParameterException while saving document ", e);
         }
 
         DocumentEntity document = documentRepository.saveAndFlush(documentEntity);
@@ -147,7 +147,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         } catch (InvalidParameterException e) {
             LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
-            throw new OperationFailedException("InvalidParameterException while getting document ",e);
+            throw new OperationFailedException("InvalidParameterException while getting document ", e);
         }
 
     }

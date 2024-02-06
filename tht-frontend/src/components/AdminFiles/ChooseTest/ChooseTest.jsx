@@ -28,17 +28,17 @@ export default function ChooseTest() {
 		// console.log("In use Effect => ", totalManualTestcaseResults);
 		const completedManualTestcaseResults = testcaseResults.filter(
 			(tescaseResults) =>
-				tescaseResults.manual == true &&
-				(tescaseResults.state ==
+				!!tescaseResults.manual &&
+				(tescaseResults.state ===
 					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
-					tescaseResults.state ==
-						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED)
+					tescaseResults.state ===
+					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED)
 		).length;
 
 		if (totalManualTestcaseResults !== 0) {
 			setManualProgress(
 				(completedManualTestcaseResults / totalManualTestcaseResults) *
-					100
+				100
 			);
 		}
 	}, [totalManualTestcaseResults]);
@@ -46,20 +46,19 @@ export default function ChooseTest() {
 	useEffect(() => {
 		var total = testcaseResults.filter(
 			(totalTestCaseResults) =>
-				totalTestCaseResults.manual == true &&
+				!!totalTestCaseResults.manual &&
 				totalTestCaseResults.state !==
-					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
+				TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
 		).length;
 		setTotalManualTestcaseResults(total);
-		// console.log("manutotal ", total);
 
-		// console.log(totalManualTestcaseResults);
-		var automatedTotal = testcaseResults.filter(
-			(totalTestCaseResults) =>
-				totalTestCaseResults.manual == false &&
-				totalTestCaseResults.state !==
+		var automatedTotal =
+			testcaseResults.filter(
+				(totalTestCaseResults) =>
+					!!totalTestCaseResults.automated &&
+					totalTestCaseResults.state !==
 					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
-		).length;
+			).length
 
 		setTotalAutomatedTestcaseResults(automatedTotal);
 		console.log("auto total ", automatedTotal);
@@ -70,11 +69,11 @@ export default function ChooseTest() {
 	useEffect(() => {
 		const completedAutomatedTestcaseResults = testcaseResults.filter(
 			(tescaseResults) =>
-				tescaseResults.manual == false &&
-				(tescaseResults.state ==
+				!!tescaseResults.automated &&
+				(tescaseResults.state ===
 					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
-					tescaseResults.state ==
-						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED)
+					tescaseResults.state ===
+					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED)
 		).length;
 		// console.log(completedManualTestcaseResults);
 		console.log("completed automate", completedAutomatedTestcaseResults);
@@ -83,7 +82,7 @@ export default function ChooseTest() {
 			setAutomatedProgress(
 				(completedAutomatedTestcaseResults /
 					totalAutomatedTestcaseResults) *
-					100
+				100
 			);
 		}
 	}, [totalAutomatedTestcaseResults]);
@@ -101,15 +100,29 @@ export default function ChooseTest() {
 				throw error;
 			});
 	};
-	const handleStartTesting = (manual, link) => {
-		const params = { testRequestId, TESTREQUEST_REFOBJURI, manual };
+	const handleStartTesting = (manual, automated) => {
+		const params = { testRequestId, refObjUri: TESTREQUEST_REFOBJURI, refId: testRequestId };
+		if (!!manual) {
+			params.manual = true;
+		}
+		if (!!automated) {
+			params.automated = true;
+		}
 		TestResultAPI.startTests(params)
 			.then((response) => {
-				console.log(response);
 				notification.success({
-					description: "Test Started Successfully",
+					description: "Testing Process has been Started Successfully",
 					placement: "bottomRight",
 				});
+				if(!!automated) {
+					navigate(
+						`/dashboard/automated-testing/${testRequestId}`
+					)	
+				} else {
+					navigate(
+						`/dashboard/manual-testing/${testRequestId}`
+					)	
+				}
 				loadProgress();
 			})
 			.catch((error) => {
@@ -194,7 +207,7 @@ export default function ChooseTest() {
 									onClick={() => {
 										handleStartTesting(
 											true,
-											"manual-testing"
+											null
 										);
 									}}
 								>
@@ -241,7 +254,7 @@ export default function ChooseTest() {
 									className="btn btn-primary small btn-sm mt-4"
 									style={{ alignItems: "flex-end" }}
 									onClick={() => {
-										handleStartTesting(false);
+										handleStartTesting(null, true);
 									}}
 								>
 									Start Testing

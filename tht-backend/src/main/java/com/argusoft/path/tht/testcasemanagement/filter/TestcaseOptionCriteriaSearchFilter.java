@@ -123,7 +123,7 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
     }
 
     public Join<TestcaseOptionEntity, TestcaseEntity> getTestcaseOptionEntityTestcaseEntityJoin() {
-        if(testcaseOptionEntityTestcaseEntityJoin == null){
+        if (testcaseOptionEntityTestcaseEntityJoin == null) {
             testcaseOptionEntityTestcaseEntityJoin = getTestcaseOptionEntityRoot().join("testcase");
         }
         return testcaseOptionEntityTestcaseEntityJoin;

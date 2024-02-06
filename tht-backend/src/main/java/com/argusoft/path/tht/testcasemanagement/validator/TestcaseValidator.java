@@ -192,7 +192,7 @@ public class TestcaseValidator {
     private static void validateCommonRequired(TestcaseEntity testcaseEntity,
                                                List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testcaseEntity.getSpecification(), "specification", errors);
-        if(!Objects.equals(Boolean.TRUE, testcaseEntity.getManual())) {
+        if (!Objects.equals(Boolean.TRUE, testcaseEntity.getManual())) {
             ValidationUtils.validateRequired(testcaseEntity.getBeanName(), "beanName", errors);
         }
     }
@@ -225,7 +225,7 @@ public class TestcaseValidator {
     private static void validateTestcaseEntityClassName(TestcaseEntity testcaseEntity,
                                                         ApplicationContext applicationContext,
                                                         List<ValidationResultInfo> errors) {
-        if(StringUtils.isEmpty(testcaseEntity.getBeanName())) {
+        if (StringUtils.isEmpty(testcaseEntity.getBeanName())) {
             return;
         }
         try {
