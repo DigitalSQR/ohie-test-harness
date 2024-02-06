@@ -133,7 +133,7 @@ public class TestcaseOptionValidator {
 
         boolean isAnyTrue = testcaseOptionList.stream().anyMatch(testcaseOption1 -> testcaseOption1.getSuccess().equals(Boolean.TRUE));
 
-        if(!isAnyTrue){
+        if (!isAnyTrue) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setLevel(ErrorLevel.ERROR);
             validationResultInfo.setMessage("One of the testcase option must be true");

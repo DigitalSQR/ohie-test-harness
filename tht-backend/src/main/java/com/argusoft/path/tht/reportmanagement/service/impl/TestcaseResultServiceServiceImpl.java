@@ -6,6 +6,7 @@
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
+import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
@@ -17,6 +18,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
@@ -39,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This TestcaseResultServiceServiceImpl contains implementation for TestcaseResult service.
@@ -63,6 +67,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private GradeEvaluator gradeEvaluator;
 
     /**
      * {@inheritdoc}
@@ -146,7 +153,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
 
-        if(!TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())) {
+        if (!TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())) {
             changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
         }
 
@@ -364,27 +371,22 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
-                // TODO
                 Long duration = 0L;
                 for (TestcaseResultEntity tcr : testcaseResultEntities) {
-                    if (tcr.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
-                        if(tcr.getDuration()!=null) {
-                            Long testcaseResultEntity1Duration = tcr.getDuration();
-                            duration = duration + testcaseResultEntity1Duration;
-                        }
+                    if (tcr.getDuration() != null) {
+                        duration = duration + tcr.getDuration();
                     }
                 }
-                if (testcaseResultEntities.stream()
-                        .anyMatch(tre -> {
-                            return tre.getRequired() && !Objects.equals(tre.getSuccess(), Boolean.TRUE);
-                        })) {
-                    testcaseResultEntity.setSuccess(Boolean.FALSE);
-                } else {
-                    testcaseResultEntity.setSuccess(Boolean.TRUE);
-                }
+                testcaseResultEntity.setSuccess(
+                        testcaseResultEntities.stream()
+                                .allMatch(tre -> {
+                                    return !Objects.equals(tre.getRequired(), Boolean.TRUE)
+                                            || Objects.equals(tre.getSuccess(), Boolean.TRUE);
+                                }));
                 testcaseResultEntity.setDuration(duration);
                 updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
+                updateTestcaseResult(testcaseResultEntity, contextInfo);
             }
         } else if (testcaseResultEntities.stream()
                 .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
@@ -402,4 +404,155 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             }
         }
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    @Timed(name = "getTestcaseResultStatus")
+    public TestcaseResultEntity getTestcaseResultStatus(
+            String testcaseResultId,
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            ContextInfo contextInfo)
+            throws DoesNotExistException,
+            InvalidParameterException, OperationFailedException {
+        if (StringUtils.isEmpty(testcaseResultId)) {
+            throw new InvalidParameterException("TestcaseResultId is missing");
+        }
+
+        TestcaseResultEntity testcaseResultEntity = this.getTestcaseResultById(testcaseResultId, contextInfo);
+
+        return fetchTestcaseResultStatusByInputs(
+                isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
+                testcaseResultEntity,
+                contextInfo);
+    }
+
+    private TestcaseResultEntity fetchTestcaseResultStatusByInputs(
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            TestcaseResultEntity testcaseResultEntity,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+
+        if (testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
+            return testcaseResultEntity;
+        }
+
+        List<TestcaseResultEntity> filteredTestcaseResults = new ArrayList<>();
+
+        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+        testcaseResultCriteriaSearchFilter.setTestRequestId(testcaseResultEntity.getTestRequest().getId());
+        testcaseResultCriteriaSearchFilter.setManual(isManual);
+        testcaseResultCriteriaSearchFilter.setAutomated(isAutomated);
+        testcaseResultCriteriaSearchFilter.setRequired(isRequired);
+        testcaseResultCriteriaSearchFilter.setRecommended(isRecommended);
+        testcaseResultCriteriaSearchFilter.setFunctional(isFunctional);
+        testcaseResultCriteriaSearchFilter.setWorkflow(isWorkflow);
+
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+
+        recalculateTestcaseResultEntity(testcaseResultEntity, testcaseResultEntities);
+
+        if(Boolean.TRUE.equals(isRecommended) && testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
+            if(ComponentServiceConstants.COMPONENT_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
+                List<TestcaseResultEntity> specificationsFromComponent = getChildTestcaseResultFromParentTestcaseResult(testcaseResultEntity, testcaseResultEntities);
+                for (TestcaseResultEntity specificationTestcase : specificationsFromComponent) {
+                    recalculateTestcaseResultEntity(specificationTestcase, testcaseResultEntities);
+                }
+                testcaseResultEntity.setGrade(gradeEvaluator.evaluate(specificationsFromComponent ,contextInfo));
+            } else if(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
+                List<TestcaseResultEntity> componentFromTestRequest = getChildTestcaseResultFromParentTestcaseResult(testcaseResultEntity, testcaseResultEntities);
+
+                for (TestcaseResultEntity componentTestRequest : componentFromTestRequest) {
+                    List<TestcaseResultEntity> specificationsFromComponent = getChildTestcaseResultFromParentTestcaseResult(componentTestRequest, testcaseResultEntities);
+                    for (TestcaseResultEntity specificationTestcase : specificationsFromComponent) {
+                        recalculateTestcaseResultEntity(specificationTestcase, testcaseResultEntities);
+                    }
+                    componentTestRequest.setSuccess(specificationsFromComponent.stream().allMatch(entity -> Boolean.TRUE.equals(entity.getSuccess())));
+                }
+                testcaseResultEntity.setGrade(gradeEvaluator.evaluate(componentFromTestRequest ,contextInfo));
+            }
+        }
+        return testcaseResultEntity;
+    }
+
+    private void recalculateTestcaseResultEntity(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
+        List<TestcaseResultEntity> filteredTestcaseResults;
+        if (testcaseResultEntity.getRefObjUri().equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
+            filteredTestcaseResults = getFilteredTestcaseResultsForSpecification(testcaseResultEntity, testcaseResultEntities);
+        } else if (testcaseResultEntity.getRefObjUri().equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
+            List<String> specificationTestcaseResultIds = getChildTestcaseResultFromParentTestcaseResult(testcaseResultEntity, testcaseResultEntities).stream().map(entity -> entity.getId()).toList();
+            filteredTestcaseResults
+                    = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
+                    }).collect(Collectors.toList());
+        } else {
+            filteredTestcaseResults
+                    = testcaseResultEntities.stream()
+                    .filter(tcre -> {
+                        return tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        if (filteredTestcaseResults.stream()
+                .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+            testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP);
+        } else if (filteredTestcaseResults.stream()
+                .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
+                        || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+            testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
+        } else if (filteredTestcaseResults.stream()
+                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
+            testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS);
+        } else if (filteredTestcaseResults.stream()
+                .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING))) {
+            testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING);
+        } else {
+            testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
+        }
+
+        //set success
+        testcaseResultEntity.setSuccess(filteredTestcaseResults.stream().allMatch(testcaseResult -> Boolean.TRUE.equals(testcaseResult.getSuccess())));
+    }
+
+    private static List<TestcaseResultEntity> getChildTestcaseResultFromParentTestcaseResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
+        List<TestcaseResultEntity> specificationTestcaseResultIds = testcaseResultEntities.stream()
+                .filter(tcre -> {
+                    return tcre.getParentTestcaseResult() != null
+                            && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                }).collect(Collectors.toList());
+        return specificationTestcaseResultIds;
+    }
+
+    private static List<TestcaseResultEntity> getFilteredTestcaseResultsForSpecification(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
+        List<TestcaseResultEntity> filteredTestcaseResults;
+        filteredTestcaseResults
+                = testcaseResultEntities.stream()
+                .filter(tcre -> {
+                    return tcre.getParentTestcaseResult() != null
+                            && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                }).collect(Collectors.toList());
+        return filteredTestcaseResults;
+    }
+
+
 }

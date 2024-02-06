@@ -80,6 +80,27 @@
   padding-right: 2px;
 }
 
+.btn-grey-sm {
+  text-align: center;
+  background: #6c757d;
+  padding: 2px;
+  width: 100px;
+  color: #fff;
+  transition: all 0.5s;
+  font-size: 13px;
+  font-weight: 700;
+}
+.btn-grey-sm:hover {
+  color: #fff;
+  background-color: #6c757d;
+}
+.btn-grey-sm:focus {
+  box-shadow: none;
+}
+.btn-grey-sm i {
+  padding-right: 2px;
+}
+
 .btn-orange-sm {
   text-align: center;
   background: #ff8a65;

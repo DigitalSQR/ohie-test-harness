@@ -29,6 +29,7 @@ import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.testprocessmanagement.validator.TestRequestValidator;
@@ -42,6 +43,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -84,6 +86,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             String refObjUri,
             String refId,
             Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
             ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
@@ -93,6 +100,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 refObjUri,
                 refId,
                 isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
                 Constant.REINITIALIZE_PROCESS_VALIDATION,
                 testcaseResultService,
                 contextInfo);
@@ -102,6 +114,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 refObjUri,
                 refId,
                 isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
                 contextInfo);
     }
 
@@ -112,6 +129,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             String refObjUri,
             String refId,
             Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException,
@@ -121,6 +143,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 refObjUri,
                 refId,
                 isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
                 Constant.START_PROCESS_VALIDATION,
                 testcaseResultService,
                 contextInfo);
@@ -130,6 +157,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 refObjUri,
                 refId,
                 isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
                 contextInfo);
     }
 
@@ -280,6 +312,8 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
         String currentState = testRequestEntity.getState();
 
+        validateChangeStateForAccepted(testRequestEntity,stateKey);
+
         //validate transition
         ValidationUtils.transitionValid(TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, currentState, stateKey, errors);
 
@@ -296,6 +330,45 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         return testRequestEntity;
     }
 
+    private void validateChangeStateForAccepted(TestRequestEntity testRequestEntity, String nextState) throws DataValidationErrorException {
+        if(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextState)) {
+
+            Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();
+
+            if (testRequestUrls.isEmpty()) {
+                throwValidationException("Components not found to test", "component");
+            }
+
+            List<ComponentEntity> componentListToTest = testRequestUrls.stream()
+                    .map(TestRequestUrlEntity::getComponent)
+                    .toList();
+
+            if (componentListToTest.stream().noneMatch(componentEntity -> ComponentServiceConstants.COMPONENT_STATUS_ACTIVE.equals(componentEntity.getState()))) {
+                throwValidationException("No active component(s) found to start testing", "component");
+            }
+
+            for (ComponentEntity componentEntity : componentListToTest) {
+                if (componentEntity.getSpecifications().stream().noneMatch(specificationEntity -> SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE.equals(specificationEntity.getState()))) {
+                    throwValidationException("No active specifications found for component named " + componentEntity.getName() + ", can't start testing for this request.", "specification");
+                }
+
+                for (SpecificationEntity specification : componentEntity.getSpecifications()) {
+                    if (specification.getTestcases().stream().noneMatch(testcaseEntity -> TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE.equals(testcaseEntity.getState()))) {
+                        throwValidationException("No active testcases found for specification named " + specification.getName() + ", can't start testing for this request.", "specification");
+                    }
+                }
+            }
+        }
+    }
+
+    private void throwValidationException(String message, String element) throws DataValidationErrorException {
+        ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+        validationResultInfo.setMessage(message);
+        validationResultInfo.setLevel(ErrorLevel.ERROR);
+        validationResultInfo.setElement(element);
+        throw new DataValidationErrorException(message, Collections.singletonList(validationResultInfo));
+    }
+
     private void changeStateCallback(TestRequestEntity testRequestEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         if (testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
             createDraftTestcaseResultsByTestRequestAndProcessKey(testRequestEntity, contextInfo);
@@ -306,71 +379,156 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         List<ComponentEntity> activeComponents = fetchActiveComponents(contextInfo)
                 .stream().filter(componentEntity ->
                         testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> testRequestUrlEntity.getComponent().getId().equals(componentEntity.getId()))
+                                && componentEntity.getSpecifications().stream().anyMatch(
+                                specificationEntity -> {
+                                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                                            && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                                        return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
+                                    });
+                                })
                 ).collect(Collectors.toList());
 
         Integer counter = 1;
-        List<ComponentEntity> filteredComponents = activeComponents.stream().filter(componentEntity -> {
-            return componentEntity.getSpecifications().stream().anyMatch(
-                    specificationEntity -> {
-                        return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
-                                && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
-                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                    && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                        });
+        if (!activeComponents.isEmpty()) {
+            Boolean isManual = activeComponents.stream().anyMatch(componentEntity -> {
+                return componentEntity.getSpecifications().stream().anyMatch(specificationEntity -> {
+                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                            && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                        return testcaseEntity.getManual()
+                                && testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
                     });
-        }).collect(Collectors.toList());
-        if (!filteredComponents.isEmpty()) {
+                });
+            });
+            Boolean isAutomated = activeComponents.stream().anyMatch(componentEntity -> {
+                return componentEntity.getSpecifications().stream().anyMatch(specificationEntity -> {
+                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                            && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                        return !testcaseEntity.getManual()
+                                && testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
+                    });
+                });
+            });
+            Boolean isRequired = activeComponents.stream().anyMatch(componentEntity -> {
+                return componentEntity.getSpecifications().stream().anyMatch(specificationEntity -> {
+                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                            && specificationEntity.getRequired();
+                });
+            });
+            Boolean isRecommended = activeComponents.stream().anyMatch(componentEntity -> {
+                return componentEntity.getSpecifications().stream().anyMatch(specificationEntity -> {
+                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                            && !specificationEntity.getRequired();
+                });
+            });
+            Boolean isFunctional = activeComponents.stream().anyMatch(componentEntity -> {
+                return componentEntity.getSpecifications().stream().anyMatch(specificationEntity -> {
+                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                            && specificationEntity.getFunctional();
+                });
+            });
+            Boolean isWorkflow = activeComponents.stream().anyMatch(componentEntity -> {
+                return componentEntity.getSpecifications().stream().anyMatch(specificationEntity -> {
+                    return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                            && !specificationEntity.getFunctional();
+                });
+            });
+
             TestcaseResultEntity testRequestTestcaseResult = createDraftTestCaseResultIfNotExists(
                     TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
                     testRequestEntity.getId(),
                     testRequestEntity.getId(),
                     testRequestEntity.getName(),
                     counter,
-                    Boolean.FALSE,
-                    Boolean.TRUE,
+                    isManual,
+                    isAutomated,
+                    isRequired,
+                    isRecommended,
+                    isFunctional,
+                    isWorkflow,
                     null,
                     contextInfo);
             counter++;
-            for (ComponentEntity componentEntity : filteredComponents) {
-                List<SpecificationEntity> filteredSpecifications = componentEntity.getSpecifications().stream().filter(specificationEntity -> {
+
+            for (ComponentEntity componentEntity : activeComponents) {
+                List<SpecificationEntity> activeSpecifications = componentEntity.getSpecifications().stream().filter(specificationEntity -> {
                             return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
                                     && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
-                                return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                        && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                                return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
                             });
                         })
                         .sorted(Comparator.comparing(SpecificationEntity::getRank))
                         .collect(Collectors.toList());
 
-                if (!filteredSpecifications.isEmpty()) {
+                if (!activeSpecifications.isEmpty()) {
+                    isManual = activeSpecifications.stream().anyMatch(specificationEntity -> {
+                        return specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                            return testcaseEntity.getManual() && testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
+                        });
+                    });
+                    isAutomated = activeSpecifications.stream().anyMatch(specificationEntity -> {
+                        return specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                            return !testcaseEntity.getManual() && testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
+                        });
+                    });
+                    isRequired = activeSpecifications.stream().anyMatch(specificationEntity -> {
+                        return specificationEntity.getRequired();
+                    });
+                    isRecommended = activeSpecifications.stream().anyMatch(specificationEntity -> {
+                        return !specificationEntity.getRequired();
+                    });
+                    isFunctional = activeSpecifications.stream().anyMatch(specificationEntity -> {
+                        return specificationEntity.getFunctional();
+                    });
+                    isWorkflow = activeSpecifications.stream().anyMatch(specificationEntity -> {
+                        return !specificationEntity.getFunctional();
+                    });
+
                     TestcaseResultEntity componentTestcaseResult = createDraftTestCaseResultIfNotExists(
                             ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
                             componentEntity.getId(),
                             testRequestEntity.getId(),
                             componentEntity.getName(),
                             counter,
-                            Boolean.FALSE,
-                            Boolean.TRUE,
+                            isManual,
+                            isAutomated,
+                            isRequired,
+                            isRecommended,
+                            isFunctional,
+                            isWorkflow,
                             testRequestTestcaseResult.getId(),
                             contextInfo);
                     counter++;
-                    for (SpecificationEntity specificationEntity : filteredSpecifications) {
+
+                    for (SpecificationEntity specificationEntity : activeSpecifications) {
                         List<TestcaseEntity> filteredTestcases = specificationEntity.getTestcases().stream().filter(testcaseEntity -> {
-                                    return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                            && !Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
+                                    return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
                                 })
                                 .sorted(Comparator.comparing(TestcaseEntity::getRank))
                                 .collect(Collectors.toList());
 
                         if (!filteredTestcases.isEmpty()) {
+                            isManual = specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                                return testcaseEntity.getManual() && testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
+                            });
+                            isAutomated = specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
+                                return !testcaseEntity.getManual() && testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
+                            });
+                            isRequired = specificationEntity.getRequired();
+                            isRecommended = !specificationEntity.getRequired();
+                            isFunctional = specificationEntity.getFunctional();
+                            isWorkflow = !specificationEntity.getFunctional();
                             TestcaseResultEntity specificationTestcaseResult = createDraftTestCaseResultIfNotExists(
                                     SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
                                     specificationEntity.getId(),
                                     testRequestEntity.getId(),
                                     specificationEntity.getName(),
                                     counter,
-                                    Boolean.FALSE,
-                                    specificationEntity.getRequired(),
+                                    isManual,
+                                    isAutomated,
+                                    isRequired,
+                                    isRecommended,
+                                    isFunctional,
+                                    isWorkflow,
                                     componentTestcaseResult.getId(),
                                     contextInfo);
                             counter++;
@@ -381,94 +539,12 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                         testRequestEntity.getId(),
                                         testcaseEntity.getName(),
                                         counter,
-                                        Boolean.FALSE,
-                                        specificationEntity.getRequired(),
-                                        specificationTestcaseResult.getId(),
-                                        contextInfo);
-                                counter++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-
-        counter = 1;
-        filteredComponents = activeComponents.stream().filter(componentEntity -> {
-            return componentEntity.getSpecifications().stream().anyMatch(
-                    specificationEntity -> {
-                        return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
-                                && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
-                            return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                    && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                        });
-                    });
-        }).collect(Collectors.toList());
-        if (!filteredComponents.isEmpty()) {
-            TestcaseResultEntity testRequestTestcaseResult = createDraftTestCaseResultIfNotExists(
-                    TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
-                    testRequestEntity.getId(),
-                    testRequestEntity.getId(),
-                    testRequestEntity.getName(),
-                    counter,
-                    Boolean.TRUE,
-                    Boolean.TRUE,
-                    null,
-                    contextInfo);
-            counter++;
-            for (ComponentEntity componentEntity : filteredComponents) {
-                List<SpecificationEntity> filteredSpecifications = componentEntity.getSpecifications().stream().filter(specificationEntity -> {
-                            return specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
-                                    && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {
-                                return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                        && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                            });
-                        })
-                        .sorted(Comparator.comparing(SpecificationEntity::getRank))
-                        .collect(Collectors.toList());
-
-                if (!filteredSpecifications.isEmpty()) {
-                    TestcaseResultEntity componentTestcaseResult = createDraftTestCaseResultIfNotExists(
-                            ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
-                            componentEntity.getId(),
-                            testRequestEntity.getId(),
-                            componentEntity.getName(),
-                            counter,
-                            Boolean.TRUE,
-                            Boolean.TRUE,
-                            testRequestTestcaseResult.getId(),
-                            contextInfo);
-                    counter++;
-                    for (SpecificationEntity specificationEntity : filteredSpecifications) {
-                        List<TestcaseEntity> filteredTestcases = specificationEntity.getTestcases().stream().filter(testcaseEntity -> {
-                                    return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE)
-                                            && Objects.equals(Boolean.TRUE, testcaseEntity.getManual());
-                                })
-                                .sorted(Comparator.comparing(TestcaseEntity::getRank))
-                                .collect(Collectors.toList());
-
-                        if (!filteredTestcases.isEmpty()) {
-                            TestcaseResultEntity specificationTestcaseResult = createDraftTestCaseResultIfNotExists(
-                                    SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
-                                    specificationEntity.getId(),
-                                    testRequestEntity.getId(),
-                                    specificationEntity.getName(),
-                                    counter,
-                                    Boolean.TRUE,
-                                    specificationEntity.getRequired(),
-                                    componentTestcaseResult.getId(),
-                                    contextInfo);
-                            counter++;
-                            for (TestcaseEntity testcaseEntity : filteredTestcases) {
-                                createDraftTestCaseResultIfNotExists(
-                                        TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
-                                        testcaseEntity.getId(),
-                                        testRequestEntity.getId(),
-                                        testcaseEntity.getName(),
-                                        counter,
-                                        Boolean.TRUE,
-                                        specificationEntity.getRequired(),
+                                        testcaseEntity.getManual(),
+                                        !testcaseEntity.getManual(),
+                                        isRequired,
+                                        isRecommended,
+                                        isFunctional,
+                                        isWorkflow,
                                         specificationTestcaseResult.getId(),
                                         contextInfo);
                                 counter++;
@@ -492,7 +568,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                                                       String name,
                                                                       Integer counter,
                                                                       Boolean isManual,
+                                                                      Boolean isAutomated,
                                                                       Boolean isRequired,
+                                                                      Boolean isRecommended,
+                                                                      Boolean isFunctional,
+                                                                      Boolean isWorkflow,
                                                                       String parentTestcaseResultId,
                                                                       ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
@@ -523,7 +603,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         testcaseResultEntity.setRank(counter);
         testcaseResultEntity.setName(name);
         testcaseResultEntity.setManual(isManual);
+        testcaseResultEntity.setAutomated(isAutomated);
         testcaseResultEntity.setRequired(isRequired);
+        testcaseResultEntity.setRecommended(isRecommended);
+        testcaseResultEntity.setFunctional(isFunctional);
+        testcaseResultEntity.setWorkflow(isWorkflow);
         UserEntity userEntity = new UserEntity();
         userEntity.setId(contextInfo.getUsername());
         testcaseResultEntity.setTester(userEntity);

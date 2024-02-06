@@ -151,6 +151,7 @@ public interface TestRequestService {
      * reinitialize automation testing process by killing process and make testcase results draft again.
      *
      * @param testRequestId testRequestWhich needs to be tested
+     * @param isAutomated
      * @param contextInfo   information containing the principalId and locale
      *                      information about the caller of service operation
      */
@@ -159,12 +160,18 @@ public interface TestRequestService {
             String refObjUri,
             String refId,
             Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException;
 
     /**
      * start manual testing process.
      *
      * @param testRequestId testRequestWhich needs to be tested
+     * @param isAutomated
      * @param contextInfo   information containing the principalId and locale
      *                      information about the caller of service operation
      */
@@ -173,6 +180,11 @@ public interface TestRequestService {
             String refObjUri,
             String refId,
             Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException,

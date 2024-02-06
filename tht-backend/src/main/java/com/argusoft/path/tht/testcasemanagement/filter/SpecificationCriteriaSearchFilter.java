@@ -149,14 +149,14 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     }
 
     private Join<SpecificationEntity, ComponentEntity> getSpecificationEntityComponentEntityJoin() {
-        if(this.specificationEntityComponentEntityJoin == null){
+        if (this.specificationEntityComponentEntityJoin == null) {
             this.specificationEntityComponentEntityJoin = getSpecificationEntityRoot().join("component");
         }
         return specificationEntityComponentEntityJoin;
     }
 
     private Join<SpecificationEntity, TestcaseEntity> getSpecificationEntityTestcaseEntityJoin() {
-        if(this.specificationEntityTestcaseEntityJoin == null){
+        if (this.specificationEntityTestcaseEntityJoin == null) {
             this.specificationEntityTestcaseEntityJoin = getSpecificationEntityRoot().join("testcases");
         }
         return specificationEntityTestcaseEntityJoin;

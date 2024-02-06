@@ -56,7 +56,7 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
 
     private Root<DocumentEntity> documentEntityRoot;
 
-    private Join<DocumentEntity,UserEntity> documentEntityUserEntityJoin;
+    private Join<DocumentEntity, UserEntity> documentEntityUserEntityJoin;
 
 
     public DocumentCriteriaSearchFilter() {
@@ -129,7 +129,7 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     }
 
     private Join<DocumentEntity, UserEntity> getDocumentEntityUserEntityJoin() {
-        if(documentEntityUserEntityJoin==null){
+        if (documentEntityUserEntityJoin == null) {
             documentEntityUserEntityJoin = getDocumentEntityRoot().join("owner");
         }
         return documentEntityUserEntityJoin;

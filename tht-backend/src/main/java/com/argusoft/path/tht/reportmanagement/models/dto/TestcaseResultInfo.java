@@ -73,12 +73,26 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = true)
     private Boolean isRequired;
 
+    @ApiModelProperty(notes = "The isRecommended of the TestcaseResult",
+            allowEmptyValue = false,
+            example = "false",
+            dataType = "Boolean",
+            required = true)
+    private Boolean isRecommended;
+
     @ApiModelProperty(notes = "The isManual of the TestcaseResult",
             allowEmptyValue = false,
             example = "false",
             dataType = "Boolean",
             required = true)
     private Boolean isManual;
+
+    @ApiModelProperty(notes = "The isAutomated of the TestcaseResult",
+            allowEmptyValue = false,
+            example = "false",
+            dataType = "Boolean",
+            required = true)
+    private Boolean isAutomated;
 
     @ApiModelProperty(notes = "The isSuccess of the testcaseOption",
             allowEmptyValue = false,
@@ -101,12 +115,33 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             required = true)
     private String parentTestcaseResultId;
 
+    @ApiModelProperty(notes = "The isFunctional of the TestcaseResult",
+            allowEmptyValue = false,
+            example = "true",
+            dataType = "Boolean",
+            required = true)
+    private Boolean isFunctional;
+
+    @ApiModelProperty(notes = "The isWorkflow of the TestcaseResult",
+            allowEmptyValue = false,
+            example = "true",
+            dataType = "Boolean",
+            required = true)
+    private Boolean isWorkflow;
+
     @ApiModelProperty(notes = "The duration of the TestcaseResult in milliseconds",
             allowEmptyValue = true,
             example = "duration in milliseconds",
             dataType = "Long",
             required = false)
     private Long duration;
+
+    @ApiModelProperty(notes = "The grade of the TestcaseResult",
+            allowEmptyValue = true,
+            example = "A",
+            dataType = "String",
+            required = false)
+    private String grade;
 
     public String getParentTestcaseResultId() {
         return parentTestcaseResultId;
@@ -210,5 +245,45 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
 
     public void setDuration(Long duration) {
         this.duration = duration;
+    }
+
+    public Boolean getRecommended() {
+        return isRecommended;
+    }
+
+    public void setRecommended(Boolean recommended) {
+        isRecommended = recommended;
+    }
+
+    public Boolean getAutomated() {
+        return isAutomated;
+    }
+
+    public void setAutomated(Boolean automated) {
+        isAutomated = automated;
+    }
+
+    public Boolean getIsFunctional() {
+        return isFunctional;
+    }
+
+    public void setIsFunctional(Boolean isFunctional) {
+        this.isFunctional = isFunctional;
+    }
+
+    public Boolean getIsWorkflow() {
+        return isWorkflow;
+    }
+
+    public void setIsWorkflow(Boolean isWorkflow) {
+        this.isWorkflow = isWorkflow;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 }

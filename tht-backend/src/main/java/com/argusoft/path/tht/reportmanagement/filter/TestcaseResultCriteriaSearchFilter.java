@@ -61,6 +61,31 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     )
     private Boolean isManual;
 
+    @ApiParam(
+            value = "isAutomated of the TestcaseResult"
+    )
+    private Boolean isAutomated;
+
+    @ApiParam(
+            value = "isFunctional of the TestcaseResult"
+    )
+    private Boolean isFunctional;
+
+    @ApiParam(
+            value = "isWorkflow of the TestcaseResult"
+    )
+    private Boolean isWorkflow;
+
+    @ApiParam(
+            value = "isRecommended of the TestcaseResult"
+    )
+    private Boolean isRecommended;
+
+    @ApiParam(
+            value = "isRequired of the TestcaseResult"
+    )
+    private Boolean isRequired;
+
 
     private Root<TestcaseResultEntity> testcaseResultEntityRoot;
 
@@ -121,6 +146,26 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
         if (getManual() != null) {
             predicates.add(criteriaBuilder.equal(getTestcaseResultEntityRoot().get("isManual"), getManual()));
+        }
+
+        if (getAutomated() != null) {
+            predicates.add(criteriaBuilder.equal(getTestcaseResultEntityRoot().get("isAutomated"), getAutomated()));
+        }
+
+        if (getFunctional() != null) {
+            predicates.add(criteriaBuilder.equal(getTestcaseResultEntityRoot().get("isFunctional"), getFunctional()));
+        }
+
+        if (getWorkflow() != null) {
+            predicates.add(criteriaBuilder.equal(getTestcaseResultEntityRoot().get("isWorkflow"), getWorkflow()));
+        }
+
+        if (getRecommended() != null) {
+            predicates.add(criteriaBuilder.equal(getTestcaseResultEntityRoot().get("isRecommended"), getRecommended()));
+        }
+
+        if (getRequired() != null) {
+            predicates.add(criteriaBuilder.equal(getTestcaseResultEntityRoot().get("isRequired"), getRequired()));
         }
 
         if (getTestRequestId() != null) {
@@ -217,6 +262,46 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
         this.id = id;
     }
 
+    public Boolean getAutomated() {
+        return isAutomated;
+    }
+
+    public void setAutomated(Boolean automated) {
+        isAutomated = automated;
+    }
+
+    public Boolean getFunctional() {
+        return isFunctional;
+    }
+
+    public void setFunctional(Boolean functional) {
+        isFunctional = functional;
+    }
+
+    public Boolean getWorkflow() {
+        return isWorkflow;
+    }
+
+    public void setWorkflow(Boolean workflow) {
+        isWorkflow = workflow;
+    }
+
+    public Boolean getRecommended() {
+        return isRecommended;
+    }
+
+    public void setRecommended(Boolean recommended) {
+        isRecommended = recommended;
+    }
+
+    public Boolean getRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(Boolean required) {
+        isRequired = required;
+    }
+
     private Root<TestcaseResultEntity> getTestcaseResultEntityRoot() {
         return testcaseResultEntityRoot;
     }
@@ -231,7 +316,7 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     }
 
     public Join<TestcaseResultEntity, UserEntity> getTestcaseResultEntityUserEntityJoinForTester() {
-        if(this.testcaseResultEntityUserEntityJoin == null){
+        if (this.testcaseResultEntityUserEntityJoin == null) {
             this.testcaseResultEntityUserEntityJoin = getTestcaseResultEntityRoot().join("tester");
         }
         return testcaseResultEntityUserEntityJoin;
@@ -239,21 +324,21 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
 
     public Join<TestcaseResultEntity, TestcaseResultEntity> getTestcaseResultEntityTestcaseResultEntityJoin() {
-        if(testcaseResultEntityTestcaseResultEntityJoin == null){
+        if (testcaseResultEntityTestcaseResultEntityJoin == null) {
             testcaseResultEntityTestcaseResultEntityJoin = getTestcaseResultEntityRoot().join("parentTestcaseResult");
         }
         return testcaseResultEntityTestcaseResultEntityJoin;
     }
 
     public Join<TestcaseResultEntity, TestRequestEntity> getTestcaseResultEntityTestRequestEntityJoin() {
-        if(testcaseResultEntityTestRequestEntityJoin == null){
-            testcaseResultEntityTestRequestEntityJoin =  getTestcaseResultEntityRoot().join("testRequest");
+        if (testcaseResultEntityTestRequestEntityJoin == null) {
+            testcaseResultEntityTestRequestEntityJoin = getTestcaseResultEntityRoot().join("testRequest");
         }
         return testcaseResultEntityTestRequestEntityJoin;
     }
 
     public Join<TestRequestEntity, UserEntity> getTestRequestEntityUserEntityJoinWithTestcaseResultJoin() {
-        if(testRequestEntityUserEntityJoinWithTestcaseResultJoin == null){
+        if (testRequestEntityUserEntityJoinWithTestcaseResultJoin == null) {
             testRequestEntityUserEntityJoinWithTestcaseResultJoin = getTestcaseResultEntityTestRequestEntityJoin().join("assessee");
         }
         return testRequestEntityUserEntityJoinWithTestcaseResultJoin;

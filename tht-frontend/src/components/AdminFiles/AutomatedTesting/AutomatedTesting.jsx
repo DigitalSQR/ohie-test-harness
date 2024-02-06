@@ -6,13 +6,14 @@ import { useLoader } from "../../loader/LoaderContext";
 import { useParams } from "react-router-dom";
 import passImg from "../../../styles/images/success.svg";
 import failImg from "../../../styles/images/failure.svg";
+import skipImg from "../../../styles/images/skip.svg";
+import stopImg from "../../../styles/images/stop.svg";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
-
 export default function AutomatedTesting() {
 	const { testRequestId } = useParams();
 	const [testcaseName, setTestCaseName] = useState();
 	const { showLoader, hideLoader } = useLoader();
-	const [data, setData] = useState({});
+	const [data, setData] = useState([]);
 	const clickHandler = () => {
 		notification.info({
 			placement: "bottom-right",
@@ -21,13 +22,15 @@ export default function AutomatedTesting() {
 	};
 	const getResultDisplay = (state, success) => {
 		if (state == "testcase.result.status.finished") {
-			if (success == true) {
+			if (!!success) {
 				return <img className="finished" src={passImg} alt="PASS" />;
 			} else {
 				return <img className="finished" src={failImg} alt="FAIL" />;
 			}
 		} else if (state == "testcase.result.status.pending") {
-			return <div class="spinner-border" role="status"></div>;
+			return <img className="finished" src={stopImg} alt="PENDING" />;
+		} else if (state == "testcase.result.status.skip") {
+			return <img className="finished" src={skipImg} alt="SKIP" />;
 		} else if (state == "testcase.result.status.inprogress") {
 			return <div class="spinner-border" role="status"></div>;
 		}
@@ -37,42 +40,23 @@ export default function AutomatedTesting() {
 		try {
 			const response = await TestResultAPI.getTestCaseResultById(
 				testRequestId,
-				false
+				null,
+				true
 			);
-			const grouped = response.content.reduce((acc, item) => {
+			const grouped = [];
+			for (let item of response.content) {
+				item = await TestResultAPI.getTestcaseResultStatus(item.id, { automated: true });
 				if (item.refObjUri.split(".").pop() === "ComponentInfo") {
-					if (!acc[item.id]) {
-						acc[item.id] = {
-							...item,
-							specifications: [],
-						};
-					}
-				} else if (
-					item.refObjUri.split(".").pop() === "SpecificationInfo"
-				) {
-					const componentId = item.parentTestcaseResultId;
-					if (!acc[componentId]) {
-						acc[componentId] = {
-							specifications: [],
-						};
-					}
-					acc[componentId].specifications.push({
-						[item.id]: { ...item, testCases: [] },
+					grouped.push({
+						...item,
+						specifications: [],
 					});
+				} else if (item.refObjUri.split(".").pop() === "SpecificationInfo") {
+					grouped[grouped.length - 1].specifications.push({ ...item, testCases: [] });
 				} else if (item.refObjUri.split(".").pop() === "TestcaseInfo") {
-					const specificationId = item.parentTestcaseResultId;
-
-					Object.entries(acc).forEach(([cmpId, value]) => {
-						const specification = value.specifications.find(
-							(spec) => Object.keys(spec)[0] === specificationId
-						);
-						if (specification) {
-							specification[specificationId].testCases.push(item);
-						}
-					});
+					grouped[grouped.length - 1].specifications[grouped[grouped.length - 1].specifications.length - 1].testCases.push(item);
 				}
-				return acc;
-			}, {});
+			}
 			setData(grouped);
 			hideLoader();
 		} catch (error) {
@@ -131,92 +115,55 @@ export default function AutomatedTesting() {
 								</tr>
 							</thead>
 							<tbody>
-								{Object.entries(data)?.map(
-									([componentId, component]) => [
-										// Component row
+								{!!data && data.map((component) => [
+									// Component row
+									<tr
+										key={`component-${component.id}`}
+										className="component-row"
+									>
+										<td>{component?.name}</td>
+										<td></td>
+										<td></td>
+										<td>
+											{getResultDisplay(component?.state, component?.success)}
+										</td>
+										<td>{!!component?.duration ? component?.duration + ' ms' : '-'}</td>
+									</tr>,
+									component?.specifications?.map((specification) => [
 										<tr
-											key={`component-${componentId}`}
-											className="component-row"
+											key={`specification-${specification?.id}`}
+											className="specification-row"
 										>
-											<td>{component?.name}</td>
 											<td></td>
+											<td>
+												{specification.name}
+											</td>
 											<td></td>
 											<td>
 												{getResultDisplay(
-													component?.state,
-													component?.success
+													specification.state,
+													specification.success
 												)}
 											</td>
-											<td>{component?.duration} ms</td>
+											<td>{!!specification?.duration ? specification?.duration + ' ms' : '-'}</td>
 										</tr>,
-										...component?.specifications?.map(
-											(specification) => [
-												<tr
-													key={`specification-${specification?.id}`}
-													className="specification-row"
-												>
-													<td></td>
-													<td>
-														{
-															specification[
-																Object.keys(
-																	specification
-																)[0]
-															].name
-														}
-													</td>
-													<td></td>
-													<td>
-														{getResultDisplay(
-															specification[
-																Object.keys(
-																	specification
-																)[0]
-															].state,
-															specification[
-																Object.keys(
-																	specification
-																)[0]
-															].success
-														)}
-													</td>
-													<td>
-														{component?.duration} ms
-													</td>
-												</tr>,
 
-												...specification[
-													Object.keys(
-														specification
-													)[0]
-												].testCases?.map((testcase) => [
-													<tr
-														key={`testcase-${testcase?.id}`}
-														className="specification-row"
-													>
-														<td></td>
-														<td></td>
-														<td>
-															{testcase?.name}
-														</td>
-														<td>
-															{getResultDisplay(
-																testcase?.state,
-																testcase?.success
-															)}
-														</td>
-														<td>
-															{
-																component?.duration
-															}{" "}
-															ms
-														</td>
-													</tr>,
-												]),
-											]
-										),
-									]
-								)}
+										specification.testCases?.map((testcase) => [
+											<tr
+												key={`testcase-${testcase?.id}`}
+												className="specification-row"
+											>
+												<td></td>
+												<td></td>
+												<td>{testcase?.name}</td>
+												<td>
+													{getResultDisplay(testcase?.state, testcase?.success)}
+												</td>
+												<td>{!!testcase?.duration ? testcase?.duration + ' ms' : '-'}</td>
+											</tr>,
+										]),
+									]),
+								])}
 							</tbody>
 						</table>
 					</div>

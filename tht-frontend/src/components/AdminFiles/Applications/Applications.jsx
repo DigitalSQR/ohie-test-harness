@@ -201,12 +201,7 @@ const Applications = () => {
                           FINISHED
                         </button>
                       )}
-                      <button
-                        className="report"
-                        onClick={() => viewReport(testRequest.id)}
-                      >
-                        View Report
-                      </button>
+                      <button class="btn btn-blue-sm report" onClick={() => viewReport(testRequest.id)}> <i class="bi bi-file-text"></i> Report</button>
                     </td>
                   </tr>
                 ))}

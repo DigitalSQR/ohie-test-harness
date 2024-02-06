@@ -60,22 +60,64 @@ public class TestcaseExecutioner {
     @Autowired
     private TestcaseExecutionStarter testcaseExecutionStarter;
 
-    public void executeTestingProcess(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws OperationFailedException {
-        
-            TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = changeStateAndPrepareIgenericClient(testRequestId, refObjUri, refId, isManual, contextInfo);
-            if (testcaseResultEntitiesAndIgenericClient == null) return;
+    public void executeTestingProcess(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            ContextInfo contextInfo) throws OperationFailedException {
 
-            testcaseExecutionStarter.startExecution(testcaseResultEntitiesAndIgenericClient.testcaseResultEntities(), testcaseResultEntitiesAndIgenericClient.iGenericClientMap(), Constant.SUPER_USER_CONTEXT);
-        
+        TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = changeStateAndPrepareIgenericClient(
+                testRequestId,
+                refObjUri,
+                refId,
+                isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
+                contextInfo);
+        if (testcaseResultEntitiesAndIgenericClient == null) return;
+
+        testcaseExecutionStarter.startExecution(testcaseResultEntitiesAndIgenericClient.testcaseResultEntities(), testcaseResultEntitiesAndIgenericClient.iGenericClientMap(), Constant.SUPER_USER_CONTEXT);
+
     }
 
     @Transactional
-    public TestcaseResultEntitiesAndIgenericClient changeStateAndPrepareIgenericClient(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws OperationFailedException {
+    public TestcaseResultEntitiesAndIgenericClient changeStateAndPrepareIgenericClient(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
-            List<TestcaseResultEntity> testcaseResultEntities = fetchTestcaseResultsByInputs(testRequestId, refObjUri, refId, isManual, contextInfo);
+            List<TestcaseResultEntity> testcaseResultEntities =
+                    fetchTestcaseResultsByInputs(
+                            testRequestId,
+                            refObjUri,
+                            refId,
+                            isManual,
+                            isAutomated,
+                            isRequired,
+                            isRecommended,
+                            isWorkflow,
+                            isFunctional,
+                            contextInfo);
+
             changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING, contextInfo);
 
-            if (Objects.equals(Boolean.TRUE, isManual)) {
+            if (!Objects.equals(Boolean.TRUE, isAutomated)) {
                 return null;
             }
 
@@ -102,12 +144,30 @@ public class TestcaseExecutioner {
         }
     }
 
-    private record TestcaseResultEntitiesAndIgenericClient(List<TestcaseResultEntity> testcaseResultEntities, Map<String, IGenericClient> iGenericClientMap) {
-    }
-
-    public void reinitializeTestingProcess(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws OperationFailedException {
+    public void reinitializeTestingProcess(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
-            List<TestcaseResultEntity> testcaseResultEntities = fetchTestcaseResultsByInputsForManual(testRequestId, refObjUri, refId, isManual, contextInfo);
+            List<TestcaseResultEntity> testcaseResultEntities =
+                    fetchTestcaseResultsByInputsForReinitialize(
+                            testRequestId,
+                            refObjUri,
+                            refId,
+                            isManual,
+                            isAutomated,
+                            isRequired,
+                            isRecommended,
+                            isWorkflow,
+                            isFunctional,
+                            contextInfo);
             changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
         } catch (DoesNotExistException | InvalidParameterException | OperationFailedException |
                  VersionMismatchException ex) {
@@ -119,10 +179,9 @@ public class TestcaseExecutioner {
         }
     }
 
-
     public void execute(List<TestcaseResultEntity> testcaseResultEntities,
-                         Map<String, IGenericClient> iGenericClientMap,
-                         ContextInfo contextInfo) {
+                        Map<String, IGenericClient> iGenericClientMap,
+                        ContextInfo contextInfo) {
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
             this.executeTestcase(testcaseResult, iGenericClientMap, contextInfo);
         }
@@ -268,18 +327,33 @@ public class TestcaseExecutioner {
 
     private void changeTestcaseResultsState(List<TestcaseResultEntity> testcaseResultEntities, String newState, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
-            if(!newState.equals(testcaseResult.getState())) {
+            if (!newState.equals(testcaseResult.getState())) {
                 testcaseResultService.changeState(testcaseResult.getId(), newState, contextInfo);
             }
         }
     }
 
-    private List<TestcaseResultEntity> fetchTestcaseResultsByInputsForManual(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+    private List<TestcaseResultEntity> fetchTestcaseResultsByInputsForReinitialize(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
         testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
-        testcaseResultCriteriaSearchFilter.setManual(Objects.equals(isManual, Boolean.TRUE));
+        testcaseResultCriteriaSearchFilter.setManual(isManual);
+        testcaseResultCriteriaSearchFilter.setAutomated(isAutomated);
+        testcaseResultCriteriaSearchFilter.setRequired(isRequired);
+        testcaseResultCriteriaSearchFilter.setRecommended(isRecommended);
+        testcaseResultCriteriaSearchFilter.setFunctional(isFunctional);
+        testcaseResultCriteriaSearchFilter.setWorkflow(isWorkflow);
 
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
 
@@ -288,8 +362,9 @@ public class TestcaseExecutioner {
         }).findFirst();
 
         if (!optionalTestcaseResultEntity.isPresent()) {
-            throw new OperationFailedException("No TestcaseResult found for the inputs.");
+            throw new OperationFailedException("No TestRequest doesn't have testcases for selected inputs.");
         }
+
         TestcaseResultEntity testcaseResultEntity = optionalTestcaseResultEntity.get();
         if (refObjUri.equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
             filteredTestcaseResults = Arrays.asList(testcaseResultEntity);
@@ -324,13 +399,28 @@ public class TestcaseExecutioner {
         return filteredTestcaseResults;
     }
 
-    private List<TestcaseResultEntity> fetchTestcaseResultsByInputs(String testRequestId, String refObjUri, String refId, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+    private List<TestcaseResultEntity> fetchTestcaseResultsByInputs(
+            String testRequestId,
+            String refObjUri,
+            String refId,
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
         testcaseResultCriteriaSearchFilter.setState(Arrays.asList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP));
         testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
-        testcaseResultCriteriaSearchFilter.setManual(Objects.equals(isManual, Boolean.TRUE));
+        testcaseResultCriteriaSearchFilter.setManual(isManual);
+        testcaseResultCriteriaSearchFilter.setAutomated(isAutomated);
+        testcaseResultCriteriaSearchFilter.setRequired(isRequired);
+        testcaseResultCriteriaSearchFilter.setRecommended(isRecommended);
+        testcaseResultCriteriaSearchFilter.setWorkflow(isWorkflow);
+        testcaseResultCriteriaSearchFilter.setFunctional(isFunctional);
 
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
 
@@ -339,8 +429,9 @@ public class TestcaseExecutioner {
         }).findFirst();
 
         if (!optionalTestcaseResultEntity.isPresent()) {
-            throw new OperationFailedException("No TestcaseResult found for the inputs.");
+            throw new OperationFailedException("No TestRequest doesn't have testcases for selected inputs.");
         }
+
         TestcaseResultEntity testcaseResultEntity = optionalTestcaseResultEntity.get();
         if (refObjUri.equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
             filteredTestcaseResults = Arrays.asList(testcaseResultEntity);
@@ -372,13 +463,21 @@ public class TestcaseExecutioner {
                     .collect(Collectors.toList());
         }
 
-        return filteredTestcaseResults.stream().filter(testcaseResultEntity1 -> testcaseResultEntity1.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT)).collect(Collectors.toList());
+        return filteredTestcaseResults.stream()
+                .filter(testcaseResultEntity1 ->
+                        testcaseResultEntity1.getState()
+                                .equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT))
+                .collect(Collectors.toList());
     }
 
     private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
         componentCriteriaSearchFilter.setState(Collections.singletonList(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE));
         return componentService.searchComponents(componentCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
+    }
+
+    private record TestcaseResultEntitiesAndIgenericClient(List<TestcaseResultEntity> testcaseResultEntities,
+                                                           Map<String, IGenericClient> iGenericClientMap) {
     }
 
 }

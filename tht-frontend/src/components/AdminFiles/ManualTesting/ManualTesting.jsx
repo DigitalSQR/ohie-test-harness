@@ -14,15 +14,20 @@ import { Option } from "antd/es/mentions";
 import TestCase from "../TestCase/TestCase";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 
+import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 export default function ManualTesting() {
 	const { testRequestId } = useParams();
-	const [testId, setTestId] = useState();
-	const [manualQuestions, setManualQuestions] = useState([]);
-	const [componentId, setComponentId] = useState();
-	const [activeSpecification, setActiveSpecification] = useState();
-	const [defaultValue, setDefaultValue] = useState();
+	const [currentComponentIndex, setCurrentComponentIndex] = useState();
+	const [currentSpecificationIndex, setCurrentSpecificationIndex] = useState();
+	const [currentTestcaseIndex, setCurrentTestcaseIndex] = useState();
+	const [currentComponent, setCurrentComponent] = useState();
+	const [currentSpecification, setCurrentSpecification] = useState();
+	const [currentTestcase, setCurrentTestcase] = useState();
+	const [testcaseResults, setTestcaseResults] = useState();
+
 	const { Item } = Tabs;
 	const [testcaseName, setTestCaseName] = useState();
+	const navigate = useNavigate();
 	const testCaseInfo = () => {
 		TestRequestAPI.getTestRequestsById(testRequestId)
 			.then((res) => {
@@ -39,11 +44,22 @@ export default function ManualTesting() {
 	useEffect(() => {
 		TestResultAPI.getTestCases(testRequestId)
 			.then((res) => {
-				setTestId(res.content[0].id);
-				console.log(res.content);
-				setManualQuestions(res.content);
-				setComponentId(res.content[1].id);
-				setDefaultValue(res.content[1].name);
+				const testcaseResults = [];
+				res.content.forEach(testcaseResult => {
+					if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
+						testcaseResult.childTestcaseResults = [];
+						testcaseResults.push(testcaseResult);
+					} else if (testcaseResult.refObjUri === RefObjUriConstants.SPECIFICATION_REFOBJURI) {
+						testcaseResult.childTestcaseResults = [];
+						testcaseResults[testcaseResults.length - 1].childTestcaseResults.push(testcaseResult);
+					} else if (testcaseResult.refObjUri === RefObjUriConstants.TESTCASE_REFOBJURI) {
+						testcaseResults[testcaseResults.length - 1]
+							.childTestcaseResults[testcaseResults[testcaseResults.length - 1].childTestcaseResults.length - 1]
+							.childTestcaseResults
+							.push(testcaseResult);
+					}
+				});
+				setTestcaseResults(testcaseResults);
 			})
 			.catch((error) => {
 				throw error;
@@ -51,53 +67,81 @@ export default function ManualTesting() {
 		testCaseInfo();
 	}, []);
 
-	const nextSpecification = (rank, nextRefId) => {
-		console.log(manualQuestions);
-		const nextSpecification = manualQuestions.filter((entry) => {
-			return entry.rank == rank;
-		});
-		console.log("the next specification ", nextSpecification);
-		// console.log(nextSpecification[0].refId)
-		if (
-			nextSpecification[0] != undefined &&
-			nextSpecification[0]?.refId.includes(nextRefId)
-		) {
-			setActiveSpecification(nextSpecification[0].id);
-		} else {
-			notification.info({
-				description: "This was the last question",
-				placement: "bottomRight",
-			});
+	useEffect(() => {
+		if (!!testcaseResults) {
+			selectComponent(0);
 		}
-	};
+	}, [testcaseResults]);
 
-	const getSpecifications = () => {
-		const items = [];
+	const selectComponent = (componentIndex) => {
+		componentIndex = parseInt(componentIndex);
+		setCurrentComponent(testcaseResults[componentIndex]);
+		setCurrentComponentIndex(componentIndex);
+		selectSpecification(0, componentIndex);
+	}
 
-		manualQuestions
-			.filter(
-				(specification) =>
-					specification.parentTestcaseResultId == componentId
-			)
-			.map((specification) => {
-				items.push({
-					title: specification.name,
-					id: specification.id, // i changed it from specification to specification.id
-				});
-			});
+	const isLastQuestion = () => {
+		return (currentComponentIndex === testcaseResults.length - 1)
+			&& (currentTestcaseIndex === testcaseResults[currentComponentIndex].childTestcaseResults[currentSpecificationIndex].childTestcaseResults.length - 1)
+			&& (currentSpecificationIndex === testcaseResults[currentComponentIndex].childTestcaseResults.length - 1);
+	}
 
-		return items;
-	};
+	const selectSpecification = (specificationIndex, componentIndex) => {
+		specificationIndex = parseInt(specificationIndex);
+		if (componentIndex === undefined) { componentIndex = currentComponentIndex; }
+		setCurrentSpecification(
+			testcaseResults[componentIndex]
+				.childTestcaseResults[specificationIndex]);
+		setCurrentSpecificationIndex(specificationIndex);
+		selectTestcase(0, specificationIndex, componentIndex);
+	}
 
-	const onComponentChange = (val) => {
-		setComponentId(val);
-		const index = manualQuestions.findIndex(
-			(specification) => specification.parentTestcaseResultId == val
+	const selectTestcase = (testcaseIndex, specificationIndex, componentIndex) => {
+		if (componentIndex === undefined) { componentIndex = currentComponentIndex; }
+		if (specificationIndex === undefined) { specificationIndex = currentSpecificationIndex; }
+		testcaseIndex = parseInt(testcaseIndex);
+		setCurrentTestcase(
+			testcaseResults[componentIndex]
+				.childTestcaseResults[specificationIndex]
+				.childTestcaseResults[testcaseIndex]
 		);
-		setActiveSpecification(manualQuestions[index].id);
-	};
+		setCurrentTestcaseIndex(testcaseIndex);
+	}
 
-	return (
+	const selectNextTestcase = () => {
+		if (currentTestcaseIndex === testcaseResults[currentComponentIndex].childTestcaseResults[currentSpecificationIndex].childTestcaseResults.length - 1) {
+			selectNextSpecification();
+		} else {
+			selectTestcase(currentTestcaseIndex + 1, currentSpecificationIndex, currentComponentIndex);
+		}
+	}
+
+	const selectNextSpecification = () => {
+		if (currentSpecificationIndex === testcaseResults[currentComponentIndex].childTestcaseResults.length - 1) {
+			selectNextComponent();
+		} else {
+			selectSpecification(currentSpecificationIndex + 1, currentComponentIndex);
+		}
+	}
+
+	const selectNextComponent = () => {
+		if (currentComponentIndex === testcaseResults.length - 1) {
+			navigate(
+				`/dashboard/choose-test/${testRequestId}`
+			)
+		} else {
+			selectComponent(currentComponentIndex + 1);
+		}
+	}
+
+	const refreshCurrentTestcase = (testcase) => {
+		testcaseResults[currentComponentIndex]
+			.childTestcaseResults[currentSpecificationIndex]
+			.childTestcaseResults[currentTestcaseIndex] = testcase;
+	}
+
+
+	return !!testcaseResults && !!currentComponent && (
 		<div id="wrapper" className="stepper-wrapper">
 
 			<nav aria-label="breadcrumb">
@@ -117,38 +161,43 @@ export default function ManualTesting() {
 				<b>Component </b>
 			</span>
 			<Select
-				onChange={onComponentChange}
+				onChange={selectComponent}
 				style={{ width: "145px", marginBottom: "10px" }}
-				defaultValue={"Client Registry"}
+				value={currentComponent.name}
 			>
-				{manualQuestions
-					.filter((components) => {
-						return components.parentTestcaseResultId == testId;
-					})
-					.map((components) => {
+				{testcaseResults
+					.map((components, index) => {
 						return (
 							<Select.Option
 								key={components.id}
-								value={components.id}
+								value={index}
 							>
 								{components.name}
 							</Select.Option>
 						);
 					})}
 			</Select>
-			{!!componentId && (
+			{!!currentSpecification && (
 				<Tabs
-					type="card"
-					activeKey={activeSpecification}
+					activeKey={currentSpecificationIndex.toString()}
 					onChange={(val) => {
-						setActiveSpecification(val);
+						selectSpecification(val, currentComponentIndex);
 					}}
 				>
-					{getSpecifications().map((specification) => (
-						<Item key={specification.id} tab={specification.title}>
+					{testcaseResults[currentComponentIndex].childTestcaseResults.map((specification, index) => (
+						<Item
+							key={index}
+							value={specification.id}
+							tab={specification.name}
+						>
 							<TestCase
-								specificationId={specification.id}
-								nextSpecification={nextSpecification}
+								currentTestcaseIndex={currentTestcaseIndex}
+								currentTestcase={currentTestcase}
+								currentSpecification={currentSpecification}
+								selectTestcase={selectTestcase}
+								selectNextTestcase={selectNextTestcase}
+								refreshCurrentTestcase={refreshCurrentTestcase}
+								isLastQuestion={isLastQuestion}
 							></TestCase>
 						</Item>
 					))}

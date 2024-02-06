@@ -5,7 +5,6 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
-import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import io.swagger.annotations.ApiParam;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -141,7 +140,7 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
     }
 
     public Join<TestcaseEntity, SpecificationEntity> getTestcaseEntitySpecificationEntityJoin() {
-        if(testcaseEntitySpecificationEntityJoin == null){
+        if (testcaseEntitySpecificationEntityJoin == null) {
             testcaseEntitySpecificationEntityJoin = getTestcaseEntityRoot().join("specification");
         }
         return testcaseEntitySpecificationEntityJoin;

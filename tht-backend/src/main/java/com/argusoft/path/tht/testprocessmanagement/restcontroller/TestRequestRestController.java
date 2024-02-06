@@ -186,13 +186,23 @@ public class TestRequestRestController {
             @PathVariable("testRequestId") String testRequestId,
             @RequestParam(value = "refObjUri") String refObjUri,
             @RequestParam(value = "refId") String refId,
-            @RequestParam("manual") Boolean isManual,
+            @RequestParam(value = "manual", required = false) Boolean isManual,
+            @RequestParam(value = "automated", required = false) Boolean isAutomated,
+            @RequestParam(value ="required", required = false) Boolean isRequired,
+            @RequestParam(value ="recommended", required = false) Boolean isRecommended,
+            @RequestParam(value ="workflow", required = false) Boolean isWorkflow,
+            @RequestParam(value = "functional", required = false) Boolean isFunctional,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         testRequestService.startTestingProcess(
                 testRequestId,
                 refObjUri,
                 refId,
                 isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
                 contextInfo);
     }
 
@@ -206,7 +216,12 @@ public class TestRequestRestController {
             @PathVariable("testRequestId") String testRequestId,
             @RequestParam("refObjUri") String refObjUri,
             @RequestParam("refId") String refId,
-            @RequestParam("manual") Boolean isManual,
+            @RequestParam(value = "manual", required = false) Boolean isManual,
+            @RequestParam(value = "automated", required = false) Boolean isAutomated,
+            @RequestParam(value ="required", required = false) Boolean isRequired,
+            @RequestParam(value ="recommended", required = false) Boolean isRecommended,
+            @RequestParam(value ="workflow", required = false) Boolean isWorkflow,
+            @RequestParam(value = "functional", required = false) Boolean isFunctional,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
         testRequestService.reinitializeTestingProcess(
@@ -214,6 +229,11 @@ public class TestRequestRestController {
                 refObjUri,
                 refId,
                 isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
                 contextInfo);
     }
 

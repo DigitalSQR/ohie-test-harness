@@ -184,4 +184,32 @@ public interface TestcaseResultService {
             throws DoesNotExistException,
             DataValidationErrorException,
             InvalidParameterException, OperationFailedException, VersionMismatchException;
+
+    /**
+     * Retrieves a TestcaseResult corresponding to the given filters.
+     *
+     * @param testcaseResultId TestcaseResultId of TestcaseResult to be retrieved
+     * @param isManual
+     * @param isAutomated
+     * @param isRequired
+     * @param isRecommended
+     * @param isWorkflow
+     * @param isFunctional
+     * @param contextInfo      information containing the principalId and locale
+     *                         information about the caller of service operation
+     * @return a list of TestcaseResult
+     * @throws DoesNotExistException     a TestcaseResultId in TestcaseResultIds not found
+     * @throws InvalidParameterException invalid contextInfo
+     */
+    public TestcaseResultEntity getTestcaseResultStatus(
+            String testcaseResultId,
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            ContextInfo contextInfo)
+            throws DoesNotExistException,
+            InvalidParameterException, OperationFailedException;
 }

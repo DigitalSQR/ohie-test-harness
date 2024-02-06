@@ -4,6 +4,7 @@ import com.argusoft.path.tht.systemconfiguration.security.handler.OnSsoAuthentic
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -14,6 +15,8 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Email Service to do operations related to email.
@@ -31,7 +34,7 @@ public class EmailService {
 
     @Async
     public void sendMessage(
-            String to, String subject,String htmlContent) throws MessagingException {
+            String to, String subject, String htmlContent) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setFrom("noreply@baeldung.com");
@@ -103,7 +106,6 @@ public class EmailService {
             return htmlContent;
         }
     }
-
 
 
 }

@@ -9,11 +9,41 @@ export const TestResultAPI = {
 				params: {
 					testRequestId: trid,
 					manual: true,
-					size: "100",
+					size: "1000",
 					sort: "rank",
 				},
 			});
 			// console.log(response);
+			return response.data;
+		} catch (error) {
+			throw error;
+		}
+	},
+	getTestcaseResultStatus: async function (testcaseResultId, params) {
+		if (!!params.manual) {
+			params.manual = true;
+		}
+		if (!!params.automated) {
+			params.automated = true;
+		}
+		if (!!params.required) {
+			params.required = true;
+		}
+		if (!!params.recommended) {
+			params.recommended = true;
+		}
+		if (!!params.workflow) {
+			params.workflow = true;
+		}
+		if (!!params.functional) {
+			params.functional = true;
+		}
+		try {
+			const response = await api.request({
+				url: `/testcase-result/status/${testcaseResultId}`,
+				method: "GET",
+				params,
+			});
 			return response.data;
 		} catch (error) {
 			throw error;
@@ -27,6 +57,7 @@ export const TestResultAPI = {
 				params: {
 					parentTestcaseResultId: parentTestcaseResultId,
 					sort: "rank",
+					manual: true,
 					size: 1,
 					page: currentPage,
 				},
@@ -63,6 +94,7 @@ export const TestResultAPI = {
 		}
 	},
 	fetchCasesForProgressBar: async function (params) {
+		params.size = 1000;
 		try {
 			const response = await api.request({
 				url: "/testcase-result",
@@ -79,39 +111,39 @@ export const TestResultAPI = {
 			const response = await api.request({
 				url: `/test-request/start-testing-process/${params.testRequestId}`,
 				method: "PUT",
-				params:{
-					manual:params.manual,
-					refId:params.testRequestId,
-					refObjUri:params.TESTREQUEST_REFOBJURI,
-					testRequestId:params.testRequestId
-				}
+				params
 			});
 		} catch (error) {
 			throw error;
 		}
 	},
-	getTestCaseResultById: async function (testRequestId, manual) {
+	getTestCaseResultById: async function (testRequestId, manual, automated) {
 		try {
-		  const params = {
-			testRequestId: testRequestId,
-			sort: "rank",
-		  };
-	  
-		  if (manual !== null && manual !== undefined) {
-			params.manual = manual;
-		  }
-	  
-		  const response = await api.request({
-			url: "/testcase-result",
-			method: "GET",
-			params: params,
-		  });
-	  
-		  return response.data;
+			const params = {
+				testRequestId: testRequestId,
+				sort: "rank",
+				size: 1000,
+			};
+
+			if (!!manual) {
+				params.manual = true;
+			}
+
+			if (!!automated) {
+				params.automated = true;
+			}
+
+			const response = await api.request({
+				url: "/testcase-result",
+				method: "GET",
+				params: params,
+			});
+
+			return response.data;
 		} catch (error) {
-		  throw error;
+			throw error;
 		}
-	  }
-	  
+	}
+
 
 };

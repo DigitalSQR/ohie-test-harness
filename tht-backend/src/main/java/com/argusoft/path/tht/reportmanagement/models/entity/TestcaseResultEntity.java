@@ -54,6 +54,18 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "is_required")
     private Boolean isRequired;
 
+    @Column(name = "is_automated")
+    private Boolean isAutomated;
+
+    @Column(name = "is_recommended")
+    private Boolean isRecommended;
+
+    @Column(name = "is_workflow")
+    private Boolean isWorkflow;
+
+    @Column(name = "is_functional")
+    private Boolean isFunctional;
+
     @Column(name = "is_success")
     private Boolean isSuccess;
 
@@ -63,6 +75,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     @Column(name = "duration")
     private Long duration;
+
+    @Transient
+    private String grade;
 
     public Integer getRank() {
         return rank;
@@ -166,5 +181,45 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     public void setDuration(Long duration) {
         this.duration = duration;
+    }
+
+    public Boolean getAutomated() {
+        return isAutomated;
+    }
+
+    public void setAutomated(Boolean automated) {
+        isAutomated = automated;
+    }
+
+    public Boolean getRecommended() {
+        return isRecommended;
+    }
+
+    public void setRecommended(Boolean recommended) {
+        isRecommended = recommended;
+    }
+
+    public Boolean getWorkflow() {
+        return isWorkflow;
+    }
+
+    public void setWorkflow(Boolean workflow) {
+        isWorkflow = workflow;
+    }
+
+    public Boolean getFunctional() {
+        return isFunctional;
+    }
+
+    public void setFunctional(Boolean functional) {
+        isFunctional = functional;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 }
