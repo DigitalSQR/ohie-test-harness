@@ -4,9 +4,10 @@ import "./applications.scss";
 import sortIcon from "../../../styles/images/sort-icon.png";
 import { useNavigate } from "react-router-dom";
 import {
+  StateBadgeClasses,
   StateClasses,
   TestRequestActionStateLabels,
-  TestRequestStateConstants,
+  TestRequestStateConstantNames,
 } from "../../../constants/test_requests_constants.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
 import { notification } from "antd";
@@ -195,13 +196,21 @@ const Applications = () => {
                           {StateClasses[testRequest.state]?.btnText}
                         </button>
                       ) : (
-                        <button
-                          className={StateClasses[testRequest.state]?.btnClass}
+                        <span
+                          className={`badge ${
+                            StateBadgeClasses[testRequest.state]
+                          }`}
                         >
-                          FINISHED
-                        </button>
+                          {TestRequestStateConstantNames[testRequest.state]}
+                        </span>
                       )}
-                      <button class="btn btn-blue-sm report" onClick={() => viewReport(testRequest.id)}> <i class="bi bi-file-text"></i> Report</button>
+                      <button
+                        class="btn btn-blue-sm report"
+                        onClick={() => viewReport(testRequest.id)}
+                      >
+                        {" "}
+                        <i class="bi bi-file-text"></i> Report
+                      </button>
                     </td>
                   </tr>
                 ))}
