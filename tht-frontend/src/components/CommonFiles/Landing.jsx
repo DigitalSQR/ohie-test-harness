@@ -56,7 +56,8 @@ export default function Landing() {
         "user.status.active": "Active",
         "user.status.inactive": "Inactive",
         "user.status.rejected": "Rejected",
-        "user.status.verification.pending": "Pending",
+        "user.status.verification.pending": "Not verified",
+        "user.status.approval.pending": "Pending",
       };
 
       return labelMap[stateKey] || stateKey;
@@ -114,11 +115,13 @@ export default function Landing() {
             </div>
           )}
         </div>
-        <div className="row mt-5">
+        <div className="row mt-5 justify-content-around">
           {!userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
             <div className="col-md-6">
               <h5 className="mb-3 text-center">User Status Pie Chart</h5>
-              <div style={{ maxWidth: "400px", margin: "0 auto" }}>
+              <div style={{ maxWidth: "400px", margin: "0 auto",  border: "1px solid #ddd",
+              borderRadius: "8px",
+              padding: "10px",}}>
                 <ApexChart
                   options={userOptions}
                   series={userSeries}
@@ -128,17 +131,29 @@ export default function Landing() {
               </div>
             </div>
           )}
-          <div className="col-md-6">
-            <h5 className="mb-3 text-center">Test Request Status Pie Chart</h5>
-            <div style={{ maxWidth: "400px", margin: "0 auto" }}>
-              <ApexChart
-                options={testRequestOptions}
-                series={testRequestSeries}
-                type="pie"
-                width="100%"
-              />
+          {testRequestSeries.length > 0 && (
+            <div className="col-md-6">
+              <h5 className="mb-3 text-center">
+                Test Request Status Pie Chart
+              </h5>
+              <div
+                style={{
+                  maxWidth: "400px",
+                  margin: "0 auto",
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  padding: "10px",
+                }}
+              >
+                <ApexChart
+                  options={testRequestOptions}
+                  series={testRequestSeries}
+                  type="pie"
+                  width="100%"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
