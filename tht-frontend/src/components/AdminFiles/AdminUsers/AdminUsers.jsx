@@ -98,6 +98,7 @@ const AdminUsers = () => {
                   type="text"
                   className="form-control"
                   placeholder="Search"
+                  autoComplete="off"
                 />
               </div>
             </div>

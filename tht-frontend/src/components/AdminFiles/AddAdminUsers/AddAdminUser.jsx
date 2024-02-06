@@ -67,6 +67,7 @@ const AddAdminUser = () => {
                     placeholder="Your Name"
                     value={formData.name}
                     onChange={handleChange}
+                    autoComplete="off"
                   />
                 </div>
               </div>
@@ -85,6 +86,7 @@ const AddAdminUser = () => {
                     placeholder="Your Email"
                     value={formData.email}
                     onChange={handleChange}
+                    autoComplete="off"
                   />
                 </div>
               </div>
@@ -103,6 +105,7 @@ const AddAdminUser = () => {
                     placeholder="Your Password"
                     value={formData.password}
                     onChange={handleChange}
+                    autoComplete="off"
                   />
                 </div>
               </div>

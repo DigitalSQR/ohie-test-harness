@@ -108,6 +108,7 @@ export default function SignUp() {
                       aria-label="Username"
                       aria-describedby="basic-addon1"
                       onChange={handleInputChange}
+                      autoComplete="off"
                     />
                   </div>
                 </div>
@@ -128,6 +129,7 @@ export default function SignUp() {
                       aria-describedby="basic-addon1"
                       //   className="email"
                       onChange={handleInputChange}
+                      autoComplete="off"
                     />
                   </div>
                 </div>
@@ -147,6 +149,7 @@ export default function SignUp() {
                       aria-label="Username"
                       aria-describedby="basic-addon1"
                       onChange={handleInputChange}
+                      autoComplete="off"
                     />
                   </div>
                 </div>
@@ -166,6 +169,7 @@ export default function SignUp() {
                       aria-label="Username"
                       aria-describedby="basic-addon1"
                       onChange={handleInputChange}
+                      autoComplete="off"
                     />
                   </div>
                 </div>
@@ -184,6 +188,7 @@ export default function SignUp() {
                       aria-label="Username"
                       aria-describedby="basic-addon1"
                       onChange={(e) => setconfirmPassword(e.target.value)}
+                      autoComplete="off"
                     />
                   </div>
                 </div>
