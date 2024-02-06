@@ -12,6 +12,8 @@ import { Tabs, notification } from "antd";
 import { Select } from "antd";
 import { Option } from "antd/es/mentions";
 import TestCase from "../TestCase/TestCase";
+import { TestRequestAPI } from "../../../api/TestRequestAPI";
+
 export default function ManualTesting() {
 	const { testRequestId } = useParams();
 	const [testId, setTestId] = useState();
@@ -20,10 +22,25 @@ export default function ManualTesting() {
 	const [activeSpecification, setActiveSpecification] = useState();
 	const [defaultValue, setDefaultValue] = useState();
 	const { Item } = Tabs;
+	const [testcaseName, setTestCaseName] = useState();
+	const testCaseInfo = () => {
+		TestRequestAPI.getTestRequestsById(testRequestId)
+			.then((res) => {
+				console.log("testrequestinfo", res);
+				setTestCaseName(res.productName);
+			})
+			.catch(() => {
+				notification.error({
+					description: "Oops something went wrong!",
+					placement: "bottomRight",
+				});
+			});
+	};
 	useEffect(() => {
 		TestResultAPI.getTestCases(testRequestId)
 			.then((res) => {
 				setTestId(res.content[0].id);
+				console.log(res.content);
 				setManualQuestions(res.content);
 				setComponentId(res.content[1].id);
 				setDefaultValue(res.content[1].name);
@@ -31,9 +48,11 @@ export default function ManualTesting() {
 			.catch((error) => {
 				throw error;
 			});
+		testCaseInfo();
 	}, []);
 
 	const nextSpecification = (rank, nextRefId) => {
+		console.log(manualQuestions);
 		const nextSpecification = manualQuestions.filter((entry) => {
 			return entry.rank == rank;
 		});
@@ -80,6 +99,20 @@ export default function ManualTesting() {
 
 	return (
 		<div id="wrapper" className="stepper-wrapper">
+
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item">
+						<a href="/dashboard/applications">Applications</a>
+					</li>
+					<li class="breadcrumb-item" aria-current="page">
+						<a href={`/dashboard/choose-test/${testRequestId}`}>
+							{testcaseName}
+						</a>
+					</li>
+					<li class="breadcrumb-item active">Manual Testing</li>
+				</ol>
+			</nav>
 			<span>
 				<b>Select Component : </b>
 			</span>
@@ -111,10 +144,7 @@ export default function ManualTesting() {
 					}}
 				>
 					{getSpecifications().map((specification) => (
-						<Item
-							key={specification.id}
-							tab={specification.title}
-						>
+						<Item key={specification.id} tab={specification.title}>
 							<TestCase
 								specificationId={specification.id}
 								nextSpecification={nextSpecification}

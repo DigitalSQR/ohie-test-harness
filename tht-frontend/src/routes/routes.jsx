@@ -9,7 +9,7 @@ import ApplicationReport from "../components/AdminFiles/ApplicationReport/Applic
 import ChooseTest from "../components/AdminFiles/ChooseTest/ChooseTest";
 import Landing from "../components/CommonFiles/Landing";
 import FunctionalTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
-import WorkFlowTesting from "../components/AdminFiles/WorkflowTesting/WorkflowTesting";
+import AutomatedTesting from "../components/AdminFiles/AutomatedTesting/AutomatedTesting";
 import GoogleAuth from "../components/UserFiles/GoogleAuth";
 import ForgotPassword from "../components/CommonFiles/ForgotPassword";
 import UpdatePassword from "../components/UserFiles/UpdatePassword";
@@ -48,7 +48,7 @@ const routes = createBrowserRouter([
 			{ path: "applications", element: <Applications /> },
 			{ path: "choose-test/:testRequestId", element: <ChooseTest />, },
 			{ path: "manual-testing/:testRequestId", element: <ManualTesting /> },
-			{ path: "workflow-testing/:testRequestId", element: <WorkFlowTesting /> },
+			{ path: "automated-testing/:testRequestId", element: <AutomatedTesting /> },
 			{ path: "assessee", element: <Assessee /> },
 			{ path: "register-application", element: <RegisterApplication />},
       { path: "admin-users", element: <AdminUsers /> },
