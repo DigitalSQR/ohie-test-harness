@@ -344,7 +344,7 @@ export default function TestCase(props) {
 												);
 											}}
 										>
-											Save and Next
+											Save & Next
 										</button>
 									</div>
 									{/* Photos upload code above */}
