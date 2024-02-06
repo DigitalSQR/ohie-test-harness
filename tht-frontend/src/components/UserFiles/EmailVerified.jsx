@@ -49,7 +49,7 @@ export default function EmailVerified() {
 								</div>
 								<h2 className="text-green">Congratulations!</h2>
 								<h6 className="my-4">
-									Dear Assesee! Your Email has been verified.
+									Dear Assessee! Your Email has been verified.
 								</h6>
 								<p>
 									Please wait for Admin's Approval before

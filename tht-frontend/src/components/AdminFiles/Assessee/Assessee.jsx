@@ -110,7 +110,6 @@ const Assessee = () => {
     );
   }, [state]);
 
-  
   return (
     <div id="wrapper">
       <div className="col-12">
@@ -125,7 +124,7 @@ const Assessee = () => {
                   value={state}
                   onChange={(e) => {
                     if (e.target.value.includes(",")) {
-                     setState(e.target.value.split(","))
+                      setState(e.target.value.split(","));
                     } else {
                       setState(e.target.value);
                     }
@@ -214,7 +213,11 @@ const Assessee = () => {
                     <tr>
                       <td>{user.name}</td>
                       <td>{user.email}</td>
-                      <td>{user.companyName}</td>
+                      {user.companyName ? (
+                        <td>{user.companyName}</td>
+                      ) : (
+                        <td>&ndash;</td>
+                      )}
                       <td>{formattedDate}</td>
                       <td>
                         <span className={userBadgeClasses[user.state]}>

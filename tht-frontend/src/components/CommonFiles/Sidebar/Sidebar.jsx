@@ -11,176 +11,163 @@ import { USER_ROLES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 
 export default function Sidebar() {
-	const dispatch = useDispatch();
-	const navigate = useNavigate();
-	const location = useLocation();
-	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-	const [activeMenuItem, setActiveMenuItem] = useState();
-	const [user, setUser] = useState();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeMenuItem, setActiveMenuItem] = useState();
+  const [user, setUser] = useState();
 
-	/*
-	 * This is to expand/shrink the wrapper when the side menu bar is toogled
-	 * To Do: Refactor the structure in such a way that margins are removed from the pages
-	 * and the outlet will directly render things in the middle of the page.
-	 **/
-	const toggleSidebar = () => {
-		setIsSidebarOpen(!isSidebarOpen);
-		let wrapper = document.getElementById("wrapper");
-		if (wrapper) {
-			wrapper.classList.toggle("expand");
-		}
-	};
+  /*
+   * This is to expand/shrink the wrapper when the side menu bar is toogled
+   * To Do: Refactor the structure in such a way that margins are removed from the pages
+   * and the outlet will directly render things in the middle of the page.
+   **/
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+    let wrapper = document.getElementById("wrapper");
+    if (wrapper) {
+      wrapper.classList.toggle("expand");
+    }
+  };
 
-	const handleMenuItemClick = (path) => {
-		setActiveMenuItem(path);
-		navigate(path);
-	};
+  const handleMenuItemClick = (path) => {
+    setActiveMenuItem(path);
+    navigate(path);
+  };
 
-	useEffect(() => {
-		const userInfo = store.getState().userInfoSlice;
-		setUser(userInfo);
-	}, []);
+  useEffect(() => {
+    const userInfo = store.getState().userInfoSlice;
+    setUser(userInfo);
+  }, []);
 
-	useEffect(() => {
-		setActiveMenuItem(location.pathname);
-		let wrapper = document.getElementById("wrapper");
-		if (wrapper) {
-			isSidebarOpen
-				? wrapper.classList.remove("expand")
-				: wrapper.classList.add("expand");
-		}
-	}, [location]);
+  useEffect(() => {
+    setActiveMenuItem(location.pathname);
+    let wrapper = document.getElementById("wrapper");
+    if (wrapper) {
+      isSidebarOpen
+        ? wrapper.classList.remove("expand")
+        : wrapper.classList.add("expand");
+    }
+  }, [location]);
 
-	return (
-		<div
-			className={
-				isSidebarOpen
-					? "sidebar-wrapper open"
-					: "sidebar-wrapper shrink"
-			}
-			id="mySidenav"
-		>
-			<div className="close-sidemenu-icon" onClick={toggleSidebar}>
-				<i className="bi bi-filter-left"></i>
-			</div>
-			<div className="logo-white">
-				<img src={logo} alt="Logo" />
-			</div>
+  return (
+    <div
+      className={
+        isSidebarOpen ? "sidebar-wrapper open" : "sidebar-wrapper shrink"
+      }
+      id="mySidenav"
+    >
+      <div className="close-sidemenu-icon" onClick={toggleSidebar}>
+        <i className="bi bi-filter-left"></i>
+      </div>
+      <div className="logo-white">
+        <img src={logo} alt="Logo" />
+      </div>
 
-			<ul className="side-menu">
-				<li>
-					<a
-						className={
-							activeMenuItem === "/dashboard"
-								? "active menu-like-item"
-								: "menu-like-item"
-						}
-						onClick={() => {
-							handleMenuItemClick("/dashboard");
-						}}
-					>
-						<i
-							aria-label="Dashboard"
-							title="Dashboard"
-							className="bi bi-columns-gap menu-left-icon"
-						></i>
-						<span> Dashboard </span>
-					</a>
-				</li>
-				{user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
-					<>
-						<li>
-							<a
-								className={
-									activeMenuItem === "/dashboard/assessee"
-										? "active menu-like-item"
-										: "menu-like-item"
-								}
-								onClick={() =>
-									handleMenuItemClick("/dashboard/assessee")
-								}
-							>
-								<i
-									aria-label="User Registration"
-									title="User Registration"
-									className="bi bi-columns-gap menu-left-icon"
-								></i>
-								<span> Assessee </span>
-							</a>
-						</li>
-						<li>
-							<a
-								className={
-									activeMenuItem ===
-									"/dashboard/testing-requests"
-										? "active menu-like-item"
-										: "menu-like-item"
-								}
-								onClick={() =>
-									handleMenuItemClick(
-										"/dashboard/testing-requests"
-									)
-								}
-							>
-								<i
-									aria-label="Testing Requests"
-									title="Testing Requests"
-									className="bi bi-file-earmark-bar-graph menu-left-icon"
-								></i>
-								<span> Testing Requests</span>
-							</a>
-						</li>
-						<li>
-							<a
-								className={
-									activeMenuItem === "/dashboard/applications"
-										? "active menu-like-item"
-										: "menu-like-item"
-								}
-								onClick={() =>
-									handleMenuItemClick(
-										"/dashboard/applications"
-									)
-								}
-							>
-								<i
-									aria-label="Applications"
-									title="Applications"
-									className="bi bi-file-earmark-bar-graph menu-left-icon"
-								></i>
-								<span> Applications </span>
-							</a>
-						</li>
-					</>
-				)}
-				{user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
-					<Fragment>
-						{" "}
-						<li>
-							<a
-								className={
-									activeMenuItem ===
-									"/dashboard/testing-requests"
-										? "active menu-like-item"
-										: "menu-like-item"
-								}
-								onClick={() =>
-									handleMenuItemClick(
-										"/dashboard/testing-requests"
-									)
-								}
-							>
-								<i
-									aria-label="Testing Requests"
-									title="Testing Requests"
-									className="bi bi-file-earmark-bar-graph menu-left-icon"
-								></i>
-								<span> Testing Requests</span>
-							</a>
-						</li>
-					</Fragment>
-				)}
-				{/*   {user?.roleIds?.includes("role.admin") && (
+      <ul className="side-menu">
+        <li>
+          <a
+            className={
+              activeMenuItem === "/dashboard"
+                ? "active menu-like-item"
+                : "menu-like-item"
+            }
+            onClick={() => {
+              handleMenuItemClick("/dashboard");
+            }}
+          >
+            <i
+              aria-label="Dashboard"
+              title="Dashboard"
+              className="bi bi-columns-gap menu-left-icon"
+            ></i>
+            <span> Dashboard </span>
+          </a>
+        </li>
+        {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+          <>
+            <li>
+              <a
+                className={
+                  activeMenuItem === "/dashboard/assessee"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
+                }
+                onClick={() => handleMenuItemClick("/dashboard/assessee")}
+              >
+                <i
+                  aria-label="User"
+                  title="User"
+                  className="bi bi-person menu-left-icon"
+                ></i>
+
+                <span> Assessees </span>
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  activeMenuItem === "/dashboard/testing-requests"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
+                }
+                onClick={() =>
+                  handleMenuItemClick("/dashboard/testing-requests")
+                }
+              >
+                <i
+                  aria-label="Testing Requests"
+                  title="Testing Requests"
+                  className="bi bi-file-earmark-plus menu-left-icon"
+                ></i>
+                <span> Testing Requests</span>
+              </a>
+            </li>
+            <li>
+              <a
+                className={
+                  activeMenuItem === "/dashboard/applications"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
+                }
+                onClick={() => handleMenuItemClick("/dashboard/applications")}
+              >
+                <i
+                  aria-label="Applications"
+                  title="Applications"
+                  className="bi bi-file-earmark-bar-graph menu-left-icon"
+                ></i>
+                <span> Applications </span>
+              </a>
+            </li>
+          </>
+        )}
+        {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
+          <Fragment>
+            {" "}
+            <li>
+              <a
+                className={
+                  activeMenuItem === "/dashboard/testing-requests"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
+                }
+                onClick={() =>
+                  handleMenuItemClick("/dashboard/testing-requests")
+                }
+              >
+                <i
+                  aria-label="Testing Requests"
+                  title="Testing Requests"
+                  className="bi bi-file-earmark-bar-graph menu-left-icon"
+                ></i>
+                <span> Testing Requests</span>
+              </a>
+            </li>
+          </Fragment>
+        )}
+        {/*   {user?.roleIds?.includes("role.admin") && (
           <li>
             <a
               className={
@@ -196,7 +183,7 @@ export default function Sidebar() {
           </li>
         )}
       */}
-				{/* <li>
+        {/* <li>
           <a
             className="menu-like-item"
             onClick={() => {
@@ -213,7 +200,7 @@ export default function Sidebar() {
             <span> Logout </span>
           </a>
         </li> */}
-			</ul>
-		</div>
-	);
+      </ul>
+    </div>
+  );
 }
