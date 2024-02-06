@@ -229,7 +229,7 @@ const Assessee = () => {
                           <Fragment>
                             <button
                               type="button"
-                              className="btn btn-sm text-uppercase approval-action-button"
+                              className="btn btn-sm text-uppercase approval-action-button action-button"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -238,12 +238,6 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                              <i
-                                className="bi bi-x-circle-fill text-red font-size-16l font-weight-light font-size-16"
-                                style={{
-                                  fontWeight: "lighter !important",
-                                }}
-                              ></i>{" "}
                               DISABLE
                             </button>
                           </Fragment>
@@ -252,7 +246,7 @@ const Assessee = () => {
                           <Fragment>
                             <button
                               type="button"
-                              className="btn btn-sm text-uppercase approval-action-button"
+                              className="btn btn-sm text-uppercase approval-action-button action-button"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -261,17 +255,11 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                              <i
-                                className="bi bi-check-circle-fill text-green-50 font-weight-light font-size-16"
-                                style={{
-                                  fontWeight: "lighter !important",
-                                }}
-                              ></i>{" "}
                               APPROVE
                             </button>
                             <button
                               type="button"
-                              className="btn btn-sm text-uppercase approval-action-button"
+                              className="btn btn-sm text-uppercase approval-action-button action-button"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -280,12 +268,6 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                              <i
-                                className="bi bi-x-circle-fill text-red font-size-16l font-weight-light font-size-16"
-                                style={{
-                                  fontWeight: "lighter !important",
-                                }}
-                              ></i>{" "}
                               REJECT
                             </button>
                           </Fragment>
@@ -294,7 +276,7 @@ const Assessee = () => {
                         {user.state === "user.status.inactive" && (
                           <button
                             type="button"
-                            className="btn btn-sm text-uppercase approval-action-button"
+                            className="btn btn-sm text-uppercase approval-action-button action-button"
                             onClick={() => {
                               changeState(
                                 user.id,
@@ -303,12 +285,6 @@ const Assessee = () => {
                               );
                             }}
                           >
-                            <i
-                              className="bi bi-check-circle-fill text-green-50 font-weight-light font-size-16"
-                              style={{
-                                fontWeight: "lighter !important",
-                              }}
-                            ></i>{" "}
                             Enable
                           </button>
                         )}
