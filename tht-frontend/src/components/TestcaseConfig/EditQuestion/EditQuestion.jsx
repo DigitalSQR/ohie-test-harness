@@ -12,8 +12,7 @@ const EditQuestion = () => {
   const location = useLocation();
   let { testcase } = location.state;
   const { showLoader, hideLoader } = useLoader();
-  const [loading, setLoading] = useState(false);
-  const [editedQuestion, setEditedQuestion] = useState(testcase.question);
+  const [editedQuestion, setEditedQuestion] = useState(testcase.testcase.name);
   const [editedOptions, setEditedOptions] = useState(
     testcase.options.map((option) => ({
       label: option.name,
@@ -23,20 +22,14 @@ const EditQuestion = () => {
       changesMade: false,
     }))
   );
-  const [questionChanged, setQuestionChanged] = useState(false);
 
   const [changesMade, setChangesMade] = useState(false);
-
-  const handleChange = () => {};
 
   const handleQuestionChange = (newValue) => {
     setEditedQuestion(newValue);
 
-    // Check if the new value is different from the original question
-    setQuestionChanged(newValue !== testcase.question);
-
     // Enable/disable Save button based on the questionChanged state
-    setChangesMade(newValue !== testcase.question);
+    setChangesMade(newValue !== testcase.testcase.name);
   };
 
   const handleOptionChange = (index, newValue) => {
@@ -46,27 +39,22 @@ const EditQuestion = () => {
       updatedOptions[index].label !== testcase.options[index].name;
 
     setEditedOptions(updatedOptions);
-    setChangesMade(true);
-    handleChange();
   };
 
   const handleStatusChange = (index, newStatus) => {
     const updatedOptions = [...editedOptions];
     updatedOptions[index].status = newStatus;
     setEditedOptions(updatedOptions);
-    setChangesMade(true);
   };
 
   const handleRadioChange = (index) => {
     const updatedOptions = [...editedOptions];
     updatedOptions[index].checked = !editedOptions[index].checked;
     setEditedOptions(updatedOptions);
-    setChangesMade(true);
   };
 
   const handleSaveQuestion = async () => {
     try {
-      setLoading(true);
       showLoader();
 
       const body = {
@@ -76,8 +64,7 @@ const EditQuestion = () => {
         },
         name: editedQuestion,
       };
-      const resp = await TestCaseAPI.editTestCaseName(body);
-      console.log(resp);
+      await TestCaseAPI.editTestCaseName(body);
 
       notification.success({
         placement: "bottomRight",
@@ -93,7 +80,6 @@ const EditQuestion = () => {
         message: "Failed to save question",
       });
     } finally {
-      setLoading(false);
       hideLoader();
     }
   };
@@ -111,8 +97,7 @@ const EditQuestion = () => {
         testcaseId: testcase.id,
       };
 
-      const resp = await TestCaseOptionsAPI.editTestCaseOptions(body);
-      console.log(resp);
+      await TestCaseOptionsAPI.editTestCaseOptions(body);
 
       notification.success({
         placement: "bottomRight",
@@ -180,8 +165,8 @@ const EditQuestion = () => {
         ...resp,
       };
 
-      console.log(testcase.testcase);
       setEditedQuestion(resp.name);
+      setChangesMade(false);
     } catch (error) {
       console.error("Error loading options:", error);
 
@@ -217,7 +202,7 @@ const EditQuestion = () => {
               className="smaller-button"
               type="primary"
               onClick={handleSaveQuestion}
-              disabled={!changesMade || loading}
+              disabled={!changesMade}
             >
               Save
             </Button>

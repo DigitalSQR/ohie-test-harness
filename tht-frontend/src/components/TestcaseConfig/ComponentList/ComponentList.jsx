@@ -9,8 +9,14 @@ const ComponentList = () => {
   const navigate = useNavigate();
   const [components, setComponents] = useState([]);
   const { showLoader, hideLoader } = useLoader();
-  const handleUpdate = (componentId) => {
-    navigate(`/dashboard/component-specification/${componentId}`);
+  const handleUpdate = (componentId, name) => {
+    console.log(componentId);
+    navigate(`/dashboard/component-specification/${componentId}`, {
+      state: {
+        name,
+        componentId,
+      },
+    });
   };
   useEffect(() => {
     showLoader();
@@ -32,7 +38,7 @@ const ComponentList = () => {
       <div className="col-12">
         <div className="row mb-2 justify-content-between">
           <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
-            <b>Components</b>
+            <h4 className="my-2">Components</h4>
           </div>
         </div>
         <div className="table-responsive">
@@ -59,7 +65,9 @@ const ComponentList = () => {
                     </td>
                     <td className="d-flex">
                       <EditOutlined
-                        onClick={() => handleUpdate(component.id)}
+                        onClick={() =>
+                          handleUpdate(component.id, component.name)
+                        }
                       />
                       <span className="badges-green-dark">ACTIVE</span>
                     </td>

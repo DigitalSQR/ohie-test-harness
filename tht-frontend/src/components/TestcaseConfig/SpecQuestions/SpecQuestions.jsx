@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { TestCaseAPI } from "../../../api/TestCaseAPI";
 import { useLoader } from "../../loader/LoaderContext";
 import { EditOutlined } from "@ant-design/icons";
 import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
 import "./SpecQuestions.scss";
 const ManualTestCases = () => {
-  const { specificationId } = useParams();
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const { componentId, specificationId, name } = location.state;
 
   const { showLoader, hideLoader } = useLoader();
   const [questions, setQuestions] = useState();
@@ -21,6 +23,15 @@ const ManualTestCases = () => {
     navigate(`/dashboard/edit-question`, {
       state: {
         testcase: question,
+      },
+    });
+  };
+
+  const handleClick = () => {
+    navigate(`/dashboard/component-specification/${componentId}`, {
+      state: {
+        name,
+        componentId,
       },
     });
   };
@@ -75,7 +86,10 @@ const ManualTestCases = () => {
   };
   return (
     <div id="wrapper">
-      <h1 className="specification-id">{`${specificationId} - Manual Configuration`}</h1>
+      <h1
+        onClick={handleClick}
+        className="specification-id"
+      >{`${specificationId} - Manual Configuration`}</h1>
       {questions?.map((question, index) => (
         <div key={index} className="question-container">
           <div className="question-content">

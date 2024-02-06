@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./ComponentSpecification.scss";
-import { useNavigate, useParams } from "react-router-dom";
-import { EditOutlined} from "@ant-design/icons";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { EditOutlined } from "@ant-design/icons";
 import { useLoader } from "../../loader/LoaderContext";
 import { SpecificationAPI } from "../../../api/SpecificationAPI";
 const ComponentSpecification = () => {
   const navigate = useNavigate();
-  const { componentId } = useParams();
   const [activeTab, setActiveTab] = useState("Automation");
   const [specifications, setSpecifications] = useState();
   const { showLoader, hideLoader } = useLoader();
+  const location = useLocation();
+  const { componentId, name } = location.state;
   const openTab = (tabName) => {
     setActiveTab(tabName);
     if (tabName === "Automation") {
@@ -20,11 +21,22 @@ const ComponentSpecification = () => {
   };
   useEffect(() => {
     fetchData(false);
+    console.log(componentId);
   }, []);
+
+  const handleClick = () => {
+    navigate("/dashboard/testcase-config");
+  };
 
   const handleEdit = (specificationId) => {
     if (activeTab === "Manual") {
-      navigate(`/dashboard/manual-testcases/${specificationId}`);
+      navigate(`/dashboard/manual-testcases/${specificationId}`, {
+        state: {
+          specificationId,
+          componentId,
+          name,
+        },
+      });
     }
   };
 
@@ -39,7 +51,12 @@ const ComponentSpecification = () => {
   };
   return (
     <div id="wrapper">
-      <div className="tabs">
+      <div className="page-heading">
+        <h1 onClick={handleClick} className="larger-text d-inline">
+          {name}
+        </h1>
+      </div>
+      <div className="tabs my-3">
         <button
           className={`tablinks ${
             activeTab === "Automation" ? "activeTab" : ""
