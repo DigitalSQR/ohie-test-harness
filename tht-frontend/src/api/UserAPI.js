@@ -1,3 +1,4 @@
+import { paramSerialize } from "../utils/utils";
 import api from "./configs/axiosConfigs";
 
 export const UserAPI = {
@@ -54,7 +55,10 @@ export const UserAPI = {
       const response = await api.request({
         url: `/user`,
         method: "GET",
-        params
+        params,
+        paramsSerializer: params => {
+				  return paramSerialize(params);
+				}
       });
       return response.data;
     } catch (error) {

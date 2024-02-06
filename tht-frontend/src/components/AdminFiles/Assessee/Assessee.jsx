@@ -6,7 +6,7 @@ import { notification } from "antd";
 import { Pagination } from "@mui/material";
 import { userBadgeClasses } from "../../../constants/user_constants";
 import { useLoader } from "../../loader/LoaderContext";
-
+import { userStatusActionLabels } from "../../../constants/user_constants";
 const Assessee = () => {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [state, setState] = useState("");
@@ -15,12 +15,13 @@ const Assessee = () => {
     email: "desc",
     createdAt: "desc",
   });
+
+  const userStates = [...userStatusActionLabels, { label: "All", value: "" }];
   const [sortFieldName, setSortFieldName] = useState("createdAt");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [role,setRole] = useState("role.assessee"); 
-  const pendingstate = "user.status.approval.pending";
+  const [role, setRole] = useState("role.assessee");
   const { showLoader, hideLoader } = useLoader();
   const fetchUserByState = (
     sortFieldName,
@@ -30,10 +31,18 @@ const Assessee = () => {
     state
   ) => {
     showLoader();
-    UserAPI.getUserByState(sortFieldName, sortDirection, currentPage, pageSize,state,role)
+
+    UserAPI.getUserByState(
+      sortFieldName,
+      sortDirection,
+      currentPage - 1,
+      pageSize,
+      state,
+      role
+    )
       .then((res) => {
         hideLoader();
-        console.log("the users are put here ",res)
+        console.log("the users are put here ", res);
         setAvailableUsers(res.content);
         setTotalPages(res.totalPages);
       })
@@ -57,10 +66,10 @@ const Assessee = () => {
   };
 
   const changeState = (userId, state, newState) => {
-    showLoader()
+    showLoader();
     UserAPI.changeState(userId, state)
       .then((res) => {
-        hideLoader()
+        hideLoader();
         notification.success({
           description: `Request has been ${newState}`,
           placement: "bottom-left",
@@ -100,6 +109,8 @@ const Assessee = () => {
       state
     );
   }, [state]);
+
+  
   return (
     <div id="wrapper">
       <div className="col-12">
@@ -113,13 +124,23 @@ const Assessee = () => {
                   aria-label="Default select example"
                   value={state}
                   onChange={(e) => {
-                    setState(e.target.value);
+                    if (e.target.value.includes(",")) {
+                     setState(e.target.value.split(","))
+                    } else {
+                      setState(e.target.value);
+                    }
                   }}
                 >
-                  <option value="">All</option>
-                  <option value="user.status.active">Accepted</option>
-                  <option value="user.status.rejected">Rejected</option>
-                  <option value="user.status.approval.pending">Pending</option>
+                  {userStates.map(
+                    (userState) => (
+                      console.log(userState.value),
+                      (
+                        <option value={userState.value} key={userState.value}>
+                          {userState.label}
+                        </option>
+                      )
+                    )
+                  )}
                 </select>
               </div>
             </div>
@@ -201,31 +222,73 @@ const Assessee = () => {
                         </span>
                       </td>
                       <td className=" no-wrap">
-                      {user.state === "user.status.active" && (
-                        <Fragment>
-                          <button
-                            type="button"
-                            className="btn btn-sm text-uppercase approval-action-button"
-                            onClick={() => {
-                              changeState(
-                                user.id,
-                                "user.status.inactive",
-                                "Inactive"
-                              );
-                            }}
-                          >
-                            <i
-                              className="bi bi-x-circle-fill text-red font-size-16l font-weight-light font-size-16"
-                              style={{
-                                fontWeight: "lighter !important",
+                        {user.state === "user.status.active" && (
+                          <Fragment>
+                            <button
+                              type="button"
+                              className="btn btn-sm text-uppercase approval-action-button"
+                              onClick={() => {
+                                changeState(
+                                  user.id,
+                                  "user.status.inactive",
+                                  "Inactive"
+                                );
                               }}
-                            ></i>{" "}
-                            DISABLE
-                          </button>
-                        </Fragment>
-                      )}
-                      {user.state === "user.status.approval.pending" && (
-                        <Fragment>
+                            >
+                              <i
+                                className="bi bi-x-circle-fill text-red font-size-16l font-weight-light font-size-16"
+                                style={{
+                                  fontWeight: "lighter !important",
+                                }}
+                              ></i>{" "}
+                              DISABLE
+                            </button>
+                          </Fragment>
+                        )}
+                        {user.state === "user.status.approval.pending" && (
+                          <Fragment>
+                            <button
+                              type="button"
+                              className="btn btn-sm text-uppercase approval-action-button"
+                              onClick={() => {
+                                changeState(
+                                  user.id,
+                                  "user.status.active",
+                                  "Approved"
+                                );
+                              }}
+                            >
+                              <i
+                                className="bi bi-check-circle-fill text-green-50 font-weight-light font-size-16"
+                                style={{
+                                  fontWeight: "lighter !important",
+                                }}
+                              ></i>{" "}
+                              APPROVE
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-sm text-uppercase approval-action-button"
+                              onClick={() => {
+                                changeState(
+                                  user.id,
+                                  "user.status.rejected",
+                                  "Rejected"
+                                );
+                              }}
+                            >
+                              <i
+                                className="bi bi-x-circle-fill text-red font-size-16l font-weight-light font-size-16"
+                                style={{
+                                  fontWeight: "lighter !important",
+                                }}
+                              ></i>{" "}
+                              REJECT
+                            </button>
+                          </Fragment>
+                        )}
+
+                        {user.state === "user.status.inactive" && (
                           <button
                             type="button"
                             className="btn btn-sm text-uppercase approval-action-button"
@@ -233,7 +296,7 @@ const Assessee = () => {
                               changeState(
                                 user.id,
                                 "user.status.active",
-                                "Approved"
+                                "Active"
                               );
                             }}
                           >
@@ -243,51 +306,9 @@ const Assessee = () => {
                                 fontWeight: "lighter !important",
                               }}
                             ></i>{" "}
-                            APPROVE
+                            Enable
                           </button>
-                          <button
-                            type="button"
-                            className="btn btn-sm text-uppercase approval-action-button"
-                            onClick={() => {
-                              changeState(
-                                user.id,
-                                "user.status.rejected",
-                                "Rejected"
-                              );
-                            }}
-                          >
-                            <i
-                              className="bi bi-x-circle-fill text-red font-size-16l font-weight-light font-size-16"
-                              style={{
-                                fontWeight: "lighter !important",
-                              }}
-                            ></i>{" "}
-                            REJECT
-                          </button>
-                        </Fragment>
-                      )}
-
-                      {user.state === "user.status.inactive" && (
-                        <button
-                          type="button"
-                          className="btn btn-sm text-uppercase approval-action-button"
-                          onClick={() => {
-                            changeState(
-                              user.id,
-                              "user.status.active",
-                              "Active"
-                            );
-                          }}
-                        >
-                          <i
-                            className="bi bi-check-circle-fill text-green-50 font-weight-light font-size-16"
-                            style={{
-                              fontWeight: "lighter !important",
-                            }}
-                          ></i>{" "}
-                          Enable
-                        </button>
-                      )}
+                        )}
                       </td>
                     </tr>
                   </Fragment>
