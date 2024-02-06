@@ -5,27 +5,23 @@ import { userStateConstantNames } from "../../../constants/user_constants";
 import { Modal, Button } from "react-bootstrap";
 const UserIdConnector = ({ userId, isLink }) => {
   const [user, setUser] = useState();
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  // const [show, setShow] = useState(false);
+  // const handleClose = () => setShow(false);
   useEffect(() => {
     UserAPI.getUserById(userId).then((user) => {
       setUser(user);
     });
   }, []);
 
-  const showPopup = (event) => {
-    event.preventDefault();
-    setShow(true);
-  };
+  // const showPopup = (event) => {
+  //   event.preventDefault();
+  //   setShow(true);
+  // };
 
   return (
     <div>
-      {user?.name ? (
-        <a onClick={(event) => showPopup(event)} href="" target="_blank">
-          {user.name}
-        </a>
-      ) : null}
-      <Modal show={show} onHide={handleClose}>
+      {user?.name ? <p>{user?.name}</p> : null}
+      {/* <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>DETAILS</Modal.Title>
         </Modal.Header>
@@ -56,7 +52,7 @@ const UserIdConnector = ({ userId, isLink }) => {
             CLOSE
           </Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

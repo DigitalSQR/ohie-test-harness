@@ -50,6 +50,7 @@ export default function Options(props) {
 							value={option.id}
 							checked={currentOption === option.id}
 							onChange={handleChange}
+							autoComplete="off"
 						/>
 						<label htmlFor={option.id} onClick={(e) => onLabelClick(e, index)}>{option.name}</label>
 					</div>

@@ -34,6 +34,7 @@ export default function Login() {
     grant_type: "password", // Assuming 'password' grant type
   });
   const { showLoader, hideLoader } = useLoader();
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setDefaultToken();
@@ -45,36 +46,38 @@ export default function Login() {
   };
 
   const handleLogin = async () => {
-    showLoader();
-    AuthenticationAPI.doLogin(new URLSearchParams(formData))
-      .then(
-        (response) => {
-          dispatch(login_success(response));
-          setAuthToken(response.access_token);
+    if (formData.username.length > 0 && formData.password.length > 0) {
+      showLoader();
+      AuthenticationAPI.doLogin(new URLSearchParams(formData))
+        .then(
+          (response) => {
+            dispatch(login_success(response));
+            setAuthToken(response.access_token);
+            hideLoader();
+            UserAPI.viewUser().then((user) => {
+              dispatch(userinfo_success(user));
+              navigate("/dashboard");
+            });
+          },
+          (response) => {
+            hideLoader();
+            console.log(response);
+            notification.error({
+              placement: "bottomRight",
+              description: `${response.response.data.error_description}`,
+            });
+          }
+        )
+        .catch((error) => {
+          // Handle the error here
           hideLoader();
-          UserAPI.viewUser().then((user) => {
-            dispatch(userinfo_success(user));
-            navigate("/dashboard");
-          });
-        },
-        (response) => {
-          hideLoader();
-          console.log(response);
+          console.log(error);
           notification.error({
             placement: "bottomRight",
-            description: `${response.response.data.error_description}`,
+            description: "Invalid username or password",
           });
-        }
-      )
-      .catch((error) => {
-        // Handle the error here
-        hideLoader();
-        console.log(error);
-        notification.error({
-          placement: "bottomRight",
-          description: "Invalid username or password",
         });
-      });
+    }
   };
 
   const redirectToSignUp = async () => {
@@ -93,6 +96,12 @@ export default function Login() {
       setIsKeepLogin(false);
     }
     dispatch(setIsKeepLoginState(isKeepLogin));
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleLogin();
+    }
   };
 
   return (
@@ -140,6 +149,7 @@ export default function Login() {
                       placeholder="Email"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
+                      onKeyDown={handleKeyPress}
                     />
                   </div>
                 </div>
@@ -155,7 +165,7 @@ export default function Login() {
                       <i className="bi bi-lock"></i>
                     </span>
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       className="form-control border-start-0 ps-0"
                       name="password"
                       id="exampleFormControlInput2"
@@ -163,9 +173,22 @@ export default function Login() {
                       value={formData.password}
                       onChange={handleInputChange}
                       placeholder="Password"
-                      aria-label="Username"
+                      aria-label="Password"
                       aria-describedby="basic-addon1"
+                      onKeyDown={handleKeyPress}
                     />
+                    <button
+                      className="btn btn-outline-secondary"
+                      type="button"
+                      style={{ borderColor: "#ccdade" }}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      <i
+                        className={`bi ${
+                          showPassword ? "bi-eye-slash" : "bi-eye"
+                        }`}
+                      ></i>
+                    </button>
                   </div>
                 </div>
 
