@@ -34,11 +34,8 @@ const TestingRequests = () => {
 	const [iconClass, setIconClass] = useState("bi bi-eye-fill");
 
 	const navigate = useNavigate();
-	const [sortDirection, setSortDirection] = useState({
-		productName: "desc",
-		createdAt: "desc",
-	});
-	const [sortFieldName, setSortFieldName] = useState("");
+	const [sortDirection, setSortDirection] = useState();
+	const [sortFieldName, setSortFieldName] = useState();
 	const handleChangePage = (event, newPage) => {
     console.log(newPage);
 		setCurrentPage(newPage);
@@ -54,7 +51,7 @@ const TestingRequests = () => {
 		TestRequestAPI.getTestRequestsByState(
 			filterState,
 			sortFieldName,
-			sortDirection[sortFieldName],
+			!!sortFieldName ? sortDirection[sortFieldName] : null,
 			newPage - 1,
 			pageSize
 		)

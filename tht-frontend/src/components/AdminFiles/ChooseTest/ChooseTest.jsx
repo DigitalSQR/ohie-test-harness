@@ -25,67 +25,51 @@ export default function ChooseTest() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		// console.log("In use Effect => ", totalManualTestcaseResults);
-		const completedManualTestcaseResults = testcaseResults.filter(
-			(tescaseResults) =>
-				!!tescaseResults.manual &&
-				(tescaseResults.state ===
-					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
-					tescaseResults.state ===
-					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED)
-		).length;
+		var totalManual = 0;
+		var totalFinishedManual = 0;
+		var totalAutomated = 0;
+		var totalFinishedAutomated = 0;
+		testcaseResults.forEach((testcaseResult) => {
+			if (testcaseResult.state !== TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT) {
+				if (!!testcaseResult.manual) {
+					totalManual++;
+					if (testcaseResult.state ===
+						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
+						testcaseResult.state ===
+						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
+						totalFinishedManual++;
+					}
+				}
+				if (!!testcaseResult.automated) {
+					totalAutomated++;
+					if (testcaseResult.state ===
+						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
+						testcaseResult.state ===
+						TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
+						totalFinishedAutomated++;
+					}
+				}
+			}
+		});
 
-		if (totalManualTestcaseResults !== 0) {
+		setTotalManualTestcaseResults(totalManual);
+		setTotalAutomatedTestcaseResults(totalAutomated);
+
+		if (totalManual !== 0) {
 			setManualProgress(
-				(completedManualTestcaseResults / totalManualTestcaseResults) *
-				100
+				Math.floor((totalFinishedManual / totalManual) *
+					100)
 			);
 		}
-	}, [totalManualTestcaseResults]);
 
-	useEffect(() => {
-		var total = testcaseResults.filter(
-			(totalTestCaseResults) =>
-				!!totalTestCaseResults.manual &&
-				totalTestCaseResults.state !==
-				TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
-		).length;
-		setTotalManualTestcaseResults(total);
-
-		var automatedTotal =
-			testcaseResults.filter(
-				(totalTestCaseResults) =>
-					!!totalTestCaseResults.automated &&
-					totalTestCaseResults.state !==
-					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
-			).length
-
-		setTotalAutomatedTestcaseResults(automatedTotal);
-		console.log("auto total ", automatedTotal);
-
-		// console.log(completedManualTestcaseResults);
-	}, [testcaseResults]);
-
-	useEffect(() => {
-		const completedAutomatedTestcaseResults = testcaseResults.filter(
-			(tescaseResults) =>
-				!!tescaseResults.automated &&
-				(tescaseResults.state ===
-					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
-					tescaseResults.state ===
-					TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED)
-		).length;
-		// console.log(completedManualTestcaseResults);
-		console.log("completed automate", completedAutomatedTestcaseResults);
-
-		if (totalAutomatedTestcaseResults !== 0) {
+		if (totalAutomated !== 0) {
 			setAutomatedProgress(
-				(completedAutomatedTestcaseResults /
-					totalAutomatedTestcaseResults) *
-				100
+				Math.floor((totalFinishedAutomated /
+					totalAutomated) *
+					100)
 			);
 		}
-	}, [totalAutomatedTestcaseResults]);
+	}, [testcaseResults]);
 
 	const loadProgress = () => {
 		const params = {
@@ -100,6 +84,7 @@ export default function ChooseTest() {
 				throw error;
 			});
 	};
+
 	const handleStartTesting = (manual, automated) => {
 		const params = { testRequestId, refObjUri: TESTREQUEST_REFOBJURI, refId: testRequestId };
 		if (!!manual) {
@@ -114,14 +99,14 @@ export default function ChooseTest() {
 					description: "Testing Process has been Started Successfully",
 					placement: "bottomRight",
 				});
-				if(!!automated) {
+				if (!!automated) {
 					navigate(
 						`/dashboard/automated-testing/${testRequestId}`
-					)	
+					)
 				} else {
 					navigate(
 						`/dashboard/manual-testing/${testRequestId}`
-					)	
+					)
 				}
 				loadProgress();
 			})
@@ -161,6 +146,7 @@ export default function ChooseTest() {
 				});
 			});
 	};
+
 	useEffect(() => {
 		loadProgress();
 		testCaseInfo();
@@ -275,7 +261,7 @@ export default function ChooseTest() {
 											)
 										}
 									>
-										Resume
+										Show Result
 									</Button>
 								</Fragment>
 							)}
