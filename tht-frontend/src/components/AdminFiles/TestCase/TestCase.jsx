@@ -289,7 +289,7 @@ export default function TestCase(props) {
 
 							<div className="text-end mb-3">
 								<button
-									disabled={currentTestcase.testcaseOptionId || selectedOption}
+									disabled={!currentTestcase.testcaseOptionId && !selectedOption}
 									className="cst-btn-group btn btn-primary"
 									onClick={() => {
 										handleSaveandNext();
