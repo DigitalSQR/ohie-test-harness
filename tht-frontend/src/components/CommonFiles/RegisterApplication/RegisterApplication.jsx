@@ -39,8 +39,21 @@ const RegisterApplication = () => {
   // which keys are symmetrical to our values/initialValues
   const validate = (values) => {
     const errors = {};
+
     if (values.testRequestUrls.length === 0) {
       errors.testRequestUrls = "Please select atleast one component";
+    }
+
+    if (values.name === "") {
+      errors.name = "Application Name is required";
+    }
+
+    if (values.productName === "") {
+      errors.productName = "Product Name is required";
+    }
+
+    if (values.description === "") {
+      errors.description = "Application Description is required";
     }
 
     return errors;
@@ -128,14 +141,24 @@ const RegisterApplication = () => {
                     id="name"
                     name="name"
                     type="text"
-                    className="form-control"
+                    className={`form-control ${
+                      formik.touched.name && formik.errors.name
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Application Name"
                     value={formik.values.name}
                     onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     autoComplete="off"
+                    required
                   />
                 </div>
+                {formik.touched.name && formik.errors.name && (
+                  <div className="text-danger">{formik.errors.name}</div>
+                )}
               </div>
+
               <div className="col-sm-6 col-12">
                 <div className="custom-input mb-3">
                   <label htmlFor="productName" className="form-label">
@@ -145,13 +168,22 @@ const RegisterApplication = () => {
                     id="productName"
                     name="productName"
                     type="text"
-                    className="form-control"
+                    className={`form-control ${
+                      formik.touched.productName && formik.errors.productName
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     placeholder="Product Name"
                     value={formik.values.productName}
                     onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     autoComplete="off"
+                    required
                   />
                 </div>
+                {formik.touched.productName && formik.errors.productName && (
+                  <div className="text-danger">{formik.errors.productName}</div>
+                )}
               </div>
             </div>
 
@@ -164,14 +196,23 @@ const RegisterApplication = () => {
                   <textarea
                     id="description"
                     name="description"
-                    className="form-control custom-textarea"
+                    className={`form-control ${
+                      formik.touched.description && formik.errors.description
+                        ? "is-invalid"
+                        : ""
+                    }`}
                     rows="3"
                     placeholder="Application Description"
                     value={formik.values.description}
                     onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
                     autoComplete="off"
+                    required
                   ></textarea>
                 </div>
+                {formik.touched.description && formik.errors.description && (
+                  <div className="text-danger">{formik.errors.description}</div>
+                )}
               </div>
             </div>
 
