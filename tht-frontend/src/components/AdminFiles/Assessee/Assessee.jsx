@@ -17,7 +17,7 @@ const Assessee = () => {
   });
 
   const userStates = [...userStatusActionLabels, { label: "All", value: "" }];
-  const [sortFieldName, setSortFieldName] = useState("createdAt");
+  const [sortFieldName, setSortFieldName] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);

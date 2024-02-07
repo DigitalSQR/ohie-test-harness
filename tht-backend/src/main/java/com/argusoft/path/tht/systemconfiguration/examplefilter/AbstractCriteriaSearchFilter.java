@@ -18,12 +18,12 @@ public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchF
         validateSearchFilter();
         return (root, query, criteriaBuilder) -> {
             BiFunction<Root<T>, CriteriaBuilder, Predicate> predicateFunction = preparePredicate(contextInfo);
-            modifyCriteriaQuery(root, query);
+            modifyCriteriaQuery(criteriaBuilder, root, query);
             return predicateFunction.apply(root, criteriaBuilder);
         };
     }
 
-    protected void modifyCriteriaQuery(Root<T> root, CriteriaQuery<?> query) {
+    protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<T> root, CriteriaQuery<?> query) {
     }
 
 

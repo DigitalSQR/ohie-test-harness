@@ -3,16 +3,14 @@ package com.argusoft.path.tht.testprocessmanagement.filter;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +42,19 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     @Override
     public void validateSearchFilter() throws InvalidParameterException {
 
+    }
+
+    @Override
+    protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<TestRequestEntity> root, CriteriaQuery<?> query) {
+        Expression<Object> stateWiseDefaultOrder = criteriaBuilder.selectCase()
+                .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED), 0)
+                .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING), 1)
+                .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS), 2)
+                .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED), 3)
+                .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED), 4)
+                .otherwise(5);
+
+        query.orderBy(criteriaBuilder.asc(stateWiseDefaultOrder));
     }
 
     @Override

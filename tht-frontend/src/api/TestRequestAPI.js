@@ -40,12 +40,13 @@ export const TestRequestAPI = {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}
 	},
-	getTestRequestsByState: async function (state, sortFieldName="createdAt", sortDirection="desc", currentPage, pageSize) {
+	getTestRequestsByState: async function (state, sortFieldName, sortDirection, currentPage, pageSize) {
 		try {
-			const params={
-				state,
-				sort: `${sortFieldName},${sortDirection}`,
+			const params={}
+			if(!!sortFieldName){
+				params.sort = `${sortFieldName},${sortDirection}`;
 			}
+			if(state) params.state = state;
 			if(currentPage) params.page=currentPage;
 			if(pageSize) params.size=pageSize;
 			const response = await api.request({

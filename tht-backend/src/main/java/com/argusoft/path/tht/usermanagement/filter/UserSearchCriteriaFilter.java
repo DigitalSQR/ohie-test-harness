@@ -3,16 +3,15 @@ package com.argusoft.path.tht.usermanagement.filter;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +53,19 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     @Override
     public void validateSearchFilter() throws InvalidParameterException {
 
+    }
+
+    @Override
+    protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<UserEntity> root, CriteriaQuery<?> query) {
+        Expression<Object> stateWiseDefaultOrder = criteriaBuilder.selectCase()
+                .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_APPROVAL_PENDING), 1)
+                .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING), 2)
+                .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_ACTIVE), 3)
+                .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_INACTIVE), 4)
+                .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_REJECTED), 5)
+                .otherwise(6);
+
+        query.orderBy(criteriaBuilder.asc(stateWiseDefaultOrder));
     }
 
     @Override

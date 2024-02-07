@@ -58,7 +58,7 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     }
 
     @Override
-    protected void modifyCriteriaQuery(Root<SpecificationEntity> root, CriteriaQuery<?> query) {
+    protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<SpecificationEntity> root, CriteriaQuery<?> query) {
         if (getManual() != null) {
             query.distinct(true);
         }

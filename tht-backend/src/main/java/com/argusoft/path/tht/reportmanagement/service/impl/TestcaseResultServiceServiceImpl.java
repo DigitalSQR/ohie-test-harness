@@ -451,6 +451,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
+            if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS.equals(testcaseResultEntity.getState())) {
+                testcaseResultEntity.setDuration(System.currentTimeMillis() - testcaseResultEntity.getUpdatedAt().getTime());
+            }
             return testcaseResultEntity;
         }
 
@@ -519,9 +522,28 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         } else if (filteredTestcaseResults.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+            //set duration
+            Long duration = 0L;
+            for (TestcaseResultEntity tcr : testcaseResultEntities) {
+                if (tcr.getDuration() != null) {
+                    duration = duration + tcr.getDuration();
+                }
+            }
+            testcaseResultEntity.setDuration(duration);
+
             testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
         } else if (filteredTestcaseResults.stream()
                 .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
+            //set duration
+            Long duration = System.currentTimeMillis() - testcaseResultEntity.getUpdatedAt().getTime();
+            for (TestcaseResultEntity tcr : testcaseResultEntities) {
+                if (tcr.getDuration() != null) {
+                    duration = duration + tcr.getDuration();
+                }
+            }
+            testcaseResultEntity.setDuration(duration);
+
+
             testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS);
         } else if (filteredTestcaseResults.stream()
                 .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING))) {

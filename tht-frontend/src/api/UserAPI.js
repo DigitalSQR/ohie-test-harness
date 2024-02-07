@@ -37,17 +37,20 @@ export const UserAPI = {
     }
   },
   getUserByState: async function (
-    sortFieldName = "createdAt",
-    sortDirection = "desc",
+    sortFieldName,
+    sortDirection,
     pageNumber = 1,
     pageSize = 10,
     state,
     role
   ) {
     try {
-      const params={
-				sort: `${sortFieldName},${sortDirection}`,
-			}
+      const params = {};
+
+      if(!!sortFieldName){
+        params.sort = `${sortFieldName},${sortDirection}`;
+      }
+
 			if(pageNumber) params.page=pageNumber;
 			if(pageSize) params.size=pageSize;  
       if(state)params.state=state;
