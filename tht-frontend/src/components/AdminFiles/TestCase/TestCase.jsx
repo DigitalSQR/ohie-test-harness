@@ -8,16 +8,29 @@ import "./testcase.scss";
 import { DocumentAPI } from "../../../api/DocumentAPI";
 import { fileTypeIcon } from "../../../utils/utils";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
-import { DOCUMENT_STATE_ACTIVE, DOCUMENT_STATE_INACTIVE } from "../../../constants/document_constants";
+import {
+	DOCUMENT_STATE_ACTIVE,
+	DOCUMENT_STATE_INACTIVE,
+} from "../../../constants/document_constants";
+import question_img_logo from "../../../styles/images/question-img.png";
+
 export default function TestCase(props) {
-	const { isLastQuestion, currentTestcase, currentSpecification, selectTestcase, selectNextTestcase, currentTestcaseIndex, refreshCurrentTestcase } = props;
+	const {
+		isLastQuestion,
+		currentTestcase,
+		currentSpecification,
+		selectTestcase,
+		selectNextTestcase,
+		currentTestcaseIndex,
+		refreshCurrentTestcase,
+	} = props;
 	const { showLoader, hideLoader } = useLoader();
 	const [selectedOption, setSelectedOption] = useState();
 	const [files, setFiles] = useState([]);
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadQuestion, setUploadedQuestion] = useState({});
 	const fileInputRef = useRef(null);
-
+	const [saveButton, setSaveButton] = useState("");
 	const handlePageChange = (event, page) => {
 		showLoader();
 		selectTestcase(page - 1);
@@ -44,16 +57,21 @@ export default function TestCase(props) {
 	};
 
 	useEffect(() => {
-		DocumentAPI.getDocumentsByRefObjUriAndRefId(RefObjUriConstants.TESTCASE_RESULT_REFOBJURI, currentTestcase.id, DOCUMENT_STATE_ACTIVE)
+		DocumentAPI.getDocumentsByRefObjUriAndRefId(
+			RefObjUriConstants.TESTCASE_RESULT_REFOBJURI,
+			currentTestcase.id,
+			DOCUMENT_STATE_ACTIVE
+		)
 			.then((res) => {
 				setUploadedFiles(res.content);
-			}).catch((err) => {
+			})
+			.catch((err) => {
 				notification.error({
 					message: "Error Loading Files!",
-					placement: "bottomRight"
+					placement: "bottomRight",
 				});
 			});
-	}, [currentTestcase])
+	}, [currentTestcase]);
 
 	const addAttachment = () => {
 		var file = document.getElementById("my-file");
@@ -65,7 +83,7 @@ export default function TestCase(props) {
 		setFiles([...event.target.files]);
 		setUploadedQuestion({
 			...question,
-			index
+			index,
 		});
 	};
 
@@ -82,7 +100,10 @@ export default function TestCase(props) {
 		formData.append(`file`, file);
 		formData.append(`fileName`, file.name);
 		formData.append("refId", question?.id);
-		formData.append("refObjUri", RefObjUriConstants.TESTCASE_RESULT_REFOBJURI);
+		formData.append(
+			"refObjUri",
+			RefObjUriConstants.TESTCASE_RESULT_REFOBJURI
+		);
 		DocumentAPI.uploadDocument(formData)
 			.then((res) => {
 				console.log(res);
@@ -95,14 +116,16 @@ export default function TestCase(props) {
 				setFiles(newFiles);
 				notification.success({
 					message: `Document Uploaded!`,
-					placement: "bottomRight"
+					placement: "bottomRight",
 				});
-			}).catch((err) => {
-				let msg = err.response.data?.message || err.response.data[0].message;
+			})
+			.catch((err) => {
+				let msg =
+					err.response.data?.message || err.response.data[0].message;
 				notification.error({
 					message: `${msg}`,
-					placement: "bottomRight"
-				})
+					placement: "bottomRight",
+				});
 			});
 	};
 
@@ -112,32 +135,35 @@ export default function TestCase(props) {
 			DocumentAPI.changeDocumentState(file.id, DOCUMENT_STATE_INACTIVE)
 				.then((res) => {
 					notification.success({
-						message: 'Document Removed',
-						placement: "bottomRight"
+						message: "Document Removed",
+						placement: "bottomRight",
 					});
 					setUploadedFiles((prev) => {
-						return prev.filter(doc => doc.id !== file.id);
-					})
-				}).catch((err) => {
-					let msg = err.response.data?.message || err.response.data[0].message;
+						return prev.filter((doc) => doc.id !== file.id);
+					});
+				})
+				.catch((err) => {
+					let msg =
+						err.response.data?.message ||
+						err.response.data[0].message;
 					notification.error({
 						message: `${msg}`,
-						placement: "bottomRight"
-					})
+						placement: "bottomRight",
+					});
 				});
 		} else {
-			// Remove from files 
+			// Remove from files
 			setFiles((prev) => {
 				let newFiles = [...prev];
 				newFiles = newFiles.splice(index, 1);
 				return newFiles;
-			})
+			});
 		}
 	};
 
 	useEffect(() => {
 		if (files.length == 0 && fileInputRef.current) {
-			fileInputRef.current.value = '';
+			fileInputRef.current.value = "";
 		}
 	}, [files]);
 
@@ -159,6 +185,7 @@ export default function TestCase(props) {
 						<div className="col-md-9 col-12 p-0">
 							<h2>Question</h2>
 						</div>
+
 						<div className="col-md-3 col-12 d-md-flex d-none p-0">
 							<h2 className="border-left">Reference</h2>
 						</div>
@@ -169,8 +196,7 @@ export default function TestCase(props) {
 						<div className="col-md-9 col-12 p-0 question">
 							<h2>
 								<b>
-									{currentTestcase
-										.refId
+									{currentTestcase.refId
 										.split(".")
 										.slice(-3)
 										.join(".")
@@ -196,9 +222,7 @@ export default function TestCase(props) {
 										className="doc-badge"
 									>
 										<img
-											src={fileTypeIcon(
-												file.fileType
-											)}
+											src={fileTypeIcon(file.fileType)}
 										/>
 										<span> {file.name} </span>
 										<span
@@ -220,7 +244,7 @@ export default function TestCase(props) {
 									</div>
 								))}
 							</div>
-							<div className="text-center mb-3">
+							<div className="text-end mb-3">
 								<div
 									className="cst-btn-group btn-group"
 									role="group"
@@ -232,7 +256,9 @@ export default function TestCase(props) {
 										ref={fileInputRef}
 										name="my_file"
 										id="my-file"
-										onChange={(e) => { addFiles(e, currentTestcase, 0) }}
+										onChange={(e) => {
+											addFiles(e, currentTestcase, 0);
+										}}
 										style={{
 											visibility: "hidden",
 											width: "0",
@@ -245,8 +271,7 @@ export default function TestCase(props) {
 									>
 										<i
 											style={{
-												transform:
-													"rotate(-45.975deg)",
+												transform: "rotate(-45.975deg)",
 											}}
 											className="bi bi-paperclip"
 										></i>
@@ -261,54 +286,26 @@ export default function TestCase(props) {
 									</button>
 								</div>
 							</div>
-							{/* <div className="doc-badge-wrapper">
-										{files.map((file, index) => (
-											<div
-												key={file.name}
-												className="doc-badge"
-											>
-												<img
-													src={fileTypeIcon(
-														file.type
-													)}
-												/>
-												<span> {file.name} </span>
-												<span
-													onClick={(e) =>
-														onUpload(
-															e,
-															question,
-															index
-														)
-													}
-													type="button"
-													title="Upload File"
-													className="mx-2 font-size-14"
-												>
-													<i class="bi bi-upload"></i>
-												</span>
-												<span
-													type="button"
-													title="Remove File"
-													className="mx-2 font-size-14"
-													onClick={() => deleteFile(file, index)}
-												>
-													<i class="bi bi-trash3"></i>
-												</span>
-											</div>
-										))}
-									</div> */}
-							<div className="text-center mb-3">
+
+							<div className="text-end mb-3">
 								<button
+									disabled={currentTestcase.testcaseOptionId || selectedOption}
 									className="cst-btn-group btn btn-primary"
 									onClick={() => {
 										handleSaveandNext();
 									}}
 								>
-									{!!isLastQuestion() ? 'Save' : 'Save and Next'}
+									{!!isLastQuestion()
+										? "Save"
+										: "Save and Next"}
 								</button>
 							</div>
 							{/* Photos upload code above */}
+						</div>
+						<div class="col-md-3 col-12 p-0">
+							<div class=" p-2 pt-5 q-img">
+								<img src={question_img_logo} />
+							</div>
 						</div>
 					</div>
 				</div>
