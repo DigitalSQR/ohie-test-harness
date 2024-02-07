@@ -173,16 +173,21 @@ export default function ChooseTest() {
 	return (
 		<div id="wrapper">
 			<div className="col-12 pt-3">
-				<nav aria-label="breadcrumb">
-					<ol class="breadcrumb">
-						<li class="breadcrumb-item">
-							<a href="/dashboard/applications">Applications</a>
-						</li>
-						<li class="breadcrumb-item active" aria-current="page">
+			<div class="bcca-breadcrumb">
+						<div
+							class="bcca-breadcrumb-item"
+						>
 							{testcaseName}
-						</li>
-					</ol>
-				</nav>
+						</div>
+						<div
+							class="bcca-breadcrumb-item"
+							onClick={() => {
+								navigate(`/dashboard/applications`);
+							}}
+						>
+							Applications
+						</div>
+					</div>
 				<h5>Choose Testing Type</h5>
 				<p className="text-gray">
 					Select the type to start testing application with OpenHIE.{" "}

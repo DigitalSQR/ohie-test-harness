@@ -87,7 +87,7 @@ export default function Landing() {
     <div id="wrapper">
       <div className="pt-3">
         <div className="text-center">
-          <img src={tool_icon} alt="Tool Icon" />
+          {/* <img src={tool_icon} alt="Tool Icon" />
           <h4 className="mt-2">Testing Harness Tool</h4>
           <p className="font-size-16 mt-4">
             Register your application to the open-source testing harness and
@@ -103,7 +103,7 @@ export default function Landing() {
             >
               View OpenHIE Component Specifications
             </a>
-          </p>
+          </p> */}
           {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
             <div className="my-4">
               <button
