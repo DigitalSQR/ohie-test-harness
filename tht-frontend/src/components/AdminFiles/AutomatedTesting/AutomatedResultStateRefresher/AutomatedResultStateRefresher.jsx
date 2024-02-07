@@ -32,7 +32,7 @@ export default function AutomatedResultStateRefresher({ testResultId, isDuration
             setItem(response);
             if (response?.state !== "testcase.result.status.finished") {
                 // Call again till finished
-                setTimeout(fetchTestResultStatus, 2000);
+                setTimeout(fetchTestResultStatus, 1000);
             }
         };
 
