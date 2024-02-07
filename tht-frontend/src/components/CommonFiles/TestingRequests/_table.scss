@@ -1,5 +1,8 @@
 @import "./_variables.scss";
 
+.table-responsive{
+  height: 70vh;
+}
 .data-table {
   width: 100%;
   background: $color-white;

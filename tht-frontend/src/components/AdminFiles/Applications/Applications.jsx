@@ -24,7 +24,7 @@ const Applications = () => {
   const [testRequests, setTestRequests] = useState([]);
   const [sortDirection, setSortDirection] = useState({
     name: "desc",
-    email: "desc",
+    productName: "desc",
   });
   const [sortFieldName, setSortFieldName] = useState();
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,14 +47,17 @@ const Applications = () => {
     filterState,
     sortFieldName,
     sortDirection,
-    currentPage
+    newPage
   ) => {
+    if (!filterState || filterState == "") {
+      filterState = TestRequestActionStateLabels.map((state) => state.value);
+    }
     showLoader();
     TestRequestAPI.getTestRequestsByState(
       filterState,
       sortFieldName,
       sortDirection[sortFieldName],
-      currentPage - 1,
+      newPage - 1,
       pageSize
     )
       .then((res) => {
@@ -168,7 +171,7 @@ const Applications = () => {
                   </>
                 ) : null}
                 {testRequests?.map((testRequest) => (
-                  <tr key={testRequest.name}>
+                  <tr key={testRequest.id}>
                     <td>{testRequest.name}</td>
                     <td>{testRequest.productName !== "" ? testRequest.productName : '-'}</td>
                     <td>{formatDate(testRequest.meta.updatedAt)}</td>
