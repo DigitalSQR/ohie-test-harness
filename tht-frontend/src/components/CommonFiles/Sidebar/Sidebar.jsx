@@ -157,10 +157,10 @@ export default function Sidebar() {
                   handleMenuItemClick("/dashboard/testing-requests")
                 }
               >
-                <i
+              <i
                   aria-label="Testing Requests"
                   title="Testing Requests"
-                  className="bi bi-file-earmark-bar-graph menu-left-icon"
+                  className="bi bi-file-earmark-plus menu-left-icon"
                 ></i>
                 <span> Testing Requests</span>
               </a>
