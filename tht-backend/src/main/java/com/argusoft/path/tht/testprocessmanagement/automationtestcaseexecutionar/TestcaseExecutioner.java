@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -179,39 +180,41 @@ public class TestcaseExecutioner {
         }
     }
 
-    public void execute(List<TestcaseResultEntity> testcaseResultEntities,
-                        Map<String, IGenericClient> iGenericClientMap,
-                        ContextInfo contextInfo) {
-        for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
-            this.executeTestcase(testcaseResult, iGenericClientMap, contextInfo);
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void executeTestcase(String testcaseResultId, Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
+        try {
+            TestcaseResultEntity testcaseResult = testcaseResultService.getTestcaseResultById(testcaseResultId, contextInfo);
+            // start date for test case
+            long startDateForTestCase = System.currentTimeMillis();
+            try {
+                TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseResult.getRefId(), contextInfo);
+
+                TestCase testCaseExecutionService = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
+                // Overwrite the date to be more accurate
+                startDateForTestCase = System.currentTimeMillis();
+                ValidationResultInfo validationResultInfo = testCaseExecutionService.test(iGenericClientMap, contextInfo);
+
+                updateTestCaseResultByValidationResult(testcaseResult, validationResultInfo, startDateForTestCase, contextInfo);
+            } catch (Exception e) {
+                LOGGER.error("caught Exception in TestcaseExecutioner ", e);
+                e.printStackTrace();
+                //TODO: add system failure log and connect it with testResult by refObjUri/refId.
+                try {
+                    updateTestCaseResultForSystemError(testcaseResult, startDateForTestCase, contextInfo);
+                } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
+                         VersionMismatchException | DoesNotExistException ex) {
+                    LOGGER.error("caught Exception in TestcaseExecutioner ", e);
+                    ex.printStackTrace();
+                }
+            }
+        }catch (Exception e){
+            LOGGER.error("caught Exception in TestcaseExecutioner ", e);
         }
     }
 
-    private void executeTestcase(TestcaseResultEntity testcaseResult, Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
-        // start date for test case
-        long startDateForTestCase = System.currentTimeMillis();
-        try {
-            testcaseResultService.changeState(testcaseResult.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
-            TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseResult.getRefId(), contextInfo);
-
-            TestCase testCaseExecutionService = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
-            // Overwrite the date to be more accurate
-            startDateForTestCase = System.currentTimeMillis();
-            ValidationResultInfo validationResultInfo = testCaseExecutionService.test(iGenericClientMap, contextInfo);
-
-            updateTestCaseResultByValidationResult(testcaseResult, validationResultInfo, startDateForTestCase, contextInfo);
-        } catch (Exception e) {
-            LOGGER.error("caught Exception in TestcaseExecutioner ", e);
-            e.printStackTrace();
-            //TODO: add system failure log and connect it with testResult by refObjUri/refId.
-            try {
-                updateTestCaseResultForSystemError(testcaseResult, startDateForTestCase, contextInfo);
-            } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
-                     VersionMismatchException | DoesNotExistException ex) {
-                LOGGER.error("caught Exception in TestcaseExecutioner ", e);
-                ex.printStackTrace();
-            }
-        }
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void markTestcaseResultInProgress(String testcaseResultId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        testcaseResultService.changeState(testcaseResultId, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
     }
 
     private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity, long startDate, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
