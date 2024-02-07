@@ -413,7 +413,6 @@ public class TestcaseExecutioner {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
-        testcaseResultCriteriaSearchFilter.setState(Arrays.asList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP));
         testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
         testcaseResultCriteriaSearchFilter.setManual(isManual);
         testcaseResultCriteriaSearchFilter.setAutomated(isAutomated);
@@ -425,7 +424,7 @@ public class TestcaseExecutioner {
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
 
         Optional<TestcaseResultEntity> optionalTestcaseResultEntity = testcaseResultEntities.stream().filter(testcaseResultEntity -> {
-            return (testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT) || testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) && testcaseResultEntity.getRefObjUri().equals(refObjUri) && testcaseResultEntity.getRefId().equals(refId);
+            return testcaseResultEntity.getRefObjUri().equals(refObjUri) && testcaseResultEntity.getRefId().equals(refId);
         }).findFirst();
 
         if (!optionalTestcaseResultEntity.isPresent()) {
