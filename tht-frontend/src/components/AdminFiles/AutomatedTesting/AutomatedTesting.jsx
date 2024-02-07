@@ -9,6 +9,8 @@ import failImg from "../../../styles/images/failure.svg";
 import skipImg from "../../../styles/images/skip.svg";
 import stopImg from "../../../styles/images/stop.svg";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
+import AutomatedResultStateRefresher from "./AutomatedResultStateRefresher/AutomatedResultStateRefresher";
+
 export default function AutomatedTesting() {
 	const { testRequestId } = useParams();
 	const [testcaseName, setTestCaseName] = useState();
@@ -125,9 +127,11 @@ export default function AutomatedTesting() {
 										<td></td>
 										<td></td>
 										<td>
-											{getResultDisplay(component?.state, component?.success)}
+											<AutomatedResultStateRefresher key={`component-result-${component?.id}`} testResultId={component.id} />
 										</td>
-										<td>{!!component?.duration ? component?.duration + ' ms' : '-'}</td>
+										<td>
+											<AutomatedResultStateRefresher key={`component-result-${component?.id}`} testResultId={component.id} isDuration={true} />
+										</td>
 									</tr>,
 									component?.specifications?.map((specification) => [
 										<tr
@@ -140,12 +144,11 @@ export default function AutomatedTesting() {
 											</td>
 											<td></td>
 											<td>
-												{getResultDisplay(
-													specification.state,
-													specification.success
-												)}
+												<AutomatedResultStateRefresher key={`specification-result-${specification?.id}`} testResultId={specification.id} />
 											</td>
-											<td>{!!specification?.duration ? specification?.duration + ' ms' : '-'}</td>
+											<td>
+												<AutomatedResultStateRefresher key={`specification-result-${specification?.id}`} testResultId={specification.id} isDuration={true}/>
+											</td>
 										</tr>,
 
 										specification.testCases?.map((testcase) => [
@@ -157,9 +160,11 @@ export default function AutomatedTesting() {
 												<td></td>
 												<td>{testcase?.name}</td>
 												<td>
-													{getResultDisplay(testcase?.state, testcase?.success)}
+													<AutomatedResultStateRefresher key={`testcase-result-${testcase?.id}`} testResultId={testcase.id} />
 												</td>
-												<td>{!!testcase?.duration ? testcase?.duration + ' ms' : '-'}</td>
+												<td>
+													<AutomatedResultStateRefresher key={`testcase-result-${testcase?.id}`} testResultId={testcase.id} isDuration={true}/>
+												</td>
 											</tr>,
 										]),
 									]),
