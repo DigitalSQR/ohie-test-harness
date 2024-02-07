@@ -303,34 +303,4 @@ VALUES
         Now(),
         Now(),
         0
-    ),
-    (
-        'testcase.cr.crf.10.1',
-        'Verify patient related person',
-        'Test case verify the ability to keep record of both message it receives and the messages it sends and can be reviewed/monitored',
-        'testcase.status.active',
-        1,
-        false,
-        'CRF10TestCase1',
-        'specification.cr.crf.10',
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
-        Now(),
-        Now(),
-        0
-    ),
-    (
-        'testcase.cr.crf.10.2',
-        'Verify multi birth order',
-        'Test case to verify the ability to keep record of multi birth order',
-        'testcase.status.active',
-        2,
-        false,
-        'CRF10TestCase2',
-        'specification.cr.crf.10',
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
-        Now(),
-        Now(),
-        0
     );
