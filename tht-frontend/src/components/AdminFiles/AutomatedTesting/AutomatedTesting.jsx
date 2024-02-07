@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { notification } from "antd";
 import "./automatedtesting.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
+import AutomatedResultStateRefresher from "./AutomatedResultStateRefresher/AutomatedResultStateRefresher";
 import { useLoader } from "../../loader/LoaderContext";
 import { useNavigate, useParams } from "react-router-dom";
 import passImg from "../../../styles/images/success.svg";
@@ -14,7 +15,7 @@ export default function AutomatedTesting() {
     const [testcaseName, setTestCaseName] = useState();
     const { showLoader, hideLoader } = useLoader();
     const [data, setData] = useState([]);
-	const navigate = useNavigate();
+    const navigate = useNavigate();
     const clickHandler = () => {
         notification.info({
             placement: "bottom-right",
@@ -85,30 +86,30 @@ export default function AutomatedTesting() {
         <div className="Workflow-testing-wrapper">
             <div className="container">
                 <div className="col-12">
-				<div class="bcca-breadcrumb">
-						<div class="bcca-breadcrumb-item">
-							Automated Testing
-						</div>
-						<div
-							class="bcca-breadcrumb-item"
-							onClick={() => {
-								console.log("helllo")
-								navigate(
-									`/dashboard/choose-test/${testRequestId}`
-								);
-							}}
-						>
-							{testcaseName}
-						</div>
-						<div
-							class="bcca-breadcrumb-item"
-							onClick={() => {
-								navigate(`/dashboard/applications`);
-							}}
-						>
-							Applications
-						</div>
-					</div>
+                    <div class="bcca-breadcrumb">
+                        <div class="bcca-breadcrumb-item">
+                            Automated Testing
+                        </div>
+                        <div
+                            class="bcca-breadcrumb-item"
+                            onClick={() => {
+                                console.log("helllo")
+                                navigate(
+                                    `/dashboard/choose-test/${testRequestId}`
+                                );
+                            }}
+                        >
+                            {testcaseName}
+                        </div>
+                        <div
+                            class="bcca-breadcrumb-item"
+                            onClick={() => {
+                                navigate(`/dashboard/applications`);
+                            }}
+                        >
+                            Applications
+                        </div>
+                    </div>
                     <div className="table-responsive mb-5">
                         <table className="data-table">
                             <thead>
@@ -131,9 +132,11 @@ export default function AutomatedTesting() {
                                         <td></td>
                                         <td></td>
                                         <td>
-                                            {getResultDisplay(component?.state, component?.success)}
+                                            <AutomatedResultStateRefresher key={`component-result-${component?.id}`} testResultId={component.id} />
                                         </td>
-                                        <td>{!!component?.duration ? component?.duration + ' ms' : '-'}</td>
+                                        <td>
+                                            <AutomatedResultStateRefresher key={`component-result-${component?.id}`} testResultId={component.id} isDuration={true} />
+                                        </td>
                                     </tr>,
                                     component?.specifications?.map((specification) => [
                                         <tr
@@ -146,12 +149,11 @@ export default function AutomatedTesting() {
                                             </td>
                                             <td></td>
                                             <td>
-                                                {getResultDisplay(
-                                                    specification.state,
-                                                    specification.success
-                                                )}
+                                                <AutomatedResultStateRefresher key={`specification-result-${specification?.id}`} testResultId={specification.id} />
                                             </td>
-                                            <td>{!!specification?.duration ? specification?.duration + ' ms' : '-'}</td>
+                                            <td>
+                                                <AutomatedResultStateRefresher key={`specification-result-${specification?.id}`} testResultId={specification.id} isDuration={true} />
+                                            </td>
                                         </tr>,
 
                                         specification.testCases?.map((testcase) => [
@@ -163,9 +165,11 @@ export default function AutomatedTesting() {
                                                 <td></td>
                                                 <td>{testcase?.name}</td>
                                                 <td>
-                                                    {getResultDisplay(testcase?.state, testcase?.success)}
+                                                    <AutomatedResultStateRefresher key={`testcase-result-${testcase?.id}`} testResultId={testcase.id} />
                                                 </td>
-                                                <td>{!!testcase?.duration ? testcase?.duration + ' ms' : '-'}</td>
+                                                <td>
+                                                    <AutomatedResultStateRefresher key={`testcase-result-${testcase?.id}`} testResultId={testcase.id} isDuration={true} />
+                                                </td>
                                             </tr>,
                                         ]),
                                     ]),
