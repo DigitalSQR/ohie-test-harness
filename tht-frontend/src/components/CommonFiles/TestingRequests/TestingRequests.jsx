@@ -35,15 +35,21 @@ const TestingRequests = () => {
 
 	const navigate = useNavigate();
 	const [sortDirection, setSortDirection] = useState({
-		name: "desc",
-		email: "desc",
+		productName: "desc",
+		createdAt: "desc",
 	});
-	const [sortFieldName, setSortFieldName] = useState("createdAt");
+	const [sortFieldName, setSortFieldName] = useState("");
 	const handleChangePage = (event, newPage) => {
+    console.log(newPage);
 		setCurrentPage(newPage);
-		fetchTestRequests(newPage);
+		fetchTestRequests(filterState, sortFieldName, sortDirection, newPage);
 	};
-	const fetchTestRequests = (newPage) => {
+	const fetchTestRequests = (
+    filterState,
+    sortFieldName,
+    sortDirection,
+    newPage
+  ) => {
 		showLoader();
 		TestRequestAPI.getTestRequestsByState(
 			filterState,
@@ -80,39 +86,37 @@ const TestingRequests = () => {
 	useEffect(() => {
 		const userInfo = store.getState().userInfoSlice;
 		setUserRoles(userInfo.roleIds);
-
-		fetchTestRequests(currentPage);
+		fetchTestRequests(filterState, sortFieldName, sortDirection, currentPage);
 	}, [filterState]);
 
-	const handleSort = (sortFieldName) => {
-		setSortFieldName(sortFieldName);
-		const newSortDirection = { ...sortDirection };
-		newSortDirection[sortFieldName] =
-			sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
-		setSortDirection(newSortDirection);
-		fetchTestRequests(currentPage);
-	};
+  const handleSort = (field) => {
+    setSortFieldName(field);
+    const newSortDirection = { ...sortDirection };
+    newSortDirection[field] = sortDirection[field] === "asc" ? "desc" : "asc";
+    setSortDirection(newSortDirection);
+    fetchTestRequests(filterState, field, newSortDirection, currentPage);
+  };
 
-	const changeState = (testRequestId, state) => {
-		showLoader();
-		TestRequestAPI.changeState(testRequestId, state)
-			.then((res) => {
-				notification.success({
-					placement: "bottomRight",
-					message: "Status updated successfully!",
-				});
-				fetchTestRequests(currentPage);
-				hideLoader();
-			})
-			.catch((err) => {
-				notification.error({
-					placement: "bottomRight",
-					message: "Oops! Something went wrong!",
-				});
-				console.log(err);
-				hideLoader();
-			});
-	};
+  const changeState = (testRequestId, state) => {
+    showLoader();
+    TestRequestAPI.changeState(testRequestId, state)
+      .then((res) => {
+        notification.success({
+          placement: "bottomRight",
+          message: "Status updated successfully!",
+        });
+        fetchTestRequests(state, sortFieldName, sortDirection, currentPage);
+        hideLoader();
+      })
+      .catch((err) => {
+        notification.error({
+          placement: "bottomRight",
+          message: "Oops! Something went wrong!",
+        });
+        console.log(err);
+        hideLoader();
+      });
+  };
 
 	const toggleRow = (trid) => {
 		setTestRequests((trs) => {
@@ -187,7 +191,7 @@ const TestingRequests = () => {
 						<table className=" data-table">
 							<thead>
 								<tr>
-									<th className="col-2.4">
+									<th style={{width:"20%"}}>
 										APP NAME{" "}
 										<a className="ps-1" href="#">
 											<img
@@ -199,7 +203,7 @@ const TestingRequests = () => {
 											/>
 										</a>
 									</th>
-									<th className="col-2.4">
+									<th style={{width:"20%"}}>
 										DATE OF APPLICATION{" "}
 										<a className="ps-1" href="#">
 											<img
@@ -211,9 +215,9 @@ const TestingRequests = () => {
 											/>
 										</a>
 									</th>
-									<th className="col-2.4">Assessee</th>
-									<th className="col-2.4">STATUS</th>
-									<th className="col-2.4">
+									<th style={{width:"20%"}}>Assessee</th>
+									<th style={{width:"20%"}}>STATUS</th>
+									<th style={{width:"30%"}}>
 										<span
 											className={
 												userRoles.includes(

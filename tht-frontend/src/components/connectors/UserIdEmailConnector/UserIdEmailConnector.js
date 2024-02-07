@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { UserAPI } from "../../../api/UserAPI";
-
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 const UserIdEmailConnector = ({userId}) => {
     const [user, setUser] = useState();
 
@@ -11,11 +12,13 @@ const UserIdEmailConnector = ({userId}) => {
     }, []);
 
     return (
-        user?.email ?
-        <div>
-            {user.email}
-        </div>
-        : null 
+        <span>
+        {user?.email ? (
+          <p style={{ margin: "0px" }}>{user?.email}</p>
+        ) : (
+          <Spin indicator={<LoadingOutlined style={{ fontSize: 14 }} spin />} />
+        )}
+      </span>
     );
 }
 
