@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * This FHIRUtil provides methods for fhir.
@@ -258,4 +256,185 @@ public final class FHIRUtils {
 
         return location;
     }
+
+    public static Practitioner createPractitioner(
+            String familyName,
+            String givenName,
+            String prefix,
+            String gender,
+            String birthDate,
+            String identifierSystem,
+            String identifierValue,
+            boolean active,
+            String phone,
+            String email
+    ){
+        // Creating a new Practitioner resource
+        Practitioner practitioner = new Practitioner();
+
+        // Set practitioner identifier
+        Identifier identifier = practitioner.addIdentifier();
+        identifier.setSystem(identifierSystem)
+                .setValue(identifierValue);
+
+        // Set practitioner name
+        HumanName name = practitioner.addName();
+        name.addGiven(givenName).setFamily(familyName);
+        name.addPrefix(prefix);
+
+        // Set practitioner gender
+        if (gender != null) {
+            practitioner.setGender(Enumerations.AdministrativeGender.valueOf(gender.toUpperCase()));
+        }
+
+        // Set practitioner birth date
+        if (birthDate != null) {
+            practitioner.setBirthDateElement(new DateType(birthDate));
+        }
+
+        // Set practitioner active status
+        practitioner.setActive(active);
+
+        // Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        ContactPoint emailContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL).setValue(email).setUse(ContactPoint.ContactPointUse.HOME);
+        practitioner.addTelecom(phoneContact).addTelecom(emailContact);
+
+
+        return practitioner;
+    }
+
+    public static PractitionerRole createPractitionerRole(
+            String id,
+            Practitioner practitionerRef,
+            String codingSystem,
+            String role,
+            boolean active,
+            Location locationRef,
+            HealthcareService healthcareServiceRef,
+//            Set<String> daysOfWeek,
+            String availableStartTime,
+            String availableEndTime
+    ){
+        // Creating new PractitionerRole resource
+        PractitionerRole practitionerRole = new PractitionerRole();
+
+        // Set id
+        practitionerRole.setId(id);
+
+        // Set practitioner reference
+        practitionerRole.setPractitioner(new Reference(practitionerRef));
+
+        // Set practitioner role code
+        List<CodeableConcept> codeableConceptList = new ArrayList<>();
+        CodeableConcept codeableConcept = new CodeableConcept()
+                .addCoding(new Coding().setSystem(codingSystem).setCode(role));
+
+        codeableConceptList.add(codeableConcept);
+
+        practitionerRole.setCode(codeableConceptList);
+
+        // Set practitioner active status
+        practitionerRole.setActive(active);
+
+        //Set Location reference
+        practitionerRole.addLocation(new Reference(locationRef));
+
+        //Set HealthcareService reference
+        practitionerRole.addHealthcareService(new Reference(healthcareServiceRef));
+
+
+        practitionerRole.addAvailableTime()
+                .setAvailableStartTime(String.valueOf(new TimeType(availableStartTime)))
+                .setAvailableEndTime(String.valueOf(new TimeType(availableEndTime)));
+
+        return practitionerRole;
+    }
+
+    public static HealthcareService createHealthcareService(
+            String id,
+            String categorySystem,
+            String categoryCode,
+            String categoryDisplay,
+            String typeSystem,
+            String typeCode,
+            String typeDisplay,
+            String serviceName,
+            boolean active,
+            Location location
+
+    ){
+
+        // Create a HealthcareService resource
+        HealthcareService healthcareService = new HealthcareService();
+
+        //set id
+        healthcareService.setId(id);
+        // Set the service category
+        healthcareService.addCategory(new CodeableConcept().addCoding(
+                new Coding().setSystem(categorySystem).setCode(categoryCode).setDisplay(categoryDisplay)
+        ));
+
+        // Set the service type
+        healthcareService.addType(new CodeableConcept().addCoding(
+                new Coding().setSystem(typeSystem).setCode(typeCode).setDisplay(typeDisplay)
+        ));
+
+        // Set the location reference
+        healthcareService.getLocation().add(new Reference(location));
+
+        // Set the service name
+        healthcareService.setName(serviceName);
+
+        // Set service status
+        healthcareService.setActive(active);
+
+        return healthcareService;
+    }
+
+    public static Location createLocation(
+            String id,
+            String name,
+            String street,
+            String city,
+            String state,
+            String postalCode,
+            String country,
+            String phoneNo,
+            double latitude,
+            double longitude
+    ){
+        // Create a Location reference
+        Location location=new Location();
+
+        // Set Location name
+        location.setName(name);
+
+        // set id
+        location.setId(id);
+
+        //Set address
+        location.setAddress(
+                new Address()
+                        .addLine(street)
+                        .setCity(city)
+                        .setPostalCode(postalCode)
+                        .setState(state)
+                        .setCountry(country));
+
+        // Set telecom
+        location.addTelecom(new ContactPoint()
+                .setSystem(ContactPoint.ContactPointSystem.PHONE)
+                .setValue(phoneNo)
+        );
+
+        // Set position
+        location.setPosition(new Location.LocationPositionComponent()
+                .setLatitude(latitude)
+                .setLongitude(longitude)
+        );
+
+        return location;
+    }
+
 }
