@@ -371,7 +371,36 @@ public class TestRequestValidator {
     //Validate Required
     private static void validateCommonRequired(TestRequestEntity testRequestEntity,
                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(testRequestEntity.getName(), "name", errors);
+        //check the app name required
+        ValidationUtils
+                .validateRequired(testRequestEntity.getName(), "name", errors);
+        //check the app assessee required
+        ValidationUtils
+                .validateRequired(testRequestEntity.getAssessee(), "assessee", errors);
+        //check the product name required
+        ValidationUtils
+                .validateRequired(testRequestEntity.getProductName(), "product name", errors);
+        //check the state required
+        ValidationUtils
+                .validateRequired(testRequestEntity.getState(), "state", errors);
+
+        //check at least one component/testRequestUrl required
+        Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
+        ValidationUtils
+                .validateRequired(urlEntitySet, "test request url", errors);
+
+        //loop to check email and password not null in testrequest url
+       for(TestRequestUrlEntity entity : urlEntitySet){
+           //check for username
+           ValidationUtils
+                   .validateRequired(entity.getUsername(), "username", errors);
+           //check for password
+           ValidationUtils
+                   .validateRequired(entity.getPassword(), "password", errors);
+           //check for baseurl
+           ValidationUtils
+                   .validateRequired(entity.getBaseUrl(), "baseurl", errors);
+       }
     }
 
     //Validate Common Unique

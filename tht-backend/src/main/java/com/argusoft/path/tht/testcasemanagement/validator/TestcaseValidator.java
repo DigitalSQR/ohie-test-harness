@@ -198,10 +198,27 @@ public class TestcaseValidator {
     //Validate Required
     private static void validateCommonRequired(TestcaseEntity testcaseEntity,
                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(testcaseEntity.getSpecification(), "specification", errors);
+        //check for specification
+        ValidationUtils
+                .validateRequired(testcaseEntity.getSpecification().getId(), "specificationId", errors);
+
         if (!Objects.equals(Boolean.TRUE, testcaseEntity.getManual())) {
             ValidationUtils.validateRequired(testcaseEntity.getBeanName(), "beanName", errors);
+        }else{
+            ValidationUtils.validateRequired(testcaseEntity.getManual(), "manual", errors);
         }
+        //check for rank
+        ValidationUtils
+                .validateRequired(testcaseEntity.getRank(), "rank", errors);
+        //check for state
+        ValidationUtils
+                .validateRequired(testcaseEntity.getState(), "state", errors);
+        //check for name
+        ValidationUtils
+                .validateRequired(testcaseEntity.getName(), "name", errors);
+        //check for description
+        ValidationUtils
+                .validateRequired(testcaseEntity.getDescription(), "description", errors);
     }
 
     //validate not update

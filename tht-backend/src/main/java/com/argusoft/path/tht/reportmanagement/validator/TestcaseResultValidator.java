@@ -16,6 +16,7 @@ import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.testprocessmanagement.validator.RefObjectUriAndRefIdValidator;
 import com.argusoft.path.tht.usermanagement.service.UserService;
@@ -294,13 +295,40 @@ public class TestcaseResultValidator {
     //Validate Required
     private static void validateCommonRequired(TestcaseResultEntity testcaseResultEntity,
                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(testcaseResultEntity.getName(), "name", errors);
-        ValidationUtils.validateRequired(testcaseResultEntity.getRank(), "rank", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getName(), "name", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRank(), "rank", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getState(), "state", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getAutomated(), "automated", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getManual(), "manual", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getFunctional(), "functional", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRefObjUri(), "refObjUri", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRefId(), "refId", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getTestRequest().getId(), "testRequestId", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRecommended(), "recommended", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRequired(), "required", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getWorkflow(), "workflow", errors);
+
         if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())
                 && TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())
                 && Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual())
                 && Objects.equals(Boolean.FALSE, testcaseResultEntity.getHasSystemError())) {
             ValidationUtils.validateRequired(testcaseResultEntity.getTestcaseOption(), "testcaseOption", errors);
+        }
+        if(!(StringUtils.hasLength(testcaseResultEntity.getRefObjUri()) && (testcaseResultEntity.getRefId().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)))){
+            ValidationUtils
+                    .validateRequired(testcaseResultEntity.getParentTestcaseResult().getId(), "parent testcase result id", errors);
         }
     }
 

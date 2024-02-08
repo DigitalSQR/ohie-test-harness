@@ -232,8 +232,21 @@ public class TestcaseOptionValidator {
     //Validate Required
     private static void validateCommonRequired(TestcaseOptionEntity testcaseOptionEntity,
                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(testcaseOptionEntity.getName(), "name", errors);
-        ValidationUtils.validateRequired(testcaseOptionEntity.getTestcase(), "component", errors);
+        //check for name
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getName(), "name", errors);
+        //check for testcaseId
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getTestcase().getId(), "testcaseId", errors);
+        //check for state
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getState(), "state", errors);
+        //check for success
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getSuccess(), "success", errors);
+        //check for rank
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getRank(), "rank", errors);
     }
 
     //Validate Common Unique

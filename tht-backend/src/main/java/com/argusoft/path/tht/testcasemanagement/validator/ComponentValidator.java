@@ -210,7 +210,18 @@ public class ComponentValidator {
     //Validate Required
     private static void validateCommonRequired(ComponentEntity componentEntity,
                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(componentEntity.getName(), "name", errors);
+        //check for name
+        ValidationUtils
+                .validateRequired(componentEntity.getName(), "name", errors);
+        //check for description
+        ValidationUtils
+                .validateRequired(componentEntity.getDescription(), "description", errors);
+        //check for state
+        ValidationUtils
+                .validateRequired(componentEntity.getState(), "state", errors);
+        //check for rank
+        ValidationUtils
+                .validateRequired(componentEntity.getRank(), "rank", errors);
     }
 
     //Validate Common Unique

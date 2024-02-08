@@ -62,6 +62,13 @@ public class UserValidator {
         //check the email required
         ValidationUtils
                 .validateRequired(userEntity.getEmail(), "email", errors);
+        //check the name required
+        ValidationUtils
+                .validateRequired(userEntity.getName(), "name", errors);
+        //check the role required
+        ValidationUtils
+                .validateRequired(userEntity.getRoles(), "roles", errors);
+        //check the state required
         ValidationUtils
                 .validateRequired(userEntity.getState(), "state", errors);
     }
