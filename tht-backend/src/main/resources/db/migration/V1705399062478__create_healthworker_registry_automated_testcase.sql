@@ -86,6 +86,39 @@ VALUES
             0
     );
 
+INSERT INTO
+    specification (
+        id,
+        name,
+        description,
+        state,
+        rank,
+        is_functional,
+        is_required,
+        component_id,
+        created_by,
+        updated_by,
+        created_at,
+        updated_at,
+        version
+    )
+VALUES
+    (
+        'specification.hw.hwwf.2',
+        'HWWF-2',
+        'HWWF-2 Specification of the HealthWorker Registry Component (https://guides.ohie.org/arch-spec/introduction/care-services-discovery/query-care-services-records-workflow)',
+        'specification.status.active',
+        2,
+        false,
+        true,
+        'component.healthworker.registry',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    );
+
  INSERT INTO testcase (
             id,
             name,
@@ -148,3 +181,37 @@ VALUES
     Now(),
     0
 );
+
+INSERT INTO
+testcase (
+    id,
+    name,
+    description,
+    state,
+    rank,
+    is_manual,
+    bean_name,
+    specification_id,
+    created_by,
+    updated_by,
+    created_at,
+    updated_at,
+    version
+)
+VALUES
+
+(
+              'testcase.hw.hwwf.2.1',
+              'Query Care Services Records Workflow ',
+              'Testcase to Query Care Services Records Workflow for specification HWWF2 of the HealthWorker Registry',
+              'testcase.status.active',
+              1,
+              false,
+              'HWWF2TestCase1',
+              'specification.hw.hwwf.2',
+              'ivasiwala@argusoft.com',
+              'ivasiwala@argusoft.com',
+              Now(),
+              Now(),
+              0
+          );
