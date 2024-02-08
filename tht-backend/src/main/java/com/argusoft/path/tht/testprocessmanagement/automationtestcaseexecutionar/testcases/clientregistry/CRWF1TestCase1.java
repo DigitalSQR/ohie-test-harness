@@ -44,6 +44,7 @@ public class CRWF1TestCase1 implements TestCase {
             MethodOutcome outcome = client.create()
                     .resource(patient)
                     .execute();
+
             // Check if the patient was created successfully
             if (outcome.getCreated()) {
                 LOGGER.info("Testcase successfully passed!");
