@@ -229,8 +229,27 @@ public class SpecificationValidator {
     //Validate Required
     private static void validateCommonRequired(SpecificationEntity specificationEntity,
                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(specificationEntity.getName(), "name", errors);
-        ValidationUtils.validateRequired(specificationEntity.getComponent(), "component", errors);
+        //check for name
+        ValidationUtils
+                .validateRequired(specificationEntity.getName(), "name", errors);
+        //check for component
+        ValidationUtils
+                .validateRequired(specificationEntity.getComponent().getId(), "componentID", errors);
+        //check for rank
+        ValidationUtils
+                .validateRequired(specificationEntity.getRank(), "rank", errors);
+        //check for state
+        ValidationUtils
+                .validateRequired(specificationEntity.getState(), "state", errors);
+        //check for description
+        ValidationUtils
+                .validateRequired(specificationEntity.getDescription(), "description", errors);
+        //check for functional
+        ValidationUtils
+                .validateRequired(specificationEntity.getFunctional(), "functional", errors);
+        //check for required
+        ValidationUtils
+                .validateRequired(specificationEntity.getRequired(), "required", errors);
     }
 
     //Validate Common Unique

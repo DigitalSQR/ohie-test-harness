@@ -62,6 +62,10 @@ public class DocumentValidator {
         ValidationUtils.validateRequired(documentEntity.getFileType(), "fileType", errors);
         ValidationUtils.validateRequired(documentEntity.getRefId(), "refId", errors);
         ValidationUtils.validateRequired(documentEntity.getRefObjUri(), "refObjUri", errors);
+        ValidationUtils.validateRequired(documentEntity.getName(), "name", errors);
+        ValidationUtils.validateRequired(documentEntity.getState(), "state", errors);
+        ValidationUtils.validateRequired(documentEntity.getOrder(), "order", errors);
+        ValidationUtils.validateRequired(documentEntity.getOwner(), "owner", errors);
     }
 
     public static void setErrorMessageForFileType(InvalidFileTypeException e) throws DataValidationErrorException {
