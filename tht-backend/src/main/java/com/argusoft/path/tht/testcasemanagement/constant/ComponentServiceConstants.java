@@ -25,6 +25,7 @@ public class ComponentServiceConstants {
     //Component Ids
     public static final String COMPONENT_CLIENT_REGISTRY_ID = "component.client.registry";
     public static final String COMPONENT_FACILITY_REGISTRY_ID = "component.facility.registry";
+    public static final String COMPONENT_HEALTH_WORKER_REGISTRY_ID = "component.health.worker.registry";
     public static final Multimap<String, String> COMPONENT_STATUS_MAP = ArrayListMultimap.create();
     public static List<String> COMPONENT_STATUS = new ArrayList<>();
 
