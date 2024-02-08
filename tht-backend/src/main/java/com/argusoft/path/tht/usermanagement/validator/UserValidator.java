@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UserValidator {
 
@@ -97,28 +99,44 @@ public class UserValidator {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || userEntity.getId() != null)
                 && userEntity.getEmail() != null) {
-            UserSearchCriteriaFilter searchFilter = new UserSearchCriteriaFilter();
-            searchFilter.setEmail(userEntity.getEmail());
 
-            Page<UserEntity> userEntities = userService
-                    .searchUsers(
-                            searchFilter,
-                            Constant.TWO_VALUE_PAGE,
-                            contextInfo);
+            // Regex pattern for email format
+            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+            Pattern pattern = Pattern.compile(emailRegex);
+            Matcher matcher = pattern.matcher(userEntity.getEmail());
 
-            // if info found with same email and username than and not current id
-            boolean flag
-                    = userEntities.stream().anyMatch(u -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
-                    || !u.getId().equals(userEntity.getId()))
-            );
-            if (flag) {
+            // Check if email matches the regex pattern
+            if (!matcher.matches()) {
                 String fieldName = "Email";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "Given User with same Email already exists."));
+                errors.add(new ValidationResultInfo(fieldName,
+                        ErrorLevel.ERROR,
+                        "Invalid email format."));
             }
+            else
+            {
+                UserSearchCriteriaFilter searchFilter = new UserSearchCriteriaFilter();
+                searchFilter.setEmail(userEntity.getEmail());
 
+                Page<UserEntity> userEntities = userService
+                        .searchUsers(
+                                searchFilter,
+                                Constant.TWO_VALUE_PAGE,
+                                contextInfo);
+
+                // if info found with same email and username than and not current id
+                boolean flag
+                        = userEntities.stream().anyMatch(u -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
+                        || !u.getId().equals(userEntity.getId()))
+                );
+                if (flag) {
+                    String fieldName = "Email";
+                    errors.add(
+                            new ValidationResultInfo(fieldName,
+                                    ErrorLevel.ERROR,
+                                    "Given User with same Email already exists."));
+                }
+
+            }
         }
     }
 
