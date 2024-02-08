@@ -135,6 +135,52 @@ public final class FHIRUtils {
         }
     }
 
+    public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone){
+        Practitioner practitioner = new Practitioner();
+
+        // set Practitioner demographics
+        practitioner.addName().addGiven(name);
+        practitioner.setGender(gender.equals("M") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE);
+        practitioner.setBirthDate(parseDate(birthDate));
+
+        // Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        practitioner.addTelecom(phoneContact);
+
+        // set identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5.6").setValue(identifierValue);
+        practitioner.addIdentifier(identifier);
+
+        return practitioner;
+    }
+
+    public static PractitionerRole createPractitionerRole(String identifierValue, String displaySpecialty, String contact, Practitioner practitioner, Location location, HealthcareService careService) {
+        PractitionerRole practitionerRole = new PractitionerRole();
+
+        // set Practitioner demographics
+        practitionerRole.setPractitioner(new Reference(practitioner));
+        practitionerRole.getLocation().add(new Reference(location));
+//        practitionerRole.getHealthcareService().add(new Reference(careService));
+        practitionerRole.addHealthcareService(new Reference(careService));
+        practitionerRole.getSpecialtyFirstRep().addCoding()
+                .setSystem("http://hl7.org/fhir/sid/us-npi")
+                .setCode("207QS0010X")
+                .setDisplay(displaySpecialty);
+
+
+        // Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(contact).setUse(ContactPoint.ContactPointUse.MOBILE);
+        practitionerRole.addTelecom(phoneContact);
+
+        // set identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
+        practitionerRole.addIdentifier(identifier);
+
+        return practitionerRole;
+    }
+
+
+
 
     public static Organization createOrganization(String name,
                                                   String identifierValue, String phone, String email, String city, String state, String country) {
@@ -156,6 +202,31 @@ public final class FHIRUtils {
         organization.addTelecom(phoneContact).addTelecom(emailContact);
 
         return organization;
+    }
+
+    public static HealthcareService createHealthcareService(String identifierValue, String name, String comment,
+                                                            String phone, String email, List<String> specialties, Location location) {
+        HealthcareService healthcareService = new HealthcareService();
+        // Set the identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
+        healthcareService.addIdentifier(identifier);
+        //set demographics
+        healthcareService.setName(name);
+        healthcareService.setComment(comment);
+        //set contact details
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        ContactPoint emailContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL).setValue(email).setUse(ContactPoint.ContactPointUse.HOME);
+        healthcareService.addTelecom(phoneContact).addTelecom(emailContact);
+        // Set specialties
+        for (String specialty : specialties) {
+            CodeableConcept codeableConcept = new CodeableConcept();
+            Coding coding = codeableConcept.addCoding();
+            coding.setCode(specialty);
+            healthcareService.addSpecialty(codeableConcept);
+        }
+        //set location
+        healthcareService.getLocation().add(new Reference(location));
+        return healthcareService;
     }
 
     public static Location createLocation(String identifierValue, String name, String description, String phone,
@@ -183,6 +254,7 @@ public final class FHIRUtils {
 
         //set organization
         location.setManagingOrganization(new Reference(organization));
+
 
         return location;
     }
