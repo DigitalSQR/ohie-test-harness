@@ -1,7 +1,7 @@
 @import "./_variables.scss";
 
 .table-responsive{
-  height: 70vh;
+  height: min(auto, 70vh);
 }
 .data-table {
   width: 100%;

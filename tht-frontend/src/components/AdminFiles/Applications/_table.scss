@@ -19,6 +19,10 @@
     border-top: 1px solid $color-gray-3;
     line-height: 18px;
   }
+
+  tr {
+    page-break-inside: avoid;
+  }
 }
 
 .data-table > tbody > tr:nth-of-type(odd) {
