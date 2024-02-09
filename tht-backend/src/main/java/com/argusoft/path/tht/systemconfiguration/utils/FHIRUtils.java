@@ -179,6 +179,29 @@ public final class FHIRUtils {
 
 
 
+    public static CodeSystem createCodeSystem(String url,String version,String name,String title,String status,String publisher,String content,String code,String display,String definition) {
+
+        // create codeSystem object
+        CodeSystem codeSystem = new CodeSystem() ;
+
+        // add data in codeSystem
+        codeSystem.setUrl(url);
+        codeSystem.setName(name);
+        codeSystem.setVersion(version);
+        codeSystem.setStatus(Enumerations.PublicationStatus.valueOf(status));
+        codeSystem.setTitle(title);
+        codeSystem.setPublisher(publisher);
+        codeSystem.setContent(CodeSystem.CodeSystemContentMode.valueOf(content));
+
+        // Add a concept with a code
+        CodeSystem.ConceptDefinitionComponent concept=codeSystem.addConcept();
+        concept.setCode(code);
+        concept.setDisplay(display);
+        concept.setDefinition(definition);
+
+        return codeSystem;
+    }
+
 
     public static Organization createOrganization(String name,
                                                   String identifierValue, String phone, String email, String city, String state, String country) {

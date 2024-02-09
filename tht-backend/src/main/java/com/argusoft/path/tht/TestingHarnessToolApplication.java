@@ -37,7 +37,9 @@ public class TestingHarnessToolApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Flyway.configure().baselineOnMigrate(true).dataSource(dataSource).load().migrate();
+        Flyway flyway =  Flyway.configure().baselineOnMigrate(true).dataSource(dataSource).load();
+        flyway.repair();
+        flyway.migrate();
     }
 
     @Bean
