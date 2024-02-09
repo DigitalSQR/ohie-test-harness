@@ -18,20 +18,11 @@ const ManualTestCases = () => {
     fetchData();
   }, []);
 
-  const handleUpdate = (question) => {
-    console.log(question);
+  const handleUpdate = (question,name) => {
+    console.log(name);
     navigate(`/dashboard/edit-question`, {
       state: {
-        testcase: question,
-      },
-    });
-  };
-
-  const handleClick = () => {
-    navigate(`/dashboard/component-specification/${componentId}`, {
-      state: {
-        name,
-        componentId,
+        testcase: question,name,componentId
       },
     });
   };
@@ -78,6 +69,11 @@ const ManualTestCases = () => {
       hideLoader();
     }
   };
+
+  const handleClick = (path, state) => {
+    navigate(path, { state });
+  };
+  
   const fetchTestCaseOptions = async (testcaseId) => {
     const optionsResp = await TestCaseOptionsAPI.getTestCaseOptionsByTestcaseId(
       testcaseId
@@ -86,12 +82,13 @@ const ManualTestCases = () => {
   };
   return (
     <div id="wrapper">
-      <h1
-        onClick={handleClick}
-        className="specification-id"
-      >{`${specificationId} - Manual Configuration`}</h1>
+      <div class="bcca-breadcrumb">
+		  		<div class="bcca-breadcrumb-item">{specificationId} - Manual Configuration</div>
+		  		<div class="bcca-breadcrumb-item" onClick={() => handleClick(`/dashboard/component-specification/${componentId}`, {name, componentId})}> {name} </div>
+		  		<div class="bcca-breadcrumb-item" onClick={()=>{navigate("/dashboard/testcase-config")}}>Components</div>
+		  </div>
       {questions?.map((question, index) => (
-        <div key={index} className="question-container">
+        <div key={index} className="question-container my-3">
           <div className="question-content">
             <h5 className="question">
               {question.rank}. {question.question}
@@ -106,7 +103,7 @@ const ManualTestCases = () => {
           </div>
           <div className="question-actions">
             <span className="edit-icon">
-              <EditOutlined onClick={() => handleUpdate(question)} />
+              <EditOutlined onClick={() => handleUpdate(question,name)} />
             </span>
             <span className="badges-green-dark">ACTIVE</span>
           </div>

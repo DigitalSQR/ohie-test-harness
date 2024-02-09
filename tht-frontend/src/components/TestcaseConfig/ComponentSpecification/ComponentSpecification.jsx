@@ -24,10 +24,6 @@ const ComponentSpecification = () => {
     console.log(componentId);
   }, []);
 
-  const handleClick = () => {
-    navigate("/dashboard/testcase-config");
-  };
-
   const handleEdit = (specificationId) => {
     if (activeTab === "Manual") {
       navigate(`/dashboard/manual-testcases/${specificationId}`, {
@@ -51,12 +47,11 @@ const ComponentSpecification = () => {
   };
   return (
     <div id="wrapper">
-      <div className="page-heading">
-        <h1 onClick={handleClick} className="larger-text d-inline">
-          {name}
-        </h1>
-      </div>
-      <div className="tabs my-3">
+    <div class="bcca-breadcrumb">
+				<div class="bcca-breadcrumb-item">{name}</div>
+				<div class="bcca-breadcrumb-item" onClick={()=>{navigate("/dashboard/testcase-config")}}>Components</div>
+			</div>
+      <div className="tabs mt-4">
         <button
           className={`tablinks ${
             activeTab === "Automation" ? "activeTab" : ""

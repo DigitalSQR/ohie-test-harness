@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Select, notification } from "antd";
 import "./EditQuestion.scss";
 import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
@@ -10,7 +10,8 @@ const { Option } = Select;
 
 const EditQuestion = () => {
   const location = useLocation();
-  let { testcase } = location.state;
+  const navigate = useNavigate();
+  let { testcase, name, componentId } = location.state;
   const { showLoader, hideLoader } = useLoader();
   const [editedQuestion, setEditedQuestion] = useState(testcase.testcase.name);
   const [editedOptions, setEditedOptions] = useState(
@@ -179,13 +180,39 @@ const EditQuestion = () => {
     }
   };
 
+  const handleClick = (path, state) => {
+    navigate(path, { state });
+  };
+
+  const handleSave = (path, state) => {
+    navigate(path, { state });
+  };
+
   return (
     <div id="wrapper">
-      <div className="col-12">
+      <div class="bcca-breadcrumb">
+        <div class="bcca-breadcrumb-item">Question</div>
+        <div class="bcca-breadcrumb-item" onClick={() => handleSave(`/dashboard/manual-testcases/${testcase.testcase.id}`, {
+            name,
+            componentId,
+            specificationId: testcase.testcase.specificationId})}>
+          {testcase.testcase.specificationId} - Manual Configuration
+        </div>
+        <div class="bcca-breadcrumb-item" onClick={() => handleClick(`/dashboard/component-specification/${componentId}`, {
+              name,
+              componentId})}>
+          {" "}
+          {name}{" "}
+        </div>
+        <div class="bcca-breadcrumb-item" onClick={() => {navigate("/dashboard/testcase-config")}}>
+          Components
+        </div>
+      </div>
+      <div className="col-12 my-3">
         <div className="row mb-2 justify-content-between">
           <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
-            <b style={{ fontSize: "1.5em" }} className="bolder-text">
-              Edit: {testcase.description}
+            <b style={{ fontSize: "1.5em" }} className="bolder-text my-3">
+              {`Edit: ${testcase.description.replace("Question for the ", "")}`}
             </b>
           </div>
         </div>
