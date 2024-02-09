@@ -2,6 +2,7 @@ package com.argusoft.path.tht.testcasemanagement.validator;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -239,6 +240,7 @@ public class SpecificationValidator {
 
             SpecificationCriteriaSearchFilter specificationCriteriaSearchFilter = new SpecificationCriteriaSearchFilter();
             specificationCriteriaSearchFilter.setName(specificationEntity.getName());
+            specificationCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
             List<SpecificationEntity> specificationEntities = specificationService.searchSpecifications(specificationCriteriaSearchFilter, contextInfo);
 
             // if info found with same name than and not current id
