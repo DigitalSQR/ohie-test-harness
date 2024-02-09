@@ -291,29 +291,6 @@ public final class FHIRUtils {
 
         return conceptMap;
     }
-    public static CodeSystem createCodeSystem(String url,String version,String name,String title,String status,String publisher,String content,String code,String display,String definition) {
-
-        // create codeSystem object
-        CodeSystem codeSystem = new CodeSystem() ;
-
-        // add data in codeSystem
-        codeSystem.setUrl(url);
-        codeSystem.setName(name);
-        codeSystem.setVersion(version);
-        codeSystem.setStatus(Enumerations.PublicationStatus.valueOf(status));
-        codeSystem.setTitle(title);
-        codeSystem.setPublisher(publisher);
-        codeSystem.setContent(CodeSystem.CodeSystemContentMode.valueOf(content));
-
-        // Add a concept with a code
-        CodeSystem.ConceptDefinitionComponent concept=codeSystem.addConcept();
-        concept.setCode(code);
-        concept.setDisplay(display);
-        concept.setDefinition(definition);
-
-
-        return codeSystem;
-    }
 
     public static Practitioner createPractitioner(
             String familyName,
@@ -449,6 +426,58 @@ public final class FHIRUtils {
 
         return healthcareService;
     }
+
+    public static CodeSystem createCodeSystem(String url,String version,String name,String title,String status,String publisher,String content,String code,String display,String definition) {
+
+        // create codeSystem object
+        CodeSystem codeSystem = new CodeSystem() ;
+
+        // add data in codeSystem
+        codeSystem.setUrl(url);
+        codeSystem.setName(name);
+        codeSystem.setVersion(version);
+        codeSystem.setStatus(Enumerations.PublicationStatus.valueOf(status));
+        codeSystem.setTitle(title);
+        codeSystem.setPublisher(publisher);
+        codeSystem.setContent(CodeSystem.CodeSystemContentMode.valueOf(content));
+
+        // Add a concept with a code
+        CodeSystem.ConceptDefinitionComponent concept=codeSystem.addConcept();
+        concept.setCode(code);
+        concept.setDisplay(display);
+        concept.setDefinition(definition);
+
+        return codeSystem;
+    }
+
+    public static ValueSet createValueSet(String url,String name,String title,String status,String publisherName){
+
+        ValueSet valueSet=new ValueSet();
+        valueSet.setUrl(url);
+        valueSet.setName(name);
+        valueSet.setTitle(title);
+        valueSet.setStatus(Enumerations.PublicationStatus.valueOf(status));
+        valueSet.setPublisher(publisherName);
+
+        return valueSet;
+    }
+
+    public static void addConceptValueSet(ValueSet valueSet,String codeSystemUrl,String code,String display){
+        // creating compose in ValueSet
+        ValueSet.ValueSetComposeComponent compose = new ValueSet.ValueSetComposeComponent();
+
+        // include a system and concept
+        ValueSet.ConceptSetComponent conceptSet = compose.addInclude();
+        conceptSet.setSystem(codeSystemUrl);
+        ValueSet.ConceptReferenceComponent concept= conceptSet.addConcept();
+        concept.setCode(code);
+        concept.setDisplay(display);
+
+        // Add the composed component in the valueSet
+        valueSet.setCompose(compose);
+    }
+
+}
 
     public static Location createLocation(
             String id,

@@ -265,3 +265,64 @@ INSERT INTO testcase (
         Now(),
         0
     );
+
+
+INSERT INTO specification (
+   	    id,
+    	name,
+    	description,
+    	state,
+    	rank,
+    	is_functional,
+    	is_required,
+    	component_id,
+    	created_by,
+        updated_by,
+        created_at,
+        updated_at,
+        version
+    ) VALUES (
+        'specification.ts.tswf.6',
+        'TSWF-6',
+        'TSWF-6 Specification of the Terminology Service Component (https://guides.ohie.org/arch-spec/introduction/terminology-service-workflow/query-value-set)',
+        'specification.status.active',
+        1,
+        false,
+        true,
+        'component.terminology.service',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    );
+
+    INSERT INTO testcase (
+       	    id,
+        	name,
+        	description,
+        	state,
+        	rank,
+        	is_manual,
+        	bean_name,
+        	specification_id,
+        	created_by,
+            updated_by,
+            created_at,
+            updated_at,
+            version
+        ) VALUES (
+            'testcase.ts.tswf.6.1',
+            'Query Value Set',
+            'Testcase to verify Query Value Set for specification TSWF6 of the terminology service',
+            'testcase.status.active',
+            1,
+            false,
+            'TSWF6TestCase1',
+            'specification.ts.tswf.6',
+            'ivasiwala@argusoft.com',
+            'ivasiwala@argusoft.com',
+            Now(),
+            Now(),
+            0
+        );
