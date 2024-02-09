@@ -17,22 +17,12 @@ import ReCAPTCHA from "react-google-recaptcha";
 import GoogleLoginIcon from "../../../styles/images/GoogleLoginIcon.png";
 import { UserAPI } from "../../../api/UserAPI";
 import { userinfo_success } from "../../../reducers/UserInfoReducer";
+import { useFormik } from "formik";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState("");
   const isKeepFromState = useSelector((state) => state.authSlice.isKeepLogin);
   const [isKeepLogin, setIsKeepLogin] = useState(false);
-  const [captcha, setCaptcha] = useState(false);
-
-  // Initialize error state
-  //const isKeepLogin = useSelector((state) => state.authSlice.isKeepLogin);
-
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    grant_type: "password", // Assuming 'password' grant type
-  });
   const { showLoader, hideLoader } = useLoader();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -40,15 +30,57 @@ export default function Login() {
     setDefaultToken();
     setKeepMeLoginFromState();
   }, []);
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+  const handleLogin = async () => {};
+
+  const redirectToSignUp = async () => {
+    navigate("/SignUp");
+  };
+  const setOrUnsetKeepMeLogin = (event) => {
+    const { checked } = event.target;
+    setIsKeepLogin(checked);
+    dispatch(setIsKeepLoginState(checked));
   };
 
-  const handleLogin = async () => {
-    if (formData.username.length > 0 && formData.password.length > 0) {
+  const setKeepMeLoginFromState = () => {
+    if (isKeepFromState && isKeepFromState === true) {
+      setIsKeepLogin(true);
+    } else {
+      setIsKeepLogin(false);
+    }
+    dispatch(setIsKeepLoginState(isKeepLogin));
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      formik.handleSubmit();
+    }
+  };
+
+  const validate = (values) => {
+    const errors = {};
+
+    if (values.username.length == 0) {
+      errors.username = "Please enter Username.";
+    }
+
+    if (values.password.length == 0) {
+      errors.password = "Password can't be empty.";
+    }
+
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+      grant_type: "password",
+    },
+    validate,
+    onSubmit: async () => {
       showLoader();
-      AuthenticationAPI.doLogin(new URLSearchParams(formData))
+      AuthenticationAPI.doLogin(new URLSearchParams(formik.values))
         .then(
           (response) => {
             dispatch(login_success(response));
@@ -77,32 +109,8 @@ export default function Login() {
             description: "Invalid username or password",
           });
         });
-    }
-  };
-
-  const redirectToSignUp = async () => {
-    navigate("/SignUp");
-  };
-  const setOrUnsetKeepMeLogin = (event) => {
-    const { checked } = event.target;
-    setIsKeepLogin(checked);
-    dispatch(setIsKeepLoginState(checked));
-  };
-
-  const setKeepMeLoginFromState = () => {
-    if (isKeepFromState && isKeepFromState === true) {
-      setIsKeepLogin(true);
-    } else {
-      setIsKeepLogin(false);
-    }
-    dispatch(setIsKeepLoginState(isKeepLogin));
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleLogin();
-    }
-  };
+    },
+  });
 
   return (
     <Fragment>
@@ -144,8 +152,9 @@ export default function Login() {
                       name="username"
                       id="exampleFormControlInput1"
                       autoComplete="off"
-                      value={formData.username}
-                      onChange={handleInputChange}
+                      value={formik.values.username}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       placeholder="Email"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -170,8 +179,9 @@ export default function Login() {
                       name="password"
                       id="exampleFormControlInput2"
                       autoComplete="off"
-                      value={formData.password}
-                      onChange={handleInputChange}
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       placeholder="Password"
                       aria-label="Password"
                       aria-describedby="basic-addon1"
@@ -216,7 +226,8 @@ export default function Login() {
 
                 <div className="my-4">
                   <button
-                    onClick={handleLogin}
+                  type="submit"
+                    onClick={formik.handleSubmit}
                     className="btn btn-primary btn-blue w-100"
                   >
                     Login
