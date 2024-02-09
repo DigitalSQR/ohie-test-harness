@@ -82,3 +82,63 @@ INSERT INTO specification (
             Now(),
             0
         );
+
+INSERT INTO specification (
+   	    id,
+    	name,
+    	description,
+    	state,
+    	rank,
+    	is_functional,
+    	is_required,
+    	component_id,
+    	created_by,
+        updated_by,
+        created_at,
+        updated_at,
+        version
+    ) VALUES (
+        'specification.ts.tswf.2',
+        'TSWF-2',
+        'TSWF-2 Specification of the Terminology Service Component (https://guides.ohie.org/arch-spec/introduction/terminology-service-workflow/verify-code-membership)',
+        'specification.status.active',
+        1,
+        false,
+        true,
+        'component.terminology.service',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    );
+
+INSERT INTO testcase (
+   	    id,
+    	name,
+    	description,
+    	state,
+    	rank,
+    	is_manual,
+    	bean_name,
+    	specification_id,
+    	created_by,
+        updated_by,
+        created_at,
+        updated_at,
+        version
+    ) VALUES (
+        'testcase.ts.tswf.2.1',
+        'Verify Code Membership',
+        'Testcase to verify code membership for specification TSWF2 of the terminology repository',
+        'testcase.status.active',
+        1,
+        false,
+        'TSWF2TestCase1',
+        'specification.ts.tswf.2',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    );
