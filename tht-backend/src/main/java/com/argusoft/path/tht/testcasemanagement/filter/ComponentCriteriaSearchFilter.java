@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.filter;
 
+import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
@@ -54,7 +55,7 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getComponentEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getComponentEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {

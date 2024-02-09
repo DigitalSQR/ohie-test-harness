@@ -78,7 +78,8 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
