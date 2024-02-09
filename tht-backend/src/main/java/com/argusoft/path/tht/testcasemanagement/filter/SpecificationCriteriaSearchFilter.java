@@ -75,7 +75,8 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getSpecificationEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.specificationEntityRoot.get("name")),getNameBasedOnSearchType(getName())));
+
         }
 
         if (!CollectionUtils.isEmpty(getState())) {

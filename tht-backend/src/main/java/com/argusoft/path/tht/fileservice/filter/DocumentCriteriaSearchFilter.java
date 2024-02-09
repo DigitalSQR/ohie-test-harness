@@ -82,7 +82,8 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getDocumentEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getDocumentEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+
         }
 
         if (StringUtils.hasLength(getRefObjUri())) {
