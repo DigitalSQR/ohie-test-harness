@@ -113,6 +113,37 @@ INSERT INTO specification (
         0
     );
 
+
+    INSERT INTO specification (
+            id,
+            name,
+            description,
+            state,
+            rank,
+            is_functional,
+            is_required,
+            component_id,
+            created_by,
+            updated_by,
+            created_at,
+            updated_at,
+            version
+        ) VALUES (
+            'specification.ts.tswf.8',
+            'TSWF-8',
+            'TSWF-8 Specification of the Terminology Repository Component (https://guides.ohie.org/arch-spec/introduction/terminology-service-workflow/expand-value-set)',
+            'specification.status.active',
+            8,
+            true,
+            true,
+            'component.terminology.service',
+            'ivasiwala@argusoft.com',
+            'ivasiwala@argusoft.com',
+            Now(),
+            Now(),
+            0
+        );
+
 INSERT INTO testcase (
    	    id,
     	name,
@@ -142,3 +173,34 @@ INSERT INTO testcase (
         Now(),
         0
     );
+
+
+    INSERT INTO testcase (
+            id,
+            name,
+            description,
+            state,
+            rank,
+            is_manual,
+            bean_name,
+            specification_id,
+            created_by,
+            updated_by,
+            created_at,
+            updated_at,
+            version
+        ) VALUES (
+            'testcase.ts.tswf.8.1',
+            'Verify translate function use',
+            'Testcase to verify translate function use for specification TSWF8 of the terminology service',
+            'testcase.status.active',
+            1,
+            false,
+            'TSWF8TestCase1',
+            'specification.ts.tswf.8',
+            'ivasiwala@argusoft.com',
+            'ivasiwala@argusoft.com',
+            Now(),
+            Now(),
+            0
+        );
