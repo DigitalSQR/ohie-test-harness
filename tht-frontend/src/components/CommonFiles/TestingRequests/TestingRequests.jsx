@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./application-status.scss";
-import "./_table.scss";
+// import "./_table.scss";
 import {
 	TestRequestStateLabels,
 	TestRequestStateConstants,
@@ -185,7 +185,7 @@ const TestingRequests = () => {
 					</div>
 
 					<div className="table-responsive">
-						<table className=" data-table">
+						<table className="data-table">
 							<thead>
 								<tr>
 									<th style={{width:"20%"}}>
@@ -213,8 +213,8 @@ const TestingRequests = () => {
 										</a>
 									</th>
 									<th style={{width:"20%"}}>Assessee</th>
-									<th style={{width:"20%"}}>STATUS</th>
-									<th style={{width:"30%"}}>
+									<th style={{width:"15%"}}>STATUS</th>
+									<th style={{width:"35%"}}>
 										<span
 											className={
 												userRoles.includes(

@@ -266,6 +266,8 @@ body {
   font-size: 13px;
   /* border-top: 1px solid #DFEFF3; */
   line-height: 18px;
+  background: #DFEFF3;
+
 }
 
 .approval-action-button:hover {

@@ -16,7 +16,7 @@ const RegisterApplication = () => {
   const { showLoader, hideLoader } = useLoader();
   const [components, setComponents] = useState([]);
   const [userId, setUserId] = useState();
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
   const [touched, setTouched] = useState({});
 
   useEffect(() => {
@@ -57,11 +57,20 @@ const RegisterApplication = () => {
     if (values.testRequestUrls.length === 0) {
       errors.testRequestUrls = "Please select atleast one component";
     }
+    if (values.testRequestUrls.length === 0) {
+      errors.testRequestUrls = "Please select atleast one component";
+    }
 
     if (values.name === "") {
       errors.name = "Application Name is required";
     }
+    if (values.name === "") {
+      errors.name = "Application Name is required";
+    }
 
+    if (values.productName === "") {
+      errors.productName = "Product Name is required";
+    }
     if (values.productName === "") {
       errors.productName = "Product Name is required";
     }
@@ -177,13 +186,7 @@ const RegisterApplication = () => {
     addOrRemoveTestUrls(components[index], index);
   };
 
-  const handleMouseDown = () => {
-    setShowPassword(true);
-  };
 
-  const handleMouseUp = () => {
-    setShowPassword(false);
-  };
 
   const handleBlur = (key, componentId) => {
     setTouched((prevTouched) => {
@@ -257,7 +260,6 @@ const RegisterApplication = () => {
                 )}
               </div>
             </div>
-
             <div className="row">
               <div className="col-12">
                 <div className="custom-input mb-3">
@@ -384,9 +386,9 @@ const RegisterApplication = () => {
                                     </div>
                                   )}
                               </div>
-                              <div className="col-sm-6 col-12">
+                              <div className=" custom-input col-sm-6 col-12">
                                 <div
-                                  className="custom-input mb-3"
+                                  className=" input-group mb-3"
                                   style={{ position: "relative" }}
                                 >
                                   <input
@@ -438,14 +440,24 @@ const RegisterApplication = () => {
                                         transform: "translateY(-50%)",
                                         cursor: "pointer",
                                       }}
-                                      onMouseDown={handleMouseDown}
-                                      onMouseUp={handleMouseUp}
                                     >
-                                      {showPassword ? (
-                                        <i className="bi bi-eye-slash-fill"></i>
-                                      ) : (
-                                        <i className="bi bi-eye-fill"></i>
-                                      )}
+                                      <button
+                                        className="btn btn-outline-secondary"
+                                        type="button"
+                                        style={{ borderColor: "#ccdade" }}
+                                        onClick={() =>{
+                                          setShowPassword(!showPassword)
+                                          
+                                          }}
+                                      >
+                                        <i
+                                          className={`bi ${
+                                            showPassword
+                                              ? "bi-eye-slash"
+                                              : "bi-eye"
+                                          }`}
+                                        ></i>
+                                      </button>
                                     </div>
                                   )}
                                   {touched?.[
