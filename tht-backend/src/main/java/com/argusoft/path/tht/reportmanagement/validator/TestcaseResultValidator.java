@@ -326,7 +326,7 @@ public class TestcaseResultValidator {
                 && Objects.equals(Boolean.FALSE, testcaseResultEntity.getHasSystemError())) {
             ValidationUtils.validateRequired(testcaseResultEntity.getTestcaseOption(), "testcaseOption", errors);
         }
-        if(!(StringUtils.hasLength(testcaseResultEntity.getRefObjUri()) && (testcaseResultEntity.getRefId().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)))){
+        if(!(StringUtils.hasLength(testcaseResultEntity.getRefObjUri()) && (testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)))){
             ValidationUtils
                     .validateRequired(testcaseResultEntity.getParentTestcaseResult().getId(), "parent testcase result id", errors);
         }
