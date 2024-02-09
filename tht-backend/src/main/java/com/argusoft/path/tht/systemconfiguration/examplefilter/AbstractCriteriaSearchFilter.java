@@ -1,9 +1,11 @@
 package com.argusoft.path.tht.systemconfiguration.examplefilter;
 
+import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -13,6 +15,8 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchFilter<T> {
+
+    private SearchType nameSearchType = SearchType.CONTAINING;
     @Override
     public final Specification<T> buildSpecification(ContextInfo contextInfo) throws InvalidParameterException {
         validateSearchFilter();
@@ -46,5 +50,25 @@ public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchF
 
     protected abstract void validateSearchFilter() throws InvalidParameterException;
 
+    public SearchType getNameSearchType() {
+        return nameSearchType;
+    }
 
+    public void setNameSearchType(SearchType nameSearchType) {
+        this.nameSearchType = nameSearchType;
+    }
+
+    public String getNameBasedOnSearchType(String name) {
+            switch (nameSearchType) {
+                case EXACTLY:
+                    return name.toLowerCase();
+                case STARTING:
+                    return name.toLowerCase() + "%";
+                case ENDING:
+                    return "%" + name.toLowerCase();
+                default:
+                    //CONTAINING
+                    return "%" + name.toLowerCase() + "%";
+            }
+    }
 }
