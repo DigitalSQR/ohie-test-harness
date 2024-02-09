@@ -16,7 +16,7 @@ const RegisterApplication = () => {
   const { showLoader, hideLoader } = useLoader();
   const [components, setComponents] = useState([]);
   const [userId, setUserId] = useState();
-  const [showPassword, setShowPassword] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState({});
 
   useEffect(() => {
@@ -185,8 +185,6 @@ const RegisterApplication = () => {
     setComponents(components);
     addOrRemoveTestUrls(components[index], index);
   };
-
-
 
   const handleBlur = (key, componentId) => {
     setTouched((prevTouched) => {
@@ -432,33 +430,22 @@ const RegisterApplication = () => {
                                         "].password"
                                     ]
                                   ) && (
-                                    <div
-                                      style={{
-                                        position: "absolute",
-                                        top: "50%",
-                                        right: "10px",
-                                        transform: "translateY(-50%)",
-                                        cursor: "pointer",
+                                    <button
+                                      className="btn btn-outline-secondary"
+                                      type="button"
+                                      style={{ borderColor: "#ccdade" }}
+                                      onClick={() => {
+                                        setShowPassword(!showPassword);
                                       }}
                                     >
-                                      <button
-                                        className="btn btn-outline-secondary"
-                                        type="button"
-                                        style={{ borderColor: "#ccdade" }}
-                                        onClick={() =>{
-                                          setShowPassword(!showPassword)
-                                          
-                                          }}
-                                      >
-                                        <i
-                                          className={`bi ${
-                                            showPassword
-                                              ? "bi-eye-slash"
-                                              : "bi-eye"
-                                          }`}
-                                        ></i>
-                                      </button>
-                                    </div>
+                                      <i
+                                        className={`bi ${
+                                          showPassword
+                                            ? "bi-eye-slash"
+                                            : "bi-eye"
+                                        }`}
+                                      ></i>
+                                    </button>
                                   )}
                                   {touched?.[
                                     modifiedComponentId(url.componentId)
