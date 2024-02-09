@@ -144,6 +144,36 @@ INSERT INTO specification (
             0
         );
 
+        INSERT INTO specification (
+           	    id,
+            	name,
+            	description,
+            	state,
+            	rank,
+            	is_functional,
+            	is_required,
+            	component_id,
+            	created_by,
+                updated_by,
+                created_at,
+                updated_at,
+                version
+            ) VALUES (
+                'specification.ts.tswf.5',
+                'TSWF-5',
+                'TSWF-5 Specification of the Terminology Service Component (https://guides.ohie.org/arch-spec/introduction/terminology-service-workflow/query-code-systems)',
+                'specification.status.active',
+                1,
+                false,
+                true,
+                'component.terminology.service',
+                'ivasiwala@argusoft.com',
+                'ivasiwala@argusoft.com',
+                Now(),
+                Now(),
+                0
+            );
+
 INSERT INTO testcase (
    	    id,
     	name,
@@ -204,3 +234,34 @@ INSERT INTO testcase (
             Now(),
             0
         );
+
+
+INSERT INTO testcase (
+   	    id,
+    	name,
+    	description,
+    	state,
+    	rank,
+    	is_manual,
+    	bean_name,
+    	specification_id,
+    	created_by,
+        updated_by,
+        created_at,
+        updated_at,
+        version
+    ) VALUES (
+        'testcase.ts.tswf.5.1',
+        'Query Code Systems',
+        'Testcase to verify Query Code Systems for specification TSWF5 of the terminology service',
+        'testcase.status.active',
+        1,
+        false,
+        'TSWF5TestCase1',
+        'specification.ts.tswf.5',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    );
