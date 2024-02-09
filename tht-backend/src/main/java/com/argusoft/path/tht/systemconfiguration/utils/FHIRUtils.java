@@ -179,28 +179,7 @@ public final class FHIRUtils {
 
 
 
-    public static CodeSystem createCodeSystem(String url,String version,String name,String title,String status,String publisher,String content,String code,String display,String definition) {
 
-        // create codeSystem object
-        CodeSystem codeSystem = new CodeSystem() ;
-
-        // add data in codeSystem
-        codeSystem.setUrl(url);
-        codeSystem.setName(name);
-        codeSystem.setVersion(version);
-        codeSystem.setStatus(Enumerations.PublicationStatus.valueOf(status));
-        codeSystem.setTitle(title);
-        codeSystem.setPublisher(publisher);
-        codeSystem.setContent(CodeSystem.CodeSystemContentMode.valueOf(content));
-
-        // Add a concept with a code
-        CodeSystem.ConceptDefinitionComponent concept=codeSystem.addConcept();
-        concept.setCode(code);
-        concept.setDisplay(display);
-        concept.setDefinition(definition);
-
-        return codeSystem;
-    }
 
 
     public static Organization createOrganization(String name,
@@ -278,6 +257,61 @@ public final class FHIRUtils {
 
 
         return location;
+    }
+
+    public static ConceptMap createConceptMap(String name, String url, String status, String sourceUri, String targetUri, String sourceCode, String targetCode, String sourceDisplay, String targetDisplay){
+        ConceptMap conceptMap = new ConceptMap();
+
+        // Set ConceptMap metadata
+        conceptMap.setName(name);
+        conceptMap.setUrl(url);
+        conceptMap.setStatus(Enumerations.PublicationStatus.valueOf(status));
+
+        // Set source and target code systems
+        conceptMap.setSource(new UriType(sourceUri));
+        conceptMap.setTarget(new UriType(targetUri));
+
+        // Define a mapping between source and target codes
+        ConceptMap.ConceptMapGroupComponent group = new ConceptMap.ConceptMapGroupComponent();
+        group.setSource(sourceUri);
+        group.setTarget(targetUri);
+
+        ConceptMap.SourceElementComponent sourceElement = new ConceptMap.SourceElementComponent();
+        sourceElement.setCode(sourceCode);
+        sourceElement.setDisplay(sourceDisplay);
+        ConceptMap.TargetElementComponent target = sourceElement.addTarget();
+        target.setCode(targetCode);
+                target.setEquivalence(Enumerations.ConceptMapEquivalence.EQUAL);
+                target.setDisplay(targetDisplay);
+
+
+        group.addElement(sourceElement);
+        conceptMap.setGroup(Collections.singletonList(group));
+
+        return conceptMap;
+    }
+    public static CodeSystem createCodeSystem(String url,String version,String name,String title,String status,String publisher,String content,String code,String display,String definition) {
+
+        // create codeSystem object
+        CodeSystem codeSystem = new CodeSystem() ;
+
+        // add data in codeSystem
+        codeSystem.setUrl(url);
+        codeSystem.setName(name);
+        codeSystem.setVersion(version);
+        codeSystem.setStatus(Enumerations.PublicationStatus.valueOf(status));
+        codeSystem.setTitle(title);
+        codeSystem.setPublisher(publisher);
+        codeSystem.setContent(CodeSystem.CodeSystemContentMode.valueOf(content));
+
+        // Add a concept with a code
+        CodeSystem.ConceptDefinitionComponent concept=codeSystem.addConcept();
+        concept.setCode(code);
+        concept.setDisplay(display);
+        concept.setDefinition(definition);
+
+
+        return codeSystem;
     }
 
     public static Practitioner createPractitioner(
@@ -488,3 +522,5 @@ public final class FHIRUtils {
     }
 
 }
+
+
