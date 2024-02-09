@@ -2,6 +2,7 @@ package com.argusoft.path.tht.testcasemanagement.validator;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -228,6 +229,7 @@ public class ComponentValidator {
 
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
             componentCriteriaSearchFilter.setName(componentEntity.getName());
+            componentCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
             List<ComponentEntity> componentEntities = componentService.searchComponents(componentCriteriaSearchFilter, contextInfo);
 
             // if info found with same name than and not current id

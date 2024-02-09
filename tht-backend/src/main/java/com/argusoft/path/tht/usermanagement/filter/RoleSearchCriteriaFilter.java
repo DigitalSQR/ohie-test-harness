@@ -46,7 +46,8 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getRoleEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getRoleEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+
         }
 
         return predicates;

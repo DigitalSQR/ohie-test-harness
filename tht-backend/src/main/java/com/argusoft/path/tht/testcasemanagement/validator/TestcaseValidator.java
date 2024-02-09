@@ -2,6 +2,7 @@ package com.argusoft.path.tht.testcasemanagement.validator;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -310,7 +311,7 @@ public class TestcaseValidator {
 
             TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter = new TestcaseCriteriaSearchFilter();
             testcaseCriteriaSearchFilter.setName(testcaseEntity.getName());
-
+            testcaseCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
             List<TestcaseEntity> testcaseEntities = testcaseService.searchTestcases(testcaseCriteriaSearchFilter, contextInfo);
 
             // if info found with same name than and not current id
