@@ -339,6 +339,16 @@ public final class FHIRUtils {
         return practitioner;
     }
 
+
+    public static ValueSet createValueSet(String url,String name,String title,String status){
+        ValueSet valueSet=new ValueSet();
+        valueSet.setUrl(url);
+        valueSet.setName(name);
+        valueSet.setTitle(title);
+        valueSet.setStatus(Enumerations.PublicationStatus.valueOf(status));
+        return valueSet;
+    }
+
     public static PractitionerRole createPractitionerRole(
             String id,
             Practitioner practitionerRef,
@@ -450,35 +460,6 @@ public final class FHIRUtils {
         return codeSystem;
     }
 
-    public static ValueSet createValueSet(String url,String name,String title,String status,String publisherName){
-
-        ValueSet valueSet=new ValueSet();
-        valueSet.setUrl(url);
-        valueSet.setName(name);
-        valueSet.setTitle(title);
-        valueSet.setStatus(Enumerations.PublicationStatus.valueOf(status));
-        valueSet.setPublisher(publisherName);
-
-        return valueSet;
-    }
-
-    public static void addConceptValueSet(ValueSet valueSet,String codeSystemUrl,String code,String display){
-        // creating compose in ValueSet
-        ValueSet.ValueSetComposeComponent compose = new ValueSet.ValueSetComposeComponent();
-
-        // include a system and concept
-        ValueSet.ConceptSetComponent conceptSet = compose.addInclude();
-        conceptSet.setSystem(codeSystemUrl);
-        ValueSet.ConceptReferenceComponent concept= conceptSet.addConcept();
-        concept.setCode(code);
-        concept.setDisplay(display);
-
-        // Add the composed component in the valueSet
-        valueSet.setCompose(compose);
-    }
-
-}
-
     public static Location createLocation(
             String id,
             String name,
@@ -552,5 +533,4 @@ public final class FHIRUtils {
     }
 
 }
-
 
