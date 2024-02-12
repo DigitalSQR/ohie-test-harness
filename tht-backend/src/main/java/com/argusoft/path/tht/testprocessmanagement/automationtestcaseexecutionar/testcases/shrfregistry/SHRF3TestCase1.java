@@ -8,21 +8,30 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class SHRF3TestCase1 implements TestCase {
     public static final Logger logger = LoggerFactory.getLogger(SHRF3TestCase1.class);
 
     @Override
-    public ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) throws Exception {
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws Exception {
         try {
 
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_SHARED_HEALTH_RECORD_REGISTRY_ID);
+            if (client == null) {
+                return new ValidationResultInfo("testSHRF3TestCase1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
+
             logger.info("Start testing SHRF3TestCase1");
+
 
             // Create a new patient resource with all demographic information by passing XML data and get patient in XML format.
             Patient patient = FHIRUtils.createPatient("Doe", "John", "MALE", "1990-01-01", "00001", "555-555-5555", true, "", "21468992", "xyz@gmail.com", client);
@@ -330,7 +339,7 @@ public class SHRF3TestCase1 implements TestCase {
             }
 
             // Create Diagnosis Report by passing JSON data and get diagnosis report in JSON format.
-            DiagnosticReport diagnosticReport = FHIRUtils.createDiagnosticReport(resultPatient.getId(), "56789", "X-ray Report");
+            DiagnosticReport diagnosticReport = FHIRUtils.createDiagnosticReportWithCode(resultPatient.getId(), "56789", "X-ray Report");
 
             String jsonDataForDiagnosticReport = jsonParser.encodeResourceToString(diagnosticReport);
 

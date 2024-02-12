@@ -92,6 +92,48 @@ public final class FHIRUtils {
         return patient;
     }
 
+
+    public static Patient createPatient(
+            String familyName,
+            String givenName,
+            String gender,
+            String birthDate,
+            String identifierSystem,
+            String phone,
+            String email) {
+        // Creating a new Patient resource
+        Patient patient = new Patient();
+
+        // Setting patient name
+        HumanName name = patient.addName();
+        name.setFamily(familyName);
+        name.addGiven(givenName);
+
+        // Setting patient gender
+        if (gender != null) {
+            patient.setGender(Enumerations.AdministrativeGender.valueOf(gender.toUpperCase()));
+        }
+
+        // Setting patient birth date
+        if (birthDate != null) {
+            patient.setBirthDateElement(new DateType(birthDate));
+        }
+
+        // Setting patient identifier
+        Identifier identifier = patient.addIdentifier();
+        identifier.setSystem(identifierSystem);
+
+        // Setting patient active status
+        patient.setActive(true);
+
+        // Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        ContactPoint emailContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL).setValue(email).setUse(ContactPoint.ContactPointUse.HOME);
+        patient.addTelecom(phoneContact).addTelecom(emailContact);
+
+        return patient;
+    }
+
     public static Location createAmbulance(String name, String description, String phone, Location.LocationStatus status) {
 
         Location ambulance = new Location();
@@ -786,7 +828,7 @@ public final class FHIRUtils {
 
         return immunization;
     }
-    public static DiagnosticReport createDiagnosticReport(String patientId, String code, String description ){
+    public static DiagnosticReport createDiagnosticReportWithCode(String patientId, String code, String description ){
         DiagnosticReport diagnosticReport = new DiagnosticReport();
 
         diagnosticReport.getSubject().setReference(patientId);  // Reference to the patient
@@ -802,7 +844,6 @@ public final class FHIRUtils {
         return diagnosticReport;
     }
 
-}
 
     public static Composition createComposition(String title, String patientId, String organizationId, String OrganizationName)
     {
