@@ -119,6 +119,36 @@ VALUES
         0
     );
 
+    INSERT INTO specification (
+           	    id,
+            	name,
+            	description,
+            	state,
+            	rank,
+            	is_functional,
+            	is_required,
+            	component_id,
+            	created_by,
+                updated_by,
+                created_at,
+                updated_at,
+                version
+            ) VALUES (
+                    'specification.hwr.hwwf.4',
+                    'HWWF-4',
+                    'HWWF-4 Specification of the Health Worker Repository Component (https://guides.ohie.org/arch-spec/introduction/care-services-discovery/request-care-services-updates-workflow)',
+                    'specification.status.active',
+                    4,
+                    false,
+                    true,
+                    'component.health.worker.registry',
+                    'ivasiwala@argusoft.com',
+                    'ivasiwala@argusoft.com',
+                    Now(),
+                    Now(),
+                    0
+        );
+
  INSERT INTO testcase (
             id,
             name,
@@ -215,3 +245,34 @@ VALUES
               Now(),
               0
           );
+
+
+INSERT INTO testcase (
+       	    id,
+        	name,
+        	description,
+        	state,
+        	rank,
+        	is_manual,
+        	bean_name,
+        	specification_id,
+        	created_by,
+            updated_by,
+            created_at,
+            updated_at,
+            version
+        ) VALUES (
+                'testcase.hwr.hwwf.4.1',
+                'Verify Care Service Updates',
+                'Testcase to verify care service updates for specification HWWF4 of the healthworker registry',
+                'testcase.status.active',
+                1,
+                false,
+                'HWWF4TestCase1',
+                'specification.hwr.hwwf.4',
+                'ivasiwala@argusoft.com',
+                'ivasiwala@argusoft.com',
+                Now(),
+                Now(),
+                0
+    );
