@@ -88,7 +88,7 @@ const ManualTestCases = () => {
 		  		<div class="bcca-breadcrumb-item" onClick={()=>{navigate("/dashboard/testcase-config")}}>Components</div>
 		  </div>
       {questions?.map((question, index) => (
-        <div key={index} className="question-container my-3">
+        <div key={index} className="question-container my-4">
           <div className="question-content">
             <h5 className="question">
               {question.rank}. {question.question}

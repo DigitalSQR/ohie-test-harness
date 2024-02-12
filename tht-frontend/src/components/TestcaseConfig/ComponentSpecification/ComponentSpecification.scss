@@ -1,9 +1,13 @@
 .tablinks{
-    padding: 15px;
-    width: 10rem;
+    padding: 7px;
+    width: 6rem;
+	// height: 4vh;
+	text-align: center;
     background-color:#bddbe2;
     color:rgba(0, 0, 0, 0.589);
     border:0.3px solid rgb(0, 0, 0);
+	border-radius: 3px;
+	// font-size: 10px
 }
 .activeTab{
     background-color: #009FC8;
@@ -33,7 +37,7 @@
 	line-height: 40px;
 	padding-left: 30px;
 	padding-right: 10px;
-	font-size: 13px;
+	font-size: 15px;
 	font-weight: 600;
 	color: rgba(74, 74, 74, 0.8);
 	position: relative;
@@ -94,3 +98,12 @@
 .bcca-breadcrumb-item:first-child:hover {
 	background-color: rgba(23, 165, 98, 0.15);
 }
+
+// /*** Responsive Styles ***/
+// @media screen and (max-width: 768px) {
+// 	.bcca-breadcrumb-item {
+// 	  font-size: 8px;
+// 	  padding-left: 20px;
+// 	  padding-right: 5px;
+// 	}
+//   }

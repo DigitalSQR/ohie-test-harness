@@ -12,13 +12,12 @@ const ComponentSpecification = () => {
   const location = useLocation();
   const { componentId, name } = location.state;
   const openTab = (tabName) => {
-    setActiveTab(tabName);
-    if (tabName === "Automation") {
-      fetchData(false);
-    } else {
-      fetchData(true);
+    if (tabName !== activeTab) {
+      setActiveTab(tabName);
+      fetchData(tabName === "Manual");
     }
   };
+  
   useEffect(() => {
     fetchData(false);
     console.log(componentId);
@@ -51,11 +50,8 @@ const ComponentSpecification = () => {
 				<div class="bcca-breadcrumb-item">{name}</div>
 				<div class="bcca-breadcrumb-item" onClick={()=>{navigate("/dashboard/testcase-config")}}>Components</div>
 			</div>
-      <div className="tabs mt-4">
-        <button
-          className={`tablinks ${
-            activeTab === "Automation" ? "activeTab" : ""
-          }`}
+      <div className="tabs mt-5">
+        <button className={`tablinks ${ activeTab === "Automation" ? "activeTab":""}`}
           onClick={() => openTab("Automation")}
         >
           Automation
@@ -68,7 +64,7 @@ const ComponentSpecification = () => {
         </button>
       </div>
       <div className={`tabcontent ${activeTab === "Automation" ? "show" : ""}`}>
-        <div className="table-responsive">
+        <div className="table-responsive mt-3">
           <table className="data-table">
             <thead>
               <tr>
@@ -81,11 +77,14 @@ const ComponentSpecification = () => {
                 <tr key={specification.name}>
                   <td>{specification.name}</td>
                   <td className="action-icons-container">
+                  {activeTab==="Manual" && (
+
                     <span className="action-icon">
                       <EditOutlined
                         onClick={() => handleEdit(specification.id)}
                       />
                     </span>
+                  )}
                     <span className="badges-green-dark">ACTIVE</span>
                   </td>
                 </tr>

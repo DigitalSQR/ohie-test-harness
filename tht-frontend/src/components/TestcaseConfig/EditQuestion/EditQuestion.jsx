@@ -208,10 +208,10 @@ const EditQuestion = () => {
           Components
         </div>
       </div>
-      <div className="col-12 my-3">
+      <div className="col-12 my-4">
         <div className="row mb-2 justify-content-between">
           <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
-            <b style={{ fontSize: "1.5em" }} className="bolder-text my-3">
+            <b style={{ fontSize: "1.3em" }} className="bolder-text my-3">
               {`Edit: ${testcase.description.replace("Question for the ", "")}`}
             </b>
           </div>
