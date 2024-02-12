@@ -10,7 +10,10 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
@@ -119,6 +122,9 @@ public class SpecificationValidator {
                 errors);
         // For :IsFunctional
         validateSpecificationEntityIsFunctional(specificationEntity,
+                errors);
+        // For :IsFunctional
+        validateSpecificationEntityDesc(specificationEntity,
                 errors);
         return errors;
     }
@@ -262,16 +268,16 @@ public class SpecificationValidator {
     private static void validateSpecificationEntityId(SpecificationEntity specificationEntity,
                                                       List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(specificationEntity.getId(), "id", errors);
+        ValidationUtils.validateLength(specificationEntity.getId(),
+                "id",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Name
     private static void validateSpecificationEntityName(SpecificationEntity specificationEntity,
                                                         List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(specificationEntity.getName(),
-                "name",
-                Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
-                errors);
         ValidationUtils.validateLength(specificationEntity.getName(),
                 "name",
                 3,
@@ -297,6 +303,17 @@ public class SpecificationValidator {
     //Validation For :ComponentId
     private static void validateSpecificationEntityComponentId(SpecificationEntity specificationEntity,
                                                                List<ValidationResultInfo> errors) {
+
+    }
+
+    //Validation for desc
+    private static void validateSpecificationEntityDesc(SpecificationEntity specificationEntity,
+                                                    List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(specificationEntity.getDescription(),
+                "description",
+                0,
+                1000,
+                errors);
     }
 
     //trim all Specification field

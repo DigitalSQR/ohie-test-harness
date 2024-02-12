@@ -9,8 +9,10 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
@@ -115,6 +117,12 @@ public class TestcaseOptionValidator {
                 errors);
         // For :IsFunctional
         validateTestcaseOptionEntityIsSuccess(testcaseOptionEntity,
+                errors);
+        // For : Description
+        validateTestcaseOptionDescription(testcaseOptionEntity,
+                errors);
+        // For : Message
+        validateTestcaseOptionMessage(testcaseOptionEntity,
                 errors);
         return errors;
 
@@ -244,6 +252,11 @@ public class TestcaseOptionValidator {
     private static void validateTestcaseOptionEntityId(TestcaseOptionEntity testcaseOptionEntity,
                                                        List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(testcaseOptionEntity.getId(), "id", errors);
+        ValidationUtils.validateLength(testcaseOptionEntity.getId(),
+                "id",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Name
@@ -263,6 +276,26 @@ public class TestcaseOptionValidator {
                 "rank",
                 1,
                 null,
+                errors);
+    }
+
+    //Validation For:Description
+    private static void validateTestcaseOptionDescription(TestcaseOptionEntity testcaseOption,
+                                                    List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseOption.getDescription(),
+                "description",
+                0,
+                1000,
+                errors);
+    }
+
+    //Validation For:Message
+    private static void validateTestcaseOptionMessage(TestcaseOptionEntity testcaseOption,
+                                                    List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseOption.getMessage(),
+                "message",
+                0,
+                2000,
                 errors);
     }
 
@@ -289,3 +322,4 @@ public class TestcaseOptionValidator {
         }
     }
 }
+
