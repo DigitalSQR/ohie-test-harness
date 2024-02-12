@@ -297,6 +297,38 @@ INSERT INTO specification (
         0
     );
 
+
+    INSERT INTO specification (
+       	    id,
+        	name,
+        	description,
+        	state,
+        	rank,
+        	is_functional,
+        	is_required,
+        	component_id,
+        	created_by,
+            updated_by,
+            created_at,
+            updated_at,
+            version
+        ) VALUES (
+            'specification.ts.tswf.3',
+            'TSWF-3',
+            'TSWF-3 Specification of the Terminology Repository Component (https://guides.ohie.org/arch-spec/introduction/terminology-service-workflow/expand-value-set)',
+            'specification.status.active',
+            3,
+            false,
+            true,
+            'component.terminology.service',
+            'ivasiwala@argusoft.com',
+            'ivasiwala@argusoft.com',
+            Now(),
+            Now(),
+            0
+        );
+
+
     INSERT INTO testcase (
        	    id,
         	name,
@@ -326,3 +358,34 @@ INSERT INTO specification (
             Now(),
             0
         );
+
+
+        INSERT INTO testcase (
+           	    id,
+            	name,
+            	description,
+            	state,
+            	rank,
+            	is_manual,
+            	bean_name,
+            	specification_id,
+            	created_by,
+                updated_by,
+                created_at,
+                updated_at,
+                version
+            ) VALUES (
+                'testcase.ts.tswf.3.1',
+                'Verify Expand ValueSet',
+                'Testcase to verify expand value set for specification TSWF3 of the terminology service',
+                'testcase.status.active',
+                1,
+                false,
+                'TSWF3TestCase1',
+                'specification.ts.tswf.3',
+                'ivasiwala@argusoft.com',
+                'ivasiwala@argusoft.com',
+                Now(),
+                Now(),
+                0
+            );
