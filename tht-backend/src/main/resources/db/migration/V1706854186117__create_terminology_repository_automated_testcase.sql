@@ -174,6 +174,39 @@ INSERT INTO specification (
                 0
             );
 
+            INSERT INTO
+                specification (
+                    id,
+                    name,
+                    description,
+                    state,
+                    rank,
+                    is_functional,
+                    is_required,
+                    component_id,
+                    created_by,
+                    updated_by,
+                    created_at,
+                    updated_at,
+                    version
+                )
+            VALUES
+                (
+                    'specification.ts.tswf.4',
+                    'TSWF-4',
+                    'TSWF-4 Specification of the Terminology Service Component (https://guides.ohie.org/arch-spec/introduction/terminology-service-workflow/query-concept-maps)',
+                    'specification.status.active',
+                    1,
+                    false,
+                    true,
+                    'component.terminology.service',
+                    'ivasiwala@argusoft.com',
+                    'ivasiwala@argusoft.com',
+                    Now(),
+                    Now(),
+                    0
+                );
+
 INSERT INTO testcase (
    	    id,
     	name,
@@ -450,3 +483,37 @@ INSERT INTO specification (
                         Now(),
                         0
                     );
+
+
+INSERT INTO
+    testcase (
+        id,
+        name,
+        description,
+        state,
+        rank,
+        is_manual,
+        bean_name,
+        specification_id,
+        created_by,
+        updated_by,
+        created_at,
+        updated_at,
+        version
+    )
+VALUES
+    (
+        'testcase.ts.tswf.4.1',
+        'Verify conceptMap',
+        'Testcase to verify conceptMap for specification TSWF4.',
+        'testcase.status.active',
+        1,
+        false,
+        'TSWF4TestCase1',
+        'specification.ts.tswf.4',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    );
