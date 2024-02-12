@@ -349,6 +349,7 @@ public final class FHIRUtils {
         return valueSet;
     }
 
+
     public static PractitionerRole createPractitionerRole(
             String id,
             Practitioner practitionerRef,

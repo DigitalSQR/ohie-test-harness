@@ -389,3 +389,64 @@ INSERT INTO specification (
                 Now(),
                 0
             );
+
+
+            INSERT INTO specification (
+               	    id,
+                	name,
+                	description,
+                	state,
+                	rank,
+                	is_functional,
+                	is_required,
+                	component_id,
+                	created_by,
+                    updated_by,
+                    created_at,
+                    updated_at,
+                    version
+                ) VALUES (
+                    'specification.ts.tswf.7',
+                    'TSWF-7',
+                    'TSWF-7 Specification of the Terminology Repository Component (https://guides.ohie.org/arch-spec/introduction/terminology-service-workflow/lookup-code)',
+                    'specification.status.active',
+                    7,
+                    false,
+                    true,
+                    'component.terminology.service',
+                    'ivasiwala@argusoft.com',
+                    'ivasiwala@argusoft.com',
+                    Now(),
+                    Now(),
+                    0
+                );
+
+                INSERT INTO testcase (
+                   	    id,
+                    	name,
+                    	description,
+                    	state,
+                    	rank,
+                    	is_manual,
+                    	bean_name,
+                    	specification_id,
+                    	created_by,
+                        updated_by,
+                        created_at,
+                        updated_at,
+                        version
+                    ) VALUES (
+                        'testcase.ts.tswf.7.1',
+                        'Verify Lookup-Code',
+                        'Testcase to verify lookup-code for specification TSWF7 of the terminology service',
+                        'testcase.status.active',
+                        1,
+                        false,
+                        'TSWF7TestCase1',
+                        'specification.ts.tswf.7',
+                        'ivasiwala@argusoft.com',
+                        'ivasiwala@argusoft.com',
+                        Now(),
+                        Now(),
+                        0
+                    );
