@@ -52,34 +52,36 @@ public interface TestRequestMapper {
     }
 
     default Set<TestRequestUrlInfo> setToTestRequestUrls(TestRequestEntity testRequestEntity) {
-        return testRequestEntity.getTestRequestUrls().stream()
-                .map(testRequestUrl -> {
-                    return new TestRequestUrlInfo(testRequestUrl.getComponent().getId(),
-                            testRequestUrl.getBaseUrl(),
-                            testRequestUrl.getUsername(),
-                            testRequestUrl.getPassword(),
-                            testRequestUrl.getFhirVersion());
-                })
-                .collect(Collectors.toSet());
+        if(testRequestEntity.getTestRequestUrls()==null){ return null;}
+            return testRequestEntity.getTestRequestUrls().stream()
+                    .map(testRequestUrl -> {
+                        return new TestRequestUrlInfo(testRequestUrl.getComponent().getId(),
+                                testRequestUrl.getBaseUrl(),
+                                testRequestUrl.getUsername(),
+                                testRequestUrl.getPassword(),
+                                testRequestUrl.getFhirVersion());
+                    })
+                    .collect(Collectors.toSet());
     }
 
     default Set<TestRequestUrlEntity> setToTestRequestUrls(TestRequestInfo testRequestInfo) {
-        return testRequestInfo.getTestRequestUrls().stream()
-                .map(testRequestUrl -> {
-                    TestRequestUrlEntity testRequestUrlEntity = new TestRequestUrlEntity();
-                    testRequestUrlEntity.setTestRequestId(testRequestInfo.getId());
-                    testRequestUrlEntity.setBaseUrl(testRequestUrl.getBaseUrl());
-                    testRequestUrlEntity.setUsername(testRequestUrl.getUsername());
-                    testRequestUrlEntity.setPassword(testRequestUrl.getPassword());
-                    testRequestUrlEntity.setFhirVersion(testRequestUrl.getFhirVersion());
+        if(testRequestInfo.getTestRequestUrls()==null){return null;}
+            return testRequestInfo.getTestRequestUrls().stream()
+                    .map(testRequestUrl -> {
+                        TestRequestUrlEntity testRequestUrlEntity = new TestRequestUrlEntity();
+                        testRequestUrlEntity.setTestRequestId(testRequestInfo.getId());
+                        testRequestUrlEntity.setBaseUrl(testRequestUrl.getBaseUrl());
+                        testRequestUrlEntity.setUsername(testRequestUrl.getUsername());
+                        testRequestUrlEntity.setPassword(testRequestUrl.getPassword());
+                        testRequestUrlEntity.setFhirVersion(testRequestUrl.getFhirVersion());
 
-                    ComponentEntity componentEntity = new ComponentEntity();
-                    componentEntity.setId(testRequestUrl.getComponentId());
-                    testRequestUrlEntity.setComponent(componentEntity);
+                        ComponentEntity componentEntity = new ComponentEntity();
+                        componentEntity.setId(testRequestUrl.getComponentId());
+                        testRequestUrlEntity.setComponent(componentEntity);
 
-                    return testRequestUrlEntity;
-                })
-                .collect(Collectors.toSet());
+                        return testRequestUrlEntity;
+                    })
+                    .collect(Collectors.toSet());
     }
 
     @Named("setToApproverId")
