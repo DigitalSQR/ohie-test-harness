@@ -70,7 +70,7 @@ public final class FHIRUtils {
             patient.setBirthDateElement(new DateType(birthDate));
         }
 
-        // Setting patient identifier
+            // Setting patient identifier
         Identifier identifier = patient.addIdentifier();
         identifier.setSystem(identifierSystem);
         identifier.setValue(identifierValue);
@@ -187,6 +187,20 @@ public final class FHIRUtils {
         return healthcareService;
     }
 
+    public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone){
+        Practitioner practitioner = new Practitioner();
+// set Practitioner demographics
+        practitioner.addName().addGiven(name);
+        practitioner.setGender(gender.equals("M") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE);
+        practitioner.setBirthDate(parseDate(birthDate));
+// Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        practitioner.addTelecom(phoneContact);
+// set identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5.6").setValue(identifierValue);
+        practitioner.addIdentifier(identifier);
+        return practitioner;
+    }
 
     public static PractitionerRole createPractitionerRole(String identifierValue, String displaySpecialty, String contact, Practitioner practitioner, Location location, HealthcareService careService) {
         PractitionerRole practitionerRole = new PractitionerRole();
@@ -325,23 +339,6 @@ public final class FHIRUtils {
         valueSet.setTitle(title);
         valueSet.setStatus(Enumerations.PublicationStatus.valueOf(status));
         return valueSet;
-    }
-    public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone){
-        Practitioner practitioner = new Practitioner();
-
-        // set Practitioner demographics
-        practitioner.addName().addGiven(name);
-        practitioner.setGender(gender.equals("M") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE);
-        practitioner.setBirthDate(parseDate(birthDate));
-
-        // Set contact information
-        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
-        practitioner.addTelecom(phoneContact);
-
-        // set identifier
-        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5.6").setValue(identifierValue);
-        practitioner.addIdentifier(identifier);
-        return practitioner;
     }
 
     public static Encounter createEncounter(String patientId, List<String> practitionerIds, String encounterTypeCode, String encounterDate) {
@@ -877,6 +874,56 @@ public final class FHIRUtils {
         composition.addSection(section);
         return composition;
     }
+
+    public static DocumentReference createDocumentReference(String documentReferenceId,String patientId,String practitionerId,String attachmentURL,String attachmentTitle)
+    {
+        String base64CdaContent = "PGNsaW5pY2lkYXRvcz4KICAgIDx0aXRsZT5TYW1wbGUgQ0RBIERvY3VtZW50PC90aXRsZT4KICAgIDxwYXRpZW50PjxuYW1lPkpvaG4gRG9lPC9uYW1lPjxkYXRlYmFzZT4xOTgwMDEwMTwvZGF0ZWJhc2U+CiAgICA8L3BhdGllbnQ+CjwvQ2xpY2lubmFtZURvY3VtZW50PjwvQ2xpY2lubmFtZWRhdG9ucz4=";
+        DocumentReference documentReference = new DocumentReference();
+        documentReference.setId(documentReferenceId);
+        documentReference.setStatus(Enumerations.DocumentReferenceStatus.CURRENT);
+
+        // Set the subject (patient)
+        Reference subjectReference = new Reference("Patient/"+patientId);
+        documentReference.setSubject(subjectReference);
+
+            // Set the content (attachment details)
+        DocumentReference.DocumentReferenceContentComponent content = new DocumentReference.DocumentReferenceContentComponent();
+        Attachment attachment = new Attachment();
+
+// Set content type (e.g., "application/xml" for CDA documents)
+        attachment.setContentType("application/xml");
+
+// Base64-decode the CDA document content and set it
+        byte[] decodedContent = Base64.getDecoder().decode(base64CdaContent);
+        attachment.setData(decodedContent);
+
+// Optionally set URL or title if applicable
+ attachment.setUrl(attachmentURL);
+ attachment.setTitle(attachmentTitle);
+
+// Set the attachment in the content
+        content.setAttachment(attachment);
+
+// Add content to the DocumentReference
+        documentReference.addContent(content);
+        // Set the type (LOINC code for Clinical Note)
+        CodeableConcept typeCodeableConcept = new CodeableConcept();
+        Coding typeCoding = new Coding();
+        typeCoding.setSystem("http://loinc.org");
+        typeCoding.setCode("60591-5");
+        typeCoding.setDisplay("Clinical Note");
+        typeCodeableConcept.addCoding(typeCoding);
+        typeCodeableConcept.setText("Clinical Note");
+        documentReference.setType(typeCodeableConcept);
+
+        // Set the author (practitioner reference)
+        Reference authorReference = new Reference("Practitioner/"+practitionerId);
+        documentReference.addAuthor(authorReference);
+
+        return documentReference;
+
+    }
+
 
     // Method to create Discharge Summary Composition
     public static Composition createDischargeSummary( String patientId, String organizationId,String practitionerId, String OrganizationName) {

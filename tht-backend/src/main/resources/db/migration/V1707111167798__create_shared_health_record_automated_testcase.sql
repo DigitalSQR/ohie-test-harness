@@ -91,6 +91,39 @@ VALUES
             0
         );
 
+    INSERT INTO
+        specification (
+            id,
+            name,
+            description,
+            state,
+            rank,
+            is_functional,
+            is_required,
+            component_id,
+            created_by,
+            updated_by,
+            created_at,
+            updated_at,
+            version
+        )
+    VALUES
+        (
+            'specification.shr.shrwf.2',
+            'SHRWF-2',
+            'SHRWF-2 Specification of the Shared health record Registry Component (https://guides.ohie.org/arch-spec/introduction/shared-health-record/query-patient-level-clinical-data-workflow)',
+            'specification.status.active',
+            2,
+            false,
+            true,
+            'component.shared.health.record.registry',
+            'ivasiwala@argusoft.com',
+            'ivasiwala@argusoft.com',
+            Now(),
+            Now(),
+            0
+        );
+
 INSERT INTO
     testcase (
         id,
@@ -202,3 +235,36 @@ VALUES
             Now(),
             0
         );
+
+INSERT INTO
+    testcase (
+        id,
+        name,
+        description,
+        state,
+        rank,
+        is_manual,
+        bean_name,
+        specification_id,
+        created_by,
+        updated_by,
+        created_at,
+        updated_at,
+        version
+    )
+VALUES
+    (
+        'testcase.shr.shrwf.2.1',
+        'Verify fetch patient level clinical data from Shared Health Record',
+        'Testcase to verify fetch patient level clinical data from Shared Health Record for specification SHRWF1 of the shared health record registry',
+        'testcase.status.active',
+        1,
+        false,
+        'SHRWF2TestCase1',
+        'specification.shr.shrwf.2',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    );
