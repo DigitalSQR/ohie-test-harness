@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import "./_table.scss";
 import "./applications.scss";
 import sortIcon from "../../../styles/images/sort-icon.png";
@@ -199,6 +199,7 @@ const Applications = () => {
                           {StateClasses[testRequest.state]?.btnText}
                         </button>
                       ) : (
+                        <Fragment>
                         <span
                           className={`badge ${
                             StateBadgeClasses[testRequest.state]
@@ -206,7 +207,7 @@ const Applications = () => {
                         >
                           {TestRequestStateConstantNames[testRequest.state]}
                         </span>
-                      )}
+
                       <button
                         class="btn btn-blue-sm report"
                         onClick={() => viewReport(testRequest.id)}
@@ -214,6 +215,8 @@ const Applications = () => {
                         {" "}
                         <i class="bi bi-file-text"></i> Report
                       </button>
+                      </Fragment>
+                      )}
                     </td>
                   </tr>
                 ))}
