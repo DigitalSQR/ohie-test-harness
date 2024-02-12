@@ -10,8 +10,11 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
@@ -118,8 +121,8 @@ public class TestcaseValidator {
         // For :Name
         validateTestcaseEntityName(testcaseEntity,
                 errors);
-        // For :ClassName
-        validateTestcaseEntityClassName(testcaseEntity, applicationContext,
+        // For :BeanName
+        validateTestcaseEntityBeanName(testcaseEntity, applicationContext,
                 errors);
         // For :Order
         validateTestcaseEntityOrder(testcaseEntity,
@@ -129,6 +132,9 @@ public class TestcaseValidator {
                 errors);
         // For :IsRequired
         validateTestcaseEntityIsRequired(testcaseEntity,
+                errors);
+        //For : description
+        validateTestcaseEntityDescription(testcaseEntity,
                 errors);
 
         return errors;
@@ -210,6 +216,11 @@ public class TestcaseValidator {
     private static void validateTestcaseEntityId(TestcaseEntity testcaseEntity,
                                                  List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(testcaseEntity.getId(), "id", errors);
+        ValidationUtils.validateLength(testcaseEntity.getId(),
+                "id",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Name
@@ -222,13 +233,28 @@ public class TestcaseValidator {
                 errors);
     }
 
-    //Validation For :ClassName
-    private static void validateTestcaseEntityClassName(TestcaseEntity testcaseEntity,
+    //Validation For :Description
+    private static void validateTestcaseEntityDescription(TestcaseEntity testcaseEntity,
+                                                   List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseEntity.getName(),
+                "description",
+                0,
+                1000,
+                errors);
+    }
+
+    //Validation For :BeanName
+    private static void validateTestcaseEntityBeanName(TestcaseEntity testcaseEntity,
                                                         ApplicationContext applicationContext,
                                                         List<ValidationResultInfo> errors) {
         if (StringUtils.isEmpty(testcaseEntity.getBeanName())) {
             return;
         }
+        ValidationUtils.validateLength(testcaseEntity.getBeanName(),
+                "beanName",
+                0,
+                255,
+                errors);
         try {
             TestCase cRTestCases = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
         } catch (Exception e) {

@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,18 +44,26 @@ public interface ComponentMapper {
     }
 
     default Set<String> setToSpecificationIds(Set<SpecificationEntity> specificationEntities) {
-        return specificationEntities.stream()
-                .map(SpecificationEntity::getId)
-                .collect(Collectors.toSet());
+        if(specificationEntities!=null)
+        {
+            return specificationEntities.stream()
+                    .map(SpecificationEntity::getId)
+                    .collect(Collectors.toSet());
+        }
+        return new HashSet<>();
     }
 
     default Set<SpecificationEntity> setToSpecifications(Set<String> specificationIds) {
-        return specificationIds.stream()
-                .map(id -> {
-                    SpecificationEntity specificationEntity = new SpecificationEntity();
-                    specificationEntity.setId(id);
-                    return specificationEntity;
-                })
-                .collect(Collectors.toSet());
+        if(specificationIds!=null)
+        {
+            return specificationIds.stream()
+                    .map(id -> {
+                        SpecificationEntity specificationEntity = new SpecificationEntity();
+                        specificationEntity.setId(id);
+                        return specificationEntity;
+                    })
+                    .collect(Collectors.toSet());
+        }
+        return new HashSet<>();
     }
 }

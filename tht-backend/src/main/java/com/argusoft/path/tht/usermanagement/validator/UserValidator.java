@@ -9,6 +9,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
@@ -199,7 +201,8 @@ public class UserValidator {
         // For :Role
         validateUserEntityRoles(userEntity,
                 errors);
-
+        // For : CompanyName
+        validateUserEntityCompanyName(userEntity,errors);
         return errors;
     }
 
@@ -275,19 +278,24 @@ public class UserValidator {
     private static void validateUserEntityId(UserEntity userEntity,
                                              List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(userEntity.getId(), "id", errors);
+        ValidationUtils.validateLength(userEntity.getId(),
+                "id",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Name
     private static void validateUserEntityName(UserEntity userEntity,
                                                List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(userEntity.getName(),
-                "userName",
+                "name",
                 Constant.ALLOWED_CHARS_IN_NAMES,
                 "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
                 errors);
         ValidationUtils.validateLength(userEntity.getName(),
-                "userName",
-                3,
+                "name",
+                0,
                 1000,
                 errors);
     }
@@ -300,6 +308,11 @@ public class UserValidator {
                 UserServiceConstants.EMAIL_REGEX,
                 "Given email is invalid.",
                 errors);
+        ValidationUtils.validateLength(userEntity.getEmail(),
+                "email",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Password
@@ -307,7 +320,7 @@ public class UserValidator {
                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(userEntity.getPassword(),
                 "password",
-                6,
+                0,
                 255,
                 errors);
     }
@@ -322,17 +335,14 @@ public class UserValidator {
                 errors);
     }
 
-//    //validate given stateKey
-//    public static void validateStateKey(String stateKey) throws DataValidationErrorException {
-//        List<ValidationResultInfo> errors = new ArrayList<>();
-//        boolean contains = UserServiceConstants.userStates.contains(stateKey);
-//        if (!contains) {
-//            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-//            validationResultInfo.setElement("stateKey");
-//            validationResultInfo.setLevel(ErrorLevel.ERROR);
-//            validationResultInfo.setMessage("provided stateKey is not valid ");
-//            errors.add(validationResultInfo);
-//            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
-//        }
-//    }
+    //Validation For :Company Name
+    private static void validateUserEntityCompanyName(UserEntity userEntity,
+                                                   List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(userEntity.getCompanyName(),
+                "company name",
+                0,
+                255,
+                errors);
+    }
+
 }
