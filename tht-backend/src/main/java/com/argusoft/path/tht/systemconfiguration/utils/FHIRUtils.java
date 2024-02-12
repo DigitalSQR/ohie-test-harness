@@ -187,20 +187,6 @@ public final class FHIRUtils {
         return healthcareService;
     }
 
-    public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone){
-        Practitioner practitioner = new Practitioner();
-// set Practitioner demographics
-        practitioner.addName().addGiven(name);
-        practitioner.setGender(gender.equals("M") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE);
-        practitioner.setBirthDate(parseDate(birthDate));
-// Set contact information
-        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
-        practitioner.addTelecom(phoneContact);
-// set identifier
-        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5.6").setValue(identifierValue);
-        practitioner.addIdentifier(identifier);
-        return practitioner;
-    }
 
     public static PractitionerRole createPractitionerRole(String identifierValue, String displaySpecialty, String contact, Practitioner practitioner, Location location, HealthcareService careService) {
         PractitionerRole practitionerRole = new PractitionerRole();
@@ -339,6 +325,44 @@ public final class FHIRUtils {
         valueSet.setTitle(title);
         valueSet.setStatus(Enumerations.PublicationStatus.valueOf(status));
         return valueSet;
+    }
+    public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone){
+        Practitioner practitioner = new Practitioner();
+
+        // set Practitioner demographics
+        practitioner.addName().addGiven(name);
+        practitioner.setGender(gender.equals("M") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE);
+        practitioner.setBirthDate(parseDate(birthDate));
+
+        // Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        practitioner.addTelecom(phoneContact);
+
+        // set identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5.6").setValue(identifierValue);
+        practitioner.addIdentifier(identifier);
+        return practitioner;
+    }
+
+    public static Encounter createEncounter(String patientId, List<String> practitionerIds, String encounterTypeCode, String encounterDate) {
+        Encounter encounter = new Encounter();
+
+        // Set the patient reference
+        encounter.setSubject(new Reference("Patient/" + patientId));
+
+        for(String practitionerId: practitionerIds){
+            encounter.addParticipant().setIndividual(new Reference("Practitioner/" + practitionerId));
+        }
+        // Set the practitioner reference
+
+
+        // Set the encounter class (e.g., outpatient)
+        encounter.setClass_(new Coding().setSystem("http://terminology.hl7.org/CodeSystem/v3-ActCode").setCode(encounterTypeCode));
+
+        // Set the encounter period
+        encounter.setPeriod(new Period().setStart(parseDate(encounterDate)));
+
+        return encounter;
     }
 
     public static Encounter createEncounter(String patientId, String practitionerId, String encounterTypeCode, String encounterDate) {
