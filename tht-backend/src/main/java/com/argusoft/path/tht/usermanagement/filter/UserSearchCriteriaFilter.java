@@ -87,7 +87,7 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         }
 
         if (StringUtils.hasLength(getEmail())) {
-            predicates.add(criteriaBuilder.equal(getUserEntityRoot().get("email"), getEmail()));
+            predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(getUserEntityRoot().get("email")), getEmail().toLowerCase()));
         }
 
         if (StringUtils.hasLength(getRole())) {

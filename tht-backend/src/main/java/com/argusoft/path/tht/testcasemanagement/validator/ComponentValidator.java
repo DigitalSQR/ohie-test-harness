@@ -3,6 +3,7 @@ package com.argusoft.path.tht.testcasemanagement.validator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
+import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -10,11 +11,14 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -118,8 +122,8 @@ public class ComponentValidator {
         // For :Name
         validateComponentEntityName(componentEntity,
                 errors);
-        // For :Order
-        validateComponentEntityOrder(componentEntity,
+        // For :Desc
+        validateComponentEntityDesc(componentEntity,
                 errors);
         // For :Order
         validateComponentEntityOrder(componentEntity,
@@ -228,6 +232,7 @@ public class ComponentValidator {
                 && StringUtils.hasLength(componentEntity.getName())) {
 
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+
             componentCriteriaSearchFilter.setName(componentEntity.getName());
             componentCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
             List<ComponentEntity> componentEntities = componentService.searchComponents(componentCriteriaSearchFilter, contextInfo);
@@ -251,16 +256,16 @@ public class ComponentValidator {
     private static void validateComponentEntityId(ComponentEntity componentEntity,
                                                   List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(componentEntity.getId(), "id", errors);
+        ValidationUtils.validateLength(componentEntity.getId(),
+                "id",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Name
     private static void validateComponentEntityName(ComponentEntity componentEntity,
                                                     List<ValidationResultInfo> errors) {
-        ValidationUtils.validatePattern(componentEntity.getName(),
-                "name",
-                Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
-                errors);
         ValidationUtils.validateLength(componentEntity.getName(),
                 "name",
                 3,
@@ -278,11 +283,15 @@ public class ComponentValidator {
                 errors);
     }
 
-    //Validation For :Order
-    private static void validateComponentEntity(ComponentEntity componentEntity,
-                                                List<ValidationResultInfo> errors) {
+    //Validation for desc
+    private static void validateComponentEntityDesc(ComponentEntity componentEntity,
+                                                    List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(componentEntity.getDescription(),
+                "description",
+                0,
+                1000,
+                errors);
     }
-
     //trim all Component field
     private static void trimComponent(ComponentEntity ComponentEntity) {
         if (ComponentEntity.getId() != null) {
@@ -296,3 +305,4 @@ public class ComponentValidator {
         }
     }
 }
+

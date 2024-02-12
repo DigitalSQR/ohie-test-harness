@@ -19,12 +19,6 @@ import java.util.Set;
  */
 public class TestRequestInfo extends IdStateNameMetaInfo implements Serializable {
 
-    @ApiModelProperty(notes = "The evaluationVersionId of the testRequest",
-            allowEmptyValue = false,
-            example = "1",
-            dataType = "String",
-            required = true)
-    private String evaluationVersionId;
 
     @ApiModelProperty(notes = "The assesseeId of the testRequest",
             allowEmptyValue = false,
@@ -63,14 +57,6 @@ public class TestRequestInfo extends IdStateNameMetaInfo implements Serializable
 
     public void setTestRequestUrls(Set<TestRequestUrlInfo> testRequestUrls) {
         this.testRequestUrls = testRequestUrls;
-    }
-
-    public String getEvaluationVersionId() {
-        return evaluationVersionId;
-    }
-
-    public void setEvaluationVersionId(String evaluationVersionId) {
-        this.evaluationVersionId = evaluationVersionId;
     }
 
     public String getAssesseeId() {

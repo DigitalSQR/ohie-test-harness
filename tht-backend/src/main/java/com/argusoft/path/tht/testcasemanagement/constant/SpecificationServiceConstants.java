@@ -20,6 +20,8 @@ public class SpecificationServiceConstants {
     public static final String SPECIFICATION_STATUS_DRAFT = "specification.status.draft";
     public static final String SPECIFICATION_STATUS_ACTIVE = "specification.status.active";
     public static final String SPECIFICATION_STATUS_INACTIVE = "specification.status.inactive";
+    public static final String ALLOWED_CHAR_SPECIFICATION = "[[A-Z][a-z][0-9][\\s][.]]*";
+
     public static final Multimap<String, String> SPECIFICATION_STATUS_MAP = ArrayListMultimap.create();
     public static List<String> SPECIFICATION_STATUS = new ArrayList<>();
 

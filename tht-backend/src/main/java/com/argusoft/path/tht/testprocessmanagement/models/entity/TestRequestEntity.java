@@ -23,9 +23,6 @@ import java.util.UUID;
 @Table(name = "testRequest")
 public class TestRequestEntity extends IdStateNameMetaEntity {
 
-    @Column(name = "evaluation_version_id")
-    private String evaluationVersionId;
-
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "assessee_id")
     private UserEntity assessee;
@@ -40,13 +37,6 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Set<TestRequestUrlEntity> testRequestUrls;
 
-    public String getEvaluationVersionId() {
-        return evaluationVersionId;
-    }
-
-    public void setEvaluationVersionId(String evaluationVersionId) {
-        this.evaluationVersionId = evaluationVersionId;
-    }
 
     public UserEntity getAssessee() {
         return assessee;
