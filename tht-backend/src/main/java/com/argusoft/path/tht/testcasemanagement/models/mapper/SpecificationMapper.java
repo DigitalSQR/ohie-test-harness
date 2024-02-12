@@ -45,19 +45,21 @@ public interface SpecificationMapper {
     }
 
     default Set<String> setToTestcaseIds(Set<TestcaseEntity> testcaseEntities) {
-        return testcaseEntities.stream()
-                .map(TestcaseEntity::getId)
-                .collect(Collectors.toSet());
+        if(testcaseEntities==null){ return null; }
+            return testcaseEntities.stream()
+                    .map(TestcaseEntity::getId)
+                    .collect(Collectors.toSet());
     }
 
     default Set<TestcaseEntity> setToTestcases(Set<String> testcaseIds) {
-        return testcaseIds.stream()
-                .map(id -> {
-                    TestcaseEntity testcaseEntity = new TestcaseEntity();
-                    testcaseEntity.setId(id);
-                    return testcaseEntity;
-                })
-                .collect(Collectors.toSet());
+        if(testcaseIds==null){ return null; }
+            return testcaseIds.stream()
+                    .map(id -> {
+                        TestcaseEntity testcaseEntity = new TestcaseEntity();
+                        testcaseEntity.setId(id);
+                        return testcaseEntity;
+                    })
+                    .collect(Collectors.toSet());
     }
 
     default String setToComponentId(ComponentEntity componentEntity) {
