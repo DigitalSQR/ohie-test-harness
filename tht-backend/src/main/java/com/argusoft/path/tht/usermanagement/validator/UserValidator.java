@@ -21,10 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class UserValidator {
 
@@ -345,4 +342,19 @@ public class UserValidator {
                 errors);
     }
 
+    //validate one admin should active all time
+    public static void oneAdminShouldActiveValidation(UserEntity userEntity, UserService userService, List<ValidationResultInfo> errors, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
+        userSearchCriteriaFilter.setRole(UserServiceConstants.ROLE_ID_ADMIN);
+        userSearchCriteriaFilter.setState(Collections.singletonList(UserServiceConstants.USER_STATUS_ACTIVE));
+        List<UserEntity> userList = userService.searchUsers(userSearchCriteriaFilter ,contextInfo);
+
+        if (userList.size() == 1) {
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("One of the admin must be active");
+            validationResultInfo.setElement("state");
+            errors.add(validationResultInfo);
+        }
+    }
 }
