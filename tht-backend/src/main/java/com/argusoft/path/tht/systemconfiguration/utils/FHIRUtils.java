@@ -5,21 +5,14 @@
  */
 package com.argusoft.path.tht.systemconfiguration.utils;
 
-import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.impl.GenericClient;
 import org.hl7.fhir.r4.model.*;
-import org.hl7.fhir.r4.model.codesystems.DocumentRelationshipType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * This FHIRUtil provides methods for fhir.
@@ -160,31 +153,6 @@ public final class FHIRUtils {
         organization.addTelecom(phoneContact).addTelecom(emailContact);
 
         return organization;
-    }
-
-    public static HealthcareService createHealthcareService(String identifierValue, String name, String comment,
-                                                            String phone, String email, List<String> specialties, Location location) {
-        HealthcareService healthcareService = new HealthcareService();
-        // Set the identifier
-        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
-        healthcareService.addIdentifier(identifier);
-        //set demographics
-        healthcareService.setName(name);
-        healthcareService.setComment(comment);
-        //set contact details
-        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
-        ContactPoint emailContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL).setValue(email).setUse(ContactPoint.ContactPointUse.HOME);
-        healthcareService.addTelecom(phoneContact).addTelecom(emailContact);
-        // Set specialties
-        for (String specialty : specialties) {
-            CodeableConcept codeableConcept = new CodeableConcept();
-            Coding coding = codeableConcept.addCoding();
-            coding.setCode(specialty);
-            healthcareService.addSpecialty(codeableConcept);
-        }
-        //set location
-        healthcareService.getLocation().add(new Reference(location));
-        return healthcareService;
     }
 
     public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone){
@@ -922,6 +890,33 @@ public final class FHIRUtils {
 
         return documentReference;
 
+    }
+
+
+
+    public static HealthcareService createHealthcareService(String identifierValue, String name, String comment,
+                                                            String phone, String email, List<String> specialties, Location location) {
+        HealthcareService healthcareService = new HealthcareService();
+        // Set the identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
+        healthcareService.addIdentifier(identifier);
+        //set demographics
+        healthcareService.setName(name);
+        healthcareService.setComment(comment);
+        //set contact details
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        ContactPoint emailContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL).setValue(email).setUse(ContactPoint.ContactPointUse.HOME);
+        healthcareService.addTelecom(phoneContact).addTelecom(emailContact);
+        // Set specialties
+        for (String specialty : specialties) {
+            CodeableConcept codeableConcept = new CodeableConcept();
+            Coding coding = codeableConcept.addCoding();
+            coding.setCode(specialty);
+            healthcareService.addSpecialty(codeableConcept);
+        }
+        //set location
+        healthcareService.getLocation().add(new Reference(location));
+        return healthcareService;
     }
 
 
