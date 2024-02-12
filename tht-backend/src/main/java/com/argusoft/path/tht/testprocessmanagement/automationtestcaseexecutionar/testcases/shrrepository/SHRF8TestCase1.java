@@ -7,6 +7,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.Patient;
@@ -14,13 +15,19 @@ import org.hl7.fhir.r4.model.Resource;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class SHRF8TestCase1 implements TestCase {
 
     @Override
-    public ValidationResultInfo test(IGenericClient client, ContextInfo contextInfo) throws OperationFailedException {
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
         try {
+
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
+            if (client == null) {
+                return new ValidationResultInfo("testTSWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
 
             // Create a new patient resource with all demographic information
             Patient newPatient = FHIRUtils.createPatient("John", "Doe", "M", "1990-01-01", "00002", "555-555-5555", "john.doe@example.com");
