@@ -35,7 +35,7 @@ export const TestCaseOptionsAPI = {
         method: "PUT",
         data,
       });
-      console.log(response.data)
+      console.log(response.data);
       return response.data;
     } catch (error) {
       throw error;
