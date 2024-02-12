@@ -5,8 +5,11 @@
  */
 package com.argusoft.path.tht.systemconfiguration.utils;
 
+import ca.uhn.fhir.model.primitive.DateTimeDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.impl.GenericClient;
 import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.codesystems.DocumentRelationshipType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -136,55 +140,6 @@ public final class FHIRUtils {
         }
     }
 
-    public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone){
-        Practitioner practitioner = new Practitioner();
-
-        // set Practitioner demographics
-        practitioner.addName().addGiven(name);
-        practitioner.setGender(gender.equals("M") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE);
-        practitioner.setBirthDate(parseDate(birthDate));
-
-        // Set contact information
-        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
-        practitioner.addTelecom(phoneContact);
-
-        // set identifier
-        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5.6").setValue(identifierValue);
-        practitioner.addIdentifier(identifier);
-
-        return practitioner;
-    }
-
-    public static PractitionerRole createPractitionerRole(String identifierValue, String displaySpecialty, String contact, Practitioner practitioner, Location location, HealthcareService careService) {
-        PractitionerRole practitionerRole = new PractitionerRole();
-
-        // set Practitioner demographics
-        practitionerRole.setPractitioner(new Reference(practitioner));
-        practitionerRole.getLocation().add(new Reference(location));
-//        practitionerRole.getHealthcareService().add(new Reference(careService));
-        practitionerRole.addHealthcareService(new Reference(careService));
-        practitionerRole.getSpecialtyFirstRep().addCoding()
-                .setSystem("http://hl7.org/fhir/sid/us-npi")
-                .setCode("207QS0010X")
-                .setDisplay(displaySpecialty);
-
-
-        // Set contact information
-        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(contact).setUse(ContactPoint.ContactPointUse.MOBILE);
-        practitionerRole.addTelecom(phoneContact);
-
-        // set identifier
-        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
-        practitionerRole.addIdentifier(identifier);
-
-        return practitionerRole;
-    }
-
-
-
-
-
-
     public static Organization createOrganization(String name,
                                                   String identifierValue, String phone, String email, String city, String state, String country) {
         Organization organization = new Organization();
@@ -232,6 +187,40 @@ public final class FHIRUtils {
         return healthcareService;
     }
 
+    public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone){
+        Practitioner practitioner = new Practitioner();
+// set Practitioner demographics
+        practitioner.addName().addGiven(name);
+        practitioner.setGender(gender.equals("M") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE);
+        practitioner.setBirthDate(parseDate(birthDate));
+// Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(phone).setUse(ContactPoint.ContactPointUse.MOBILE);
+        practitioner.addTelecom(phoneContact);
+// set identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5.6").setValue(identifierValue);
+        practitioner.addIdentifier(identifier);
+        return practitioner;
+    }
+
+    public static PractitionerRole createPractitionerRole(String identifierValue, String displaySpecialty, String contact, Practitioner practitioner, Location location, HealthcareService careService) {
+        PractitionerRole practitionerRole = new PractitionerRole();
+// set Practitioner demographics
+        practitionerRole.setPractitioner(new Reference(practitioner));
+        practitionerRole.getLocation().add(new Reference(location));
+// practitionerRole.getHealthcareService().add(new Reference(careService));
+        practitionerRole.addHealthcareService(new Reference(careService));
+        practitionerRole.getSpecialtyFirstRep().addCoding()
+                .setSystem("http://hl7.org/fhir/sid/us-npi")
+                .setCode("207QS0010X")
+                .setDisplay(displaySpecialty);
+// Set contact information
+        ContactPoint phoneContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.PHONE).setValue(contact).setUse(ContactPoint.ContactPointUse.MOBILE);
+        practitionerRole.addTelecom(phoneContact);
+// set identifier
+        Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
+        practitionerRole.addIdentifier(identifier);
+        return practitionerRole;
+    }
     public static Location createLocation(String identifierValue, String name, String description, String phone,
                                           String email, String city, String postalCode, String country, Organization organization) {
         Location location = new Location();
@@ -350,6 +339,72 @@ public final class FHIRUtils {
         valueSet.setTitle(title);
         valueSet.setStatus(Enumerations.PublicationStatus.valueOf(status));
         return valueSet;
+    }
+
+    public static Encounter createEncounter(String patientId, String practitionerId, String encounterTypeCode, String encounterDate) {
+        Encounter encounter = new Encounter();
+
+        // Set the patient reference
+        encounter.setSubject(new Reference("Patient/" + patientId));
+
+        // Set the practitioner reference
+        encounter.addParticipant().setIndividual(new Reference("Practitioner/" + practitionerId));
+
+        // Set the encounter class (e.g., outpatient)
+        encounter.setClass_(new Coding().setSystem("http://terminology.hl7.org/CodeSystem/v3-ActCode").setCode(encounterTypeCode));
+
+        // Set the encounter period
+        encounter.setPeriod(new Period().setStart(parseDate(encounterDate)));
+
+        return encounter;
+    }
+
+    public static DocumentReference createDocumentReference(String patientId,String practitionerId,String attachmentURL,String attachmentTitle)
+    {
+        String base64CdaContent = "PGNsaW5pY2lkYXRvcz4KICAgIDx0aXRsZT5TYW1wbGUgQ0RBIERvY3VtZW50PC90aXRsZT4KICAgIDxwYXRpZW50PjxuYW1lPkpvaG4gRG9lPC9uYW1lPjxkYXRlYmFzZT4xOTgwMDEwMTwvZGF0ZWJhc2U+CiAgICA8L3BhdGllbnQ+CjwvQ2xpY2lubmFtZURvY3VtZW50PjwvQ2xpY2lubmFtZWRhdG9ucz4=";
+        DocumentReference documentReference = new DocumentReference();
+        documentReference.setStatus(Enumerations.DocumentReferenceStatus.CURRENT);
+        documentReference.setId("document123");
+        // Set the subject (patient)
+        Reference subjectReference = new Reference("Patient/"+patientId);
+        documentReference.setSubject(subjectReference);
+
+        // Set the content (attachment details)
+        DocumentReference.DocumentReferenceContentComponent content = new DocumentReference.DocumentReferenceContentComponent();
+        Attachment attachment = new Attachment();
+
+// Set content type (e.g., "application/xml" for CDA documents)
+        attachment.setContentType("application/xml");
+
+// Base64-decode the CDA document content and set it
+        byte[] decodedContent = Base64.getDecoder().decode(base64CdaContent);
+        attachment.setData(decodedContent);
+
+// Optionally set URL or title if applicable
+        attachment.setUrl(attachmentURL);
+        attachment.setTitle(attachmentTitle);
+
+// Set the attachment in the content
+        content.setAttachment(attachment);
+
+// Add content to the DocumentReference
+        documentReference.addContent(content);
+        // Set the type (LOINC code for Clinical Note)
+        CodeableConcept typeCodeableConcept = new CodeableConcept();
+        Coding typeCoding = new Coding();
+        typeCoding.setSystem("http://loinc.org");
+        typeCoding.setCode("60591-5");
+        typeCoding.setDisplay("Clinical Note");
+        typeCodeableConcept.addCoding(typeCoding);
+        typeCodeableConcept.setText("Clinical Note");
+        documentReference.setType(typeCodeableConcept);
+
+        // Set the author (practitioner reference)
+        Reference authorReference = new Reference("Practitioner/"+practitionerId);
+        documentReference.addAuthor(authorReference);
+
+        return documentReference;
+
     }
 
 
@@ -536,5 +591,308 @@ public final class FHIRUtils {
         valueSet.setCompose(compose);
     }
 
+
+    public static DiagnosticReport createDiagnosticReport(String patientId, String practitionerId, String observationId)
+    {
+        Reference patientReference = new Reference("Patient/" + patientId);
+
+        // Create Practitioner reference
+        Reference practitionerReference = new Reference("Practitioner/" + practitionerId);
+
+        Reference observationReference = new Reference("Observation/" + observationId);
+        // Create DiagnosticReport
+        DiagnosticReport diagnosticReport = new DiagnosticReport();
+        diagnosticReport.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
+        diagnosticReport.setSubject(patientReference);
+        diagnosticReport.setPerformer(List.of(practitionerReference));
+        diagnosticReport.addResult(observationReference);
+
+
+        return diagnosticReport;
+    }
+
+    public static Observation createObservation(String patientId, String practitionerId, String code, double value) {
+        // Create Patient reference
+        Reference patientReference = new Reference("Patient/" + patientId);
+        Reference practitionerReference = new Reference("Practitioner/"+practitionerId);
+
+        // Create Observation
+        Observation observation = new Observation();
+        observation.setStatus(Observation.ObservationStatus.FINAL);
+        observation.addPerformer(practitionerReference);
+
+        // Set code and value for the observation
+        observation.getCode().addCoding()
+                .setSystem("http://loinc.org")
+                .setCode(code)
+                .setDisplay("Observation Display Name");
+
+        observation.setValue(new Quantity().setValue(value).setUnit("Unit"));
+
+        // Set additional details
+        observation.setEffective(new DateTimeType());
+        observation.setIssuedElement(new InstantType());
+
+        // Set reference range (normal range for the observation)
+        observation.getReferenceRangeFirstRep().setLow(new SimpleQuantity().setValue(10.0).setUnit("Unit"));
+        observation.getReferenceRangeFirstRep().setHigh(new SimpleQuantity().setValue(20.0).setUnit("Unit"));
+
+        // Set the method used to produce the observation
+        observation.getMethod().addCoding().setSystem("http://snomed.info/sct").setCode("123456");
+
+        // Set interpretation of the observation result
+        observation.getMethod().addCoding().setSystem("http://snomed.info/sct").setCode("789012");
+        CodeableConcept interpretation = new CodeableConcept();
+        interpretation.addCoding().setSystem("http://snomed.info/sct").setCode("789012");
+        observation.setInterpretation(List.of(interpretation));
+
+
+        return observation;
+    }
+
+    public static Composition createComposition(String title, String patientId, String organizationId, String OrganizationName)
+    {
+
+        Composition composition = new Composition();
+
+        // Set the title of the composition
+        composition.setTitle(title);
+
+        // Set the status of the composition (e.g., FINAL)
+        composition.setStatus(Composition.CompositionStatus.FINAL);
+
+        // Set the date of the composition (e.g., current date/time)
+        composition.setDate(new Date());
+
+        // Set the subject of the composition (reference to the patient)
+        composition.setSubject(new Reference("Patient/" + patientId));
+
+
+        Reference custodian = new Reference("Organization/" + organizationId);
+        custodian.setDisplay(OrganizationName);
+        composition.setCustodian(custodian);
+
+
+        // Section - History of present illness
+        Composition.SectionComponent section1 = new Composition.SectionComponent();
+        section1.setTitle("History of present illness");
+        CodeableConcept code1 = new CodeableConcept();
+        code1.addCoding(new Coding("http://loinc.org", "11348-0", "History of past illness Narrative"));
+        section1.setCode(code1);
+        composition.addSection(section1);
+
+        // Section - History of family member diseases
+        Composition.SectionComponent section2 = new Composition.SectionComponent();
+        section2.setTitle("History of family member diseases");
+        CodeableConcept code2 = new CodeableConcept();
+        code2.addCoding(new Coding("http://loinc.org", "10157-6", "History of family member diseases Narrative"));
+        section2.setCode(code2);
+        Narrative text2 = new Narrative();
+        text2.setStatus(Narrative.NarrativeStatus.GENERATED);
+        text2.setDivAsString("<div xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t\t\t<p>History of family member diseases - not available</p>\n\t\t\t</div>");
+        section2.setText(text2);
+        CodeableConcept emptyReason = new CodeableConcept();
+        emptyReason.addCoding(new Coding("http://terminology.hl7.org/CodeSystem/list-empty-reason", "withheld", "Information Withheld"));
+        section2.setEmptyReason(emptyReason);
+        composition.addSection(section2);
+
+        return composition;
+
+    }
+
+
+    public static Composition  createAdmissionNote( String patientId, String organizationId, String practitionerId, String OrganizationName) {
+        Composition composition = new Composition();
+
+        // Set type
+        CodeableConcept type = new CodeableConcept().addCoding(new Coding().setSystem("http://loinc.org").setCode("11488-4").setDisplay("Admission note"));
+        composition.setType(type);
+
+        // Set status
+        composition.setStatus(Composition.CompositionStatus.FINAL);
+
+        // Set date
+        composition.setDate(new Date());
+
+        // Set title
+        composition.setTitle("Admission Note");
+
+        // Set subject (replace with actual patient reference)
+        composition.setSubject(new Reference("Patient/"+patientId));
+
+        // Set author (replace with actual author reference)
+        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+
+        Reference custodian = new Reference("Organization/" + organizationId);
+        custodian.setDisplay(OrganizationName);
+        composition.setCustodian(custodian);
+
+        // Add sections (example: presenting complaints, medical history, initial assessments, treatment plans)
+        Composition.SectionComponent section = new Composition.SectionComponent();
+        section.setTitle("Presenting Complaints");
+        section.setCode(new CodeableConcept().setText("Presenting Complaints"));
+        Narrative text = new  Narrative();
+        text.setStatus(Narrative.NarrativeStatus.GENERATED);
+        text.setDivAsString("Presented to the emergency department with severe abdominal pain");
+        section.setText(text);
+        composition.addSection(section);
+        return composition;
+    }
+
+    // Method to create Operative Note Composition
+    public static Composition createOperativeNote( String patientId, String organizationId,String practitionerId, String OrganizationName) {
+        Composition composition = new Composition();
+
+        // Set type
+        CodeableConcept type = new CodeableConcept().addCoding(new Coding().setSystem("http://loinc.org").setCode("28573-5").setDisplay("Operative note"));
+        composition.setType(type);
+
+        // Set status
+        composition.setStatus(Composition.CompositionStatus.FINAL);
+
+        // Set date
+        composition.setDate(new Date());
+
+        // Set title
+        composition.setTitle("Operative Note");
+
+        // Set subject (replace with actual patient reference)
+        composition.setSubject(new Reference("Patient/"+patientId));
+
+        // Set author (replace with actual author reference)
+        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+
+        Reference custodian = new Reference("Organization/" + organizationId);
+        custodian.setDisplay(OrganizationName);
+        composition.setCustodian(custodian);
+
+        Composition.SectionComponent section = new Composition.SectionComponent();
+        section.setTitle("Preoperative Assessments");
+        section.setCode(new CodeableConcept().setText("Preoperative Assessments"));
+        Narrative text = new  Narrative();
+        text.setStatus(Narrative.NarrativeStatus.GENERATED);
+        text.setDivAsString("The patient underwent preoperative evaluation");
+        section.setText(text);
+        composition.addSection(section);
+        return composition;
+    }
+
+    // Method to create Progress Notes Composition
+    public static Composition createProgressNotes( String patientId, String organizationId, String practitionerId, String OrganizationName) {
+        Composition composition = new Composition();
+
+        // Set type
+        CodeableConcept type = new CodeableConcept().addCoding(new Coding().setSystem("http://loinc.org").setCode("11506-3").setDisplay("Progress note"));
+        composition.setType(type);
+
+        // Set status
+        composition.setStatus(Composition.CompositionStatus.FINAL);
+
+        // Set date
+        composition.setDate(new Date());
+
+        // Set title
+        composition.setTitle("Progress Note");
+
+        // Set subject (replace with actual patient reference)
+        composition.setSubject(new Reference("Patient/"+patientId));
+
+        // Set author (replace with actual author reference)
+        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+
+        Reference custodian = new Reference("Organization/" + organizationId);
+        custodian.setDisplay(OrganizationName);
+        composition.setCustodian(custodian);
+
+        Composition.SectionComponent section = new Composition.SectionComponent();
+        section.setTitle("Daily Progress Notes");
+        section.setCode(new CodeableConcept().setText("Daily Progress Notes"));
+        Narrative text = new  Narrative();
+        text.setStatus(Narrative.NarrativeStatus.GENERATED);
+        text.setDivAsString("On day 2 of hospitalization, the patient's condition remained stable");
+        section.setText(text);
+        composition.addSection(section);
+        return composition;
+    }
+
+    // Method to create Consultation Reports Composition
+    public static Composition createConsultationReports( String patientId, String organizationId, String practitionerId, String OrganizationName) {
+        Composition composition = new Composition();
+
+        // Set type
+        CodeableConcept type = new CodeableConcept().addCoding(new Coding().setSystem("http://loinc.org").setCode("57133-1").setDisplay("Consultation note"));
+        composition.setType(type);
+
+        // Set status
+        composition.setStatus(Composition.CompositionStatus.FINAL);
+
+        // Set date
+        composition.setDate(new Date());
+
+        // Set title
+        composition.setTitle("Consultation Report");
+
+        // Set subject (replace with actual patient reference)
+        composition.setSubject(new Reference("Patient/"+patientId));
+
+        // Set author (replace with actual author reference)
+        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+
+        Reference custodian = new Reference("Organization/" + organizationId);
+        custodian.setDisplay(OrganizationName);
+        composition.setCustodian(custodian);
+
+
+        Composition.SectionComponent section = new Composition.SectionComponent();
+        section.setTitle("Findings");
+        section.setCode(new CodeableConcept().setText("Findings"));
+        Narrative text = new  Narrative();
+        text.setStatus(Narrative.NarrativeStatus.GENERATED);
+        text.setDivAsString("The patient was referred for cardiology consultation");
+        section.setText(text);
+        composition.addSection(section);
+        return composition;
+    }
+
+    // Method to create Discharge Summary Composition
+    public static Composition createDischargeSummary( String patientId, String organizationId,String practitionerId, String OrganizationName) {
+        Composition composition = new Composition();
+
+        // Set type
+        CodeableConcept type = new CodeableConcept().addCoding(new Coding().setSystem("http://loinc.org").setCode("18842-5").setDisplay("Discharge summary"));
+        composition.setType(type);
+
+        // Set status
+        composition.setStatus(Composition.CompositionStatus.FINAL);
+
+        // Set date
+        composition.setDate(new Date());
+
+        // Set title
+        composition.setTitle("Discharge Summary");
+
+        // Set subject (replace with actual patient reference)
+        composition.setSubject(new Reference("Patient/"+patientId));
+
+        // Set author (replace with actual author reference)
+        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+
+        Reference custodian = new Reference("Organization/" + organizationId);
+        custodian.setDisplay(OrganizationName);
+        composition.setCustodian(custodian);
+
+        Composition.SectionComponent section = new Composition.SectionComponent();
+        section.setTitle("Reason for Admission");
+        section.setCode(new CodeableConcept().setText("Reason for Admission"));
+        Narrative text = new  Narrative();
+        text.setStatus(Narrative.NarrativeStatus.GENERATED);
+        text.setDivAsString("The patient was admitted for exacerbation of congestive heart failure");
+        section.setText(text);
+        composition.addSection(section);
+
+        return composition;
+    }
 }
+
+
 
