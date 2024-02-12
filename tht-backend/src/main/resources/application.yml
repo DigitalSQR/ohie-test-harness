@@ -3,6 +3,10 @@
 # ===============================
 
 spring:
+  cache:
+    caches:
+      authenticationCache:
+        time-to-live: 300000
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

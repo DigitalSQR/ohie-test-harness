@@ -21,6 +21,10 @@ import com.argusoft.path.tht.testcasemanagement.validator.ComponentValidator;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.cache.annotation.CacheEvict;
+// import org.springframework.cache.annotation.CachePut;
+// import org.springframework.cache.annotation.Cacheable;
+// import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -53,6 +57,11 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     @Timed(name = "createComponent")
+    // @Caching(evict = {
+    //         @CacheEvict(value = "searchComponents", allEntries = true),
+    //         @CacheEvict(value = "searchComponentsList", allEntries = true),
+    //         @CacheEvict(value = "getComponents", allEntries = true)
+    // })
     public ComponentEntity createComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
             throws OperationFailedException,
@@ -80,6 +89,15 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     @Timed(name = "updateComponent")
+    // @Caching(
+    //         evict = {
+    //                 @CacheEvict(value = "searchComponents", allEntries = true),
+    //                 @CacheEvict(value = "searchComponentsList", allEntries = true),
+    //                 @CacheEvict(value = "getComponents", allEntries = true)
+    //         }, put = {
+    //         @CachePut(value = "getComponentById",
+    //                 key = "#componentEntity.getId()")
+    // })
     public ComponentEntity updateComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
             throws OperationFailedException,
@@ -103,6 +121,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     @Timed(name = "searchComponents")
+    // @Cacheable(value = "searchComponents", key = "{ #componentCriteriaSearchFilter, #pageable }")
     public Page<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
             Pageable pageable,
@@ -113,7 +132,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
-    @Timed(name = "searchComponents")
+    @Timed(name = "searchComponentsList")
+    // @Cacheable(value = "searchComponentsList", key = "#componentCriteriaSearchFilter")
     public List<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
             ContextInfo contextInfo)
@@ -129,6 +149,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     @Timed(name = "getComponentById")
+    // @Cacheable(value = "getComponentById", key = "#componentId")
     public ComponentEntity getComponentById(String componentId,
                                             ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -141,23 +162,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
         return componentEntities.stream()
                 .findFirst()
                 .orElseThrow(() -> new DoesNotExistException("component does not found with id : " + componentId));
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getComponents")
-    public Page<ComponentEntity> getComponents(Pageable pageable,
-                                               ContextInfo contextInfo)
-            throws InvalidParameterException {
-        if (pageable == null) {
-            throw new InvalidParameterException("pageble is missing");
-        }
-        Page<ComponentEntity> components = componentRepository.findComponents(pageable);
-        return components;
     }
 
     /**
@@ -178,6 +182,16 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
+    // @Timed(name = "changeState")
+    // @Caching(
+    //         evict = {
+    //                 @CacheEvict(value = "searchComponents", allEntries = true),
+    //                 @CacheEvict(value = "searchComponentsList", allEntries = true),
+    //                 @CacheEvict(value = "getComponents", allEntries = true)
+    //         }, put = {
+    //         @CachePut(value = "getComponentById",
+    //                 key = "#componentID")
+    // })
     public ComponentEntity changeState(String componentID, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 

@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
@@ -56,7 +57,7 @@ public class ContextSetterFilter extends OncePerRequestFilter {
             token = (requestTokenHeader.substring(7));
             try {
                 OAuth2Authentication authority
-                        = defaultTokenServices.loadAuthentication(token);
+                        = loadAuthentication(token);
                 WebAuthenticationDetails webAuthenticationDetails = new WebAuthenticationDetails(request);
                 authority.setDetails(webAuthenticationDetails);
                 contextInfo = ((ContextInfo) authority.getPrincipal());
@@ -74,5 +75,10 @@ public class ContextSetterFilter extends OncePerRequestFilter {
         contextInfo.setCurrentDate(Calendar.getInstance().getTime());
         request.setAttribute("contextInfo", contextInfo);
         chain.doFilter(request, response);
+    }
+    
+    @Cacheable(value = "authenticationCache", key = "#token")
+    private OAuth2Authentication loadAuthentication(String token) {
+        return defaultTokenServices.loadAuthentication(token);
     }
 }
