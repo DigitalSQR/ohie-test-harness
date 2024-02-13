@@ -61,7 +61,6 @@ export default function AutomatedTesting() {
         ...specification,
         testCases: specification.testCases.map((testcase) => ({
           ...testcase,
-          // Toggle the class only for the clicked row
           class:
             testcase.id === testcaseId
               ? testcase.class === "show"
@@ -91,6 +90,19 @@ export default function AutomatedTesting() {
     setData(newData);
   };
 
+  const toggleComponentRow = (componentId) => {
+    const newData = data.map((component) => ({
+      ...component,
+      class:
+        component.id === componentId
+          ? component.class === "show"
+            ? "hide"
+            : "show"
+          : component.class,
+    }));
+    setData(newData);
+  };
+
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
@@ -111,10 +123,10 @@ export default function AutomatedTesting() {
     <div className="Workflow-testing-wrapper">
       <div className="container">
         <div className="col-12">
-          <div class="bcca-breadcrumb">
-            <div class="bcca-breadcrumb-item">Automated Testing</div>
+          <div className="bcca-breadcrumb">
+            <div className="bcca-breadcrumb-item">Automated Testing</div>
             <div
-              class="bcca-breadcrumb-item"
+              className="bcca-breadcrumb-item"
               onClick={() => {
                 navigate(`/dashboard/choose-test/${testRequestId}`);
               }}
@@ -122,7 +134,7 @@ export default function AutomatedTesting() {
               {testcaseName}
             </div>
             <div
-              class="bcca-breadcrumb-item"
+              className="bcca-breadcrumb-item"
               onClick={() => {
                 navigate(`/dashboard/applications`);
               }}
@@ -146,28 +158,75 @@ export default function AutomatedTesting() {
                 {!!data &&
                   data.map((component) => [
                     // Component row
-                    <tr
-                      key={`component-${component.id}`}
-                      className="component-row"
-                    >
-                      <td>{component?.name}</td>
-                      <td></td>
-                      <td></td>
-                      <td>
-                        <AutomatedResultStateRefresher
-                          key={`component-result-${component?.id}`}
-                          testResultId={component.id}
-                        />
-                      </td>
-                      <td>
-                        <AutomatedResultStateRefresher
-                          key={`component-result-${component?.id}`}
-                          testResultId={component.id}
-                          isDuration={true}
-                        />
-                      </td>
-                      <td></td>
-                    </tr>,
+                    <>
+                      <tr
+                        key={`component-${component.id}`}
+                        className="component-row"
+                      >
+                        <td>{component?.name}</td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                          <AutomatedResultStateRefresher
+                            key={`component-result-${component?.id}`}
+                            testResultId={component.id}
+                          />
+                        </td>
+                        <td>
+                          <AutomatedResultStateRefresher
+                            key={`component-result-${component?.id}`}
+                            testResultId={component.id}
+                            isDuration={true}
+                          />
+                        </td>
+                        <td>
+                          {component?.state ==
+                            "testcase.result.status.finished" &&
+                          component?.success == false ? (
+                            <span
+                              onClick={() => toggleComponentRow(component?.id)}
+                              type="button"
+                              className="approval-action-button float-end my-auto"
+                              style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                alignItems: "center",
+                              }}
+                            >
+                              {component.class === "show" ? (
+                                <i className="bi bi-chevron-double-down"></i>
+                              ) : (
+                                <i className="bi bi-chevron-double-right"></i>
+                              )}
+                            </span>
+                          ) : (
+                            " "
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td
+                          colSpan={6}
+                          className="text-center hiddenRow m-0 field-box"
+                        >
+                          <div
+                            className={
+                              "collapse " + component.class + " expanded-row"
+                            }
+                          >
+                            {component?.hasSystemError ? (
+                              <p>
+                                <b>Failed due to System Error</b>
+                              </p>
+                            ) : (
+                              <p>
+                                <b>{component?.message}</b>
+                              </p>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    </>,
                     component?.specifications?.map((specification) => [
                       <>
                         <tr
@@ -207,9 +266,9 @@ export default function AutomatedTesting() {
                                 }}
                               >
                                 {specification.class === "show" ? (
-                                  <i class="bi bi-chevron-double-down"></i>
+                                  <i className="bi bi-chevron-double-down"></i>
                                 ) : (
-                                  <i class="bi bi-chevron-double-right"></i>
+                                  <i className="bi bi-chevron-double-right"></i>
                                 )}
                               </span>
                             ) : (
@@ -229,7 +288,6 @@ export default function AutomatedTesting() {
                                 " expanded-row"
                               }
                             >
-                            {console.log(specification?.hasSystemError)}
                               {specification?.hasSystemError ? (
                                 <p>
                                   <b>Failed due to System Error</b>
@@ -283,9 +341,9 @@ export default function AutomatedTesting() {
                                   }}
                                 >
                                   {testcase.class === "show" ? (
-                                    <i class="bi bi-chevron-double-down"></i>
+                                    <i className="bi bi-chevron-double-down"></i>
                                   ) : (
-                                    <i class="bi bi-chevron-double-right"></i>
+                                    <i className="bi bi-chevron-double-right"></i>
                                   )}
                                 </span>
                               ) : (
