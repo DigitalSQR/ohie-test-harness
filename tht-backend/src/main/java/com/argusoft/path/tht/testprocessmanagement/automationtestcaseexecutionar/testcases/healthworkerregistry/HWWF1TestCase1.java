@@ -33,7 +33,7 @@ public class HWWF1TestCase1 implements TestCase {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_HEALTH_WORKER_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             //create practitioner
@@ -46,7 +46,7 @@ public class HWWF1TestCase1 implements TestCase {
             // Check if the practitioner was created successfully
             if (!practitionerOutcome.getCreated()) {
                 LOGGER.error("Testcase Failed for creating practitioner");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to create practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner");
             }
 
             String practitionerId = practitionerOutcome.getResource().getIdElement().getIdPart();
@@ -58,7 +58,7 @@ public class HWWF1TestCase1 implements TestCase {
             //check for practitioner
             if (!practitioner.hasName()) {
                 LOGGER.error("Testcase Failed to read practitioner");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to read practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to read practitioner");
             }
 
             LOGGER.info("Creating Location in HWR");
@@ -73,7 +73,7 @@ public class HWWF1TestCase1 implements TestCase {
             //check for the location created successfully
             if (!locationOutcome.getCreated()) {
                 LOGGER.error("Testcase Failed for creating location in HWR");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to create location");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create location");
             }
 
             String locationId = locationOutcome.getResource().getIdElement().getIdPart();
@@ -85,7 +85,7 @@ public class HWWF1TestCase1 implements TestCase {
             //check for location
             if (!location.hasName()) {
                 LOGGER.error("Testcase Failed to read location in HWR");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to read location");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to read location");
             }
 
             //For Health Care Service
@@ -108,7 +108,7 @@ public class HWWF1TestCase1 implements TestCase {
             // Check if the healthcare service was created successfully
             if (!careServiceOutcome.getCreated()) {
                 LOGGER.error("Testcase Failed to create HealthCare Service");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to create HealthCare Service");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create HealthCare Service");
             }
 
             String careServiceId = careServiceOutcome.getResource().getIdElement().getIdPart();
@@ -120,7 +120,7 @@ public class HWWF1TestCase1 implements TestCase {
             //check if we can queryy healthcare service or not
             if (!healthcareService.hasName()) {
                 LOGGER.error("Testcase failed to read HealthCare Service");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to read HealthCare Service");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to read HealthCare Service");
             }
 
             //For Practitioner Role
@@ -136,7 +136,7 @@ public class HWWF1TestCase1 implements TestCase {
             // Check if the practitioner role was created successfully
             if (!practitionerRoleOutcome.getCreated()) {
                 LOGGER.error("Testcase Failed to create Practitioner Role");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to create practitioner role");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner role");
             }
 
             // Search for Practitioner by name
@@ -149,7 +149,7 @@ public class HWWF1TestCase1 implements TestCase {
             // Check if practitioner was found by name
             if (practitionerBundle.getEntry().isEmpty()) {
                 LOGGER.error("Testcase failed to search practitioner by name");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to search practitioner by name");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search practitioner by name");
             }
 
 
@@ -163,7 +163,7 @@ public class HWWF1TestCase1 implements TestCase {
             // Check if location was found by name
             if (locationBundle.getEntry().isEmpty()) {
                 LOGGER.error("Testcase failed to search location by name");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to search location by name");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search location by name");
             }
 
             // Search for Healthcare Service by name
@@ -176,7 +176,7 @@ public class HWWF1TestCase1 implements TestCase {
             // Check if care services was found by name
             if (careServiceBundle.getEntry().isEmpty()) {
                 LOGGER.error("Testcase failed to search careService by name");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to search careService by name");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search careService by name");
             }
 
             //search practitioner by passing attributes reference
@@ -190,17 +190,17 @@ public class HWWF1TestCase1 implements TestCase {
             //check if present or not present
             if (resultBundle.getEntry().isEmpty()) {
                 LOGGER.error("Testcase failed to search PractitionerRole by Attributes practitioner and location");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to search PractitionerRole by Attributes practitioner and location");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search PractitionerRole by Attributes practitioner and location");
             }
 
             //check for healthcare service present or not
             if (practitionerRole.getHealthcareService().stream().noneMatch(careService -> careService.getResource().getIdElement().getIdPart().equals(careServiceId))) {
                 LOGGER.error("Testcase failed to find healthcare service in practitioner role ");
-                return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.ERROR, "Failed to find healthcare service in practitioner role");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to find healthcare service in practitioner role");
             }
 
             LOGGER.info("Testcase Passed");
-            return new ValidationResultInfo("testHWWF1Case1", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
             LOGGER.error("Exception while HWWF1TestCase1 ", ex);

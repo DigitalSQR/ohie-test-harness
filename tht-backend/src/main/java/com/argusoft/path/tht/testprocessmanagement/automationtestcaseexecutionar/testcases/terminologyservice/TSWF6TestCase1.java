@@ -30,24 +30,24 @@ public class TSWF6TestCase1  implements TestCase {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
             if (client == null) {
-                return new ValidationResultInfo("testTSWF6Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             LOGGER.info("Creating CodeSystem");
             // Creating codeSystem
             if (!Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated())
-                return new ValidationResultInfo("testTSWF6Case1", ErrorLevel.ERROR, "Failed to create codeSystem");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
 
 
             LOGGER.info("Creating ValueSet");
             // Creating valueSet
             if (!Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset", "ExampleValueSet", "Example ValueSet Title", "ACTIVE", "HL7 International / Terminology Infrastructure", "http://example.com/gender", "12345", "Blood Pressure")).getCreated()) {
-                return new ValidationResultInfo("testTSWF6Case1", ErrorLevel.ERROR, "Failed to create valueSet");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
             }
 
             // Creating valueSet
             if (!Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset2", "ExampleValueSet2", "Example ValueSet Title2", "ACTIVE", "HTHE International", "http://example.com/gender", "12345", "Blood Pressure")).getCreated()) {
-                return new ValidationResultInfo("testTSWF6Case1", ErrorLevel.ERROR, "Failed to create valueSet");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
             }
 
             // Publisher name to search for
@@ -64,10 +64,10 @@ public class TSWF6TestCase1  implements TestCase {
             // checking if it contains codeSystem with particular publisherName
             if (isValueSetPresent(searchResults, "http://example.com/ValueSet/example-valueset") && !isValueSetPresent(searchResults, "http://example.com/ValueSet/example-valueset2")) {
                 LOGGER.info("testTSWF6Case1 Testcase successfully passed!");
-                return new ValidationResultInfo("testTSWF6Case1", ErrorLevel.OK, "Passed");
+                return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             }
 
-            return new ValidationResultInfo("testTSWF6Case1", ErrorLevel.ERROR, "Failed to perform query code in valueSet");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to perform query code in valueSet");
 
         } catch (Exception ex) {
             LOGGER.error("Exception while TSWF6TestCase1 ", ex);

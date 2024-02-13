@@ -121,9 +121,6 @@ public class TestcaseOptionValidator {
         // For : Description
         validateTestcaseOptionDescription(testcaseOptionEntity,
                 errors);
-        // For : Message
-        validateTestcaseOptionMessage(testcaseOptionEntity,
-                errors);
         return errors;
 
     }
@@ -286,16 +283,6 @@ public class TestcaseOptionValidator {
                 "description",
                 0,
                 1000,
-                errors);
-    }
-
-    //Validation For:Message
-    private static void validateTestcaseOptionMessage(TestcaseOptionEntity testcaseOption,
-                                                    List<ValidationResultInfo> errors) {
-        ValidationUtils.validateLength(testcaseOption.getMessage(),
-                "message",
-                0,
-                2000,
                 errors);
     }
 

@@ -30,7 +30,7 @@ public class TSWF2TestCase1  implements TestCase {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
             if (client == null) {
-                return new ValidationResultInfo("testTSWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             LOGGER.info("Creating CodeSystem");
@@ -64,7 +64,7 @@ public class TSWF2TestCase1  implements TestCase {
 
             // check if codeSystem got created
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testTSWF2Case1", ErrorLevel.ERROR, "Failed to create codeSystem");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
 
@@ -97,7 +97,7 @@ public class TSWF2TestCase1  implements TestCase {
                     .execute();
 
             if (!outcome1.getCreated())
-                return new ValidationResultInfo("testTSWF2Case1", ErrorLevel.ERROR, "Failed to create valueSet");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
 
 
             // Validate against ValueSet
@@ -115,11 +115,11 @@ public class TSWF2TestCase1  implements TestCase {
 
 
             if (!validationResults.getParameterBool("result")) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to perform validate-code operation");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to perform validate-code operation");
             }
 
             LOGGER.info("testTSWF1Case1 Testcase successfully passed!");
-            return new ValidationResultInfo("testTSWF1Case1", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
             LOGGER.error("Exception while TSWF1TestCase1 ", ex);

@@ -33,7 +33,7 @@ public class CRWF1TestCase1 implements TestCase {
             LOGGER.info("Start testing CRWF1TestCase1");
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             LOGGER.info("Creating patient");
@@ -48,10 +48,10 @@ public class CRWF1TestCase1 implements TestCase {
             // Check if the patient was created successfully
             if (outcome.getCreated()) {
                 LOGGER.info("Testcase successfully passed!");
-                return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.OK, "Passed");
+                return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             } else {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testCRWF1Case1", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
 
         } catch (Exception ex) {

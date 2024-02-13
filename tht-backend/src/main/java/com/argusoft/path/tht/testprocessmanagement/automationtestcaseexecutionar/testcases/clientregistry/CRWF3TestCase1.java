@@ -35,7 +35,7 @@ public class CRWF3TestCase1 implements TestCase {
         try {
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             List<String> patientIds = new ArrayList<>();
@@ -49,7 +49,7 @@ public class CRWF3TestCase1 implements TestCase {
 
             // Check if the patient was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
             patientIds.add(outcome.getResource().getIdElement().getIdPart());
 
@@ -60,7 +60,7 @@ public class CRWF3TestCase1 implements TestCase {
                     .execute();
 
             if (!patient1.getBirthDate().equals(createdPatient.getBirthDate())) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to get patient by ID");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get patient by ID");
             }
 
             //verify patients by IDs
@@ -73,7 +73,7 @@ public class CRWF3TestCase1 implements TestCase {
 
             // Check if the patient was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
             patientIds.add(outcome.getResource().getIdElement().getIdPart());
 
@@ -86,9 +86,9 @@ public class CRWF3TestCase1 implements TestCase {
             List<Patient> patients = FHIRUtils.processBundle(Patient.class, bundle);
 
             if (patients.size() == 2) {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.OK, "Passed");
+                return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             } else {
-                return new ValidationResultInfo("testCRWF3Case1", ErrorLevel.ERROR, "Failed to get patients by IDs");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get patients by IDs");
             }
 
         } catch (Exception ex) {

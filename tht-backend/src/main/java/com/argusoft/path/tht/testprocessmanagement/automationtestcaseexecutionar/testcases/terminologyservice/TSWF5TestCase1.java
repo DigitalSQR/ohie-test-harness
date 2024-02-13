@@ -29,16 +29,16 @@ public class TSWF5TestCase1 implements TestCase {
             LOGGER.info("Start testing TSWF5TestCase1");
         IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
         if (client == null) {
-            return new ValidationResultInfo("testTSWF5Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
         }
 
         LOGGER.info("Creating codeSystems");
         //creating codeSystems
         if(!Objects.requireNonNull(addCodeSystem(client, "http://example.com/blood-pressure", "1.0.0", "BloodPressure", "Blood Pressure Codes", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "systolic", "Systolic Pressure", "The pressure in the arteries when the heart muscle contracts.")).getCreated())
-            return new ValidationResultInfo("testTSWF5Case1", ErrorLevel.ERROR, "Failed to create codeSystem");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
 
         if(!Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated())
-            return new ValidationResultInfo("testTSWF5Case1", ErrorLevel.ERROR, "Failed to create codeSystem");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
 
         // Publisher name to search for
         String publisherName = "HL7 International / Terminology Infrastructure";
@@ -53,11 +53,11 @@ public class TSWF5TestCase1 implements TestCase {
 
         // checking if it contains codeSystem with particular publisherName
         if(!isCodeSystemPresent(searchResults,"http://example.com/blood-pressure", "1.0.0") && !isCodeSystemPresent(searchResults,"http://example.com/gender", "1.0.0"))
-            return new ValidationResultInfo("testTSWF5Case1", ErrorLevel.ERROR, "Failed to search codeSystem by publisher name");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search codeSystem by publisher name");
 
         // Pass the test case if all the above conditions are passed
         LOGGER.info("testTSWF5Case1 Testcase successfully passed!");
-        return new ValidationResultInfo("testTSWF5Case1", ErrorLevel.OK, "Passed");
+        return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
     } catch (Exception ex) {
         LOGGER.error("Exception while TSWF5TestCase1 ", ex);

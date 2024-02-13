@@ -31,7 +31,7 @@ public class TSWF4TestCase1 implements TestCase {
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
             String testCaseName = this.getClass().getSimpleName();
             if (client == null) {
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             LOGGER.info("Start testing " + testCaseName);
@@ -49,7 +49,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             // check if codeSystem got created
             if (!outcome1.getCreated()) {
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create codeSystem");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
             String targetCode1 = "1234" + uniqueId;
@@ -63,7 +63,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             // check if codeSystem got created
             if (!outcome2.getCreated()) {
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create codeSystem");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
             String sourceCode2 = "pqrs" + uniqueId;
@@ -77,7 +77,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             // check if codeSystem got created
             if (!outcome3.getCreated()) {
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create codeSystem");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
             String targetCode2 = "6789" + uniqueId;
@@ -91,7 +91,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             // check if codeSystem got created
             if (!outcome4.getCreated()) {
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create codeSystem");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
             LOGGER.info("Creating coneptMaps");
@@ -109,7 +109,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             // check if conceptMap got created
             if (!outcome5.getCreated()) {
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create conceptMap");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create conceptMap");
             }
 
             ConceptMap conceptMap2 = FHIRUtils.createConceptMap(name2, url2,"ACTIVE", sourceUrl2, targetUrl2, sourceCode2, targetCode2,"Asthma","AS");
@@ -121,7 +121,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             // check if conceptMap got created
             if (!outcome6.getCreated()) {
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create conceptMap");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create conceptMap");
             }
 
 
@@ -135,7 +135,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             List<ConceptMap> maps1 = FHIRUtils.processBundle(ConceptMap.class, bundle1);
             if(maps1.size() != 1){
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get concept map by url");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by url");
             }
 
             // Search by Status and name
@@ -149,7 +149,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             List<ConceptMap> maps2 = FHIRUtils.processBundle(ConceptMap.class, bundle2);
             if(maps2.size() != 2){
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get concept map by status and name");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by status and name");
             }
 
 //          Search by source code
@@ -162,7 +162,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             List<ConceptMap> maps3 = FHIRUtils.processBundle(ConceptMap.class, bundle3);
             if(maps3.size() != 1){
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get concept map by source code");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by source code");
             }
 
 //            Search by target code
@@ -175,7 +175,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             List<ConceptMap> maps4 = FHIRUtils.processBundle(ConceptMap.class, bundle4);
             if(maps4.size() != 1){
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get concept map by target code");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by target code");
             }
 
 //             Search by source uri
@@ -188,7 +188,7 @@ public class TSWF4TestCase1 implements TestCase {
 
             List<ConceptMap> maps5 = FHIRUtils.processBundle(ConceptMap.class, bundle5);
             if(maps5.size() != 1){
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get concept map by source uri");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by source uri");
             }
 
             // Search by target uri
@@ -201,10 +201,10 @@ public class TSWF4TestCase1 implements TestCase {
 
             List<ConceptMap> maps6 = FHIRUtils.processBundle(ConceptMap.class, bundle6);
             if(maps6.size() != 1){
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get concept map by target uri");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by target uri");
             }
             LOGGER.info("Test case Passed");
-            return new ValidationResultInfo(testCaseName, ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         }
         catch(Exception ex){

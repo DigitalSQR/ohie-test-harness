@@ -29,7 +29,7 @@ public class HWWF2TestCase1 implements TestCase {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_HEALTH_WORKER_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testHWWF2TestCase1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             //creating a practitioner
@@ -42,7 +42,7 @@ public class HWWF2TestCase1 implements TestCase {
             // Check if the practitioner was created successfully
             if (!outcome.getCreated()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to create practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner");
             }
 
             //verify practitioner by ID
@@ -53,7 +53,7 @@ public class HWWF2TestCase1 implements TestCase {
                     .execute();
 
             if (!practitioner.getBirthDate().equals(createdPractitioner.getBirthDate())) {
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to get practitioner by ID");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get practitioner by ID");
             }
 
 
@@ -67,7 +67,7 @@ public class HWWF2TestCase1 implements TestCase {
 
             if (!bundle.hasEntry()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to fetch practitioner based on parameter");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch practitioner based on parameter");
             }
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -75,7 +75,7 @@ public class HWWF2TestCase1 implements TestCase {
                 Practitioner temppractitioner = (Practitioner) entry.getResource();
                 if(!temppractitioner.getBirthDate().equals(dateFormat.parse("1995-11-06"))){
                     LOGGER.error("Testcase Failed");
-                    return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to fetch practitioner based on parameter");
+                    return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch practitioner based on parameter");
                 }
             }
 
@@ -92,7 +92,7 @@ public class HWWF2TestCase1 implements TestCase {
             // Check if the location was created successfully
             if (!outcome.getCreated()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to create location");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create location");
             }
 
             //verify practitioner by ID
@@ -104,7 +104,7 @@ public class HWWF2TestCase1 implements TestCase {
 
 
             if (!location.getPosition().getLongitude().equals(createdLocation.getPosition().getLongitude()) || !location.getPosition().getLatitude().equals(createdLocation.getPosition().getLatitude())) {
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to get location by ID");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get location by ID");
 
             }
 
@@ -118,7 +118,7 @@ public class HWWF2TestCase1 implements TestCase {
 
             if (!bundle.hasEntry()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to fetch Location based on parameter");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch Location based on parameter");
             }
 
 
@@ -126,7 +126,7 @@ public class HWWF2TestCase1 implements TestCase {
                 Location tempLocation = (Location) entry.getResource();
                 if(!tempLocation.getName().equals("HCL hospital")){
                     LOGGER.error("Testcase Failed");
-                    return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to fetch Location based on parameter");
+                    return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch Location based on parameter");
 
                 }
             }
@@ -144,7 +144,7 @@ public class HWWF2TestCase1 implements TestCase {
             // Check if the healthcareService was created successfully
             if (!outcome.getCreated()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to create healthcareService");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create healthcareService");
             }
 
             //verify practitioner by ID
@@ -156,7 +156,7 @@ public class HWWF2TestCase1 implements TestCase {
 
 
             if (!healthcareService.getName().equals(createdHealthcareService.getName())){
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to get healthcareService by ID");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get healthcareService by ID");
             }
 
 
@@ -169,7 +169,7 @@ public class HWWF2TestCase1 implements TestCase {
 
             if (!bundle.hasEntry()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to fetch HealthcareService based on parameter");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch HealthcareService based on parameter");
             }
 
             boolean flag = false;
@@ -182,7 +182,7 @@ public class HWWF2TestCase1 implements TestCase {
             }
             if(!flag){
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to fetch HealthcareService based on parameter");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch HealthcareService based on parameter");
             }
 
 
@@ -198,7 +198,7 @@ public class HWWF2TestCase1 implements TestCase {
             // Check if the practitionerRole was created successfully
             if (!outcome.getCreated()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to create practitionerRole");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitionerRole");
             }
 
             //verify practitionerRole by ID
@@ -209,7 +209,7 @@ public class HWWF2TestCase1 implements TestCase {
                     .execute();
 
             if (!createdPractitionerRole.getPractitioner().getReference().equals("Practitioner/"+practitionerId)) {
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to get practitionerRole by ID");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get practitionerRole by ID");
             }
 
             // query based on some parameter
@@ -223,7 +223,7 @@ public class HWWF2TestCase1 implements TestCase {
 
             if (!bundle.hasEntry()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to fetch PractitionerRole based on parameter");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch PractitionerRole based on parameter");
             }
 
             flag = false;
@@ -236,11 +236,11 @@ public class HWWF2TestCase1 implements TestCase {
             }
             if(!flag){
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.ERROR, "Failed to fetch practitionerRole based on parameter");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch practitionerRole based on parameter");
             }
 
             LOGGER.info("Testcase successfully passed!");
-            return new ValidationResultInfo("testHWWF2Case1", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
 
         }

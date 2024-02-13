@@ -30,7 +30,7 @@ public class TSWF3TestCase1 implements TestCase {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
             if (client == null) {
-                return new ValidationResultInfo("testTSWF3Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             String codeSystemVersion="1.0.0";
@@ -60,7 +60,7 @@ public class TSWF3TestCase1 implements TestCase {
 
             // check if codeSystem got created
             if(!outcome.getCreated()){
-                return new ValidationResultInfo("testTSWF1Case1", ErrorLevel.ERROR, "Failed to create codeSystem");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
             //search for value set
@@ -92,7 +92,7 @@ public class TSWF3TestCase1 implements TestCase {
 
             // check if valueSet got created
             if(!valueSetOutcome.getCreated()){
-                return new ValidationResultInfo("testTSWF1Case1", ErrorLevel.ERROR, "Failed to create valueSet");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
             }
 
 
@@ -112,10 +112,10 @@ public class TSWF3TestCase1 implements TestCase {
                     .execute();
 
             if(result.getCompose().getInclude().size() == 1){
-                return new ValidationResultInfo("testTSWF3Case1", ErrorLevel.OK, "Passed");
+                return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             }
 
-            return new ValidationResultInfo("testTSWF3Case1", ErrorLevel.ERROR, "cannot expand the concept set");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "cannot expand the concept set");
 
         } catch (Exception e) {
             LOGGER.error("Exception while TSWF3TestCase1 ", e);

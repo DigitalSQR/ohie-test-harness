@@ -26,9 +26,9 @@ public class TSWF7TestCase1 implements TestCase{
                                  ContextInfo contextInfo) throws OperationFailedException {
         try{
 
-            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE);
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
             if (client == null) {
-                return new ValidationResultInfo("testTSWF3Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             String codeSystemVersion="1.0.0";
@@ -57,7 +57,7 @@ public class TSWF7TestCase1 implements TestCase{
 
             // check if codeSystem got created
             if(!outcome.getCreated()){
-                return new ValidationResultInfo("testTSWF7Case1", ErrorLevel.ERROR, "Failed to create codeSystem");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
             // create parameter for $lookup operation
@@ -73,11 +73,11 @@ public class TSWF7TestCase1 implements TestCase{
                     .execute();
 
             if(result.hasParameter() && result.getParameter("display").getValue().toString().equals("Blood Pressure")){
-                return new ValidationResultInfo("testTSWF3Case1", ErrorLevel.OK, "Passed");
+                return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             }
 
 
-            return new ValidationResultInfo("testTSWF7Case1", ErrorLevel.ERROR, "cannot perform $lookup");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "cannot perform $lookup");
 
         } catch (Exception e) {
             LOGGER.error("Exception while TSWF7TestCase1 ", e);
