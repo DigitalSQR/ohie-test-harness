@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedHealthRecordRegistry;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecordregistry;
 
 
 import ca.uhn.fhir.rest.api.MethodOutcome;

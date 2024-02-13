@@ -1,27 +1,29 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecord;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecordregistry;
+
+import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Encounter;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Practitioner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
-import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
-import org.hl7.fhir.r4.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 @Component
-public class SHRWF1TestCase1  implements TestCase{
+public class SHRWF1TestCase1 implements TestCase{
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF1TestCase1.class);
 
@@ -32,7 +34,7 @@ public class SHRWF1TestCase1  implements TestCase{
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.COLLECTION);
 
-        IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_SHARED_HEALTH_RECORD_ID);
+        IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_SHARED_HEALTH_RECORD_REGISTRY_ID);
 
 
         //Creating Patient

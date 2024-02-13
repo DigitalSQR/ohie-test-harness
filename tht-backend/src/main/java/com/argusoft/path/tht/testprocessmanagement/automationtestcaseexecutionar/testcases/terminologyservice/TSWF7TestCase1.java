@@ -26,7 +26,7 @@ public class TSWF7TestCase1 implements TestCase{
                                  ContextInfo contextInfo) throws OperationFailedException {
         try{
 
-            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE);
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
             if (client == null) {
                 return new ValidationResultInfo("testTSWF3Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
             }

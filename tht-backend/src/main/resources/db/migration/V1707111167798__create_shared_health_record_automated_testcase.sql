@@ -48,8 +48,67 @@ VALUES
         'SHRWF-1 Specification of the Shared Health Record Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
         'specification.status.active',
         1,
+        false,
         true,
+        'component.shared.health.record',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),
+    (
+        'specification.shr.shrwf.2',
+        'SHRWF-2',
+        'SHRWF-2 Specification of the Shared health record Registry Component (https://guides.ohie.org/arch-spec/introduction/shared-health-record/query-patient-level-clinical-data-workflow)',
+        'specification.status.active',
+        2,
+        false,
         true,
+        'component.shared.health.record',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),
+    (
+        'specification.shr.shrf.3',
+        'SHRF-3',
+        'SHRF-3 Specification of the Shared Health Record Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
+        'specification.status.active',
+        1,
+        true,
+        false,
+        'component.shared.health.record',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),(
+    'specification.shr.shrf.5',
+    'SHRF-5',
+    'SHRF-5 Specification of the Shared health record Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
+    'specification.status.active',
+    4,
+    true,
+    true,
+    'component.shared.health.record',
+    'ivasiwala@argusoft.com',
+    'ivasiwala@argusoft.com',
+    Now(),
+    Now(),
+    0
+),
+    (
+        'specification.shr.shrf.8',
+        'SHRF-8',
+        'SHRF-8 Specification of the SHR Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
+        'specification.status.active',
+        1,
+        true,
+        false,
         'component.shared.health.record',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
@@ -58,99 +117,7 @@ VALUES
         0
     );
 
-    INSERT INTO
-        specification (
-            id,
-            name,
-            description,
-            state,
-            rank,
-            is_functional,
-            is_required,
-            component_id,
-            created_by,
-            updated_by,
-            created_at,
-            updated_at,
-            version
-        )
-    VALUES
-        (
-            'specification.shr.shrf.5',
-            'SHRF-5',
-            'SHRF-5 Specification of the Shared health record Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
-            'specification.status.active',
-            4,
-            false,
-            true,
-            'component.shared.health.record.registry',
-            'ivasiwala@argusoft.com',
-            'ivasiwala@argusoft.com',
-            Now(),
-            Now(),
-            0
-        );
 
-    INSERT INTO
-        specification (
-            id,
-            name,
-            description,
-            state,
-            rank,
-            is_functional,
-            is_required,
-            component_id,
-            created_by,
-            updated_by,
-            created_at,
-            updated_at,
-            version
-        )
-    VALUES
-        (
-            'specification.shr.shrwf.2',
-            'SHRWF-2',
-            'SHRWF-2 Specification of the Shared health record Registry Component (https://guides.ohie.org/arch-spec/introduction/shared-health-record/query-patient-level-clinical-data-workflow)',
-            'specification.status.active',
-            2,
-            false,
-            true,
-            'component.shared.health.record.registry',
-            'ivasiwala@argusoft.com',
-            'ivasiwala@argusoft.com',
-            Now(),
-            Now(),
-            0
-        );
-
-INSERT INTO specification (
-   	    id,
-    	name,
-    	description,
-    	state,
-    	rank,
-    	is_functional,
-    	component_id,
-    	created_by,
-        updated_by,
-        created_at,
-        updated_at,
-        version
-    ) VALUES (
-        'specification.shr.shrf.8',
-        'SHRF-8',
-        'SHRF-8 Specification of the SHR Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
-        'specification.status.active',
-        1,
-        false,
-        'component.shr.repository',
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
-        Now(),
-        Now(),
-        0
-    );
 
 INSERT INTO
     testcase (
@@ -183,26 +150,37 @@ VALUES
         Now(),
         Now(),
         0
-    );
-
-
-    INSERT INTO
-        testcase (
-            id,
-            name,
-            description,
-            state,
-            rank,
-            is_manual,
-            bean_name,
-            specification_id,
-            created_by,
-            updated_by,
-            created_at,
-            updated_at,
-            version
-        )
-    VALUES
+    ),
+    (
+        'testcase.shr.shrwf.2.1',
+        'Verify fetch patient level clinical data from Shared Health Record',
+        'Testcase to verify fetch patient level clinical data from Shared Health Record for specification SHRWF1 of the shared health record registry',
+        'testcase.status.active',
+        1,
+        false,
+        'SHRWF2TestCase1',
+        'specification.shr.shrwf.2',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),
+    (
+        'testcase.shr.shrf.3.1',
+        'Verify creation and fetch facility using XML and JSON data',
+        'Testcase to verify create and fetch resources for specification SHRF3 of the Shared Health Record registry',
+        'testcase.status.active',
+        1,
+        false,
+        'SHRF3TestCase1',
+        'specification.shr.shrf.3',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        0
+    ),
         (
             'testcase.shr.shrf.5.1',
             'Verify that it can return a specific known document from Shared Health Record',
@@ -262,69 +240,19 @@ VALUES
             Now(),
             Now(),
             0
-        );
-
-INSERT INTO
-    testcase (
-        id,
-        name,
-        description,
-        state,
-        rank,
-        is_manual,
-        bean_name,
-        specification_id,
-        created_by,
-        updated_by,
-        created_at,
-        updated_at,
-        version
-    )
-VALUES
+        ),
     (
-        'testcase.shr.shrwf.2.1',
-        'Verify fetch patient level clinical data from Shared Health Record',
-        'Testcase to verify fetch patient level clinical data from Shared Health Record for specification SHRWF1 of the shared health record registry',
+        'testcase.shr.shrf.8.1',
+        'Verify If Patient Data Is In FHIR format',
+        'Testcase to verify patient data format for specification SHRF8 of the shr repository',
         'testcase.status.active',
-        1,
+        9,
         false,
-        'SHRWF2TestCase1',
-        'specification.shr.shrwf.2',
+        'SHRF8TestCase1',
+        'specification.shr.shrf.8',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
         0
     );
-
-    INSERT INTO testcase (
-       	    id,
-        	name,
-        	description,
-        	state,
-        	rank,
-        	is_manual,
-        	is_required,
-        	bean_name,
-        	specification_id,
-        	created_by,
-            updated_by,
-            created_at,
-            updated_at,
-            version
-        ) VALUES (
-            'testcase.shr.shrf.8.1',
-            'Verify If Patient Data Is In FHIR format',
-            'Testcase to verify patient data format for specification SHRF8 of the shr repository',
-            'testcase.status.active',
-            9,
-            false,
-            true,
-            'SHRF8TestCase1',
-            'specification.shr.shrf.8',
-            'ivasiwala@argusoft.com',
-            'ivasiwala@argusoft.com',
-            Now(),
-            Now(),
-            0
-        );

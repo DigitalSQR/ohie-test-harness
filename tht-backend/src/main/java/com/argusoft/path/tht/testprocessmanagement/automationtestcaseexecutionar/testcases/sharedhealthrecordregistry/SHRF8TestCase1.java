@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.shrrepository;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecordregistry;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
