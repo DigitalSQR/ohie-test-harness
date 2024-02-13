@@ -1,27 +1,29 @@
 package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecord;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.FHIRUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Encounter;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Practitioner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component
-public class SHRWF1TestCase1  implements TestCase{
+public class SHRWF1TestCase1 implements TestCase{
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF1TestCase1.class);
 
@@ -32,8 +34,10 @@ public class SHRWF1TestCase1  implements TestCase{
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.COLLECTION);
 
-        IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_SHARED_HEALTH_RECORD_ID);
-
+        IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_SHARED_HEALTH_RECORD_REGISTRY_ID);
+        if (client == null) {
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
+        }
 
         //Creating Patient
         Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
@@ -44,7 +48,7 @@ public class SHRWF1TestCase1  implements TestCase{
         //Checking if patient is created
         if(!(outcome.getCreated())){
             LOGGER.error("Patient Creation Failed");
-            return new ValidationResultInfo(testCaseName,ErrorLevel.ERROR,"Patient creation failed");
+            return new ValidationResultInfo(ErrorLevel.ERROR,"Patient creation failed");
         }
 
         String patientID = outcome.getResource().getIdElement().getIdPart();
@@ -60,7 +64,7 @@ public class SHRWF1TestCase1  implements TestCase{
         //Checking if practitioner is created
         if(!(outcome.getCreated())){
             LOGGER.error("Practitioner 1 Creation Failed");
-            return new ValidationResultInfo(testCaseName,ErrorLevel.ERROR,"Practitioner 1 creation failed");
+            return new ValidationResultInfo(ErrorLevel.ERROR,"Practitioner 1 creation failed");
         }
 
         String practitionerID = outcome.getResource().getIdElement().getIdPart();
@@ -74,7 +78,7 @@ public class SHRWF1TestCase1  implements TestCase{
         //Checking if practitioner is created
         if(!(outcome.getCreated())){
             LOGGER.error("Practitioner 2 Creation Failed");
-            return new ValidationResultInfo(testCaseName,ErrorLevel.ERROR,"Practitioner 2 creation failed");
+            return new ValidationResultInfo(ErrorLevel.ERROR,"Practitioner 2 creation failed");
         }
 
         practitionerID = outcome.getResource().getIdElement().getIdPart();
@@ -91,7 +95,7 @@ public class SHRWF1TestCase1  implements TestCase{
 
         //Check if encounter is created
         if(!(outcome.getCreated())){
-            return new ValidationResultInfo(testCaseName,ErrorLevel.ERROR,"Encounter creation failed");
+            return new ValidationResultInfo(ErrorLevel.ERROR,"Encounter creation failed");
         }
 
         String encounterID = outcome.getResource().getIdElement().getIdPart();
@@ -120,13 +124,13 @@ public class SHRWF1TestCase1  implements TestCase{
 
         } else {
             LOGGER.error("Patient ID not found");
-            return new ValidationResultInfo(testCaseName,ErrorLevel.ERROR,"Could not find patientID");
+            return new ValidationResultInfo(ErrorLevel.ERROR,"Could not find patientID");
         }
 
         //Check if Patient ID matches
         if(!(fetchedPatientID.equals(patientID))){
             LOGGER.error("Patient ID does not match");
-            return new ValidationResultInfo(testCaseName,ErrorLevel.ERROR,"Patient ID does not match");
+            return new ValidationResultInfo(ErrorLevel.ERROR,"Patient ID does not match");
         }
 
 
@@ -146,7 +150,7 @@ public class SHRWF1TestCase1  implements TestCase{
 
             } else {
                 LOGGER.error("Practitioner ID not found");
-                return new ValidationResultInfo(testCaseName,ErrorLevel.ERROR,"Could not find practitionerID");
+                return new ValidationResultInfo(ErrorLevel.ERROR,"Could not find practitionerID");
             }
             boolean participantIDsMatch=false;
 
@@ -160,11 +164,11 @@ public class SHRWF1TestCase1  implements TestCase{
             //Check if Practitioner ID matches
             if(!participantIDsMatch){
                 LOGGER.error("Practitioner ID does not match");
-                return new ValidationResultInfo(testCaseName,ErrorLevel.ERROR,"Patient ID does not match");
+                return new ValidationResultInfo(ErrorLevel.ERROR,"Patient ID does not match");
             }
         }
 
-        return new ValidationResultInfo(testCaseName, ErrorLevel.OK,"Passed");
+        return new ValidationResultInfo(ErrorLevel.OK,"Passed");
 
     }
 }

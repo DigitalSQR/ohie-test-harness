@@ -54,6 +54,12 @@ public class ValidationResultInfo implements Serializable {
         this.message = message;
     }
 
+    public ValidationResultInfo(ErrorLevel level, String message) {
+        this.level = level;
+        this.message = message;
+    }
+
+
     public static boolean isSurpassingThreshold(ErrorLevel currentLevel,
                                                 ErrorLevel threshold) {
         return currentLevel.compareTo(threshold) >= 0;

@@ -34,7 +34,7 @@ public class FRWF1TestCase1 implements TestCase {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_FACILITY_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             //create organization
@@ -47,7 +47,7 @@ public class FRWF1TestCase1 implements TestCase {
 
             // Check if the organization was created successfully
             if (!organizationOutcome.getCreated()) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to create organization");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization");
             }
 
             String organizationId = organizationOutcome.getResource().getIdElement().getIdPart();
@@ -58,7 +58,7 @@ public class FRWF1TestCase1 implements TestCase {
 
             //check for organization
             if (!organization.hasName()) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to read organization");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to read organization");
             }
 
             //create location
@@ -71,7 +71,7 @@ public class FRWF1TestCase1 implements TestCase {
 
             //check for the location created successfully
             if (!locationOutcome.getCreated()) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to create location");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create location");
             }
 
             String locationId = locationOutcome.getResource().getIdElement().getIdPart();
@@ -86,7 +86,7 @@ public class FRWF1TestCase1 implements TestCase {
 
             //check this id with the actual organization id
             if (!organizationId.equals(organizationRefId)) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to find organization in location");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to find organization in location");
             }
 
             //query for the location by name
@@ -98,7 +98,7 @@ public class FRWF1TestCase1 implements TestCase {
 
             // Check if location was found by name
             if (locationBundle.getEntry().isEmpty()) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to search location by name");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search location by name");
             }
 
             //query for the organization by name
@@ -110,12 +110,12 @@ public class FRWF1TestCase1 implements TestCase {
 
             // Check if organization was found by name
             if (organizationBundle.getEntry().isEmpty()) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to search organization by name");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search organization by name");
             }
 
             // Pass the test case if all the above conditions are passed
             LOGGER.info("testFRWF1Case1 Testcase successfully passed!");
-            return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
             LOGGER.error("Exception while FRWF1TestCase1 ", ex);

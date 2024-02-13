@@ -30,7 +30,7 @@ public class HWWF3TestCase1 implements TestCase {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_HEALTH_WORKER_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testHWWF3TestCase1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             //creating a practitioner1
@@ -43,7 +43,7 @@ public class HWWF3TestCase1 implements TestCase {
             // Check if the practitioner1 was created successfully
             if (!outcome.getCreated()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to create practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner");
             }
 
             //verify practitioner by ID
@@ -54,7 +54,7 @@ public class HWWF3TestCase1 implements TestCase {
                     .execute();
 
             if (!practitioner.getBirthDate().equals(createdPractitioner.getBirthDate())) {
-                return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to get practitioner by ID");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get practitioner by ID");
             }
 
 
@@ -68,7 +68,7 @@ public class HWWF3TestCase1 implements TestCase {
 
             if (!bundle.hasEntry()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to fetch practitioner based on parameter");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch practitioner based on parameter");
             }
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -76,10 +76,9 @@ public class HWWF3TestCase1 implements TestCase {
                 Practitioner temppractitioner = (Practitioner) entry.getResource();
                 if(!temppractitioner.getBirthDate().equals(dateFormat.parse("1995-11-06"))){
                     LOGGER.error("Testcase Failed3");
-                    return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to fetch practitioner based on parameter");
+                    return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch practitioner based on parameter");
                 }
             }
-
 
             LOGGER.info("Creating Location resource");
 
@@ -93,7 +92,7 @@ public class HWWF3TestCase1 implements TestCase {
             // Check if the practitioner1 was created successfully
             if (!outcome.getCreated()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to create location");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create location");
             }
 
             //verify practitioner by ID
@@ -105,7 +104,7 @@ public class HWWF3TestCase1 implements TestCase {
 
 
             if (!location.getPosition().getLongitude().equals(createdLocation.getPosition().getLongitude()) || !location.getPosition().getLatitude().equals(createdLocation.getPosition().getLatitude())) {
-                return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to get location by ID");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get location by ID");
 
             }
 
@@ -119,7 +118,7 @@ public class HWWF3TestCase1 implements TestCase {
 
             if (!bundle.hasEntry()) {
                 LOGGER.error("Testcase Failed");
-                return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to fetch Location based on parameter");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch Location based on parameter");
             }
 
 
@@ -127,7 +126,7 @@ public class HWWF3TestCase1 implements TestCase {
                 Location tempLocation = (Location) entry.getResource();
                 if(!tempLocation.getName().equals("HCL hospital")){
                     LOGGER.error("Testcase Failed");
-                    return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to fetch Location based on parameter");
+                    return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to fetch Location based on parameter");
 
                 }
             }

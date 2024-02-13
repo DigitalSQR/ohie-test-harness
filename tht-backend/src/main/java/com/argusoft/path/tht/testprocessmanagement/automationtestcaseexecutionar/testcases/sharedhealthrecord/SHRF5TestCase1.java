@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedHealthRecordRegistry;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecord;
 
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -33,7 +33,7 @@ public class SHRF5TestCase1 implements TestCase {
 
                 if (client == null) {
                     LOGGER.error(testCaseName + "Failed to get IGenericClient");
-                    return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to get IGenericClient");
+                    return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
                 }
 
             Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "9414473", "555-555-5555", "john.doe@example.com", client);
@@ -41,20 +41,20 @@ public class SHRF5TestCase1 implements TestCase {
 
             if (!patientOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Patient");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Patient");
             }
             Practitioner practitionerOne = FHIRUtils.createPractitioner("Walter", "male", "12-05-2001", "9414", "555-555-5555");
             MethodOutcome practitionerOneOutcome = client.create().resource(practitionerOne).execute();
             String practitionerReference = "Practitioner/" + practitionerOneOutcome.getId().getIdPart();
             if (!practitionerOneOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Practitioner");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Practitioner");
             }
             Organization organizationOne = FHIRUtils.createOrganization("Good Health Clinic", "India", "Gandhinagar", "111-111-111");
             MethodOutcome organizationOneOutcome = client.create().resource(organizationOne).execute();
             if (!organizationOneOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating organization");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create organization");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization");
             }
             System.out.println("Organization reference id: " + organizationOneOutcome.getId().getIdPart());
 
@@ -65,7 +65,7 @@ public class SHRF5TestCase1 implements TestCase {
 
             if (!admissionNoteOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Composition");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Admission Composition");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Admission Composition");
             }
             String originalCompositionId = admissionNoteOutcome.getResource().getIdElement().getIdPart();
 
@@ -83,7 +83,7 @@ public class SHRF5TestCase1 implements TestCase {
 
                         if (!(compositionId.equals(originalCompositionId))) {
                             LOGGER.error(testCaseName + "Test case failed because of different composition Id in Bundle");
-                            return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Different Composition Id");
+                            return new ValidationResultInfo(ErrorLevel.ERROR, "Different Composition Id");
                         }
 
                         String title = composition.getTitle();
@@ -92,24 +92,24 @@ public class SHRF5TestCase1 implements TestCase {
                         List<Reference> authors = composition.getAuthor();
                         if (authors == null || authors.isEmpty()) {
                             LOGGER.error(testCaseName + "Test case failed because no Author found in Bundle");
-                            return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "No Author in Composition Bundle");
+                            return new ValidationResultInfo(ErrorLevel.ERROR, "No Author in Composition Bundle");
                         }
                         authorReference = authors.get(0).getReference();
                         if (!(authorReference.equals(practitionerReference))) {
                             LOGGER.error(testCaseName + "Test case failed because of different Practitioner reference in Bundle");
-                            return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Different Practitioner reference");
+                            return new ValidationResultInfo(ErrorLevel.ERROR, "Different Practitioner reference");
                         }
                         if (!(title.equals(admissionNote.getTitle()))) {
                             LOGGER.error(testCaseName + "Test case failed because of different title in Admission Note in Bundle");
-                            return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Different title in Admission Note");
+                            return new ValidationResultInfo(ErrorLevel.ERROR, "Different title in Admission Note");
                         }
                         LOGGER.info(testCaseName + "Testcase successfully passed!");
-                        return new ValidationResultInfo(testCaseName, ErrorLevel.OK, "Passed");
+                        return new ValidationResultInfo(ErrorLevel.OK, "Passed");
                     }
                 }
             }
             LOGGER.error(testCaseName + "Test case failed because Composition has no Entry");
-            return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Composition has no entry");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Composition has no entry");
         }
         catch (Exception ex)
         {

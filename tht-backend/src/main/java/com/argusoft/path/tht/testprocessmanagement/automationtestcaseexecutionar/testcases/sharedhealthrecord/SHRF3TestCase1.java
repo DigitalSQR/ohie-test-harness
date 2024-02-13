@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.shrfregistry;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecord;
 
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -47,7 +47,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the patient was created successfully
             if (!outcomeForPatient.getCreated()) {
                 logger.error("Failed to create patient by passing XML data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create patient by passing XML data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient by passing XML data");
             }
             Patient resultPatient = client.read()
                     .resource(Patient.class)
@@ -57,7 +57,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultPatient == null) {
                 logger.error("Patient created successfully by XML data but failed to get patient by Id in XML format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Patient created successfully by XML data but failed to get patient by Id in XML format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Patient created successfully by XML data but failed to get patient by Id in XML format");
             }
 
 
@@ -74,7 +74,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the practitioner was created successfully
             if (!outcomeForPractitioner.getCreated()) {
                 logger.error("Failed to create practitioner by passing XML data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create practitioner by passing XML data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner by passing XML data");
             }
 
             Practitioner resultPractitioner = client.read()
@@ -85,7 +85,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultPractitioner == null) {
                 logger.error("Practitioner created successfully by passing XML data but failed to get practitioner by Id in JSON Format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Practitioner created successfully by passing XML data but failed to get practitioner by Id in JSON Format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Practitioner created successfully by passing XML data but failed to get practitioner by Id in JSON Format");
             }
 
             // Create Organization by passing JSON data and get organization in XML format.
@@ -101,7 +101,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the organization was created successfully
             if (!outcomeForOrganization.getCreated()) {
                 logger.error("Failed to create organization by passing JSON data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create organization by passing JSON data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization by passing JSON data");
             }
 
             Organization resultOrganization = client.read()
@@ -112,7 +112,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultOrganization == null) {
                 logger.error("Organization created successfully by passing JSON data but failed to get organization by Id in XML format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Organization created successfully by passing JSON data but failed to get organization by Id in XML format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Organization created successfully by passing JSON data but failed to get organization by Id in XML format");
             }
 
 
@@ -128,7 +128,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the practitioner role was created successfully
             if (!outcomeForPractitionerRole.getCreated()) {
                 logger.error("Failed to create practitioner role by passing JSON data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create practitioner role by passing JSON data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner role by passing JSON data");
             }
 
             PractitionerRole resultPractitionerRole = client.read()
@@ -139,7 +139,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultPractitionerRole == null) {
                 logger.error("Practitioner role created successfully by passing JSON data but failed to get practitioner role by Id by in JSON format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Practitioner role created successfully by passing JSON data but failed to get practitioner role by Id by in JSON format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Practitioner role created successfully by passing JSON data but failed to get practitioner role by Id by in JSON format");
             }
 
 
@@ -153,7 +153,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the encounter was created successfully
             if (!outcomeForEncounter.getCreated()) {
                 logger.error("Failed to create encounter");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create encounter");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create encounter");
             }
 
             Encounter resultEncounter = client.read()
@@ -164,7 +164,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultEncounter == null) {
                 logger.error("Encounter created successfully but failed to get encounter by Id in JSON format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Encounter created successfully but failed to get encounter by Id in JSON format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Encounter created successfully but failed to get encounter by Id in JSON format");
             }
 
             // Create Condition by get condition data in XML format.
@@ -177,7 +177,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the condition was created successfully
             if (!outcomeForCondition.getCreated()) {
                 logger.error("Failed to create condition");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create condition");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create condition");
             }
 
             Condition resultCondition = client.read()
@@ -188,7 +188,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultCondition == null) {
                 logger.error("Condition created successfully but failed to get condition by Id in XML format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Condition created successfully but failed to get condition by Id in XML format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Condition created successfully but failed to get condition by Id in XML format");
             }
 
             // Create Medication by passing JSON data and get medication data.
@@ -202,7 +202,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the medication was created successfully
             if (!outcomeForMedication.getCreated()) {
                 logger.error("Failed to create Medication by passing JSON data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create Medication by passing JSON data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Medication by passing JSON data");
             }
 
             Medication resultMedication = client.read()
@@ -212,7 +212,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultMedication == null) {
                 logger.error("Medication created successfully by passing JSON data but failed to get medication by Id");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Medication created successfully by passing JSON data but failed to get medication by Id");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Medication created successfully by passing JSON data but failed to get medication by Id");
             }
 
             // Create Medication request by passing XML data and get medication request data.
@@ -225,7 +225,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the medication request was created successfully
             if (!outcomeForMedicationRequest.getCreated()) {
                 logger.error("Failed to create Medication request by passing XML data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create Medication request by passing XML data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Medication request by passing XML data");
             }
 
             MedicationRequest resultMedicationRequest = client.read()
@@ -235,7 +235,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultMedicationRequest == null) {
                 logger.error("Medication request created successfully by passing XML data but failed to get medication request by Id");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Medication request created successfully by passing XML data but failed to get medication request by Id");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Medication request created successfully by passing XML data but failed to get medication request by Id");
             }
 
             // Create Procedure by passing JSON data and get procedure in JSON format.
@@ -249,7 +249,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the procedure was created successfully
             if (!outcomeForProcedure.getCreated()) {
                 logger.error("Failed to create Procedure by passing JSON data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create Procedure by passing JSON data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Procedure by passing JSON data");
             }
 
             Procedure resultProcedure = client.read()
@@ -260,7 +260,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultProcedure == null) {
                 logger.error("Procedure created successfully by passing JSON data but failed to get procedure by Id in JSON format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Procedure created successfully by passing JSON data but failed to get procedure by Id in JSON format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Procedure created successfully by passing JSON data but failed to get procedure by Id in JSON format");
             }
 
             // Create Observation by passing XML data and get observation in XML format.
@@ -274,7 +274,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the observation was created successfully
             if (!outcomeForObservation.getCreated()) {
                 logger.error("Failed to create Observation by passing XML data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create Observation by passing XML data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Observation by passing XML data");
             }
 
             Observation resultObservation = client.read()
@@ -285,7 +285,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultObservation == null) {
                 logger.error("Observation created successfully by passing XML data but failed to get Observation by Id in XML format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Observation created successfully by passing XML data but failed to get Observation by Id in XML format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Observation created successfully by passing XML data but failed to get Observation by Id in XML format");
             }
 
             // Create Allergy Intolerance by passing JSON data and get allergy intolerance in JSON format.
@@ -299,7 +299,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the Allergy Intolerance was created successfully
             if (!outcomeForAllergyIntolerance.getCreated()) {
                 logger.error("Failed to create Allergy Intolerance by passing JSON data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create Allergy Intolerance by passing JSON data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Allergy Intolerance by passing JSON data");
             }
 
             AllergyIntolerance resultAllergyIntolerance = client.read()
@@ -310,7 +310,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultAllergyIntolerance == null) {
                 logger.error("Allergy Intolerance created successfully by passing JSON data but failed to get Observation by Id in JSON format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Allergy Intolerance created successfully by passing JSON data but failed to get Observation by Id in JSON format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Allergy Intolerance created successfully by passing JSON data but failed to get Observation by Id in JSON format");
             }
 
             // Create Immunization by passing XML data and get immunization in XML format.
@@ -324,7 +324,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the immunization was created successfully
             if (!outcomeForImmunization.getCreated()) {
                 logger.error("Failed to create Immunization by passing XML data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create Immunization by passing XML data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Immunization by passing XML data");
             }
 
             Immunization resultImmunization = client.read()
@@ -335,7 +335,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultImmunization == null) {
                 logger.error("Immunization created successfully by passing XML data but failed to get immunization by Id in XML format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Immunization created successfully by passing XML data but failed to get immunization by Id in XML format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Immunization created successfully by passing XML data but failed to get immunization by Id in XML format");
             }
 
             // Create Diagnosis Report by passing JSON data and get diagnosis report in JSON format.
@@ -349,7 +349,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the Diagnostic Report was created successfully
             if (!outcomeForDiagnosticReport.getCreated()) {
                 logger.error("Failed to create Diagnostic Report by passing JSON data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create Diagnostic Report by passing JSON data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Diagnostic Report by passing JSON data");
             }
 
             DiagnosticReport resultDiagnosticReport = client.read()
@@ -360,7 +360,7 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultDiagnosticReport == null) {
                 logger.error("Diagnostic Report created successfully by passing JSON data but failed to get diagnostic report by Id in JSON format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Diagnostic Report created successfully by passing JSON data but failed to get diagnostic report by Id in JSON format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Diagnostic Report created successfully by passing JSON data but failed to get diagnostic report by Id in JSON format");
             }
 
             // Create Medication administration by passing JSON data and get medical administration in JSON format.
@@ -374,7 +374,7 @@ public class SHRF3TestCase1 implements TestCase {
             // Check if the Diagnostic Report was created successfully
             if (!outcomeForDiagnosticReport.getCreated()) {
                 logger.error("Failed to create Diagnostic Report by passing JSON data");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Failed to create Diagnostic Report by passing JSON data");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Diagnostic Report by passing JSON data");
             }
 
             MedicationAdministration resultMedicationAdministration = client.read()
@@ -385,11 +385,11 @@ public class SHRF3TestCase1 implements TestCase {
 
             if (resultMedicationAdministration == null) {
                 logger.error("Medication administration created successfully by passing JSON data but failed to get medication administration report by Id in JSON format");
-                return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.ERROR, "Medication administration created successfully by passing JSON data but failed to get medication administration report by Id in JSON format");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Medication administration created successfully by passing JSON data but failed to get medication administration report by Id in JSON format");
             }
 
             logger.info("SHRF3 test case passed");
-            return new ValidationResultInfo("testSHRF3Case1", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
             throw new OperationFailedException(ex.getMessage(), ex);

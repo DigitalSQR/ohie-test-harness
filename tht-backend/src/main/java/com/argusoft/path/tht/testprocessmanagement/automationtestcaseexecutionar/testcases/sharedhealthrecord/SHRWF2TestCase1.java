@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedHealthRecordRegistry;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecord;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -27,12 +27,16 @@ public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.clas
     public ValidationResultInfo test(Map<String, IGenericClient> isGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
         try {
             IGenericClient client = isGenericClientMap.get(ComponentServiceConstants.COMPONENT_SHARED_HEALTH_RECORD_REGISTRY_ID);
+            if (client == null) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
+
             Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "9414473", "555-555-5555", "john.doe@example.com", client);
             MethodOutcome patientOutcome = client.create().resource(patient).execute();
             if (!patientOutcome.getCreated()) {
 
                 LOGGER.error("Failed to create a patient");
-                return new ValidationResultInfo("testSHRWF2", ErrorLevel.ERROR, "Failed to create a patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create a patient");
             }
 
             LOGGER.info("Patient is created");
@@ -44,7 +48,7 @@ public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.clas
 
                 LOGGER.error("Failed to create first practitioner");
 
-                return new ValidationResultInfo("testSHRWF2", ErrorLevel.ERROR, "Failed to create first practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create first practitioner");
             }
 
             LOGGER.info("First Practitioner is created");
@@ -55,7 +59,7 @@ public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.clas
 
                 LOGGER.error("Failed to create second practitioner");
 
-                return new ValidationResultInfo("testSHRWF2", ErrorLevel.ERROR, "Failed to create second practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create second practitioner");
 
             }
 
@@ -67,7 +71,7 @@ public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.clas
 
                 LOGGER.error("Failed to create first document reference");
 
-                return new ValidationResultInfo("testSHRWF2", ErrorLevel.ERROR, "Failed to create first document reference");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create first document reference");
 
             }
 
@@ -79,7 +83,7 @@ public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.clas
 
                 LOGGER.error("Failed to create second document reference");
 
-                return new ValidationResultInfo("testSHRWF2", ErrorLevel.ERROR, "Failed to create second document reference");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create second document reference");
 
             }
 
@@ -115,17 +119,17 @@ public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.clas
 
                         LOGGER.error("Not CDA Compliant");
 
-                        return new ValidationResultInfo("testSHRWF2", ErrorLevel.ERROR, "Not CDA Compliant");
+                        return new ValidationResultInfo(ErrorLevel.ERROR, "Not CDA Compliant");
                     }
                 } else {
 
                     LOGGER.error("Document reference not found");
 
-                    return new ValidationResultInfo("testSHRWF2", ErrorLevel.ERROR, "Document reference not found");
+                    return new ValidationResultInfo(ErrorLevel.ERROR, "Document reference not found");
                 }
             }
             LOGGER.info("Test case SHRWF2 Passed");
-            return new ValidationResultInfo("testSHRWF2", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
         }
         catch (Exception ex)
         {

@@ -1,6 +1,5 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedHealthRecordRegistry;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecord;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
@@ -31,13 +30,16 @@ public class SHRF5TestCase3 implements TestCase {
             LOGGER.info("Start testing " + testCaseName);
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_SHARED_HEALTH_RECORD_REGISTRY_ID);
+            if (client == null) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
 
             Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "9414473", "555-555-5555", "john.doe@example.com", client);
             MethodOutcome patientOutcome = client.create().resource(patient).execute();
             System.out.println("Patient reference id: " + patientOutcome.getId().getIdPart());
             if (!patientOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Patient");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Patient");
             }
             String patientReference = "Patient/" + patientOutcome.getId().getIdPart();
 
@@ -45,7 +47,7 @@ public class SHRF5TestCase3 implements TestCase {
             MethodOutcome practitionerOneOutcome = client.create().resource(practitionerOne).execute();
             if (!practitionerOneOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Practitioner");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Practitioner");
 
             }
             String practitionerOneReference = "Practitioner/" + practitionerOneOutcome.getId().getIdPart();
@@ -54,7 +56,7 @@ public class SHRF5TestCase3 implements TestCase {
             MethodOutcome practitionerTwoOutcome = client.create().resource(practitionerTwo).execute();
             if (!practitionerTwoOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Practitioner");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Practitioner");
 
             }
             String practitionerTwoReference = "Practitioner/" + practitionerTwoOutcome.getId().getIdPart();
@@ -64,7 +66,7 @@ public class SHRF5TestCase3 implements TestCase {
 
             if (!observationOneOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating ObservationOne");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Observation");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Observation");
 
             }
             String observationOneReference = "Observation/" + observationOneOutcome.getId().getIdPart();
@@ -74,7 +76,7 @@ public class SHRF5TestCase3 implements TestCase {
             System.out.println("observationTwoOutcome reference id: " + observationTwoOutcome.getId().getIdPart());
             if (!observationTwoOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating ObservationTwo");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Observation");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Observation");
 
             }
             String observationTwoReference = "Observation/" + observationTwoOutcome.getId().getIdPart();
@@ -84,7 +86,7 @@ public class SHRF5TestCase3 implements TestCase {
 
             if (!diagnosticReportOneOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed while creating first Diagnostic Report");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Diagnostic Report");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Diagnostic Report");
 
             }
             DiagnosticReport diagnosticReportTwo = FHIRUtils.createDiagnosticReport(patientOutcome.getId().getIdPart(), practitionerTwoOutcome.getId().getIdPart(), observationTwoOutcome.getId().getIdPart());
@@ -92,7 +94,7 @@ public class SHRF5TestCase3 implements TestCase {
 
             if (!diagnosticReportTwoOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed while creating second Diagnostic Report");
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed to create Diagnostic Report");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Diagnostic Report");
             }
 
 
@@ -106,7 +108,7 @@ public class SHRF5TestCase3 implements TestCase {
             if (actualTotal != expectedTotal) {
 
                 LOGGER.error(testCaseName + "Testcase Failed because expected " + expectedTotal + " entries, but found " + actualTotal);
-                return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed because expected " + expectedTotal + " entries, but found " + actualTotal);
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed because expected " + expectedTotal + " entries, but found " + actualTotal);
             }
             for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
                 Resource resource = entry.getResource();
@@ -119,7 +121,7 @@ public class SHRF5TestCase3 implements TestCase {
                     if (!subjectRef.getReference().equals(patientReference)) {
 
                         LOGGER.error(testCaseName + "Testcase Failed because of invalid subject reference");
-                        return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed because of invalid subject reference");
+                        return new ValidationResultInfo(ErrorLevel.ERROR, "Failed because of invalid subject reference");
 
                     }
 
@@ -136,7 +138,7 @@ public class SHRF5TestCase3 implements TestCase {
                     if (!performerFound) {
 
                         LOGGER.error(testCaseName + "Testcase Failed because Performer reference not found");
-                        return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed because Performer reference not found");
+                        return new ValidationResultInfo(ErrorLevel.ERROR, "Failed because Performer reference not found");
 
                     }
 
@@ -153,17 +155,17 @@ public class SHRF5TestCase3 implements TestCase {
                     if (!resultFound) {
 
                         LOGGER.error(testCaseName + "Testcase Failed because Result reference not found");
-                        return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed because Result reference not found");
+                        return new ValidationResultInfo(ErrorLevel.ERROR, "Failed because Result reference not found");
                     }
                 } else {
 
                     LOGGER.error(testCaseName + "Testcase Failed because Entry is not a DiagnosticReport resource");
-                    return new ValidationResultInfo(testCaseName, ErrorLevel.ERROR, "Failed because Entry is not a DiagnosticReport resource");
+                    return new ValidationResultInfo(ErrorLevel.ERROR, "Failed because Entry is not a DiagnosticReport resource");
                 }
             }
 
             LOGGER.info(testCaseName + "Testcase successfully passed!");
-            return new ValidationResultInfo(testCaseName, ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
         }
         catch (Exception ex)
         {

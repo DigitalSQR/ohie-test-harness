@@ -32,7 +32,7 @@ public class CRWF2TestCase1 implements TestCase {
         try {
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             // Create a new patient resource with all demographic information
@@ -45,7 +45,7 @@ public class CRWF2TestCase1 implements TestCase {
 
             // Check if the patient was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
 
             String patientId = outcome.getResource().getIdElement().getIdPart();
@@ -63,7 +63,7 @@ public class CRWF2TestCase1 implements TestCase {
                     .execute();
 
             if (!patientId.equals(outcome.getResource().getIdElement().getIdPart())) {
-                return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Instead of Update, Server has created new Patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Instead of Update, Server has created new Patient");
             }
 
             patient = client.read()
@@ -73,9 +73,9 @@ public class CRWF2TestCase1 implements TestCase {
 
             //check if patient got updated or not
             if (patient.getName().get(0).getGiven().get(0).getValue().equals("ALICE")) {
-                return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.OK, "Passed");
+                return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             } else {
-                return new ValidationResultInfo("testCRWF2Case1", ErrorLevel.ERROR, "Failed to update patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to update patient");
             }
         } catch (Exception ex) {
             LOGGER.error("caught OperationFailedException in CRWF2TestCase1 ", ex);

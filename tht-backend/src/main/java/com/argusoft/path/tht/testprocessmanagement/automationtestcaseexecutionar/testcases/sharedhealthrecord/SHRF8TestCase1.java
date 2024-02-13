@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.shrrepository;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecord;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -26,7 +26,7 @@ public class SHRF8TestCase1 implements TestCase {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
             if (client == null) {
-                return new ValidationResultInfo("testTSWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             // Create a new patient resource with all demographic information
@@ -39,7 +39,7 @@ public class SHRF8TestCase1 implements TestCase {
 
             // Check if the patient was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testSHRF8TestCase1", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
 
             String tempPatientId = outcome.getResource().getIdElement().getIdPart();
@@ -72,17 +72,17 @@ public class SHRF8TestCase1 implements TestCase {
 
                 } else {
                     // Handle case where Patient resource is missing required fields
-                    return new ValidationResultInfo("testSHRF8TestCase1", ErrorLevel.ERROR, "Patient resource is incomplete or missing required fields.");
+                    return new ValidationResultInfo(ErrorLevel.ERROR, "Patient resource is incomplete or missing required fields.");
                 }
             } else {
                 // Handle cases where the resource is not a FHIR Patient
-                return new ValidationResultInfo("testSHRF8TestCase1", ErrorLevel.ERROR, "Resource is not a FHIR Patient Resource");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Resource is not a FHIR Patient Resource");
             }
             // Return patient to be a FHIR Patient resource
-            return new ValidationResultInfo("testSHRF8TestCase1", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         } catch (Exception e) {
-            return new ValidationResultInfo("testSHRF8TestCase1", ErrorLevel.ERROR, "OPERATION FAILED");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "OPERATION FAILED");
         }
     }
 

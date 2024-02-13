@@ -34,7 +34,7 @@ public class HWWF4TestCase1 implements TestCase {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_HEALTH_WORKER_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testFRWF1Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             //create practitioner
@@ -47,7 +47,7 @@ public class HWWF4TestCase1 implements TestCase {
             // Check if the practitioner was created successfully
             if (!practitionerOutcome.getCreated()) {
                 LOGGER.error("Testcase Failed for creating practitioner");
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Failed to create practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner");
             }
 
             String practitionerId = practitionerOutcome.getResource().getIdElement().getIdPart();
@@ -64,7 +64,7 @@ public class HWWF4TestCase1 implements TestCase {
                     .execute();
 
             if (!practitionerId.equals(practitionerOutcome.getResource().getIdElement().getIdPart())) {
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Instead of Update, Server has created new Practitioner");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Instead of Update, Server has created new Practitioner");
             }
 
             practitioner = client.read()
@@ -74,7 +74,7 @@ public class HWWF4TestCase1 implements TestCase {
 
             //check for practitioner updated or not
             if (!practitioner.getName().get(0).getGiven().get(0).getValue().equals("ALICE")) {
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.OK, "Failed to update Practitioner");
+                return new ValidationResultInfo(ErrorLevel.OK, "Failed to update Practitioner");
             }
 
 
@@ -90,7 +90,7 @@ public class HWWF4TestCase1 implements TestCase {
             //check for the location created successfully
             if (!locationOutcome.getCreated()) {
                 LOGGER.error("Testcase Failed for creating location in HWR");
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Failed to create location");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create location");
             }
 
             String locationId = locationOutcome.getResource().getIdElement().getIdPart();
@@ -105,7 +105,7 @@ public class HWWF4TestCase1 implements TestCase {
                     .execute();
 
             if (!locationId.equals(locationOutcome.getResource().getIdElement().getIdPart())) {
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Instead of Update, Server has created new Location");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Instead of Update, Server has created new Location");
             }
 
             location = client.read()
@@ -115,7 +115,7 @@ public class HWWF4TestCase1 implements TestCase {
 
             //check for location updated or not
             if (!location.getName().equals("North Wing , first floor")) {
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.OK, "Failed to update Location");
+                return new ValidationResultInfo(ErrorLevel.OK, "Failed to update Location");
             }
 
 
@@ -139,7 +139,7 @@ public class HWWF4TestCase1 implements TestCase {
             // Check if the healthcare service was created successfully
             if (!careServiceOutcome.getCreated()) {
                 LOGGER.error("Testcase Failed to create HealthCare Service");
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Failed to create HealthCare Service");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create HealthCare Service");
             }
 
             String careServiceId = careServiceOutcome.getResource().getIdElement().getIdPart();
@@ -154,7 +154,7 @@ public class HWWF4TestCase1 implements TestCase {
                     .execute();
 
             if (!careServiceId.equals(careServiceOutcome.getResource().getIdElement().getIdPart())) {
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Instead of Update, Server has created new HealthCare Service ");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Instead of Update, Server has created new HealthCare Service ");
             }
 
             healthcareService = client.read()
@@ -164,7 +164,7 @@ public class HWWF4TestCase1 implements TestCase {
 
             //check for HealthCAre Service updated or not
             if (!healthcareService.getName().equals("Example Care Services")) {
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Failed to update HealthCare Service");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to update HealthCare Service");
             }
 
 
@@ -181,7 +181,7 @@ public class HWWF4TestCase1 implements TestCase {
             // Check if the practitioner role was created successfully
             if (!practitionerRoleOutcome.getCreated()) {
                 LOGGER.error("Testcase Failed to create Practitioner Role");
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Failed to create practitioner role");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner role");
             }
 
             String practitionerRoleId = practitionerRoleOutcome.getResource().getIdElement().getIdPart();
@@ -198,7 +198,7 @@ public class HWWF4TestCase1 implements TestCase {
                     .execute();
 
             if (!practitionerRoleId.equals(practitionerRoleOutcome.getResource().getIdElement().getIdPart())) {
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Instead of Update, Server has created new Practitioner Role ");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Instead of Update, Server has created new Practitioner Role ");
             }
 
             practitionerRole = client.read()
@@ -209,11 +209,11 @@ public class HWWF4TestCase1 implements TestCase {
             //check for practitioner Role updated or not
             if (practitionerRole.getTelecom().stream()
                     .noneMatch(prole -> "222-222-2222".equals(prole.getValue()))) {
-                return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.ERROR, "Failed to update HealthCare Service");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to update HealthCare Service");
             }
 
             LOGGER.info("Testcase Passed");
-            return new ValidationResultInfo("testHWWF4Case1", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
             LOGGER.error("Exception while HWWF4TestCase1 ", ex);
