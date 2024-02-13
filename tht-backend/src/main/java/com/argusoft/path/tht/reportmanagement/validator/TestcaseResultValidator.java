@@ -147,6 +147,9 @@ public class TestcaseResultValidator {
         // For :Order
         validateTestcaseResultEntityOrder(testcaseResultEntity,
                 errors);
+        // For :Description
+        validateTestcaseResultEntityDescription(testcaseResultEntity,
+                errors);
         // For :TestcaseOption
         validateTestcaseResultEntityTestcaseOption(testcaseResultEntity,
                 errors);
@@ -342,6 +345,11 @@ public class TestcaseResultValidator {
     private static void validateTestcaseResultEntityId(TestcaseResultEntity testcaseResultEntity,
                                                        List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(testcaseResultEntity.getId(), "id", errors);
+        ValidationUtils.validateLength(testcaseResultEntity.getId(),
+                "id",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Name
@@ -361,6 +369,16 @@ public class TestcaseResultValidator {
                 "rank",
                 1,
                 null,
+                errors);
+    }
+
+    //Validation For :Description
+    private static void validateTestcaseResultEntityDescription(TestcaseResultEntity testcaseResultEntity,
+                                                         List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseResultEntity.getDescription(),
+                "description",
+                0,
+                1000,
                 errors);
     }
 

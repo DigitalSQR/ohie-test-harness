@@ -21,6 +21,10 @@ import com.argusoft.path.tht.testcasemanagement.validator.TestcaseOptionValidato
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.cache.annotation.CacheEvict;
+// import org.springframework.cache.annotation.CachePut;
+// import org.springframework.cache.annotation.Cacheable;
+// import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -53,6 +57,11 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     @Timed(name = "createTestcaseOption")
+    // @Caching(evict = {
+    //         @CacheEvict(value = "searchTestcaseOptions", allEntries = true),
+    //         @CacheEvict(value = "searchTestcaseOptionsList", allEntries = true),
+    //         @CacheEvict(value = "getTestcaseOptions", allEntries = true)
+    // })
     public TestcaseOptionEntity createTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
@@ -81,6 +90,15 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     @Timed(name = "updateTestcaseOption")
+    // @Caching(
+    //         evict = {
+    //                 @CacheEvict(value = "searchTestcaseOptions", allEntries = true),
+    //                 @CacheEvict(value = "searchTestcaseOptionsList", allEntries = true),
+    //                 @CacheEvict(value = "getTestcaseOptions", allEntries = true)
+    //         }, put = {
+    //         @CachePut(value = "getTestcaseOptionById",
+    //                 key = "#testcaseOptionEntity.getId()")
+    // })
     public TestcaseOptionEntity updateTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
@@ -104,6 +122,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     @Timed(name = "searchTestcaseOptions")
+    // @Cacheable(value = "searchTestcaseOptions", key = "{ #testcaseOptionCriteriaSearchFilter, #pageable }")
     public Page<TestcaseOptionEntity> searchTestcaseOptions(
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             Pageable pageable,
@@ -115,7 +134,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
 
     @Override
-    @Timed(name = "searchTestcaseOptions")
+    @Timed(name = "searchTestcaseOptionsList")
+    // @Cacheable(value = "searchTestcaseOptionsList", key = "#testcaseOptionCriteriaSearchFilter")
     public List<TestcaseOptionEntity> searchTestcaseOptions(
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             ContextInfo contextInfo)
@@ -131,6 +151,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     @Timed(name = "getTestcaseOptionById")
+    // @Cacheable(value = "getTestcaseOptionById", key = "#testcaseOptionId")
     public TestcaseOptionEntity getTestcaseOptionById(String testcaseOptionId,
                                                       ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -143,23 +164,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         return testcaseOptionEntities.stream()
                 .findFirst()
                 .orElseThrow(() -> new DoesNotExistException("Testcase does not found with id : " + testcaseOptionId));
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getTestcaseOptions")
-    public Page<TestcaseOptionEntity> getTestcaseOptions(Pageable pageable,
-                                                         ContextInfo contextInfo)
-            throws InvalidParameterException {
-        if (pageable == null) {
-            throw new InvalidParameterException("pageble is missing");
-        }
-        Page<TestcaseOptionEntity> testcaseOptions = testcaseOptionRepository.findTestcaseOptions(pageable);
-        return testcaseOptions;
     }
 
     /**
@@ -178,6 +182,16 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
     }
 
     @Override
+    @Timed(name = "changeState")
+    // @Caching(
+    //         evict = {
+    //                 @CacheEvict(value = "searchTestcaseOptions", allEntries = true),
+    //                 @CacheEvict(value = "searchTestcaseOptionsList", allEntries = true),
+    //                 @CacheEvict(value = "getTestcaseOptions", allEntries = true)
+    //         }, put = {
+    //         @CachePut(value = "getTestcaseOptionById",
+    //                 key = "#testcaseOptionId")
+    // })
     public TestcaseOptionEntity changeState(String testcaseOptionId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 

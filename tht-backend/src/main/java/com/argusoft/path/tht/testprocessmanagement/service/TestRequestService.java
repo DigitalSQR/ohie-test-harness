@@ -132,22 +132,6 @@ public interface TestRequestService {
             InvalidParameterException;
 
     /**
-     * Retrieves a list of TestRequests.The returned list may be in any order with
-     * unique set.
-     *
-     * @param pageable    Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-     * @return a list of TestRequest
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
-     */
-    public Page<TestRequestEntity> getTestRequests(Pageable pageable,
-                                                   ContextInfo contextInfo)
-            throws InvalidParameterException;
-
-    /**
      * reinitialize automation testing process by killing process and make testcase results draft again.
      *
      * @param testRequestId testRequestWhich needs to be tested

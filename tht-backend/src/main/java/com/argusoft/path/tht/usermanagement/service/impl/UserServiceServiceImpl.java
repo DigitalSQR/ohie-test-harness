@@ -159,6 +159,11 @@ public class UserServiceServiceImpl implements UserService {
         //validate transition
         ValidationUtils.transitionValid(UserServiceConstants.USER_STATUS_MAP, oldState, stateKey, errors);
 
+        //validate for one admin should active all time
+        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ADMIN))){
+            UserValidator.oneAdminShouldActiveValidation(userEntity, this, errors, contextInfo);
+        }
+
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
@@ -166,6 +171,7 @@ public class UserServiceServiceImpl implements UserService {
         }
 
         userEntity.setState(stateKey);
+
         userEntity = this.updateUser(userEntity, contextInfo);
         sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity);
         return userEntity;
@@ -275,19 +281,6 @@ public class UserServiceServiceImpl implements UserService {
         return userEntities.stream()
                 .findFirst()
                 .orElseThrow(() -> new DoesNotExistException("User does not found with id : " + userId));
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getUsers")
-    public Page<UserEntity> getUsers(Pageable pageable,
-                                     ContextInfo contextInfo) {
-        Page<UserEntity> users = userRepository.findUsers(pageable);
-        return users;
     }
 
     /**

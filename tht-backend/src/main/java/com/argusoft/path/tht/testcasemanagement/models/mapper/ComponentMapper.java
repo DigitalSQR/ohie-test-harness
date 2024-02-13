@@ -44,14 +44,18 @@ public interface ComponentMapper {
     }
 
     default Set<String> setToSpecificationIds(Set<SpecificationEntity> specificationEntities) {
-        if(specificationEntities==null) {return null;}
+        if(specificationEntities!=null)
+        {
             return specificationEntities.stream()
                     .map(SpecificationEntity::getId)
                     .collect(Collectors.toSet());
+        }
+        return new HashSet<>();
     }
 
     default Set<SpecificationEntity> setToSpecifications(Set<String> specificationIds) {
-        if(specificationIds==null) {return null;}
+        if(specificationIds!=null)
+        {
             return specificationIds.stream()
                     .map(id -> {
                         SpecificationEntity specificationEntity = new SpecificationEntity();
@@ -59,5 +63,7 @@ public interface ComponentMapper {
                         return specificationEntity;
                     })
                     .collect(Collectors.toSet());
+        }
+        return new HashSet<>();
     }
 }

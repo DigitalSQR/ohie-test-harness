@@ -170,19 +170,6 @@ public class TestcaseResultRestController {
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return
-     */
-    public Page<TestcaseResultInfo> getTestcaseResults(
-            Pageable pageable,
-            ContextInfo contextInfo)
-            throws InvalidParameterException {
-        Page<TestcaseResultEntity> TestcaseResults = testcaseResultService.getTestcaseResults(pageable, contextInfo);
-        return testcaseResultMapper.pageEntityToDto(TestcaseResults);
-    }
-
-    /**
      * We can expose this API in future if needed.
      * {@inheritdoc}
      */

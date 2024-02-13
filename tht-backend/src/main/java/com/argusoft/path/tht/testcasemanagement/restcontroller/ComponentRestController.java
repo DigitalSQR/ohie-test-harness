@@ -145,19 +145,6 @@ public class ComponentRestController {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    public Page<ComponentInfo> getComponents(
-            Pageable pageable,
-            ContextInfo contextInfo)
-            throws InvalidParameterException {
-        Page<ComponentEntity> components = componentService.getComponents(pageable, contextInfo);
-        return componentMapper.pageEntityToDto(components);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @ApiOperation(value = "View a list of validation errors for Component", response = List.class)
     @ApiResponses(value = {
