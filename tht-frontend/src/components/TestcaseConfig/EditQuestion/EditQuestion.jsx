@@ -105,7 +105,7 @@ const EditQuestion = () => {
         message: "Option saved successfully",
       });
 
-      await fetchTestCaseOptions();
+      await fetchTestCaseOptions(index);
     } catch (error) {
       console.error("Error saving option:", error);
 
@@ -118,29 +118,26 @@ const EditQuestion = () => {
     }
   };
 
-  const fetchTestCaseOptions = async () => {
+  const fetchTestCaseOptions = async (index) => {
     try {
       showLoader();
 
-      const testcaseId = testcase.id;
+      const testcaseOptionId = testcase.options[index].id;
 
-      const resp = await TestCaseOptionsAPI.getTestCaseOptionsByTestcaseId(
-        testcaseId
-      );
+      const resp =
+        await TestCaseOptionsAPI.getTestCaseOptionsByTestcaseOptionId(testcaseOptionId);
 
-      const options = resp.content.sort((a, b) => a.rank - b.rank);
+      testcase.options[index] = resp;
 
-      testcase.options = options;
-
-      setEditedOptions(
-        options.map((option) => ({
-          label: option.name,
-          metaVersion: option.meta.version,
-          checked: false,
-          status: "Active",
-          changesMade: false,
-        }))
-      );
+      const temp = editedOptions;
+      temp[index] = {
+        label: resp.name,
+        metaVersion: resp.meta.version,
+        checked: false,
+        status: "Active",
+        changesMade: false,
+      };
+      setEditedOptions(temp);
     } catch (error) {
       console.error("Error loading options:", error);
 
@@ -192,19 +189,29 @@ const EditQuestion = () => {
     <div id="wrapper">
       <div class="bcca-breadcrumb">
         <div class="bcca-breadcrumb-item">Question</div>
-        <div class="bcca-breadcrumb-item" onClick={() => handleSave(`/dashboard/manual-testcases/${testcase.testcase.id}`, {
-            name,
-            componentId,
-            specificationId: testcase.testcase.specificationId})}>
+        <div
+          class="bcca-breadcrumb-item"
+          onClick={() => handleSave(`/dashboard/manual-testcases/${testcase.testcase.id}`, {name, componentId, specificationId: testcase.testcase.specificationId})}>
           {testcase.testcase.specificationId} - Manual Configuration
         </div>
-        <div class="bcca-breadcrumb-item" onClick={() => handleClick(`/dashboard/component-specification/${componentId}`, {
+        <div
+          class="bcca-breadcrumb-item"
+          onClick={() =>
+            handleClick(`/dashboard/component-specification/${componentId}`, {
               name,
-              componentId})}>
+              componentId,
+            })
+          }
+        >
           {" "}
           {name}{" "}
         </div>
-        <div class="bcca-breadcrumb-item" onClick={() => {navigate("/dashboard/testcase-config")}}>
+        <div
+          class="bcca-breadcrumb-item"
+          onClick={() => {
+            navigate("/dashboard/testcase-config");
+          }}
+        >
           Components
         </div>
       </div>
