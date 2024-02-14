@@ -357,4 +357,16 @@ public class UserValidator {
             errors.add(validationResultInfo);
         }
     }
+
+    public static void validatePasswords(String oldPassword, String newPassword, String dbPassword, List<ValidationResultInfo> errors) {
+        if(newPassword.isEmpty()){
+            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR,"New password cannot be empty"));
+        }
+        if (!Objects.equals(oldPassword, dbPassword)) {
+            errors.add(new ValidationResultInfo("Old password", ErrorLevel.ERROR, "Old password is incorrect."));
+        }
+        if (Objects.equals(oldPassword, newPassword)) {
+            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR, "Old password can not be usable as new password."));
+        }
+    }
 }
