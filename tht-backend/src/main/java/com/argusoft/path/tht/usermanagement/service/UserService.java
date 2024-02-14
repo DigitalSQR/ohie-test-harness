@@ -15,6 +15,7 @@ import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.User;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -197,6 +198,19 @@ public interface UserService {
 
     public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException;
 
+
+    /**
+     * Reset password of user.
+     *
+     * @param oldPassword Old password of user
+     * @param newPassword  new password of user
+     * @param contextInfo ContextInfo
+     * @return UserEntity
+     *
+     */
+
+    public UserEntity resetPassword(String oldPassword, String newPassword, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException;
+
     /**
      * change state of user with id and giving the expected state
      *
@@ -208,5 +222,6 @@ public interface UserService {
      * @throws DataValidationErrorException when validation fails
      */
     public UserEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException;
+
 
 }

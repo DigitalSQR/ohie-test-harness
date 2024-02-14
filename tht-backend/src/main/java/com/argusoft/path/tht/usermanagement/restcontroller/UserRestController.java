@@ -309,5 +309,22 @@ public class UserRestController {
         return userMapper.modelToDto(principalUser);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @ApiOperation(value = "Reset password for user", response = UserInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully reset the password"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/reset/password")
+    public UserInfo resetPassword(@RequestParam("oldPassword") String oldPassword,
+                                  @RequestParam("newPassword") String newPassword,
+                                  @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        return userMapper.modelToDto(userService.resetPassword(oldPassword, newPassword, contextInfo));
+    }
 
 }

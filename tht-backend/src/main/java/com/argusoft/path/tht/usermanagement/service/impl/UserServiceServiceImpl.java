@@ -146,6 +146,23 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
+    public UserEntity resetPassword(String oldPassword, String newPassword, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        UserEntity principalUser = this.getPrincipalUser(contextInfo);
+        UserValidator.validatePasswords(oldPassword, newPassword, principalUser.getPassword(), errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
+
+        principalUser.setPassword(newPassword);
+        return updateUser(principalUser, contextInfo);
+    }
+
+    @Override
     @Timed(name = "changeState")
     public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         List<ValidationResultInfo> errors = new ArrayList<>();
