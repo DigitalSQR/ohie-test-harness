@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testprocessmanagement.models.mapper;
 
+import com.argusoft.path.tht.common.configurations.ModelDtoMapper;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestUrlInfo;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface TestRequestMapper {
+public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity,TestRequestInfo> {
 
     TestRequestMapper INSTANCE = Mappers.getMapper(TestRequestMapper.class);
 

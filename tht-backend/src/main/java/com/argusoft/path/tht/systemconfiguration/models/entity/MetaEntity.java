@@ -6,6 +6,8 @@
 package com.argusoft.path.tht.systemconfiguration.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.MetaInfo;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -22,8 +24,20 @@ import java.util.Date;
  * @author Dhruv
  */
 @MappedSuperclass
+@Audited
 @EntityListeners(AuditingEntityListener.class)
 public class MetaEntity {
+
+    @Override
+    public String toString() {
+        return "MetaEntity{" +
+                "createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", createdBy='" + createdBy + '\'' +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", version=" + version +
+                '}';
+    }
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)

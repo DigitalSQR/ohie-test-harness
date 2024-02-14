@@ -6,6 +6,8 @@
 package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -17,6 +19,7 @@ import java.util.Set;
  * @author Dhruv
  */
 @Entity
+@Audited
 @Table(name = "specification")
 public class SpecificationEntity extends IdStateNameMetaEntity {
 
@@ -28,13 +31,32 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "component_id")
+    @JsonIgnore
     private ComponentEntity component;
 
-    @OneToMany(mappedBy = "specification", cascade = {}, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "specification", cascade = {})
     private Set<TestcaseEntity> testcases;
+
+    public Boolean getFunctional() {
+        return isFunctional;
+    }
+
+    public void setFunctional(Boolean functional) {
+        isFunctional = functional;
+    }
+
+    public Boolean getRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(Boolean required) {
+        isRequired = required;
+    }
 
     @Column(name = "is_required")
     private Boolean isRequired;
+
 
     public Integer getRank() {
         return rank;
@@ -63,19 +85,12 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
         this.testcases = testcases;
     }
 
-    public Boolean getFunctional() {
-        return isFunctional;
+    @Override
+    public String toString() {
+        return "SpecificationEntity{" +
+                "rank=" + rank +
+                ", isFunctional=" + isFunctional +
+                '}';
     }
 
-    public void setFunctional(Boolean functional) {
-        isFunctional = functional;
-    }
-
-    public Boolean getRequired() {
-        return isRequired;
-    }
-
-    public void setRequired(Boolean required) {
-        isRequired = required;
-    }
 }

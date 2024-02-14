@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.systemconfiguration.models.entity;
 
+import org.hibernate.envers.Audited;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import java.util.UUID;
  * =
  */
 @MappedSuperclass
+@Audited
 public class IdStateMetaEntity extends MetaEntity {
 
     @Id
@@ -26,6 +28,14 @@ public class IdStateMetaEntity extends MetaEntity {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "IdStateMetaEntity{" +
+                "id='" + id + '\'' +
+                ", state='" + state + '\'' +
+                '}';
     }
 
     public void setId(String id) {

@@ -6,6 +6,8 @@
 package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -17,13 +19,15 @@ import java.util.Set;
  * @author Dhruv
  */
 @Entity
+@Audited
 @Table(name = "component")
 public class ComponentEntity extends IdStateNameMetaEntity {
 
     @Column(name = "rank")
     private Integer rank;
 
-    @OneToMany(mappedBy = "component", cascade = {}, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "component", cascade = {})
     private Set<SpecificationEntity> specifications;
 
     public Integer getRank() {

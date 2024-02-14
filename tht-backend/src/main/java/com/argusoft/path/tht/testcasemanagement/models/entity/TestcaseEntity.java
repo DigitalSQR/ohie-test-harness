@@ -6,6 +6,9 @@
 package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
@@ -15,6 +18,7 @@ import javax.persistence.*;
  * @author Dhruv
  */
 @Entity
+@Audited
 @Table(name = "testcase")
 public class TestcaseEntity extends IdStateNameMetaEntity {
 
@@ -62,4 +66,5 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     public void setSpecification(SpecificationEntity specification) {
         this.specification = specification;
     }
+
 }

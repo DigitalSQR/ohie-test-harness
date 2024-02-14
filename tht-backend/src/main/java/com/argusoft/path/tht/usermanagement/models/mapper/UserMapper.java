@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.usermanagement.models.mapper;
 
+import com.argusoft.path.tht.common.configurations.ModelDtoMapper;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -20,13 +21,13 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface UserMapper {
+public interface UserMapper extends ModelDtoMapper<UserEntity,UserInfo> {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
+
     @Mapping(source = "roles", target = "roleIds")
     UserInfo modelToDto(UserEntity userEntity);
-
 
     @InheritInverseConfiguration
     UserEntity dtoToModel(UserInfo userInfo);
