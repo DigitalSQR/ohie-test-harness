@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.reportmanagement.models.mapper;
 
+import com.argusoft.path.tht.common.configurations.ModelDtoMapper;
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
@@ -21,7 +22,7 @@ import java.util.List;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface TestcaseResultMapper {
+public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntity,TestcaseResultInfo> {
 
     TestcaseResultMapper INSTANCE = Mappers.getMapper(TestcaseResultMapper.class);
 

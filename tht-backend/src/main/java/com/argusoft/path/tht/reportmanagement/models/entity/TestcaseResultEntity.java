@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEn
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
@@ -18,6 +19,7 @@ import javax.persistence.*;
  * @author Dhruv
  */
 @Entity
+@Audited
 @Table(name = "testcase_result")
 public class TestcaseResultEntity extends IdStateNameMetaEntity {
 

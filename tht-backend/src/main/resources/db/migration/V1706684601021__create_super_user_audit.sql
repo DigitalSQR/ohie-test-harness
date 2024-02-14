@@ -1,37 +1,17 @@
---create User with super admin.
---
---@author dhruv
---@since 2023-09-13\
-
-
 INSERT INTO
-    revinfo(rev, revtstmp)
+    role_aud (id, rev, revtype, name)
 VALUES
-    (
-        1,
-        EXTRACT(
-            EPOCH
-            FROM
-                CURRENT_TIMESTAMP
-        ) :: BIGINT * 1000
-    );
+    ('role.admin', 1, 0, 'Admin'),
+    ('role.tester', 1, 0, 'Tester'),
+    ('role.assessee', 1, 0, 'Assessee');
 
 INSERT INTO
-    role (id, name)
-VALUES
-    ('role.admin', 'Admin'),
-    ('role.tester', 'Tester'),
-    (
-        'role.assessee',
-        'Assessee'
-    );
-
-INSERT INTO
-    tht_user (
+    tht_user_aud(
         id,
+        rev,
+        revtype,
         email,
         name,
-        company_name,
         state,
         password,
         created_by,
@@ -43,9 +23,10 @@ INSERT INTO
 VALUES
     (
         'SYSTEM_USER',
+        1,
+        0,
         'ivasiwala@argusoft.com',
         'Istyak Ahmed Vasiwala',
-        'Argusoft.Path',
         'user.status.active',
         'password',
         'ivasiwala@argusoft.com',
@@ -56,9 +37,11 @@ VALUES
     );
 
 INSERT INTO
-    role_tht_user (user_id, role_id)
+    role_tht_user_aud (rev, user_id, role_id, revtype)
 VALUES
     (
+        1,
         'SYSTEM_USER',
-        'role.admin'
+        'role.admin',
+        0
     );

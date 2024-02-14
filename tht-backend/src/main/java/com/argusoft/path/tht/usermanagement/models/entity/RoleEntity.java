@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.usermanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdEntity;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.Table;
  */
 
 @Entity
+@Audited
 @Table(name = "role")
 public class RoleEntity extends IdEntity {
 

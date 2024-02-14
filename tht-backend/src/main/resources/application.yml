@@ -7,6 +7,9 @@ spring:
     caches:
       authenticationCache:
         time-to-live: 300000
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -18,7 +21,15 @@ spring:
     password: argusadmin
   jpa:
     properties:
+      org.hibernate.envers.default_revision_entity_name: "CustomRevisionEntity"
+      org:
+        hibernate:
+          envers:
+            do_not_audit_optimistic_locking_field: false
       hibernate:
+        envers:
+          strategy:
+            DefaultAuditStrategy
         jdbc:
           lob.non_contextual_creation: true
         dialect: org.hibernate.dialect.PostgreSQLDialect

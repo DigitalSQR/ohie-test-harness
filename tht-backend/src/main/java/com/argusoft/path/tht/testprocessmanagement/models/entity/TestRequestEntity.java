@@ -7,6 +7,7 @@ package com.argusoft.path.tht.testprocessmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import org.hibernate.envers.Audited;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ import java.util.UUID;
  * @author Dhruv
  */
 @Entity
+@Audited
 @Table(name = "testRequest")
 public class TestRequestEntity extends IdStateNameMetaEntity {
 
