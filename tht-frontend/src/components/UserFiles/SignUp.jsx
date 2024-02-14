@@ -6,14 +6,91 @@ import { AuthenticationAPI } from "../../api/AuthenticationAPI";
 import { useLoader } from "../loader/LoaderContext";
 import { notification } from "antd";
 import ReCAPTCHA from "react-google-recaptcha";
+import { useFormik } from "formik";
 export default function SignUp() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     name: "",
     password: "",
-    companyName:""
+    companyName: "",
   });
+
+  const validate = (values) => {
+    const errors = {};
+
+    if (values.email.length == 0) {
+      errors.email = "Please enter email.";
+    }
+
+    if (values.password.length == 0) {
+      errors.password = "Please enter password.";
+    }
+
+    if (values.name.length == 0) {
+      errors.name = "Please enter name.";
+    }
+
+    if (values.companyName.length == 0) {
+      errors.companyName = "Please enter your company's information.";
+    }
+
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      name: "",
+      password: "",
+      companyName: "",
+    },
+    validate: validate,
+    onSubmit: async () => {
+      if (formik.values.password != confirmPassword) {
+        notification.error({
+          placement: "bottomRight",
+          description: "Passwords do not match.",
+        });
+      } else {
+        console.log(formik.values);
+        showLoader();
+        AuthenticationAPI.signup(formik.values)
+          .then(
+            (result) => {
+              hideLoader();
+              navigate(`/CongratulationsPage/${result.email}
+              `);
+            },
+            (result) => {
+              hideLoader();
+              const messages = result.response.data.map((res) => res.message);
+              const MessageList = () => (
+                <div>
+                  {messages.map((message, index) => (
+                    <li key={index}>{message}</li>
+                  ))}
+                </div>
+              );
+
+              notification.error({
+                placement: "bottomRight",
+                message: "Error",
+                description: <MessageList />,
+              });
+            }
+          )
+          .catch((error) => {
+            hideLoader();
+            notification.error({
+              placement: "bottomRight",
+              description: `${error.message}`,
+            });
+          });
+      }
+    },
+  });
+
   const [confirmPassword, setconfirmPassword] = useState("");
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,7 +98,7 @@ export default function SignUp() {
   };
   const { showLoader, hideLoader } = useLoader();
   const SignUpHandler = async () => {
-    if (formData.password != confirmPassword) {
+    if (formik.values.password != confirmPassword) {
       notification.error({
         placement: "bottomRight",
         description: "Passwords do not match.",
@@ -46,10 +123,10 @@ export default function SignUp() {
                 ))}
               </div>
             );
-            
+
             notification.error({
-              placement: 'bottomRight',
-              message: 'Error',
+              placement: "bottomRight",
+              message: "Error",
               description: <MessageList />,
             });
           }
@@ -73,7 +150,10 @@ export default function SignUp() {
       <div className="container-fluid ps-0">
         <div className="row">
           <div className="col-md-6 col-12 col-sm-12 p-0">
-          <div className="login-bg" style={{ height: "max(100vh,100%)", overflowY: "hidden" }}>
+            <div
+              className="login-bg"
+              style={{ height: "max(100vh,100%)", overflowY: "hidden" }}
+            >
               <div className="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
                 <h1>Testing Harness Test Automation</h1>
                 <p className="font-size-16 mt-3">
@@ -93,7 +173,10 @@ export default function SignUp() {
               <h4 className="my-4">Sign Up</h4>
               <div>
                 <div className="custom-input mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label"
+                  >
                     Name
                   </label>
                   <div className="input-group">
@@ -102,18 +185,26 @@ export default function SignUp() {
                     </span>
                     <input
                       name="name"
+                      value={formik.values.name}
                       type="text"
                       className="form-control border-start-0 ps-0"
                       placeholder="Full name"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
-                      onChange={handleInputChange}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       autoComplete="off"
                     />
                   </div>
+                  {formik.touched.name && formik.errors.name && (
+                    <div className="text-danger">{formik.errors.name}</div>
+                  )}
                 </div>
                 <div className="custom-input mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label"
+                  >
                     Email
                   </label>
                   <div className="input-group">
@@ -122,19 +213,27 @@ export default function SignUp() {
                     </span>
                     <input
                       name="email"
+                      value={formik.values.email}
                       type="text"
                       className="form-control border-start-0 ps-0"
                       placeholder="Email"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
                       //   className="email"
-                      onChange={handleInputChange}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
                       autoComplete="off"
                     />
                   </div>
+                  {formik.touched.email && formik.errors.email && (
+                    <div className="text-danger">{formik.errors.email}</div>
+                  )}
                 </div>
                 <div className="custom-input mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label"
+                  >
                     Company
                   </label>
                   <div className="input-group">
@@ -143,18 +242,28 @@ export default function SignUp() {
                     </span>
                     <input
                       name="companyName"
+                      value={formik.values.companyName}
                       type="text"
                       className="form-control border-start-0 ps-0"
                       placeholder="companyName"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
-                      onChange={handleInputChange}
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
                       autoComplete="off"
                     />
                   </div>
+                  {formik.touched.companyName && formik.errors.companyName && (
+                    <div className="text-danger">
+                      {formik.errors.companyName}
+                    </div>
+                  )}
                 </div>
                 <div className="custom-input mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label"
+                  >
                     Password
                   </label>
                   <div className="input-group">
@@ -163,18 +272,26 @@ export default function SignUp() {
                     </span>
                     <input
                       name="password"
+                      value={formik.values.password}
                       type="password"
                       className="form-control border-start-0 ps-0"
                       placeholder="Password"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
-                      onChange={handleInputChange}
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
                       autoComplete="off"
                     />
                   </div>
+                  {formik.touched.password && formik.errors.password && (
+                    <div className="text-danger">{formik.errors.password}</div>
+                  )}
                 </div>
                 <div className="custom-input mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">
+                  <label
+                    htmlFor="exampleFormControlInput1"
+                    className="form-label"
+                  >
                     Confirm Password
                   </label>
                   <div className="input-group">
@@ -205,8 +322,9 @@ export default function SignUp() {
 
                 <div className="my-3">
                   <button
+                    disabled={!(formik.isValid && formik.dirty)}
                     className="btn btn-primary btn-blue w-100 mt-5"
-                    onClick={SignUpHandler}
+                    onClick={formik.handleSubmit}
                   >
                     Sign Up
                   </button>
