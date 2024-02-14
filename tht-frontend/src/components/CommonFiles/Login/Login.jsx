@@ -31,8 +31,6 @@ export default function Login() {
     setKeepMeLoginFromState();
   }, []);
 
-  const handleLogin = async () => {};
-
   const redirectToSignUp = async () => {
     navigate("/SignUp");
   };
@@ -61,23 +59,22 @@ export default function Login() {
     const errors = {};
 
     if (values.username.length == 0) {
-      errors.username = "Please enter Username.";
+      errors.username = "Please enter username.";
     }
 
     if (values.password.length == 0) {
-      errors.password = "Password can't be empty.";
+      errors.password = "Please enter password.";
     }
 
     return errors;
   };
-
   const formik = useFormik({
     initialValues: {
       username: "",
       password: "",
       grant_type: "password",
     },
-    validate,
+    validate: validate,
     onSubmit: async () => {
       showLoader();
       AuthenticationAPI.doLogin(new URLSearchParams(formik.values))
@@ -135,7 +132,10 @@ export default function Login() {
                 <img src={openhie_logo} />
               </div>
               <div className="custom-scrollbar sm-cut">
-                <div className="custom-input mb-3">
+                <div
+                  className="custom-input mb-3"
+                  style={{ position: "relative" }}
+                >
                   <label
                     htmlFor="exampleFormControlInput1"
                     className="form-label"
@@ -148,7 +148,7 @@ export default function Login() {
                     </span>
                     <input
                       type="text"
-                      className="form-control border-start-0 ps-0"
+                      className={"form-control border-start-0 ps-0"}
                       name="username"
                       id="exampleFormControlInput1"
                       autoComplete="off"
@@ -160,9 +160,25 @@ export default function Login() {
                       aria-describedby="basic-addon1"
                       onKeyDown={handleKeyPress}
                     />
+                    {formik.touched.username && formik.errors.username && (
+                      <div
+                        className="text-danger"
+                        style={{
+                          position: "absolute",
+                          top: "100%",
+                          left: "0",
+                          paddingBottom: "0.5rem",
+                        }}
+                      >
+                        {formik.errors.username}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="custom-input mb-3">
+                <div
+                  className="custom-input mb-3"
+                  style={{ marginTop: "0.5rem" }}
+                >
                   <label
                     htmlFor="exampleFormControlInput2"
                     className="form-label"
@@ -200,6 +216,9 @@ export default function Login() {
                       ></i>
                     </button>
                   </div>
+                  {formik.touched.password && formik.errors.password && (
+                    <div className="text-danger">{formik.errors.password}</div>
+                  )}
                 </div>
 
                 <div className="d-flex justify-content-between">
@@ -226,7 +245,8 @@ export default function Login() {
 
                 <div className="my-4">
                   <button
-                  type="submit"
+                    disabled={!(formik.isValid && formik.dirty)}
+                    type="submit"
                     onClick={formik.handleSubmit}
                     className="btn btn-primary btn-blue w-100"
                   >

@@ -31,7 +31,6 @@ const TestingRequests = () => {
   const [userRoles, setUserRoles] = useState([USER_ROLES.ROLE_ID_ASSESSEE]);
   const [testRequests, setTestRequests] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
-  const [iconClass, setIconClass] = useState("bi bi-eye-fill");
 
   const navigate = useNavigate();
   const [sortDirection, setSortDirection] = useState({
@@ -73,13 +72,13 @@ const TestingRequests = () => {
   };
 
   const togglePasswordVisibility = (testUrl) => {
+    console.log("hello")
     if (testUrl.showPass) {
       testUrl.showPass = !testUrl.showPass;
     } else {
       testUrl.showPass = true;
     }
     setShowPassword(!showPassword);
-    setIconClass(testUrl.showPass ? "bi bi-eye-fill" : "bi bi-eye-slash-fill");
   };
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
@@ -90,7 +89,7 @@ const TestingRequests = () => {
   const handleSort = (field) => {
     setSortFieldName(field);
     const newSortDirection = { ...sortDirection };
-	console.log(newSortDirection)
+    console.log(newSortDirection);
     newSortDirection[field] = sortDirection[field] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
     fetchTestRequests(filterState, field, newSortDirection, currentPage);
@@ -324,14 +323,18 @@ const TestingRequests = () => {
                                         <td key={testRequest.id}>
                                           {testUrls.showPass
                                             ? testUrls.password
-                                            : "***********"}
+                                            : "*********"}
                                           <i
-                                            className={iconClass}
+                                            className={
+                                              testUrls.showPass
+                                                ? "bi bi-eye-fill"
+                                                : "bi bi-eye-slash-fill"
+                                            }
                                             key={testUrls.componentId}
                                             style={{
                                               paddingLeft: "2px",
                                             }}
-                                            onClick={(e) =>
+                                            onClick={() =>
                                               togglePasswordVisibility(testUrls)
                                             }
                                           ></i>{" "}
