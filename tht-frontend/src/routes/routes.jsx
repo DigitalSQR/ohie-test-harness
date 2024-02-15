@@ -22,6 +22,10 @@ import UpdateAdminUser from "../components/AdminFiles/UpdateAdminUser/UpdateAdmi
 import AdminUsers from "../components/AdminFiles/AdminUsers/AdminUsers";
 import AddAdminUser from "../components/AdminFiles/AddAdminUsers/AddAdminUser";
 import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
+import ComponentList from "../components/TestcaseConfig/ComponentList/ComponentList.tsx";
+import ComponentSpecification from "../components/TestcaseConfig/ComponentSpecification/ComponentSpecification.tsx";
+import ManualTestCases from "../components/TestcaseConfig/SpecQuestions/SpecQuestions.tsx";
+import EditQuestion from "../components/TestcaseConfig/EditQuestion/EditQuestion.tsx";
 const PrivateRoute = () => {
 	const token = useSelector((state) => state.authSlice.access_token);
 
@@ -55,6 +59,16 @@ const routes = createBrowserRouter([
       { path: "admin-users/add-admin-user", element: <AddAdminUser /> },
       { path: "admin-users/update-admin-user", element: <UpdateAdminUser /> },
       // { path: "admin-users/update-admin-user", element: <AdminUsers /> },
+      { path: "testcase-config", element: <ComponentList /> },
+      {
+        path: "component-specification/:componentId",
+        element: <ComponentSpecification />,
+      },
+      {
+        path: "manual-testcases/:specificationId",
+        element: <ManualTestCases />,
+      },
+      { path: "edit-question", element: <EditQuestion /> },
 		],
 	},
 	{ path: "/", element: <Navigate to="/login" /> },
