@@ -234,7 +234,7 @@ public class SpecificationValidator {
                 .validateRequired(specificationEntity.getName(), "name", errors);
         //check for component
         ValidationUtils
-                .validateRequired(specificationEntity.getComponent().getId(), "componentID", errors);
+                .validateRequired(specificationEntity.getComponent(), "component", errors);
         //check for rank
         ValidationUtils
                 .validateRequired(specificationEntity.getRank(), "rank", errors);
