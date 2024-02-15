@@ -6,6 +6,7 @@ import AutomatedResultStateRefresher from "./AutomatedResultStateRefresher/Autom
 import { useLoader } from "../../loader/LoaderContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
+import AutomatedToggleButtonRefresher from "./AutomatedToggleButtonRefresher/AutomatedToggleButtonRefresher";
 export default function AutomatedTesting() {
   const { testRequestId } = useParams();
   const [testcaseName, setTestCaseName] = useState();
@@ -180,28 +181,11 @@ export default function AutomatedTesting() {
                           />
                         </td>
                         <td>
-                          {component?.state ==
-                            "testcase.result.status.finished" &&
-                          component?.success == false ? (
-                            <span
-                              onClick={() => toggleComponentRow(component?.id)}
-                              type="button"
-                              className="approval-action-button float-end my-auto"
-                              style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                alignItems: "center",
-                              }}
-                            >
-                              {component.class === "show" ? (
-                                <i className="bi bi-chevron-double-down"></i>
-                              ) : (
-                                <i className="bi bi-chevron-double-right"></i>
-                              )}
-                            </span>
-                          ) : (
-                            " "
-                          )}
+                          <AutomatedToggleButtonRefresher
+                            testResultId={component?.id}
+                            toggleClass={component?.class}
+                            toggleFunction={toggleComponentRow}
+                          />
                         </td>
                       </tr>
                       <tr>
@@ -209,21 +193,11 @@ export default function AutomatedTesting() {
                           colSpan={6}
                           className="text-center hiddenRow m-0 field-box"
                         >
-                          <div
-                            className={
-                              "collapse " + component.class + " expanded-row"
-                            }
-                          >
-                            {component?.hasSystemError ? (
-                              <p>
-                                <b>Failed due to System Error</b>
-                              </p>
-                            ) : (
-                              <p>
-                                <b>{component?.message}</b>
-                              </p>
-                            )}
-                          </div>
+                          <AutomatedToggleButtonRefresher
+                            testResultId={component?.id}
+                            toggleClass={component?.class}
+                            ErrorStatement={true}
+                          />
                         </td>
                       </tr>
                     </>,
@@ -250,30 +224,11 @@ export default function AutomatedTesting() {
                             />
                           </td>
                           <td>
-                            {specification?.state ==
-                              "testcase.result.status.finished" &&
-                            specification?.success == false ? (
-                              <span
-                                onClick={() =>
-                                  toggleSpecificationRow(specification?.id)
-                                }
-                                type="button"
-                                className="approval-action-button float-end my-auto"
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "flex-end",
-                                  alignItems: "center",
-                                }}
-                              >
-                                {specification.class === "show" ? (
-                                  <i className="bi bi-chevron-double-down"></i>
-                                ) : (
-                                  <i className="bi bi-chevron-double-right"></i>
-                                )}
-                              </span>
-                            ) : (
-                              " "
-                            )}
+                            <AutomatedToggleButtonRefresher
+                              testResultId={specification?.id}
+                              toggleClass={specification?.class}
+                              toggleFunction={toggleSpecificationRow}
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -281,23 +236,11 @@ export default function AutomatedTesting() {
                             colSpan={6}
                             className="text-center hiddenRow m-0 field-box"
                           >
-                            <div
-                              className={
-                                "collapse " +
-                                specification.class +
-                                " expanded-row"
-                              }
-                            >
-                              {specification?.hasSystemError ? (
-                                <p>
-                                  <b>Failed due to System Error</b>
-                                </p>
-                              ) : (
-                                <p>
-                                  <b>{specification?.message}</b>
-                                </p>
-                              )}
-                            </div>
+                            <AutomatedToggleButtonRefresher
+                              testResultId={specification?.id}
+                              toggleClass={specification?.class}
+                              ErrorStatement={true}
+                            />
                           </td>
                         </tr>
                       </>,
@@ -325,30 +268,11 @@ export default function AutomatedTesting() {
                               />
                             </td>
                             <td>
-                              {testcase?.state ==
-                                "testcase.result.status.finished" &&
-                              testcase?.success == false ? (
-                                <span
-                                  onClick={() =>
-                                    toggleTestCaseRow(testcase?.id)
-                                  }
-                                  type="button"
-                                  className="approval-action-button float-end my-auto"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  {testcase.class === "show" ? (
-                                    <i className="bi bi-chevron-double-down"></i>
-                                  ) : (
-                                    <i className="bi bi-chevron-double-right"></i>
-                                  )}
-                                </span>
-                              ) : (
-                                " "
-                              )}
+                              <AutomatedToggleButtonRefresher
+                                testResultId={testcase?.id}
+                                toggleClass={testcase?.class}
+                                toggleFunction={toggleTestCaseRow}
+                              />
                             </td>
                           </tr>
                           <tr>
@@ -356,21 +280,11 @@ export default function AutomatedTesting() {
                               colSpan={6}
                               className="text-center hiddenRow m-0 field-box"
                             >
-                              <div
-                                className={
-                                  "collapse " + testcase.class + " expanded-row"
-                                }
-                              >
-                                {testcase?.hasSystemError ? (
-                                  <p>
-                                    <b>Failed due to System Error</b>
-                                  </p>
-                                ) : (
-                                  <p>
-                                    <b>{testcase?.message}</b>
-                                  </p>
-                                )}
-                              </div>
+                              <AutomatedToggleButtonRefresher
+                                testResultId={testcase?.id}
+                                toggleClass={testcase?.class}
+                                ErrorStatement={true}
+                              />
                             </td>
                           </tr>
                         </>,
