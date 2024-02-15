@@ -27,21 +27,23 @@ import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.Multimap;
 import io.astefanutti.metrics.aspectj.Metrics;
+import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -421,6 +423,17 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 isFunctional,
                 testcaseResultEntity,
                 contextInfo);
+    }
+
+    @Override
+    public List<String> getSubClassesNameForTestCase() {
+        Reflections reflections = new Reflections(TestcaseServiceConstants.PACKAGE_NAME);
+        Set<Class<? extends TestCase>> subTypes = reflections.getSubTypesOf(TestCase.class);
+        List<String> classNames = new ArrayList<>();
+        for (Class<?> subType : subTypes) {
+            classNames.add(subType.getSimpleName());
+        }
+        return classNames;
     }
 
     private TestcaseResultEntity fetchTestcaseResultStatusByInputs(

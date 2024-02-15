@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.fileservice.restcontroller;
 
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
+import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
@@ -8,6 +9,7 @@ import com.argusoft.path.tht.fileservice.models.mapper.DocumentMapper;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -24,8 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * DocumentRestController
@@ -151,6 +156,18 @@ public class DocumentRestController {
                 .headers(headers)
                 .contentLength(byteArrayResourceByDocumentId.contentLength())
                 .body(byteArrayResourceByDocumentId);
+    }
+
+    @ApiOperation(value = "Retrieves all status of document.", response = Multimap.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/status/mapping")
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
+        Collection<String> strings = DocumentServiceConstants.DOCUMENT_STATUS_MAP.get(sourceStatus);
+        return strings.parallelStream().toList();
     }
 
 

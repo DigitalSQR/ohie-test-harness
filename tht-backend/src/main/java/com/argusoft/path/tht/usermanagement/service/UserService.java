@@ -19,7 +19,9 @@ import org.springframework.security.core.userdetails.User;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface provides contract for User API.
@@ -222,6 +224,5 @@ public interface UserService {
      * @throws DataValidationErrorException when validation fails
      */
     public UserEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException;
-
 
 }

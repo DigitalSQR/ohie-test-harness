@@ -13,7 +13,10 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface provides contract for Testcase API.
@@ -131,6 +134,5 @@ public interface TestcaseService {
             InvalidParameterException;
 
     public TestcaseEntity changeState(String testcaseId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
-
 
 }
