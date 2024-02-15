@@ -3,36 +3,22 @@
 # ===============================
 
 spring:
-  cache:
-    caches:
-      authenticationCache:
-        time-to-live: 300000
-  jackson:
-    serialization:
-      fail-on-empty-beans: false
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   main:
     allow-circular-references: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/testing_harness_tool
-    username: postgres
-    password: argusadmin
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
   jpa:
     properties:
-      org.hibernate.envers.default_revision_entity_name: "CustomRevisionEntity"
-      org:
-        hibernate:
-          envers:
-            do_not_audit_optimistic_locking_field: false
       hibernate:
-        envers:
-          strategy:
-            DefaultAuditStrategy
         jdbc:
           lob.non_contextual_creation: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
       generate-ddl: true
@@ -44,7 +30,7 @@ spring:
     table: tht_schema_history
     baseline-version: 0.1
     out-of-order: true
-    locations: classpath:db/migration
+    locations: filesystem:src/test/resources/db/migration
   security:
     oauth2:
       client:
@@ -55,11 +41,6 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: https://tht.argusoft.com/api/login/oauth2/code/google
-server:
-  servlet:
-    context-path: /api
-  port: 8081
 # ===============================
 # LOGGING
 # ===============================
@@ -69,13 +50,6 @@ logging:
     org.springframework.web: INFO
     com.argusoft.path.tht: INFO
     org.flywaydb.core: INFO
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE
 
 exception:
   stack-trace:
@@ -86,3 +60,6 @@ tht-file:
 
 frontend:
   google.success: /google/success
+
+app:
+  authBasicToken: dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==
