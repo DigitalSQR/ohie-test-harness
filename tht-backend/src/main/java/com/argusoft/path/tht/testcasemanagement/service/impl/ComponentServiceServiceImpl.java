@@ -26,6 +26,8 @@ import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.cache.annotation.CacheEvict;
 // import org.springframework.cache.annotation.CachePut;
@@ -40,6 +42,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This ComponentServiceServiceImpl contains implementation for Component service.
@@ -49,6 +55,8 @@ import java.util.*;
 @Service
 @Metrics(registry = "ComponentServiceServiceImpl")
 public class ComponentServiceServiceImpl implements ComponentService {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(ComponentServiceServiceImpl.class);
 
     @Autowired
     ComponentRepository componentRepository;
@@ -74,16 +82,19 @@ public class ComponentServiceServiceImpl implements ComponentService {
             InvalidParameterException,
             DataValidationErrorException {
 
+        if (componentEntity == null) {
+            LOGGER.error("caught InvalidParameterException in ComponentServiceServiceImpl");
+            throw new InvalidParameterException("componentEntity is missing");
+        }
+
+        defaultValueCreateComponent(componentEntity, contextInfo);
+
         ComponentValidator.validateCreateUpdateComponent(Constant.CREATE_VALIDATION,
                 this,
                 specificationService,
                 componentEntity,
                 contextInfo);
 
-        if (StringUtils.isEmpty(componentEntity.getId())) {
-            componentEntity.setId(UUID.randomUUID().toString());
-        }
-        componentEntity.setState(ComponentServiceConstants.COMPONENT_STATUS_DRAFT);
         componentEntity = componentRepository.saveAndFlush(componentEntity);
         return componentEntity;
     }
@@ -109,6 +120,11 @@ public class ComponentServiceServiceImpl implements ComponentService {
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
+
+        if (componentEntity == null) {
+            LOGGER.error("caught InvalidParameterException in ComponentServiceServiceImpl");
+            throw new InvalidParameterException("componentEntity is missing");
+        }
 
         ComponentValidator.validateCreateUpdateComponent(Constant.UPDATE_VALIDATION,
                 this,
@@ -182,6 +198,11 @@ public class ComponentServiceServiceImpl implements ComponentService {
             throws InvalidParameterException,
             OperationFailedException {
 
+        if (componentEntity == null) {
+            LOGGER.error("caught InvalidParameterException in ComponentServiceServiceImpl");
+            throw new InvalidParameterException("componentEntity is missing");
+        }
+
         List<ValidationResultInfo> errors = ComponentValidator.validateComponent(validationTypeKey, componentEntity, this, specificationService, contextInfo);
 
         return errors;
@@ -206,10 +227,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
 
         ComponentEntity componentEntity = this.getComponentById(componentID, contextInfo);
 
-        String currentState = componentEntity.getState();
-
         //validate transition
-        ValidationUtils.transitionValid(ComponentServiceConstants.COMPONENT_STATUS_MAP, currentState, stateKey, errors);
+        ValidationUtils.transitionValid(ComponentServiceConstants.COMPONENT_STATUS_MAP, componentEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -222,6 +241,19 @@ public class ComponentServiceServiceImpl implements ComponentService {
 
         return componentEntity;
     }
-}
 
+    private void defaultValueCreateComponent(ComponentEntity componentEntity, ContextInfo contextInfo) throws InvalidParameterException {
+        if (StringUtils.isEmpty(componentEntity.getId())) {
+            componentEntity.setId(UUID.randomUUID().toString());
+        }
+        componentEntity.setState(ComponentServiceConstants.COMPONENT_STATUS_DRAFT);
+
+        ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+        componentEntity.setRank(1);
+        List<ComponentEntity> components = this.searchComponents(componentCriteriaSearchFilter, Constant.SINGLE_PAGE_SORT_BY_RANK, contextInfo).getContent();
+        if(!components.isEmpty()){
+            componentEntity.setRank(components.get(0).getRank() + 1);
+        }
+    }
+}
 

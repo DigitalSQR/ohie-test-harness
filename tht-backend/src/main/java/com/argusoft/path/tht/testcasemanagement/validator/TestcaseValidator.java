@@ -54,10 +54,7 @@ public class TestcaseValidator {
                                                               SpecificationService specificationService,
                                                               ApplicationContext applicationContext,
                                                               ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        if (testcaseEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseValidator ");
-            throw new InvalidParameterException("testcaseEntity is missing");
-        }
+        
         if (StringUtils.isEmpty(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in TestcaseValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");

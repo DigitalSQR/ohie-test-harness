@@ -50,10 +50,7 @@ public class SpecificationValidator {
     }
 
     public static List<ValidationResultInfo> validateSpecification(String validationTypeKey, SpecificationEntity specificationEntity, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        if (specificationEntity == null) {
-            LOGGER.error("caught InvalidParameterException in SpecificationValidator ");
-            throw new InvalidParameterException("specificationEntity is missing");
-        }
+        
         if (StringUtils.isEmpty(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in SpecificationValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");

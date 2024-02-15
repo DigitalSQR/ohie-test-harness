@@ -24,6 +24,8 @@ import com.argusoft.path.tht.testcasemanagement.validator.SpecificationValidator
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Multimap;
 import io.astefanutti.metrics.aspectj.Metrics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.cache.annotation.CacheEvict;
 // import org.springframework.cache.annotation.CachePut;
@@ -37,6 +39,10 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This SpecificationServiceServiceImpl contains implementation for Specification service.
@@ -46,6 +52,8 @@ import java.util.*;
 @Service
 @Metrics(registry = "SpecificationServiceServiceImpl")
 public class SpecificationServiceServiceImpl implements SpecificationService {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(SpecificationServiceServiceImpl.class);
 
     @Autowired
     SpecificationRepository specificationRepository;
@@ -74,6 +82,13 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             InvalidParameterException,
             DataValidationErrorException {
 
+        if (specificationEntity == null) {
+            LOGGER.error("caught InvalidParameterException in SpecificationServiceServiceImpl");
+            throw new InvalidParameterException("specificationEntity is missing");
+        }
+
+        defaultValueCreateSpecification(specificationEntity,contextInfo);
+
         SpecificationValidator.validateCreateUpdateSpecification(Constant.CREATE_VALIDATION,
                 this,
                 testcaseService,
@@ -81,10 +96,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
                 specificationEntity,
                 contextInfo);
 
-        if (StringUtils.isEmpty(specificationEntity.getId())) {
-            specificationEntity.setId(UUID.randomUUID().toString());
-        }
-        specificationEntity.setState(SpecificationServiceConstants.SPECIFICATION_STATUS_DRAFT);
         specificationEntity = specificationRepository.saveAndFlush(specificationEntity);
         return specificationEntity;
     }
@@ -111,6 +122,10 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             InvalidParameterException,
             DataValidationErrorException {
 
+        if (specificationEntity == null) {
+            LOGGER.error("caught InvalidParameterException in SpecificationServiceServiceImpl");
+            throw new InvalidParameterException("specificationEntity is missing");
+        }
 
         SpecificationValidator.validateCreateUpdateSpecification(Constant.UPDATE_VALIDATION,
                 this,
@@ -188,6 +203,10 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
+        if (specificationEntity == null) {
+            LOGGER.error("caught InvalidParameterException in SpecificationServiceServiceImpl");
+            throw new InvalidParameterException("specificationEntity is missing");
+        }
         List<ValidationResultInfo> errors = SpecificationValidator.validateSpecification(validationTypeKey, specificationEntity, this, testcaseService, componentService, contextInfo);
         return errors;
     }
@@ -211,10 +230,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
         SpecificationEntity specificationEntity = this.getSpecificationById(specificationId, contextInfo);
 
-        String currentState = specificationEntity.getState();
-
         //validate transition
-        ValidationUtils.transitionValid(SpecificationServiceConstants.SPECIFICATION_STATUS_MAP, currentState, stateKey, errors);
+        ValidationUtils.transitionValid(SpecificationServiceConstants.SPECIFICATION_STATUS_MAP, specificationEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -226,5 +243,22 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         specificationEntity = specificationRepository.saveAndFlush(specificationEntity);
 
         return specificationEntity;
+    }
+
+    private void defaultValueCreateSpecification(SpecificationEntity specificationEntity, ContextInfo contextInfo) throws InvalidParameterException {
+        if (StringUtils.isEmpty(specificationEntity.getId())) {
+            specificationEntity.setId(UUID.randomUUID().toString());
+        }
+        specificationEntity.setState(SpecificationServiceConstants.SPECIFICATION_STATUS_DRAFT);
+        SpecificationCriteriaSearchFilter searchFilter = new SpecificationCriteriaSearchFilter();
+
+        specificationEntity.setRank(1);
+        if(specificationEntity.getComponent() != null) {
+            searchFilter.setComponentId(specificationEntity.getComponent().getId());
+            List<SpecificationEntity> specifications = this.searchSpecifications(searchFilter, Constant.SINGLE_PAGE_SORT_BY_RANK, contextInfo).getContent();
+            if (!specifications.isEmpty()) {
+                specificationEntity.setRank(specifications.get(0).getRank() + 1);
+            }
+        }
     }
 }

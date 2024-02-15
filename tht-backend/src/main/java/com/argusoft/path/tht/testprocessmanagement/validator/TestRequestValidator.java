@@ -15,10 +15,11 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,10 +177,6 @@ public class TestRequestValidator {
                                                                  ComponentService componentService,
                                                                  ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
-        if (testRequestEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
-            throw new InvalidParameterException("TestRequestEntity is missing");
-        }
         if (StringUtils.isEmpty(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
@@ -277,13 +274,19 @@ public class TestRequestValidator {
             }
         }
         if (testRequestEntity.getAssessee() != null) {
+            String fieldName = "assessee";
             try {
-                testRequestEntity.setAssessee(
-                        userService.getUserById(testRequestEntity.getAssessee().getId(), contextInfo)
-                );
+                UserEntity userEntity = userService.getUserById(testRequestEntity.getAssessee().getId(), contextInfo);
+                if (userEntity.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))) {
+                    testRequestEntity.setAssessee(userEntity);
+                } else {
+                    errors.add(
+                            new ValidationResultInfo(fieldName,
+                                    ErrorLevel.ERROR,
+                                    "The id supplied for the assessee does not have assessee role"));
+                }
             } catch (DoesNotExistException | InvalidParameterException ex) {
                 LOGGER.error("caught DoesNotExistException in TestRequestValidator ", ex);
-                String fieldName = "assessee";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
@@ -372,34 +375,26 @@ public class TestRequestValidator {
     private static void validateCommonRequired(TestRequestEntity testRequestEntity,
                                                List<ValidationResultInfo> errors) {
         //check the app name required
-        ValidationUtils
-                .validateRequired(testRequestEntity.getName(), "name", errors);
+        ValidationUtils.validateRequired(testRequestEntity.getName(), "name", errors);
         //check the app assessee required
-        ValidationUtils
-                .validateRequired(testRequestEntity.getAssessee(), "assessee", errors);
+        ValidationUtils.validateRequired(testRequestEntity.getAssessee(), "assessee", errors);
         //check the product name required
-        ValidationUtils
-                .validateRequired(testRequestEntity.getProductName(), "product name", errors);
+        ValidationUtils.validateRequired(testRequestEntity.getProductName(), "product name", errors);
         //check the state required
-        ValidationUtils
-                .validateRequired(testRequestEntity.getState(), "state", errors);
+        ValidationUtils.validateRequired(testRequestEntity.getState(), "state", errors);
 
         //check at least one component/testRequestUrl required
         Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
-        ValidationUtils
-                .validateRequired(urlEntitySet, "test request url", errors);
+        ValidationUtils.validateRequired(urlEntitySet, "test request url", errors);
 
         //loop to check email and password not null in testrequest url
        for(TestRequestUrlEntity entity : urlEntitySet){
            //check for username
-           ValidationUtils
-                   .validateRequired(entity.getUsername(), "username", errors);
+           ValidationUtils.validateRequired(entity.getUsername(), "username", errors);
            //check for password
-           ValidationUtils
-                   .validateRequired(entity.getPassword(), "password", errors);
+           ValidationUtils.validateRequired(entity.getPassword(), "password", errors);
            //check for baseurl
-           ValidationUtils
-                   .validateRequired(entity.getBaseUrl(), "baseurl", errors);
+           ValidationUtils.validateRequired(entity.getBaseUrl(), "baseurl", errors);
        }
     }
 

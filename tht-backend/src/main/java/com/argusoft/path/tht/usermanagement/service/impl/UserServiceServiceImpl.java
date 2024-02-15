@@ -101,11 +101,7 @@ public class UserServiceServiceImpl implements UserService {
     @Timed(name = "registerAssessee")
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
             throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException, MessagingException, IOException {
-        RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setId(UserServiceConstants.ROLE_ID_ASSESSEE);
-        userEntity.getRoles().clear();
-        userEntity.getRoles().add(roleEntity);
-
+        defaultValueRegisterAssessee(userEntity);
         userEntity = this.createUser(userEntity, contextInfo);
         return userEntity;
     }
@@ -393,4 +389,12 @@ public class UserServiceServiceImpl implements UserService {
         Page<RoleEntity> roles = roleRepository.findRoles(pageable);
         return roles;
     }
+
+    private void defaultValueRegisterAssessee(UserEntity userEntity) {
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setId(UserServiceConstants.ROLE_ID_ASSESSEE);
+        userEntity.getRoles().clear();
+        userEntity.getRoles().add(roleEntity);
+    }
+
 }

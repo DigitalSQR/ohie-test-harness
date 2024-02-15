@@ -12,7 +12,7 @@ public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
             example = "1",
             dataType = "Integer",
             required = false)
-    private Integer order;
+    private Integer rank;
 
     @ApiModelProperty(notes = "The refObjUri of the TestcaseResult",
             allowEmptyValue = false,
@@ -49,12 +49,12 @@ public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
             required = true)
     private String ownerId;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
     public String getRefObjUri() {
