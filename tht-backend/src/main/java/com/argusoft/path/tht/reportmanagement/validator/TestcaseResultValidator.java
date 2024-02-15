@@ -151,6 +151,9 @@ public class TestcaseResultValidator {
         // For :Description
         validateTestcaseResultEntityDescription(testcaseResultEntity,
                 errors);
+        // For :Message
+        validateTestcaseResultEntityMessage(testcaseResultEntity,
+                errors);
         // For :TestcaseOption
         validateTestcaseResultEntityTestcaseOption(testcaseResultEntity,
                 errors);
@@ -319,7 +322,6 @@ public class TestcaseResultValidator {
                 .validateRequired(testcaseResultEntity.getRequired(), "required", errors);
         ValidationUtils
                 .validateRequired(testcaseResultEntity.getWorkflow(), "workflow", errors);
-
         if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())
                 && TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())
                 && Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual())
@@ -407,6 +409,16 @@ public class TestcaseResultValidator {
                 "description",
                 0,
                 1000,
+                errors);
+    }
+
+    //Validation For :Message
+    private static void validateTestcaseResultEntityMessage(TestcaseResultEntity testcaseResultEntity,
+                                                            List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseResultEntity.getMessage(),
+                "message",
+                0,
+                2000,
                 errors);
     }
 

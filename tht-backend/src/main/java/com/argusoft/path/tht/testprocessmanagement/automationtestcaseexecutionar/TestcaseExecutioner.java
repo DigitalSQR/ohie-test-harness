@@ -200,7 +200,11 @@ public class TestcaseExecutioner {
                 e.printStackTrace();
                 //TODO: add system failure log and connect it with testResult by refObjUri/refId.
                 try {
-                    updateTestCaseResultForSystemError(testcaseResult, startDateForTestCase, contextInfo);
+                    String errorMessage = e.getMessage();
+                    if(errorMessage.length()>2000){
+                        errorMessage = errorMessage.substring(0,2000);
+                    }
+                    updateTestCaseResultForSystemError(testcaseResult, startDateForTestCase, errorMessage, contextInfo);
                 } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
                          VersionMismatchException | DoesNotExistException ex) {
                     LOGGER.error("caught Exception in TestcaseExecutioner ", e);
@@ -217,10 +221,10 @@ public class TestcaseExecutioner {
         testcaseResultService.changeState(testcaseResultId, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
     }
 
-    private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity, long startDate, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
+    private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity, long startDate,String errorMessage, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         testcaseResultEntity = testcaseResultService.getTestcaseResultById(testcaseResultEntity.getId(), contextInfo);
         testcaseResultEntity.setSuccess(Boolean.FALSE);
-        testcaseResultEntity.setMessage("System failure");
+        testcaseResultEntity.setMessage(errorMessage);
         testcaseResultEntity.setHasSystemError(true);
         // Store total duration in milliseconds
         testcaseResultEntity.setDuration(System.currentTimeMillis() - startDate);

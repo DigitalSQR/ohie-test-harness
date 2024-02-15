@@ -40,7 +40,7 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "ref_id")
     private String refId;
 
-    @Column(name = "message")
+    @Column(name = "message", length = 2000)
     private String message;
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
