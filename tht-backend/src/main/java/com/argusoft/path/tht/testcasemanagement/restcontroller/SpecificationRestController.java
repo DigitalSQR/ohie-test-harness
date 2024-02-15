@@ -5,16 +5,19 @@
  */
 package com.argusoft.path.tht.testcasemanagement.restcontroller;
 
+import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.SpecificationMapper;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -25,7 +28,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This SpecificationServiceRestController maps end points with standard service.
@@ -179,6 +185,18 @@ public class SpecificationRestController {
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         SpecificationEntity specificationEntity = specificationService.changeState(specificationId, changeState, contextInfo);
         return specificationMapper.modelToDto(specificationEntity);
+    }
+
+    @ApiOperation(value = "Retrieves all status of specification.", response = Multimap.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/status/mapping")
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
+        Collection<String> strings = SpecificationServiceConstants.SPECIFICATION_STATUS_MAP.get(sourceStatus);
+        return strings.parallelStream().toList();
     }
 
 }

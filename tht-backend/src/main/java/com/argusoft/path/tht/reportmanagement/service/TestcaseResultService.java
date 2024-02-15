@@ -10,10 +10,16 @@ import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
+import com.google.common.collect.Multimap;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This interface provides contract for TestcaseResult API.
@@ -196,4 +202,6 @@ public interface TestcaseResultService {
             ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException, OperationFailedException;
+
+    public List<String> getSubClassesNameForTestCase();
 }
