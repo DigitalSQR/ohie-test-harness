@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.fileservice.filter;
 
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
@@ -118,7 +119,7 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     protected List<Predicate> buildAuthorizationPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (contextInfo.isAssessee()) {
+        if (contextInfo.isAssessee() && contextInfo.getModule() != Module.DOCUMENT ) {
             predicates.add(criteriaBuilder.equal(this.getDocumentEntityUserEntityJoin().get("id"), contextInfo.getUsername()));
         } else {
             if (getOwnerId() != null) {
