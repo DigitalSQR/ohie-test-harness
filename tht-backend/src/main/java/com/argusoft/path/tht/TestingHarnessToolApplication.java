@@ -2,11 +2,13 @@ package com.argusoft.path.tht;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -31,15 +33,19 @@ public class TestingHarnessToolApplication implements CommandLineRunner {
     @Autowired
     DataSource dataSource;
 
+    @Value("${spring.flyway.locations}")
+    String flywayLocation;
+
     public static void main(String[] args) {
         SpringApplication.run(TestingHarnessToolApplication.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-        Flyway flyway =  Flyway.configure().baselineOnMigrate(true).dataSource(dataSource).load();
-        flyway.repair();
-        flyway.migrate();
+        Flyway.configure().baselineOnMigrate(true).dataSource(dataSource)
+                    .locations(flywayLocation).
+                    load()
+                    .migrate();
     }
 
     @Bean

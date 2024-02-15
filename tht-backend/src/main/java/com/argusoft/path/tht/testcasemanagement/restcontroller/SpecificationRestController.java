@@ -55,7 +55,7 @@ public class SpecificationRestController {
 //            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
 //            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 //    })
-//    @PostMapping("")
+    //    @PostMapping("")
     @Timed(name = "createSpecification")
     public SpecificationInfo createSpecification(
             @RequestBody SpecificationInfo specificationInfo,
@@ -173,7 +173,7 @@ public class SpecificationRestController {
     })
     @PatchMapping("/state/{specificationId}/{changeState}")
     @Transactional
-    public SpecificationInfo updateSpecificationState(@PathVariable("componentId") String specificationId,
+    public SpecificationInfo updateSpecificationState(@PathVariable("specificationId") String specificationId,
                                                       @PathVariable("changeState") String changeState,
                                                       @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {

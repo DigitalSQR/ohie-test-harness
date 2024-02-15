@@ -120,12 +120,6 @@ public class DocumentServiceImpl implements DocumentService {
         return fileDetails;
     }
 
-    private void validateRequired(DocumentEntity documentEntity, List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(documentEntity.getFileType(), "fileType", errors);
-        ValidationUtils.validateRequired(documentEntity.getRefId(), "refId", errors);
-        ValidationUtils.validateRequired(documentEntity.getRefObjUri(), "refObjUri", errors);
-    }
-
     private String getFileType(MultipartFile file) throws OperationFailedException {
         try {
             return FileService.detectInputStreamTypeWithTika(file.getInputStream());

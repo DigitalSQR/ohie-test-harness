@@ -125,18 +125,13 @@ public class ComponentValidator {
         // For :Desc
         validateComponentEntityDesc(componentEntity,
                 errors);
-        // For :Order
-        validateComponentEntityOrder(componentEntity,
-                errors);
         return errors;
     }
 
     private static void validateCommonForeignKey(ComponentEntity componentEntity,
                                                  List<ValidationResultInfo> errors,
                                                  SpecificationService specificationService,
-                                                 ContextInfo contextInfo)
-            throws OperationFailedException,
-            InvalidParameterException {
+                                                 ContextInfo contextInfo) {
         //validate Component foreignKey.
         Set<SpecificationEntity> specificationEntitySet = new HashSet<>();
         componentEntity.getSpecifications().stream().forEach(item -> {
@@ -157,9 +152,7 @@ public class ComponentValidator {
     //validate update
     private static void validateUpdateComponent(List<ValidationResultInfo> errors,
                                                 ComponentEntity componentEntity,
-                                                ComponentEntity originalEntity)
-            throws OperationFailedException,
-            InvalidParameterException {
+                                                ComponentEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(componentEntity.getId(), "id", errors);
         //check the meta required
