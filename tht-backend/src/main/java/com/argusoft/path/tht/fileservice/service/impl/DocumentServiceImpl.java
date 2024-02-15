@@ -250,6 +250,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
         documentEntity.setOwner(userService.getPrincipalUser(contextInfo));
+        documentEntity.setRank(1);
 
         DocumentCriteriaSearchFilter searchFilter = new DocumentCriteriaSearchFilter();
         searchFilter.setRefObjUri(documentEntity.getRefObjUri());

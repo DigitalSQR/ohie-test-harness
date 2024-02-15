@@ -11,6 +11,8 @@ import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import {
 	DOCUMENT_STATE_ACTIVE,
 	DOCUMENT_STATE_INACTIVE,
+	DOCUMENT_TYPE_FOR_USER,
+	DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS
 } from "../../../constants/document_constants";
 import question_img_logo from "../../../styles/images/question-img.png";
 
@@ -104,9 +106,9 @@ export default function TestCase(props) {
 			"refObjUri",
 			RefObjUriConstants.TESTCASE_RESULT_REFOBJURI
 		);
+		formData.append("documentType",DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS.DOCUMENT_TYPE_EVIDENCE);
 		DocumentAPI.uploadDocument(formData)
 			.then((res) => {
-				console.log(res);
 				setUploadedFiles((prevFiles) => [
 					...prevFiles,
 					{ name: res.name, id: res.id, fileType: res.fileType },
