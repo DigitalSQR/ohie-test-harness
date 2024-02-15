@@ -26,7 +26,8 @@ public class CRF7TestCase1 implements TestCase {
         try {
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
+                LOGGER.error("Failed to get IGenericClient");
+                return new ValidationResultInfo("testCRF7Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             OperationOutcome operationOutcome = new OperationOutcome();
@@ -43,15 +44,18 @@ public class CRF7TestCase1 implements TestCase {
                     if (issue.hasSeverity() && issue.getSeverity() == OperationOutcome.IssueSeverity.ERROR &&
                             issue.hasDiagnostics() && issue.getDiagnostics().equals("An error occur") && issue.hasCode() &&
                             issue.getCode() == OperationOutcome.IssueType.PROCESSING) {
-                        return new ValidationResultInfo(ErrorLevel.OK, "Passed");
+                        LOGGER.info("Testcase CRF7 passed");
+                        return new ValidationResultInfo("testCRF7case1", ErrorLevel.OK, "Passed");
                     } else {
-                        return new ValidationResultInfo(ErrorLevel.ERROR, "Failed because operation outcome data is not matched");
+                        LOGGER.error("Failed because operation outcome data is not matched");
+                        return new ValidationResultInfo("testCRF7case1", ErrorLevel.ERROR, "Failed because operation outcome data is not matched");
                     }
                 }
                 // Additional return statement to handle the case where the loop does not execute
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed because operationOutcome is not found");
             } else {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "failed because OperationOutcome was not created");
+                LOGGER.error("Failed because OperationOutcome was not created");
+                return new ValidationResultInfo("testCRF7case1", ErrorLevel.ERROR, "Failed because OperationOutcome was not created");
             }
 
         } catch (Exception ex) {

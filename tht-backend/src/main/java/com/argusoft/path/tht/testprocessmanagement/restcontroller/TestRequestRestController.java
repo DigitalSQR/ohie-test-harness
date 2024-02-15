@@ -11,6 +11,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestcaseExecutionStarter;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 /**
  * This TestRequestServiceRestController maps end points with standard service.
@@ -47,6 +50,15 @@ public class TestRequestRestController {
 
     @Autowired
     private TestRequestMapper testRequestMapper;
+
+    @Autowired
+    private TestcaseExecutionStarter testcaseExecutionStarter;
+    @Autowired
+    private ExecutorService executorService;
+
+    @Autowired
+    private ThreadPoolTaskExecutor asyncExecutor;
+
 
     /**
      * {@inheritdoc}
@@ -186,17 +198,41 @@ public class TestRequestRestController {
             @RequestParam(value ="workflow", required = false) Boolean isWorkflow,
             @RequestParam(value = "functional", required = false) Boolean isFunctional,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
-        testRequestService.startTestingProcess(
-                testRequestId,
-                refObjUri,
-                refId,
-                isManual,
-                isAutomated,
-                isRequired,
-                isRecommended,
-                isWorkflow,
-                isFunctional,
-                contextInfo);
+
+                    testRequestService.startTestingProcess(
+                            testRequestId,
+                            refObjUri,
+                            refId,
+                            isManual,
+                            isAutomated,
+                            isRequired,
+                            isRecommended,
+                            isWorkflow,
+                            isFunctional,
+                            contextInfo);
+
+    }
+    @ApiOperation(value = "Stopping automation testing process", response = Boolean.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully stopped automation testing process")
+    })
+    @PostMapping("/stopTestProcess")
+    public Void stopTest(@RequestParam("refId") String refId,
+                           @RequestParam("refObjUri") String refObjUri) {
+
+        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+        while(threadGroup!=null){
+            Thread[] threads = new Thread[threadGroup.activeCount()];
+            threadGroup.enumerate(threads);
+            for(Thread thread:threads){
+                if(thread.getName().startsWith(refId+refObjUri)){
+                    thread.interrupt();
+                    System.out.println("Thread Interrupted: "+thread.getName());
+                }
+            }
+            threadGroup = threadGroup.getParent();
+        }
+        return null;
     }
 
     @ApiOperation(value = "Reinitialize automation testing process", response = Boolean.class)

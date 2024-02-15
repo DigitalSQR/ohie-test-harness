@@ -149,18 +149,22 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 Constant.START_PROCESS_VALIDATION,
                 testcaseResultService,
                 contextInfo);
-
-        testcaseExecutioner.executeTestingProcess(
-                testRequestId,
-                refObjUri,
-                refId,
-                isManual,
-                isAutomated,
-                isRequired,
-                isRecommended,
-                isWorkflow,
-                isFunctional,
-                contextInfo);
+        System.out.println("Inside start Testing Process");
+        try {
+            testcaseExecutioner.executeTestingProcess(
+                    testRequestId,
+                    refObjUri,
+                    refId,
+                    isManual,
+                    isAutomated,
+                    isRequired,
+                    isRecommended,
+                    isWorkflow,
+                    isFunctional,
+                    contextInfo);
+        } catch (DoesNotExistException | VersionMismatchException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

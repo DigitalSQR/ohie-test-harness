@@ -71,7 +71,7 @@ public class TestcaseExecutioner {
             Boolean isRecommended,
             Boolean isWorkflow,
             Boolean isFunctional,
-            ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
 
         TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = changeStateAndPrepareIgenericClient(
                 testRequestId,
@@ -85,8 +85,7 @@ public class TestcaseExecutioner {
                 isFunctional,
                 contextInfo);
         if (testcaseResultEntitiesAndIgenericClient == null) return;
-
-        testcaseExecutionStarter.startExecution(testcaseResultEntitiesAndIgenericClient.testcaseResultEntities(), testcaseResultEntitiesAndIgenericClient.iGenericClientMap(), Constant.SUPER_USER_CONTEXT);
+        testcaseExecutionStarter.startExecution(testcaseResultEntitiesAndIgenericClient.testcaseResultEntities(), testcaseResultEntitiesAndIgenericClient.iGenericClientMap(), refId, refObjUri, Constant.SUPER_USER_CONTEXT);
 
     }
 
@@ -180,7 +179,7 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = {Exception.class})
     public void executeTestcase(String testcaseResultId, Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
         try {
             TestcaseResultEntity testcaseResult = testcaseResultService.getTestcaseResultById(testcaseResultId, contextInfo);
@@ -216,7 +215,7 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = {Exception.class})
     public void markTestcaseResultInProgress(String testcaseResultId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         testcaseResultService.changeState(testcaseResultId, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
     }
@@ -331,8 +330,8 @@ public class TestcaseExecutioner {
 
         return client;
     }
-
-    private void changeTestcaseResultsState(List<TestcaseResultEntity> testcaseResultEntities, String newState, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+    @Transactional
+    public void changeTestcaseResultsState(List<TestcaseResultEntity> testcaseResultEntities, String newState, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
             if (!newState.equals(testcaseResult.getState())) {
                 testcaseResultService.changeState(testcaseResult.getId(), newState, contextInfo);
