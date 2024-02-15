@@ -23,6 +23,8 @@ import com.argusoft.path.tht.testcasemanagement.validator.TestcaseOptionValidato
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Multimap;
 import io.astefanutti.metrics.aspectj.Metrics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.cache.annotation.CacheEvict;
 // import org.springframework.cache.annotation.CachePut;
@@ -36,6 +38,10 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This TestcaseOptionServiceServiceImpl contains implementation for TestcaseOption service.
@@ -45,6 +51,8 @@ import java.util.*;
 @Service
 @Metrics(registry = "TestcaseOptionServiceServiceImpl")
 public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseOptionServiceServiceImpl.class);
 
     @Autowired
     TestcaseOptionRepository testcaseOptionRepository;
@@ -70,16 +78,19 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             InvalidParameterException,
             DataValidationErrorException {
 
+        if (testcaseOptionEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseOptionServiceServiceImpl");
+            throw new InvalidParameterException("testcaseOptionEntity is missing");
+        }
+
+        defaultValueCreateTestCaseOption(testcaseOptionEntity, contextInfo);
+
         TestcaseOptionValidator.validateCreateUpdateTestcaseOption(Constant.CREATE_VALIDATION,
                 this,
                 testcaseService,
                 testcaseOptionEntity,
                 contextInfo);
 
-        if (StringUtils.isEmpty(testcaseOptionEntity.getId())) {
-            testcaseOptionEntity.setId(UUID.randomUUID().toString());
-        }
-        testcaseOptionEntity.setState(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_DRAFT);
         testcaseOptionEntity = testcaseOptionRepository.saveAndFlush(testcaseOptionEntity);
 
         return testcaseOptionEntity;
@@ -106,6 +117,11 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
+
+        if (testcaseOptionEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseOptionServiceServiceImpl");
+            throw new InvalidParameterException("testcaseOptionEntity is missing");
+        }
 
         TestcaseOptionValidator.validateCreateUpdateTestcaseOption(Constant.UPDATE_VALIDATION,
                 this,
@@ -179,6 +195,10 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
+        if (testcaseOptionEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseOptionServiceServiceImpl");
+            throw new InvalidParameterException("testcaseOptionEntity is missing");
+        }
         List<ValidationResultInfo> errors = TestcaseOptionValidator.validateTestcaseOption(validationTypeKey, testcaseOptionEntity, this, testcaseService, contextInfo);
         return errors;
     }
@@ -202,10 +222,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
         TestcaseOptionEntity testcaseOptionEntity = this.getTestcaseOptionById(testcaseOptionId, contextInfo);
 
-        String currentState = testcaseOptionEntity.getState();
-
         //validate transition
-        ValidationUtils.transitionValid(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_MAP, currentState, stateKey, errors);
+        ValidationUtils.transitionValid(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_MAP, testcaseOptionEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -218,4 +236,22 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
         return testcaseOptionEntity;
     }
-}
+
+    private void defaultValueCreateTestCaseOption(TestcaseOptionEntity testcaseOptionEntity, ContextInfo contextInfo) throws InvalidParameterException {
+        if (StringUtils.isEmpty(testcaseOptionEntity.getId())) {
+            testcaseOptionEntity.setId(UUID.randomUUID().toString());
+        }
+        testcaseOptionEntity.setState(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_DRAFT);
+        TestcaseOptionCriteriaSearchFilter searchFilter = new TestcaseOptionCriteriaSearchFilter();
+
+        testcaseOptionEntity.setRank(1);
+        if(testcaseOptionEntity.getTestcase() != null) {
+            searchFilter.setTestcaseId(testcaseOptionEntity.getTestcase().getId());
+            List<TestcaseOptionEntity> testCaseOptions = this.searchTestcaseOptions(searchFilter, Constant.SINGLE_PAGE_SORT_BY_RANK, contextInfo).getContent();
+            if (!testCaseOptions.isEmpty()) {
+                testcaseOptionEntity.setRank(testCaseOptions.get(0).getRank() + 1);
+            }
+        }
+    }
+    }
+

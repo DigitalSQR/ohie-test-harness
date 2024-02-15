@@ -12,7 +12,7 @@ public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
             example = "1",
             dataType = "Integer",
             required = false)
-    private Integer order;
+    private Integer rank;
 
     @ApiModelProperty(notes = "The refObjUri of the TestcaseResult",
             allowEmptyValue = false,
@@ -42,6 +42,13 @@ public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
             required = false)
     private String fileType;
 
+    @ApiModelProperty(notes = "The documentType of the Saved File i.e. which kind of document eg. profile, proof etc.",
+            allowEmptyValue = false,
+            example = "documentType",
+            dataType = "String",
+            required = false)
+    private String documentType;
+
     @ApiModelProperty(notes = "The ownerId of the Saved File.",
             allowEmptyValue = false,
             example = "1",
@@ -49,12 +56,12 @@ public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
             required = true)
     private String ownerId;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
     public String getRefObjUri() {
@@ -97,4 +104,7 @@ public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
         this.ownerId = ownerId;
     }
 
+    public String getDocumentType() { return documentType; }
+
+    public void setDocumentType(String documentType) { this.documentType = documentType; }
 }

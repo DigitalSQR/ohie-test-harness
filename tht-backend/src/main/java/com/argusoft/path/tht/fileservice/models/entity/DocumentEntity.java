@@ -9,8 +9,8 @@ import javax.persistence.*;
 @Table(name = "document")
 public class DocumentEntity extends IdStateNameMetaEntity {
 
-    @Column(name = "order_id")
-    private Integer order;
+    @Column(name = "rank")
+    private Integer rank;
 
     @Column(name = "ref_obj_uri")
     private String refObjUri;
@@ -24,16 +24,19 @@ public class DocumentEntity extends IdStateNameMetaEntity {
     @Column(name = "file_type")
     private String fileType;
 
+    @Column(name = "document_type")
+    private String documentType;
+
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private UserEntity owner;
 
-    public Integer getOrder() {
-        return order;
+    public Integer getRank() {
+        return rank;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
     public String getRefObjUri() {
@@ -75,4 +78,8 @@ public class DocumentEntity extends IdStateNameMetaEntity {
     public void setOwner(UserEntity owner) {
         this.owner = owner;
     }
+
+    public String getDocumentType() { return documentType; }
+
+    public void setDocumentType(String documentType) { this.documentType = documentType; }
 }

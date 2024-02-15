@@ -20,10 +20,10 @@ public interface DocumentMapper {
     DocumentMapper INSTANCE = Mappers.getMapper(DocumentMapper.class);
 
     @Mapping(source = "owner", target = "ownerId")
-    DocumentInfo modelToDto(DocumentEntity componentEntity);
+    DocumentInfo modelToDto(DocumentEntity documentEntity);
 
     @InheritInverseConfiguration
-    DocumentEntity dtoToModel(DocumentInfo componentEntity);
+    DocumentEntity dtoToModel(DocumentInfo documentEntity);
 
     List<DocumentEntity> dtoToModel(List<DocumentInfo> documentInfos);
 

@@ -55,10 +55,7 @@ public class ComponentValidator {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        if (componentEntity == null) {
-            LOGGER.error("caught InvalidParameterException in ComponentValidator ");
-            throw new InvalidParameterException("componentEntity is missing");
-        }
+
         if (StringUtils.isEmpty(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in ComponentValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
