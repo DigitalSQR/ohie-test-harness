@@ -5,7 +5,7 @@ import failImg from "../../../../styles/images/failure.svg";
 import skipImg from "../../../../styles/images/skip.svg";
 import stopImg from "../../../../styles/images/stop.svg";
 
-export default function AutomatedResultStateRefresher({ testResultId, isDuration }) {
+export default function AutomatedResultStateRefresher({ testResultId, isDuration, stompClient }) {
     const [item, setItem] = useState();
 
     const getResultDisplay = (item) => {
@@ -27,16 +27,15 @@ export default function AutomatedResultStateRefresher({ testResultId, isDuration
     };
 
     useEffect(() => {
-        const fetchTestResultStatus = async () => {
-            const response = await TestResultAPI.getTestcaseResultStatus(testResultId, { automated: true });
+        TestResultAPI.getTestcaseResultStatus(testResultId, { automated: true }).then( (response) => {
             setItem(response);
-            if (response?.state !== "testcase.result.status.finished") {
-                // Call again till finished
-                setTimeout(fetchTestResultStatus, 1000);
-            }
-        };
-
-        fetchTestResultStatus(); // Initial call
+            if (stompClient && stompClient.connected) {
+                const destination = '/testcase-result/' + testResultId;
+                stompClient.subscribe(destination, (msg) => {                
+                    setItem(JSON.parse(msg.body));
+                });
+            }            
+        })
     }, [testResultId]);
 
     return (
