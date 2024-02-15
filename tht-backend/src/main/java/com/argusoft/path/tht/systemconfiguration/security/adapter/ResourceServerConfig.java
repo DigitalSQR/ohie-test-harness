@@ -56,6 +56,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
         //TODO: Before release add all antMatchers
         http.authorizeRequests()
+                .antMatchers("/socket/**").permitAll()
                 .antMatchers("/user/register").permitAll()
                 .antMatchers("/user/logout").permitAll()
                 .antMatchers("/user/verify/**").permitAll()
