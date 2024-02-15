@@ -122,6 +122,9 @@ public class ComponentValidator {
         // For :Desc
         validateComponentEntityDesc(componentEntity,
                 errors);
+        // For :Order
+        validateComponentEntityRank(componentEntity,
+                errors);
         return errors;
     }
 
@@ -275,7 +278,7 @@ public class ComponentValidator {
     }
 
     //Validation For :Order
-    private static void validateComponentEntityOrder(ComponentEntity componentEntity,
+    private static void validateComponentEntityRank(ComponentEntity componentEntity,
                                                      List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(componentEntity.getRank(),
                 "rank",

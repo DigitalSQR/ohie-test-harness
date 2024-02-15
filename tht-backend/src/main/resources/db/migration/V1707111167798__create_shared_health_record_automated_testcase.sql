@@ -72,21 +72,22 @@ VALUES
         Now(),
         0
     ),
-    (
-        'specification.shr.shrf.3',
-        'SHRF-3',
-        'SHRF-3 Specification of the Shared Health Record Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
-        'specification.status.active',
-        1,
-        true,
-        false,
-        'component.shared.health.record',
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
-        Now(),
-        Now(),
-        0
-    ),(
+--    (
+--        'specification.shr.shrf.3',
+--        'SHRF-3',
+--        'SHRF-3 Specification of the Shared Health Record Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
+--        'specification.status.active',
+--        1,
+--        true,
+--        false,
+--        'component.shared.health.record',
+--        'ivasiwala@argusoft.com',
+--        'ivasiwala@argusoft.com',
+--        Now(),
+--        Now(),
+--        0
+--    ),
+(
     'specification.shr.shrf.5',
     'SHRF-5',
     'SHRF-5 Specification of the Shared health record Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
@@ -100,22 +101,22 @@ VALUES
     Now(),
     Now(),
     0
-),
-    (
-        'specification.shr.shrf.8',
-        'SHRF-8',
-        'SHRF-8 Specification of the SHR Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
-        'specification.status.active',
-        1,
-        true,
-        false,
-        'component.shared.health.record',
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
-        Now(),
-        Now(),
-        0
-    );
+);
+--    ,(
+--        'specification.shr.shrf.8',
+--        'SHRF-8',
+--        'SHRF-8 Specification of the SHR Repository Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-shared-health-record-shr)',
+--        'specification.status.active',
+--        1,
+--        true,
+--        false,
+--        'component.shared.health.record',
+--        'ivasiwala@argusoft.com',
+--        'ivasiwala@argusoft.com',
+--        Now(),
+--        Now(),
+--        0
+--    );
 
 
 
@@ -166,21 +167,21 @@ VALUES
         Now(),
         0
     ),
-    (
-        'testcase.shr.shrf.3.1',
-        'Verify creation and fetch facility using XML and JSON data',
-        'Testcase to verify create and fetch resources for specification SHRF3 of the Shared Health Record registry',
-        'testcase.status.inactive',
-        1,
-        false,
-        'SHRF3TestCase1',
-        'specification.shr.shrf.3',
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
-        Now(),
-        Now(),
-        0
-    ),
+--    (
+--        'testcase.shr.shrf.3.1',
+--        'Verify creation and fetch facility using XML and JSON data',
+--        'Testcase to verify create and fetch resources for specification SHRF3 of the Shared Health Record registry',
+--        'testcase.status.inactive',
+--        1,
+--        false,
+--        'SHRF3TestCase1',
+--        'specification.shr.shrf.3',
+--        'ivasiwala@argusoft.com',
+--        'ivasiwala@argusoft.com',
+--        Now(),
+--        Now(),
+--        0
+--    ),
         (
             'testcase.shr.shrf.5.1',
             'Verify that it can return a specific known document from Shared Health Record',
@@ -240,19 +241,19 @@ VALUES
             Now(),
             Now(),
             0
-        ),
-    (
-        'testcase.shr.shrf.8.1',
-        'Verify If Patient Data Is In FHIR format',
-        'Testcase to verify patient data format for specification SHRF8 of the shr repository',
-        'testcase.status.inactive',
-        9,
-        false,
-        'SHRF8TestCase1',
-        'specification.shr.shrf.8',
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
-        Now(),
-        Now(),
-        0
-    );
+        );
+--    ,(
+--        'testcase.shr.shrf.8.1',
+--        'Verify If Patient Data Is In FHIR format',
+--        'Testcase to verify patient data format for specification SHRF8 of the shr repository',
+--        'testcase.status.inactive',
+--        9,
+--        false,
+--        'SHRF8TestCase1',
+--        'specification.shr.shrf.8',
+--        'ivasiwala@argusoft.com',
+--        'ivasiwala@argusoft.com',
+--        Now(),
+--        Now(),
+--        0
+--    );
