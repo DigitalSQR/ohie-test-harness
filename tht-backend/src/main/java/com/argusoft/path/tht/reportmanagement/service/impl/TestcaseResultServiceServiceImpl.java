@@ -9,6 +9,7 @@ import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceCons
 import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
+import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
@@ -39,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
@@ -62,6 +64,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     private TestcaseResultRepository testcaseResultRepository;
 
     @Autowired
+    TestcaseResultMapper testcaseResultMapper;
+
+    @Autowired
     private TestcaseOptionService testcaseOptionService;
 
     @Autowired
@@ -72,6 +77,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     @Autowired
     private GradeEvaluator gradeEvaluator;
+
+    @Autowired
+    SimpMessagingTemplate msgTemplate;
 
     /**
      * {@inheritdoc}
@@ -263,6 +271,11 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         testcaseResultEntity.setState(stateKey);
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
+
+        // Notify client if the state is changed to finished
+        if(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
+            notifyTestCaseFinished(testcaseResultEntity, contextInfo);
+        }
 
         if (!testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
             updateChildTestcaseResult(testcaseResultEntity, contextInfo);
@@ -522,7 +535,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             //set duration
             Long duration = 0L;
-            for (TestcaseResultEntity tcr : testcaseResultEntities) {
+            for (TestcaseResultEntity tcr : filteredTestcaseResults) {
                 if (tcr.getDuration() != null) {
                     duration = duration + tcr.getDuration();
                 }
@@ -591,6 +604,26 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         testcaseResultEntity.setTestcaseOption(testcaseOptionEntity);
         testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
+    }
 
+    private void notifyTestCaseFinished(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+
+        if (testcaseResultEntity.getAutomated().equals(Boolean.TRUE)) {
+            String destination = "/testcase-result/" + testcaseResultEntity.getId();
+            fetchTestcaseResultStatusByInputs(
+                    null,
+                    true,
+                    null,
+                    null,
+                    null,
+                    null,
+                    testcaseResultEntity,
+                    contextInfo
+            );
+            msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
+            if (testcaseResultEntity.getParentTestcaseResult() != null) {
+                notifyTestCaseFinished(testcaseResultEntity.getParentTestcaseResult(), contextInfo);
+            }
+        }
     }
 }
