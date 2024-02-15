@@ -54,6 +54,11 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     )
     private List<String> state;
 
+    @ApiParam(
+            value = "type of the document"
+    )
+    private String documentType;
+
     private Root<DocumentEntity> documentEntityRoot;
 
     private Join<DocumentEntity, UserEntity> documentEntityUserEntityJoin;
@@ -96,6 +101,10 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
 
         if (StringUtils.hasLength(getFileId())) {
             predicates.add(criteriaBuilder.equal(this.getDocumentEntityRoot().get("fileId"), fileId));
+        }
+
+        if (StringUtils.hasLength(getDocumentType())) {
+            predicates.add(criteriaBuilder.equal(this.getDocumentEntityRoot().get("documentType"), documentType));
         }
 
         if (!CollectionUtils.isEmpty(state)) {
@@ -191,4 +200,8 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     public void setPrimaryId(String id) {
         this.id = id;
     }
+
+    public String getDocumentType() { return documentType; }
+
+    public void setDocumentType(String documentType) { this.documentType = documentType; }
 }

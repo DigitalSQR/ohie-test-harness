@@ -100,7 +100,7 @@ public class FileService {
                 return true;
             }
             LOGGER.error("caught InvalidFileTypeException in FileService ");
-            throw new InvalidFileTypeException("Given file is of type (" + actualType + ") which was not expected in given types => " + (String.join(",", validateAgainstTypes)));
+            throw new InvalidFileTypeException("Invalid file type, only allowed file types are : " + (String.join(",", validateAgainstTypes)));
         } catch (IOException e) {
             LOGGER.error("caught IOException in FileService ", e);
             throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());

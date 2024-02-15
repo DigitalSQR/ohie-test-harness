@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.usermanagement.constant;
 
+import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -13,6 +14,7 @@ import java.util.List;
  */
 public class UserServiceConstants {
 
+    public static final String USER_REF_OBJ_URI = UserInfo.class.getName();
     //User status
     public static final String USER_STATUS_VERIFICATION_PENDING = "user.status.verification.pending";
     public static final String USER_STATUS_APPROVAL_PENDING = "user.status.approval.pending";
