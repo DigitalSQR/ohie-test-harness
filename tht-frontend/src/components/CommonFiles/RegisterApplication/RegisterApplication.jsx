@@ -23,7 +23,7 @@ const RegisterApplication = () => {
     const userInfo = store.getState().userInfoSlice;
     setUserId(userInfo.id);
 
-    ComponentAPI.getCompoents()
+    ComponentAPI.getComponents()
       .then((res) => {
         setComponents(res.content);
         hideLoader();
@@ -35,7 +35,7 @@ const RegisterApplication = () => {
         });
         hideLoader();
       });
-    ComponentAPI.getCompoents()
+    ComponentAPI.getComponents()
       .then((res) => {
         setComponents(res.content);
         hideLoader();
