@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.systemconfiguration.security.filters;
 
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,7 @@ public class ContextSetterFilter extends OncePerRequestFilter {
             contextInfo = new ContextInfo();
         }
 
+        contextInfo.setModule(Module.UI);
         contextInfo.setCurrentDate(Calendar.getInstance().getTime());
         request.setAttribute("contextInfo", contextInfo);
         chain.doFilter(request, response);

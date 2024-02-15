@@ -22,7 +22,7 @@ import java.util.Set;
 @Table(name = "tht_user")
 public class UserEntity extends IdStateMetaEntity {
 
-    @Column(name = "email")
+    @Column(name = "email", updatable = false)
     private String email;
 
     @Column(name = "name")

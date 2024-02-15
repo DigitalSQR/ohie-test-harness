@@ -13,6 +13,7 @@ import com.argusoft.path.tht.fileservice.service.FileService;
 import com.argusoft.path.tht.fileservice.validator.DocumentValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -252,6 +253,7 @@ public class DocumentServiceImpl implements DocumentService {
         documentEntity.setOwner(userService.getPrincipalUser(contextInfo));
         documentEntity.setRank(1);
 
+        contextInfo.setModule(Module.DOCUMENT);
         DocumentCriteriaSearchFilter searchFilter = new DocumentCriteriaSearchFilter();
         searchFilter.setRefObjUri(documentEntity.getRefObjUri());
         searchFilter.setRefId(documentEntity.getRefId());
@@ -259,5 +261,6 @@ public class DocumentServiceImpl implements DocumentService {
         if (!documents.isEmpty()) {
             documentEntity.setRank(documents.get(0).getRank() + 1);
         }
+        contextInfo.setModule(Module.UI);
     }
 }

@@ -266,6 +266,16 @@ public class TestcaseResultValidator {
                                              TestcaseResultEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseResultEntity.getState(), originalEntity.getState(), "state", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getParentTestcaseResult(), originalEntity.getParentTestcaseResult(), "parent_test_case_result_id", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getRefObjUri(), originalEntity.getRefObjUri(), "ref_obj_uri", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getRefId(), originalEntity.getRefId(), "ref_id", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getTestRequest(), originalEntity.getTestRequest(), "test_request_id", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getManual(), originalEntity.getManual(), "is_manual", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getRequired(), originalEntity.getRequired(), "is_required", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getAutomated(), originalEntity.getAutomated(), "is_automated", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getRecommended(), originalEntity.getRecommended(), "is_recommended", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getWorkflow(), originalEntity.getWorkflow(), "is_workflow", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getFunctional(), originalEntity.getFunctional(), "is_functional", errors);
     }
 
     //validate create

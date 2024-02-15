@@ -14,6 +14,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
@@ -124,6 +125,8 @@ public class UserServiceServiceImpl implements UserService {
     @Timed(name = "updatePasswordWithVerificationToken")
     public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException {
 
+        contextInfo.setModule(Module.FORGOTPASSWORD);
+
         //trim values
         updatePasswordInfo.trimObject();
 
@@ -143,6 +146,8 @@ public class UserServiceServiceImpl implements UserService {
 
     @Override
     public UserEntity resetPassword(String oldPassword, String newPassword, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+
+        contextInfo.setModule(Module.RESETPASSWORD);
 
         List<ValidationResultInfo> errors = new ArrayList<>();
         UserEntity principalUser = this.getPrincipalUser(contextInfo);
