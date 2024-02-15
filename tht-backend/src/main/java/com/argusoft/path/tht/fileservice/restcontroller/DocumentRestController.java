@@ -117,18 +117,18 @@ public class DocumentRestController {
         return documentMapper.modelToDto(documentEntity);
     }
 
-    @ApiOperation(value = "To change order of Document", response = DocumentInfo.class)
+    @ApiOperation(value = "To change rank of Document", response = DocumentInfo.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated document"),
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PutMapping("/order/{documentId}/{orderId}")
+    @PutMapping("/rank/{documentId}/{rankId}")
     @Transactional
-    public DocumentInfo changeDocumentOrder(@PathVariable("documentId") String documentId,
-                                            @PathVariable("orderId") Integer orderId,
+    public DocumentInfo changeDocumentRank(@PathVariable("documentId") String documentId,
+                                            @PathVariable("rankId") Integer rankId,
                                             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
-        DocumentEntity updatedDocumentEntity = documentService.changeOrder(documentId, orderId, contextInfo);
+        DocumentEntity updatedDocumentEntity = documentService.changeRank(documentId, rankId, contextInfo);
         return documentMapper.modelToDto(updatedDocumentEntity);
     }
 

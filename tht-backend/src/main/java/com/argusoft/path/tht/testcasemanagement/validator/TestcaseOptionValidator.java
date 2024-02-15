@@ -44,10 +44,6 @@ public class TestcaseOptionValidator {
     }
 
     public static List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey, TestcaseOptionEntity testcaseOptionEntity, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        if (testcaseOptionEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseOptionValidator ");
-            throw new InvalidParameterException("testcaseOptionEntity is missing");
-        }
         if (StringUtils.isEmpty(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in TestcaseOptionValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");

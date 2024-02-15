@@ -22,6 +22,8 @@ import com.argusoft.path.tht.testcasemanagement.validator.TestcaseValidator;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Multimap;
 import io.astefanutti.metrics.aspectj.Metrics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.cache.annotation.CacheEvict;
 // import org.springframework.cache.annotation.CachePut;
@@ -35,6 +37,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -45,6 +51,8 @@ import java.util.*;
 @Service
 @Metrics(registry = "TestcaseServiceServiceImpl")
 public class TestcaseServiceServiceImpl implements TestcaseService {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseServiceServiceImpl.class);
 
     @Autowired
     TestcaseRepository testcaseRepository;
@@ -74,6 +82,13 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             InvalidParameterException,
             DataValidationErrorException {
 
+        if (testcaseEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseServiceServiceImpl");
+            throw new InvalidParameterException("testcaseEntity is missing");
+        }
+
+        defaultValueCreateTestCase(testcaseEntity, contextInfo);
+
         TestcaseValidator.validateCreateUpdateTestCase(Constant.CREATE_VALIDATION,
                 testcaseEntity,
                 this,
@@ -81,10 +96,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
                 applicationContext,
                 contextInfo);
 
-        if (StringUtils.isEmpty(testcaseEntity.getId())) {
-            testcaseEntity.setId(UUID.randomUUID().toString());
-        }
-        testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_DRAFT);
         testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
         return testcaseEntity;
     }
@@ -110,6 +121,11 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
+
+        if (testcaseEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseServiceServiceImpl");
+            throw new InvalidParameterException("testcaseEntity is missing");
+        }
 
         TestcaseValidator.validateCreateUpdateTestCase(Constant.UPDATE_VALIDATION,
                 testcaseEntity,
@@ -185,6 +201,11 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             throws InvalidParameterException,
             OperationFailedException {
 
+        if (testcaseEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseServiceServiceImpl");
+            throw new InvalidParameterException("testcaseEntity is missing");
+        }
+
         List<ValidationResultInfo> errors = TestcaseValidator.validateTestCase(validationTypeKey, testcaseEntity, this, specificationService, applicationContext, contextInfo);
         return errors;
     }
@@ -207,10 +228,9 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         ValidationUtils.statusPresent(TestcaseServiceConstants.TESTCASE_STATUS, stateKey, errors);
 
         TestcaseEntity testcaseEntity = this.getTestcaseById(testcaseId, contextInfo);
-        String currentState = testcaseEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(TestcaseServiceConstants.TESTCASE_STATUS_MAP, currentState, stateKey, errors);
+        ValidationUtils.transitionValid(TestcaseServiceConstants.TESTCASE_STATUS_MAP, testcaseEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -222,5 +242,23 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
 
         return testcaseEntity;
+    }
+
+    private void defaultValueCreateTestCase(TestcaseEntity testcaseEntity, ContextInfo contextInfo) throws InvalidParameterException {
+        if (StringUtils.isEmpty(testcaseEntity.getId())) {
+            testcaseEntity.setId(UUID.randomUUID().toString());
+        }
+        testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_DRAFT);
+
+        TestcaseCriteriaSearchFilter searchFilter = new TestcaseCriteriaSearchFilter();
+
+        testcaseEntity.setRank(1);
+        if(testcaseEntity.getSpecification() != null) {
+            searchFilter.setSpecificationId(testcaseEntity.getSpecification().getId());
+            List<TestcaseEntity> testCases = this.searchTestcases(searchFilter, Constant.SINGLE_PAGE_SORT_BY_RANK, contextInfo).getContent();
+            if (!testCases.isEmpty()) {
+                testcaseEntity.setRank(testCases.get(0).getRank() + 1);
+            }
+        }
     }
 }

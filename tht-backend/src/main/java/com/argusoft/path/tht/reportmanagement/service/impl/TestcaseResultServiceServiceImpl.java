@@ -22,7 +22,6 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
@@ -34,6 +33,8 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Multimap;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,11 +56,10 @@ import java.util.stream.Collectors;
 @Metrics(registry = "TestcaseResultServiceServiceImpl")
 public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
-    @Autowired
-    private TestcaseResultRepository testcaseResultRepository;
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultServiceServiceImpl.class);
 
     @Autowired
-    private SpecificationService specificationService;
+    private TestcaseResultRepository testcaseResultRepository;
 
     @Autowired
     private TestcaseOptionService testcaseOptionService;
@@ -84,7 +84,14 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+            DataValidationErrorException, DoesNotExistException {
+
+        if (testcaseResultEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseResultServiceServiceImpl ");
+            throw new InvalidParameterException("TestcaseResultEntity is missing");
+        }
+
+        defaultValueCreateTestCaseResult(testcaseResultEntity, contextInfo);
 
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.CREATE_VALIDATION,
                 this,
@@ -94,10 +101,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 testcaseResultEntity,
                 contextInfo);
 
-        if (StringUtils.isEmpty(testcaseResultEntity.getId())) {
-            testcaseResultEntity.setId(UUID.randomUUID().toString());
-        }
-        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
         return testcaseResultEntity;
     }
@@ -113,7 +116,12 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+            DataValidationErrorException {
+
+        if (testcaseResultEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseResultServiceServiceImpl ");
+            throw new InvalidParameterException("TestcaseResultEntity is missing");
+        }
 
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.UPDATE_VALIDATION,
                 this,
@@ -131,6 +139,11 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     @Override
     public TestcaseResultEntity submitTestcaseResult(String testcaseResultId, String selectedTestcaseOptionId, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
 
+        TestcaseResultEntity testcaseResultEntity
+                = this.getTestcaseResultById(testcaseResultId, contextInfo);
+
+        defaultValueSubmitTestCaseResult(testcaseResultEntity, selectedTestcaseOptionId, contextInfo);
+
         TestcaseResultValidator.validateSubmitTestcaseResult(
                 testcaseResultId,
                 selectedTestcaseOptionId,
@@ -138,20 +151,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 this,
                 testcaseOptionService,
                 contextInfo);
-
-        //Submit testcaseResult.
-        TestcaseResultEntity testcaseResultEntity
-                = this.getTestcaseResultById(testcaseResultId, contextInfo);
-
-        TestcaseOptionEntity testcaseOptionEntity
-                = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
-
-        testcaseResultEntity.setTestcaseOption(testcaseOptionEntity);
-        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
-
-        UserEntity userEntity =
-                userService.getPrincipalUser(contextInfo);
-        testcaseResultEntity.setTester(userEntity);
 
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
 
@@ -222,6 +221,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
+        if (testcaseResultEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseResultServiceServiceImpl ");
+            throw new InvalidParameterException("TestcaseResultEntity is missing");
+        }
         List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, testRequestService, contextInfo);
         return errors;
     }
@@ -235,10 +238,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         ValidationUtils.statusPresent(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS, stateKey, errors);
 
         TestcaseResultEntity testcaseResultEntity = this.getTestcaseResultById(testcaseResultId, contextInfo);
-        String currentState = testcaseResultEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP, currentState, stateKey, errors);
+        ValidationUtils.transitionValid(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP, testcaseResultEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -573,4 +575,22 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
 
+    private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+        if (StringUtils.isEmpty(testcaseResultEntity.getId())) {
+            testcaseResultEntity.setId(UUID.randomUUID().toString());
+        }
+        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
+        testcaseResultEntity.setDuration(null);
+    }
+
+    private void defaultValueSubmitTestCaseResult(TestcaseResultEntity testcaseResultEntity, String selectedTestcaseOptionId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+        testcaseResultEntity.setTester(userService.getPrincipalUser(contextInfo));
+
+        TestcaseOptionEntity testcaseOptionEntity
+            = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
+
+        testcaseResultEntity.setTestcaseOption(testcaseOptionEntity);
+        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
+
+    }
 }

@@ -36,6 +36,7 @@ public final class Constant {
     public static final Pageable SINGLE_VALUE_PAGE = PageRequest.of(0, 1);
     public static final Pageable FULL_PAGE = PageRequest.of(0, Integer.MAX_VALUE);
     public static final Pageable FULL_PAGE_SORT_BY_RANK = PageRequest.of(0, Integer.MAX_VALUE, Sort.by("rank"));
+    public static final Pageable SINGLE_PAGE_SORT_BY_RANK = PageRequest.of(0, 1, Sort.by("rank").descending());
     public static final Pageable TWO_VALUE_PAGE = PageRequest.of(0, 2);
     public static final String NOT_FOUND = " not found";
     public static final String ALLOWED_CHARS_IN_NAMES = "[[A-Z][a-z][0-9][/][\\s][_][@][#][(][)][.][,]['][-][*][`][/][&]]*";

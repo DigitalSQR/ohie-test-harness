@@ -46,13 +46,13 @@ public class DocumentValidator {
         }
     }
 
-    public static void validateDocumentOrder(Integer orderId) throws DataValidationErrorException {
+    public static void validateDocumentRank(Integer rankId) throws DataValidationErrorException {
         List<ValidationResultInfo> errors = new ArrayList<>();
-        if (orderId < 0) {
+        if (rankId < 0) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setMessage("orderId cannot be lesser than 0");
+            validationResultInfo.setMessage("rankId cannot be lesser than 0");
             validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setElement("orderId");
+            validationResultInfo.setElement("rankId");
             errors.add(validationResultInfo);
             throw new DataValidationErrorException("Error(s) occured in validating ", errors);
         }
@@ -64,7 +64,7 @@ public class DocumentValidator {
         ValidationUtils.validateRequired(documentEntity.getRefObjUri(), "refObjUri", errors);
         ValidationUtils.validateRequired(documentEntity.getName(), "name", errors);
         ValidationUtils.validateRequired(documentEntity.getState(), "state", errors);
-        ValidationUtils.validateRequired(documentEntity.getOrder(), "order", errors);
+        ValidationUtils.validateRequired(documentEntity.getRank(), "rank", errors);
         ValidationUtils.validateRequired(documentEntity.getOwner(), "owner", errors);
     }
 
