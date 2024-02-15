@@ -5,15 +5,18 @@
  */
 package com.argusoft.path.tht.testcasemanagement.restcontroller;
 
+import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseOptionInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseOptionMapper;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -24,7 +27,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This TestcaseOptionServiceRestController maps end points with standard service.
@@ -37,7 +43,7 @@ import java.util.List;
 public class TestcaseOptionRestController {
 
     @Autowired
-    private TestcaseOptionService TestcaseOptionService;
+    private TestcaseOptionService testcaseOptionService;
 
     @Autowired
     private TestcaseOptionMapper TestcaseOptionMapper;
@@ -64,7 +70,7 @@ public class TestcaseOptionRestController {
             DataValidationErrorException {
 
         TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
-        testcaseOptionEntity = TestcaseOptionService.createTestcaseOption(testcaseOptionEntity, contextInfo);
+        testcaseOptionEntity = testcaseOptionService.createTestcaseOption(testcaseOptionEntity, contextInfo);
         return TestcaseOptionMapper.modelToDto(testcaseOptionEntity);
 
     }
@@ -92,7 +98,7 @@ public class TestcaseOptionRestController {
             DataValidationErrorException {
 
         TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
-        testcaseOptionEntity = TestcaseOptionService.updateTestcaseOption(testcaseOptionEntity, contextInfo);
+        testcaseOptionEntity = testcaseOptionService.updateTestcaseOption(testcaseOptionEntity, contextInfo);
         return TestcaseOptionMapper.modelToDto(testcaseOptionEntity);
     }
 
@@ -116,7 +122,7 @@ public class TestcaseOptionRestController {
             throws OperationFailedException,
             InvalidParameterException {
 
-        Page<TestcaseOptionEntity> testcaseOptionEntities = TestcaseOptionService.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, pageable, contextInfo);
+        Page<TestcaseOptionEntity> testcaseOptionEntities = testcaseOptionService.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, pageable, contextInfo);
         return TestcaseOptionMapper.pageEntityToDto(testcaseOptionEntities);
     }
 
@@ -139,7 +145,7 @@ public class TestcaseOptionRestController {
             throws DoesNotExistException,
             InvalidParameterException {
 
-        TestcaseOptionEntity testcaseOptionById = TestcaseOptionService.getTestcaseOptionById(testcaseOptionId, contextInfo);
+        TestcaseOptionEntity testcaseOptionById = testcaseOptionService.getTestcaseOptionById(testcaseOptionId, contextInfo);
         return TestcaseOptionMapper.modelToDto(testcaseOptionById);
     }
 
@@ -161,7 +167,7 @@ public class TestcaseOptionRestController {
             throws InvalidParameterException,
             OperationFailedException {
         TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
-        return TestcaseOptionService
+        return testcaseOptionService
                 .validateTestcaseOption(validationTypeKey, testcaseOptionEntity, contextInfo);
     }
 
@@ -178,7 +184,19 @@ public class TestcaseOptionRestController {
                                                         @PathVariable("changeState") String changeState,
                                                         @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
-        TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionService.changeState(testcaseOptionId, changeState, contextInfo);
+        TestcaseOptionEntity testcaseOptionEntity = testcaseOptionService.changeState(testcaseOptionId, changeState, contextInfo);
         return TestcaseOptionMapper.modelToDto(testcaseOptionEntity);
+    }
+
+    @ApiOperation(value = "Retrieves all status of test case option.", response = Multimap.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/status/mapping")
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
+        Collection<String> strings = TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_MAP.get(sourceStatus);
+        return strings.parallelStream().toList();
     }
 }

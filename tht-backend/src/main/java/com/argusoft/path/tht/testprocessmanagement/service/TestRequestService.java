@@ -13,7 +13,10 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface provides contract for TestRequest API.
@@ -186,5 +189,4 @@ public interface TestRequestService {
      * @throws DataValidationErrorException when validation fails
      */
     public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
-
 }
