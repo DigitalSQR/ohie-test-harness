@@ -5,6 +5,7 @@
  */
 package com.argusoft.path.tht.systemconfiguration.models.dto;
 
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import io.swagger.annotations.ApiParam;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,6 +48,16 @@ public class ContextInfo extends User implements Serializable {
     private Boolean isTester;
 
     private Boolean isAdmin;
+
+    private Module module;
+
+    public Module getModule() {
+        return module;
+    }
+
+    public void setModule(Module module) {
+        this.module = module;
+    }
 
     public ContextInfo() {
         super("username", "password", new ArrayList<>());

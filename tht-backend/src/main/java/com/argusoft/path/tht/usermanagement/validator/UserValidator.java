@@ -9,8 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
@@ -177,7 +176,8 @@ public class UserValidator {
 
                 validateUpdateUser(errors,
                         userEntity,
-                        originalEntity);
+                        originalEntity,
+                        contextInfo);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateUser(userService, errors, userEntity, contextInfo);
@@ -220,7 +220,8 @@ public class UserValidator {
     //validate update
     private static void validateUpdateUser(List<ValidationResultInfo> errors,
                                            UserEntity userEntity,
-                                           UserEntity originalEntity) {
+                                           UserEntity originalEntity,
+                                           ContextInfo contextInfo) {
         // required validation
         ValidationUtils.validateRequired(userEntity.getId(), "id", errors);
         //check the meta required
@@ -241,16 +242,21 @@ public class UserValidator {
                             + " refresh your copy."));
         }
         // check not updatable fields
-        validateNotUpdatable(errors, userEntity, originalEntity);
+        validateNotUpdatable(errors, userEntity, originalEntity, contextInfo);
     }
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              UserEntity userEntity,
-                                             UserEntity originalEntity) {
+                                             UserEntity originalEntity,
+                                             ContextInfo contextInfo) {
 
         // state can't be updated
         ValidationUtils.validateNotUpdatable(userEntity.getState(), originalEntity.getState(), "state", errors);
+        ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
+        if(contextInfo.getModule()!= Module.RESETPASSWORD && contextInfo.getModule()!= Module.FORGOTPASSWORD){
+            ValidationUtils.validateNotUpdatable(userEntity.getPassword(), originalEntity.getPassword(), "password", errors);
+        }
     }
 
     //validate create
