@@ -237,7 +237,7 @@ public class TestcaseOptionValidator {
                 .validateRequired(testcaseOptionEntity.getName(), "name", errors);
         //check for testcaseId
         ValidationUtils
-                .validateRequired(testcaseOptionEntity.getTestcase().getId(), "testcaseId", errors);
+                .validateRequired(testcaseOptionEntity.getTestcase(), "testcase", errors);
         //check for state
         ValidationUtils
                 .validateRequired(testcaseOptionEntity.getState(), "state", errors);

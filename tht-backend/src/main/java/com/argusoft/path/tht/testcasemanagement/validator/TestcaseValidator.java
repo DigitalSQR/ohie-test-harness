@@ -200,7 +200,7 @@ public class TestcaseValidator {
                                                List<ValidationResultInfo> errors) {
         //check for specification
         ValidationUtils
-                .validateRequired(testcaseEntity.getSpecification().getId(), "specificationId", errors);
+                .validateRequired(testcaseEntity.getSpecification(), "specification", errors);
 
         if (!Objects.equals(Boolean.TRUE, testcaseEntity.getManual())) {
             ValidationUtils.validateRequired(testcaseEntity.getBeanName(), "beanName", errors);

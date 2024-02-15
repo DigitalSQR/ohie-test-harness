@@ -312,7 +312,7 @@ public class TestcaseResultValidator {
         ValidationUtils
                 .validateRequired(testcaseResultEntity.getRefId(), "refId", errors);
         ValidationUtils
-                .validateRequired(testcaseResultEntity.getTestRequest().getId(), "testRequestId", errors);
+                .validateRequired(testcaseResultEntity.getTestRequest(), "testRequest", errors);
         ValidationUtils
                 .validateRequired(testcaseResultEntity.getRecommended(), "recommended", errors);
         ValidationUtils
