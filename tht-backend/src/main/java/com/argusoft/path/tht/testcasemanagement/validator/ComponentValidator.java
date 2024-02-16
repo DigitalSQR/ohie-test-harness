@@ -56,7 +56,7 @@ public class ComponentValidator {
             throws InvalidParameterException,
             OperationFailedException {
 
-        if (StringUtils.isEmpty(validationTypeKey)) {
+        if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in ComponentValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
         }

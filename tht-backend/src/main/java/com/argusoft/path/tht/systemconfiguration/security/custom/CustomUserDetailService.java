@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.argusoft.path.tht.systemconfiguration.security.custom;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
@@ -58,7 +53,7 @@ public class CustomUserDetailService implements UserDetailsService {
             String password = request.getParameter("password");
             try {
                 UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
-                if (StringUtils.isEmpty(user.getPassword()) || !Objects.equals(user.getPassword(), password)) {
+                if (!StringUtils.hasLength(user.getPassword()) || !Objects.equals(user.getPassword(), password)) {
                     LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
                     throw new UsernameNotFoundException("Credential are incorrect.");
                 }

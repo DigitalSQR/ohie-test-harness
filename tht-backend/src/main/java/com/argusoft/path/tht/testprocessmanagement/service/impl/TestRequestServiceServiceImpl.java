@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.argusoft.path.tht.testprocessmanagement.service.impl;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
@@ -264,7 +259,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                                 ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
-        if (StringUtils.isEmpty(testRequestId)) {
+        if (!StringUtils.hasLength(testRequestId)) {
             throw new InvalidParameterException("TestRequestId is missing");
         }
         TestRequestCriteriaSearchFilter testRequestCriteriaSearchFilter = new TestRequestCriteriaSearchFilter(testRequestId);
@@ -604,7 +599,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(contextInfo.getUsername());
         testcaseResultEntity.setTester(userEntity);
-        if (!StringUtils.isEmpty(parentTestcaseResultId)) {
+        if (!!StringUtils.hasLength(parentTestcaseResultId)) {
             TestcaseResultEntity parentTestcaseResult = new TestcaseResultEntity();
             parentTestcaseResult.setId(parentTestcaseResultId);
             testcaseResultEntity.setParentTestcaseResult(parentTestcaseResult);

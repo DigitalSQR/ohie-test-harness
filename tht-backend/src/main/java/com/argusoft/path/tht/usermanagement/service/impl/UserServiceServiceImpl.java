@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.argusoft.path.tht.usermanagement.service.impl;
 
 import com.argusoft.path.tht.emailservice.service.EmailService;
@@ -290,7 +285,7 @@ public class UserServiceServiceImpl implements UserService {
                                   ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
-        if (StringUtils.isEmpty(userId)) {
+        if (!StringUtils.hasLength(userId)) {
             LOGGER.error("caught InvalidParameterException in UserServiceServiceImpl ");
             throw new InvalidParameterException("userId is missing");
         }
@@ -371,7 +366,7 @@ public class UserServiceServiceImpl implements UserService {
             throws DoesNotExistException,
             OperationFailedException,
             InvalidParameterException {
-        if (StringUtils.isEmpty(roleId)) {
+        if (!StringUtils.hasLength(roleId)) {
             LOGGER.error("caught InvalidParameterException in UserServiceServiceImpl ");
             throw new InvalidParameterException("roleId can not be empty");
         }

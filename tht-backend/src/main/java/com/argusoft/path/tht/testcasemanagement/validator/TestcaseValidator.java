@@ -55,7 +55,7 @@ public class TestcaseValidator {
                                                               ApplicationContext applicationContext,
                                                               ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         
-        if (StringUtils.isEmpty(validationTypeKey)) {
+        if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in TestcaseValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
         }
@@ -261,7 +261,7 @@ public class TestcaseValidator {
     private static void validateTestcaseEntityBeanName(TestcaseEntity testcaseEntity,
                                                         ApplicationContext applicationContext,
                                                         List<ValidationResultInfo> errors) {
-        if (StringUtils.isEmpty(testcaseEntity.getBeanName())) {
+        if (!StringUtils.hasLength(testcaseEntity.getBeanName())) {
             return;
         }
         ValidationUtils.validateLength(testcaseEntity.getBeanName(),

@@ -52,7 +52,7 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
     }
 
     default UserEntity setToTester(String testerId) {
-        if (StringUtils.isEmpty(testerId)) {
+        if (!StringUtils.hasLength(testerId)) {
             return null;
         }
         UserEntity userEntity = new UserEntity();
@@ -66,7 +66,7 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
     }
 
     default TestcaseOptionEntity setToTestcaseOption(String testcaseOptionId) {
-        if (StringUtils.isEmpty(testcaseOptionId)) {
+        if (!StringUtils.hasLength(testcaseOptionId)) {
             return null;
         }
         TestcaseOptionEntity testcaseOptionEntity = new TestcaseOptionEntity();
@@ -80,7 +80,7 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
     }
 
     default TestcaseResultEntity setToParentTestcaseResult(String parentTestcaseResultId) {
-        if (StringUtils.isEmpty(parentTestcaseResultId)) {
+        if (!StringUtils.hasLength(parentTestcaseResultId)) {
             return null;
         }
         TestcaseResultEntity testcaseOptionEntity = new TestcaseResultEntity();
@@ -95,7 +95,7 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
     }
 
     default TestRequestEntity setToTestRequest(String testRequestId) {
-        if (StringUtils.isEmpty(testRequestId)) {
+        if (!StringUtils.hasLength(testRequestId)) {
             return null;
         }
         TestRequestEntity testRequestEntity = new TestRequestEntity();

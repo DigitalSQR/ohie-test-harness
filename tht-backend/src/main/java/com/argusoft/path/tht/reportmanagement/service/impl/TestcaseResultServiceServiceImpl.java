@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
@@ -208,7 +203,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                                       ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
-        if (StringUtils.isEmpty(testcaseResultId)) {
+        if (!StringUtils.hasLength(testcaseResultId)) {
             throw new InvalidParameterException("TestcaseResultId is missing");
         }
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter(testcaseResultId);
@@ -423,7 +418,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException, OperationFailedException {
-        if (StringUtils.isEmpty(testcaseResultId)) {
+        if (!StringUtils.hasLength(testcaseResultId)) {
             throw new InvalidParameterException("TestcaseResultId is missing");
         }
 
@@ -589,7 +584,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
 
     private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
-        if (StringUtils.isEmpty(testcaseResultEntity.getId())) {
+        if (!StringUtils.hasLength(testcaseResultEntity.getId())) {
             testcaseResultEntity.setId(UUID.randomUUID().toString());
         }
         testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);

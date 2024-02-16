@@ -75,7 +75,7 @@ public class TestcaseResultValidator {
 
     public static List<ValidationResultInfo> validateTestCaseResult(String validationTypeKey, TestcaseResultEntity testcaseResultEntity, UserService userService, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, TestRequestService testRequestService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
-        if (StringUtils.isEmpty(validationTypeKey)) {
+        if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in TestcaseResultValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
         }

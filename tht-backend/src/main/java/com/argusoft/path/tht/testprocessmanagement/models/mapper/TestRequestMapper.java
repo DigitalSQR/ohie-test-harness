@@ -93,7 +93,7 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity,Test
 
     @Named("setToApprover")
     default UserEntity setToApprover(String approverId) {
-        if (StringUtils.isEmpty(approverId)) {
+        if (!StringUtils.hasLength(approverId)) {
             return null;
         }
         UserEntity userEntity = new UserEntity();
@@ -109,7 +109,7 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity,Test
 
     @Named("setToAssessee")
     default UserEntity setToAssessee(String assesseeId) {
-        if (StringUtils.isEmpty(assesseeId)) {
+        if (!StringUtils.hasLength(assesseeId)) {
             return null;
         }
         UserEntity userEntity = new UserEntity();

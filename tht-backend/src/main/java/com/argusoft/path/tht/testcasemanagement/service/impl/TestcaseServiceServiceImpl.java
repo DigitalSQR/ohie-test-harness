@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
@@ -179,7 +174,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
                                           ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
-        if (StringUtils.isEmpty(testcaseId)) {
+        if (!StringUtils.hasLength(testcaseId)) {
             throw new InvalidParameterException("TestcaseId is missing");
         }
         TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter = new TestcaseCriteriaSearchFilter(testcaseId);
@@ -245,7 +240,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     }
 
     private void defaultValueCreateTestCase(TestcaseEntity testcaseEntity, ContextInfo contextInfo) throws InvalidParameterException {
-        if (StringUtils.isEmpty(testcaseEntity.getId())) {
+        if (!StringUtils.hasLength(testcaseEntity.getId())) {
             testcaseEntity.setId(UUID.randomUUID().toString());
         }
         testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_DRAFT);
