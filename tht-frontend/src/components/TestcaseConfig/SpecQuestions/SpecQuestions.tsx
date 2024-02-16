@@ -7,7 +7,6 @@ import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
 import "./SpecQuestions.scss";
 import { SpecificationDTO } from "../../../dto/SpecificationDTO";
 import { Question, Option } from "../../../dto/SpecQuestionDTO";
-import { Switch } from "antd";
 
 const ManualTestCases: React.FC = () => {
   const navigate = useNavigate();
@@ -77,7 +76,7 @@ const ManualTestCases: React.FC = () => {
   const handleClick = (path: string, state: object) => {
     navigate(path, { state });
   };
-
+  
   const fetchTestCaseOptions = async (testcaseId: string) => {
     const optionsResp = await TestCaseOptionsAPI.getTestCaseOptionsByTestcaseId(
       testcaseId
@@ -88,29 +87,9 @@ const ManualTestCases: React.FC = () => {
   return (
     <div id="wrapper">
       <div className="bcca-breadcrumb">
-        <div className="bcca-breadcrumb-item">
-          {specificationId} - Manual Configuration
-        </div>
-        <div
-          className="bcca-breadcrumb-item"
-          onClick={() =>
-            handleClick(`/dashboard/component-specification/${componentId}`, {
-              name,
-              componentId,
-            })
-          }
-        >
-          {" "}
-          {name}{" "}
-        </div>
-        <div
-          className="bcca-breadcrumb-item"
-          onClick={() => {
-            navigate("/dashboard/testcase-config");
-          }}
-        >
-          Components
-        </div>
+        <div className="bcca-breadcrumb-item">{specificationId} - Manual Configuration</div>
+        <div className="bcca-breadcrumb-item" onClick={() => handleClick(`/dashboard/component-specification/${componentId}`, {name, componentId})}> {name} </div>
+        <div className="bcca-breadcrumb-item" onClick={()=>{navigate("/dashboard/testcase-config")}}>Components</div>
       </div>
       {questions?.map((question, index) => (
         <div key={index} className="question-container my-4">
@@ -130,12 +109,7 @@ const ManualTestCases: React.FC = () => {
             <span className="edit-icon">
               <EditOutlined onClick={() => handleUpdate(question, name)} />
             </span>
-            <Switch
-              defaultChecked={true}
-              // onChange={(checked) => handleToggleChange(component.id, checked)}
-              checkedChildren="ACTIVE"
-              unCheckedChildren="INACTIVE"
-            />
+            <span className="badges-green-dark">ACTIVE</span>
           </div>
         </div>
       ))}
