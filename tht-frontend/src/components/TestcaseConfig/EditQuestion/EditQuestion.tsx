@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button, Select, notification } from "antd";
+import { Button, Select, Switch, notification } from "antd";
 import "./EditQuestion.scss";
 import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
 import { useLoader } from "../../loader/LoaderContext";
 import { TestCaseAPI } from "../../../api/TestCaseAPI";
-import {  EditedOption } from "../../../dto/EditQuestionDTO";
+import { EditedOption } from "../../../dto/EditQuestionDTO";
 
 const { Option: AntdOption } = Select;
 
@@ -15,16 +15,20 @@ const EditQuestion = () => {
   const { showLoader, hideLoader } = useLoader();
   let { testcase, name, componentId } = location.state;
 
-  const [editedQuestion, setEditedQuestion] = useState<string>(testcase.testcase.name);
+  const [editedQuestion, setEditedQuestion] = useState<string>(
+    testcase.testcase.name
+  );
   const [changesMade, setChangesMade] = useState<boolean>(false);
 
-  const [editedOptions, setEditedOptions] = useState<EditedOption[]>( testcase.options.map((option) => ({
-    label: option.name,
-    metaVersion: option.meta.version,
-    checked: false,
-    status: "Active",
-    changesMade: false,
-  })));
+  const [editedOptions, setEditedOptions] = useState<EditedOption[]>(
+    testcase.options.map((option) => ({
+      label: option.name,
+      metaVersion: option.meta.version,
+      checked: false,
+      status: "Active",
+      changesMade: false,
+    }))
+  );
 
   const handleQuestionChange = (newValue: string) => {
     setEditedQuestion(newValue);
@@ -123,7 +127,9 @@ const EditQuestion = () => {
       const testcaseOptionId = testcase.options[index].id;
 
       const resp =
-        await TestCaseOptionsAPI.getTestCaseOptionsByTestcaseOptionId(testcaseOptionId);
+        await TestCaseOptionsAPI.getTestCaseOptionsByTestcaseOptionId(
+          testcaseOptionId
+        );
 
       testcase.options[index] = resp;
 
@@ -189,7 +195,14 @@ const EditQuestion = () => {
         <div className="bcca-breadcrumb-item">Question</div>
         <div
           className="bcca-breadcrumb-item"
-          onClick={() => handleSave(`/dashboard/manual-testcases/${testcase.testcase.id}`, {name, componentId, specificationId: testcase.testcase.specificationId})}>
+          onClick={() =>
+            handleSave(`/dashboard/manual-testcases/${testcase.testcase.id}`, {
+              name,
+              componentId,
+              specificationId: testcase.testcase.specificationId,
+            })
+          }
+        >
           {testcase.testcase.specificationId} - Manual Configuration
         </div>
         <div
@@ -265,17 +278,12 @@ const EditQuestion = () => {
                 />
               </div>
               <div className="col-md-2 text-center">
-                <Select
-                  value={option.status}
-                  onChange={(value) => handleStatusChange(index, value)}
-                  dropdownStyle={{
-                    backgroundColor:
-                      option.status === "Active" ? "#4CAF50" : "#FF8A65",
-                  }}
-                >
-                  <AntdOption value="Active">Active</AntdOption>
-                  <AntdOption value="Inactive">Inactive</AntdOption>
-                </Select>
+                <Switch
+                  defaultChecked={true}
+                  // onChange={(checked) => handleToggleChange(component.id, checked)}
+                  checkedChildren="ACTIVE"
+                  unCheckedChildren="INACTIVE"
+                />
               </div>
               <div className="col-md-2 text-center">
                 <Button

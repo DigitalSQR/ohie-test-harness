@@ -5,6 +5,7 @@ import { EditOutlined } from "@ant-design/icons";
 import { useLoader } from "../../loader/LoaderContext";
 import { SpecificationAPI } from "../../../api/SpecificationAPI";
 import { Specification, SpecificationDTO } from "../../../dto/SpecificationDTO";
+import { Switch } from "antd";
 
 const ComponentSpecification: React.FC = () => {
   const navigate = useNavigate();
@@ -100,7 +101,12 @@ const ComponentSpecification: React.FC = () => {
                         <EditOutlined onClick={() => handleEdit(specification.id)} />
                       </span>
                     )}
-                    <span className="badges-green-dark">ACTIVE</span>
+                    <Switch
+                        defaultChecked={true}
+                        // onChange={(checked) => handleToggleChange(specification.id, checked)}
+                        checkedChildren="ACTIVE"
+                        unCheckedChildren="INACTIVE"
+                      />
                   </td>
                 </tr>
               ))}
