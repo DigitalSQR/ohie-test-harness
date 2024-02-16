@@ -1,10 +1,9 @@
-// Assuming your ComponentDTO is in a file named MyDTO.ts
 import React, { useEffect, useState } from "react";
 import "./componentList.scss";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import { ComponentAPI } from "../../../api/ComponentAPI";
-import { notification } from "antd";
+import { Switch, notification } from "antd";
 import { useLoader } from "../../loader/LoaderContext";
 import { ComponentDTO, MyContent } from "../../../dto/ComponentDTO";
 
@@ -70,11 +69,17 @@ const ComponentList: React.FC = () => {
                     </td>
                     <td className="d-flex">
                       <EditOutlined
+                        style={{ marginRight: "8px" }}
                         onClick={() =>
                           handleUpdate(component.id, component.name)
                         }
                       />
-                      <span className="badges-green-dark">ACTIVE</span>
+                      <Switch
+                        defaultChecked={true}
+                        // onChange={(checked) => handleToggleChange(component.id, checked)}
+                        checkedChildren="ACTIVE"
+                        unCheckedChildren="INACTIVE"
+                      />
                     </td>
                   </tr>
                 ))
