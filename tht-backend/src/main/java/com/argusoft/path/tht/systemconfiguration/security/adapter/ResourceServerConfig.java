@@ -70,6 +70,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/metrics/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
+                .antMatchers("/captcha/**").permitAll()
                 .anyRequest().authenticated();
 
         http.headers().frameOptions().and()

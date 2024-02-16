@@ -1,17 +1,21 @@
+import Password from "antd/es/input/Password";
 import api from "./configs/axiosConfigs";
 
 export const AuthenticationAPI = {
-	doLogin: async function (data) {
+	doLogin: async function (data,captchaInfo) {
 		try {
 			const response = await api.request({
 				url: `/oauth/token`,
 				method: "POST",
-				data: data,
+				data:data,
+				headers: {
+					captchaCode: captchaInfo.code,
+					captcha:captchaInfo.captcha
+				}
 			});
-
 			return response.data;
 		} catch (error) {
-			throw error; // You can choose to re-throw the error or handle it in a specific way
+			throw error; 
 		}
 	},
 	refreshToken: async function (data) {
@@ -37,12 +41,17 @@ export const AuthenticationAPI = {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}
 	},
-	signup: async function (data) {
+	signup: async function (data,captchaInfo) {
 		try {
 			const response = await api.request({
 				url: `/user/register`,
 				method: "POST",
 				data: data,
+				headers: {
+					'Content-Type': 'application/json', 
+					'captchaCode': captchaInfo.code,
+					'captcha':captchaInfo.captcha
+				}
 			});
 			return response.data;
 		} catch (error) {
@@ -53,8 +62,8 @@ export const AuthenticationAPI = {
 		try {
 			const response = await api.request({
 				url: `/user/forgot/password`,
-				params:{
-					userEmail:email
+				params: {
+					userEmail: email
 				},
 				method: "GET"
 			});
@@ -75,14 +84,14 @@ export const AuthenticationAPI = {
 			throw error;
 		}
 	},
-	verifyEmail : async function(base64UserEmail,base64TokenId){
-		try{
-		const response = await api.request({
-			url:`/user/verify/${base64UserEmail}/${base64TokenId}`,
-			method:"POST"
-		});
-		return response;
-		}catch(error){throw error}
+	verifyEmail: async function (base64UserEmail, base64TokenId) {
+		try {
+			const response = await api.request({
+				url: `/user/verify/${base64UserEmail}/${base64TokenId}`,
+				method: "POST"
+			});
+			return response;
+		} catch (error) { throw error }
 	}
 }
 

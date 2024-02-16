@@ -18,6 +18,7 @@ import GoogleLoginIcon from "../../../styles/images/GoogleLoginIcon.png";
 import { UserAPI } from "../../../api/UserAPI";
 import { userinfo_success } from "../../../reducers/UserInfoReducer";
 import { useFormik } from "formik";
+import { CaptchaAPI } from "../../../api/CaptchaAPI";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,6 +26,11 @@ export default function Login() {
   const [isKeepLogin, setIsKeepLogin] = useState(false);
   const { showLoader, hideLoader } = useLoader();
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaInfo, setCaptchaInfo] = useState({
+    code: "",
+    captcha: ""
+  });
+  const [base64Image, setbase64Image] = useState("");
 
   useEffect(() => {
     setDefaultToken();
@@ -34,6 +40,27 @@ export default function Login() {
   const redirectToSignUp = async () => {
     navigate("/SignUp");
   };
+
+  useEffect(() => {
+    const fetchCaptcha = async () => {
+      try {
+
+        const response = await CaptchaAPI.getCaptcha();
+        setCaptchaInfo({ ...captchaInfo, 'captcha': response.data.captcha });
+        console.log(captchaInfo);
+        setbase64Image(response.data.image);
+      } catch (error) {
+        console.error('Error fetching captcha:', error);
+      }
+    };
+
+    fetchCaptcha();
+  }, [])
+
+  const handleCaptchChange = (e) => {
+    setCaptchaInfo({ ...captchaInfo, 'code': e.target.value });
+  }
+
   const setOrUnsetKeepMeLogin = (event) => {
     const { checked } = event.target;
     setIsKeepLogin(checked);
@@ -77,9 +104,16 @@ export default function Login() {
       grant_type: "password",
     },
     validate: validate,
-    onSubmit: () => {
+    onSubmit: async () => {
+      if (!captchaInfo.code)  {
+        notification.error({
+          placement: "bottomRight",
+          description: "Invalid captcha",
+        });
+        return;
+      }
       showLoader();
-      AuthenticationAPI.doLogin(new URLSearchParams(formik.values))
+      AuthenticationAPI.doLogin(new URLSearchParams(formik.values), captchaInfo)
         .then(
           (response) => {
             dispatch(login_success(response));
@@ -92,27 +126,20 @@ export default function Login() {
           },
           (response) => {
             hideLoader();
-            console.log(response);
             notification.error({
               placement: "bottomRight",
-              description:
-                response.response.data.error_description !== undefined
-                  ? `${response.response.data.error_description}`
-                  : `Oops something went wrong`
+              description: !!response.response.data[0] ? response.response.data[0].message : (!!response.response.data.error_description ? response.response.data.error_description : 'Oops something went wrong'),
             });
-          }
-        )
-        .catch((error) => {
-          // Handle the error here
-          hideLoader();
-          console.log(error);
-          notification.error({
-            placement: "bottomRight",
-            description: "Invalid username or password",
+          }).catch((error) => {
+            // Handle the error here
+            hideLoader();
+            notification.error({
+              placement: "bottomRight",
+              description: "Invalid username or password",
+            });
           });
-        });
-    },
-  });
+        },
+      });
 
   return (
     <Fragment>
@@ -207,9 +234,8 @@ export default function Login() {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       <i
-                        className={`bi ${
-                          showPassword ? "bi-eye-slash" : "bi-eye"
-                        }`}
+                        className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"
+                          }`}
                       ></i>
                     </button>
                   </div>
@@ -217,9 +243,36 @@ export default function Login() {
                     <div className="text-danger">{formik.errors.password}</div>
                   )}
                 </div>
-                <div style={{ paddingBottom: "10px" }}>
-                  {/* <span style={{ color: "red", padding: "0 4px" }}>*</span> indicates required fields. */}
-                </div>
+
+                {
+                  base64Image ?
+                    <div className="custom-input mb-3">
+                      <label htmlFor="exampleFormControlInput1" className="form-label">
+                        Captcha
+                      </label>
+                      <div className="mb-3">
+                        <img src={`data:image/png;base64, ${base64Image}`} alt="Captcha Image" />
+                      </div>
+                      <div className="input-group">
+                        <span className="input-group-text" id="basic-addon1">
+                          <i class="bi bi-person-lock"></i>
+                        </span>
+                        <input
+                          name="captcha"
+                          type="text"
+                          className="form-control border-start-0 ps-0"
+                          placeholder="Please retype the above code"
+                          aria-label="Username"
+                          aria-describedby="basic-addon1"
+                          onChange={handleCaptchChange}
+                          autoComplete="off"
+                        />
+                      </div>
+                    </div>
+                    :
+                    <></>
+                }
+
                 <div className="d-flex justify-content-between">
                   <label className="custom-checkbox">
                     Remember me

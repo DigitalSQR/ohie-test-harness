@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import openhie_logo from "../../styles/images/logo.png";
 import capture_logo from "../../styles/images/capture-logo.png";
@@ -7,10 +7,36 @@ import { useLoader } from "../loader/LoaderContext";
 import { notification } from "antd";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useFormik } from "formik";
+import { CaptchaAPI } from "../../api/CaptchaAPI";
 export default function SignUp() {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    name: "",
+    password: "",
+    companyName: "",
+  });
   const [confirmPassword, setconfirmPassword] = useState("");
+  const [captchaInfo, setCaptchaInfo] = useState({
+    code: "",
+    captcha: ""
+  });
+  const [base64Image, setbase64Image] = useState("");
 
+  useEffect(() => {
+    const fetchCaptcha = async () => {
+      try {
+
+        const response = await CaptchaAPI.getCaptcha();
+        setCaptchaInfo({ ...captchaInfo, 'captcha': response.data.captcha });
+        setbase64Image(response.data.image);
+      } catch (error) {
+        console.error('Error fetching captcha:', error);
+      }
+    };
+
+    fetchCaptcha();
+  }, [])
   const validate = (values) => {
     const errors = {};
 
@@ -50,9 +76,16 @@ export default function SignUp() {
           description: "Passwords do not match.",
         });
       } else {
+        if (!captchaInfo.code)  {
+          notification.error({
+            placement: "bottomRight",
+            description: "Invalid captcha",
+          });
+          return;
+        }
         console.log(formik.values);
         showLoader();
-        AuthenticationAPI.signup(formik.values)
+        AuthenticationAPI.signup(formik.values,captchaInfo)
           .then(
             (result) => {
               hideLoader();
@@ -91,9 +124,16 @@ export default function SignUp() {
     },
   });
 
-  const { showLoader, hideLoader } = useLoader();
- 
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  const handleCaptchChange = (e) => {
+    setCaptchaInfo({ ...captchaInfo, "code": e.target.value });
+  }
+  const { showLoader, hideLoader } = useLoader();
+  
   const ClickHandler = () => {
     navigate("/login");
   };
@@ -262,8 +302,10 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
-                <div>
-                  {/* <ReCAPTCHA
+                {
+                  base64Image ?
+                    <div className="custom-input">
+                      {/* <ReCAPTCHA
                     sitekey="6Lf8OrIoAAAAAAKT2bArym6y1lrkkuoVVpIN0uXf"
                     style={{
                       display: "flex",
@@ -271,12 +313,31 @@ export default function SignUp() {
                       alignItems: "center",
                     }}
                   />{" "} */}
-                </div>
-                {/* <div >
-                  <span style={{ color: "red", padding: "0 4px" }}>*</span>{" "}
-                  indicates required fields.
-                </div> */}
-
+                      <label htmlFor="exampleFormControlInput1" className="form-label">
+                        Captcha
+                      </label>
+                      <div className="mb-3">
+                        <img src={`data:image/png;base64, ${base64Image}`} alt="Captcha Image" />
+                      </div>
+                      <div className="input-group">
+                        <span className="input-group-text" id="basic-addon1">
+                          <i class="bi bi-person-lock"></i>
+                        </span>
+                        <input
+                          name="captcha"
+                          type="text"
+                          className="form-control border-start-0 ps-0"
+                          placeholder="Please retype the above code"
+                          aria-label="Username"
+                          aria-describedby="basic-addon1"
+                          onChange={handleCaptchChange}
+                          autoComplete="off"
+                        />
+                      </div>
+                    </div>
+                    :
+                    <></>
+                }
                 <div className="my-3">
                   <button
                     disabled={!(formik.isValid && formik.dirty)}
