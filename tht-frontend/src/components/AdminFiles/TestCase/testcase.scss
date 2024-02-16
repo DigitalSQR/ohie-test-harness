@@ -62,3 +62,25 @@
 		border-right: 1px solid #e1ebf1;
 	}
 }
+
+.margin{
+	margin: 0 15px;
+}
+
+.visibility{
+	visibility: hidden;
+	width: 0;
+}
+
+.rotate{
+	transform: rotate(45.975deg);
+}
+.display{
+	display: flex;
+	justify-content: space-between;
+}
+.pagination{
+	flex: 1;
+	display: flex;
+	justify-content: center;
+}

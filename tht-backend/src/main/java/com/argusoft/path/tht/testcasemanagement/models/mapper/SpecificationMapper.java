@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.models.mapper;
 
+import com.argusoft.path.tht.common.configurations.ModelDtoMapper;
 import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface SpecificationMapper {
+public interface SpecificationMapper extends ModelDtoMapper<SpecificationEntity,SpecificationInfo> {
 
     SpecificationMapper INSTANCE = Mappers.getMapper(SpecificationMapper.class);
 

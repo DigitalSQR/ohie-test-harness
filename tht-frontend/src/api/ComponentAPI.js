@@ -1,7 +1,7 @@
 import api from "./configs/axiosConfigs";
 
 export const ComponentAPI = {
-	getCompoents: async function () {
+	getComponents: async function () {
 		try {
 			const response = await api.request({
 				url: `/component`,

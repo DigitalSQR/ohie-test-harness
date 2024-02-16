@@ -1,0 +1,65 @@
+# ===============================
+# ALL PROFILES
+# ===============================
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  main:
+    allow-circular-references: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob.non_contextual_creation: true
+        dialect: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+      generate-ddl: true
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
+    schemas:
+      - public
+    table: tht_schema_history
+    baseline-version: 0.1
+    out-of-order: true
+    locations: filesystem:src/test/resources/db/migration
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 997632152085-pp4ofm9tqfk5149giq4utb54m24et4ig.apps.googleusercontent.com
+            clientSecret: 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
+            scope:
+              - email
+              - profile
+# ===============================
+# LOGGING
+# ===============================
+logging:
+  level:
+    org.springframework.http: INFO
+    org.springframework.web: INFO
+    com.argusoft.path.tht: INFO
+    org.flywaydb.core: INFO
+
+exception:
+  stack-trace:
+    enabled: true
+
+tht-file:
+  location: /srv/tht/files
+
+frontend:
+  google.success: /google/success
+
+app:
+  authBasicToken: dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==

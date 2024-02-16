@@ -29,7 +29,7 @@ public class CRF8TestCase1 implements TestCase {
         try {
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testCRF8Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
 //            Initial birthdate
@@ -37,7 +37,7 @@ public class CRF8TestCase1 implements TestCase {
             Patient patient = FHIRUtils.createPatient("Doe", "John", "M", birthDate, "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
             MethodOutcome outcome = client.create().resource(patient).execute();
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testCRF8", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
             String patientId = outcome.getId().getIdPart();
 //          URL for retrieving patient history
@@ -49,7 +49,7 @@ public class CRF8TestCase1 implements TestCase {
 
             outcome = client.update().resource(patient).withId(patientId).execute();
             if (!patientId.equals(outcome.getResource().getIdElement().getIdPart())) {
-                return new ValidationResultInfo("testCRF8", ErrorLevel.ERROR, "Failed because instead of update it has created patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed because instead of update it has created patient");
             }
             Bundle patientHistoryBundleAfterBirthDateChange = client.search().byUrl(historyUrl).returnBundle(Bundle.class).execute();
 //          In each entry we are checking whether it contain previous birthdate
@@ -59,11 +59,11 @@ public class CRF8TestCase1 implements TestCase {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String formattedBirthDate = sdf.format(historybirthDate);
                 if (birthDate.equals(formattedBirthDate)) {
-                    return new ValidationResultInfo("testCRF8", ErrorLevel.OK, "Passed");
+                    return new ValidationResultInfo(ErrorLevel.OK, "Passed");
                 }
 
             }
-            return new ValidationResultInfo("testCRF8", ErrorLevel.ERROR, "Failed");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed");
 
         } catch (Exception ex) {
             LOGGER.error("caught OperationFailedException in CRF8TestCase1 ", ex);

@@ -3,6 +3,13 @@
 # ===============================
 
 spring:
+  cache:
+    caches:
+      authenticationCache:
+        time-to-live: 300000
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -14,7 +21,15 @@ spring:
     password: argusadmin
   jpa:
     properties:
+      org.hibernate.envers.default_revision_entity_name: "CustomRevisionEntity"
+      org:
+        hibernate:
+          envers:
+            do_not_audit_optimistic_locking_field: false
       hibernate:
+        envers:
+          strategy:
+            DefaultAuditStrategy
         jdbc:
           lob.non_contextual_creation: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -29,8 +44,7 @@ spring:
     table: tht_schema_history
     baseline-version: 0.1
     out-of-order: true
-    locations:
-      - classpath:db/migration
+    locations: classpath:db/migration
   security:
     oauth2:
       client:
@@ -42,6 +56,10 @@ spring:
               - email
               - profile
             redirect-uri: https://tht.argusoft.com/api/login/oauth2/code/google
+  servlet:
+    multipart:
+      max-file-size: 2MB
+
 server:
   servlet:
     context-path: /api

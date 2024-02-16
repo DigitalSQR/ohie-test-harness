@@ -67,7 +67,7 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestcaseEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestcaseEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {

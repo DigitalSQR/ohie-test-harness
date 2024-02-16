@@ -56,3 +56,33 @@
 .font-size-16 {
   font-size: 16px;
 }
+
+.display{
+ display: flex;
+ justify-content: flex-end;
+ align-items: center;
+}
+
+.padding-icon {
+  padding-left: 2px;
+}
+
+.app-name-column {
+  width: 20%;
+}
+
+.date-column {
+  width: 20%;
+}
+
+.assessee-column {
+  width: 20%;
+}
+
+.status-column {
+  width: 15%;
+}
+
+.actions-column {
+  width: 35%;
+}

@@ -23,7 +23,7 @@ public class CRF10TestCase2 implements TestCase {
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
         IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
         if (client == null) {
-            return new ValidationResultInfo("testCRF10Case2", ErrorLevel.ERROR, "Failed to get IGenericClient");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
         }
 
         Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "2001-01-05", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
@@ -33,12 +33,12 @@ public class CRF10TestCase2 implements TestCase {
         MethodOutcome outcome = client.create().resource(patient).execute();
         String patientId = outcome.getId().getIdPart();
         if (!outcome.getCreated()) {
-            return new ValidationResultInfo("testCRF10case2", ErrorLevel.ERROR, "Failed to create patient");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
         }
         Patient infant = client.read().resource(Patient.class).withId(patientId).execute();
         if (!infant.hasMultipleBirth()) {
-            return new ValidationResultInfo("testCRF10case2", ErrorLevel.ERROR, "Failed to store patient with the multiple birth indicator");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to store patient with the multiple birth indicator");
         }
-        return new ValidationResultInfo("testCRF10case2", ErrorLevel.OK, "Passed");
+        return new ValidationResultInfo(ErrorLevel.OK, "Passed");
     }
 }

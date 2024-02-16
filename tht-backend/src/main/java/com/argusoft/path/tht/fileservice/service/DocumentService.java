@@ -11,7 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author hardik
@@ -55,16 +58,16 @@ public interface DocumentService {
 
 
     /**
-     * change order of document with id and giving expected order
+     * change rank of document with id and giving expected rank
      *
      * @param documentId  id of document
-     * @param orderId     expected order Id
+     * @param rankId     expected rank Id
      * @param contextInfo ContextInfo
      * @return update documentEntity
      * @throws DoesNotExistException        when document Does not exist for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException;
+    public DocumentEntity changeRank(String documentId, Integer rankId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException;
 
     /**
      * change state of document with id and giving the expected state

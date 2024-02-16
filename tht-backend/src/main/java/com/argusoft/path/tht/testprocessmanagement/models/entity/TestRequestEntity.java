@@ -7,6 +7,7 @@ package com.argusoft.path.tht.testprocessmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import org.hibernate.envers.Audited;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -20,11 +21,9 @@ import java.util.UUID;
  * @author Dhruv
  */
 @Entity
+@Audited
 @Table(name = "testRequest")
 public class TestRequestEntity extends IdStateNameMetaEntity {
-
-    @Column(name = "evaluation_version_id")
-    private String evaluationVersionId;
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "assessee_id")
@@ -40,13 +39,6 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Set<TestRequestUrlEntity> testRequestUrls;
 
-    public String getEvaluationVersionId() {
-        return evaluationVersionId;
-    }
-
-    public void setEvaluationVersionId(String evaluationVersionId) {
-        this.evaluationVersionId = evaluationVersionId;
-    }
 
     public UserEntity getAssessee() {
         return assessee;

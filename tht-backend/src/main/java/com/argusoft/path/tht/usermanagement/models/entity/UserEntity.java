@@ -6,6 +6,7 @@
 package com.argusoft.path.tht.usermanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateMetaEntity;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -17,10 +18,11 @@ import java.util.Set;
  * @author Dhruv
  */
 @Entity
+@Audited
 @Table(name = "tht_user")
 public class UserEntity extends IdStateMetaEntity {
 
-    @Column(name = "email")
+    @Column(name = "email", updatable = false)
     private String email;
 
     @Column(name = "name")
@@ -57,6 +59,16 @@ public class UserEntity extends IdStateMetaEntity {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 
     public void setName(String name) {

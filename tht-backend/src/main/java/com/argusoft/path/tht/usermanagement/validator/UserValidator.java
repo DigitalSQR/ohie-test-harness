@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
@@ -19,10 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class UserValidator {
 
@@ -63,6 +61,10 @@ public class UserValidator {
         //check the email required
         ValidationUtils
                 .validateRequired(userEntity.getEmail(), "email", errors);
+        //check the name required
+        ValidationUtils
+                .validateRequired(userEntity.getName(), "name", errors);
+        //check the state required
         ValidationUtils
                 .validateRequired(userEntity.getState(), "state", errors);
     }
@@ -174,7 +176,8 @@ public class UserValidator {
 
                 validateUpdateUser(errors,
                         userEntity,
-                        originalEntity);
+                        originalEntity,
+                        contextInfo);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateUser(userService, errors, userEntity, contextInfo);
@@ -199,7 +202,8 @@ public class UserValidator {
         // For :Role
         validateUserEntityRoles(userEntity,
                 errors);
-
+        // For : CompanyName
+        validateUserEntityCompanyName(userEntity,errors);
         return errors;
     }
 
@@ -216,7 +220,8 @@ public class UserValidator {
     //validate update
     private static void validateUpdateUser(List<ValidationResultInfo> errors,
                                            UserEntity userEntity,
-                                           UserEntity originalEntity) {
+                                           UserEntity originalEntity,
+                                           ContextInfo contextInfo) {
         // required validation
         ValidationUtils.validateRequired(userEntity.getId(), "id", errors);
         //check the meta required
@@ -237,16 +242,21 @@ public class UserValidator {
                             + " refresh your copy."));
         }
         // check not updatable fields
-        validateNotUpdatable(errors, userEntity, originalEntity);
+        validateNotUpdatable(errors, userEntity, originalEntity, contextInfo);
     }
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
                                              UserEntity userEntity,
-                                             UserEntity originalEntity) {
+                                             UserEntity originalEntity,
+                                             ContextInfo contextInfo) {
 
         // state can't be updated
         ValidationUtils.validateNotUpdatable(userEntity.getState(), originalEntity.getState(), "state", errors);
+        ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
+        if(contextInfo.getModule()!= Module.RESETPASSWORD && contextInfo.getModule()!= Module.FORGOTPASSWORD){
+            ValidationUtils.validateNotUpdatable(userEntity.getPassword(), originalEntity.getPassword(), "password", errors);
+        }
     }
 
     //validate create
@@ -275,19 +285,24 @@ public class UserValidator {
     private static void validateUserEntityId(UserEntity userEntity,
                                              List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(userEntity.getId(), "id", errors);
+        ValidationUtils.validateLength(userEntity.getId(),
+                "id",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Name
     private static void validateUserEntityName(UserEntity userEntity,
                                                List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(userEntity.getName(),
-                "userName",
+                "name",
                 Constant.ALLOWED_CHARS_IN_NAMES,
                 "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
                 errors);
         ValidationUtils.validateLength(userEntity.getName(),
-                "userName",
-                3,
+                "name",
+                0,
                 1000,
                 errors);
     }
@@ -300,6 +315,11 @@ public class UserValidator {
                 UserServiceConstants.EMAIL_REGEX,
                 "Given email is invalid.",
                 errors);
+        ValidationUtils.validateLength(userEntity.getEmail(),
+                "email",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Password
@@ -307,7 +327,7 @@ public class UserValidator {
                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(userEntity.getPassword(),
                 "password",
-                6,
+                0,
                 255,
                 errors);
     }
@@ -322,17 +342,41 @@ public class UserValidator {
                 errors);
     }
 
-//    //validate given stateKey
-//    public static void validateStateKey(String stateKey) throws DataValidationErrorException {
-//        List<ValidationResultInfo> errors = new ArrayList<>();
-//        boolean contains = UserServiceConstants.userStates.contains(stateKey);
-//        if (!contains) {
-//            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-//            validationResultInfo.setElement("stateKey");
-//            validationResultInfo.setLevel(ErrorLevel.ERROR);
-//            validationResultInfo.setMessage("provided stateKey is not valid ");
-//            errors.add(validationResultInfo);
-//            throw new DataValidationErrorException("Validation Failed due to errors ", errors);
-//        }
-//    }
+    //Validation For :Company Name
+    private static void validateUserEntityCompanyName(UserEntity userEntity,
+                                                   List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(userEntity.getCompanyName(),
+                "company name",
+                0,
+                255,
+                errors);
+    }
+
+    //validate one admin should active all time
+    public static void oneAdminShouldActiveValidation(UserEntity userEntity, UserService userService, List<ValidationResultInfo> errors, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
+        userSearchCriteriaFilter.setRole(UserServiceConstants.ROLE_ID_ADMIN);
+        userSearchCriteriaFilter.setState(Collections.singletonList(UserServiceConstants.USER_STATUS_ACTIVE));
+        List<UserEntity> userList = userService.searchUsers(userSearchCriteriaFilter ,contextInfo);
+
+        if (userList.size() == 1) {
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("One of the admin must be active");
+            validationResultInfo.setElement("state");
+            errors.add(validationResultInfo);
+        }
+    }
+
+    public static void validatePasswords(String oldPassword, String newPassword, String dbPassword, List<ValidationResultInfo> errors) {
+        if(newPassword.isEmpty()){
+            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR,"New password cannot be empty"));
+        }
+        if (!Objects.equals(oldPassword, dbPassword)) {
+            errors.add(new ValidationResultInfo("Old password", ErrorLevel.ERROR, "Old password is incorrect."));
+        }
+        if (Objects.equals(oldPassword, newPassword)) {
+            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR, "Old password can not be usable as new password."));
+        }
+    }
 }

@@ -13,7 +13,10 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface provides contract for TestRequest API.
@@ -132,22 +135,6 @@ public interface TestRequestService {
             InvalidParameterException;
 
     /**
-     * Retrieves a list of TestRequests.The returned list may be in any order with
-     * unique set.
-     *
-     * @param pageable    Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-     * @return a list of TestRequest
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
-     */
-    public Page<TestRequestEntity> getTestRequests(Pageable pageable,
-                                                   ContextInfo contextInfo)
-            throws InvalidParameterException;
-
-    /**
      * reinitialize automation testing process by killing process and make testcase results draft again.
      *
      * @param testRequestId testRequestWhich needs to be tested
@@ -202,5 +189,4 @@ public interface TestRequestService {
      * @throws DataValidationErrorException when validation fails
      */
     public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
-
 }

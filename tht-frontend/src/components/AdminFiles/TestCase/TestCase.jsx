@@ -11,6 +11,8 @@ import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import {
 	DOCUMENT_STATE_ACTIVE,
 	DOCUMENT_STATE_INACTIVE,
+	DOCUMENT_TYPE_FOR_USER,
+	DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS
 } from "../../../constants/document_constants";
 import question_img_logo from "../../../styles/images/question-img.png";
 
@@ -104,9 +106,9 @@ export default function TestCase(props) {
 			"refObjUri",
 			RefObjUriConstants.TESTCASE_RESULT_REFOBJURI
 		);
+		formData.append("documentType",DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS.DOCUMENT_TYPE_EVIDENCE);
 		DocumentAPI.uploadDocument(formData)
 			.then((res) => {
-				console.log(res);
 				setUploadedFiles((prevFiles) => [
 					...prevFiles,
 					{ name: res.name, id: res.id, fileType: res.fileType },
@@ -246,10 +248,9 @@ export default function TestCase(props) {
 							</div>
 							<div className="text-end mb-3">
 								<div
-									className="cst-btn-group btn-group"
+									className="cst-btn-group btn-group margin"
 									role="group"
 									aria-label="Basic example"
-									style={{ margin: "0 15px" }}
 								>
 									<input
 										type="file"
@@ -259,10 +260,7 @@ export default function TestCase(props) {
 										onChange={(e) => {
 											addFiles(e, currentTestcase, 0);
 										}}
-										style={{
-											visibility: "hidden",
-											width: "0",
-										}}
+										className="visibility"
 									></input>
 									<button
 										type="button"
@@ -270,10 +268,7 @@ export default function TestCase(props) {
 										onClick={addAttachment}
 									>
 										<i
-											style={{
-												transform: "rotate(-45.975deg)",
-											}}
-											className="bi bi-paperclip"
+											className="bi bi-paperclip rotate"
 										></i>
 										Add Attachments
 									</button>
@@ -310,13 +305,9 @@ export default function TestCase(props) {
 					</div>
 				</div>
 			</div>
-			<div style={{ display: "flex", justifyContent: "space-between" }}>
+			<div className="display">
 				<Pagination
-					style={{
-						flex: 1,
-						display: "flex",
-						justifyContent: "center",
-					}}
+				className="pagination"
 					count={currentSpecification.childTestcaseResults.length}
 					page={currentTestcaseIndex + 1}
 					color="primary"

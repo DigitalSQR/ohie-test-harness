@@ -23,8 +23,6 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
-import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestcaseExecutioner;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
@@ -38,6 +36,8 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import io.astefanutti.metrics.aspectj.Metrics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +49,8 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants.TEST_REQUEST_STATUS;
+
 /**
  * This TestRequestServiceServiceImpl contains implementation for TestRequest service.
  *
@@ -58,6 +60,8 @@ import java.util.stream.Collectors;
 @Metrics(registry = "TestRequestServiceServiceImpl")
 public class TestRequestServiceServiceImpl implements TestRequestService {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestRequestServiceServiceImpl.class);
+
     @Autowired
     private TestRequestRepository testRequestRepository;
 
@@ -66,12 +70,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     @Autowired
     private ComponentService componentService;
-
-    @Autowired
-    private SpecificationService specificationService;
-
-    @Autowired
-    private TestcaseService testcaseService;
 
     @Autowired
     private UserService userService;
@@ -178,17 +176,19 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             InvalidParameterException,
             DataValidationErrorException, DoesNotExistException {
 
-        testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING);
+        if (testRequestEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestRequestServiceServiceImpl ");
+            throw new InvalidParameterException("TestRequestEntity is missing");
+        }
+
+        defaultValueCreateTestRequest(testRequestEntity, contextInfo);
+
         TestRequestValidator.validateCreateUpdateTestRequest(Constant.CREATE_VALIDATION,
                 testRequestEntity,
                 this,
                 userService,
                 componentService,
                 contextInfo);
-        UserEntity principalUser = userService.getPrincipalUser(contextInfo);
-        if (principalUser.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))) {
-            testRequestEntity.setAssessee(principalUser);
-        }
 
         //Create state change API to make this as Accepted or Rejected
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
@@ -207,6 +207,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
+
+        if (testRequestEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestRequestServiceServiceImpl ");
+            throw new InvalidParameterException("TestRequestEntity is missing");
+        }
 
         TestRequestValidator.validateCreateUpdateTestRequest(Constant.UPDATE_VALIDATION,
                 testRequestEntity,
@@ -271,23 +276,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getTestRequests")
-    public Page<TestRequestEntity> getTestRequests(Pageable pageable,
-                                                   ContextInfo contextInfo)
-            throws InvalidParameterException {
-        if (pageable == null) {
-            throw new InvalidParameterException("pageable is missing");
-        }
-        Page<TestRequestEntity> testRequests = testRequestRepository.findTestRequests(pageable);
-        return testRequests;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @Override
     @Timed(name = "validateTestRequest")
@@ -297,6 +285,10 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
+        if (testRequestEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestRequestServiceServiceImpl ");
+            throw new InvalidParameterException("TestRequestEntity is missing");
+        }
         List<ValidationResultInfo> errors = TestRequestValidator.validateTestRequest(validationTypeKey, testRequestEntity, this, userService, componentService, contextInfo);
         return errors;
     }
@@ -304,18 +296,19 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     @Override
     public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
+        TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
+
+        defaultValueChangeState(testRequestEntity, stateKey, contextInfo);
+
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         //validate given stateKey
-        ValidationUtils.statusPresent(TestRequestServiceConstants.TEST_REQUEST_STATUS, stateKey, errors);
-
-        TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
-        String currentState = testRequestEntity.getState();
+        ValidationUtils.statusPresent(TEST_REQUEST_STATUS, stateKey, errors);
 
         validateChangeStateForAccepted(testRequestEntity,stateKey);
 
         //validate transition
-        ValidationUtils.transitionValid(TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, currentState, stateKey, errors);
+        ValidationUtils.transitionValid(TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, testRequestEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -617,5 +610,19 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             testcaseResultEntity.setParentTestcaseResult(parentTestcaseResult);
         }
         return testcaseResultService.createTestcaseResult(testcaseResultEntity, contextInfo);
+    }
+
+    private void defaultValueCreateTestRequest(TestRequestEntity testRequestEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+        testRequestEntity.setState(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING);
+        UserEntity principalUser = userService.getPrincipalUser(contextInfo);
+        if (principalUser.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))) {
+            testRequestEntity.setAssessee(principalUser);
+        }
+    }
+
+    private void defaultValueChangeState(TestRequestEntity testRequestEntity, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+        if (stateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED) || stateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)) {
+            testRequestEntity.setApprover(userService.getPrincipalUser(contextInfo));
+        }
     }
 }

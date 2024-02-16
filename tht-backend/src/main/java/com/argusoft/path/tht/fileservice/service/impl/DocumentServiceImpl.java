@@ -13,12 +13,15 @@ import com.argusoft.path.tht.fileservice.service.FileService;
 import com.argusoft.path.tht.fileservice.validator.DocumentValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +64,7 @@ public class DocumentServiceImpl implements DocumentService {
     public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
                                          List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException {
 
-        //get FileType
-        String fileType = getFileType(file);
-        documentEntity.setFileType(fileType);
+        defaultValueCreateDocument(documentEntity, file, contextInfo);
 
         //validate documentEntity
         DocumentValidator.validateDocumentEntity(Constant.CREATE_VALIDATION, documentEntity, contextInfo);
@@ -80,32 +81,9 @@ public class DocumentServiceImpl implements DocumentService {
         //set FileId to DocumentEntity as it is UUID
         documentEntity.setFileId(fileDetails.getFileId());
         documentEntity.setName(fileDetails.getFileName());
-        documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
-
-        UserEntity user = null;
-        try {
-            user = userService.getPrincipalUser(contextInfo);
-        } catch (InvalidParameterException e) {
-            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
-            throw new OperationFailedException("InvalidParameterException while fetching principal User while saving document ", e);
-        }
-        documentEntity.setOwner(user);
-
-        try {
-            setOrderBasedOnRefObjIdAndUri(documentEntity, contextInfo);
-        } catch (InvalidParameterException e) {
-            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
-            throw new OperationFailedException("InvalidParameterException while saving document ", e);
-        }
 
         DocumentEntity document = documentRepository.saveAndFlush(documentEntity);
         return document;
-    }
-
-    private void setOrderBasedOnRefObjIdAndUri(DocumentEntity documentEntity, ContextInfo contextInfo) throws InvalidParameterException {
-        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = this.getDocumentsByRefObjectUriAndRefObjectId(documentEntity.getRefId(), documentEntity.getRefObjUri(), contextInfo);
-        int size = documentsByRefObjectUriAndRefObjectId.size();
-        documentEntity.setOrder(size + 1);
     }
 
     private FileDetails storeFileAndGetFileDetails(MultipartFile file, List<String> allowedFileTypes) throws OperationFailedException, InvalidFileTypeException {
@@ -118,12 +96,6 @@ public class DocumentServiceImpl implements DocumentService {
             throw new OperationFailedException("Operation Failed due to IOException", e);
         }
         return fileDetails;
-    }
-
-    private void validateRequired(DocumentEntity documentEntity, List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(documentEntity.getFileType(), "fileType", errors);
-        ValidationUtils.validateRequired(documentEntity.getRefId(), "refId", errors);
-        ValidationUtils.validateRequired(documentEntity.getRefObjUri(), "refObjUri", errors);
     }
 
     private String getFileType(MultipartFile file) throws OperationFailedException {
@@ -165,9 +137,9 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity changeOrder(String documentId, Integer orderId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    public DocumentEntity changeRank(String documentId, Integer rankId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
 
-        DocumentValidator.validateDocumentOrder(orderId);
+        DocumentValidator.validateDocumentRank(rankId);
         DocumentEntity document = this.getDocument(documentId, contextInfo);
 
         String refObjUri = document.getRefObjUri();
@@ -187,20 +159,20 @@ public class DocumentServiceImpl implements DocumentService {
         }
 
         boolean foundTheInBetweenDocumentEntity = false;
-        if (documentEntityTreeMap.containsKey(orderId)) {
+        if (documentEntityTreeMap.containsKey(rankId)) {
             for (Map.Entry<Integer, DocumentEntity> integerDocumentEntityEntry : documentEntityTreeMap.entrySet()) {
-                if (Objects.equals(integerDocumentEntityEntry.getKey(), orderId)) {
+                if (Objects.equals(integerDocumentEntityEntry.getKey(), rankId)) {
                     foundTheInBetweenDocumentEntity = true;
                 }
                 if (foundTheInBetweenDocumentEntity) {
                     DocumentEntity documentEntity = integerDocumentEntityEntry.getValue();
-                    documentEntity.setOrder(integerDocumentEntityEntry.getKey() + 1);
+                    documentEntity.setRank(integerDocumentEntityEntry.getKey() + 1);
                     documentRepository.saveAndFlush(documentEntity);
                 }
             }
-            document.setOrder(orderId);
+            document.setRank(rankId);
         } else {
-            document.setOrder(documentsByRefObjectUriAndRefObjectId.size() + 2);
+            document.setRank(documentsByRefObjectUriAndRefObjectId.size() + 2);
         }
 
         documentRepository.saveAndFlush(document);
@@ -223,10 +195,9 @@ public class DocumentServiceImpl implements DocumentService {
         ValidationUtils.statusPresent(DocumentServiceConstants.DOCUMENT_STATUS, stateKey, errors);
 
         DocumentEntity documentEntity = this.getDocument(documentID, contextInfo);
-        String currentState = documentEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(DocumentServiceConstants.DOCUMENT_STATUS_MAP, currentState, stateKey, errors);
+        ValidationUtils.transitionValid(DocumentServiceConstants.DOCUMENT_STATUS_MAP, documentEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -271,5 +242,25 @@ public class DocumentServiceImpl implements DocumentService {
         List<DocumentEntity> documentEntities;
         documentEntities = this.searchDocument(documentCriteriaSearchFilter, contextInfo);
         return documentEntities;
+    }
+
+    private void defaultValueCreateDocument(DocumentEntity documentEntity, MultipartFile file, ContextInfo contextInfo) throws OperationFailedException, DoesNotExistException, InvalidParameterException {
+
+        String fileType = getFileType(file);
+        documentEntity.setFileType(fileType);
+
+        documentEntity.setState(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE);
+        documentEntity.setOwner(userService.getPrincipalUser(contextInfo));
+        documentEntity.setRank(1);
+
+        contextInfo.setModule(Module.DOCUMENT);
+        DocumentCriteriaSearchFilter searchFilter = new DocumentCriteriaSearchFilter();
+        searchFilter.setRefObjUri(documentEntity.getRefObjUri());
+        searchFilter.setRefId(documentEntity.getRefId());
+        List<DocumentEntity> documents = this.searchDocument(searchFilter, Constant.SINGLE_PAGE_SORT_BY_RANK, contextInfo).getContent();
+        if (!documents.isEmpty()) {
+            documentEntity.setRank(documents.get(0).getRank() + 1);
+        }
+        contextInfo.setModule(Module.UI);
     }
 }

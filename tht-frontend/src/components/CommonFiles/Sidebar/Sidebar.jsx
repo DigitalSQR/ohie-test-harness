@@ -141,6 +141,25 @@ export default function Sidebar() {
                 <span> Applications </span>
               </a>
             </li>
+            <li>
+            <a
+              className={
+                activeMenuItem === "/dashboard/testcase-config"
+                  ? "active menu-like-item"
+                  : "menu-like-item"
+              }
+              onClick={() =>
+                handleMenuItemClick("/dashboard/testcase-config")
+              }
+            >
+              <i
+                aria-label="Testcase Config"
+                title="Testcase Config"
+                className="bi bi-file-earmark-bar-graph menu-left-icon"
+              ></i>
+              <span> TestCase Config </span>
+            </a>
+          </li>
           </>
         )}
         {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (

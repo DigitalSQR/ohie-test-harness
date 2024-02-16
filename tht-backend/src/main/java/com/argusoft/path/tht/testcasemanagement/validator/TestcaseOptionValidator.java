@@ -9,8 +9,10 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
@@ -42,10 +44,6 @@ public class TestcaseOptionValidator {
     }
 
     public static List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey, TestcaseOptionEntity testcaseOptionEntity, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        if (testcaseOptionEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseOptionValidator ");
-            throw new InvalidParameterException("testcaseOptionEntity is missing");
-        }
         if (StringUtils.isEmpty(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in TestcaseOptionValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
@@ -115,6 +113,9 @@ public class TestcaseOptionValidator {
                 errors);
         // For :IsFunctional
         validateTestcaseOptionEntityIsSuccess(testcaseOptionEntity,
+                errors);
+        // For : Description
+        validateTestcaseOptionDescription(testcaseOptionEntity,
                 errors);
         return errors;
 
@@ -227,8 +228,21 @@ public class TestcaseOptionValidator {
     //Validate Required
     private static void validateCommonRequired(TestcaseOptionEntity testcaseOptionEntity,
                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(testcaseOptionEntity.getName(), "name", errors);
-        ValidationUtils.validateRequired(testcaseOptionEntity.getTestcase(), "component", errors);
+        //check for name
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getName(), "name", errors);
+        //check for testcaseId
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getTestcase(), "testcase", errors);
+        //check for state
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getState(), "state", errors);
+        //check for success
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getSuccess(), "success", errors);
+        //check for rank
+        ValidationUtils
+                .validateRequired(testcaseOptionEntity.getRank(), "rank", errors);
     }
 
     //Validate Common Unique
@@ -244,6 +258,11 @@ public class TestcaseOptionValidator {
     private static void validateTestcaseOptionEntityId(TestcaseOptionEntity testcaseOptionEntity,
                                                        List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(testcaseOptionEntity.getId(), "id", errors);
+        ValidationUtils.validateLength(testcaseOptionEntity.getId(),
+                "id",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Name
@@ -263,6 +282,16 @@ public class TestcaseOptionValidator {
                 "rank",
                 1,
                 null,
+                errors);
+    }
+
+    //Validation For:Description
+    private static void validateTestcaseOptionDescription(TestcaseOptionEntity testcaseOption,
+                                                    List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseOption.getDescription(),
+                "description",
+                0,
+                1000,
                 errors);
     }
 
@@ -289,3 +318,4 @@ public class TestcaseOptionValidator {
         }
     }
 }
+

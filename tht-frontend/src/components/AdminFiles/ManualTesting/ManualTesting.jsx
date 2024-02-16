@@ -155,7 +155,7 @@ export default function ManualTesting() {
 			</span>
 			<Select
 				onChange={selectComponent}
-				style={{ width: "145px", marginBottom: "10px" }}
+				className="select"
 				value={currentComponent.name}
 			>
 				{testcaseResults

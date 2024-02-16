@@ -64,3 +64,22 @@
     justify-content: center;
     width: fit-content;
   }
+
+.position{
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding-bottom: 0.5rem;
+}  
+
+.password{
+  margin-top: 0.5rem;
+}
+
+.login{
+  border-color: #ccdade;
+}
+
+.align{
+  text-align: center;
+}

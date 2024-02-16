@@ -32,7 +32,7 @@ public class CRWF1TestCase2 implements TestCase {
         try {
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             // Create a new patient resource with all demographic information
@@ -45,7 +45,7 @@ public class CRWF1TestCase2 implements TestCase {
 
             // Check if the patient was created successfully
             if (!outcome.getCreated()) {
-                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
 
             Patient patientForConflict = FHIRUtils.createPatient("MOHR", "MAIDEN", "female", "1958-01-30",
@@ -57,9 +57,9 @@ public class CRWF1TestCase2 implements TestCase {
 
             // Check if the patient was created twice?
             if (outcome.getCreated()) {
-                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.OK, "Passed");
+                return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             } else {
-                return new ValidationResultInfo("testCRWF1Case2", ErrorLevel.ERROR, "Was not able to resolve patient conflict via linking patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Was not able to resolve patient conflict via linking patient");
             }
         } catch (Exception ex) {
             LOGGER.error("caught OperationFailedException in CRWF1TestCase2 ", ex);

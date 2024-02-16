@@ -10,10 +10,16 @@ import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
+import com.google.common.collect.Multimap;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This interface provides contract for TestcaseResult API.
@@ -153,22 +159,6 @@ public interface TestcaseResultService {
             throws DoesNotExistException,
             InvalidParameterException;
 
-    /**
-     * Retrieves a list of TestcaseResults.The returned list may be in any order with
-     * unique set.
-     *
-     * @param pageable    Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-     * @return a list of TestcaseResult
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
-     */
-    public Page<TestcaseResultEntity> getTestcaseResults(Pageable pageable,
-                                                         ContextInfo contextInfo)
-            throws InvalidParameterException;
-
 
     /**
      * change state of testcaseResult with id and giving the expected state
@@ -212,4 +202,6 @@ public interface TestcaseResultService {
             ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException, OperationFailedException;
+
+    public List<String> getSubClassesNameForTestCase();
 }

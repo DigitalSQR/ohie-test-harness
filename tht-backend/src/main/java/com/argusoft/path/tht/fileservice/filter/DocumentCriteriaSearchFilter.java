@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.fileservice.filter;
 
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
@@ -54,6 +55,11 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     )
     private List<String> state;
 
+    @ApiParam(
+            value = "type of the document"
+    )
+    private String documentType;
+
     private Root<DocumentEntity> documentEntityRoot;
 
     private Join<DocumentEntity, UserEntity> documentEntityUserEntityJoin;
@@ -82,7 +88,8 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getDocumentEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getDocumentEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+
         }
 
         if (StringUtils.hasLength(getRefObjUri())) {
@@ -97,6 +104,10 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
             predicates.add(criteriaBuilder.equal(this.getDocumentEntityRoot().get("fileId"), fileId));
         }
 
+        if (StringUtils.hasLength(getDocumentType())) {
+            predicates.add(criteriaBuilder.equal(this.getDocumentEntityRoot().get("documentType"), documentType));
+        }
+
         if (!CollectionUtils.isEmpty(state)) {
             predicates.add(criteriaBuilder.in(this.getDocumentEntityRoot().get("state")).value(state));
         }
@@ -108,7 +119,7 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     protected List<Predicate> buildAuthorizationPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (contextInfo.isAssessee()) {
+        if (contextInfo.isAssessee() && contextInfo.getModule() != Module.DOCUMENT ) {
             predicates.add(criteriaBuilder.equal(this.getDocumentEntityUserEntityJoin().get("id"), contextInfo.getUsername()));
         } else {
             if (getOwnerId() != null) {
@@ -190,4 +201,8 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     public void setPrimaryId(String id) {
         this.id = id;
     }
+
+    public String getDocumentType() { return documentType; }
+
+    public void setDocumentType(String documentType) { this.documentType = documentType; }
 }

@@ -15,10 +15,13 @@ import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.User;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface provides contract for User API.
@@ -90,9 +93,7 @@ public interface UserService {
      *                         information about the caller of service operation
      * @return a list of User name start with given UserName found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws MissingParameterException name or contextInfo is missing or null
      * @throws OperationFailedException  unable to complete request
-     * @throws PermissionDeniedException an authorization failure occurred
      */
     public Page<UserEntity> searchUsers(UserSearchCriteriaFilter userSearchFilter,
                                         Pageable pageable,
@@ -146,33 +147,12 @@ public interface UserService {
      * @return a list of User
      * @throws DoesNotExistException     a userId in userIds not found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws MissingParameterException userId or contextInfo is missing or
-     *                                   null
      * @throws OperationFailedException  unable to complete request
-     * @throws PermissionDeniedException an authorization failure occurred
      */
     public UserEntity getUserById(String userId,
                                   ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException;
-
-    /**
-     * Retrieves a list of Users.The returned list may be in any order with
-     * unique set.
-     *
-     * @param pageable    Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-     * @return a list of User
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws MissingParameterException contextInfo is missing or null
-     * @throws OperationFailedException  unable to complete request
-     * @throws PermissionDeniedException an authorization failure occurred
-     */
-    public Page<UserEntity> getUsers(Pageable pageable,
-                                     ContextInfo contextInfo)
-            throws InvalidParameterException;
 
     /**
      * get logged in uses detail
@@ -219,6 +199,19 @@ public interface UserService {
     public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo);
 
     public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException;
+
+
+    /**
+     * Reset password of user.
+     *
+     * @param oldPassword Old password of user
+     * @param newPassword  new password of user
+     * @param contextInfo ContextInfo
+     * @return UserEntity
+     *
+     */
+
+    public UserEntity resetPassword(String oldPassword, String newPassword, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException;
 
     /**
      * change state of user with id and giving the expected state

@@ -12,6 +12,9 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
@@ -26,6 +29,7 @@ import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.argusoft.path.tht.usermanagement.validator.UserValidator;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.Multimap;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -40,10 +44,7 @@ import org.springframework.util.StringUtils;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * This UserServiceServiceImpl contains implementation for User service.
@@ -101,11 +102,7 @@ public class UserServiceServiceImpl implements UserService {
     @Timed(name = "registerAssessee")
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
             throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException, MessagingException, IOException {
-        RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setId(UserServiceConstants.ROLE_ID_ASSESSEE);
-        userEntity.getRoles().clear();
-        userEntity.getRoles().add(roleEntity);
-
+        defaultValueRegisterAssessee(userEntity);
         userEntity = this.createUser(userEntity, contextInfo);
         return userEntity;
     }
@@ -128,6 +125,8 @@ public class UserServiceServiceImpl implements UserService {
     @Timed(name = "updatePasswordWithVerificationToken")
     public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException {
 
+        contextInfo.setModule(Module.FORGOTPASSWORD);
+
         //trim values
         updatePasswordInfo.trimObject();
 
@@ -146,6 +145,25 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
+    public UserEntity resetPassword(String oldPassword, String newPassword, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+
+        contextInfo.setModule(Module.RESETPASSWORD);
+
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        UserEntity principalUser = this.getPrincipalUser(contextInfo);
+        UserValidator.validatePasswords(oldPassword, newPassword, principalUser.getPassword(), errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    "Error(s) occurred in the validating",
+                    errors);
+        }
+
+        principalUser.setPassword(newPassword);
+        return updateUser(principalUser, contextInfo);
+    }
+
+    @Override
     @Timed(name = "changeState")
     public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         List<ValidationResultInfo> errors = new ArrayList<>();
@@ -159,6 +177,11 @@ public class UserServiceServiceImpl implements UserService {
         //validate transition
         ValidationUtils.transitionValid(UserServiceConstants.USER_STATUS_MAP, oldState, stateKey, errors);
 
+        //validate for one admin should active all time
+        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ADMIN))){
+            UserValidator.oneAdminShouldActiveValidation(userEntity, this, errors, contextInfo);
+        }
+
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
@@ -166,6 +189,7 @@ public class UserServiceServiceImpl implements UserService {
         }
 
         userEntity.setState(stateKey);
+
         userEntity = this.updateUser(userEntity, contextInfo);
         sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity);
         return userEntity;
@@ -279,19 +303,6 @@ public class UserServiceServiceImpl implements UserService {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getUsers")
-    public Page<UserEntity> getUsers(Pageable pageable,
-                                     ContextInfo contextInfo) {
-        Page<UserEntity> users = userRepository.findUsers(pageable);
-        return users;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @Override
     @Timed(name = "validateUser")
@@ -384,5 +395,11 @@ public class UserServiceServiceImpl implements UserService {
         return roles;
     }
 
+    private void defaultValueRegisterAssessee(UserEntity userEntity) {
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setId(UserServiceConstants.ROLE_ID_ASSESSEE);
+        userEntity.getRoles().clear();
+        userEntity.getRoles().add(roleEntity);
+    }
 
 }

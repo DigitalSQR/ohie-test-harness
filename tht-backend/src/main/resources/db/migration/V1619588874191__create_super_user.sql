@@ -1,7 +1,20 @@
 --create User with super admin.
 --
 --@author dhruv
---@since 2023-09-13
+--@since 2023-09-13\
+
+
+INSERT INTO
+    revinfo(rev, revtstmp)
+VALUES
+    (
+        1,
+        EXTRACT(
+            EPOCH
+            FROM
+                CURRENT_TIMESTAMP
+        ) :: BIGINT * 1000
+    );
 
 INSERT INTO
     role (id, name)

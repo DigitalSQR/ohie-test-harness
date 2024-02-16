@@ -13,7 +13,10 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntit
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This interface provides contract for Specification API.
@@ -130,23 +133,6 @@ public interface SpecificationService {
                                                     ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException;
-
-    /**
-     * Retrieves a list of Specifications.The returned list may be in any order with
-     * unique set.
-     *
-     * @param pageable    Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-     * @return a list of Specification
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
-     */
-    public Page<SpecificationEntity> getSpecifications(Pageable pageable,
-                                                       ContextInfo contextInfo)
-            throws InvalidParameterException;
-
 
     public SpecificationEntity changeState(String specificationId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 

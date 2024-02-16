@@ -16,6 +16,7 @@ import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.testprocessmanagement.validator.RefObjectUriAndRefIdValidator;
 import com.argusoft.path.tht.usermanagement.service.UserService;
@@ -74,10 +75,6 @@ public class TestcaseResultValidator {
 
     public static List<ValidationResultInfo> validateTestCaseResult(String validationTypeKey, TestcaseResultEntity testcaseResultEntity, UserService userService, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, TestRequestService testRequestService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
-        if (testcaseResultEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseResultValidator ");
-            throw new InvalidParameterException("TestcaseResultEntity is missing");
-        }
         if (StringUtils.isEmpty(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in TestcaseResultValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
@@ -146,6 +143,12 @@ public class TestcaseResultValidator {
                 errors);
         // For :Order
         validateTestcaseResultEntityOrder(testcaseResultEntity,
+                errors);
+        // For :Description
+        validateTestcaseResultEntityDescription(testcaseResultEntity,
+                errors);
+        // For :Message
+        validateTestcaseResultEntityMessage(testcaseResultEntity,
                 errors);
         // For :TestcaseOption
         validateTestcaseResultEntityTestcaseOption(testcaseResultEntity,
@@ -263,6 +266,16 @@ public class TestcaseResultValidator {
                                              TestcaseResultEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseResultEntity.getState(), originalEntity.getState(), "state", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getParentTestcaseResult(), originalEntity.getParentTestcaseResult(), "parent_test_case_result_id", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getRefObjUri(), originalEntity.getRefObjUri(), "ref_obj_uri", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getRefId(), originalEntity.getRefId(), "ref_id", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getTestRequest(), originalEntity.getTestRequest(), "test_request_id", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getManual(), originalEntity.getManual(), "is_manual", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getRequired(), originalEntity.getRequired(), "is_required", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getAutomated(), originalEntity.getAutomated(), "is_automated", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getRecommended(), originalEntity.getRecommended(), "is_recommended", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getWorkflow(), originalEntity.getWorkflow(), "is_workflow", errors);
+        ValidationUtils.validateNotUpdatable(testcaseResultEntity.getFunctional(), originalEntity.getFunctional(), "is_functional", errors);
     }
 
     //validate create
@@ -291,13 +304,39 @@ public class TestcaseResultValidator {
     //Validate Required
     private static void validateCommonRequired(TestcaseResultEntity testcaseResultEntity,
                                                List<ValidationResultInfo> errors) {
-        ValidationUtils.validateRequired(testcaseResultEntity.getName(), "name", errors);
-        ValidationUtils.validateRequired(testcaseResultEntity.getRank(), "rank", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getName(), "name", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRank(), "rank", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getState(), "state", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getAutomated(), "automated", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getManual(), "manual", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getFunctional(), "functional", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRefObjUri(), "refObjUri", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRefId(), "refId", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getTestRequest(), "testRequest", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRecommended(), "recommended", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getRequired(), "required", errors);
+        ValidationUtils
+                .validateRequired(testcaseResultEntity.getWorkflow(), "workflow", errors);
         if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())
                 && TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())
                 && Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual())
                 && Objects.equals(Boolean.FALSE, testcaseResultEntity.getHasSystemError())) {
             ValidationUtils.validateRequired(testcaseResultEntity.getTestcaseOption(), "testcaseOption", errors);
+        }
+        if(!(StringUtils.hasLength(testcaseResultEntity.getRefObjUri()) && (testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)))){
+            ValidationUtils
+                    .validateRequired(testcaseResultEntity.getParentTestcaseResult().getId(), "parent testcase result id", errors);
         }
     }
 
@@ -342,6 +381,11 @@ public class TestcaseResultValidator {
     private static void validateTestcaseResultEntityId(TestcaseResultEntity testcaseResultEntity,
                                                        List<ValidationResultInfo> errors) {
         ValidationUtils.validateNotEmpty(testcaseResultEntity.getId(), "id", errors);
+        ValidationUtils.validateLength(testcaseResultEntity.getId(),
+                "id",
+                0,
+                255,
+                errors);
     }
 
     //Validation For :Name
@@ -361,6 +405,26 @@ public class TestcaseResultValidator {
                 "rank",
                 1,
                 null,
+                errors);
+    }
+
+    //Validation For :Description
+    private static void validateTestcaseResultEntityDescription(TestcaseResultEntity testcaseResultEntity,
+                                                         List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseResultEntity.getDescription(),
+                "description",
+                0,
+                1000,
+                errors);
+    }
+
+    //Validation For :Message
+    private static void validateTestcaseResultEntityMessage(TestcaseResultEntity testcaseResultEntity,
+                                                            List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseResultEntity.getMessage(),
+                "message",
+                0,
+                2000,
                 errors);
     }
 

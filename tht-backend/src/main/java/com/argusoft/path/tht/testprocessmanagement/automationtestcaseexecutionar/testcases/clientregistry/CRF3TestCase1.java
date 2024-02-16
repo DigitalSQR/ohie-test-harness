@@ -34,7 +34,7 @@ public class CRF3TestCase1 implements TestCase {
             LOGGER.info("Start testing CRF3TestCase1");
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
             if (client == null) {
-                return new ValidationResultInfo("testCRF3Case1", ErrorLevel.ERROR, "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
             // Create Patient resource
@@ -47,7 +47,7 @@ public class CRF3TestCase1 implements TestCase {
 
             // Checking whether patient is created or not
             if (!patientOutcome.getCreated()) {
-                return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed to create patient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
 
             // Retrieving the Patient's ID
@@ -61,7 +61,7 @@ public class CRF3TestCase1 implements TestCase {
                     .execute();
 
             if (!auditEventBundle.hasEntry()) {
-                return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed due to non presence of inbound transaction");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed due to non presence of inbound transaction");
             }
 
             // Reading Patient
@@ -76,10 +76,10 @@ public class CRF3TestCase1 implements TestCase {
                     .prettyPrint().execute();
 
             if (!specificAuditEventBundle.hasEntry()) {
-                return new ValidationResultInfo("testCRF3", ErrorLevel.ERROR, "Failed due to non presence of outbound transaction");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed due to non presence of outbound transaction");
             }
 
-            return new ValidationResultInfo("testCRF3", ErrorLevel.OK, "Passed");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
         } catch (Exception ex) {
             LOGGER.error("caught OperationFailedException in CRF3TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);

@@ -3,15 +3,18 @@ import { notification } from "antd";
 import "./automatedtesting.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import AutomatedResultStateRefresher from "./AutomatedResultStateRefresher/AutomatedResultStateRefresher";
+import AutomatedToggleButtonRefresher from "./AutomatedToggleButtonRefresher/AutomatedToggleButtonRefresher"
 import { useLoader } from "../../loader/LoaderContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
+import WebSocketService from "../../../api/WebSocketService";
 export default function AutomatedTesting() {
   const { testRequestId } = useParams();
   const [testcaseName, setTestCaseName] = useState();
   const { showLoader, hideLoader } = useLoader();
   const [data, setData] = useState([]);
   const navigate = useNavigate();
+  const { stompClient, connect, disconnect } = WebSocketService();
   const clickHandler = () => {
     notification.info({
       placement: "bottom-right",
@@ -61,7 +64,6 @@ export default function AutomatedTesting() {
         ...specification,
         testCases: specification.testCases.map((testcase) => ({
           ...testcase,
-          // Toggle the class only for the clicked row
           class:
             testcase.id === testcaseId
               ? testcase.class === "show"
@@ -91,6 +93,19 @@ export default function AutomatedTesting() {
     setData(newData);
   };
 
+  const toggleComponentRow = (componentId) => {
+    const newData = data.map((component) => ({
+      ...component,
+      class:
+        component.id === componentId
+          ? component.class === "show"
+            ? "hide"
+            : "show"
+          : component.class,
+    }));
+    setData(newData);
+  };
+
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
@@ -106,15 +121,20 @@ export default function AutomatedTesting() {
   useEffect(() => {
     fetchTestCaseResultData();
     testCaseInfo();
+    connect();
+    // Cleanup function
+    // return () => {
+    //   disconnect();
+    // };
   }, []);
   return (
     <div className="Workflow-testing-wrapper">
       <div className="container">
         <div className="col-12">
-          <div class="bcca-breadcrumb">
-            <div class="bcca-breadcrumb-item">Automated Testing</div>
+          <div className="bcca-breadcrumb">
+            <div className="bcca-breadcrumb-item">Automated Testing</div>
             <div
-              class="bcca-breadcrumb-item"
+              className="bcca-breadcrumb-item"
               onClick={() => {
                 navigate(`/dashboard/choose-test/${testRequestId}`);
               }}
@@ -122,7 +142,7 @@ export default function AutomatedTesting() {
               {testcaseName}
             </div>
             <div
-              class="bcca-breadcrumb-item"
+              className="bcca-breadcrumb-item"
               onClick={() => {
                 navigate(`/dashboard/applications`);
               }}
@@ -157,6 +177,8 @@ export default function AutomatedTesting() {
                         <AutomatedResultStateRefresher
                           key={`component-result-${component?.id}`}
                           testResultId={component.id}
+                          isDuration={false}
+                          stompClient={stompClient}
                         />
                       </td>
                       <td>
@@ -164,6 +186,7 @@ export default function AutomatedTesting() {
                           key={`component-result-${component?.id}`}
                           testResultId={component.id}
                           isDuration={true}
+                          stompClient={stompClient}
                         />
                       </td>
                       <td></td>
@@ -181,6 +204,8 @@ export default function AutomatedTesting() {
                             <AutomatedResultStateRefresher
                               key={`specification-result-${specification?.id}`}
                               testResultId={specification.id}
+                              isDuration={false}
+                              stompClient={stompClient}
                             />
                           </td>
                           <td>
@@ -188,33 +213,15 @@ export default function AutomatedTesting() {
                               key={`specification-result-${specification?.id}`}
                               testResultId={specification.id}
                               isDuration={true}
+                              stompClient={stompClient}
                             />
                           </td>
                           <td>
-                            {specification?.state ==
-                              "testcase.result.status.finished" &&
-                            specification?.success == false ? (
-                              <span
-                                onClick={() =>
-                                  toggleSpecificationRow(specification?.id)
-                                }
-                                type="button"
-                                className="approval-action-button float-end my-auto"
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "flex-end",
-                                  alignItems: "center",
-                                }}
-                              >
-                                {specification.class === "show" ? (
-                                  <i class="bi bi-chevron-double-down"></i>
-                                ) : (
-                                  <i class="bi bi-chevron-double-right"></i>
-                                )}
-                              </span>
-                            ) : (
-                              " "
-                            )}
+                            <AutomatedToggleButtonRefresher
+                              testResultId={specification?.id}
+                              toggleClass={specification?.class}
+                              toggleFunction={toggleSpecificationRow}
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -222,24 +229,11 @@ export default function AutomatedTesting() {
                             colSpan={6}
                             className="text-center hiddenRow m-0 field-box"
                           >
-                            <div
-                              className={
-                                "collapse " +
-                                specification.class +
-                                " expanded-row"
-                              }
-                            >
-                            {console.log(specification?.hasSystemError)}
-                              {specification?.hasSystemError ? (
-                                <p>
-                                  <b>Failed due to System Error</b>
-                                </p>
-                              ) : (
-                                <p>
-                                  <b>{specification?.message}</b>
-                                </p>
-                              )}
-                            </div>
+                            <AutomatedToggleButtonRefresher
+                              testResultId={specification?.id}
+                              toggleClass={specification?.class}
+                              ErrorStatement={true}
+                            />
                           </td>
                         </tr>
                       </>,
@@ -257,6 +251,8 @@ export default function AutomatedTesting() {
                               <AutomatedResultStateRefresher
                                 key={`testcase-result-${testcase?.id}`}
                                 testResultId={testcase.id}
+                                isDuration={false}
+                                stompClient={stompClient}
                               />
                             </td>
                             <td>
@@ -264,33 +260,15 @@ export default function AutomatedTesting() {
                                 key={`testcase-result-${testcase?.id}`}
                                 testResultId={testcase.id}
                                 isDuration={true}
+                                stompClient={stompClient}
                               />
                             </td>
                             <td>
-                              {testcase?.state ==
-                                "testcase.result.status.finished" &&
-                              testcase?.success == false ? (
-                                <span
-                                  onClick={() =>
-                                    toggleTestCaseRow(testcase?.id)
-                                  }
-                                  type="button"
-                                  className="approval-action-button float-end my-auto"
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  {testcase.class === "show" ? (
-                                    <i class="bi bi-chevron-double-down"></i>
-                                  ) : (
-                                    <i class="bi bi-chevron-double-right"></i>
-                                  )}
-                                </span>
-                              ) : (
-                                " "
-                              )}
+                              <AutomatedToggleButtonRefresher
+                                testResultId={testcase?.id}
+                                toggleClass={testcase?.class}
+                                toggleFunction={toggleTestCaseRow}
+                              />
                             </td>
                           </tr>
                           <tr>
@@ -298,21 +276,11 @@ export default function AutomatedTesting() {
                               colSpan={6}
                               className="text-center hiddenRow m-0 field-box"
                             >
-                              <div
-                                className={
-                                  "collapse " + testcase.class + " expanded-row"
-                                }
-                              >
-                                {testcase?.hasSystemError ? (
-                                  <p>
-                                    <b>Failed due to System Error</b>
-                                  </p>
-                                ) : (
-                                  <p>
-                                    <b>{testcase?.message}</b>
-                                  </p>
-                                )}
-                              </div>
+                              <AutomatedToggleButtonRefresher
+                                testResultId={testcase?.id}
+                                toggleClass={testcase?.class}
+                                ErrorStatement={true}
+                              />
                             </td>
                           </tr>
                         </>,

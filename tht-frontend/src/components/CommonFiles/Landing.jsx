@@ -6,6 +6,7 @@ import ApexChart from "react-apexcharts";
 import { USER_ROLES } from "../../constants/role_constants";
 import { store } from "../../store/store";
 import { TestRequestAPI } from "../../api/TestRequestAPI";
+import "./landing.scss"
 export default function Landing() {
   const navigate = useNavigate();
   const [user, setUser] = useState();
@@ -121,15 +122,7 @@ export default function Landing() {
         {!userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
           <div className="col-md-4 border rounded">
             <h5 className="mb-3 text-center mt-1">User Status Pie Chart</h5>
-            <div
-              style={{
-                maxHeight: "50vh", // Set the maximum height in viewport height units
-                maxWidth: "50vw", // Set the maximum width in viewport width units
-                margin: "0 auto",
-                padding: "10px",
-                width: "100%",
-              }}
-            >
+            <div className="chart-container">
               <ApexChart
                 options={userOptions}
                 series={userSeries}
@@ -142,15 +135,7 @@ export default function Landing() {
         {testRequestSeries.length > 0 && (
           <div className="col-md-4 border rounded">
             <h5 className="mb-3 text-center mt-1">Test Request Status Pie Chart</h5>
-            <div
-              style={{
-                maxHeight: "50vh", // Set the maximum height in viewport height units
-                maxWidth: "50vw", // Set the maximum width in viewport width units
-                margin: "0 auto",
-                padding: "10px",
-                width: "100%",
-              }}
-            >
+            <div className="chart-container">
               <ApexChart
                 options={testRequestOptions}
                 series={testRequestSeries}

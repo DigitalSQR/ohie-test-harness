@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -92,6 +93,15 @@ public class ExceptionController {
     public ResponseEntity<Object> handleExceptionToJustPrintLog(Exception exception) throws Exception {
         LOGGER.error("caught Exception in ControllerAdvice ", exception);
         throw exception;
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Object> handleMaxSizeException(MaxUploadSizeExceededException ex) {
+        ValidationResultInfo error = new ValidationResultInfo();
+        error.setMessage("File size exceeds the maximum limit of 2MB");
+        error.setLevel(ErrorLevel.ERROR);
+        error.setElement("file");
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     private ValidationResultInfo calErrorResponse(Exception exception) {

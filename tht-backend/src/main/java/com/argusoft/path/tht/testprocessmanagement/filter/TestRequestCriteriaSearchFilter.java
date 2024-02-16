@@ -47,8 +47,8 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     @Override
     protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<TestRequestEntity> root, CriteriaQuery<?> query) {
         Expression<Object> stateWiseDefaultOrder = criteriaBuilder.selectCase()
-                .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED), 0)
-                .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING), 1)
+                .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING), 0)
+                .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED), 1)
                 .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS), 2)
                 .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED), 3)
                 .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED), 4)
@@ -68,7 +68,7 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityRoot().get("name")), "%" + getName().toLowerCase() + "%"));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {

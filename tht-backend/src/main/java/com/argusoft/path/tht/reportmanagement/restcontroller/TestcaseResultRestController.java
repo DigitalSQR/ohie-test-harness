@@ -5,7 +5,9 @@
  */
 package com.argusoft.path.tht.reportmanagement.restcontroller;
 
+import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
+import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
@@ -14,6 +16,7 @@ import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -24,7 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * This TestcaseResultServiceRestController maps end points with standard service.
@@ -170,19 +174,6 @@ public class TestcaseResultRestController {
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @return
-     */
-    public Page<TestcaseResultInfo> getTestcaseResults(
-            Pageable pageable,
-            ContextInfo contextInfo)
-            throws InvalidParameterException {
-        Page<TestcaseResultEntity> TestcaseResults = testcaseResultService.getTestcaseResults(pageable, contextInfo);
-        return testcaseResultMapper.pageEntityToDto(TestcaseResults);
-    }
-
-    /**
      * We can expose this API in future if needed.
      * {@inheritdoc}
      */
@@ -258,4 +249,34 @@ public class TestcaseResultRestController {
                 contextInfo);
         return testcaseResultMapper.modelToDto(testcaseResultById);
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @ApiOperation(value = "Retrieves classes extending Test case class.", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved classes name"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/sub-classes")
+    public List<String> getSubClassesNameForTestCase(){
+        return testcaseResultService.getSubClassesNameForTestCase();
+    }
+
+    @ApiOperation(value = "Retrieves all status of test case result.", response = Multimap.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/status/mapping")
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
+        Collection<String> strings = TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP.get(sourceStatus);
+        return strings.parallelStream().toList();
+    }
+
 }

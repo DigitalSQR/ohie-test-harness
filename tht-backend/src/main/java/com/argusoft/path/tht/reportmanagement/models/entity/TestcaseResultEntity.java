@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEn
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
@@ -18,6 +19,7 @@ import javax.persistence.*;
  * @author Dhruv
  */
 @Entity
+@Audited
 @Table(name = "testcase_result")
 public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
@@ -29,41 +31,41 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     private UserEntity tester;
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_test_case_result_id")
+    @JoinColumn(name = "parent_test_case_result_id", updatable = false)
     private TestcaseResultEntity parentTestcaseResult;
 
-    @Column(name = "ref_obj_uri")
+    @Column(name = "ref_obj_uri", updatable = false)
     private String refObjUri;
 
-    @Column(name = "ref_id")
+    @Column(name = "ref_id", updatable = false)
     private String refId;
 
-    @Column(name = "message")
+    @Column(name = "message", length = 2000)
     private String message;
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "test_request_id")
+    @JoinColumn(name = "test_request_id", updatable = false)
     private TestRequestEntity testRequest;
 
     @Column(name = "has_system_error")
     private Boolean hasSystemError;
 
-    @Column(name = "is_manual")
+    @Column(name = "is_manual", updatable = false)
     private Boolean isManual;
 
-    @Column(name = "is_required")
+    @Column(name = "is_required", updatable = false)
     private Boolean isRequired;
 
-    @Column(name = "is_automated")
+    @Column(name = "is_automated", updatable = false)
     private Boolean isAutomated;
 
-    @Column(name = "is_recommended")
+    @Column(name = "is_recommended", updatable = false)
     private Boolean isRecommended;
 
-    @Column(name = "is_workflow")
+    @Column(name = "is_workflow", updatable = false)
     private Boolean isWorkflow;
 
-    @Column(name = "is_functional")
+    @Column(name = "is_functional", updatable = false)
     private Boolean isFunctional;
 
     @Column(name = "is_success")

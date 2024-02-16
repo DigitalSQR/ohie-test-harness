@@ -9,6 +9,7 @@ import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceCons
 import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
+import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
@@ -22,26 +23,30 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.Multimap;
 import io.astefanutti.metrics.aspectj.Metrics;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -53,11 +58,13 @@ import java.util.stream.Collectors;
 @Metrics(registry = "TestcaseResultServiceServiceImpl")
 public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultServiceServiceImpl.class);
+
     @Autowired
     private TestcaseResultRepository testcaseResultRepository;
 
     @Autowired
-    private SpecificationService specificationService;
+    TestcaseResultMapper testcaseResultMapper;
 
     @Autowired
     private TestcaseOptionService testcaseOptionService;
@@ -71,6 +78,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     @Autowired
     private GradeEvaluator gradeEvaluator;
 
+    @Autowired
+    SimpMessagingTemplate msgTemplate;
+
     /**
      * {@inheritdoc}
      *
@@ -82,7 +92,14 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+            DataValidationErrorException, DoesNotExistException {
+
+        if (testcaseResultEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseResultServiceServiceImpl ");
+            throw new InvalidParameterException("TestcaseResultEntity is missing");
+        }
+
+        defaultValueCreateTestCaseResult(testcaseResultEntity, contextInfo);
 
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.CREATE_VALIDATION,
                 this,
@@ -92,10 +109,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 testcaseResultEntity,
                 contextInfo);
 
-        if (StringUtils.isEmpty(testcaseResultEntity.getId())) {
-            testcaseResultEntity.setId(UUID.randomUUID().toString());
-        }
-        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
         return testcaseResultEntity;
     }
@@ -111,7 +124,12 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+            DataValidationErrorException {
+
+        if (testcaseResultEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseResultServiceServiceImpl ");
+            throw new InvalidParameterException("TestcaseResultEntity is missing");
+        }
 
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.UPDATE_VALIDATION,
                 this,
@@ -129,6 +147,11 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     @Override
     public TestcaseResultEntity submitTestcaseResult(String testcaseResultId, String selectedTestcaseOptionId, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
 
+        TestcaseResultEntity testcaseResultEntity
+                = this.getTestcaseResultById(testcaseResultId, contextInfo);
+
+        defaultValueSubmitTestCaseResult(testcaseResultEntity, selectedTestcaseOptionId, contextInfo);
+
         TestcaseResultValidator.validateSubmitTestcaseResult(
                 testcaseResultId,
                 selectedTestcaseOptionId,
@@ -136,20 +159,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 this,
                 testcaseOptionService,
                 contextInfo);
-
-        //Submit testcaseResult.
-        TestcaseResultEntity testcaseResultEntity
-                = this.getTestcaseResultById(testcaseResultId, contextInfo);
-
-        TestcaseOptionEntity testcaseOptionEntity
-                = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
-
-        testcaseResultEntity.setTestcaseOption(testcaseOptionEntity);
-        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
-
-        UserEntity userEntity =
-                userService.getPrincipalUser(contextInfo);
-        testcaseResultEntity.setTester(userEntity);
 
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
 
@@ -211,23 +220,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    @Override
-    @Timed(name = "getTestcaseResults")
-    public Page<TestcaseResultEntity> getTestcaseResults(Pageable pageable,
-                                                         ContextInfo contextInfo)
-            throws InvalidParameterException {
-        if (pageable == null) {
-            throw new InvalidParameterException("pageble is missing");
-        }
-        Page<TestcaseResultEntity> testcaseResults = testcaseResultRepository.findTestcaseResults(pageable);
-        return testcaseResults;
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @Override
     @Timed(name = "validateTestcaseResult")
@@ -237,6 +229,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
+        if (testcaseResultEntity == null) {
+            LOGGER.error("caught InvalidParameterException in TestcaseResultServiceServiceImpl ");
+            throw new InvalidParameterException("TestcaseResultEntity is missing");
+        }
         List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, testRequestService, contextInfo);
         return errors;
     }
@@ -250,10 +246,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         ValidationUtils.statusPresent(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS, stateKey, errors);
 
         TestcaseResultEntity testcaseResultEntity = this.getTestcaseResultById(testcaseResultId, contextInfo);
-        String currentState = testcaseResultEntity.getState();
 
         //validate transition
-        ValidationUtils.transitionValid(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP, currentState, stateKey, errors);
+        ValidationUtils.transitionValid(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP, testcaseResultEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -276,6 +271,11 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         testcaseResultEntity.setState(stateKey);
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
+
+        // Notify client if the state is changed to finished
+        if(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
+            notifyTestCaseFinished(testcaseResultEntity, contextInfo);
+        }
 
         if (!testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
             updateChildTestcaseResult(testcaseResultEntity, contextInfo);
@@ -440,6 +440,17 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 contextInfo);
     }
 
+    @Override
+    public List<String> getSubClassesNameForTestCase() {
+        Reflections reflections = new Reflections(TestcaseServiceConstants.PACKAGE_NAME);
+        Set<Class<? extends TestCase>> subTypes = reflections.getSubTypesOf(TestCase.class);
+        List<String> classNames = new ArrayList<>();
+        for (Class<?> subType : subTypes) {
+            classNames.add(subType.getSimpleName());
+        }
+        return classNames;
+    }
+
     private TestcaseResultEntity fetchTestcaseResultStatusByInputs(
             Boolean isManual,
             Boolean isAutomated,
@@ -524,7 +535,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             //set duration
             Long duration = 0L;
-            for (TestcaseResultEntity tcr : testcaseResultEntities) {
+            for (TestcaseResultEntity tcr : filteredTestcaseResults) {
                 if (tcr.getDuration() != null) {
                     duration = duration + tcr.getDuration();
                 }
@@ -577,4 +588,42 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
 
+    private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+        if (StringUtils.isEmpty(testcaseResultEntity.getId())) {
+            testcaseResultEntity.setId(UUID.randomUUID().toString());
+        }
+        testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
+        testcaseResultEntity.setDuration(null);
+    }
+
+    private void defaultValueSubmitTestCaseResult(TestcaseResultEntity testcaseResultEntity, String selectedTestcaseOptionId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+        testcaseResultEntity.setTester(userService.getPrincipalUser(contextInfo));
+
+        TestcaseOptionEntity testcaseOptionEntity
+            = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
+
+        testcaseResultEntity.setTestcaseOption(testcaseOptionEntity);
+        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
+    }
+
+    private void notifyTestCaseFinished(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+
+        if (testcaseResultEntity.getAutomated().equals(Boolean.TRUE)) {
+            String destination = "/testcase-result/" + testcaseResultEntity.getId();
+            fetchTestcaseResultStatusByInputs(
+                    null,
+                    true,
+                    null,
+                    null,
+                    null,
+                    null,
+                    testcaseResultEntity,
+                    contextInfo
+            );
+            msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
+            if (testcaseResultEntity.getParentTestcaseResult() != null) {
+                notifyTestCaseFinished(testcaseResultEntity.getParentTestcaseResult(), contextInfo);
+            }
+        }
+    }
 }

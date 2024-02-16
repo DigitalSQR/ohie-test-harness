@@ -10,6 +10,8 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
@@ -17,6 +19,7 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.mapper.UserMapper;
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -31,7 +34,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This userServiceRestController maps end points with standard service.
@@ -264,19 +269,6 @@ public class UserRestController {
 
     /**
      * {@inheritdoc}
-     *
-     * @return
-     */
-    public Page<UserInfo> getUsers(
-            Pageable pageable,
-            ContextInfo contextInfo)
-            throws InvalidParameterException {
-        Page<UserEntity> users = userService.getUsers(pageable, contextInfo);
-        return userMapper.pageEntityToDto(users);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     @ApiOperation(value = "View a list of validation errors for user", response = List.class)
     @ApiResponses(value = {
@@ -320,6 +312,35 @@ public class UserRestController {
             throw new OperationFailedException("InvalidParameterException while fetching principal User ", e);
         }
         return userMapper.modelToDto(principalUser);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @ApiOperation(value = "Reset password for user", response = UserInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully reset the password"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/reset/password")
+    public UserInfo resetPassword(@RequestParam("oldPassword") String oldPassword,
+                                  @RequestParam("newPassword") String newPassword,
+                                  @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        return userMapper.modelToDto(userService.resetPassword(oldPassword, newPassword, contextInfo));
+    }
+    @ApiOperation(value = "Retrieves all status for user.", response = Multimap.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/status/mapping")
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
+        Collection<String> strings = UserServiceConstants.USER_STATUS_MAP.get(sourceStatus);
+        return strings.parallelStream().toList();
     }
 
 
