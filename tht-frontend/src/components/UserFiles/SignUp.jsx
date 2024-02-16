@@ -9,18 +9,15 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { useFormik } from "formik";
 export default function SignUp() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    name: "",
-    password: "",
-    companyName: "",
-  });
+  const [confirmPassword, setconfirmPassword] = useState("");
 
   const validate = (values) => {
     const errors = {};
 
     if (values.email.length == 0) {
       errors.email = "Please enter email.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
+      errors.email = "Please enter a valid email address";
     }
 
     if (values.password.length == 0) {
@@ -32,7 +29,7 @@ export default function SignUp() {
     }
 
     if (values.companyName.length == 0) {
-      errors.companyName = "Please enter your company's information.";
+      errors.companyName = "Please enter your company's name.";
     }
 
     return errors;
@@ -46,7 +43,7 @@ export default function SignUp() {
       companyName: "",
     },
     validate: validate,
-    onSubmit: async () => {
+    onSubmit:  () => {
       if (formik.values.password != confirmPassword) {
         notification.error({
           placement: "bottomRight",
@@ -84,62 +81,18 @@ export default function SignUp() {
             hideLoader();
             notification.error({
               placement: "bottomRight",
-              description: `${error.message}`,
+              description:
+                error.message !== undefined
+                  ? `${error.message}`
+                  : `Oops something went wrong`,
             });
           });
       }
     },
   });
 
-  const [confirmPassword, setconfirmPassword] = useState("");
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
   const { showLoader, hideLoader } = useLoader();
-  const SignUpHandler = async () => {
-    if (formik.values.password != confirmPassword) {
-      notification.error({
-        placement: "bottomRight",
-        description: "Passwords do not match.",
-      });
-    } else {
-      console.log(formData);
-      showLoader();
-      AuthenticationAPI.signup(formData)
-        .then(
-          (result) => {
-            hideLoader();
-            navigate(`/CongratulationsPage/${result.email}
-            `);
-          },
-          (result) => {
-            hideLoader();
-            const messages = result.response.data.map((res) => res.message);
-            const MessageList = () => (
-              <div>
-                {messages.map((message, index) => (
-                  <li key={index}>{message}</li>
-                ))}
-              </div>
-            );
-
-            notification.error({
-              placement: "bottomRight",
-              message: "Error",
-              description: <MessageList />,
-            });
-          }
-        )
-        .catch((error) => {
-          hideLoader();
-          notification.error({
-            placement: "bottomRight",
-            description: `${error.message}`,
-          });
-        });
-    }
-  };
+ 
 
   const ClickHandler = () => {
     navigate("/login");
@@ -177,7 +130,7 @@ export default function SignUp() {
                     htmlFor="exampleFormControlInput1"
                     className="form-label"
                   >
-                    Name
+                    Name<span style={{ color: "red" }}>*</span>
                   </label>
                   <div className="input-group">
                     <span className="input-group-text" id="basic-addon1">
@@ -205,7 +158,7 @@ export default function SignUp() {
                     htmlFor="exampleFormControlInput1"
                     className="form-label"
                   >
-                    Email
+                    Email<span style={{ color: "red" }}>*</span>
                   </label>
                   <div className="input-group">
                     <span className="input-group-text" id="basic-addon1">
@@ -234,18 +187,18 @@ export default function SignUp() {
                     htmlFor="exampleFormControlInput1"
                     className="form-label"
                   >
-                    Company
+                    Company<span style={{ color: "red" }}>*</span>
                   </label>
                   <div className="input-group">
                     <span className="input-group-text" id="basic-addon1">
-                      <i className="bi bi-envelope"></i>
+                      <i className="bi bi-building"></i>
                     </span>
                     <input
                       name="companyName"
                       value={formik.values.companyName}
                       type="text"
                       className="form-control border-start-0 ps-0"
-                      placeholder="companyName"
+                      placeholder="Company name"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
                       onBlur={formik.handleBlur}
@@ -264,7 +217,7 @@ export default function SignUp() {
                     htmlFor="exampleFormControlInput1"
                     className="form-label"
                   >
-                    Password
+                    Password<span style={{ color: "red" }}>*</span>
                   </label>
                   <div className="input-group">
                     <span className="input-group-text" id="basic-addon1">
@@ -292,7 +245,7 @@ export default function SignUp() {
                     htmlFor="exampleFormControlInput1"
                     className="form-label"
                   >
-                    Confirm Password
+                    Confirm Password<span style={{ color: "red" }}>*</span>
                   </label>
                   <div className="input-group">
                     <span className="input-group-text" id="basic-addon1">
@@ -319,11 +272,15 @@ export default function SignUp() {
                     }}
                   />{" "} */}
                 </div>
+                {/* <div >
+                  <span style={{ color: "red", padding: "0 4px" }}>*</span>{" "}
+                  indicates required fields.
+                </div> */}
 
                 <div className="my-3">
                   <button
                     disabled={!(formik.isValid && formik.dirty)}
-                    className="btn btn-primary btn-blue w-100 mt-5"
+                    className="btn btn-primary btn-blue w-100 mt-2"
                     onClick={formik.handleSubmit}
                   >
                     Sign Up

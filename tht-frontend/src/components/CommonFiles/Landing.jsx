@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import tool_icon from "../../styles/images/tool-icon.png";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { UserAPI } from "../../api/UserAPI";
 import ApexChart from "react-apexcharts";
 import { USER_ROLES } from "../../constants/role_constants";
@@ -18,6 +18,8 @@ export default function Landing() {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
   }, []);
+
+  // const userContext = createContext(userInfo);
 
   useEffect(() => {
     const fetchUserData = async () => {

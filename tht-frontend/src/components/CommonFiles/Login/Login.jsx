@@ -59,7 +59,9 @@ export default function Login() {
     const errors = {};
 
     if (values.username.length == 0) {
-      errors.username = "Please enter username.";
+      errors.username = "Please enter your email.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.username.trim())) {
+      errors.username = "Please enter a valid email address";
     }
 
     if (values.password.length == 0) {
@@ -75,7 +77,7 @@ export default function Login() {
       grant_type: "password",
     },
     validate: validate,
-    onSubmit: async () => {
+    onSubmit: () => {
       showLoader();
       AuthenticationAPI.doLogin(new URLSearchParams(formik.values))
         .then(
@@ -93,7 +95,10 @@ export default function Login() {
             console.log(response);
             notification.error({
               placement: "bottomRight",
-              description: `${response.response.data.error_description}`,
+              description:
+                response.response.data.error_description !== undefined
+                  ? `${response.response.data.error_description}`
+                  : `Oops something went wrong`
             });
           }
         )
@@ -133,14 +138,14 @@ export default function Login() {
               </div>
               <div className="custom-scrollbar sm-cut">
                 <div
-                  className="custom-input mb-3"
+                  className="custom-input mb-4"
                   style={{ position: "relative" }}
                 >
                   <label
                     htmlFor="exampleFormControlInput1"
                     className="form-label"
                   >
-                    Email
+                    Email<span style={{ color: "red" }}>*</span>
                   </label>
                   <div className="input-group">
                     <span className="input-group-text" id="basic-addon1">
@@ -183,7 +188,7 @@ export default function Login() {
                     htmlFor="exampleFormControlInput2"
                     className="form-label"
                   >
-                    Password
+                    Password<span style={{ color: "red" }}>*</span>
                   </label>
                   <div className="input-group">
                     <span className="input-group-text" id="basic-addon1">
@@ -220,7 +225,9 @@ export default function Login() {
                     <div className="text-danger">{formik.errors.password}</div>
                   )}
                 </div>
-
+                <div style={{ paddingBottom: "10px" }}>
+                  {/* <span style={{ color: "red", padding: "0 4px" }}>*</span> indicates required fields. */}
+                </div>
                 <div className="d-flex justify-content-between">
                   <label className="custom-checkbox">
                     Remember me
