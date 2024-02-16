@@ -248,10 +248,9 @@ export default function TestCase(props) {
 							</div>
 							<div className="text-end mb-3">
 								<div
-									className="cst-btn-group btn-group"
+									className="cst-btn-group btn-group margin"
 									role="group"
 									aria-label="Basic example"
-									style={{ margin: "0 15px" }}
 								>
 									<input
 										type="file"
@@ -261,10 +260,7 @@ export default function TestCase(props) {
 										onChange={(e) => {
 											addFiles(e, currentTestcase, 0);
 										}}
-										style={{
-											visibility: "hidden",
-											width: "0",
-										}}
+										className="visibility"
 									></input>
 									<button
 										type="button"
@@ -272,10 +268,7 @@ export default function TestCase(props) {
 										onClick={addAttachment}
 									>
 										<i
-											style={{
-												transform: "rotate(-45.975deg)",
-											}}
-											className="bi bi-paperclip"
+											className="bi bi-paperclip rotate"
 										></i>
 										Add Attachments
 									</button>
@@ -312,13 +305,9 @@ export default function TestCase(props) {
 					</div>
 				</div>
 			</div>
-			<div style={{ display: "flex", justifyContent: "space-between" }}>
+			<div className="display">
 				<Pagination
-					style={{
-						flex: 1,
-						display: "flex",
-						justifyContent: "center",
-					}}
+				className="pagination"
 					count={currentSpecification.childTestcaseResults.length}
 					page={currentTestcaseIndex + 1}
 					color="primary"

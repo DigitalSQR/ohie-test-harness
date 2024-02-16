@@ -69,7 +69,7 @@ const ComponentList: React.FC = () => {
                     </td>
                     <td className="d-flex">
                       <EditOutlined
-                        style={{ marginRight: "8px" }}
+                        className="edit-icon"
                         onClick={() =>
                           handleUpdate(component.id, component.name)
                         }

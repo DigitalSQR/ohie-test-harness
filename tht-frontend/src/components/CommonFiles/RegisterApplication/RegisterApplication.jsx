@@ -386,8 +386,7 @@ const RegisterApplication = () => {
                               </div>
                               <div className=" custom-input col-sm-6 col-12">
                                 <div
-                                  className=" input-group mb-3"
-                                  style={{ position: "relative" }}
+                                  className=" input-group mb-3 position-relative"
                                 >
                                   <input
                                     id={
@@ -431,9 +430,8 @@ const RegisterApplication = () => {
                                     ]
                                   ) && (
                                     <button
-                                      className="btn btn-outline-secondary"
+                                      className="btn btn-outline-secondary color"
                                       type="button"
-                                      style={{ borderColor: "#ccdade" }}
                                       onClick={() => {
                                         setShowPassword(!showPassword);
                                       }}

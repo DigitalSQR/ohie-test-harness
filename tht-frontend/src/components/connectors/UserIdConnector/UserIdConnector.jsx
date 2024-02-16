@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UserAPI } from "../../../api/UserAPI";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
+import "./userIdConnector.scss";
 const UserIdConnector = ({ userId, isLink }) => {
   const [user, setUser] = useState();
   // const [show, setShow] = useState(false);
@@ -14,9 +15,9 @@ const UserIdConnector = ({ userId, isLink }) => {
   return (
     <span>
       {user?.name ? (
-        <p style={{ margin: "0px" }}>{user?.name}</p>
+        <p className="user-name">{user?.name}</p>
       ) : (
-        <Spin indicator={<LoadingOutlined style={{ fontSize: 14 }} spin />} />
+        <Spin indicator={<LoadingOutlined className="loading-indicator" />} />
       )}
     </span>
   );

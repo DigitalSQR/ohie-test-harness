@@ -72,7 +72,7 @@ const TestingRequests = () => {
   };
 
   const togglePasswordVisibility = (testUrl) => {
-    console.log("hello")
+    console.log("hello");
     if (testUrl.showPass) {
       testUrl.showPass = !testUrl.showPass;
     } else {
@@ -179,7 +179,7 @@ const TestingRequests = () => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th style={{ width: "20%" }}>
+                  <th className="app-name-column">
                     APP NAME{" "}
                     <a className="ps-1" href="#">
                       <img
@@ -189,7 +189,7 @@ const TestingRequests = () => {
                       />
                     </a>
                   </th>
-                  <th style={{ width: "20%" }}>
+                  <th className="date-column">
                     DATE OF APPLICATION{" "}
                     <a className="ps-1" href="#">
                       <img
@@ -199,9 +199,9 @@ const TestingRequests = () => {
                       />
                     </a>
                   </th>
-                  <th style={{ width: "20%" }}>Assessee</th>
-                  <th style={{ width: "15%" }}>STATUS</th>
-                  <th style={{ width: "35%" }}>
+                  <th className="assessee-column">Assessee</th>
+                  <th className="status-column">STATUS</th>
+                  <th className="actions-column">
                     <span
                       className={
                         userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && "mx-2"
@@ -277,12 +277,7 @@ const TestingRequests = () => {
                         <span
                           onClick={() => toggleRow(testRequest.id)}
                           type="button"
-                          className="approval-action-button float-end my-auto"
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            alignItems: "center",
-                          }}
+                          className="approval-action-button float-end my-auto display"
                         >
                           {testRequest.class === "show" ? (
                             <i class="bi bi-chevron-double-down"></i>
@@ -325,15 +320,12 @@ const TestingRequests = () => {
                                             ? testUrls.password
                                             : "*********"}
                                           <i
-                                            className={
+                                            className={`bi ${
                                               testUrls.showPass
-                                                ? "bi bi-eye-fill"
-                                                : "bi bi-eye-slash-fill"
-                                            }
+                                                ? "bi-eye-fill"
+                                                : "bi-eye-slash-fill"
+                                            } padding-icon`}
                                             key={testUrls.componentId}
-                                            style={{
-                                              paddingLeft: "2px",
-                                            }}
                                             onClick={() =>
                                               togglePasswordVisibility(testUrls)
                                             }

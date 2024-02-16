@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import "./Login.css";
+import "./login.scss";
 import openhie_logo from "../../../styles/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import {
@@ -167,13 +167,7 @@ export default function Login() {
                     />
                     {formik.touched.username && formik.errors.username && (
                       <div
-                        className="text-danger"
-                        style={{
-                          position: "absolute",
-                          top: "100%",
-                          left: "0",
-                          paddingBottom: "0.5rem",
-                        }}
+                        className="text-danger position"
                       >
                         {formik.errors.username}
                       </div>
@@ -181,8 +175,7 @@ export default function Login() {
                   </div>
                 </div>
                 <div
-                  className="custom-input mb-3"
-                  style={{ marginTop: "0.5rem" }}
+                  className="custom-input mb-3 password"
                 >
                   <label
                     htmlFor="exampleFormControlInput2"
@@ -209,9 +202,8 @@ export default function Login() {
                       onKeyDown={handleKeyPress}
                     />
                     <button
-                      className="btn btn-outline-secondary"
+                      className="btn btn-outline-secondary login"
                       type="button"
-                      style={{ borderColor: "#ccdade" }}
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       <i
@@ -259,10 +251,10 @@ export default function Login() {
                   >
                     Login
                   </button>
-                  <h6 style={{ textAlign: "center" }} className="m-2">
+                  <h6  className="m-2 align">
                     OR
                   </h6>
-                  <h4 style={{ textAlign: "center" }}>
+                  <h4 className="align">
                     <a href="/api/oauth2/authorization/google">
                       <img src={GoogleLoginIcon} />
                       {/* Login with Google */}

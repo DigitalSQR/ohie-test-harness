@@ -182,8 +182,7 @@ export default function ChooseTest() {
               </p>
               {totalManualTestcaseResults == 0 && (
                 <button
-                  className="btn btn-primary  btn-sm mt-4"
-                  style={{ alignItems: "flex-end" }}
+                  className="btn btn-primary btn-sm mt-4 display"
                   onClick={() => {
                     handleStartTesting(true, null);
                   }}
@@ -235,8 +234,7 @@ export default function ChooseTest() {
               </p>
               {totalAutomatedTestcaseResults == 0 && (
                 <button
-                  className="btn btn-primary small btn-sm mt-4"
-                  style={{ alignItems: "flex-end" }}
+                  className="btn btn-primary small btn-sm mt-4 display"
                   onClick={() => {
                     handleStartTesting(null, true);
                   }}

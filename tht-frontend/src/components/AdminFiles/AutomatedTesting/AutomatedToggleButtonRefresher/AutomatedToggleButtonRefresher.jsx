@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TestResultAPI } from "../../../../api/TestResultAPI";
+import "./AutomatedToggleButtonRefresher.scss"
 const AutomatedToggleButtonRefresher = ({
   testResultId,
   toggleFunction,
@@ -15,12 +16,7 @@ const AutomatedToggleButtonRefresher = ({
           <span
             onClick={() => toggleFunction(item?.id)}
             type="button"
-            className="approval-action-button float-end my-auto"
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-            }}
+            className="approval-action-button float-end my-auto display"
           >
             {toggleClass === "show" ? (
               <i className="bi bi-chevron-double-down"></i>
