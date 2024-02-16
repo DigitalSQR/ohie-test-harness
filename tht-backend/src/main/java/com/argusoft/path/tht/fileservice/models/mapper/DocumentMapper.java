@@ -41,7 +41,7 @@ public interface DocumentMapper {
     }
 
     default UserEntity setToOwner(String ownerId) {
-        if (StringUtils.isEmpty(ownerId)) {
+        if (!StringUtils.hasLength(ownerId)) {
             return null;
         }
         UserEntity userEntity = new UserEntity();

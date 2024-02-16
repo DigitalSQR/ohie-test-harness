@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
@@ -176,7 +171,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
                                             ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
-        if (StringUtils.isEmpty(componentId)) {
+        if (!StringUtils.hasLength(componentId)) {
             throw new InvalidParameterException("ComponentId is missing");
         }
         ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter(componentId);
@@ -243,7 +238,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     private void defaultValueCreateComponent(ComponentEntity componentEntity, ContextInfo contextInfo) throws InvalidParameterException {
-        if (StringUtils.isEmpty(componentEntity.getId())) {
+        if (!StringUtils.hasLength(componentEntity.getId())) {
             componentEntity.setId(UUID.randomUUID().toString());
         }
         componentEntity.setState(ComponentServiceConstants.COMPONENT_STATUS_DRAFT);

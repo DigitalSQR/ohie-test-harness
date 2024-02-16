@@ -47,7 +47,7 @@ public interface TestcaseMapper extends ModelDtoMapper<TestcaseEntity,TestcaseIn
     }
 
     default SpecificationEntity setToSpecification(String specificationId) {
-        if (StringUtils.isEmpty(specificationId)) {
+        if (!StringUtils.hasLength(specificationId)) {
             return null;
         }
         SpecificationEntity specificationEntity = new SpecificationEntity();

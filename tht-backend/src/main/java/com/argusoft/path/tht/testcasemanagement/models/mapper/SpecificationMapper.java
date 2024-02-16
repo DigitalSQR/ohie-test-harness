@@ -69,7 +69,7 @@ public interface SpecificationMapper extends ModelDtoMapper<SpecificationEntity,
     }
 
     default ComponentEntity setToComponent(String componentId) {
-        if (StringUtils.isEmpty(componentId)) {
+        if (!StringUtils.hasLength(componentId)) {
             return null;
         }
         ComponentEntity componentEntity = new ComponentEntity();

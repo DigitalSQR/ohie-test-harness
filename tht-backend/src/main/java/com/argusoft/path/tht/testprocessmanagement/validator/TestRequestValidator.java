@@ -104,10 +104,10 @@ public class TestRequestValidator {
             TestcaseResultService testcaseResultService,
             ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException {
-        if (StringUtils.isEmpty(testRequestId)
-                || StringUtils.isEmpty(refObjUri)
-                || StringUtils.isEmpty(refId)
-                || StringUtils.isEmpty(validationTypeKey)) {
+        if (!StringUtils.hasLength(testRequestId)
+                || !StringUtils.hasLength(refObjUri)
+                || !StringUtils.hasLength(refId)
+                || !StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
             throw new InvalidParameterException("inputData is missing");
         }
@@ -177,7 +177,7 @@ public class TestRequestValidator {
                                                                  ComponentService componentService,
                                                                  ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
-        if (StringUtils.isEmpty(validationTypeKey)) {
+        if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in TestRequestValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
         }

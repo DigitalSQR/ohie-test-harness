@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.argusoft.path.tht.systemconfiguration.utils;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
@@ -90,7 +85,7 @@ public final class ValidationUtils {
             String fieldName,
             String infoName,
             List<ValidationResultInfo> errors) {
-        if (StringUtils.isEmpty(refObjectUri) || !refObjectUri.equals(infoName)) {
+        if (!StringUtils.hasLength(refObjectUri) || !refObjectUri.equals(infoName)) {
             errors
                     .add(new ValidationResultInfo(fieldName,
                             ErrorLevel.ERROR,
@@ -160,7 +155,7 @@ public final class ValidationUtils {
                 break;
             }
             case BOOLEAN: {
-                if (StringUtils.isEmpty(value)
+                if (!StringUtils.hasLength(value)
                         || (!value.toLowerCase().equals(Constant.TRUE_STRING)
                         && !value.toLowerCase().equals(Constant.FALSE_STRING))) {
                     errors
@@ -191,7 +186,7 @@ public final class ValidationUtils {
                 break;
             }
             case STRING: {
-                if (StringUtils.isEmpty(value)) {
+                if (!StringUtils.hasLength(value)) {
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,

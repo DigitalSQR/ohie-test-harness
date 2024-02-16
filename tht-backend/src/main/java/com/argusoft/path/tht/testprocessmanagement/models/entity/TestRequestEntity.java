@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.argusoft.path.tht.testprocessmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
@@ -77,7 +72,7 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
 
     @PrePersist
     private void changesBeforeSave() {
-        if (StringUtils.isEmpty(this.getId())) {
+        if (!StringUtils.hasLength(this.getId())) {
             this.setId(UUID.randomUUID().toString());
             this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));
         }

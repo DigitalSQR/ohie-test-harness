@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.argusoft.path.tht.systemconfiguration.models.entity;
 
 import org.springframework.util.StringUtils;
@@ -36,7 +31,7 @@ public class IdMetaEntity extends MetaEntity {
 
     @PrePersist
     private void changesBeforeSave() {
-        if (StringUtils.isEmpty(id)) {
+        if (!StringUtils.hasLength(id)) {
             this.setId(UUID.randomUUID().toString());
         }
     }

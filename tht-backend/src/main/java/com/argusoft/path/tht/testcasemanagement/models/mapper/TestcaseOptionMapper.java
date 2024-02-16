@@ -47,7 +47,7 @@ public interface TestcaseOptionMapper extends ModelDtoMapper<TestcaseOptionEntit
     }
 
     default TestcaseEntity setToTestcase(String testcaseId) {
-        if (StringUtils.isEmpty(testcaseId)) {
+        if (!StringUtils.hasLength(testcaseId)) {
             return null;
         }
         TestcaseEntity testcaseEntity = new TestcaseEntity();

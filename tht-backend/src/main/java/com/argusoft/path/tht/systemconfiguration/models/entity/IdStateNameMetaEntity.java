@@ -63,7 +63,7 @@ public class IdStateNameMetaEntity extends MetaEntity {
 
     @PrePersist
     private void changesBeforeSave() {
-        if (StringUtils.isEmpty(id)) {
+        if (!StringUtils.hasLength(id)) {
             this.setId(UUID.randomUUID().toString());
         }
     }
