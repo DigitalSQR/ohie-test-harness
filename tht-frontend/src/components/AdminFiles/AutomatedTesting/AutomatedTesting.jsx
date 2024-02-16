@@ -3,6 +3,7 @@ import { notification } from "antd";
 import "./automatedtesting.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import AutomatedResultStateRefresher from "./AutomatedResultStateRefresher/AutomatedResultStateRefresher";
+import AutomatedToggleButtonRefresher from "./AutomatedToggleButtonRefresher/AutomatedToggleButtonRefresher"
 import { useLoader } from "../../loader/LoaderContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
