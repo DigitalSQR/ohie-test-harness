@@ -207,7 +207,7 @@ const RegisterApplication = () => {
               <div className="col-sm-6 col-12">
                 <div className="custom-input mb-3">
                   <label htmlFor="name" className="form-label">
-                    Application Name
+                    Application Name<span style={{ color: "red" }}>*</span>
                   </label>
                   <input
                     id="name"
@@ -234,7 +234,7 @@ const RegisterApplication = () => {
               <div className="col-sm-6 col-12">
                 <div className="custom-input mb-3">
                   <label htmlFor="productName" className="form-label">
-                    Product Name
+                    Product Name<span style={{ color: "red" }}>*</span>
                   </label>
                   <input
                     id="productName"
@@ -262,7 +262,7 @@ const RegisterApplication = () => {
               <div className="col-12">
                 <div className="custom-input mb-3">
                   <label htmlFor="description" className="form-label">
-                    Application Description
+                    Application Description<span style={{ color: "red" }}>*</span>
                   </label>
                   <textarea
                     id="description"
@@ -327,7 +327,7 @@ const RegisterApplication = () => {
                                   htmlFor="username"
                                   className="form-label"
                                 >
-                                  Credentials
+                                  Credentials<span style={{ color: "red" }}>*</span>
                                 </label>
                               </div>
                               <div className="col-sm-6 col-12">
@@ -479,7 +479,7 @@ const RegisterApplication = () => {
                                     htmlFor="baseUrl"
                                     className="form-label"
                                   >
-                                    Base Url:{" "}
+                                    Base Url:{" "}<span style={{ color: "red" }}>*</span>
                                     {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
                                   </label>
                                   <input

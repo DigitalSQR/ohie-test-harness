@@ -11,15 +11,6 @@ function App() {
     <Provider store={store}>
       <RouterProvider router={routes}></RouterProvider>
       <Loader />
-      {/* <Router>
-        <div className="App">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
-            <Route index element={<Navigate to="/login" />} />
-          </Routes>
-        </div> */}
-      {/* </Router> */}
     </Provider>
     </LoaderProvider>
   );

@@ -95,15 +95,15 @@ const TestingRequests = () => {
     fetchTestRequests(filterState, field, newSortDirection, currentPage);
   };
 
-  const changeState = (testRequestId, state) => {
+  const changeState = (testRequestId, updatedState) => {
     showLoader();
-    TestRequestAPI.changeState(testRequestId, state)
+    TestRequestAPI.changeState(testRequestId, updatedState)
       .then((res) => {
         notification.success({
           placement: "bottomRight",
           message: "Status updated successfully!",
         });
-        fetchTestRequests(state, sortFieldName, sortDirection, currentPage);
+        fetchTestRequests(filterState, sortFieldName, sortDirection, currentPage);
         hideLoader();
       })
       .catch((err) => {
