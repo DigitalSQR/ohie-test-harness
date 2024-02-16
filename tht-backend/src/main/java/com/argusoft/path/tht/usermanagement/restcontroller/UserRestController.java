@@ -2,6 +2,7 @@ package com.argusoft.path.tht.usermanagement.restcontroller;
 
 import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -115,7 +116,7 @@ public class UserRestController {
         try {
             isVerified = tokenVerificationService.verifyUserToken(base64TokenId, base64UserEmail, false, contextInfo);
         } catch (DoesNotExistException e) {
-            LOGGER.error("caught DoesNotExistException in UserRestController ", e);
+            LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION+ UserRestController.class.getSimpleName(), e);
             // return false as it is
         }
         vris.setLevel(isVerified ? ErrorLevel.OK : ErrorLevel.ERROR);
@@ -314,7 +315,7 @@ public class UserRestController {
             principalUser = userService
                     .getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
-            LOGGER.error("caught InvalidParameterException in UserRestController ", e);
+            LOGGER.error("ValidateConstant.INVALID_PARAM_EXCEPTIONUserRestController ", e);
             throw new OperationFailedException("InvalidParameterException while fetching principal User ", e);
         }
         return userMapper.modelToDto(principalUser);

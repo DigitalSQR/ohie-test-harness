@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.systemconfiguration.security.filters;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,7 @@ public class ContextSetterFilter extends OncePerRequestFilter {
                 contextInfo = ((ContextInfo) authority.getPrincipal());
                 SecurityContextHolder.getContext().setAuthentication(authority);
             } catch (AuthenticationException | InvalidTokenException e) {
-                LOGGER.error("caught Exception in ContextSetterFilter ", e);
+                LOGGER.error(ValidateConstant.EXCEPTION + ContextSetterFilter.class.getSimpleName(), e);
                 SecurityContextHolder.getContext().setAuthentication(null);
                 contextInfo = new ContextInfo();
             }

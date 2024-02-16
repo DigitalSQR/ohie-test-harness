@@ -4,12 +4,11 @@ import com.argusoft.path.tht.captcha.util.EncryptDecrypt;
 import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
-import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
@@ -26,6 +25,8 @@ import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.argusoft.path.tht.usermanagement.validator.UserValidator;
 import com.google.common.collect.Multimap;
+import com.codahale.metrics.annotation.Timed;
+import io.astefanutti.metrics.aspectj.Metrics;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,7 +105,7 @@ public class UserServiceServiceImpl implements UserService {
             userByEmail = this.getUserByEmail(userEmail, contextInfo);
             TokenVerificationEntity tokenVerification = tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.FORGOT_PASSWORD.getKey(), contextInfo);
         } catch (Exception e) {
-            LOGGER.error("caught Exception in UserServiceServiceImpl ", e);
+            LOGGER.error(ValidateConstant.EXCEPTION+ UserServiceServiceImpl.class.getSimpleName(), e);
             // ignore it, no need to show that they are not exists in DB
             //TODO add log
         }
@@ -144,7 +145,7 @@ public class UserServiceServiceImpl implements UserService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 
@@ -172,7 +173,7 @@ public class UserServiceServiceImpl implements UserService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 
@@ -295,7 +296,7 @@ public class UserServiceServiceImpl implements UserService {
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(userId)) {
-            LOGGER.error("caught InvalidParameterException in UserServiceServiceImpl ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + UserServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("userId is missing");
         }
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter(userId);
@@ -371,7 +372,7 @@ public class UserServiceServiceImpl implements UserService {
             OperationFailedException,
             InvalidParameterException {
         if (!StringUtils.hasLength(roleId)) {
-            LOGGER.error("caught InvalidParameterException in UserServiceServiceImpl ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + UserServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("roleId can not be empty");
         }
         RoleSearchCriteriaFilter roleSearchCriteriaFilter = new RoleSearchCriteriaFilter(roleId);

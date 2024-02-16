@@ -3,6 +3,7 @@ package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutiona
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -80,7 +81,7 @@ public class TSWF7TestCase1 implements TestCase{
             return new ValidationResultInfo(ErrorLevel.ERROR, "cannot perform $lookup");
 
         } catch (Exception e) {
-            LOGGER.error("Exception while TSWF7TestCase1 ", e);
+            LOGGER.error(ValidateConstant.EXCEPTION + TSWF7TestCase1.class.getSimpleName(), e);
             throw new OperationFailedException(e.getMessage(), e);
         }
     }

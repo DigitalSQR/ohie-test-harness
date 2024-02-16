@@ -3,6 +3,7 @@ package com.argusoft.path.tht.systemconfiguration.utils;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.KeyCategory;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.google.common.collect.Multimap;
@@ -49,7 +50,7 @@ public final class ValidationUtils {
         if (field == null) {
             error.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    fieldName + " must be provided"));
+                    fieldName + ValidateConstant.MUST_PROVIDED));
         }
     }
 
@@ -124,7 +125,7 @@ public final class ValidationUtils {
                             maxValue == null ? null : maxValue.floatValue(),
                             errors);
                 } catch (NumberFormatException e) {
-                    LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
+                    LOGGER.error(ValidateConstant.NUMBER_FORMAT_EXCEPTION+ ValidationUtils.class.getSimpleName(), e);
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
@@ -144,7 +145,7 @@ public final class ValidationUtils {
                             maxValue == null ? null : maxValue.floatValue(),
                             errors);
                 } catch (NumberFormatException e) {
-                    LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
+                    LOGGER.error(ValidateConstant.NUMBER_FORMAT_EXCEPTION+ ValidationUtils.class.getSimpleName(), e);
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
@@ -176,7 +177,7 @@ public final class ValidationUtils {
                             maxValue == null ? null : maxValue.intValue(),
                             errors);
                 } catch (NumberFormatException e) {
-                    LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
+                    LOGGER.error(ValidateConstant.NUMBER_FORMAT_EXCEPTION+ ValidationUtils.class.getSimpleName(), e);
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
@@ -201,7 +202,7 @@ public final class ValidationUtils {
                 try {
                     sdf.parse(value);
                 } catch (ParseException e) {
-                    LOGGER.error("caught ParseException in ValidationUtils ", e);
+                    LOGGER.error(ValidateConstant.NUMBER_FORMAT_EXCEPTION+ ValidationUtils.class.getSimpleName(), e);
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
@@ -238,7 +239,7 @@ public final class ValidationUtils {
                         maxValue,
                         errors);
             } catch (NumberFormatException e) {
-                LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
+                LOGGER.error(ValidateConstant.NUMBER_FORMAT_EXCEPTION+ ValidationUtils.class.getSimpleName(), e);
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
@@ -372,7 +373,7 @@ public final class ValidationUtils {
             try {
                 Integer.parseInt(field);
             } catch (NumberFormatException e) {
-                LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
+                LOGGER.error(ValidateConstant.NUMBER_FORMAT_EXCEPTION+ ValidationUtils.class.getSimpleName(), e);
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
@@ -396,7 +397,7 @@ public final class ValidationUtils {
             try {
                 Long.parseLong(field);
             } catch (NumberFormatException e) {
-                LOGGER.error("caught NumberFormatException in ValidationUtils ", e);
+                LOGGER.error(ValidateConstant.NUMBER_FORMAT_EXCEPTION+ ValidationUtils.class.getSimpleName(), e);
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
@@ -506,7 +507,7 @@ public final class ValidationUtils {
             List<ValidationResultInfo> validationResultInfos
     ) throws DataValidationErrorException {
         if (ValidationUtils.containsErrors(validationResultInfos, ErrorLevel.ERROR)) {
-            LOGGER.error("caught DataValidationErrorException in ValidationUtils ");
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION+ ValidationUtils.class.getSimpleName());
             throw new DataValidationErrorException("Error(s) occurred validating", validationResultInfos);
         }
     }

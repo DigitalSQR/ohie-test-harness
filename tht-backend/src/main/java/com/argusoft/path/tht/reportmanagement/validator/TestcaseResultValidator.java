@@ -10,6 +10,7 @@ import com.argusoft.path.tht.reportmanagement.service.TestResultRelationService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -53,9 +54,9 @@ public class TestcaseResultValidator {
                 testRequestService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error("caught DataValidationErrorException in TestcaseResultValidator ");
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     validationResultEntities);
         }
         return validationResultEntities;
@@ -78,9 +79,9 @@ public class TestcaseResultValidator {
                 auditService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
-            LOGGER.error("caught DataValidationErrorException in TestcaseResultValidator ");
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
             throw new DataValidationErrorException(
-                    "Error(s) occurred validating",
+                    ValidateConstant.ERRORS,
                     validationResultEntitys);
         }
     }
@@ -88,7 +89,7 @@ public class TestcaseResultValidator {
     public static List<ValidationResultInfo> validateTestCaseResult(String validationTypeKey, TestcaseResultEntity testcaseResultEntity, UserService userService, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, TestRequestService testRequestService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error("caught InvalidParameterException in TestcaseResultValidator ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
             throw new InvalidParameterException("validationTypeKey is missing");
         }
         // VALIDATE
@@ -118,13 +119,12 @@ public class TestcaseResultValidator {
                                 .getTestcaseResultById(testcaseResultEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
-                        LOGGER.error("caught DoesNotExistException in TestcaseResultValidator ", ex);
+                        LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
-                                        "The id supplied to the update does not "
-                                                + "exists"));
+                                        ValidateConstant.ID_SUPPLIED+ "update" + ValidateConstant.DOES_NOT_EXIST));
                     }
                 }
 
@@ -140,8 +140,8 @@ public class TestcaseResultValidator {
                 validateCreateTestcaseResult(errors, testcaseResultEntity, testcaseResultService, contextInfo);
                 break;
             default:
-                LOGGER.error("caught InvalidParameterException in TestcaseResultValidator ");
-                throw new InvalidParameterException("Invalid validationTypeKey");
+                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
+                throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
         //for refId and refObjUri
@@ -188,12 +188,12 @@ public class TestcaseResultValidator {
                         userService.getUserById(testcaseResultEntity.getTester().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in TestcaseResultValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
                 String fieldName = "tester";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied for the tester does not exists"));
+                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         }
         //validate TestcaseResult parentTestcaseResult.
@@ -203,12 +203,28 @@ public class TestcaseResultValidator {
                         testcaseResultService.getTestcaseResultById(testcaseResultEntity.getParentTestcaseResult().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in TestcaseResultValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
                 String fieldName = "parentTestcaseResult";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied for the parentTestcaseResult does not exists"));
+                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST
+                                ));
+            }
+        }
+        //validate TestcaseOption foreignKey.
+        if (testcaseResultEntity.getTestcaseOption() != null) {
+            try {
+                testcaseResultEntity.setTestcaseOption(
+                        testcaseOptionService.getTestcaseOptionById(testcaseResultEntity.getTestcaseOption().getId(), contextInfo)
+                );
+            } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
+                String fieldName = "testcaseOption";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         }
         //validate testRequest foreignKey.
@@ -218,12 +234,12 @@ public class TestcaseResultValidator {
                         testRequestService.getTestRequestById(testcaseResultEntity.getTestRequest().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in TestcaseResultValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
                 String fieldName = "testRequest";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied for the testRequest does not exists"));
+                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         }
     }
@@ -241,7 +257,7 @@ public class TestcaseResultValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    fieldName + " must be provided"));
+                    fieldName + ValidateConstant.MUST_PROVIDED));
         }
         // check meta version id
         else if (!testcaseResultEntity.getVersion()
@@ -249,9 +265,7 @@ public class TestcaseResultValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    "someone else has updated the TestcaseResult since you"
-                            + " started updating, you might want to"
-                            + " refresh your copy."));
+                    ValidateConstant.SOMEONE_UPDATED+ " TestcaseResult " + ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
         validateNotUpdatable(errors, testcaseResultEntity, originalEntity);
@@ -290,8 +304,9 @@ public class TestcaseResultValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied to the create already exists"));
+                                ValidateConstant.ID_SUPPLIED+ "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
         }
@@ -476,8 +491,7 @@ public class TestcaseResultValidator {
             errors.add(
                     new ValidationResultInfo(fieldName,
                             ErrorLevel.ERROR,
-                            "The testcaseResultId supplied for the submit does not "
-                                    + "exists"));
+                            "The testcaseResultId supplied for the submit does not exists"));
             return errors;
         }
         try {
@@ -497,7 +511,7 @@ public class TestcaseResultValidator {
             validateTestResultRelationsForSelectedTestcaseOptionIds(testcaseResultId, selectedTestcaseOptionIds, testResultRelationService, contextInfo, errors);
 
         } catch (InvalidParameterException | DoesNotExistException | OperationFailedException | DataValidationErrorException ex) {
-            LOGGER.error("caught exception in TestcaseResultValidator ", ex);
+            LOGGER.error(ValidateConstant.EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
             String fieldName = "selectedTestcaseOptionId";
             errors.add(
                     new ValidationResultInfo(fieldName,

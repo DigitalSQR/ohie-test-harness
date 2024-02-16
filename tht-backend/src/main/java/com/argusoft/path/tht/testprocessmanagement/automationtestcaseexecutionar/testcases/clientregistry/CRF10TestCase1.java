@@ -3,6 +3,7 @@ package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutiona
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -58,7 +59,7 @@ public class CRF10TestCase1 implements TestCase {
 
             return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create related person with given relationship ");
         } catch (Exception ex) {
-            LOGGER.error("caught OperationFailedException in CRF10TestCase1 ", ex);
+            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + CRF10TestCase1.class.getSimpleName(), ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

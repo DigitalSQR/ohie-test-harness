@@ -3,6 +3,7 @@ package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutiona
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -92,7 +93,7 @@ public class TSWF1TestCase1 implements TestCase {
 
         }
         catch(Exception ex){
-            LOGGER.error("Exception while TSWF5TestCase1 ", ex);
+            LOGGER.error(ValidateConstant.EXCEPTION + TSWF5TestCase1.class.getSimpleName(), ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
 

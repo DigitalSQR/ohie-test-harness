@@ -8,6 +8,7 @@ import com.argusoft.path.tht.reportmanagement.service.TestResultRelationService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -180,7 +181,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             DataValidationErrorException, DoesNotExistException {
 
         if (testRequestEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestRequestServiceServiceImpl ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
 
@@ -211,7 +212,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             DataValidationErrorException {
 
         if (testRequestEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestRequestServiceServiceImpl ");
+            LOGGER.error("ValidateConstant.INVALID_PARAM_EXCEPTIONTestRequestServiceServiceImpl ");
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
 
@@ -284,7 +285,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testRequestEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestRequestServiceServiceImpl ");
+            LOGGER.error("ValidateConstant.INVALID_PARAM_EXCEPTIONTestRequestServiceServiceImpl ");
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
         List<ValidationResultInfo> errors = TestRequestValidator.validateTestRequest(validationTypeKey, testRequestEntity, this, userService, componentService, contextInfo);
@@ -310,7 +311,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 

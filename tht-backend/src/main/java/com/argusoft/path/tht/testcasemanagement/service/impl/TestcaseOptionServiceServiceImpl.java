@@ -2,20 +2,18 @@ package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.TestcaseOptionRepository;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.TestcaseOptionValidator;
-import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +27,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.util.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -70,7 +65,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             DataValidationErrorException {
 
         if (testcaseOptionEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseOptionServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
 
@@ -109,7 +104,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             DataValidationErrorException {
 
         if (testcaseOptionEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseOptionServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
 
@@ -182,7 +177,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testcaseOptionEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseOptionServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
         List<ValidationResultInfo> errors = TestcaseOptionValidator.validateTestcaseOption(validationTypeKey, testcaseOptionEntity, this, testcaseService, contextInfo);
@@ -212,7 +207,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 

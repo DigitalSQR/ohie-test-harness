@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -81,7 +82,7 @@ public class CRF3TestCase1 implements TestCase {
 
             return new ValidationResultInfo(ErrorLevel.OK, "Passed");
         } catch (Exception ex) {
-            LOGGER.error("caught OperationFailedException in CRF3TestCase1 ", ex);
+            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + CRF3TestCase1.class.getSimpleName(), ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

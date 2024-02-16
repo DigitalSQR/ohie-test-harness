@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -118,7 +119,7 @@ public class TSWF3TestCase1 implements TestCase {
             return new ValidationResultInfo(ErrorLevel.ERROR, "cannot expand the concept set");
 
         } catch (Exception e) {
-            LOGGER.error("Exception while TSWF3TestCase1 ", e);
+            LOGGER.error(ValidateConstant.EXCEPTION + TSWF3TestCase1.class.getSimpleName(), e);
             throw new OperationFailedException(e.getMessage(), e);
         }
     }
