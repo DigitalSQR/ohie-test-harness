@@ -59,7 +59,7 @@ const ComponentSpecification: React.FC = () => {
   };
 
   return (
-    <div id="wrapper">
+    <div id="wrapper" className="component-specification-page">
       <div className="bcca-breadcrumb">
         <div className="bcca-breadcrumb-item">{name}</div>
         <div
