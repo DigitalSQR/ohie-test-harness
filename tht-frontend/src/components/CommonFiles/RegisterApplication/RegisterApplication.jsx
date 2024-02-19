@@ -294,7 +294,7 @@ const RegisterApplication = () => {
                     <div className="col-12">
                       <div className="field-box">
                         <input
-                          id="component"
+                          id={index}
                           type="checkbox"
                           className="field-checkbox component-checkbox"
                           name="component"
@@ -304,7 +304,7 @@ const RegisterApplication = () => {
                           autoComplete="off"
                         />
                         <label
-                          htmlFor="component"
+                          htmlFor={index}
                           className="form-label mx-2 align-middle"
                         >
                           {component.name}
