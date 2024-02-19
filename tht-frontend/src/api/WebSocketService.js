@@ -4,7 +4,7 @@ import { useState } from 'react';
 const WebSocketService = () => {
     const [stompClient, setStompClient] = useState(null);
 
-    const connect = () => {
+    const webSocketConnect = () => {
         const client = new Client({
             brokerURL: process.env.REACT_APP_WEB_SOCKET_URL || 'ws://https://tht.argusoft.com/api/socket',
             reconnectDelay: 5000,
@@ -20,7 +20,7 @@ const WebSocketService = () => {
         client.activate();
     };
 
-    const disconnect = () => {
+    const webSocketDisconnect = () => {
         if (stompClient && stompClient.connected) {
             stompClient.deactivate();
             console.log("Disconnected from WebSocket.");
@@ -30,8 +30,8 @@ const WebSocketService = () => {
 
     return {
         stompClient,
-        connect,
-        disconnect
+        webSocketConnect,
+        webSocketDisconnect
     };
 };
 

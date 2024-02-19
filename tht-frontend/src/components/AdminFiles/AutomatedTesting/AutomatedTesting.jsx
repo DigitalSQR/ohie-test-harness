@@ -2,26 +2,26 @@ import React, { useEffect, useState } from "react";
 import { notification } from "antd";
 import "./automatedtesting.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
-import AutomatedResultStateRefresher from "./AutomatedResultStateRefresher/AutomatedResultStateRefresher";
-import AutomatedToggleButtonRefresher from "./AutomatedToggleButtonRefresher/AutomatedToggleButtonRefresher"
 import { useLoader } from "../../loader/LoaderContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import WebSocketService from "../../../api/WebSocketService";
+import TestcaseResultRow from "./TestcaseResultRow/TestcaseResultRow";
 export default function AutomatedTesting() {
   const { testRequestId } = useParams();
   const [testcaseName, setTestCaseName] = useState();
+  const [testcaseRequestResult, setTestcaseRequestResult] = useState();
   const { showLoader, hideLoader } = useLoader();
   const [data, setData] = useState([]);
   const navigate = useNavigate();
-  const { stompClient, connect, disconnect } = WebSocketService();
+  const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
   const clickHandler = () => {
     notification.info({
       placement: "bottom-right",
       description: "No actions yet",
     });
   };
-  const fetchTestCaseResultData = async () => {
+  const fetchTestCaseResultDataAndStartWebSocket = async () => {
     showLoader();
     try {
       const response = await TestResultAPI.getTestCaseResultById(
@@ -48,6 +48,12 @@ export default function AutomatedTesting() {
           grouped[grouped.length - 1].specifications[
             grouped[grouped.length - 1].specifications.length - 1
           ].testCases.push(item);
+        } else {
+          setTestcaseRequestResult(item);
+          // Start the webSocket connection
+          if (item?.state !== "testcase.result.status.finished") {
+            webSocketConnect();
+          }
         }
       }
       setData(grouped);
@@ -119,14 +125,24 @@ export default function AutomatedTesting() {
       });
   };
   useEffect(() => {
-    fetchTestCaseResultData();
+    fetchTestCaseResultDataAndStartWebSocket();
     testCaseInfo();
-    connect();
-    // Cleanup function
-    // return () => {
-    //   disconnect();
-    // };
   }, []);
+
+  useEffect(() => {
+    // Close the connection once the request is finished
+    if (stompClient && stompClient.connected) {
+      const destination = '/testcase-result/' + testcaseRequestResult.id;
+      const subscription = stompClient.subscribe(destination, (msg) => {
+        const parsedTestcaseResult = JSON.parse(msg.body);
+        setTestcaseRequestResult(parsedTestcaseResult);
+        if (parsedTestcaseResult?.state === "testcase.result.status.finished") {
+          webSocketDisconnect();
+        }
+      });
+    }
+  }, [stompClient]);
+
   return (
     <div className="Workflow-testing-wrapper">
       <div className="container">
@@ -156,7 +172,7 @@ export default function AutomatedTesting() {
                 <tr>
                   <th>Component</th>
                   <th>Specification</th>
-                  <th>Test Cases</th>
+                  <th style={{ width: "40%" }}>Test Cases</th>
                   <th>Result</th>
                   <th>Duration</th>
                   <th></th>
@@ -165,125 +181,11 @@ export default function AutomatedTesting() {
               <tbody>
                 {!!data &&
                   data.map((component) => [
-                    // Component row
-                    <tr
-                      key={`component-${component.id}`}
-                      className="component-row"
-                    >
-                      <td>{component?.name}</td>
-                      <td></td>
-                      <td></td>
-                      <td>
-                        <AutomatedResultStateRefresher
-                          key={`component-result-${component?.id}`}
-                          testResultId={component.id}
-                          isDuration={false}
-                          stompClient={stompClient}
-                        />
-                      </td>
-                      <td>
-                        <AutomatedResultStateRefresher
-                          key={`component-result-${component?.id}`}
-                          testResultId={component.id}
-                          isDuration={true}
-                          stompClient={stompClient}
-                        />
-                      </td>
-                      <td></td>
-                    </tr>,
-                    component?.specifications?.map((specification) => [
-                      <>
-                        <tr
-                          key={`specification-${specification?.id}`}
-                          className="specification-row"
-                        >
-                          <td></td>
-                          <td>{specification.name}</td>
-                          <td></td>
-                          <td>
-                            <AutomatedResultStateRefresher
-                              key={`specification-result-${specification?.id}`}
-                              testResultId={specification.id}
-                              isDuration={false}
-                              stompClient={stompClient}
-                            />
-                          </td>
-                          <td>
-                            <AutomatedResultStateRefresher
-                              key={`specification-result-${specification?.id}`}
-                              testResultId={specification.id}
-                              isDuration={true}
-                              stompClient={stompClient}
-                            />
-                          </td>
-                          <td>
-                            <AutomatedToggleButtonRefresher
-                              testResultId={specification?.id}
-                              toggleClass={specification?.class}
-                              toggleFunction={toggleSpecificationRow}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td
-                            colSpan={6}
-                            className="text-center hiddenRow m-0 field-box"
-                          >
-                            <AutomatedToggleButtonRefresher
-                              testResultId={specification?.id}
-                              toggleClass={specification?.class}
-                              ErrorStatement={true}
-                            />
-                          </td>
-                        </tr>
-                      </>,
-
-                      specification.testCases?.map((testcase) => [
-                        <>
-                          <tr
-                            key={`testcase-${testcase?.id}`}
-                            className="specification-row"
-                          >
-                            <td></td>
-                            <td></td>
-                            <td>{testcase?.name}</td>
-                            <td>
-                              <AutomatedResultStateRefresher
-                                key={`testcase-result-${testcase?.id}`}
-                                testResultId={testcase.id}
-                                isDuration={false}
-                                stompClient={stompClient}
-                              />
-                            </td>
-                            <td>
-                              <AutomatedResultStateRefresher
-                                key={`testcase-result-${testcase?.id}`}
-                                testResultId={testcase.id}
-                                isDuration={true}
-                                stompClient={stompClient}
-                              />
-                            </td>
-                            <td>
-                              <AutomatedToggleButtonRefresher
-                                testResultId={testcase?.id}
-                                toggleClass={testcase?.class}
-                                toggleFunction={toggleTestCaseRow}
-                              />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td
-                              colSpan={6}
-                              className="text-center hiddenRow m-0 field-box"
-                            >
-                              <AutomatedToggleButtonRefresher
-                                testResultId={testcase?.id}
-                                toggleClass={testcase?.class}
-                                ErrorStatement={true}
-                              />
-                            </td>
-                          </tr>
-                        </>,
+                    <TestcaseResultRow key={`component-result-${component?.id}`} testcaseResultType={'component'} testResultId={component.id} stompClient={stompClient} toggleFunction={toggleComponentRow}></TestcaseResultRow>
+                    ,component?.specifications?.map((specification) => [
+                      <TestcaseResultRow key={`specification-result-${specification?.id}`} testcaseResultType={'specification'} testResultId={specification.id} stompClient={stompClient} toggleClass={specification?.class} toggleFunction={toggleSpecificationRow}></TestcaseResultRow>
+                      ,specification.testCases?.map((testcase) => [
+                        <TestcaseResultRow key={`testcase-result-${testcase?.id}`} testcaseResultType={'testcase'} testResultId={testcase.id} stompClient={stompClient} toggleClass={testcase?.class} toggleFunction={toggleTestCaseRow}></TestcaseResultRow>
                       ]),
                     ]),
                   ])}
