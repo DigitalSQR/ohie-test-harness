@@ -6,7 +6,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.systemconfiguration.utils.RestControllerUtils;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.ResetPasswordInfo;
@@ -33,7 +33,6 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This userServiceRestController maps end points with standard service.
@@ -247,7 +246,8 @@ public class UserRestController {
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
-        Page<UserEntity> userEntities = this.userService.searchUsers(userSearchFilter, pageable, contextInfo);
+        UserSearchCriteriaFilter filteredFilter = RestControllerUtils.filterFields(userSearchFilter, UserSearchCriteriaFilter.class);
+        Page<UserEntity> userEntities = this.userService.searchUsers(filteredFilter, pageable, contextInfo);
         return userMapper.pageEntityToDto(userEntities);
     }
 

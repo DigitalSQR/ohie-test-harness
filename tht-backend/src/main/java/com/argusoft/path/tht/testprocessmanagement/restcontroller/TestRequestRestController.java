@@ -1,10 +1,10 @@
 package com.argusoft.path.tht.testprocessmanagement.restcontroller;
 
-import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.RestControllerUtils;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This TestRequestServiceRestController maps end points with standard service.
@@ -116,7 +115,8 @@ public class TestRequestRestController {
             throws OperationFailedException,
             InvalidParameterException, DoesNotExistException {
 
-        Page<TestRequestEntity> testRequestEntities = testRequestService.searchTestRequests(testRequestSearchFilter, pageable, contextInfo);
+        TestRequestCriteriaSearchFilter filteredFilter = RestControllerUtils.filterFields(testRequestSearchFilter, TestRequestCriteriaSearchFilter.class);
+        Page<TestRequestEntity> testRequestEntities = testRequestService.searchTestRequests(filteredFilter, pageable, contextInfo);
         return testRequestMapper.pageEntityToDto(testRequestEntities);
     }
 

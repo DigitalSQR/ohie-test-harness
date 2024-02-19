@@ -54,7 +54,7 @@ public class ComponentValidator {
             OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ TestcaseResultValidator.class.getSimpleName());
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ ComponentValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE

@@ -11,11 +11,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
@@ -270,7 +267,7 @@ public class TestcaseValidator {
         try {
             TestCase cRTestCases = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
         } catch (Exception e) {
-            LOGGER.error(ValidateConstant.EXCEPTION+ TestcaseResultValidator.class.getSimpleName(), e);
+            LOGGER.error(ValidateConstant.EXCEPTION+ TestcaseValidator.class.getSimpleName(), e);
             errors
                     .add(new ValidationResultInfo("beanName",
                             ErrorLevel.ERROR,
