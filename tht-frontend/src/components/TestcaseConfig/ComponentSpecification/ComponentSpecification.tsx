@@ -10,7 +10,9 @@ import { Switch } from "antd";
 const ComponentSpecification: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Automation");
-  const [specifications, setSpecifications] = useState<Specification[] | undefined>();
+  const [specifications, setSpecifications] = useState<
+    Specification[] | undefined
+  >();
   const { showLoader, hideLoader } = useLoader();
   const location = useLocation();
   const { componentId, name } = location.state;
@@ -42,10 +44,11 @@ const ComponentSpecification: React.FC = () => {
   const fetchData = async (manual: boolean) => {
     showLoader();
     try {
-      const resp: SpecificationDTO = await SpecificationAPI.getSpecificationsByComponentId(
-        componentId,
-        manual
-      );
+      const resp: SpecificationDTO =
+        await SpecificationAPI.getSpecificationsByComponentId(
+          componentId,
+          manual
+        );
       setSpecifications(resp.content);
     } catch (error) {
       console.error("Error fetching specifications:", error);
@@ -70,7 +73,9 @@ const ComponentSpecification: React.FC = () => {
       </div>
       <div className="tabs mt-5">
         <button
-          className={`tablinks ${activeTab === "Automation" ? "activeTab" : ""}`}
+          className={`tablinks ${
+            activeTab === "Automation" ? "activeTab" : ""
+          }`}
           onClick={() => openTab("Automation")}
         >
           Automation
@@ -83,36 +88,46 @@ const ComponentSpecification: React.FC = () => {
         </button>
       </div>
       <div className={`tabcontent ${activeTab === "Automation" ? "show" : ""}`}>
-        <div className="table-responsive mt-3">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th className="col-9">Specifications</th>
-                <th className="col-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {specifications?.map((specification) => (
-                <tr key={specification.name}>
-                  <td>{specification.name}</td>
-                  <td className="action-icons-container">
-                    {activeTab === "Manual" && (
-                      <span className="action-icon">
-                        <EditOutlined onClick={() => handleEdit(specification.id)} />
-                      </span>
-                    )}
-                    <Switch
+        {specifications && specifications?.length > 0 ? (
+          <div className="table-responsive mt-3">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th className="col-9">Specifications</th>
+                  <th className="col-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {specifications?.map((specification) => (
+                  <tr key={specification.name}>
+                    <td>{specification.name}</td>
+                    <td className="action-icons-container">
+                      {activeTab === "Manual" && (
+                        <span className="action-icon">
+                          <EditOutlined
+                            onClick={() => handleEdit(specification.id)}
+                          />
+                        </span>
+                      )}
+                      <Switch
                         defaultChecked={true}
                         // onChange={(checked) => handleToggleChange(specification.id, checked)}
                         checkedChildren="ACTIVE"
                         unCheckedChildren="INACTIVE"
                       />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="text-center mt-5  ">
+            <h4>
+              <i>No specifications found</i>
+            </h4>
+          </div>
+        )}
       </div>
     </div>
   );
