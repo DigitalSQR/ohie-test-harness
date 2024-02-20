@@ -5,13 +5,14 @@ import { EditOutlined } from "@ant-design/icons";
 import { useLoader } from "../../loader/LoaderContext";
 import { SpecificationAPI } from "../../../api/SpecificationAPI";
 import { Specification, SpecificationDTO } from "../../../dto/SpecificationDTO";
-import { Switch } from "antd";
+import { Switch, Tabs } from "antd";
+import type { TabsProps } from "antd";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 
 const ComponentSpecification: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Automation");
+  const [activeTab, setActiveTab] = useState("1");
   const [specifications, setSpecifications] = useState<
     Specification[] | undefined
   >();
@@ -33,8 +34,73 @@ const ComponentSpecification: React.FC = () => {
     console.log(componentId);
   }, []);
 
+  const helper = () => {
+    return (
+      <div className={`tabcontent ${activeTab === "1" ? "show" : ""}`}>
+        {specifications && specifications?.length > 0 ? (
+          <div className="table-responsive mt-3">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th className="col-9">Specifications</th>
+                  <th className="col-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {specifications?.map((specification) => (
+                  <tr key={specification.name}>
+                    <td>{specification.name}</td>
+                    <td className="action-icons-container">
+                      {activeTab === "2" && (
+                        <span className="action-icon">
+                          <EditOutlined
+                            onClick={() => handleEdit(specification.id)}
+                          />
+                        </span>
+                      )}
+                      <Switch
+                        defaultChecked={true}
+                        // onChange={(checked) => handleToggleChange(specification.id, checked)}
+                        checkedChildren="ACTIVE"
+                        unCheckedChildren="INACTIVE"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="text-center mt-5  ">
+            <h4>
+              <i>No specifications found</i>
+            </h4>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const items: TabsProps["items"] = [
+    {
+      key: "1",
+      label: "Automation",
+      children: helper(),
+    },
+    {
+      key: "2",
+      label: "Manual",
+      children: helper(),
+    },
+  ];
+
+  const onChange = (key: string) => {
+    setActiveTab(key);
+    fetchData(key === "2");
+  };
+
   const handleEdit = (specificationId: string) => {
-    if (activeTab === "Manual") {
+    if (activeTab === "2") {
       navigate(`/dashboard/manual-testcases/${specificationId}`, {
         state: {
           specificationId,
@@ -75,65 +141,13 @@ const ComponentSpecification: React.FC = () => {
           Components
         </div>
       </div>
-      <div className="tabs mt-5">
-        <button
-          className={`tablinks ${
-            activeTab === "Automation" ? "activeTab" : ""
-          }`}
-          onClick={() => openTab("Automation")}
-        >
-          Automation
-        </button>
-        <button
-          className={`tablinks ${activeTab === "Manual" ? "activeTab" : ""}`}
-          onClick={() => openTab("Manual")}
-        >
-          Manual
-        </button>
-      </div>
-      <div className={`tabcontent ${activeTab === "Automation" ? "show" : ""}`}>
-        {specifications && specifications?.length > 0 ? (
-          <div className="table-responsive mt-3">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th className="col-9">Specifications</th>
-                  <th className="col-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {specifications?.map((specification) => (
-                  <tr key={specification.name}>
-                    <td>{specification.name}</td>
-                    <td className="action-icons-container">
-                      {activeTab === "Manual" && (
-                        <span className="action-icon">
-                          <EditOutlined
-                            onClick={() => handleEdit(specification.id)}
-                          />
-                        </span>
-                      )}
-                      <Switch
-                        defaultChecked={true}
-                        // onChange={(checked) => handleToggleChange(specification.id, checked)}
-                        checkedChildren="ACTIVE"
-                        unCheckedChildren="INACTIVE"
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="text-center mt-5  ">
-            <h4>
-              <i>No specifications found</i>
-            </h4>
-          </div>
-        )}
-      </div>
-    </div>
+      <Tabs
+        className="mt-5"
+        activeKey={activeTab}
+        items={items}
+        onChange={onChange}
+      />
+    </div>  
   );
 };
 
