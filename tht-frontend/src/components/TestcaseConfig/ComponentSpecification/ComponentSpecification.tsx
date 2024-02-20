@@ -6,6 +6,8 @@ import { useLoader } from "../../loader/LoaderContext";
 import { SpecificationAPI } from "../../../api/SpecificationAPI";
 import { Specification, SpecificationDTO } from "../../../dto/SpecificationDTO";
 import { Switch } from "antd";
+import { useDispatch } from "react-redux";
+import { set_header } from "../../../reducers/homeReducer";
 
 const ComponentSpecification: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ const ComponentSpecification: React.FC = () => {
   const { showLoader, hideLoader } = useLoader();
   const location = useLocation();
   const { componentId, name } = location.state;
+  const dispatch = useDispatch();
 
   const openTab = (tabName: string) => {
     if (tabName !== activeTab) {
@@ -26,6 +29,7 @@ const ComponentSpecification: React.FC = () => {
 
   useEffect(() => {
     fetchData(false);
+    dispatch(set_header(name));
     console.log(componentId);
   }, []);
 

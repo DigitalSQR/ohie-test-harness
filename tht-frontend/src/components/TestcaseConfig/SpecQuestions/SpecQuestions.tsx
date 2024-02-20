@@ -8,16 +8,20 @@ import "./SpecQuestions.scss";
 import { SpecificationDTO } from "../../../dto/SpecificationDTO";
 import { Question, Option } from "../../../dto/SpecQuestionDTO";
 import { Switch } from "antd";
+import { useDispatch } from "react-redux";
+import { set_header } from "../../../reducers/homeReducer";
 
 const ManualTestCases: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const { componentId, specificationId, name } = location.state;
   const { showLoader, hideLoader } = useLoader();
   const [questions, setQuestions] = useState<Question[]>();
 
   useEffect(() => {
     fetchData();
+    dispatch(set_header("Manual Configuration"));
   }, []);
 
   const handleUpdate = (question: Question, name: string) => {

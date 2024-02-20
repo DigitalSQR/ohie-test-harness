@@ -5,9 +5,9 @@ import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLE_NAMES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 import { log_out } from "../../../reducers/authReducer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function Header({headerContent}) {
+export default function Header({ headerContent }) {
   const [userInfo, setUserInfo] = useState();
   const dispatch = useDispatch();
   useEffect(() => {

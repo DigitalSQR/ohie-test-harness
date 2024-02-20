@@ -173,7 +173,11 @@ const Applications = () => {
                 {testRequests?.map((testRequest) => (
                   <tr key={testRequest.id}>
                     <td>{testRequest.name}</td>
-                    <td>{testRequest.productName !== "" ? testRequest.productName : '-'}</td>
+                    <td>
+                      {testRequest.productName !== ""
+                        ? testRequest.productName
+                        : "-"}
+                    </td>
                     <td>{formatDate(testRequest.meta.updatedAt)}</td>
                     <td>
                       <UserIdEmailConnector
@@ -200,22 +204,22 @@ const Applications = () => {
                         </button>
                       ) : (
                         <Fragment>
-                        <span
-                          className={`badge ${
-                            StateBadgeClasses[testRequest.state]
-                          }`}
-                        >
-                          {TestRequestStateConstantNames[testRequest.state]}
-                        </span>
+                          <span
+                            className={`badge ${
+                              StateBadgeClasses[testRequest.state]
+                            }`}
+                          >
+                            {TestRequestStateConstantNames[testRequest.state]}
+                          </span>
 
-                      <button
-                        class="btn btn-blue-sm report"
-                        onClick={() => viewReport(testRequest.id)}
-                      >
-                        {" "}
-                        <i class="bi bi-file-text"></i> Report
-                      </button>
-                      </Fragment>
+                          <button
+                            class="btn btn-blue-sm report"
+                            onClick={() => viewReport(testRequest.id)}
+                          >
+                            {" "}
+                            <i class="bi bi-file-text"></i> Report
+                          </button>
+                        </Fragment>
                       )}
                     </td>
                   </tr>
