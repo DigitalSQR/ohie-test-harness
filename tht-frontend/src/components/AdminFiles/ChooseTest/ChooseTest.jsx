@@ -9,6 +9,8 @@ import { notification, Progress, Button } from "antd";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
 import { handleErrorResponse } from "../../../utils/utils";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
+import { useDispatch } from "react-redux";
+import { set_header } from "../../../reducers/homeReducer";
 export default function ChooseTest() {
   const { testRequestId } = useParams();
   const { TESTCASE_REFOBJURI, TESTREQUEST_REFOBJURI } = RefObjUriConstants;
@@ -25,8 +27,10 @@ export default function ChooseTest() {
 
   const [testcaseResults, setTestCaseResults] = useState([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(set_header(testcaseName));
     var totalManual = 0;
     var totalFinishedManual = 0;
     var totalAutomated = 0;
@@ -196,11 +200,13 @@ export default function ChooseTest() {
                     percent={Math.floor(manualProgress)}
                     format={() => {
                       if (manualProgress === 100) {
-                       return <span>Done</span>
+                        return <span>Done</span>;
                       } else {
-                      return  <span>
-                          {totalFinishedManual}/{totalManualTestcaseResults}
-                        </span>
+                        return (
+                          <span>
+                            {totalFinishedManual}/{totalManualTestcaseResults}
+                          </span>
+                        );
                       }
                     }}
                   />
@@ -244,19 +250,21 @@ export default function ChooseTest() {
               )}
               {totalAutomatedTestcaseResults != 0 && (
                 <Fragment>
-                  <Progress percent={automatedProgress} 
-				  
-				  format={() => {
-					if (automatedProgress === 100) {
-					 return <span>Done</span>
-					} else {
-					return  <span>
-						{totalFinishedAutomated}/{totalAutomatedTestcaseResults}
-					  </span>
-					}
-				  }}
-
-				  />
+                  <Progress
+                    percent={automatedProgress}
+                    format={() => {
+                      if (automatedProgress === 100) {
+                        return <span>Done</span>;
+                      } else {
+                        return (
+                          <span>
+                            {totalFinishedAutomated}/
+                            {totalAutomatedTestcaseResults}
+                          </span>
+                        );
+                      }
+                    }}
+                  />
                   <Button
                     onClick={() =>
                       navigate(`/dashboard/automated-testing/${testRequestId}`)

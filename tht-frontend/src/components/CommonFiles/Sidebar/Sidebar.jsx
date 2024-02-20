@@ -9,6 +9,7 @@ import { Fragment, useEffect, useState } from "react";
 import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
+import { set_header } from "../../../reducers/homeReducer";
 
 export default function Sidebar() {
   const dispatch = useDispatch();
@@ -75,6 +76,7 @@ export default function Sidebar() {
             }
             onClick={() => {
               handleMenuItemClick("/dashboard");
+              dispatch(set_header(""));
             }}
           >
             <i
@@ -94,7 +96,10 @@ export default function Sidebar() {
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }
-                onClick={() => handleMenuItemClick("/dashboard/assessee")}
+                onClick={() => {
+                  handleMenuItemClick("/dashboard/assessee");
+                  dispatch(set_header("Assessee"));
+                }}
               >
                 <i
                   aria-label="User"
@@ -112,9 +117,10 @@ export default function Sidebar() {
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }
-                onClick={() =>
-                  handleMenuItemClick("/dashboard/testing-requests")
-                }
+                onClick={() => {
+                  handleMenuItemClick("/dashboard/testing-requests");
+                  dispatch(set_header("Testing Requests"));
+                }}
               >
                 <i
                   aria-label="Testing Requests"
@@ -131,7 +137,10 @@ export default function Sidebar() {
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }
-                onClick={() => handleMenuItemClick("/dashboard/applications")}
+                onClick={() => {
+                  handleMenuItemClick("/dashboard/applications");
+                  dispatch(set_header("Applications"));
+                }}
               >
                 <i
                   aria-label="Applications"
@@ -142,24 +151,25 @@ export default function Sidebar() {
               </a>
             </li>
             <li>
-            <a
-              className={
-                activeMenuItem === "/dashboard/testcase-config"
-                  ? "active menu-like-item"
-                  : "menu-like-item"
-              }
-              onClick={() =>
-                handleMenuItemClick("/dashboard/testcase-config")
-              }
-            >
-              <i
-                aria-label="Testcase Config"
-                title="Testcase Config"
-                className="bi bi-file-earmark-bar-graph menu-left-icon"
-              ></i>
-              <span> TestCase Config </span>
-            </a>
-          </li>
+              <a
+                className={
+                  activeMenuItem === "/dashboard/testcase-config"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
+                }
+                onClick={() => {
+                  handleMenuItemClick("/dashboard/testcase-config");
+                  dispatch(set_header("Components"));
+                }}
+              >
+                <i
+                  aria-label="Testcase Config"
+                  title="Testcase Config"
+                  className="bi bi-file-earmark-bar-graph menu-left-icon"
+                ></i>
+                <span> TestCase Config </span>
+              </a>
+            </li>
           </>
         )}
         {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
@@ -176,7 +186,7 @@ export default function Sidebar() {
                   handleMenuItemClick("/dashboard/testing-requests")
                 }
               >
-              <i
+                <i
                   aria-label="Testing Requests"
                   title="Testing Requests"
                   className="bi bi-file-earmark-plus menu-left-icon"
