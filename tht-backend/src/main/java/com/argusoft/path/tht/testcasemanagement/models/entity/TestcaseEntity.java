@@ -26,6 +26,9 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     @Column(name = "bean_name")
     private String beanName;
 
+    @Column(name = "question_type")
+    private String questionType;
+
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "specification_id")
     private SpecificationEntity specification;
@@ -62,4 +65,11 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
         this.specification = specification;
     }
 
+    public String getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(String questionType) {
+        this.questionType = questionType;
+    }
 }

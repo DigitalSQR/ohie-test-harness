@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.Audit.Controller;
 
 import com.argusoft.path.tht.Audit.Service.AuditService;
+import com.argusoft.path.tht.Audit.constant.AuditServiceConstant;
 import com.argusoft.path.tht.Audit.filter.SearchFilter;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
@@ -37,7 +38,9 @@ public class AuditController {
         searchFilter.setIds(ids);
         searchFilter.setRevType(type);
         searchFilter.setVersionNumber(version);
-        return auditService.searchAudit(searchFilter, contextInfo);
+        List<Object> objects = auditService.searchAudit(searchFilter, contextInfo);
+        AuditServiceConstant.EntityType entityType = AuditServiceConstant.EntityType.valueOf(tableName);
+        return entityType.createMapperObject(entityType).modelToDto(objects);
     }
 
 }

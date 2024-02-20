@@ -49,3 +49,7 @@
   content: "\F272";
   font-family: bootstrap-icons !important;
 }
+
+.label-before-no-radius:before{
+  border-radius: 0% !important;
+}

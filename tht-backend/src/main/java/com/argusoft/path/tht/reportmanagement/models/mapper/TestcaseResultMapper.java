@@ -27,7 +27,6 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
     TestcaseResultMapper INSTANCE = Mappers.getMapper(TestcaseResultMapper.class);
 
     @Mapping(source = "tester", target = "testerId")
-    @Mapping(source = "testcaseOption", target = "testcaseOptionId")
     @Mapping(source = "parentTestcaseResult", target = "parentTestcaseResultId")
     @Mapping(source = "testRequest", target = "testRequestId")
     TestcaseResultInfo modelToDto(TestcaseResultEntity testcaseResultEntity);

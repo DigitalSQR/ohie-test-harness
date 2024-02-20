@@ -132,15 +132,15 @@ public class TestcaseResultRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    @PatchMapping("/submit/{testcaseResultId}/{selectedTestcaseOptionId}")
+    @PatchMapping("/submit/{testcaseResultId}")
     public TestcaseResultInfo submitTestcaseResult(
             @PathVariable("testcaseResultId") String testcaseResultId,
-            @PathVariable("selectedTestcaseOptionId") String selectedTestcaseOptionId,
+            @RequestParam(value = "selectedTestcaseOptionId",required = true) Set<String> selectedTestcaseOptionIds,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         TestcaseResultEntity testcaseResultEntity = testcaseResultService
                 .submitTestcaseResult(
                         testcaseResultId,
-                        selectedTestcaseOptionId,
+                        selectedTestcaseOptionIds,
                         contextInfo);
         return testcaseResultMapper.modelToDto(testcaseResultEntity);
     }

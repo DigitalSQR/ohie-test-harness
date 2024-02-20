@@ -1,8 +1,12 @@
 package com.argusoft.path.tht.reportmanagement.validator;
 
-import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
+import com.argusoft.path.tht.Audit.Service.AuditService;
+import com.argusoft.path.tht.Audit.constant.AuditServiceConstant;
+import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
+import com.argusoft.path.tht.reportmanagement.service.TestResultRelationService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -12,8 +16,11 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
@@ -27,9 +34,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class TestcaseResultValidator {
@@ -56,14 +61,21 @@ public class TestcaseResultValidator {
         return validationResultEntities;
     }
 
-    public static void validateSubmitTestcaseResult(String testcaseResultId, String selectedTestcaseOptionId, String validationTypekey, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+    public static void validateSubmitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds,
+                                                    String validationTypekey, TestcaseResultService testcaseResultService,
+                                                    TestcaseOptionService testcaseOptionService,
+                                                    TestResultRelationService testResultRelationService,
+                                                    AuditService auditService,
+                                                    ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntitys
                 = validateTestcaseResultSubmit(
                 testcaseResultId,
-                selectedTestcaseOptionId,
+                selectedTestcaseOptionIds,
                 validationTypekey,
                 testcaseResultService,
                 testcaseOptionService,
+                testResultRelationService,
+                auditService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
             LOGGER.error("caught DataValidationErrorException in TestcaseResultValidator ");
@@ -199,21 +211,6 @@ public class TestcaseResultValidator {
                                 "The id supplied for the parentTestcaseResult does not exists"));
             }
         }
-        //validate TestcaseOption foreignKey.
-        if (testcaseResultEntity.getTestcaseOption() != null) {
-            try {
-                testcaseResultEntity.setTestcaseOption(
-                        testcaseOptionService.getTestcaseOptionById(testcaseResultEntity.getTestcaseOption().getId(), contextInfo)
-                );
-            } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in TestcaseResultValidator ", ex);
-                String fieldName = "testcaseOption";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "The id supplied for the testcaseOption does not exists"));
-            }
-        }
         //validate testRequest foreignKey.
         if (testcaseResultEntity.getTestRequest() != null) {
             try {
@@ -295,7 +292,6 @@ public class TestcaseResultValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in TestcaseResultValidator ", ex);
                 // This is ok because created id should be unique
             }
         }
@@ -328,12 +324,12 @@ public class TestcaseResultValidator {
                 .validateRequired(testcaseResultEntity.getRequired(), "required", errors);
         ValidationUtils
                 .validateRequired(testcaseResultEntity.getWorkflow(), "workflow", errors);
-        if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())
+       /* if (TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())
                 && TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())
                 && Objects.equals(Boolean.TRUE, testcaseResultEntity.getManual())
                 && Objects.equals(Boolean.FALSE, testcaseResultEntity.getHasSystemError())) {
             ValidationUtils.validateRequired(testcaseResultEntity.getTestcaseOption(), "testcaseOption", errors);
-        }
+        }*/
         if(!(StringUtils.hasLength(testcaseResultEntity.getRefObjUri()) && (testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)))){
             ValidationUtils
                     .validateRequired(testcaseResultEntity.getParentTestcaseResult().getId(), "parent testcase result id", errors);
@@ -462,10 +458,12 @@ public class TestcaseResultValidator {
 
     private static List<ValidationResultInfo> validateTestcaseResultSubmit(
             String testcaseResultId,
-            String selectedTestcaseOptionId,
+            Set<String> selectedTestcaseOptionIds,
             String validationTypeKey,
             TestcaseResultService testcaseResultService,
             TestcaseOptionService testcaseOptionService,
+            TestResultRelationService testResultRelationService,
+            AuditService auditService,
             ContextInfo contextInfo) {
         List<ValidationResultInfo> errors = new ArrayList<>();
         TestcaseResultEntity originalEntity;
@@ -483,29 +481,81 @@ public class TestcaseResultValidator {
             return errors;
         }
         try {
-            TestcaseOptionEntity testcaseOption = testcaseOptionService
-                    .getTestcaseOptionById(selectedTestcaseOptionId,
-                            contextInfo);
 
-            if (originalEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)
-                    && !testcaseOption.getTestcase().getId().equals(originalEntity.getRefId())
-            ) {
-                String fieldName = "selectedTestcaseOptionId";
+            TestcaseEntity testcase = validateAndGetManualQuestionInAudit(testcaseResultId, testResultRelationService, contextInfo, errors);
+
+            // validate selectedTestcaseOptionIds size based on question type
+            if(TestcaseServiceConstants.QuestionType.SINGLE_SELECT.name().equals(testcase.getQuestionType()) && selectedTestcaseOptionIds.size() > 1){
+                String fieldName = "selectedTestcaseOptionIds";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The selectedTestcaseOptionId supplied for the submit is invalid for the testcaseResult."));
+                                "selectedTestcaseOptionIds cannot be more than one, as the question is type of SINGLE_SELECT only."));
             }
-        } catch (DoesNotExistException | InvalidParameterException ex) {
-            LOGGER.error("caught DoesNotExistException in TestcaseResultValidator ", ex);
+
+
+            validateTestResultRelationsForSelectedTestcaseOptionIds(testcaseResultId, selectedTestcaseOptionIds, testResultRelationService, contextInfo, errors);
+
+        } catch (InvalidParameterException | DoesNotExistException | OperationFailedException | DataValidationErrorException ex) {
+            LOGGER.error("caught exception in TestcaseResultValidator ", ex);
             String fieldName = "selectedTestcaseOptionId";
             errors.add(
                     new ValidationResultInfo(fieldName,
                             ErrorLevel.ERROR,
-                            "The selectedTestcaseOptionId supplied for the submit does not "
-                                    + "exists"));
+                            "The selectedTestcaseOptionId supplied for the submit does not exists"));
         }
         return errors;
+    }
+
+    private static TestcaseEntity validateAndGetManualQuestionInAudit(String testcaseResultId, TestResultRelationService testResultRelationService, ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
+        TestcaseEntity testcase = new TestcaseEntity();
+
+        try {
+            List<Object> testResultRelationEntitiesFromAuditMapping = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(testcaseResultId, TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, contextInfo);
+
+            Optional<TestcaseEntity> testcaseEntity = testResultRelationEntitiesFromAuditMapping.stream().findFirst().map(TestcaseEntity.class::cast);
+
+             testcase = testcaseEntity.get();
+
+
+        }catch (DoesNotExistException e){
+            LOGGER.error("caught exception in TestcaseResultValidator ", e);
+            String fieldName = "testcaseResultId";
+            errors.add(
+                    new ValidationResultInfo(fieldName,
+                            ErrorLevel.ERROR,
+                            "Failed to get testResultRelationEntities for Testcase"));
+        }
+        return testcase;
+    }
+
+    private static void validateTestResultRelationsForSelectedTestcaseOptionIds(String testcaseResultId, Set<String> selectedTestcaseOptionIds, TestResultRelationService testResultRelationService, ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, DoesNotExistException, OperationFailedException, DataValidationErrorException {
+        // validate for TestResultRelation
+        TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter();
+        testResultRelationCriteriaSearchFilter.setTestcaseResultId(testcaseResultId);
+        testResultRelationCriteriaSearchFilter.setRefObjUri(TestcaseOptionServiceConstants.TESTCASE_OPTION_REF_OBJ_URI);
+        testResultRelationCriteriaSearchFilter.setRefId(selectedTestcaseOptionIds);
+
+        List<TestResultRelationEntity> testResultRelationEntities = testResultRelationService.searchTestResultRelation(testResultRelationCriteriaSearchFilter, contextInfo);
+
+        if(selectedTestcaseOptionIds !=null && selectedTestcaseOptionIds.size() != testResultRelationEntities.size()){
+            throw new DoesNotExistException("Failed to find all the test result related records from the database ");
+        }
+
+        List<String> resultRelationIds = testResultRelationEntities.stream().map(IdMetaEntity::getId).toList();
+
+        try {
+            List<TestcaseOptionEntity> testResultRelationsByRefObjFromAudit = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(resultRelationIds, contextInfo)
+                    .stream()
+                    .map(TestcaseOptionEntity.class::cast)
+                    .toList();
+        }catch (DoesNotExistException  | InvalidParameterException e){
+            String fieldName = "selectedTestcaseOptionId";
+            errors.add(
+                    new ValidationResultInfo(fieldName,
+                            ErrorLevel.ERROR,
+                            "Failed to find the selectedTestcaseOptionId supplied for the submit"));
+        }
     }
 
     @Autowired

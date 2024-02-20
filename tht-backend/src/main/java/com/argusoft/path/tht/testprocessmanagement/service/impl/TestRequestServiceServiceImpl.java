@@ -2,7 +2,9 @@ package com.argusoft.path.tht.testprocessmanagement.service.impl;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
+import com.argusoft.path.tht.reportmanagement.service.TestResultRelationService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -12,12 +14,18 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
+import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestcaseExecutioner;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
@@ -71,6 +79,12 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     @Autowired
     private TestcaseExecutioner testcaseExecutioner;
+
+    @Autowired
+    private TestResultRelationService testResultRelationService;
+
+    @Autowired
+    private TestcaseOptionService testcaseOptionService;
 
     @Override
     @Timed(name = "reinitializeTestingProcess")
@@ -521,7 +535,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                     contextInfo);
                             counter++;
                             for (TestcaseEntity testcaseEntity : filteredTestcases) {
-                                createDraftTestCaseResultIfNotExists(
+                                TestcaseResultEntity testcaseResult = createDraftTestCaseResultIfNotExists(
                                         TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
                                         testcaseEntity.getId(),
                                         testRequestEntity.getId(),
@@ -535,6 +549,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                         isWorkflow,
                                         specificationTestcaseResult.getId(),
                                         contextInfo);
+
+
+                                // create TestResultRelation For Manual
+                                createTestResultRelationsForManualTestcase(testcaseEntity, testcaseResult, contextInfo);
+
                                 counter++;
                             }
                         }
@@ -543,6 +562,52 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             }
         }
     }
+
+    private void createTestResultRelationsForManualTestcase(TestcaseEntity testcaseEntity, TestcaseResultEntity testcaseResult, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
+
+        if(testcaseEntity.getManual()) {
+
+            // create for question
+            TestResultRelationEntity testResultRelationEntity = createTestResultRelationEntity(
+                    TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
+                    testcaseEntity.getId(),
+                    testcaseEntity.getVersion(),
+                    testcaseResult
+            );
+
+            testResultRelationEntity = testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+
+
+            // create for options
+            TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter = new TestcaseOptionCriteriaSearchFilter();
+            testcaseOptionCriteriaSearchFilter.setTestcaseId(testcaseEntity.getId());
+            testcaseOptionCriteriaSearchFilter.setState(Collections.singletonList(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_ACTIVE));
+
+            List<TestcaseOptionEntity> testcaseOptionEntities = testcaseOptionService.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, contextInfo);
+
+            for (TestcaseOptionEntity testcaseOptionEntity : testcaseOptionEntities) {
+                testResultRelationEntity = createTestResultRelationEntity(
+                        TestcaseOptionServiceConstants.TESTCASE_OPTION_REF_OBJ_URI,
+                        testcaseOptionEntity.getId(),
+                        testcaseOptionEntity.getVersion(),
+                        testcaseResult
+                );
+
+                testResultRelationEntity = testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+            }
+        }
+    }
+
+    public TestResultRelationEntity createTestResultRelationEntity(String refObjUri, String refId, Long versionOfRefEntity, TestcaseResultEntity testcaseResult) {
+        TestResultRelationEntity testResultRelationEntity = new TestResultRelationEntity();
+        testResultRelationEntity.setRefObjUri(refObjUri);
+        testResultRelationEntity.setRefId(refId);
+        testResultRelationEntity.setVersionOfRefEntity(versionOfRefEntity);
+        testResultRelationEntity.setTestcaseResultEntity(testcaseResult);
+
+        return testResultRelationEntity;
+    }
+
 
     private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();

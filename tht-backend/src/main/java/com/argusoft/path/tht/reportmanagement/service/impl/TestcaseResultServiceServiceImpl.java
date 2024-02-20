@@ -1,11 +1,15 @@
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
+import com.argusoft.path.tht.Audit.Service.AuditService;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
+import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
+import com.argusoft.path.tht.reportmanagement.service.TestResultRelationService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
@@ -13,20 +17,20 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
-import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.Multimap;
 import io.astefanutti.metrics.aspectj.Metrics;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -40,7 +44,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,6 +75,12 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     @Autowired
     private GradeEvaluator gradeEvaluator;
+
+    @Autowired
+    private AuditService auditService;
+
+    @Autowired
+    private TestResultRelationService testResultRelationService;
 
     @Autowired
     SimpMessagingTemplate msgTemplate;
@@ -140,20 +149,50 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     @Timed(name = "submitTestcaseResult")
     @Override
-    public TestcaseResultEntity submitTestcaseResult(String testcaseResultId, String selectedTestcaseOptionId, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
+    public TestcaseResultEntity submitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
+
+        TestcaseResultValidator.validateSubmitTestcaseResult(
+                testcaseResultId,
+                selectedTestcaseOptionIds,
+                Constant.SUBMIT_VALIDATION,
+                this,
+                testcaseOptionService,
+                testResultRelationService,
+                auditService,
+                contextInfo);
+
+        TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter();
+        testResultRelationCriteriaSearchFilter.setTestcaseResultId(testcaseResultId);
+        testResultRelationCriteriaSearchFilter.setRefObjUri(TestcaseOptionServiceConstants.TESTCASE_OPTION_REF_OBJ_URI);
+
+        List<TestResultRelationEntity> testResultRelationEntities = testResultRelationService.searchTestResultRelation(testResultRelationCriteriaSearchFilter, contextInfo);
+
+        List<String> resultRelationIds = testResultRelationEntities.stream().map(IdMetaEntity::getId).collect(Collectors.toList());
+
+        List<TestcaseOptionEntity> testcaseOptionEntitiesFromAudit =
+                testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(resultRelationIds, contextInfo)
+                        .stream()
+                        .map(TestcaseOptionEntity.class::cast)
+                        .toList();
+
+
+        for (TestResultRelationEntity testResultRelationEntity : testResultRelationEntities) {
+            testResultRelationEntity.setSelected(selectedTestcaseOptionIds.contains(testResultRelationEntity.getRefId()));
+            testResultRelationService.updateTestcaseResult(testResultRelationEntity,contextInfo);
+        }
+
+
+        boolean isSuccess = isSuccessFromTestResultRelationAndSelectedOption(testResultRelationEntities, testcaseOptionEntitiesFromAudit);
+
 
         TestcaseResultEntity testcaseResultEntity
                 = this.getTestcaseResultById(testcaseResultId, contextInfo);
 
-        defaultValueSubmitTestCaseResult(testcaseResultEntity, selectedTestcaseOptionId, contextInfo);
+        testcaseResultEntity.setSuccess(isSuccess);
 
-        TestcaseResultValidator.validateSubmitTestcaseResult(
-                testcaseResultId,
-                selectedTestcaseOptionId,
-                Constant.SUBMIT_VALIDATION,
-                this,
-                testcaseOptionService,
-                contextInfo);
+        UserEntity userEntity =
+                userService.getPrincipalUser(contextInfo);
+        testcaseResultEntity.setTester(userEntity);
 
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
 
@@ -163,6 +202,25 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         return testcaseResultEntity;
     }
+
+    private boolean isSuccessFromTestResultRelationAndSelectedOption(List<TestResultRelationEntity> testResultRelationEntities, List<TestcaseOptionEntity> testcaseOptionEntitiesFromAudit) {
+
+        for (TestResultRelationEntity testResultRelationEntity : testResultRelationEntities) {
+            // check if testResultRelationEntity is success or false
+            boolean isItSuccess = testcaseOptionEntitiesFromAudit.stream()
+                    .filter(testcaseOption -> testcaseOption.getId().equals(testResultRelationEntity.getRefId()))
+                    .anyMatch(TestcaseOptionEntity::getSuccess);
+
+            if (testResultRelationEntity.getSelected() != isItSuccess) {
+                // if (relation.selected == true && isSuccess == false) return false;
+                // if (relation.selected == false && isSuccess == true) return false;
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
 
     /**
@@ -589,16 +647,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         }
         testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
         testcaseResultEntity.setDuration(null);
-    }
-
-    private void defaultValueSubmitTestCaseResult(TestcaseResultEntity testcaseResultEntity, String selectedTestcaseOptionId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
-        testcaseResultEntity.setTester(userService.getPrincipalUser(contextInfo));
-
-        TestcaseOptionEntity testcaseOptionEntity
-            = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
-
-        testcaseResultEntity.setTestcaseOption(testcaseOptionEntity);
-        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
     }
 
     private void notifyTestCaseFinished(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {

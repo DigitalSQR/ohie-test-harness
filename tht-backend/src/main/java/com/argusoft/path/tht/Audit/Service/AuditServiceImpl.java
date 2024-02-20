@@ -67,8 +67,8 @@ public class AuditServiceImpl implements AuditService{
 
 
             List<Object> obj =  auditQuery.addOrder(AuditEntity.revisionType().desc()).getResultList();
-            AuditServiceConstant.EntityType type = AuditServiceConstant.EntityType.valueOf(tableName);
-            return type.createMapperObject(type).modelToDto(obj);
+            return obj;
+
         }
         catch (Exception ex)
         {   LOGGER.error("Caught Exception in searchAudit");

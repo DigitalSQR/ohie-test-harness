@@ -61,4 +61,8 @@ VALUES
     (
         'SYSTEM_USER',
         'role.admin'
+    ),
+    (
+        'SYSTEM_USER',
+        'role.assessee'
     );
