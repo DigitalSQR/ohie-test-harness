@@ -12,5 +12,8 @@ export const RefObjUriConstants = {
 		"com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo",
 
 	TESTCASE_RESULT_REFOBJURI:
-		"com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo"
+		"com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo",
+
+	TESTCASE_OPTION_REFOBJURI:
+		"com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseOptionInfo"
 };

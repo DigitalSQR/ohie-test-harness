@@ -6,6 +6,7 @@ import { useLoader } from "../../loader/LoaderContext";
 import { Button, notification } from "antd";
 import "./testcase.scss";
 import { DocumentAPI } from "../../../api/DocumentAPI";
+import { TestResultRelationAPI } from "../../../api/TestResultRelationAPI";
 import { fileTypeIcon } from "../../../utils/utils";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import {
@@ -15,6 +16,8 @@ import {
 	DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS
 } from "../../../constants/document_constants";
 import question_img_logo from "../../../styles/images/question-img.png";
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
 export default function TestCase(props) {
 	const {
@@ -27,27 +30,28 @@ export default function TestCase(props) {
 		refreshCurrentTestcase,
 	} = props;
 	const { showLoader, hideLoader } = useLoader();
-	const [selectedOption, setSelectedOption] = useState();
+	const [selectedOptions, setSelectedOptions] = useState([]);
 	const [files, setFiles] = useState([]);
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadQuestion, setUploadedQuestion] = useState({});
 	const fileInputRef = useRef(null);
 	const [saveButton, setSaveButton] = useState("");
+	const [currentQuestion, setCurrentQuestion] = useState({});
 	const handlePageChange = (event, page) => {
 		showLoader();
 		selectTestcase(page - 1);
-		setSelectedOption(null);
+		setSelectedOptions([]);
 		hideLoader();
 	};
 
 	const handleSaveandNext = () => {
-		if (selectedOption == null) {
+		if (!selectedOptions || selectedOptions.length == 0) {
 			notification.error({
 				description: "No answers selected",
 				placement: "bottomRight",
 			});
 		} else {
-			TestResultAPI.saveOptions(currentTestcase.id, selectedOption)
+			TestResultAPI.saveOptions(currentTestcase.id, selectedOptions)
 				.then((res) => {
 					refreshCurrentTestcase(res);
 					selectNextTestcase();
@@ -73,6 +77,31 @@ export default function TestCase(props) {
 					placement: "bottomRight",
 				});
 			});
+	}, [currentTestcase]);
+
+	useEffect(() => {
+		setCurrentQuestion({});
+		showLoader();
+		TestResultRelationAPI.getTestcaseResultRelatedObject(
+			currentTestcase.id,
+			RefObjUriConstants.TESTCASE_REFOBJURI
+		).then((res) => {
+			if (res && res.length > 0) {
+				hideLoader();
+				setCurrentQuestion(res[0]);
+			} else {
+				notification.error({
+					message: "Oops! something wrong ,No question found!",
+					placement: "bottomRight",
+				});
+			}
+		})
+		.catch((err) => {
+			notification.error({
+				message: "Error Loading question!",
+				placement: "bottomRight",
+			});
+		});
 	}, [currentTestcase]);
 
 	const addAttachment = () => {
@@ -179,6 +208,12 @@ export default function TestCase(props) {
 		console.log("the uploaded docs include ", uploadedFiles);
 	}, [uploadedFiles]);
 
+	const renderTooltip = (props) => (
+		<Tooltip id="button-tooltip" {...props}>
+			Accepted file types: PDFs and images only.
+		</Tooltip>
+	);
+
 	return (
 		<Fragment>
 			<div className="col-12 non-fuctional-requirement">
@@ -203,14 +238,15 @@ export default function TestCase(props) {
 										.slice(-3)
 										.join(".")
 										.toUpperCase() +
-										" " +
-										currentTestcase.name +
-										" "}
+										" " }
+										{currentQuestion ? currentQuestion.name : " "}
 								</b>
 							</h2>
 							<Options
 								refId={currentTestcase.refId}
-								setSelectedOption={setSelectedOption}
+								testcaseResultInfo= {currentTestcase}
+								setSelectedOptions={setSelectedOptions}
+								currentQuestion = {currentQuestion}
 								testcaseOptionId={
 									currentTestcase.testcaseOptionId
 								}
@@ -263,6 +299,7 @@ export default function TestCase(props) {
 										className="visibility"
 									></input>
 									<button
+										variant="success"
 										type="button"
 										className="btn cst-btn-default"
 										onClick={addAttachment}
@@ -271,6 +308,13 @@ export default function TestCase(props) {
 											className="bi bi-paperclip rotate"
 										></i>
 										Add Attachments
+										<OverlayTrigger
+											placement="right"
+											delay={{ show: 250, hide: 400 }}
+											overlay={renderTooltip}
+										>
+											<i className="bi bi-info-circle-fill document-tooltip-info"></i>
+										</OverlayTrigger>
 									</button>
 									<button
 										type="button"
@@ -284,7 +328,7 @@ export default function TestCase(props) {
 
 							<div className="text-end mb-3">
 								<button
-									disabled={!currentTestcase.testcaseOptionId && !selectedOption}
+									disabled={!currentTestcase.testcaseOptionId && !selectedOptions.length}
 									className="cst-btn-group btn btn-primary"
 									onClick={() => {
 										handleSaveandNext();

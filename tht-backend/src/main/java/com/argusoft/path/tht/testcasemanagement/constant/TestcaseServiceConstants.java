@@ -25,6 +25,11 @@ public class TestcaseServiceConstants {
     public static final Multimap<String, String> TESTCASE_STATUS_MAP = ArrayListMultimap.create();
     public static List<String> TESTCASE_STATUS = new ArrayList<>();
 
+    public enum QuestionType {
+        SINGLE_SELECT,
+        MULTI_SELECT
+    }
+
     static {
         TESTCASE_STATUS.add(TESTCASE_STATUS_DRAFT);
         TESTCASE_STATUS.add(TESTCASE_STATUS_ACTIVE);

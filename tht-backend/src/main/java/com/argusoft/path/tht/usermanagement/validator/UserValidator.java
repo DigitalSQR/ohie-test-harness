@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.usermanagement.validator;
 
+import ca.uhn.fhir.util.CollectionUtil;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
@@ -10,6 +11,8 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
@@ -19,6 +22,7 @@ import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -256,6 +260,9 @@ public class UserValidator {
         ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
         if(contextInfo.getModule()!= Module.RESETPASSWORD && contextInfo.getModule()!= Module.FORGOTPASSWORD){
             ValidationUtils.validateNotUpdatable(userEntity.getPassword(), originalEntity.getPassword(), "password", errors);
+        }
+        if(!contextInfo.isAdmin()){
+            ValidationUtils.validateNotUpdatable(userEntity.getRoles(), originalEntity.getRoles(), "role", errors);
         }
     }
 

@@ -3,10 +3,12 @@ package com.argusoft.path.tht.reportmanagement.models.entity;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * This model is mapped to user table in database.
@@ -65,10 +67,6 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     @Column(name = "is_success")
     private Boolean isSuccess;
-
-    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-    @JoinColumn(name = "testcase_option_id")
-    private TestcaseOptionEntity testcaseOption;
 
     @Column(name = "duration")
     private Long duration;
@@ -138,14 +136,6 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
     public void setManual(Boolean manual) {
         isManual = manual;
-    }
-
-    public TestcaseOptionEntity getTestcaseOption() {
-        return testcaseOption;
-    }
-
-    public void setTestcaseOption(TestcaseOptionEntity testcaseOption) {
-        this.testcaseOption = testcaseOption;
     }
 
     public Boolean getSuccess() {
@@ -219,4 +209,5 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     public void setGrade(String grade) {
         this.grade = grade;
     }
+
 }

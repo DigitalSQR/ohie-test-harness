@@ -41,6 +41,12 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
     )
     private Boolean isManual;
 
+    @ApiParam(
+            value = "questionType of the testcase",
+            example = "SINGLE_SELECT, MULTI_SELECT"
+    )
+    private String questionType;
+
     private Root<TestcaseEntity> testcaseEntityRoot;
 
     private Join<TestcaseEntity, SpecificationEntity> testcaseEntitySpecificationEntityJoin;
@@ -80,6 +86,10 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
         if (getSpecificationId() != null) {
             predicates.add(criteriaBuilder.equal(getTestcaseEntitySpecificationEntityJoin().get("id"), getSpecificationId()));
+        }
+
+        if(StringUtils.hasLength(getQuestionType())){
+            predicates.add(criteriaBuilder.equal(getTestcaseEntityRoot().get("questionType"), getQuestionType()));
         }
 
         return predicates;
@@ -128,6 +138,15 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
     public void setPrimaryId(String id) {
         this.id = id;
+    }
+
+
+    public String getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(String questionType) {
+        this.questionType = questionType;
     }
 
     private Root<TestcaseEntity> getTestcaseEntityRoot() {

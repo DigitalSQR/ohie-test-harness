@@ -33,6 +33,13 @@ public class TestcaseInfo extends IdStateNameMetaInfo implements Serializable {
             required = false)
     private Boolean isManual;
 
+    @ApiModelProperty(notes = "The questionType of the testcase",
+            allowEmptyValue = false,
+            example = "singleSelect, multiSelect",
+            dataType = "String",
+            required = false)
+    private String questionType;
+
     @ApiModelProperty(notes = "The specificationId of the specification",
             allowEmptyValue = false,
             example = "specificationId",
@@ -70,5 +77,13 @@ public class TestcaseInfo extends IdStateNameMetaInfo implements Serializable {
 
     public void setSpecificationId(String specificationId) {
         this.specificationId = specificationId;
+    }
+
+    public String getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(String questionType) {
+        this.questionType = questionType;
     }
 }

@@ -1,4 +1,5 @@
 import api from "./configs/axiosConfigs";
+import { paramSerialize } from "../utils/utils";
 //Api's for Fetching Manual Test Case Questions and The Options.
 export const TestResultAPI = {
 	getTestCases: async function (trid) {
@@ -82,11 +83,19 @@ export const TestResultAPI = {
 			throw error;
 		}
 	},
-	saveOptions: async function (testcaseResultId, selectedTestcaseOptionId) {
+	saveOptions: async function (testcaseResultId, selectedTestcaseOptionIds) {
 		try {
+			const params = {};
+			if(selectedTestcaseOptionIds && selectedTestcaseOptionIds.length > 0){
+				params.selectedTestcaseOptionId = selectedTestcaseOptionIds;
+			}
 			const response = await api.request({
-				url: `testcase-result/submit/${testcaseResultId}/${selectedTestcaseOptionId}`,
+				url: `testcase-result/submit/${testcaseResultId}`,
 				method: "PATCH",
+				params,
+				paramsSerializer: params => {
+				  return paramSerialize(params);
+				}
 			});
 			return response.data;
 		} catch (error) {
