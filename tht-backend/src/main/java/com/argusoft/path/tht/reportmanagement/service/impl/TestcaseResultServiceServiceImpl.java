@@ -326,8 +326,13 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
 
         // Notify client if the state is changed to finished
-        if(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
-            notifyTestCaseFinished(testcaseResultEntity, contextInfo);
+        if (TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
+            notifyTestCaseFinished(
+                    testcaseResultEntity,
+                    testcaseResultEntity.getManual().equals(Boolean.TRUE) ? null : Boolean.TRUE,
+                    testcaseResultEntity.getManual().equals(Boolean.TRUE) ? Boolean.TRUE : null,
+                    contextInfo
+            );
         }
 
         if (!testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
@@ -536,14 +541,14 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         recalculateTestcaseResultEntity(testcaseResultEntity, testcaseResultEntities);
 
-        if(Boolean.TRUE.equals(isRecommended) && testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
-            if(ComponentServiceConstants.COMPONENT_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
+        if (Boolean.TRUE.equals(isRecommended) && testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
+            if (ComponentServiceConstants.COMPONENT_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
                 List<TestcaseResultEntity> specificationsFromComponent = getChildTestcaseResultFromParentTestcaseResult(testcaseResultEntity, testcaseResultEntities);
                 for (TestcaseResultEntity specificationTestcase : specificationsFromComponent) {
                     recalculateTestcaseResultEntity(specificationTestcase, testcaseResultEntities);
                 }
-                testcaseResultEntity.setGrade(gradeEvaluator.evaluate(specificationsFromComponent ,contextInfo));
-            } else if(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
+                testcaseResultEntity.setGrade(gradeEvaluator.evaluate(specificationsFromComponent, contextInfo));
+            } else if (TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
                 List<TestcaseResultEntity> componentFromTestRequest = getChildTestcaseResultFromParentTestcaseResult(testcaseResultEntity, testcaseResultEntities);
 
                 for (TestcaseResultEntity componentTestRequest : componentFromTestRequest) {
@@ -553,7 +558,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                     }
                     componentTestRequest.setSuccess(specificationsFromComponent.stream().allMatch(entity -> Boolean.TRUE.equals(entity.getSuccess())));
                 }
-                testcaseResultEntity.setGrade(gradeEvaluator.evaluate(componentFromTestRequest ,contextInfo));
+                testcaseResultEntity.setGrade(gradeEvaluator.evaluate(componentFromTestRequest, contextInfo));
             }
         }
         return testcaseResultEntity;
@@ -649,24 +654,22 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         testcaseResultEntity.setDuration(null);
     }
 
-    private void notifyTestCaseFinished(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-
-        if (testcaseResultEntity.getAutomated().equals(Boolean.TRUE)) {
-            String destination = "/testcase-result/" + testcaseResultEntity.getId();
-            fetchTestcaseResultStatusByInputs(
-                    null,
-                    true,
-                    null,
-                    null,
-                    null,
-                    null,
-                    testcaseResultEntity,
-                    contextInfo
-            );
-            msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
-            if (testcaseResultEntity.getParentTestcaseResult() != null) {
-                notifyTestCaseFinished(testcaseResultEntity.getParentTestcaseResult(), contextInfo);
-            }
+    private void notifyTestCaseFinished(TestcaseResultEntity testcaseResultEntity, Boolean isAutomated, Boolean isManual, ContextInfo contextInfo)
+            throws InvalidParameterException, OperationFailedException {
+        String destination = "/testcase-result/" + testcaseResultEntity.getId();
+        fetchTestcaseResultStatusByInputs(
+                isManual,
+                isAutomated,
+                null,
+                null,
+                null,
+                null,
+                testcaseResultEntity,
+                contextInfo
+        );
+        msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
+        if (testcaseResultEntity.getParentTestcaseResult() != null) {
+            notifyTestCaseFinished(testcaseResultEntity.getParentTestcaseResult(), isAutomated, isManual, contextInfo);
         }
     }
 }
