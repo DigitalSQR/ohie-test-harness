@@ -7,6 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import WebSocketService from "../../../api/WebSocketService";
 import TestcaseResultRow from "./TestcaseResultRow/TestcaseResultRow";
+import { set_header } from "../../../reducers/homeReducer";
+import { useDispatch } from "react-redux";
 export default function AutomatedTesting() {
   const { testRequestId } = useParams();
   const [testcaseName, setTestCaseName] = useState();
@@ -14,7 +16,9 @@ export default function AutomatedTesting() {
   const { showLoader, hideLoader } = useLoader();
   const [data, setData] = useState([]);
   const navigate = useNavigate();
-  const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
+  const { stompClient, webSocketConnect, webSocketDisconnect } =
+    WebSocketService();
+  const dispatch = useDispatch();
   const clickHandler = () => {
     notification.info({
       placement: "bottom-right",
@@ -125,6 +129,7 @@ export default function AutomatedTesting() {
       });
   };
   useEffect(() => {
+    dispatch(set_header("Automated Testing"));
     fetchTestCaseResultDataAndStartWebSocket();
     testCaseInfo();
   }, []);
@@ -132,7 +137,7 @@ export default function AutomatedTesting() {
   useEffect(() => {
     // Close the connection once the request is finished
     if (stompClient && stompClient.connected) {
-      const destination = '/testcase-result/' + testcaseRequestResult.id;
+      const destination = "/testcase-result/" + testcaseRequestResult.id;
       const subscription = stompClient.subscribe(destination, (msg) => {
         const parsedTestcaseResult = JSON.parse(msg.body);
         setTestcaseRequestResult(parsedTestcaseResult);
@@ -181,11 +186,31 @@ export default function AutomatedTesting() {
               <tbody>
                 {!!data &&
                   data.map((component) => [
-                    <TestcaseResultRow key={`component-result-${component?.id}`} testcaseResultType={'component'} testResultId={component.id} stompClient={stompClient} toggleFunction={toggleComponentRow}></TestcaseResultRow>
-                    ,component?.specifications?.map((specification) => [
-                      <TestcaseResultRow key={`specification-result-${specification?.id}`} testcaseResultType={'specification'} testResultId={specification.id} stompClient={stompClient} toggleClass={specification?.class} toggleFunction={toggleSpecificationRow}></TestcaseResultRow>
-                      ,specification.testCases?.map((testcase) => [
-                        <TestcaseResultRow key={`testcase-result-${testcase?.id}`} testcaseResultType={'testcase'} testResultId={testcase.id} stompClient={stompClient} toggleClass={testcase?.class} toggleFunction={toggleTestCaseRow}></TestcaseResultRow>
+                    <TestcaseResultRow
+                      key={`component-result-${component?.id}`}
+                      testcaseResultType={"component"}
+                      testResultId={component.id}
+                      stompClient={stompClient}
+                      toggleFunction={toggleComponentRow}
+                    ></TestcaseResultRow>,
+                    component?.specifications?.map((specification) => [
+                      <TestcaseResultRow
+                        key={`specification-result-${specification?.id}`}
+                        testcaseResultType={"specification"}
+                        testResultId={specification.id}
+                        stompClient={stompClient}
+                        toggleClass={specification?.class}
+                        toggleFunction={toggleSpecificationRow}
+                      ></TestcaseResultRow>,
+                      specification.testCases?.map((testcase) => [
+                        <TestcaseResultRow
+                          key={`testcase-result-${testcase?.id}`}
+                          testcaseResultType={"testcase"}
+                          testResultId={testcase.id}
+                          stompClient={stompClient}
+                          toggleClass={testcase?.class}
+                          toggleFunction={toggleTestCaseRow}
+                        ></TestcaseResultRow>,
                       ]),
                     ]),
                   ])}

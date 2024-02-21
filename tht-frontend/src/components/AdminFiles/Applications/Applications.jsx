@@ -15,6 +15,8 @@ import { formatDate } from "../../../utils/utils.js";
 import UserIdEmailConnector from "../../connectors/UserIdEmailConnector/UserIdEmailConnector.js";
 import { Pagination } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
+import { useDispatch } from "react-redux";
+import { set_header } from "../../../reducers/homeReducer.jsx";
 const Applications = () => {
   const testRequestStates = [
     ...TestRequestActionStateLabels,
@@ -32,8 +34,10 @@ const Applications = () => {
   const [totalPages, setTotalPages] = useState(1);
   const { showLoader, hideLoader } = useLoader();
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   useEffect(() => {
+    dispatch(set_header("Applications"));
     var state = filterState;
     if (!state || state == "") {
       state = TestRequestActionStateLabels.map((state) => state.value);
