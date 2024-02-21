@@ -5,11 +5,11 @@ import { useLoader } from "../../loader/LoaderContext";
 import { EditOutlined } from "@ant-design/icons";
 import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
 import "./SpecQuestions.scss";
-import { SpecificationDTO } from "../../../dto/SpecificationDTO";
-import { Question, Option } from "../../../dto/SpecQuestionDTO";
-import { Switch } from "antd";
+import { Question } from "../../../dto/SpecQuestionDTO";
+import { Switch, Tabs } from "antd";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
+import TabPane from "antd/es/tabs/TabPane";
 
 const ManualTestCases: React.FC = () => {
   const navigate = useNavigate();
@@ -116,33 +116,85 @@ const ManualTestCases: React.FC = () => {
           Components
         </div>
       </div>
-      {questions?.map((question, index) => (
-        <div key={index} className="question-container my-4">
-          <div className="question-content">
-            <h5 className="question">
-              {question.rank}. {question.question}
-            </h5>
-            <ol className="options-list" type="a">
-              {question.options.map((option, optionIndex) => (
-                <li key={optionIndex} className="option">
-                  {option.name}
-                </li>
-              ))}
-            </ol>
-          </div>
-          <div className="question-actions">
-            <span className="edit-icon">
-              <EditOutlined onClick={() => handleUpdate(question, name)} />
-            </span>
-            <Switch
-              defaultChecked={true}
-              // onChange={(checked) => handleToggleChange(component.id, checked)}
-              checkedChildren="ACTIVE"
-              unCheckedChildren="INACTIVE"
-            />
-          </div>
+      <div className="">
+        <div className="row">
+          <div className="col-12 col-md-8 offset-md-2"></div>
+          <Tabs
+            defaultActiveKey="1"
+            tabPosition="top"
+            className="questions-tabs mt-3"
+          >
+            {questions?.map((question, index) => (
+              <TabPane tab={`Question ${index + 1}`} key={index + 1}>
+                <div className="col-11 non-fuctional-requirement mt-3">
+                  <div className="container-fluid">
+                    <div className="row heading">
+                      <div className="col-md-7 col-12 p-0">
+                        <h2>Question</h2>
+                      </div>
+
+                      <div className="col-md-3 col-12 d-md-flex d-none p-0">
+                        <h2 className="border-left">Reference</h2>
+                      </div>
+
+                      <div className="col-md-2 col-12 d-md-flex d-none p-0">
+                        <h2 className="border-left">Action</h2>
+                      </div>
+                    </div>
+
+                    <div className="row question-box">
+                      <div className="col-md-7 col-12 p-0 question">
+                        <h2>
+                          <b>
+                            {question.rank}. {question.question}
+                          </b>
+                        </h2>
+
+                        <div className="custom-multiselect field-checkbox">
+                          {question.options &&
+                            question.options.map((option, optionIndex) => (
+                              <div
+                                className="field-box option-item"
+                                key={optionIndex}
+                              >
+                                <label>{option.name}</label>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+
+                      <div className="col-md-3 col-12 p-0">
+                        <div className="p-2 pt-5 q-img">
+                          <img
+                            src="../../../styles/images/question-img.png"
+                            alt="No Image Found"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="col-md-2 col-12 p-0">
+                        <div className="question-actions p-2 pt-5">
+                          <span className="edit-icon">
+                            <EditOutlined
+                              onClick={() => handleUpdate(question, name)}
+                            />
+                          </span>
+                          <Switch
+                            defaultChecked={true}
+                            // onChange={(checked) => handleToggleChange(component.id, checked)}
+                            checkedChildren="ACTIVE"
+                            unCheckedChildren="INACTIVE"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TabPane>
+            ))}
+          </Tabs>
         </div>
-      ))}
+      </div>
     </div>
   );
 };
