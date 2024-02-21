@@ -7,6 +7,8 @@ import { Switch, notification } from "antd";
 import { useLoader } from "../../loader/LoaderContext";
 import { ComponentDTO, MyContent } from "../../../dto/ComponentDTO";
 import { ComponentsActionStateLabels } from "../../../constants/components_constants";
+import { set_header } from "../../../reducers/homeReducer";
+import { useDispatch } from "react-redux";
 
 const ComponentList: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ const ComponentList: React.FC = () => {
   const { showLoader, hideLoader } = useLoader();
 
   const [filterState, setFilterState] = useState("");
+  const dispatch = useDispatch();
   const handleUpdate = (componentId: string, name: string) => {
     console.log(componentId);
     navigate(`/dashboard/component-specification/${componentId}`, {
@@ -25,6 +28,7 @@ const ComponentList: React.FC = () => {
   };
 
   useEffect(() => {
+    dispatch(set_header("Components"));
     var state = filterState;
     console.log(state);
 

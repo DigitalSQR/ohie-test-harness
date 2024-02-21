@@ -30,7 +30,6 @@ export default function ChooseTest() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(set_header(testcaseName));
     var totalManual = 0;
     var totalFinishedManual = 0;
     var totalAutomated = 0;
@@ -135,6 +134,7 @@ export default function ChooseTest() {
       .then((res) => {
         console.log("testrequestinfo", res);
         setTestCaseName(res.name);
+        dispatch(set_header(res.name));
       })
       .catch(() => {
         notification.error({
