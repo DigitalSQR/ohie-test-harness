@@ -211,11 +211,15 @@ public class UserServiceServiceImpl implements UserService {
             DataValidationErrorException,
             DoesNotExistException, MessagingException, IOException {
 
-        if (Objects.equals(contextInfo.getEmail(), Constant.OAUTH2_CONTEXT.getEmail())) {
-            //If method get called on google Oauth2 login then verification of email is not needed.
-            userEntity.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
-        } else {
-            userEntity.setState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING);
+        if(!contextInfo.isAdmin()){
+            if (Objects.equals(contextInfo.getEmail(), Constant.OAUTH2_CONTEXT.getEmail())) {
+                //If method get called on google Oauth2 login then verification of email is not needed.
+                userEntity.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
+            } else {
+                userEntity.setState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING);
+            }
+        }else {
+            userEntity.setState(UserServiceConstants.USER_STATUS_ACTIVE);
         }
 
         UserValidator.validateCreateUpdateUser(this, Constant.CREATE_VALIDATION, userEntity, contextInfo);

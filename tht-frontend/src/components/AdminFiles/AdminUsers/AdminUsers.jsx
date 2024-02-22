@@ -7,11 +7,17 @@ import { Pagination } from "@mui/material";
 import { Button, Modal } from "antd";
 import sortIcon from "../../../styles/images/sort-icon.png";
 import { useLoader } from "../../loader/LoaderContext";
+import { useDispatch } from "react-redux";
+import { set_header } from "../../../reducers/homeReducer";
+import { store } from "../../../store/store";
+import { Switch, notification } from "antd";
 const AdminUsers = () => {
   const navigate = useNavigate();
-  const [adminUsers, setAdminUsers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteUserId, setDeleteUserId] = useState();
+  const [userInfo, setUserInfo] = useState();
+  const dispatch = useDispatch();
   const [sortDirection, setSortDirection] = useState({
     name: "desc",
     email: "desc",
@@ -22,9 +28,13 @@ const AdminUsers = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPageUsers, setCurrentPageUsers] = useState([]);
   const { showLoader, hideLoader } = useLoader();
-  const handleOk = () => {
+  const handleOk = (userState) => {
+    const changeState =
+      userState == "user.status.inactive"
+        ? "user.status.active"
+        : "user.status.inactive";
     showLoader();
-    AdminUserAPI.updateUserState(deleteUserId, "user.status.inactive")
+    AdminUserAPI.updateUserState(deleteUserId, changeState)
       .then(() => {
         getAllUsers();
         hideLoader();
@@ -34,6 +44,7 @@ const AdminUsers = () => {
         console.error("Error updating user state:", error);
         setIsModalOpen(false);
       });
+    hideLoader();
   };
 
   const handleCancel = () => {
@@ -41,6 +52,10 @@ const AdminUsers = () => {
   };
 
   useEffect(() => {
+    const userInfo = store.getState().userInfoSlice;
+    setUserInfo(userInfo);
+    console.log(userInfo);
+    dispatch(set_header("User Management"));
     getAllUsers();
   }, [currentPage, pageSize, sortFieldName, sortDirection]);
 
@@ -53,11 +68,13 @@ const AdminUsers = () => {
       console.log(data);
       hideLoader();
       const activeUsers = data.content.filter(
-        (user) => user?.state !== "user.status.inactive" && user?.roleIds[0]!=="role.assessee"
+        (user) =>
+          user?.roleIds.includes("role.admin") ||
+          user?.roleIds.includes("role.tester")
       );
       setTotalPages(Math.ceil(activeUsers.length / pageSize));
-      
-      setAdminUsers(activeUsers);
+
+      setUsers(activeUsers);
       const startIndex = (currentPage - 1) * pageSize;
       const endIndex = startIndex + pageSize;
       const activeUsersSlice = activeUsers.slice(startIndex, endIndex);
@@ -69,9 +86,13 @@ const AdminUsers = () => {
     navigate(`/dashboard/admin-users/update-admin-user?userId=${userId}`);
   };
 
-  const handleDelete = (userId) => {
-    setIsModalOpen(true);
+  const handleToggleChange = (userId, userState) => {
     setDeleteUserId(userId);
+    if (userState == "user.status.active") {
+      setIsModalOpen(true);
+    } else {
+      handleOk(userState);
+    }
   };
 
   const handleSort = (sortFieldName) => {
@@ -92,24 +113,17 @@ const AdminUsers = () => {
       <div id="wrapper">
         <div className="col-12 pt-3">
           <div className="row mb-2 justify-content-between">
-            <div className="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12">
-              <div className="custom-input custom-input-sm mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search"
-                  autoComplete="off"
-                />
-              </div>
-            </div>
+            <div className="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12"></div>
             <div className="col-auto ml-auto">
               <button
-                className="btn btn-primary add-admin-user"
-                onClick={() =>
-                  navigate("/dashboard/admin-users/add-admin-user")
-                }
+                onClick={() => {
+                  navigate("/dashboard/admin-users/add-admin-user");
+                }}
+                type="button"
+                className="btn btn-sm btn-outline-secondary menu-like-item"
               >
-                ADD USER
+                <i className="bi bi-plus"></i>
+                Add Admin User
               </button>
             </div>
           </div>
@@ -147,7 +161,11 @@ const AdminUsers = () => {
                   <tr key={user.id}>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
-                    <td>{user.roleIds[0].replace("role.","").toUpperCase()}</td>
+                    <td>
+                      {user?.roleIds.map((roleId) => (
+                        <span className="badges-green">{roleId.replace("role.", "").toUpperCase()}</span>
+                      ))}
+                    </td>
                     <td className="action-icons-container">
                       <span
                         className="action-icon"
@@ -155,12 +173,20 @@ const AdminUsers = () => {
                       >
                         <EditOutlined />
                       </span>
-                      <span
-                        className="action-icon"
-                        onClick={() => handleDelete(user.id)}
-                      >
-                        <DeleteOutlined />
-                      </span>
+                      {userInfo?.id !== user?.id && (
+                        <span className="form-check form-switch">
+                          <Switch
+                            defaultChecked={
+                              user?.state === "user.status.active"
+                            }
+                            onChange={() =>
+                              handleToggleChange(user.id, user.state)
+                            }
+                            checkedChildren="ACTIVE"
+                            unCheckedChildren="INACTIVE"
+                          />
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -169,12 +195,12 @@ const AdminUsers = () => {
           </div>
         </div>
         <Modal
-          title="Deletion Confirmation"
+          title="Inactivation Confirmation"
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <p>Are you sure you want to delete?</p>
+          <p>Are you sure you want to inactive the user?</p>
         </Modal>
         {totalPages > 1 && (
           <Pagination

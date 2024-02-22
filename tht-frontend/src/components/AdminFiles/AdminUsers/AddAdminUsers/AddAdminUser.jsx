@@ -1,21 +1,30 @@
-import React from "react";
+import { React, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import "./addadminuser.scss";
 import { notification } from "antd";
-import { AdminUserAPI } from "../../../api/AdminUserAPI";
-import { useLoader } from "../../loader/LoaderContext";
-
+import { AdminUserAPI } from "../../../../api/AdminUserAPI";
+import { useLoader } from "../../../loader/LoaderContext";
+import CustomSelect from "../CustomSelect";
 const AddAdminUser = () => {
   const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
-
+  const roles = [
+    {
+      label: "Admin",
+      value: "role.admin",
+    },
+    {
+      label: "Tester",
+      value: "role.tester",
+    },
+  ];
   const initialValues = {
     name: "",
     email: "",
     password: "",
-    roleIds: "",
+    roleIds: [],
   };
 
   const validationSchema = Yup.object({
@@ -26,12 +35,13 @@ const AddAdminUser = () => {
     password: Yup.string()
       .required("Password is required *")
       .min(6, "Password must be of minimum 6 characters"),
-    roleIds: Yup.string().required("Role is required *"),
+    roleIds: Yup.array().min(1, "Role is required *"),
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
     showLoader();
-    const body = { ...values, roleIds: ["role." + values.roleIds] };
+    const body = { ...values, roleIds: values.roleIds.map((role) => role) };
+    console.log(body);
     AdminUserAPI.addUser(body)
       .then((response) => {
         hideLoader();
@@ -140,7 +150,6 @@ const AddAdminUser = () => {
                     </div>
                   </div>
                 </div>
-
                 <div className="row">
                   <div className="col-12">
                     <div className="custom-input mb-3">
@@ -148,21 +157,19 @@ const AddAdminUser = () => {
                         Role
                       </label>
                       <Field
-                        as="select"
-                        id="roleIds"
+                        className="custom-select mb-2"
                         name="roleIds"
-                        className="form-select"
-                      >
-                        <option value="">Select Role</option>
-                        <option value="tester">Tester</option>
-                        <option value="admin">Admin</option>
-                      </Field>
-                      <ErrorMessage
-                        name="roleIds"
-                        component="div"
-                        className="error-message"
+                        options={roles}
+                        component={CustomSelect}
+                        placeholder="Select Roles"
+                        isMulti={true}
                       />
                     </div>
+                    <ErrorMessage
+                      name="roleIds"
+                      component="div"
+                      className="error-message"
+                    />
                   </div>
                 </div>
 

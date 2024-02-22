@@ -41,7 +41,7 @@ export const AdminUserAPI = {
     try {
       const response = await api.request({
         url: `/user/state/${userId}/${changeState}`,
-        method: "PUT",
+        method: "PATCH",
       });
       return response.data;
     } catch (error) {
@@ -55,7 +55,7 @@ export const AdminUserAPI = {
         url: `/user`,
         method: "GET",
         params: {
-          sort: `${sortFieldName},${sortDirection}`
+          sort: `${sortFieldName},${sortDirection}`,
         },
       });
       return response.data;

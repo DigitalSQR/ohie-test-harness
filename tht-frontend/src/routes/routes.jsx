@@ -18,9 +18,7 @@ import Applications from "../components/AdminFiles/Applications/Applications";
 import TestingRequests from "../components/CommonFiles/TestingRequests/TestingRequests";
 import RegisterApplication from "../components/CommonFiles/RegisterApplication/RegisterApplication";
 import EmailVerified from "../components/UserFiles/EmailVerified";
-import UpdateAdminUser from "../components/AdminFiles/UpdateAdminUser/UpdateAdminUser";
 import AdminUsers from "../components/AdminFiles/AdminUsers/AdminUsers";
-import AddAdminUser from "../components/AdminFiles/AddAdminUsers/AddAdminUser";
 import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
 import ComponentList from "../components/TestcaseConfig/ComponentList/ComponentList.tsx";
 import ComponentSpecification from "../components/TestcaseConfig/ComponentSpecification/ComponentSpecification.tsx";
@@ -28,6 +26,8 @@ import ManualTestCases from "../components/TestcaseConfig/SpecQuestions/SpecQues
 import EditQuestion from "../components/TestcaseConfig/EditQuestion/EditQuestion.tsx";
 import UserProfile from "../components/AdminFiles/UserProfile/UserProfile";
 import ResetPassword from "../components/CommonFiles/ResetPassword/ResetPassword.jsx";
+import AddAdminUser from "../components/AdminFiles/AdminUsers/AddAdminUsers/AddAdminUser";
+import UpdateAdminUser from "../components/AdminFiles/AdminUsers/UpdateAdminUser/UpdateAdminUser";
 const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
 
@@ -68,8 +68,8 @@ const routes = createBrowserRouter([
       { path: "register-application", element: <RegisterApplication /> },
       { path: "user-profile", element: <UserProfile /> },
       { path: "admin-users", element: <AdminUsers /> },
-      { path: "admin-users/add-admin-user", element: <AddAdminUser /> },
-      { path: "admin-users/update-admin-user", element: <UpdateAdminUser /> },
+      { path: "admin-users/add-admin-user", element: <AddAdminUser/> },
+      { path: "admin-users/update-admin-user", element: <UpdateAdminUser/> },
       // { path: "admin-users/update-admin-user", element: <AdminUsers /> },
       { path: "testcase-config", element: <ComponentList /> },
       {
