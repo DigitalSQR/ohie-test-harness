@@ -38,4 +38,15 @@ export const TestCaseAPI = {
       throw error;
     }
   },
+  changeState: async function (testcaseId, changeState) {
+    try {
+      const response = await api.request({
+        url: `/testcase/state/${testcaseId}/${changeState}`,
+        method: "PATCH",
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
