@@ -4,22 +4,37 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import "./updateadminuser.scss";
 import { notification } from "antd";
-import { AdminUserAPI } from "../../../api/AdminUserAPI";
+import { AdminUserAPI } from "../../../../api/AdminUserAPI";
 import { useLocation } from "react-router-dom";
-import { useLoader } from "../../loader/LoaderContext";
+import { useLoader } from "../../../loader/LoaderContext";
 
+import CustomSelect from "../CustomSelect";
 const UpdateAdminUser = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userId = new URLSearchParams(location.search).get("userId");
+  const [meta, setMeta] = useState();
+  const roles = [
+    {
+      label: "Admin",
+      value: "role.admin",
+    },
+    {
+      label: "Tester",
+      value: "role.tester",
+    },
+    {
+      label: "Assessee",
+      value: "role.assessee",
+    },
+  ];
   const { showLoader, hideLoader } = useLoader();
   const [state, setState] = useState();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    roleIds: "",
-    meta: "",
+    roleIds: [],
   });
 
   const initialValues = {
@@ -34,8 +49,10 @@ const UpdateAdminUser = () => {
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required *"),
-    password: Yup.string().required("Password is required *").min(6, "Password must be of minimum 6 characters"),
-    roleIds: Yup.string().required("Role is required *"),
+    password: Yup.string()
+      .required("Password is required *")
+      .min(6, "Password must be of minimum 6 characters"),
+    roleIds: Yup.array().min(1, "Role is required *"),
   });
 
   useEffect(() => {
@@ -47,9 +64,9 @@ const UpdateAdminUser = () => {
             name: userData.name,
             email: userData.email,
             password: userData.password,
-            roleIds: userData.roleIds[0]?.substring(5),
-            meta: userData.meta,
+            roleIds: userData.roleIds,
           });
+          setMeta(userData.meta);
         })
         .catch((error) => {
           console.error("Error fetching user details:", error);
@@ -61,9 +78,10 @@ const UpdateAdminUser = () => {
     showLoader();
     const body = {
       ...values,
-      roleIds: ["role." + values.roleIds],
+      roleIds: values.roleIds.map((role) => role),
       id: userId,
       state: state,
+      meta: meta,
     };
 
     AdminUserAPI.updateUserDetails(body)
@@ -111,10 +129,10 @@ const UpdateAdminUser = () => {
                           Name
                         </label>
                         <Field
-                          type="text"
+                          type="name"
                           className="form-control"
                           id="name"
-                          placeholder="Your Name"
+                          placeholder="Your Email"
                           name="name"
                         />
                         <div className="error-message">
@@ -136,8 +154,9 @@ const UpdateAdminUser = () => {
                           id="email"
                           placeholder="Your Email"
                           name="email"
+                          disabled={true}
                         />
-                         <div className="error-message">
+                        <div className="error-message">
                           <ErrorMessage name="email" />
                         </div>
                       </div>
@@ -156,8 +175,9 @@ const UpdateAdminUser = () => {
                           id="password"
                           placeholder="Your Password"
                           name="password"
+                          disabled={true}
                         />
-                         <div className="error-message">
+                        <div className="error-message">
                           <ErrorMessage name="password" />
                         </div>
                       </div>
@@ -171,20 +191,16 @@ const UpdateAdminUser = () => {
                           Role
                         </label>
                         <Field
-                          as="select"
-                          className="form-select"
-                          id="roleIds"
+                          className="custom-select"
                           name="roleIds"
-                        >
-                          <option value="" disabled>
-                            Select Role
-                          </option>
-                          <option value="tester">Tester</option>
-                          <option value="admin">Admin</option>
-                        </Field>
-                        <div className="error-message">
-                          <ErrorMessage name="roleIds" />
-                        </div>
+                          options={roles}
+                          component={CustomSelect}
+                          placeholder="Select Roles"
+                          isMulti={true}
+                        />
+                      </div>
+                      <div className="error-message">
+                        <ErrorMessage name="roleIds" />
                       </div>
                     </div>
                   </div>

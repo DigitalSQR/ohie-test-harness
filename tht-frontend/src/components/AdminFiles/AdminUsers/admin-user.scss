@@ -1,3 +1,5 @@
+@import "./variables.scss";
+
 .add-admin-user {
   background-color: #009fc8;
 }
@@ -15,8 +17,23 @@
   cursor: pointer;
 }
 
-.pagination-ui{
+.pagination-ui {
   display: flex;
   justify-content: center;
   margin-top: 40px;
+}
+
+.badges-green {
+  display: inline-block;
+  background: $color-green-20;
+  color: $color-green;
+  border-radius: 4px;
+  padding: 0px 20px;
+  border: 1px solid $color-green-10;
+  width: 6rem;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 22px;
+  margin-right: 1rem;
 }

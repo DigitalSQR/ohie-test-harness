@@ -113,6 +113,27 @@ export default function Sidebar() {
             <li>
               <a
                 className={
+                  activeMenuItem === "/dashboard/admin-users"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
+                }
+                onClick={() => {
+                  handleMenuItemClick("/dashboard/admin-users");
+                  dispatch(set_header("Assessee"));
+                }}
+              >
+                <i
+                  aria-label="User"
+                  title="User"
+                  className="bi bi-person menu-left-icon"
+                ></i>
+
+                <span> User Management </span>
+              </a>
+            </li>
+            <li>
+              <a
+                className={
                   activeMenuItem === "/dashboard/testing-requests"
                     ? "active menu-like-item"
                     : "menu-like-item"
