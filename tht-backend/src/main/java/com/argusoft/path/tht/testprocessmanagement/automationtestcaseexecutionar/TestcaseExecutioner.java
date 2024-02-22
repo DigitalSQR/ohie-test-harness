@@ -21,6 +21,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,7 +59,6 @@ public class TestcaseExecutioner {
     private TestcaseResultService testcaseResultService;
     @Autowired
     private TestRequestService testRequestService;
-
     @Autowired
     private TestcaseExecutionStarter testcaseExecutionStarter;
 
@@ -169,7 +170,9 @@ public class TestcaseExecutioner {
                             isWorkflow,
                             isFunctional,
                             contextInfo);
+            System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + testcaseResultEntities.size());
             changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
+            System.out.println("??????????????????????????????????????????????????????");
         } catch (DoesNotExistException | InvalidParameterException | OperationFailedException |
                  VersionMismatchException ex) {
             LOGGER.error("caught OperationFailedException in TestcaseExecutioner ", ex);
@@ -334,7 +337,10 @@ public class TestcaseExecutioner {
 
     private void changeTestcaseResultsState(List<TestcaseResultEntity> testcaseResultEntities, String newState, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
-            if (!newState.equals(testcaseResult.getState())) {
+            System.out.println("--------------------------------------------" + testcaseResult.getState());
+            if (newState.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT)
+                    || !newState.equals(testcaseResult.getState())) {
+                System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++");
                 testcaseResultService.changeState(testcaseResult.getId(), newState, contextInfo);
             }
         }
@@ -353,6 +359,12 @@ public class TestcaseExecutioner {
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
+        System.out.println(isManual);
+        System.out.println(isAutomated);
+        System.out.println(isRequired);
+        System.out.println(isRecommended);
+        System.out.println(isFunctional);
+        System.out.println(isWorkflow);
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
         testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
         testcaseResultCriteriaSearchFilter.setManual(isManual);
@@ -361,6 +373,7 @@ public class TestcaseExecutioner {
         testcaseResultCriteriaSearchFilter.setRecommended(isRecommended);
         testcaseResultCriteriaSearchFilter.setFunctional(isFunctional);
         testcaseResultCriteriaSearchFilter.setWorkflow(isWorkflow);
+
 
         List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
 

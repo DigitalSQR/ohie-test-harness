@@ -5,6 +5,11 @@
 import { notification } from "antd";
 import img_icon from "../styles/images/img.png";
 import pdf_icon from "../styles/images/pdf.png";
+import {
+  ROLE_ID_ADMIN,
+  ROLE_ID_ASSESSEE,
+  ROLE_ID_TESTER,
+} from "../constants/role_constants";
 export const formatDate = (dateString) => {
   const options = { year: "numeric", month: "short", day: "numeric" };
   return new Date(dateString).toLocaleDateString(undefined, options);
@@ -47,18 +52,30 @@ export const fileTypeIcon = (fileType) => {
 };
 
 export const stateSerializer = (input) => {
- if (typeof input === 'string') {
+  if (typeof input === "string") {
     return input;
   } else if (Array.isArray(input)) {
     const mappedArray = input.map((value, index) => ({
       id: index + 1,
-      value: value
+      value: value,
     }));
-    const resultArray = mappedArray.map(obj => obj.value);
+    const resultArray = mappedArray.map((obj) => obj.value);
     return resultArray;
   } else {
     notification.error({
-      description:"The state is neither an array nor a string",
-      placement:"bottomRight"
-    })  }
+      description: "The state is neither an array nor a string",
+      placement: "bottomRight",
+    });
+  }
+};
+
+export const getHighestPriorityRole = (user) => {
+console.log(user.roleIds)
+  if (user.roleIds.includes(ROLE_ID_ADMIN)) {
+    return "ADMIN";
+  } else if (user.roleIds.includes(ROLE_ID_TESTER)) {
+    return "TESTER";
+  } else {
+    return "ASSESSEE";
+  }
 };
