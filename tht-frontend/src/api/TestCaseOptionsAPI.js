@@ -53,4 +53,15 @@ export const TestCaseOptionsAPI = {
       throw error;
     }
   },
+  changeState: async function (testcaseOptionId, changeState) {
+    try {
+      const response = await api.request({
+        url: `/testcase-option/state/${testcaseOptionId}/${changeState}`,
+        method: "PATCH",
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

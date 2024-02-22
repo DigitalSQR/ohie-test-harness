@@ -22,10 +22,11 @@ const EditQuestion = () => {
 
   const [editedOptions, setEditedOptions] = useState<EditedOption[]>(
     testcase.options.map((option) => ({
+      id: option.id,
       label: option.name,
       metaVersion: option.meta.version,
       checked: false,
-      status: "Active",
+      state: option.state,
       changesMade: false,
     }))
   );
@@ -41,12 +42,6 @@ const EditQuestion = () => {
     updatedOptions[index].changesMade =
       updatedOptions[index].label !== testcase.options[index].name;
 
-    setEditedOptions(updatedOptions);
-  };
-
-  const handleStatusChange = (index: number, newStatus: string) => {
-    const updatedOptions = [...editedOptions];
-    updatedOptions[index].status = newStatus;
     setEditedOptions(updatedOptions);
   };
 
@@ -138,7 +133,7 @@ const EditQuestion = () => {
         label: resp.name,
         metaVersion: resp.meta.version,
         checked: false,
-        status: "Active",
+        state: "Active",
         changesMade: false,
       };
       setEditedOptions(temp);
@@ -179,6 +174,32 @@ const EditQuestion = () => {
     } finally {
       hideLoader();
     }
+  };
+
+  const handleToggleChange = (testcaseOptionId, state: string) => {
+    showLoader();
+    const newState =
+      state === "testcase.option.status.active"
+        ? "testcase.option.status.inactive"
+        : "testcase.option.status.active";
+
+    TestCaseOptionsAPI.changeState(testcaseOptionId, newState)
+      .then((res) => {
+        hideLoader();
+
+        setEditedOptions((prevOptions) =>
+          prevOptions.map((option) =>
+            option.id === testcaseOptionId
+              ? { ...option, state: res.data.state }
+              : option
+          )
+        );
+
+        console.log(res);
+      })
+      .catch((error) => {
+        throw error;
+      });
   };
 
   const handleClick = (path: string, state: object) => {
@@ -279,8 +300,12 @@ const EditQuestion = () => {
               </div>
               <div className="col-md-2 text-center">
                 <Switch
-                  defaultChecked={true}
-                  // onChange={(checked) => handleToggleChange(component.id, checked)}
+                  defaultChecked={
+                    option.state === "testcase.option.status.active"
+                  }
+                onChange={(checked) =>
+                    handleToggleChange(option.id, option.state)
+                  }
                   checkedChildren="ACTIVE"
                   unCheckedChildren="INACTIVE"
                 />

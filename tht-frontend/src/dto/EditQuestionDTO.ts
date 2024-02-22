@@ -42,10 +42,11 @@ interface Option {
 }
 
 interface EditedOption {
+  id: number;
   label: string;
   metaVersion: number;
   checked: boolean;
-  status: string;
+  state: string;
   changesMade: boolean;
 }
 
