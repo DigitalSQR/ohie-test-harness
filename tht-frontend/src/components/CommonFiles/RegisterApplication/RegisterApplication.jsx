@@ -22,20 +22,8 @@ const RegisterApplication = () => {
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserId(userInfo.id);
-
-    ComponentAPI.getComponents()
-      .then((res) => {
-        setComponents(res.content);
-        hideLoader();
-      })
-      .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: err.data?.message,
-        });
-        hideLoader();
-      });
-    ComponentAPI.getComponents()
+    
+    ComponentAPI.getComponents("component.status.active")
       .then((res) => {
         setComponents(res.content);
         hideLoader();
@@ -262,7 +250,8 @@ const RegisterApplication = () => {
               <div className="col-12">
                 <div className="custom-input mb-3">
                   <label htmlFor="description" className="form-label">
-                    Application Description<span style={{ color: "red" }}>*</span>
+                    Application Description
+                    <span style={{ color: "red" }}>*</span>
                   </label>
                   <textarea
                     id="description"
@@ -327,7 +316,8 @@ const RegisterApplication = () => {
                                   htmlFor="username"
                                   className="form-label"
                                 >
-                                  Credentials<span style={{ color: "red" }}>*</span>
+                                  Credentials
+                                  <span style={{ color: "red" }}>*</span>
                                 </label>
                               </div>
                               <div className="col-sm-6 col-12">
@@ -385,9 +375,7 @@ const RegisterApplication = () => {
                                   )}
                               </div>
                               <div className=" custom-input col-sm-6 col-12">
-                                <div
-                                  className=" input-group mb-3 position-relative"
-                                >
+                                <div className=" input-group mb-3 position-relative">
                                   <input
                                     id={
                                       "testRequestUrls[" + index + "].password"
@@ -477,7 +465,8 @@ const RegisterApplication = () => {
                                     htmlFor="baseUrl"
                                     className="form-label"
                                   >
-                                    Base Url:{" "}<span style={{ color: "red" }}>*</span>
+                                    Base Url:{" "}
+                                    <span style={{ color: "red" }}>*</span>
                                     {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
                                   </label>
                                   <input
