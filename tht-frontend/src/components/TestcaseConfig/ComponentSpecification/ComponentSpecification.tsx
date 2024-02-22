@@ -21,18 +21,63 @@ const ComponentSpecification: React.FC = () => {
   const { componentId, name } = location.state;
   const dispatch = useDispatch();
 
-  const openTab = (tabName: string) => {
-    if (tabName !== activeTab) {
-      setActiveTab(tabName);
-      fetchData(tabName === "Manual");
-    }
-  };
-
   useEffect(() => {
     fetchData(false);
     dispatch(set_header(name));
     console.log(componentId);
   }, []);
+
+  const handleEdit = (specificationId: string) => {
+    if (activeTab === "2") {
+      navigate(`/dashboard/manual-testcases/${specificationId}`, {
+        state: {
+          specificationId,
+          componentId,
+          name,
+        },
+      });
+    }
+  };
+
+  const fetchData = async (manual: boolean) => {
+    showLoader();
+    try {
+      const resp: SpecificationDTO =
+        await SpecificationAPI.getSpecificationsByComponentId(
+          componentId,
+          manual
+        );
+      setSpecifications(resp.content);
+    } catch (error) {
+      console.error("Error fetching specifications:", error);
+      setSpecifications(undefined);
+    } finally {
+      hideLoader();
+    }
+  };
+
+  const handleToggleChange = (specificationId:string, state:string) => {
+    showLoader();
+    const newState =
+      state === "specification.status.active"
+        ? "specification.status.inactive"
+        : "specification.status.active";
+
+        SpecificationAPI.changeState(specificationId, newState)
+      .then((res) => {
+        hideLoader();
+
+        let temp = specifications;
+        const idx = temp.findIndex((t) => t.id === specificationId);
+        temp[idx] = res.data;
+        
+        setSpecifications(temp);
+        console.log(res);
+      })
+      .catch((error) => {
+        throw error;
+      });
+  };
 
   const helper = () => {
     return (
@@ -59,8 +104,8 @@ const ComponentSpecification: React.FC = () => {
                         </span>
                       )}
                       <Switch
-                        defaultChecked={true}
-                        // onChange={(checked) => handleToggleChange(specification.id, checked)}
+                        defaultChecked={specification?.state === "specification.status.active"}
+                        onChange={(checked) => handleToggleChange(specification.id, specification.state)}
                         checkedChildren="ACTIVE"
                         unCheckedChildren="INACTIVE"
                       />
@@ -97,35 +142,6 @@ const ComponentSpecification: React.FC = () => {
   const onChange = (key: string) => {
     setActiveTab(key);
     fetchData(key === "2");
-  };
-
-  const handleEdit = (specificationId: string) => {
-    if (activeTab === "2") {
-      navigate(`/dashboard/manual-testcases/${specificationId}`, {
-        state: {
-          specificationId,
-          componentId,
-          name,
-        },
-      });
-    }
-  };
-
-  const fetchData = async (manual: boolean) => {
-    showLoader();
-    try {
-      const resp: SpecificationDTO =
-        await SpecificationAPI.getSpecificationsByComponentId(
-          componentId,
-          manual
-        );
-      setSpecifications(resp.content);
-    } catch (error) {
-      console.error("Error fetching specifications:", error);
-      setSpecifications(undefined);
-    } finally {
-      hideLoader();
-    }
   };
 
   return (

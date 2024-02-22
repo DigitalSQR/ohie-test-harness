@@ -16,4 +16,15 @@ export const SpecificationAPI = {
       throw error;
     }
   },
+  changeState: async function (specificationId, changeState) {
+    try {
+      const response = await api.request({
+        url: `/specification/state/${specificationId}/${changeState}`,
+        method: "PATCH",
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
