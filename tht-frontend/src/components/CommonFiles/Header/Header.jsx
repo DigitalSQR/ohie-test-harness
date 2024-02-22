@@ -5,11 +5,14 @@ import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLE_NAMES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 import { log_out } from "../../../reducers/authReducer";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { getHighestPriorityRole } from "../../../utils/utils";
 
 export default function Header({ headerContent }) {
   const [userInfo, setUserInfo] = useState();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
@@ -35,10 +38,28 @@ export default function Header({ headerContent }) {
                 <i className="bi bi-chevron-down"></i>
               </span>
               <span className="font-size-12">
-                {USER_ROLE_NAMES[userInfo?.roleIds[0]]}
+                {userInfo ? getHighestPriorityRole(userInfo) : ""}
               </span>
             </div>
             <ul className="dropdown-menu">
+              <li
+                onClick={() => {
+                  navigate("/dashboard/user-profile");
+                }}
+              >
+                <a className="dropdown-item" href="#">
+                  Update Profile
+                </a>
+              </li>
+              <li
+                onClick={() => {
+                  navigate("/dashboard/reset-password");
+                }}
+              >
+                <a className="dropdown-item" href="#">
+                  Reset Password
+                </a>
+              </li>
               <li
                 onClick={() => {
                   dispatch(log_out());

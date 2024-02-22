@@ -172,30 +172,31 @@ export default function Sidebar() {
             </li>
           </>
         )}
-        {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
-          <Fragment>
-            {" "}
-            <li>
-              <a
-                className={
-                  activeMenuItem === "/dashboard/testing-requests"
-                    ? "active menu-like-item"
-                    : "menu-like-item"
-                }
-                onClick={() =>
-                  handleMenuItemClick("/dashboard/testing-requests")
-                }
-              >
-                <i
-                  aria-label="Testing Requests"
-                  title="Testing Requests"
-                  className="bi bi-file-earmark-plus menu-left-icon"
-                ></i>
-                <span> Testing Requests</span>
-              </a>
-            </li>
-          </Fragment>
-        )}
+        {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) &&
+          !user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+            <Fragment>
+              {" "}
+              <li>
+                <a
+                  className={
+                    activeMenuItem === "/dashboard/testing-requests"
+                      ? "active menu-like-item"
+                      : "menu-like-item"
+                  }
+                  onClick={() =>
+                    handleMenuItemClick("/dashboard/testing-requests")
+                  }
+                >
+                  <i
+                    aria-label="Testing Requests"
+                    title="Testing Requests"
+                    className="bi bi-file-earmark-plus menu-left-icon"
+                  ></i>
+                  <span> Testing Requests</span>
+                </a>
+              </li>
+            </Fragment>
+          )}
         {/*   {user?.roleIds?.includes("role.admin") && (
           <li>
             <a

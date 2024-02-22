@@ -4,7 +4,8 @@ const initialState = {
   state: null,
   name: null,
   email: null,
-  roleIds: null
+  roleIds: null,
+  companyName:null
 };
 
 const userSlice = createSlice({
@@ -18,7 +19,7 @@ const userSlice = createSlice({
         state.name = payload.name;
         state.email = payload.email;
         state.roleIds = payload.roleIds;
-
+        state.companyName=payload.companyName;
       }
     }
 });
