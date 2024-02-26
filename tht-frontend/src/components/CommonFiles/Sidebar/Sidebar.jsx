@@ -1,12 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { log_out } from "../../../reducers/authReducer";
-import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
-import { clearAuthInfo } from "../../../api/configs/axiosConfigs";
 import "./_sidebar.scss";
 import logo from "../../../styles/images/logo-white.png";
 import { Fragment, useEffect, useState } from "react";
-import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 import { set_header } from "../../../reducers/homeReducer";
@@ -87,7 +83,8 @@ export default function Sidebar() {
             <span> Dashboard </span>
           </a>
         </li>
-        {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+        {(user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+          user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)) && (
           <>
             <li>
               <a
@@ -110,27 +107,31 @@ export default function Sidebar() {
                 <span> Assessees </span>
               </a>
             </li>
-            <li>
-              <a
-                className={
-                  activeMenuItem === "/dashboard/admin-users"
-                    ? "active menu-like-item"
-                    : "menu-like-item"
-                }
-                onClick={() => {
-                  handleMenuItemClick("/dashboard/admin-users");
-                  dispatch(set_header("Assessee"));
-                }}
-              >
-                <i
-                  aria-label="User"
-                  title="User"
-                  className="bi bi-person menu-left-icon"
-                ></i>
 
-                <span> User Management </span>
-              </a>
-            </li>
+            {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+              <li>
+                <a
+                  className={
+                    activeMenuItem === "/dashboard/admin-users"
+                      ? "active menu-like-item"
+                      : "menu-like-item"
+                  }
+                  onClick={() => {
+                    handleMenuItemClick("/dashboard/admin-users");
+                    dispatch(set_header("Assessee"));
+                  }}
+                >
+                  <i
+                    aria-label="User"
+                    title="User"
+                    className="bi bi-person menu-left-icon"
+                  ></i>
+
+                  <span> User Management </span>
+                </a>
+              </li>
+            )}
+
             <li>
               <a
                 className={
@@ -171,26 +172,29 @@ export default function Sidebar() {
                 <span> Applications </span>
               </a>
             </li>
-            <li>
-              <a
-                className={
-                  activeMenuItem === "/dashboard/testcase-config"
-                    ? "active menu-like-item"
-                    : "menu-like-item"
-                }
-                onClick={() => {
-                  handleMenuItemClick("/dashboard/testcase-config");
-                  dispatch(set_header("Components"));
-                }}
-              >
-                <i
-                  aria-label="Testcase Config"
-                  title="Testcase Config"
-                  className="bi bi-file-earmark-bar-graph menu-left-icon"
-                ></i>
-                <span> TestCase Config </span>
-              </a>
-            </li>
+
+            {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+              <li>
+                <a
+                  className={
+                    activeMenuItem === "/dashboard/testcase-config"
+                      ? "active menu-like-item"
+                      : "menu-like-item"
+                  }
+                  onClick={() => {
+                    handleMenuItemClick("/dashboard/testcase-config");
+                    dispatch(set_header("Components"));
+                  }}
+                >
+                  <i
+                    aria-label="Testcase Config"
+                    title="Testcase Config"
+                    className="bi bi-file-earmark-bar-graph menu-left-icon"
+                  ></i>
+                  <span> TestCase Config </span>
+                </a>
+              </li>
+            )}
           </>
         )}
         {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) &&
@@ -218,39 +222,6 @@ export default function Sidebar() {
               </li>
             </Fragment>
           )}
-        {/*   {user?.roleIds?.includes("role.admin") && (
-          <li>
-            <a
-              className={
-                activeMenuItem === "/dashboard/admin-users"
-                  ? "active menu-like-item"
-                  : "menu-like-item"
-              }
-              onClick={() => handleMenuItemClick("/dashboard/admin-users")}
-            >
-              <i className="bi bi-columns-gap menu-left-icon  "></i>
-              <span> Admin Users</span>
-            </a>
-          </li>
-        )}
-      */}
-        {/* <li>
-          <a
-            className="menu-like-item"
-            onClick={() => {
-              dispatch(log_out());
-            }}
-            aria-label="Logout"
-            title="Logout"
-          >
-            <i
-              aria-label="Logout"
-              title="Logout"
-              className="bi bi-box-arrow-right menu-left-icon"
-            ></i>
-            <span> Logout </span>
-          </a>
-        </li> */}
       </ul>
     </div>
   );
