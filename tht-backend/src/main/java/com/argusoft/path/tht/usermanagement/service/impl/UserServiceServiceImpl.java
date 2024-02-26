@@ -82,15 +82,14 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     @Timed(name = "getUserByEmail")
     public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
-            throws DoesNotExistException {
-        Optional<UserEntity> userOptional = userRepository.findUserByEmail(email);
-        if (!userOptional.isPresent()) {
-            LOGGER.error("caught DoesNotExistException in UserServiceServiceImpl ");
-            throw new DoesNotExistException("User by email :"
-                    + email
-                    + Constant.NOT_FOUND);
-        }
-        return userOptional.get();
+            throws DoesNotExistException, InvalidParameterException {
+
+        UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
+        userSearchCriteriaFilter.setEmail(email);
+        List<UserEntity> userEntities = this.searchUsers(userSearchCriteriaFilter, contextInfo);
+        return userEntities.stream()
+                .findFirst()
+                .orElseThrow(() -> new DoesNotExistException("User does not found with email : " + email));
     }
 
     @Override

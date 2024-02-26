@@ -55,7 +55,7 @@ public interface UserService {
             DataValidationErrorException, DoesNotExistException, MessagingException, IOException;
 
     public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
-            throws DoesNotExistException;
+            throws DoesNotExistException, InvalidParameterException;
 
     /**
      * Updates an existing User.
