@@ -16,6 +16,11 @@ export default function SignUp() {
     password: "",
     companyName: "",
   });
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      formik.handleSubmit();
+    }
+  };
   const [confirmPassword, setconfirmPassword] = useState("");
   const [captchaInfo, setCaptchaInfo] = useState({
     code: "",
@@ -187,6 +192,8 @@ export default function SignUp() {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       autoComplete="off"
+                      autoFocus={true}
+                      onKeyDown={handleKeyPress}
                     />
                   </div>
                   {formik.touched.name && formik.errors.name && (
@@ -216,6 +223,8 @@ export default function SignUp() {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       autoComplete="off"
+                      onKeyDown={handleKeyPress}
+                     
                     />
                   </div>
                   {formik.touched.email && formik.errors.email && (
@@ -244,6 +253,7 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
                       autoComplete="off"
+                      onKeyDown={handleKeyPress}
                     />
                   </div>
                   {formik.touched.companyName && formik.errors.companyName && (
@@ -274,6 +284,7 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
                       autoComplete="off"
+                      onKeyDown={handleKeyPress}
                     />
                   </div>
                   {formik.touched.password && formik.errors.password && (
@@ -299,6 +310,7 @@ export default function SignUp() {
                       aria-describedby="basic-addon1"
                       onChange={(e) => setconfirmPassword(e.target.value)}
                       autoComplete="off"
+                      onKeyDown={handleKeyPress}
                     />
                   </div>
                 </div>
@@ -332,6 +344,7 @@ export default function SignUp() {
                           aria-describedby="basic-addon1"
                           onChange={handleCaptchChange}
                           autoComplete="off"
+                          onKeyDown={handleKeyPress}
                         />
                       </div>
                     </div>
