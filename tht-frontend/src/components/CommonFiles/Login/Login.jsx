@@ -191,6 +191,7 @@ export default function Login() {
                       aria-label="Username"
                       aria-describedby="basic-addon1"
                       onKeyDown={handleKeyPress}
+                      autoFocus={true}
                     />
                     {formik.touched.username && formik.errors.username && (
                       <div
@@ -266,6 +267,7 @@ export default function Login() {
                           aria-describedby="basic-addon1"
                           onChange={handleCaptchChange}
                           autoComplete="off"
+                          onKeyDown={handleKeyPress}
                         />
                       </div>
                     </div>
