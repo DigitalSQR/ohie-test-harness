@@ -2,6 +2,7 @@ package com.argusoft.path.tht.systemconfiguration.security.custom;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -94,7 +95,7 @@ public class CustomUserDetailService implements UserDetailsService {
                         true,
                         authorities);
 
-            } catch (NumberFormatException | DoesNotExistException e) {
+            } catch (NumberFormatException | DoesNotExistException | InvalidParameterException e) {
                 LOGGER.error("caught DoesNotExistException in CustomUserDetailService ", e);
                 throw new UsernameNotFoundException("Credential are incorrect.") {
                 };
