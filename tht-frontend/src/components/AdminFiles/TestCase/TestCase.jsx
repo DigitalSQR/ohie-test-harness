@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import Options from "../Options/Options";
-import { Pagination } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
 import { Button, notification } from "antd";
 import "./testcase.scss";
@@ -213,6 +213,17 @@ export default function TestCase(props) {
 			Accepted file types: PDFs and images only.
 		</Tooltip>
 	);
+	function getStatusColor(page, type) {
+		var style = {};
+		if (page != null && (type !== "previous" && type !== "next")) {
+			if (page === currentTestcaseIndex) {
+				style.border = "2px solid #1976d2";
+			} if (currentSpecification.childTestcaseResults[page]?.state === "testcase.result.status.finished") {
+				style.backgroundColor = "#a7ffa7";
+			}
+		}
+		return style;
+	}
 
 	return (
 		<Fragment>
@@ -351,13 +362,17 @@ export default function TestCase(props) {
 			</div>
 			<div className="display">
 				<Pagination
-				className="pagination"
+					className="pagination"
 					count={currentSpecification.childTestcaseResults.length}
 					page={currentTestcaseIndex + 1}
-					color="primary"
 					onChange={handlePageChange}
+					renderItem={(item) => (
+						<PaginationItem
+							{...item}
+							style={getStatusColor(item.page-1,item.type)}
+						/>
+					)}
 				/>
-				{/* <button></button> */}
 			</div>
 		</Fragment>
 	);
