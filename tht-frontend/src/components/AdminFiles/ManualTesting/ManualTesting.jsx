@@ -15,7 +15,11 @@ import TestCase from "../TestCase/TestCase";
 import WebSocketService from "../../../api/WebSocketService";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useLoader } from "../../loader/LoaderContext";
+
+import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody} from '@coreui/react';
+
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
+import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
 import { set_header } from "../../../reducers/homeReducer";
 
 export default function ManualTesting() {
@@ -28,7 +32,10 @@ export default function ManualTesting() {
 	const [currentTestcase, setCurrentTestcase] = useState();
 	const [testcaseResults, setTestcaseResults] = useState();
 	const [testcaseRequestResult, setTestcaseRequestResult] = useState();
-	const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
+  const [finishedTestCasesCount, setFinishedTestCasesCount] = useState(0);
+  const [totalTestCasesCount, setTotalTestCasesCount] = useState(0);
+  const [openComponentIndex, setOpenComponentIndex] = useState(-1);
+	var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
 	const { showLoader, hideLoader } = useLoader();
   const dispatch = useDispatch();
 	const { Item } = Tabs;
@@ -40,6 +47,8 @@ export default function ManualTesting() {
 			const res = await TestResultAPI.getTestCases(testRequestId);
 			const testcaseResults = [];
 			let testcaseRequestResult;
+      setTotalTestCasesCount(0);
+      setFinishedTestCasesCount(0);
 			for (let item of res.content) {
 				const testcaseResult = await TestResultAPI.getTestcaseResultStatus(item.id, { manual: true });
 				if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
@@ -49,6 +58,10 @@ export default function ManualTesting() {
 					testcaseResult.childTestcaseResults = [];
 					testcaseResults[testcaseResults.length - 1].childTestcaseResults.push(testcaseResult);
 				} else if (testcaseResult.refObjUri === RefObjUriConstants.TESTCASE_REFOBJURI) {
+            setTotalTestCasesCount(prevCount => prevCount + 1);
+            if (testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
+              setFinishedTestCasesCount(prevFinishedCount => prevFinishedCount + 1);
+            }
 					testcaseResults[testcaseResults.length - 1]
 						.childTestcaseResults[testcaseResults[testcaseResults.length - 1].childTestcaseResults.length - 1]
 						.childTestcaseResults
@@ -78,47 +91,59 @@ export default function ManualTesting() {
 		};
 	}, []);
 
-	useEffect(() => {
-		if (stompClient && stompClient.connected && !!testcaseResults) {
-			// Close the connection once the request is finished
-			var destination = '/testcase-result/' + testcaseRequestResult.id;
-			stompClient.subscribe(destination, (msg) => {
-				const parsedTestcaseResult = JSON.parse(msg.body);
-				setTestcaseRequestResult(parsedTestcaseResult);
-				if (parsedTestcaseResult?.state === "testcase.result.status.finished") {
-					webSocketDisconnect();
-				}
-			});
+  useEffect(() => {
+    if (stompClient && stompClient.connected && !!testcaseResults) {
+      // Close the connection once the request is finished
+      var destination = '/testcase-result/' + testcaseRequestResult.id;
+      stompClient.subscribe(destination, (msg) => {
+        const parsedTestcaseResult = JSON.parse(msg.body);
+        setTestcaseRequestResult(parsedTestcaseResult);
+        if (parsedTestcaseResult?.state === "testcase.result.status.finished") {
+          webSocketDisconnect();
+        }
+      });
 
-			// Recieve message when the manual testcase result item is finished
-			testcaseResults.forEach((component, componentIndex) => {
-				// Listener for the component
-				destination = '/testcase-result/' + component.id;
-				var componentSubscription = stompClient.subscribe(destination, (msg) => {
-					const parsedComponentTestcaseResult = JSON.parse(msg.body);
-					parsedComponentTestcaseResult.childTestcaseResults = component.childTestcaseResults;
-					testcaseResults[componentIndex] = parsedComponentTestcaseResult;
-					setTestcaseResults(testcaseResults);
-					if (parsedComponentTestcaseResult?.state === "testcase.result.status.finished") {
-						componentSubscription.unsubscribe();
-					}
-				});
-				component.childTestcaseResults.forEach((specification, specificationIndex) => {
-					// Listener for the specification
-					destination = '/testcase-result/' + specification.id;
-					var specificationSubscription = stompClient.subscribe(destination, (msg) => {
-						const parsedSpecificationTestcaseResult = JSON.parse(msg.body);
-						parsedSpecificationTestcaseResult.childTestcaseResults = specification.childTestcaseResults;
-						testcaseResults[componentIndex].childTestcaseResults[specificationIndex] = parsedSpecificationTestcaseResult;
-						setTestcaseResults(testcaseResults);
-						if (parsedSpecificationTestcaseResult?.state === "testcase.result.status.finished") {
-							specificationSubscription.unsubscribe();
-						}
-					});
-				});
-			});
-		}
-	}, [stompClient]);
+      // Recieve message when the manual testcase result item is finished
+      testcaseResults.forEach((component, componentIndex) => {
+        // Listener for the component
+        destination = '/testcase-result/' + component.id;
+        var componentSubscription = stompClient.subscribe(destination, (msg) => {
+          const parsedComponentTestcaseResult = JSON.parse(msg.body);
+          parsedComponentTestcaseResult.childTestcaseResults = component.childTestcaseResults;
+          testcaseResults[componentIndex] = parsedComponentTestcaseResult;
+          setTestcaseResults(testcaseResults);
+          if (parsedComponentTestcaseResult?.state === "testcase.result.status.finished") {
+            componentSubscription.unsubscribe();
+          }
+        });
+        component.childTestcaseResults.forEach((specification, specificationIndex) => {
+          // Listener for the specification
+          destination = '/testcase-result/' + specification.id;
+          var specificationSubscription = stompClient.subscribe(destination, (msg) => {
+            const parsedSpecificationTestcaseResult = JSON.parse(msg.body);
+            parsedSpecificationTestcaseResult.childTestcaseResults = specification.childTestcaseResults;
+            testcaseResults[componentIndex].childTestcaseResults[specificationIndex] = parsedSpecificationTestcaseResult;
+            setTestcaseResults(testcaseResults);
+            if (parsedSpecificationTestcaseResult?.state === "testcase.result.status.finished") {
+              specificationSubscription.unsubscribe();
+            }
+          });
+          specification.childTestcaseResults.forEach((testcase, testcaseIndex) => {
+            // Listener for the test case
+            destination = '/testcase-result/' + testcase.id;
+            var testcaseSubscription = stompClient.subscribe(destination, (msg) => {
+              const parsedTestcaseResult = JSON.parse(msg.body);
+              testcaseResults[componentIndex].childTestcaseResults[specificationIndex].childTestcaseResults[testcaseIndex] = parsedTestcaseResult;
+              setTestcaseResults(testcaseResults);
+              if (parsedTestcaseResult?.state === "testcase.result.status.finished") {
+                testcaseSubscription.unsubscribe();
+              }
+            });
+          });
+        });
+      });
+    }
+  }, [stompClient]);
 
 	useEffect(() => {
 		if (!!testcaseResults && !currentComponentIndex) {
@@ -151,12 +176,12 @@ export default function ManualTesting() {
     return (
       currentComponentIndex === testcaseResults.length - 1 &&
       currentTestcaseIndex ===
-        testcaseResults[currentComponentIndex].childTestcaseResults[
-          currentSpecificationIndex
-        ].childTestcaseResults.length -
-          1 &&
+      testcaseResults[currentComponentIndex].childTestcaseResults[
+        currentSpecificationIndex
+      ].childTestcaseResults.length -
+      1 &&
       currentSpecificationIndex ===
-        testcaseResults[currentComponentIndex].childTestcaseResults.length - 1
+      testcaseResults[currentComponentIndex].childTestcaseResults.length - 1
     );
   };
 
@@ -191,13 +216,19 @@ export default function ManualTesting() {
     setCurrentTestcaseIndex(testcaseIndex);
   };
 
+  const selectParticularTestCase = (componentIndex, specificationIndex, testcaseIndex) => {
+    selectComponent(componentIndex);
+    selectSpecification(specificationIndex, componentIndex);
+    selectTestcase(testcaseIndex, specificationIndex, componentIndex);
+  }
+
   const selectNextTestcase = () => {
     if (
       currentTestcaseIndex ===
       testcaseResults[currentComponentIndex].childTestcaseResults[
         currentSpecificationIndex
       ].childTestcaseResults.length -
-        1
+      1
     ) {
       selectNextSpecification();
     } else {
@@ -236,6 +267,7 @@ export default function ManualTesting() {
 
 
 	return !!testcaseResults && !!currentComponent && (
+    <>
 		<div id="wrapper" className="stepper-wrapper">
 			<div class="bcca-breadcrumb">
 				<div class="bcca-breadcrumb-item">Manual Testing</div>
@@ -277,6 +309,59 @@ export default function ManualTesting() {
 						);
 					})}
 			</Select>
+
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="manualTesting" aria-labelledby="manualTestingLabel">
+            <div class="offcanvas-header">
+              <div class="offcanvas-title">
+                <h5 id="manualTestingLabel">Manual Testing </h5>
+                <div class="answeredQuest">
+                  <h6> {finishedTestCasesCount}/{totalTestCasesCount} </h6>
+                </div>
+              </div>
+
+              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+              <CAccordion activeItemKey={openComponentIndex}>
+
+                {testcaseResults.map((component, outerIndex) => (
+                  <div key={outerIndex}>
+                    <CAccordionItem itemKey={outerIndex} key={outerIndex}>
+                      <CAccordionHeader className="component-header">
+                        {component.name}
+                        {component.state === "testcase.result.status.finished" && (
+                          <>&nbsp;<i style={{ color: "green" }} className="bi bi-check-circle-fill"></i></>
+                        )
+                        }
+
+                      </CAccordionHeader>
+                      <CAccordionBody>
+                        <div>
+                          {component.childTestcaseResults.map((specification, innerIndex) => (
+                            <div key={innerIndex}>
+                              <div className="specification-header"> {specification.name}</div>
+                              {specification.childTestcaseResults.map((testcase, index) => (
+                                <span key={index}>
+                                  <button
+                                    onClick={() => selectParticularTestCase(outerIndex, innerIndex, index)}
+                                    className={`round-span ${testcase.state === "testcase.result.status.finished" ? "round-span-success" : ""}`}
+                                  >
+                                    {index + 1}
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      </CAccordionBody>
+                    </CAccordionItem>
+
+                  </div>
+                ))}
+
+              </CAccordion>
+            </div>
+          </div>
 			{!!currentSpecification && (
 				<Tabs
 					activeKey={currentSpecificationIndex.toString()}
@@ -305,11 +390,19 @@ export default function ManualTesting() {
 								selectNextTestcase={selectNextTestcase}
 								refreshCurrentTestcase={refreshCurrentTestcase}
 								isLastQuestion={isLastQuestion}
+                setFinishedTestCasesCount={setFinishedTestCasesCount}
 							></TestCase>
 						</Item>
 					))}
 				</Tabs>
 			)}
 		</div>
+    
+    <div className="fixed-button">
+      <button data-bs-toggle="offcanvas" href="#manualTesting" aria-controls="manualTesting">{finishedTestCasesCount}/{totalTestCasesCount}</button>
+    </div>
+    </>
+
 	);
 }
+
