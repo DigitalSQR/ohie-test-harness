@@ -163,7 +163,7 @@ const TestingRequests = () => {
               <div className="d-flex align-items-baseline justify-content-end">
                 <button
                   onClick={() => {
-                    navigate("/dashboard/register-application");
+                    navigate("/register-application");
                   }}
                   type="button"
                   className="btn btn-sm btn-outline-secondary menu-like-item"

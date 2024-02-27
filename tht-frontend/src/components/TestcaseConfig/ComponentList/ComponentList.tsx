@@ -19,7 +19,7 @@ const ComponentList: React.FC = () => {
   const dispatch = useDispatch();
   const handleUpdate = (componentId: string, name: string) => {
     console.log(componentId);
-    navigate(`/dashboard/component-specification/${componentId}`, {
+    navigate(`/component-specification/${componentId}`, {
       state: {
         name,
         componentId,

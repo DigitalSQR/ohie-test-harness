@@ -89,12 +89,12 @@ export default function Sidebar() {
             <li>
               <a
                 className={
-                  activeMenuItem === "/dashboard/assessee"
+                  activeMenuItem === "/assessee"
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }
                 onClick={() => {
-                  handleMenuItemClick("/dashboard/assessee");
+                  handleMenuItemClick("/assessee");
                   dispatch(set_header("Assessee"));
                 }}
               >
@@ -112,12 +112,12 @@ export default function Sidebar() {
               <li>
                 <a
                   className={
-                    activeMenuItem === "/dashboard/admin-users"
+                    activeMenuItem === "/admin-users"
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
                   onClick={() => {
-                    handleMenuItemClick("/dashboard/admin-users");
+                    handleMenuItemClick("/admin-users");
                     dispatch(set_header("Assessee"));
                   }}
                 >
@@ -135,12 +135,12 @@ export default function Sidebar() {
             <li>
               <a
                 className={
-                  activeMenuItem === "/dashboard/testing-requests"
+                  activeMenuItem === "/testing-requests"
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }
                 onClick={() => {
-                  handleMenuItemClick("/dashboard/testing-requests");
+                  handleMenuItemClick("/testing-requests");
                   dispatch(set_header("Testing Requests"));
                 }}
               >
@@ -155,12 +155,12 @@ export default function Sidebar() {
             <li>
               <a
                 className={
-                  activeMenuItem === "/dashboard/applications"
+                  activeMenuItem === "/applications"
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }
                 onClick={() => {
-                  handleMenuItemClick("/dashboard/applications");
+                  handleMenuItemClick("/applications");
                   dispatch(set_header("Applications"));
                 }}
               >
@@ -177,12 +177,12 @@ export default function Sidebar() {
               <li>
                 <a
                   className={
-                    activeMenuItem === "/dashboard/testcase-config"
+                    activeMenuItem === "/testcase-config"
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
                   onClick={() => {
-                    handleMenuItemClick("/dashboard/testcase-config");
+                    handleMenuItemClick("/testcase-config");
                     dispatch(set_header("Components"));
                   }}
                 >
@@ -204,12 +204,12 @@ export default function Sidebar() {
               <li>
                 <a
                   className={
-                    activeMenuItem === "/dashboard/testing-requests"
+                    activeMenuItem === "/testing-requests"
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
                   onClick={() =>
-                    handleMenuItemClick("/dashboard/testing-requests")
+                    handleMenuItemClick("/testing-requests")
                   }
                 >
                   <i

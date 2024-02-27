@@ -217,7 +217,7 @@ const EditQuestion = () => {
         <div
           className="bcca-breadcrumb-item"
           onClick={() =>
-            handleSave(`/dashboard/manual-testcases/${testcase.testcase.id}`, {
+            handleSave(`/manual-testcases/${testcase.testcase.id}`, {
               name,
               componentId,
               specificationId: testcase.testcase.specificationId,
@@ -229,7 +229,7 @@ const EditQuestion = () => {
         <div
           className="bcca-breadcrumb-item"
           onClick={() =>
-            handleClick(`/dashboard/component-specification/${componentId}`, {
+            handleClick(`/component-specification/${componentId}`, {
               name,
               componentId,
             })
@@ -241,7 +241,7 @@ const EditQuestion = () => {
         <div
           className="bcca-breadcrumb-item"
           onClick={() => {
-            navigate("/dashboard/testcase-config");
+            navigate("/testcase-config");
           }}
         >
           Components

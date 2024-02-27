@@ -83,7 +83,7 @@ const AdminUsers = () => {
   };
 
   const handleEdit = (userId) => {
-    navigate(`/dashboard/admin-users/update-admin-user?userId=${userId}`);
+    navigate(`/admin-users/update-admin-user?userId=${userId}`);
   };
 
   const handleToggleChange = (userId, userState) => {
@@ -117,7 +117,7 @@ const AdminUsers = () => {
             <div className="col-auto ml-auto">
               <button
                 onClick={() => {
-                  navigate("/dashboard/admin-users/add-admin-user");
+                  navigate("/admin-users/add-admin-user");
                 }}
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"

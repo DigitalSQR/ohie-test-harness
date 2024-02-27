@@ -165,7 +165,7 @@ const ApplicationReport = () => {
                 <div>
                   <button
                     onClick={() => {
-                      navigate("/dashboard/applications");
+                      navigate("/applications");
                     }}
                     className="btn btn-link  py-2 font-size-14"
                   >

@@ -21,7 +21,7 @@ export default function WaitingPage() {
         </h6>
       
         <button onClick={ClickHandler} style={{marginLeft:'650px',border:'black'}}>Return</button>
-        <button onClick={()=>{navigate('/dashboard/user')}} style={{marginLeft:'650px',border:'black'}}> Users</button>
+        <button onClick={()=>{navigate('/user')}} style={{marginLeft:'650px',border:'black'}}> Users</button>
 
       </div>
     </Fragment>

@@ -36,14 +36,11 @@ const UserProfile = () => {
         formik.values.companyName = res.companyName;
         formik.values.email = res.email;
         formik.values.roleIds = getHighestPriorityRole(res);
-        
       })
       .catch((error) => {
         const errorMessage =
           error.response.data && error.response.data.length > 0
-            ? error.response.data
-                .map((element) => element.message)
-                .join(", ")
+            ? error.response.data.map((element) => element.message).join(", ")
             : "Unknown error occurred";
         notification.error({
           placement: "bottomRight",
@@ -183,7 +180,19 @@ const UserProfile = () => {
               </div>
             </div>
 
-            <div className="my-4 text-end">
+            {/* <div className="my-4 text-end"> */}
+            <div className="my-4" style={{ display: "flex", justifyContent: "flex-end" }}>
+
+              <button
+                className="btn btn-primary btn-white py-2 font-size-14 "
+                style={{ marginRight: "auto" }}
+                onClick={() => {
+                  navigate("/reset-password");
+                  formik.resetForm();
+                }}
+              >
+                Reset Password
+              </button>
               <button
                 className="btn btn-primary btn-white py-2 font-size-14"
                 onClick={() => {

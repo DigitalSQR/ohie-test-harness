@@ -116,7 +116,7 @@ const RegisterApplication = () => {
                 message: `Successfully Created! Waiting for Approval`,
               });
               hideLoader();
-              navigate("/dashboard/testing-requests");
+              navigate("/testing-requests");
             });
           } else {
             res.forEach((err) => {

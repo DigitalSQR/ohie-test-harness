@@ -44,20 +44,11 @@ export default function Header({ headerContent }) {
             <ul className="dropdown-menu">
               <li
                 onClick={() => {
-                  navigate("/dashboard/user-profile");
+                  navigate("/user-profile");
                 }}
               >
-                <a className="dropdown-item" href="#">
+                <a className="dropdown-item" >
                   Update Profile
-                </a>
-              </li>
-              <li
-                onClick={() => {
-                  navigate("/dashboard/reset-password");
-                }}
-              >
-                <a className="dropdown-item" href="#">
-                  Reset Password
                 </a>
               </li>
               <li

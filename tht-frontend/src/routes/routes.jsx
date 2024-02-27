@@ -32,7 +32,7 @@ const PrivateRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
 
   const isAuthenticated = !!token;
-  return isAuthenticated ? <Dashboard /> : <Navigate to="/login" />;
+  return isAuthenticated ? <Landing /> : <Navigate to="/login" />;
 };
 
 const routes = createBrowserRouter([
@@ -51,11 +51,11 @@ const routes = createBrowserRouter([
     path: "/email/verify/:base64UserEmail/:base64TokenId",
     element: <EmailVerified />,
   },
-  {
-    path: "/dashboard",
+  {//TODO: Move header, footer and sidebar to landing and remove from dashboard
+    path: "/",
     element: <PrivateRoute />,
     children: [
-      { path: "", element: <Landing /> },
+      { path: "dashboard", element: <Dashboard /> },
       { path: "testing-requests", element: <TestingRequests /> },
       { path: "applications", element: <Applications /> },
       { path: "choose-test/:testRequestId", element: <ChooseTest /> },
@@ -84,7 +84,7 @@ const routes = createBrowserRouter([
       {path:"reset-password",element:<ResetPassword/>}
     ],
   },
-  { path: "/", element: <Navigate to="/login" /> },
+  { path: "", element: <Navigate to="/login" /> },
 ]);
 
 export default routes;

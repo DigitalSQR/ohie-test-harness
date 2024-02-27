@@ -222,7 +222,7 @@ export default function ManualTesting() {
 
   const selectNextComponent = () => {
     if (currentComponentIndex === testcaseResults.length - 1) {
-      navigate(`/dashboard/choose-test/${testRequestId}`);
+      navigate(`/choose-test/${testRequestId}`);
     } else {
       selectComponent(currentComponentIndex + 1);
     }
@@ -239,8 +239,8 @@ export default function ManualTesting() {
 		<div id="wrapper" className="stepper-wrapper">
 			<div class="bcca-breadcrumb">
 				<div class="bcca-breadcrumb-item">Manual Testing</div>
-				<div class="bcca-breadcrumb-item" onClick={()=>{navigate(`/dashboard/choose-test/${testRequestId}`)}}>{testcaseName}</div>
-				<div class="bcca-breadcrumb-item" onClick={()=>{navigate(`/dashboard/applications`)}}>Applications</div>
+				<div class="bcca-breadcrumb-item" onClick={()=>{navigate(`/choose-test/${testRequestId}`)}}>{testcaseName}</div>
+				<div class="bcca-breadcrumb-item" onClick={()=>{navigate(`/applications`)}}>Applications</div>
 			</div>
 			<span>
 				<b>Component  </b>
