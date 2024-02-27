@@ -33,6 +33,19 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     @JoinColumn(name = "specification_id")
     private SpecificationEntity specification;
 
+    public TestcaseEntity() {
+    }
+
+    public TestcaseEntity(TestcaseEntity testcaseEntity) {
+        super(testcaseEntity);
+        this.setRank(testcaseEntity.getRank());
+        this.setManual(testcaseEntity.getManual());
+        this.setBeanName(testcaseEntity.getBeanName());
+        if(testcaseEntity.getSpecification()!=null){
+            this.setSpecification(new SpecificationEntity(testcaseEntity.getSpecification()));
+        }
+    }
+
     public Integer getRank() {
         return rank;
     }

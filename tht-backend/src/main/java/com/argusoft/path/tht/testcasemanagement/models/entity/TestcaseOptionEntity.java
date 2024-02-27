@@ -25,6 +25,19 @@ public class TestcaseOptionEntity extends IdStateNameMetaEntity {
     @JoinColumn(name = "testcase_id")
     private TestcaseEntity testcase;
 
+    public TestcaseOptionEntity(TestcaseOptionEntity testcaseOptionEntity) {
+        super(testcaseOptionEntity);
+        this.setRank(testcaseOptionEntity.getRank());
+        this.setSuccess(testcaseOptionEntity.getSuccess());
+        if(testcaseOptionEntity.getTestcase()!=null){
+            this.setTestcase(new TestcaseEntity(testcaseOptionEntity.getTestcase()));
+        }
+
+    }
+
+    public TestcaseOptionEntity() {
+    }
+
     public Integer getRank() {
         return rank;
     }

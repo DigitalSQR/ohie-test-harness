@@ -7,6 +7,7 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This model is mapped to user table in database.
@@ -24,6 +25,15 @@ public class ComponentEntity extends IdStateNameMetaEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "component", cascade = {})
     private Set<SpecificationEntity> specifications;
+
+    public ComponentEntity() {
+    }
+
+    public ComponentEntity(ComponentEntity componentEntity) {
+        super(componentEntity);
+        this.setRank(componentEntity.getRank());
+
+    }
 
     public Integer getRank() {
         return rank;

@@ -56,6 +56,17 @@ public class MetaEntity {
     @Column(name = "version")
     private Long version;
 
+    public MetaEntity() {
+    }
+
+    public MetaEntity(MetaEntity metaEntity) {
+        this.setCreatedAt(metaEntity.getCreatedAt());
+        this.setUpdatedAt(metaEntity.getUpdatedAt());
+        this.setCreatedBy(metaEntity.getCreatedBy());
+        this.setUpdatedBy(metaEntity.getUpdatedBy());
+        this.setVersion(metaEntity.getVersion());
+    }
+
     public Date getCreatedAt() {
         return createdAt;
     }

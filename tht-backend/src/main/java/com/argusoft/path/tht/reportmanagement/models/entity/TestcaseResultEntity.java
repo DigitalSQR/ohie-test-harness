@@ -74,6 +74,37 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Transient
     private String grade;
 
+    public TestcaseResultEntity() {
+    }
+
+    public TestcaseResultEntity(TestcaseResultEntity testcaseResultEntity) {
+        super(testcaseResultEntity);
+        this.setRank(testcaseResultEntity.getRank());
+        this.setRefObjUri(testcaseResultEntity.getRefObjUri());
+        this.setRefId(testcaseResultEntity.getRefId());
+        this.setMessage(testcaseResultEntity.getMessage());
+        this.setHasSystemError(testcaseResultEntity.getHasSystemError());
+        this.setDuration(testcaseResultEntity.getDuration());
+        this.setGrade(testcaseResultEntity.getGrade());
+        this.setSuccess(testcaseResultEntity.getSuccess());
+        this.setManual(testcaseResultEntity.getManual());
+        this.setRequired(testcaseResultEntity.getRequired());
+        this.setAutomated(testcaseResultEntity.getAutomated());
+        this.setRecommended(testcaseResultEntity.getRecommended());
+        this.setWorkflow(testcaseResultEntity.getWorkflow());
+        this.setFunctional(testcaseResultEntity.getFunctional());
+
+        if (testcaseResultEntity.getTester() != null) {
+            this.setTester(new UserEntity(testcaseResultEntity.getTester()));
+        }
+        if (testcaseResultEntity.getParentTestcaseResult() != null) {
+            this.setParentTestcaseResult(new TestcaseResultEntity(testcaseResultEntity.getParentTestcaseResult()));
+        }
+        if (testcaseResultEntity.getTestRequest() != null) {
+            this.setTestRequest(new TestRequestEntity(testcaseResultEntity.getTestRequest()));
+        }
+    }
+
     public Integer getRank() {
         return rank;
     }

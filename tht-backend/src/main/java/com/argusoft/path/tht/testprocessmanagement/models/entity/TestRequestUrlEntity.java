@@ -38,6 +38,21 @@ public class TestRequestUrlEntity implements Serializable {
     @Column(name = "fhir_version")
     private String fhirVersion;
 
+    public TestRequestUrlEntity() {
+
+    }
+
+    public TestRequestUrlEntity(TestRequestUrlEntity testRequestUrlEntity) {
+        this.setTestRequestId(testRequestUrlEntity.getTestRequestId());
+        if(testRequestUrlEntity.getComponent()!=null){
+            this.setComponent(new ComponentEntity(testRequestUrlEntity.getComponent()));
+        }
+        this.setBaseUrl(testRequestUrlEntity.getBaseUrl());
+        this.setUsername(testRequestUrlEntity.getUsername());
+        this.setPassword(testRequestUrlEntity.getPassword());
+        this.setFhirVersion(testRequestUrlEntity.getFhirVersion());
+    }
+
     public String getTestRequestId() {
         return testRequestId;
     }

@@ -7,6 +7,7 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This model is mapped to specification table in database.
@@ -32,6 +33,20 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "specification", cascade = {})
     private Set<TestcaseEntity> testcases;
+
+    public SpecificationEntity() {
+    }
+
+    public SpecificationEntity(SpecificationEntity specificationEntity) {
+        super(specificationEntity);
+        this.setRank(specificationEntity.getRank());
+        this.setFunctional(specificationEntity.getFunctional());
+        if(specificationEntity.getComponent()!=null){
+            this.setComponent(new ComponentEntity(specificationEntity.getComponent()));
+        }
+        this.setTestcases(specificationEntity.getTestcases().stream().map(TestcaseEntity::new).collect(Collectors.toSet()));
+        this.setRequired(specificationEntity.getRequired());
+    }
 
     public Boolean getFunctional() {
         return isFunctional;

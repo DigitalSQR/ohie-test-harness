@@ -20,6 +20,13 @@ public class IdEntity {
     @Column(name = "id")
     private String id;
 
+    public IdEntity() {
+    }
+
+    public IdEntity(IdEntity idEntity) {
+        this.setId(idEntity.getId());
+    }
+
     public String getId() {
         return id;
     }

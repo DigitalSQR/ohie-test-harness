@@ -278,7 +278,15 @@ public class TestRequestValidator {
             try {
                 UserEntity userEntity = userService.getUserById(testRequestEntity.getAssessee().getId(), contextInfo);
                 if (userEntity.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))) {
-                    testRequestEntity.setAssessee(userEntity);
+                    if(userEntity.getState().equals("user.status.active")) {
+                        testRequestEntity.setAssessee(userEntity);
+                    }
+                    else {
+                        errors.add(
+                                new ValidationResultInfo(fieldName,
+                                        ErrorLevel.ERROR,
+                                        "The id supplied for the assessee does not have active state"));
+                    }
                 } else {
                     errors.add(
                             new ValidationResultInfo(fieldName,
