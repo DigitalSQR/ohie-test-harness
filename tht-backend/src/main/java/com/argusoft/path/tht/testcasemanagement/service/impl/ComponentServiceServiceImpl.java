@@ -15,9 +15,7 @@ import com.argusoft.path.tht.testcasemanagement.repository.ComponentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.validator.ComponentValidator;
-import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Multimap;
-import io.astefanutti.metrics.aspectj.Metrics;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -48,7 +46,6 @@ import java.util.UUID;
  * @author Dhruv
  */
 @Service
-@Metrics(registry = "ComponentServiceServiceImpl")
 public class ComponentServiceServiceImpl implements ComponentService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ComponentServiceServiceImpl.class);
@@ -65,7 +62,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    @Timed(name = "createComponent")
     // @Caching(evict = {
     //         @CacheEvict(value = "searchComponents", allEntries = true),
     //         @CacheEvict(value = "searchComponentsList", allEntries = true),
@@ -100,7 +96,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    @Timed(name = "updateComponent")
     // @Caching(
     //         evict = {
     //                 @CacheEvict(value = "searchComponents", allEntries = true),
@@ -137,7 +132,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    @Timed(name = "searchComponents")
     // @Cacheable(value = "searchComponents", key = "{ #componentCriteriaSearchFilter, #pageable }")
     public Page<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
@@ -149,7 +143,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
-    @Timed(name = "searchComponentsList")
     // @Cacheable(value = "searchComponentsList", key = "#componentCriteriaSearchFilter")
     public List<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
@@ -165,7 +158,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    @Timed(name = "getComponentById")
     // @Cacheable(value = "getComponentById", key = "#componentId")
     public ComponentEntity getComponentById(String componentId,
                                             ContextInfo contextInfo)
@@ -185,7 +177,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * {@inheritdoc}
      */
     @Override
-    @Timed(name = "validateComponent")
     public List<ValidationResultInfo> validateComponent(
             String validationTypeKey,
             ComponentEntity componentEntity,
@@ -204,7 +195,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
-    // @Timed(name = "changeState")
     // @Caching(
     //         evict = {
     //                 @CacheEvict(value = "searchComponents", allEntries = true),

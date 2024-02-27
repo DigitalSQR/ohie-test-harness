@@ -6,8 +6,6 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
-import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +34,6 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
-@Metrics(registry = "CustomUserDetailService")
 public class CustomUserDetailService implements UserDetailsService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CustomUserDetailService.class);
@@ -45,7 +42,6 @@ public class CustomUserDetailService implements UserDetailsService {
     private UserService userService;
 
     @Override
-    @Timed(name = "loadUserByUsername")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes != null) {

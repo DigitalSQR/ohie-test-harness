@@ -178,7 +178,6 @@ public class DocumentServiceImpl implements DocumentService {
         documentRepository.saveAndFlush(document);
         return document;
     }
-
     private List<DocumentEntity> getDocumentsByRefObjectUriAndRefObjectId(String refObjUri, String refId, ContextInfo contextInfo) throws InvalidParameterException {
         DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
         documentCriteriaSearchFilter.setRefObjUri(refObjUri);

@@ -6,7 +6,6 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import io.astefanutti.metrics.aspectj.Metrics;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.RevisionType;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import java.util.List;
 @Service
-@Metrics(registry = "AuditServiceDaoImpl")
 public class AuditServiceImpl implements AuditService{
     public static final Logger LOGGER = LoggerFactory.getLogger(AuditServiceImpl.class);
     @Autowired

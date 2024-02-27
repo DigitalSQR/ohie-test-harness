@@ -15,9 +15,7 @@ import com.argusoft.path.tht.testcasemanagement.repository.TestcaseOptionReposit
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.TestcaseOptionValidator;
-import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Multimap;
-import io.astefanutti.metrics.aspectj.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +42,6 @@ import java.util.UUID;
  * @author Dhruv
  */
 @Service
-@Metrics(registry = "TestcaseOptionServiceServiceImpl")
 public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseOptionServiceServiceImpl.class);
@@ -61,7 +58,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
-    @Timed(name = "createTestcaseOption")
     // @Caching(evict = {
     //         @CacheEvict(value = "searchTestcaseOptions", allEntries = true),
     //         @CacheEvict(value = "searchTestcaseOptionsList", allEntries = true),
@@ -97,7 +93,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
-    @Timed(name = "updateTestcaseOption")
     // @Caching(
     //         evict = {
     //                 @CacheEvict(value = "searchTestcaseOptions", allEntries = true),
@@ -134,7 +129,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
-    @Timed(name = "searchTestcaseOptions")
     // @Cacheable(value = "searchTestcaseOptions", key = "{ #testcaseOptionCriteriaSearchFilter, #pageable }")
     public Page<TestcaseOptionEntity> searchTestcaseOptions(
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
@@ -147,7 +141,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
 
     @Override
-    @Timed(name = "searchTestcaseOptionsList")
     // @Cacheable(value = "searchTestcaseOptionsList", key = "#testcaseOptionCriteriaSearchFilter")
     public List<TestcaseOptionEntity> searchTestcaseOptions(
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
@@ -163,7 +156,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
-    @Timed(name = "getTestcaseOptionById")
     // @Cacheable(value = "getTestcaseOptionById", key = "#testcaseOptionId")
     public TestcaseOptionEntity getTestcaseOptionById(String testcaseOptionId,
                                                       ContextInfo contextInfo)
@@ -183,7 +175,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * {@inheritdoc}
      */
     @Override
-    @Timed(name = "validateTestcaseOption")
     public List<ValidationResultInfo> validateTestcaseOption(
             String validationTypeKey,
             TestcaseOptionEntity testcaseOptionEntity,
@@ -199,7 +190,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
     }
 
     @Override
-    @Timed(name = "changeState")
     // @Caching(
     //         evict = {
     //                 @CacheEvict(value = "searchTestcaseOptions", allEntries = true),
