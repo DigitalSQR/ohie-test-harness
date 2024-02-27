@@ -1278,6 +1278,38 @@ VALUES
         0
     ),
     (
+        'testcase.cr.crf.8.4.option.1',
+        'Yes, the system records and logs such user activities',
+        'Yes, the system records and logs such user activities',
+        'testcase.option.status.active',
+        1,
+        true,
+        'testcase.cr.crf.8.4',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        1,
+        0,
+        0
+    ),
+    (
+        'testcase.cr.crf.8.4.option.2',
+        'No, the system doesn''t record or log such user activities',
+        'No, the system doesn''t record or log such user activities',
+        'testcase.option.status.active',
+        2,
+        false,
+        'testcase.cr.crf.8.4',
+        'ivasiwala@argusoft.com',
+        'ivasiwala@argusoft.com',
+        Now(),
+        Now(),
+        1,
+        0,
+        0
+    ),
+    (
         'testcase.cr.crf.10.3.option.2',
         'No, the system does not retain or remember the birth order of children within a family, and does not record the sequence in which they were born for family records.',
         'No, the system does not retain or remember the birth order of children within a family, and does not record the sequence in which they were born for family records.',

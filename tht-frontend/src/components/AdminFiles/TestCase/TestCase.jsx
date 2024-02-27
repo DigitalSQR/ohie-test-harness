@@ -19,6 +19,7 @@ import {
 import question_img_logo from "../../../styles/images/question-img.png";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import {TestcaseResultStateConstants} from "../../../constants/testcaseResult_constants";
 
 export default function TestCase(props) {
 	const {
@@ -29,6 +30,7 @@ export default function TestCase(props) {
 		selectNextTestcase,
 		currentTestcaseIndex,
 		refreshCurrentTestcase,
+		setFinishedTestCasesCount,
 	} = props;
 	const { showLoader, hideLoader } = useLoader();
 	const [selectedOptions, setSelectedOptions] = useState([]);
@@ -70,6 +72,9 @@ export default function TestCase(props) {
 	const submitOptions = () => {
 		TestResultAPI.saveOptions(testcaseResult.id, selectedOptions)
 		.then((res) => {
+			if(testcaseResult.state !== TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED){
+				setFinishedTestCasesCount(prevCount => prevCount + 1);
+			}
 			refreshCurrentTestcase(res);
 			selectNextTestcase();
 		})
