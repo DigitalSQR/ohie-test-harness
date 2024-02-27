@@ -1,10 +1,39 @@
 import { Fragment, useEffect, useState } from "react";
 import openhie_logo from "../../styles/images/logo.png";
 import congratulations_icon from "../../styles/images/congratulations-icon.png";
+import { notification } from "antd";
+import { AuthenticationAPI } from "../../api/AuthenticationAPI";
 import { useNavigate, useParams } from "react-router-dom";
+import { useLoader } from "../loader/LoaderContext";
 export default function CongratulationsPage() {
+  const { showLoader, hideLoader } = useLoader();
   const navigate = useNavigate();
   const params = useParams();
+
+  const resendVerification = () => {
+    showLoader();
+    AuthenticationAPI.resendVerification(params.email)
+      .then((response) => {
+        var data = response.data;
+        notification.success({
+          placement: "bottomRight",
+          description: `${data?.message}`,
+        });
+        hideLoader();
+        navigate("/login");
+      })
+      .catch((error) => {
+        notification.error({
+          placement: "bottomRight",
+          description:
+            `${error.data.message}` !== undefined
+              ? `${error?.data?.message}`
+              : "Oops something went wrong",
+        });
+        hideLoader();
+      });
+  };
+
   return (
     <Fragment>
       <div className="container-fluid ps-0">
@@ -52,7 +81,7 @@ export default function CongratulationsPage() {
                 </p>
 
                 <p>
-                  <a className="text-blue fw-bold" href="#">
+                  <a className="text-blue fw-bold" onClick={resendVerification}>
                     RESEND
                   </a>{" "}
                   Verification link.

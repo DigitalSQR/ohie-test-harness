@@ -51,7 +51,11 @@ const routes = createBrowserRouter([
     path: "/email/verify/:base64UserEmail/:base64TokenId",
     element: <EmailVerified />,
   },
-  {//TODO: Move header, footer and sidebar to landing and remove from dashboard
+  { 
+    path: "/resend/verification/:email", 
+    element: <Login/> 
+  },
+  {
     path: "/",
     element: <PrivateRoute />,
     children: [
