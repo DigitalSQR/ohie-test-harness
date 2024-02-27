@@ -68,6 +68,9 @@ public class SpecificationRestControllerTest extends TestingHarnessToolRestTestC
         specificationInfo.setId("specification.601");
         specificationInfo.setName("specification 601");
         specificationInfo.setDescription("specification 601");
+        specificationInfo.setRequired(true);
+        specificationInfo.setFunctional(true);
+
 
         specificationInfo.setComponentId("component.02");
         Set<String> testcaseIds = new HashSet<>();
@@ -98,6 +101,10 @@ public class SpecificationRestControllerTest extends TestingHarnessToolRestTestC
         specificationInfo.setName("new specification 1");
         specificationInfo.setState("specification.status.active");
         specificationInfo.setDescription("specification 1");
+        specificationInfo.setRank(1);
+        specificationInfo.setFunctional(true);
+        specificationInfo.setFunctional(true);
+        specificationInfo.setRequired(true);
 
         Set<String> testCaseIds = new HashSet<>();
         specificationInfo.setTestcaseIds(testCaseIds);
@@ -228,5 +235,23 @@ public class SpecificationRestControllerTest extends TestingHarnessToolRestTestC
                 .isEqualTo(OK)
                 .expectBody()
                 .jsonPath("$.content.length()").isEqualTo("4");
+    }
+
+
+    @Test
+    void testGetSpecificationMapping(){
+
+        List strings = this.webTestClient
+                .get()
+                .uri("/specification/status/mapping?sourceStatus=specification.status.active")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + super.tokenMap.get("access_token"))
+                .exchange()
+                .expectStatus()
+                .isEqualTo(OK)
+                .expectBody(List.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertEquals("specification.status.inactive", strings.get(0));
     }
 }
