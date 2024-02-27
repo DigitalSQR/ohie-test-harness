@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.usermanagement.validator;
 
 import ca.uhn.fhir.util.CollectionUtil;
+import com.argusoft.path.tht.captcha.util.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
@@ -258,8 +259,8 @@ public class UserValidator {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(userEntity.getState(), originalEntity.getState(), "state", errors);
         ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
-        if(contextInfo.getModule()!= Module.RESETPASSWORD && contextInfo.getModule()!= Module.FORGOTPASSWORD){
-            ValidationUtils.validateNotUpdatable(userEntity.getPassword(), originalEntity.getPassword(), "password", errors);
+        if(contextInfo.getModule()!= Module.RESET_PASSWORD && contextInfo.getModule()!= Module.FORGOT_PASSWORD){
+            userEntity.setPassword(originalEntity.getPassword());
         }
         if(!contextInfo.isAdmin()){
             ValidationUtils.validateNotUpdatable(userEntity.getRoles(), originalEntity.getRoles(), "role", errors);
@@ -334,7 +335,7 @@ public class UserValidator {
                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(userEntity.getPassword(),
                 "password",
-                0,
+                6,
                 255,
                 errors);
     }
@@ -379,7 +380,7 @@ public class UserValidator {
         if(newPassword.isEmpty()){
             errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR,"New password cannot be empty"));
         }
-        if (!Objects.equals(oldPassword, dbPassword)) {
+        if (!EncryptDecrypt.checkRawString(oldPassword, dbPassword)) {
             errors.add(new ValidationResultInfo("Old password", ErrorLevel.ERROR, "Old password is incorrect."));
         }
         if (Objects.equals(oldPassword, newPassword)) {

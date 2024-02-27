@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.systemconfiguration.security.handler;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -74,8 +75,10 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         try {
             CustomOauth2User oauth2User = (CustomOauth2User) authentication.getPrincipal();
-            oauth2User.getCustomAttributes().put("userName", Constant.OAUTH2_CONTEXT.getUsername());
-            UserEntity loggedInUser = createUserIfNotExists(oauth2User, Constant.OAUTH2_CONTEXT);
+            ContextInfo contextInfo = Constant.SUPER_USER_CONTEXT;
+            contextInfo.setModule(Module.OAUTH2);
+            oauth2User.getCustomAttributes().put("userName", Constant.SUPER_USER_CONTEXT.getUsername());
+            UserEntity loggedInUser = createUserIfNotExists(oauth2User, Constant.SUPER_USER_CONTEXT);
 
             if (Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, loggedInUser.getState())) {
 
@@ -83,7 +86,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                         = loggedInUser.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getId()))
                         .collect(Collectors.toList());
 
-                ContextInfo contextInfo = new ContextInfo(
+                ContextInfo newContextInfo = new ContextInfo(
                         oauth2User.<String>getAttribute("email"),
                         loggedInUser.getId(),
                         "password",
@@ -105,7 +108,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                         new HashMap());
 
                 UsernamePasswordAuthenticationToken authenticationToken
-                        = new UsernamePasswordAuthenticationToken(contextInfo, "N/A", authorities);
+                        = new UsernamePasswordAuthenticationToken(newContextInfo, "N/A", authorities);
 
                 OAuth2Authentication auth = new OAuth2Authentication(oauth2Request, authenticationToken);
 

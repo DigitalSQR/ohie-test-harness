@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.systemconfiguration.security.custom;
 
+import com.argusoft.path.tht.captcha.util.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -50,7 +51,7 @@ public class CustomUserDetailService implements UserDetailsService {
             String password = request.getParameter("password");
             try {
                 UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
-                if (!StringUtils.hasLength(user.getPassword()) || !Objects.equals(user.getPassword(), password)) {
+                if (!StringUtils.hasLength(user.getPassword()) || !EncryptDecrypt.checkRawString(password, user.getPassword())) {
                     LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
                     throw new UsernameNotFoundException("Credential are incorrect.");
                 }

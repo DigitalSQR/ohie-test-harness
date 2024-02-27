@@ -47,7 +47,7 @@ VALUES
         'Istyak Ahmed Vasiwala',
         'Argusoft.Path',
         'user.status.active',
-        'password',
+        '$2a$10$9Z2hq91BCBxqodRc82UedO.BaxXch2U6nmtyz2KkHmTZhlDTbjjWe',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',
         Now(),
@@ -64,5 +64,9 @@ VALUES
     ),
     (
         'SYSTEM_USER',
-        'role.assessee'
+        'role.tester'
+    ),
+    (
+         'SYSTEM_USER',
+         'role.assessee'
     );

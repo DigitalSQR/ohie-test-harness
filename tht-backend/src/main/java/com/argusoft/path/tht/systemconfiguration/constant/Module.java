@@ -1,8 +1,9 @@
 package com.argusoft.path.tht.systemconfiguration.constant;
 
 public enum Module {
-    FORGOTPASSWORD, 
-    RESETPASSWORD, 
+    FORGOT_PASSWORD,
+    RESET_PASSWORD,
     UI,
-    DOCUMENT
+    DOCUMENT,
+    OAUTH2
 }
