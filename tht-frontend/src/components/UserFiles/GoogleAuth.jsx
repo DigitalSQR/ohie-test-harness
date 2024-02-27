@@ -28,7 +28,7 @@ export default function GoogleAuth() {
 			setAuthToken(result.access_token);
 			UserAPI.viewUser().then((user) => {
 				dispatch(userinfo_success(user));
-				navigate("/dashboard/");
+				navigate("/dashboard");
 			});
 
 		} else if (result.message) {

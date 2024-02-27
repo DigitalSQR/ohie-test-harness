@@ -26,7 +26,7 @@
 
     const handleUpdate = (question: Question, name: string) => {
       console.log(question);
-      navigate(`/dashboard/edit-question`, {
+      navigate(`/edit-question`, {
         state: {
           testcase: question,
           name,
@@ -123,7 +123,7 @@
           <div
             className="bcca-breadcrumb-item"
             onClick={() =>
-              handleClick(`/dashboard/component-specification/${componentId}`, {
+              handleClick(`/component-specification/${componentId}`, {
                 name,
                 componentId,
               })
@@ -135,7 +135,7 @@
           <div
             className="bcca-breadcrumb-item"
             onClick={() => {
-              navigate("/dashboard/testcase-config");
+              navigate("/testcase-config");
             }}
           >
             Components

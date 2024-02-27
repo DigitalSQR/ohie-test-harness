@@ -194,7 +194,7 @@ const Applications = () => {
                           className={StateClasses[testRequest.state]?.btnClass}
                           onClick={() => {
                             navigate(
-                              `/dashboard/choose-test/${testRequest.id}`
+                              `/choose-test/${testRequest.id}`
                             );
                           }}
                         >

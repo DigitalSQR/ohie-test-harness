@@ -112,9 +112,9 @@ export default function ChooseTest() {
           placement: "bottomRight",
         });
         if (!!automated) {
-          navigate(`/dashboard/automated-testing/${testRequestId}`);
+          navigate(`/automated-testing/${testRequestId}`);
         } else {
-          navigate(`/dashboard/manual-testing/${testRequestId}`);
+          navigate(`/manual-testing/${testRequestId}`);
         }
         loadProgress();
       })
@@ -161,7 +161,7 @@ export default function ChooseTest() {
           <div
             class="bcca-breadcrumb-item"
             onClick={() => {
-              navigate(`/dashboard/applications`);
+              navigate(`/applications`);
             }}
           >
             Applications
@@ -212,7 +212,7 @@ export default function ChooseTest() {
                   />
                   <Button
                     onClick={() =>
-                      navigate(`/dashboard/manual-testing/${testRequestId}`)
+                      navigate(`/manual-testing/${testRequestId}`)
                     }
                   >
                     Resume
@@ -267,7 +267,7 @@ export default function ChooseTest() {
                   />
                   <Button
                     onClick={() =>
-                      navigate(`/dashboard/automated-testing/${testRequestId}`)
+                      navigate(`/automated-testing/${testRequestId}`)
                     }
                   >
                     Show Result

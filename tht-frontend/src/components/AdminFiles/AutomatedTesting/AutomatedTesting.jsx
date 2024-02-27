@@ -157,7 +157,7 @@ export default function AutomatedTesting() {
             <div
               className="bcca-breadcrumb-item"
               onClick={() => {
-                navigate(`/dashboard/choose-test/${testRequestId}`);
+                navigate(`/choose-test/${testRequestId}`);
               }}
             >
               {testcaseName}
@@ -165,7 +165,7 @@ export default function AutomatedTesting() {
             <div
               className="bcca-breadcrumb-item"
               onClick={() => {
-                navigate(`/dashboard/applications`);
+                navigate(`/applications`);
               }}
             >
               Applications

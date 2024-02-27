@@ -29,7 +29,7 @@ const ComponentSpecification: React.FC = () => {
 
   const handleEdit = (specificationId: string) => {
     if (activeTab === "2") {
-      navigate(`/dashboard/manual-testcases/${specificationId}`, {
+      navigate(`/manual-testcases/${specificationId}`, {
         state: {
           specificationId,
           componentId,
@@ -151,7 +151,7 @@ const ComponentSpecification: React.FC = () => {
         <div
           className="bcca-breadcrumb-item"
           onClick={() => {
-            navigate("/dashboard/testcase-config");
+            navigate("/testcase-config");
           }}
         >
           Components
