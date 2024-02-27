@@ -35,6 +35,18 @@ export const DocumentAPI = {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}
 	},
+	base64Document: function (documentId, name) {
+		try {
+			return api.request({
+				url: `/document/base64/${documentId}`,
+				method: "GET",            
+			}).then((response) => {
+                return response.data;
+            })
+		} catch (error) {
+			throw error; // You can choose to re-throw the error or handle it in a specific way
+		}
+	},
 	changeDocumentState: async function (documentId, changeState) {
 		try {
 			const response = await api.request({

@@ -26,9 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * DocumentRestController
@@ -155,6 +154,18 @@ public class DocumentRestController {
                 .headers(headers)
                 .contentLength(byteArrayResourceByDocumentId.contentLength())
                 .body(byteArrayResourceByDocumentId);
+    }
+
+    @GetMapping("/base64/{documentId}")
+    public String getFileByDocumentBase64(@PathVariable("documentId") String documentId,
+                                                    @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, OperationFailedException {
+
+        ByteArrayResource byteArrayResourceByDocumentId = documentService.getByteArrayResourceByDocumentId(documentId, contextInfo);
+
+        byte[] byteArrayOfFile = byteArrayResourceByDocumentId.getByteArray();
+
+        return "data:image/jpeg;base64,"+Base64.getEncoder().encodeToString(byteArrayOfFile);
     }
 
     @ApiOperation(value = "Retrieves all status of document.", response = Multimap.class)

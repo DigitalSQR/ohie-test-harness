@@ -1,15 +1,20 @@
   import React, { useEffect, useState } from "react";
-  import { useLocation, useNavigate } from "react-router-dom";
+  import { useLocation, useNavigate, useParams } from "react-router-dom";
   import { TestCaseAPI } from "../../../api/TestCaseAPI";
   import { useLoader } from "../../loader/LoaderContext";
-  import { EditOutlined } from "@ant-design/icons";
+  import { EditOutlined, LeftOutlined, RightOutlined, LoadingOutlined, FileImageOutlined } from "@ant-design/icons";
   import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
   import "./SpecQuestions.scss";
   import { Question } from "../../../dto/SpecQuestionDTO";
-  import { Switch, Tabs } from "antd";
+  import { Switch, Tabs, Carousel, notification, Image } from "antd";
   import { useDispatch } from "react-redux";
   import { set_header } from "../../../reducers/homeReducer";
+  import { ManualQuestionTypeConstants } from "../../../constants/testcase_constants";
   import TabPane from "antd/es/tabs/TabPane";
+  import { DocumentAPI } from "../../../api/DocumentAPI";
+  import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
+  import {DOCUMENT_STATE_ACTIVE,DOCUMENT_STATE_INACTIVE} from "../../../constants/document_constants";
+import { display } from "html2canvas/dist/types/css/property-descriptors/display";
 
   const ManualTestCases: React.FC = () => {
     const navigate = useNavigate();
@@ -18,6 +23,10 @@
     const { componentId, specificationId, name } = location.state;
     const { showLoader, hideLoader } = useLoader();
     const [questions, setQuestions] = useState<Question[]>();
+    const [activeKey, setActiveKey] = useState('1');
+    const [questionAndDocument, setQuestionAndDocument] = useState([]);
+    const [questionFetched, setQuestionFetched] = useState(true);
+
 
     useEffect(() => {
       fetchData();
@@ -26,7 +35,7 @@
 
     const handleUpdate = (question: Question, name: string) => {
       console.log(question);
-      navigate(`/edit-question`, {
+      navigate(`/edit-question/${question.id}`, {
         state: {
           testcase: question,
           name,
@@ -50,6 +59,7 @@
               id: testcase.id,
               metaVersion: testcase.meta.version,
               description: testcase.description,
+              questionType: testcase.questionType,
               question: testcase.name,
               rank: testcase.rank,
               testcase,
@@ -88,6 +98,66 @@
       );
       return optionsResp.content;
     };
+
+    const handleTabChange = (key) => {
+      setActiveKey(key);
+    };
+
+
+    useEffect(() => {
+      let key;
+      if(activeKey){
+        key = activeKey - 1;
+      }
+      if(questions && (questionAndDocument.filter((questionItem) => questionItem.key === questions[key].id) <= 0)){
+        setQuestionFetched(false);
+        let question = questions[key]
+
+        DocumentAPI.getDocumentsByRefObjUriAndRefId(
+          RefObjUriConstants.TESTCASE_REFOBJURI,
+          question.id,
+          DOCUMENT_STATE_ACTIVE
+        ).then(async (res) => {
+            const updatedFiles = await Promise.all(res.content.map(async (relatedDoc) => {
+              try {
+                  const base64Image = await DocumentAPI.base64Document(relatedDoc.id,relatedDoc.name);
+                  return {
+                      name: relatedDoc.name,
+                      status: 'done',
+                      url: base64Image,
+                      documentId : relatedDoc.id
+                  };
+              } catch (error) {
+                  console.error(error);
+                  return {
+                      name: relatedDoc.name,
+                      status: 'error',
+                      url: null
+                  };
+              }
+          }));
+
+          let item = {};
+          item.key = question.id;
+          item.files = updatedFiles;
+
+          const updatedQuestions = [...questionAndDocument];
+          updatedQuestions.push(item);
+          setQuestionAndDocument(updatedQuestions);
+          })
+          .catch((err) => {
+            console.log(err);
+            notification.error({
+              message: "Error Loading Files!",
+              placement: "bottomRight",
+            });
+          })
+          .finally(()=> {
+            setQuestionFetched(true);
+          });
+      }
+    }, [activeKey,questions]); // Run this effect whenever activeKey changes
+
 
     const handleToggleChange = (testcaseId: string, state:string) => {
       showLoader();
@@ -148,6 +218,8 @@
               defaultActiveKey="1"
               tabPosition="top"
               className="questions-tabs mt-3"
+              activeKey={activeKey}
+              onChange={handleTabChange}
             >
               {questions?.map((question, index) => (
                 <TabPane tab={`Question ${index + 1}`} key={index + 1}>
@@ -182,20 +254,74 @@
                                   className="field-box option-item"
                                   key={optionIndex}
                                 >
-                                  <label>{option.name}</label>
+                                  {/* <input
+                                  type="checkbox"
+                                  id={option.id}
+                                  name={option.id}
+                                  value={option.id}
+                                  checked={option.success}
+                                  disabled
+                                  readonly={true}
+                                  autoComplete="off"
+                                  /> */}
+                                  {option.success ? <i className="bi bi-check-circle-fill me-2 text-success"></i> : <i className="bi bi-x-circle-fill me-2 text-danger"></i>}
+                                  <label className={question.questionType === ManualQuestionTypeConstants.MULTI_SELECT ? "label-before-no-radius" : ""}>{option.name}</label>
                                 </div>
                               ))}
                           </div>
                         </div>
 
-                        <div className="col-md-3 col-12 p-0">
-                          <div className="p-2 pt-5 q-img">
-                            <img
-                              src="../../../styles/images/question-img.png"
-                              alt="No Image Found"
-                            />
-                          </div>
-                        </div>
+                        {/* <div className="col-md-3 col-12 p-3">
+                          <>
+                           {questionFetched && questionAndDocument.length > 0
+                           && (questionAndDocument.find((q) => q.key === question.id)?.files.length > 0)
+                           && <Carousel arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
+                            {(
+                                questionAndDocument.find((q) => q.key === question.id)?.files.map((item) => (
+                                    <div key={item.id}>
+                                        <h3 className="spec-carousel-background">
+                                            <Image width={200}
+                                            src={item.url} />
+                                        </h3>
+                                    </div>
+                                ))
+                            )}
+                            </Carousel>}
+                            {questionFetched && (!questionAndDocument.find((q) => q.key === question.id)?.files) &&
+                              <div><FileImageOutlined style={{ fontSize: 30 }}/></div>
+                            }
+                            {!questionFetched && <div><LoadingOutlined style={{ fontSize: 30 }} spin /></div>}
+                          </>
+                        </div> */}
+
+                            <div className="col-md-3 col-12 p-3 text-center">
+                              <>
+                                {questionFetched && questionAndDocument.length > 0 && (
+                                  questionAndDocument.find((q) => q.key === question.id)?.files.length > 0 ?
+
+                                  (
+                                    <Carousel arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
+                                      {questionAndDocument.find((q) => q.key === question.id)?.files.map((item) => (
+                                        <div key={item.id}>
+                                          <h3 className="spec-carousel-background">
+                                            <Image width={200} src={item.url} />
+                                          </h3>
+                                        </div>
+                                      ))}
+                                    </Carousel>
+                                  ) : (
+                                    <div>
+                                      <span>
+                                        <FileImageOutlined style={{ fontSize: 30, display: "block" }}/>
+                                        No Image Available
+                                        </span>
+                                    </div>
+                                  )
+                                )}
+                                {!questionFetched && <div><LoadingOutlined style={{ fontSize: 30 }} spin /></div>}
+                              </>
+                            </div>
+
 
                         <div className="col-md-2 col-12 p-0">
                           <div className="question-actions p-2 pt-5">

@@ -84,7 +84,7 @@ const routes = createBrowserRouter([
         path: "manual-testcases/:specificationId",
         element: <ManualTestCases />,
       },
-      { path: "edit-question", element: <EditQuestion /> },
+      { path: "edit-question/:testcaseId", element: <EditQuestion /> },
       {path:"reset-password",element:<ResetPassword/>}
     ],
   },

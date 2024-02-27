@@ -33,11 +33,9 @@ public class ProcessReinitializer {
 
     @PostConstruct
     public void init() {
-        System.out.println("===================================================");
         try {
             ContextInfo contextInfo = Constant.SUPER_USER_CONTEXT;
             List<TestcaseResultEntity> testcaseResults = searchInProgressTestcaseResults(contextInfo);
-            System.out.println("===============================" + testcaseResults.size());
             Set<String> testRequestIdSet = new HashSet<>();
             for (TestcaseResultEntity testcaseResult : testcaseResults) {
                 if (testRequestIdSet.contains(testcaseResult.getTestRequest().getId())) {

@@ -49,4 +49,16 @@ export const TestCaseAPI = {
       throw error;
     }
   },
+  patchTestcase: async function(testcaseId, patchData){
+		const response = await api.request({
+			url: `/testcase/${testcaseId}`,
+			method: "PATCH",
+			headers: {
+				"Content-Type":"application/json-patch+json"
+			},
+			data : patchData
+		});
+		
+		return response.data;
+  }
 };

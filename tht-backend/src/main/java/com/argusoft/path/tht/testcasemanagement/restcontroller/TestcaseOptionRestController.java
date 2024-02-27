@@ -10,6 +10,11 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseOptionInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseOptionMapper;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.google.common.collect.Multimap;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +41,7 @@ public class TestcaseOptionRestController {
     private TestcaseOptionService testcaseOptionService;
 
     @Autowired
-    private TestcaseOptionMapper TestcaseOptionMapper;
+    private TestcaseOptionMapper testcaseOptionMapper;
 
     /**
      * We can expose this API in future if needed.
@@ -59,9 +64,9 @@ public class TestcaseOptionRestController {
             InvalidParameterException,
             DataValidationErrorException {
 
-        TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
+        TestcaseOptionEntity testcaseOptionEntity = testcaseOptionMapper.dtoToModel(testcaseOptionInfo);
         testcaseOptionEntity = testcaseOptionService.createTestcaseOption(testcaseOptionEntity, contextInfo);
-        return TestcaseOptionMapper.modelToDto(testcaseOptionEntity);
+        return testcaseOptionMapper.modelToDto(testcaseOptionEntity);
 
     }
 
@@ -87,9 +92,9 @@ public class TestcaseOptionRestController {
             VersionMismatchException,
             DataValidationErrorException {
 
-        TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
+        TestcaseOptionEntity testcaseOptionEntity = testcaseOptionMapper.dtoToModel(testcaseOptionInfo);
         testcaseOptionEntity = testcaseOptionService.updateTestcaseOption(testcaseOptionEntity, contextInfo);
-        return TestcaseOptionMapper.modelToDto(testcaseOptionEntity);
+        return testcaseOptionMapper.modelToDto(testcaseOptionEntity);
     }
 
     /**
@@ -113,7 +118,7 @@ public class TestcaseOptionRestController {
             InvalidParameterException {
 
         Page<TestcaseOptionEntity> testcaseOptionEntities = testcaseOptionService.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, pageable, contextInfo);
-        return TestcaseOptionMapper.pageEntityToDto(testcaseOptionEntities);
+        return testcaseOptionMapper.pageEntityToDto(testcaseOptionEntities);
     }
 
     /**
@@ -136,7 +141,7 @@ public class TestcaseOptionRestController {
             InvalidParameterException {
 
         TestcaseOptionEntity testcaseOptionById = testcaseOptionService.getTestcaseOptionById(testcaseOptionId, contextInfo);
-        return TestcaseOptionMapper.modelToDto(testcaseOptionById);
+        return testcaseOptionMapper.modelToDto(testcaseOptionById);
     }
 
     /**
@@ -156,7 +161,7 @@ public class TestcaseOptionRestController {
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
-        TestcaseOptionEntity testcaseOptionEntity = TestcaseOptionMapper.dtoToModel(testcaseOptionInfo);
+        TestcaseOptionEntity testcaseOptionEntity = testcaseOptionMapper.dtoToModel(testcaseOptionInfo);
         return testcaseOptionService
                 .validateTestcaseOption(validationTypeKey, testcaseOptionEntity, contextInfo);
     }
@@ -175,7 +180,42 @@ public class TestcaseOptionRestController {
                                                         @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         TestcaseOptionEntity testcaseOptionEntity = testcaseOptionService.changeState(testcaseOptionId, changeState, contextInfo);
-        return TestcaseOptionMapper.modelToDto(testcaseOptionEntity);
+        return testcaseOptionMapper.modelToDto(testcaseOptionEntity);
+    }
+
+    @ApiOperation(value = "Patch method for Test case option", response = TestcaseOptionInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated TestcaseOption"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping(value = "/{testcaseOptionId}",consumes = "application/json-patch+json")
+    @Transactional
+    public TestcaseOptionInfo patchTestcaseOption(@PathVariable("testcaseOptionId") String testcaseOptionId,
+                                                  @RequestBody JsonPatch jsonPatch,
+                                                  @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+
+        // get from database
+        TestcaseOptionInfo testcaseOptionById = this.getTestcaseOptionById(testcaseOptionId, contextInfo);
+
+        // apply patch
+        TestcaseOptionInfo patchedTestcaseInfo = applyPatchToTestcaseInfo(jsonPatch, testcaseOptionById);
+
+        // update and return
+        TestcaseOptionEntity updateEntity = testcaseOptionMapper.dtoToModel(patchedTestcaseInfo);
+        updateEntity = testcaseOptionService.updateTestcaseOption(updateEntity, contextInfo);
+        return testcaseOptionMapper.modelToDto(updateEntity);
+    }
+
+    private TestcaseOptionInfo applyPatchToTestcaseInfo(JsonPatch jsonPatch, TestcaseOptionInfo testcaseOptionInfo) throws OperationFailedException{
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode patched = jsonPatch.apply(objectMapper.convertValue(testcaseOptionInfo, JsonNode.class));
+            return objectMapper.treeToValue(patched, TestcaseOptionInfo.class);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            throw new OperationFailedException("Caught Exception while processing Json ",e);
+        }
     }
 
     @ApiOperation(value = "Retrieves all status of test case option.", response = Multimap.class)

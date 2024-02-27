@@ -167,7 +167,7 @@ export default function Sidebar() {
                 <i
                   aria-label="Applications"
                   title="Applications"
-                  className="bi bi-file-earmark-bar-graph menu-left-icon"
+                  className="bi bi-sliders menu-left-icon"
                 ></i>
                 <span> Applications </span>
               </a>

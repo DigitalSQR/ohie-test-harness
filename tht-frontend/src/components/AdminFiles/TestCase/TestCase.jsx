@@ -3,7 +3,8 @@ import { TestResultAPI } from "../../../api/TestResultAPI";
 import Options from "../Options/Options";
 import { Pagination, PaginationItem } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
-import { Button, notification } from "antd";
+import { Button, notification, Carousel, Image } from "antd";
+import { EditOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "./testcase.scss";
 import { DocumentAPI } from "../../../api/DocumentAPI";
 import { TestResultRelationAPI } from "../../../api/TestResultRelationAPI";
@@ -37,6 +38,7 @@ export default function TestCase(props) {
 	const fileInputRef = useRef(null);
 	const [saveButton, setSaveButton] = useState("");
 	const [currentQuestion, setCurrentQuestion] = useState({});
+	const [questionAndDocument, setQuestionAndDocument] = useState([]);
 	const handlePageChange = (event, page) => {
 		showLoader();
 		selectTestcase(page - 1);
@@ -103,6 +105,56 @@ export default function TestCase(props) {
 			});
 		});
 	}, [currentTestcase]);
+
+	useEffect(() => {
+		getQuestionImagesIfNotExists();
+	},[currentQuestion]);
+
+	const getQuestionImagesIfNotExists = () => {
+		if(currentQuestion && currentQuestion.id && (questionAndDocument.filter((questionItem) => questionItem.key === currentQuestion.id) <= 0)){
+		
+        DocumentAPI.getDocumentsByRefObjUriAndRefId(
+          RefObjUriConstants.TESTCASE_REFOBJURI,
+          currentQuestion.id,
+          DOCUMENT_STATE_ACTIVE
+        ).then(async (res) => {
+            const updatedFiles = await Promise.all(res.content.map(async (relatedDoc) => {
+              try {
+                  const base64Image = await DocumentAPI.base64Document(relatedDoc.id,relatedDoc.name);
+                  return {
+                      name: relatedDoc.name,
+                      status: 'done',
+                      url: base64Image,
+                      documentId : relatedDoc.id
+                  };
+              } catch (error) {
+                  console.error(error);
+                  return {
+                      name: relatedDoc.name,
+                      status: 'error',
+                      url: null
+                  };
+              }
+          }));
+          
+          let item = {};
+          item.key = currentQuestion.id
+          item.files = updatedFiles;
+
+          const updatedQuestions = [...questionAndDocument];
+          updatedQuestions.push(item);
+          setQuestionAndDocument(updatedQuestions);
+
+          })
+          .catch((err) => {
+            console.log(err);
+            notification.error({
+              message: "Error Loading Files!",
+              placement: "bottomRight",
+            });
+          });
+		}
+	}
 
 	const addAttachment = () => {
 		var file = document.getElementById("my-file");
@@ -354,7 +406,20 @@ export default function TestCase(props) {
 						</div>
 						<div class="col-md-3 col-12 p-0">
 							<div class=" p-2 pt-5 q-img">
-								<img src={question_img_logo} />
+							<>
+								<Carousel arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
+								{questionAndDocument.length > 0 && (
+									questionAndDocument.find((q) => q.key === currentQuestion.id)?.files.map((item) => (
+										<div key={item.id}> 
+											<h3 className="testcase-carousel-background">
+												<Image width={200} 
+												src={item.url} />
+											</h3>
+										</div>
+									))
+								)}
+								</Carousel>
+                          	</>
 							</div>
 						</div>
 					</div>
