@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.clientregistry;
 
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -22,19 +23,13 @@ import java.util.Map;
  * @author Dhruv
  */
 @Component
-public class CRWF1TestCase1 implements TestCase {
+public class CRWF1TestCase1 {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CRWF1TestCase1.class);
 
-    @Override
-    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException {
+    public static ValidationResultInfo test(IGenericClient client) throws OperationFailedException {
         try {
-            LOGGER.info("Start testing CRWF1TestCase1");
-            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
-            if (client == null) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
-            }
+
 
             LOGGER.info("Creating patient");
             // Create a new patient resource with all demographic information
@@ -58,5 +53,33 @@ public class CRWF1TestCase1 implements TestCase {
             LOGGER.error("Exception while CRWF1TestCase1 ", ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
+    }
+
+    public static void main(String[] args) throws OperationFailedException {
+        IGenericClient client = getClient("R4","http://hapi.fhir.org/baseR4","root@intrahealth.com","intrahealth");
+        System.out.println(test(client));
+    }
+    public static IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) {
+        FhirContext context;
+        switch (contextType) {
+            case "D2":
+                context = FhirContext.forDstu2();
+                break;
+            case "D3":
+                context = FhirContext.forDstu3();
+                break;
+            default:
+                //Default is for R4
+                context = FhirContext.forR4();
+        }
+
+        context.getRestfulClientFactory().setConnectTimeout(60 * 1000);
+        context.getRestfulClientFactory().setSocketTimeout(60 * 1000);
+        IGenericClient client = context.newRestfulGenericClient(serverBaseURL);
+
+        // TODO: Add authentication credentials to the client from test Request
+        // client.registerInterceptor(new BasicAuthInterceptor(username, password));
+
+        return client;
     }
 }

@@ -28,8 +28,8 @@ public class CaptchaFilter implements Filter {
     @Autowired
     private CaptchaService captchaService;
 
-    List<String> captchaProtectedUrls = List.of("/api/user/register",
-                                                "/api/oauth/token");
+    List<String> captchaProtectedUrls = List.of("/api/user");
+//                                                "/api/oauth/token");
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
