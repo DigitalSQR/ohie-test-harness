@@ -94,7 +94,7 @@ public class CustomUserDetailService implements UserDetailsService {
                         true,
                         authorities);
 
-            } catch (NumberFormatException | DoesNotExistException e) {
+            } catch (NumberFormatException | DoesNotExistException | InvalidParameterException e) {
                 LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + CustomUserDetailService.class.getSimpleName(), e);
                 throw new UsernameNotFoundException("Credential are incorrect.") {
                 };

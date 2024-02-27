@@ -10,7 +10,6 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.SpecificationMapper;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
-import com.argusoft.path.tht.systemconfiguration.utils.RestControllerUtils;
 import com.google.common.collect.Multimap;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,8 +109,7 @@ public class SpecificationRestController {
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
-        SpecificationCriteriaSearchFilter filteredFilter = RestControllerUtils.filterFields(specificationSearchFilter, SpecificationCriteriaSearchFilter.class);
-        Page<SpecificationEntity> specificationEntities = specificationService.searchSpecifications(filteredFilter, pageable, contextInfo);
+        Page<SpecificationEntity> specificationEntities = specificationService.searchSpecifications(specificationSearchFilter, pageable, contextInfo);
         return specificationMapper.pageEntityToDto(specificationEntities);
     }
 

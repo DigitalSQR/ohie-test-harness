@@ -92,10 +92,6 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
         return id;
     }
 
-    public void setPrimaryId(String id) {
-        this.id = id;
-    }
-
     private Root<ComponentEntity> getComponentEntityRoot() {
         return componentEntityRoot;
     }

@@ -340,8 +340,7 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
 
         // Test case 9: Search specification by id
 
-        SpecificationCriteriaSearchFilter specificationSearchFilter9 = new SpecificationCriteriaSearchFilter();
-        specificationSearchFilter9.setPrimaryId("specification.01");
+        SpecificationCriteriaSearchFilter specificationSearchFilter9 = new SpecificationCriteriaSearchFilter("specification.01");
         List<SpecificationEntity> specificationEntities9 = specificationService.searchSpecifications(specificationSearchFilter9, contextInfo);
         assertEquals(1, specificationEntities9.size());
 

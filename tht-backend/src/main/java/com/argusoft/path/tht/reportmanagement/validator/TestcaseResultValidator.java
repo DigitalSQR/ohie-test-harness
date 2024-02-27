@@ -212,21 +212,7 @@ public class TestcaseResultValidator {
                                 ));
             }
         }
-        //validate TestcaseOption foreignKey.
-        if (testcaseResultEntity.getTestcaseOption() != null) {
-            try {
-                testcaseResultEntity.setTestcaseOption(
-                        testcaseOptionService.getTestcaseOptionById(testcaseResultEntity.getTestcaseOption().getId(), contextInfo)
-                );
-            } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
-                String fieldName = "testcaseOption";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
-            }
-        }
+
         //validate testRequest foreignKey.
         if (testcaseResultEntity.getTestRequest() != null) {
             try {

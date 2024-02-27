@@ -6,7 +6,6 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.RestControllerUtils;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.ResetPasswordInfo;
@@ -246,8 +245,7 @@ public class UserRestController {
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
-        UserSearchCriteriaFilter filteredFilter = RestControllerUtils.filterFields(userSearchFilter, UserSearchCriteriaFilter.class);
-        Page<UserEntity> userEntities = this.userService.searchUsers(filteredFilter, pageable, contextInfo);
+        Page<UserEntity> userEntities = this.userService.searchUsers(userSearchFilter, pageable, contextInfo);
         return userMapper.pageEntityToDto(userEntities);
     }
 

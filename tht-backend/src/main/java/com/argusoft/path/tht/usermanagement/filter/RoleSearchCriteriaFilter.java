@@ -70,10 +70,6 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
         return id;
     }
 
-    public void setPrimaryId(String id) {
-        this.id = id;
-    }
-
     private Root<RoleEntity> getRoleEntityRoot() {
         return roleEntityRoot;
     }

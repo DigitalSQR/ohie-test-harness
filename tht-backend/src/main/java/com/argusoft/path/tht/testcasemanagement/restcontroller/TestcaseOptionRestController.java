@@ -4,7 +4,6 @@ import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.RestControllerUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseOptionInfo;
@@ -113,8 +112,7 @@ public class TestcaseOptionRestController {
             throws OperationFailedException,
             InvalidParameterException {
 
-        TestcaseOptionCriteriaSearchFilter filteredFilter = RestControllerUtils.filterFields(testcaseOptionCriteriaSearchFilter, TestcaseOptionCriteriaSearchFilter.class);
-        Page<TestcaseOptionEntity> testcaseOptionEntities = testcaseOptionService.searchTestcaseOptions(filteredFilter, pageable, contextInfo);
+        Page<TestcaseOptionEntity> testcaseOptionEntities = testcaseOptionService.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, pageable, contextInfo);
         return TestcaseOptionMapper.pageEntityToDto(testcaseOptionEntities);
     }
 

@@ -70,8 +70,7 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
 
     @Override
     public TestResultRelationEntity getTestResultRelationById(String testRelationResultId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException {
-        TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter();
-        testResultRelationCriteriaSearchFilter.setId(Collections.singletonList(testRelationResultId));
+        TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter(Collections.singletonList(testRelationResultId));
         List<TestResultRelationEntity> testResultRelationEntities = this.searchTestResultRelation(testResultRelationCriteriaSearchFilter, contextInfo);
         return testResultRelationEntities.stream()
                 .findFirst()
@@ -84,8 +83,7 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
 
         List<Object> objects = new ArrayList<>();
 
-        TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter();
-        testResultRelationCriteriaSearchFilter.setId(resultRelationIds);
+        TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter(resultRelationIds);
 
         List<TestResultRelationEntity> testResultRelationEntities = this.searchTestResultRelation(testResultRelationCriteriaSearchFilter, contextInfo);
 

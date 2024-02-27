@@ -9,7 +9,6 @@ import com.argusoft.path.tht.fileservice.models.mapper.DocumentMapper;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.RestControllerUtils;
 import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -97,8 +96,7 @@ public class DocumentRestController {
                                                 Pageable pageable,
                                                 @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException {
 
-        DocumentCriteriaSearchFilter filteredFilter = RestControllerUtils.filterFields(exampleDocumentSearchFilter, DocumentCriteriaSearchFilter.class);
-        Page<DocumentEntity> documentBySearchFilter = documentService.searchDocument(filteredFilter, pageable, contextInfo);
+        Page<DocumentEntity> documentBySearchFilter = documentService.searchDocument(exampleDocumentSearchFilter, pageable, contextInfo);
         return documentMapper.pageEntityToDto(documentBySearchFilter);
     }
 
