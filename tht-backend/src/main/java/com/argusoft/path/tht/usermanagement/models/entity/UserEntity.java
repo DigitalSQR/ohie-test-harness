@@ -6,6 +6,8 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * This model is mapped to user table in database.
@@ -35,6 +37,21 @@ public class UserEntity extends IdStateMetaEntity {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles;
+    public UserEntity(){
+
+    }
+
+    public UserEntity(UserEntity userEntity) {
+        super(userEntity);
+        this.setEmail(userEntity.getEmail());
+        this.setName(userEntity.getName());
+        this.setPassword(userEntity.getPassword());
+        this.setCompanyName(userEntity.getCompanyName());
+        if(userEntity.getRoles()!=null){
+            this.setRoles(userEntity.getRoles().stream().map(RoleEntity::new).collect(Collectors.toSet()));
+        }
+
+    }
 
     public String getEmail() {
         return email;

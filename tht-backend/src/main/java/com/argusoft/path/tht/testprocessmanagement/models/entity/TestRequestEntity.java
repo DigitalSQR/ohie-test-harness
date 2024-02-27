@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * This model is mapped to testRequest table in database.
@@ -34,6 +35,22 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Set<TestRequestUrlEntity> testRequestUrls;
 
+    public TestRequestEntity() {
+    }
+
+    public TestRequestEntity(TestRequestEntity testRequestEntity) {
+        super(testRequestEntity);
+        if(testRequestEntity.getAssessee()!=null){
+            this.setAssessee(new UserEntity(testRequestEntity.getAssessee()));
+        }
+        this.setProductName(testRequestEntity.getProductName());
+        if(testRequestEntity.getApprover()!=null){
+            this.setApprover(new UserEntity(testRequestEntity.getApprover()));
+        }
+        if(testRequestEntity.getTestRequestUrls()!=null){
+            this.setTestRequestUrls(testRequestEntity.getTestRequestUrls().stream().map(TestRequestUrlEntity::new).collect(Collectors.toSet()));
+        }
+    }
 
     public UserEntity getAssessee() {
         return assessee;

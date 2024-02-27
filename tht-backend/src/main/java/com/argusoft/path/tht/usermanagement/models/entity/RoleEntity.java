@@ -21,6 +21,14 @@ public class RoleEntity extends IdEntity {
     @Column(name = "name")
     private String name;
 
+    public RoleEntity() {
+    }
+
+    public RoleEntity(RoleEntity roleEntity) {
+        super(roleEntity);
+        this.setName(roleEntity.getName());
+    }
+
     public String getName() {
         return name;
     }

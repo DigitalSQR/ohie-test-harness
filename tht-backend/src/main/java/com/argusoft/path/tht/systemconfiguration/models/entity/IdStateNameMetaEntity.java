@@ -29,6 +29,17 @@ public class IdStateNameMetaEntity extends MetaEntity {
     @Column(name = "description", length = 1000)
     private String description;
 
+    public IdStateNameMetaEntity() {
+    }
+
+    public IdStateNameMetaEntity(IdStateNameMetaEntity idStateNameMetaEntity) {
+        super(idStateNameMetaEntity);
+        this.setId(idStateNameMetaEntity.getId());
+        this.setName(idStateNameMetaEntity.getName());
+        this.setState(idStateNameMetaEntity.getState());
+        this.setDescription(idStateNameMetaEntity.getDescription());
+    }
+
     public String getId() {
         return id;
     }

@@ -21,6 +21,16 @@ public class IdMetaEntity extends MetaEntity {
     @Column(name = "id")
     private String id;
 
+
+    public IdMetaEntity(){
+
+    }
+
+    public IdMetaEntity(IdMetaEntity idMetaEntity) {
+        super(idMetaEntity);
+        this.setId(idMetaEntity.getId());
+    }
+
     public String getId() {
         return id;
     }
