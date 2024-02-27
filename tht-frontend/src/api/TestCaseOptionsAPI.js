@@ -7,6 +7,8 @@ export const TestCaseOptionsAPI = {
         method: "GET",
         params: {
           testcaseId,
+          size: "1000",
+					sort: "rank"
         },
       });
       return response.data;
@@ -59,9 +61,21 @@ export const TestCaseOptionsAPI = {
         url: `/testcase-option/state/${testcaseOptionId}/${changeState}`,
         method: "PATCH",
       });
-      return response;
+      return response.data;
     } catch (error) {
       throw error;
     }
   },
+  patchTestcaseOption: async function(testcaseId, patchData){
+		const response = await api.request({
+			url: `/testcase-option/${testcaseId}`,
+			method: "PATCH",
+			headers: {
+				"Content-Type":"application/json-patch+json"
+			},
+			data : patchData
+		});
+		
+		return response.data;
+  }
 };

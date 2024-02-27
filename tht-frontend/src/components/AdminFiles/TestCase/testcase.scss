@@ -90,3 +90,34 @@
 	margin-left: 5px;
 	font-size: 14px;
 }
+
+.ant-carousel .slick-prev,
+.ant-carousel .slick-next,
+.ant-carousel .slick-prev,
+.ant-carousel .slick-next {
+  font-size: inherit;
+  color: white !important;
+}
+
+.ant-carousel .slick-prev,
+.ant-carousel .slick-prev {
+  left: 10px;
+  z-index: 2;
+  color: white !important;
+}
+
+.ant-carousel .slick-next,
+.ant-carousel .slick-next {
+  right: 10px;
+  z-index: 2;
+  color: white !important;
+}
+
+.testcase-carousel-background{
+	margin: 0;
+	height: 160px;
+	color: '#fff';
+	line-height: 160px;
+	text-align: center;
+	background: #009fc8;
+}
