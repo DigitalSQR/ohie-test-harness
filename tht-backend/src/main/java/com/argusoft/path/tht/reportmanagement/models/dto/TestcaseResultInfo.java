@@ -258,20 +258,20 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
         isAutomated = automated;
     }
 
-    public Boolean getIsFunctional() {
+    public Boolean getFunctional() {
         return isFunctional;
     }
 
-    public void setIsFunctional(Boolean isFunctional) {
-        this.isFunctional = isFunctional;
+    public void setFunctional(Boolean functional) {
+        isFunctional = functional;
     }
 
-    public Boolean getIsWorkflow() {
+    public Boolean getWorkflow() {
         return isWorkflow;
     }
 
-    public void setIsWorkflow(Boolean isWorkflow) {
-        this.isWorkflow = isWorkflow;
+    public void setWorkflow(Boolean workflow) {
+        isWorkflow = workflow;
     }
 
     public String getGrade() {

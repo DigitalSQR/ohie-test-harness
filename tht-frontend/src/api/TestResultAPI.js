@@ -126,7 +126,7 @@ export const TestResultAPI = {
 			throw error;
 		}
 	},
-	getTestCaseResultById: async function (testRequestId, manual, automated) {
+	getTestCaseResultByTestRequestId: async function (testRequestId, manual, automated) {
 		try {
 			const params = {
 				testRequestId: testRequestId,
@@ -152,6 +152,26 @@ export const TestResultAPI = {
 		} catch (error) {
 			throw error;
 		}
+	},
+	getTestCaseResultById: async function(testResultId){
+		const response = await api.request({
+			url: `/testcase-result/${testResultId}`,
+			method: "GET"
+		});
+
+		return response.data;
+	},
+	patchTestCaseResult: async function(testcaseResultId, patchData){
+		const response = await api.request({
+			url: `/testcase-result/${testcaseResultId}`,
+			method: "PATCH",
+			headers: {
+				"Content-Type":"application/json-patch+json"
+			},
+			data : patchData
+		});
+		
+		return response.data;
 	}
 
 

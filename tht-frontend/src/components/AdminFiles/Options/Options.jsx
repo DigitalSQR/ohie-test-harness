@@ -109,6 +109,13 @@ export default function Options(props) {
         return selectedValues;
     };
 
+	const onLabelClick = (e, index) => {
+		e.preventDefault();// Stop event propagation
+		if (inputRef.current[index]) {
+			inputRef.current[index].click();
+		}
+	}
+
 
 	return (
 		<div className="custom-multiselect field-checkbox">
@@ -126,7 +133,7 @@ export default function Options(props) {
 							onChange={(e) => handleChange(e)}
 							autoComplete="off"
 						/>
-						<label className={currentQuestion.questionType === ManualQuestionTypeConstants.MULTI_SELECT ? "label-before-no-radius" : ""} htmlFor={option.id} >{option.name}</label>
+						<label onClick={(e) => onLabelClick(e, index)} className={currentQuestion.questionType === ManualQuestionTypeConstants.MULTI_SELECT ? "label-before-no-radius" : ""} htmlFor={option.id} >{option.name}</label>
 					</div>
 				</div>
 			))}

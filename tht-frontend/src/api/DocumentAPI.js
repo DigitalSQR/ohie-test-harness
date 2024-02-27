@@ -30,7 +30,7 @@ export const DocumentAPI = {
                 link.href = window.URL.createObjectURL(blob)
                 link.download = name || 'data.pdf';
                 link.click()
-            })
+            });
 		} catch (error) {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}
