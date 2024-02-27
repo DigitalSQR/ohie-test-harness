@@ -8,6 +8,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
+import com.argusoft.path.tht.usermanagement.models.dto.ResetPasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -331,10 +332,9 @@ public class UserRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/reset/password")
-    public UserInfo resetPassword(@RequestParam("oldPassword") String oldPassword,
-                                  @RequestParam("newPassword") String newPassword,
+    public UserInfo resetPassword(@RequestBody ResetPasswordInfo resetPasswordInfo,
                                   @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
-        return userMapper.modelToDto(userService.resetPassword(oldPassword, newPassword, contextInfo));
+        return userMapper.modelToDto(userService.resetPassword(resetPasswordInfo, contextInfo));
     }
     @ApiOperation(value = "Retrieves all status for user.", response = Multimap.class)
     @ApiResponses(value = {

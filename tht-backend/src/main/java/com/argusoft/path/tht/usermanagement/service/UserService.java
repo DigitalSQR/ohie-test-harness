@@ -5,6 +5,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
+import com.argusoft.path.tht.usermanagement.models.dto.ResetPasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -199,14 +200,13 @@ public interface UserService {
     /**
      * Reset password of user.
      *
-     * @param oldPassword Old password of user
-     * @param newPassword  new password of user
+     * @param resetPasswordInfo information containing old password and new password
      * @param contextInfo ContextInfo
      * @return UserEntity
      *
      */
 
-    public UserEntity resetPassword(String oldPassword, String newPassword, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException;
+    public UserEntity resetPassword(ResetPasswordInfo resetPasswordInfo, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException;
 
     /**
      * change state of user with id and giving the expected state
