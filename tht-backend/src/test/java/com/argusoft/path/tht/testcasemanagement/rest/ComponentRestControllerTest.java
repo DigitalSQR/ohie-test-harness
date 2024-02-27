@@ -60,6 +60,9 @@ public class ComponentRestControllerTest extends TestingHarnessToolRestTestConfi
         componentInfo.setId("component.601");
         componentInfo.setName("component 601");
         componentInfo.setDescription("component 601");
+        componentInfo.setState("component.status.active");
+        componentInfo.setRank(1);
+
 
         Set<String> spIds = new HashSet<>();
         componentInfo.setSpecificationIds(spIds);
@@ -78,7 +81,10 @@ public class ComponentRestControllerTest extends TestingHarnessToolRestTestConfi
                 .getResponseBody();
 
         assertEquals("component 601", createComponent.getName());
-        assertEquals("component.status.active", createComponent.getState());
+//        assertEquals("component.status.active", createComponent.getState());
+
+        //we have to check for the inactive as component default value is inactive
+        assertEquals("component.status.draft", createComponent.getState());
     }*/
 
 
@@ -89,6 +95,7 @@ public class ComponentRestControllerTest extends TestingHarnessToolRestTestConfi
         componentInfo.setName("new component 4");
         componentInfo.setState("component.status.active");
         componentInfo.setDescription("component 4");
+        componentInfo.setRank(1);
 
         Set<String> spIds = new HashSet<>();
         componentInfo.setSpecificationIds(spIds);
@@ -217,5 +224,23 @@ public class ComponentRestControllerTest extends TestingHarnessToolRestTestConfi
                 .isEqualTo(OK)
                 .expectBody()
                 .jsonPath("$.content.length()").isEqualTo("3");
+    }
+
+    @Test
+    void testGetComponentMapping(){
+
+        List strings = this.webTestClient
+                .get()
+                .uri("/component/status/mapping?sourceStatus=component.status.active")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + super.tokenMap.get("access_token"))
+                .exchange()
+                .expectStatus()
+                .isEqualTo(OK)
+                .expectBody(List.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertEquals("component.status.inactive", strings.get(0));
+
     }
 }

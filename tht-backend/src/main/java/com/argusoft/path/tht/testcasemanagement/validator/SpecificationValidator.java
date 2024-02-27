@@ -50,7 +50,7 @@ public class SpecificationValidator {
     }
 
     public static List<ValidationResultInfo> validateSpecification(String validationTypeKey, SpecificationEntity specificationEntity, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        
+
         if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("caught InvalidParameterException in SpecificationValidator ");
             throw new InvalidParameterException("validationTypeKey is missing");
@@ -258,7 +258,7 @@ public class SpecificationValidator {
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || specificationEntity.getId() != null)
-                && !StringUtils.hasLength(specificationEntity.getName())) {
+                && StringUtils.hasLength(specificationEntity.getName())) {
 
             SpecificationCriteriaSearchFilter specificationCriteriaSearchFilter = new SpecificationCriteriaSearchFilter();
             specificationCriteriaSearchFilter.setName(specificationEntity.getName());
