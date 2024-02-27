@@ -1,0 +1,20 @@
+.reload-icon {
+    background-color: rgba(231, 238, 248, 0.717);
+    border: 1px solid rgba(178, 213, 250, 0.717);
+    margin: 8px;
+}
+
+.reload-icon img {
+    height: 30px;
+    width: 30px;
+}
+
+.reload-icon img:hover {
+    height: 32px;
+    width: 32px;
+}
+
+.captcha-message{
+    color: red;
+    margin-bottom: 5px;
+}

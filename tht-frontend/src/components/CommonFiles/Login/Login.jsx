@@ -18,7 +18,7 @@ import GoogleLoginIcon from "../../../styles/images/GoogleLoginIcon.png";
 import { UserAPI } from "../../../api/UserAPI";
 import { userinfo_success } from "../../../reducers/UserInfoReducer";
 import { useFormik } from "formik";
-import { CaptchaAPI } from "../../../api/CaptchaAPI";
+import Captcha from "../Captcha/Captcha";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -30,7 +30,6 @@ export default function Login() {
     code: "",
     captcha: ""
   });
-  const [base64Image, setbase64Image] = useState("");
 
   useEffect(() => {
     setDefaultToken();
@@ -41,25 +40,6 @@ export default function Login() {
     navigate("/SignUp");
   };
 
-  useEffect(() => {
-    const fetchCaptcha = async () => {
-      try {
-
-        const response = await CaptchaAPI.getCaptcha();
-        setCaptchaInfo({ ...captchaInfo, 'captcha': response.data.captcha });
-        console.log(captchaInfo);
-        setbase64Image(response.data.image);
-      } catch (error) {
-        console.error('Error fetching captcha:', error);
-      }
-    };
-
-    fetchCaptcha();
-  }, [])
-
-  const handleCaptchChange = (e) => {
-    setCaptchaInfo({ ...captchaInfo, 'code': e.target.value });
-  }
 
   const setOrUnsetKeepMeLogin = (event) => {
     const { checked } = event.target;
@@ -97,6 +77,17 @@ export default function Login() {
 
     return errors;
   };
+
+  const getCaptcha=(code,captcha)=>{
+    if(captcha)
+    {
+      setCaptchaInfo({
+        code:code,
+        captcha:captcha
+      });
+    }
+   
+}
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -105,7 +96,7 @@ export default function Login() {
     },
     validate: validate,
     onSubmit: async () => {
-      if (!captchaInfo.code)  {
+      if (!captchaInfo.code && captchaInfo.captcha)  {
         notification.error({
           placement: "bottomRight",
           description: "Invalid captcha",
@@ -244,37 +235,7 @@ export default function Login() {
                     <div className="text-danger">{formik.errors.password}</div>
                   )}
                 </div>
-
-                {
-                  base64Image ?
-                    <div className="custom-input mb-3">
-                      <label htmlFor="exampleFormControlInput1" className="form-label">
-                        Captcha
-                      </label>
-                      <div className="mb-3">
-                        <img src={`data:image/png;base64, ${base64Image}`} alt="Captcha Image" />
-                      </div>
-                      <div className="input-group">
-                        <span className="input-group-text" id="basic-addon1">
-                          <i class="bi bi-person-lock"></i>
-                        </span>
-                        <input
-                          name="captcha"
-                          type="text"
-                          className="form-control border-start-0 ps-0"
-                          placeholder="Please retype the above code"
-                          aria-label="Username"
-                          aria-describedby="basic-addon1"
-                          onChange={handleCaptchChange}
-                          autoComplete="off"
-                          onKeyDown={handleKeyPress}
-                        />
-                      </div>
-                    </div>
-                    :
-                    <></>
-                }
-
+                <Captcha getCaptcha={getCaptcha}/>
                 <div className="d-flex justify-content-between">
                   <label className="custom-checkbox">
                     Remember me

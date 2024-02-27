@@ -4,6 +4,7 @@ import cn.apiclub.captcha.Captcha;
 import cn.apiclub.captcha.backgrounds.GradiatedBackgroundProducer;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
@@ -11,8 +12,10 @@ public class CaptchaUtil {
 
     //create captcha object
     public static Captcha createCaptcha(int width, int height){
+        Color startColor = new Color(173, 216, 230); // Light Blue color
+        Color endColor = new Color(240, 248, 255);   // Another shade of Light Blue color
         return new Captcha.Builder(width, height)
-                .addBackground(new GradiatedBackgroundProducer())
+                .addBackground(new GradiatedBackgroundProducer(startColor, endColor))
                 .addText()
                 .addNoise()
                 .build();
