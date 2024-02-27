@@ -3,6 +3,7 @@ package com.argusoft.path.tht.fileservice.service;
 import com.argusoft.path.tht.fileservice.FileDetails;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import org.apache.commons.io.FilenameUtils;
@@ -35,7 +36,7 @@ public class FileService {
         // Validate file type
         boolean test = multipartFilePredicateToValidateFile.test(multipartFile);
         if (!test) {
-            LOGGER.error("caught InvalidFileTypeException in FileService ");
+            LOGGER.error(ValidateConstant.INVALID_FILE_TYPE_EXCEPTION + FileService.class.getSimpleName());
             throw new InvalidFileTypeException("File Type Validation Failed");
         }
         String fileName = multipartFile.getOriginalFilename();
@@ -68,7 +69,7 @@ public class FileService {
         try {
             return Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            LOGGER.error("caught IOException in FileService ", e);
+            LOGGER.error(ValidateConstant.IO_EXCEPTION + FileService.class.getSimpleName(), e);
             e.printStackTrace();
             return false;
         }
@@ -90,7 +91,7 @@ public class FileService {
 
     public static boolean validateFileType(MultipartFile file, List<String> validateAgainstTypes) throws InvalidFileTypeException, InvalidParameterException, OperationFailedException {
         if (validateAgainstTypes == null || validateAgainstTypes.isEmpty()) {
-            LOGGER.error("caught InvalidParameterException in FileService ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ FileService.class.getSimpleName());
             throw new InvalidParameterException("ValidationAgainstTypes should not be null or empty to validate file type ");
         }
 
@@ -99,10 +100,10 @@ public class FileService {
             if (validateAgainstTypes.contains(actualType)) {
                 return true;
             }
-            LOGGER.error("caught InvalidFileTypeException in FileService ");
+            LOGGER.error(ValidateConstant.INVALID_FILE_TYPE_EXCEPTION + FileService.class.getSimpleName());
             throw new InvalidFileTypeException("Invalid file type, only allowed file types are : " + (String.join(",", validateAgainstTypes)));
         } catch (IOException e) {
-            LOGGER.error("caught IOException in FileService ", e);
+            LOGGER.error(ValidateConstant.IO_EXCEPTION + FileService.class.getSimpleName(), e);
             throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
         }
     }
@@ -113,7 +114,7 @@ public class FileService {
         try {
             return validateFileType(file, allowedTypes);
         } catch (InvalidParameterException e) {
-            LOGGER.error("caught InvalidParameterException in FileService ", e);
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ FileService.class.getSimpleName(), e);
             throw new OperationFailedException("File validation failed due to InvalidParameterException : " + e.getMessage(), e);
         }
     }

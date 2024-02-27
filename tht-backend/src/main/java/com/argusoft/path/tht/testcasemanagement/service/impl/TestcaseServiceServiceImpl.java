@@ -2,11 +2,11 @@ package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
@@ -14,7 +14,6 @@ import com.argusoft.path.tht.testcasemanagement.repository.TestcaseRepository;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.TestcaseValidator;
-import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +28,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,7 +71,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             DataValidationErrorException {
 
         if (testcaseEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseEntity is missing");
         }
 
@@ -113,7 +110,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             DataValidationErrorException {
 
         if (testcaseEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseEntity is missing");
         }
 
@@ -188,7 +185,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             OperationFailedException {
 
         if (testcaseEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseEntity is missing");
         }
 
@@ -219,7 +216,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 

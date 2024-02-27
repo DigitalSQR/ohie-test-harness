@@ -15,6 +15,7 @@ import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
@@ -26,7 +27,6 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
@@ -34,7 +34,6 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
-import com.google.common.collect.Multimap;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +101,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             DataValidationErrorException, DoesNotExistException {
 
         if (testcaseResultEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseResultServiceServiceImpl ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestcaseResultEntity is missing");
         }
 
@@ -137,7 +136,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             DataValidationErrorException {
 
         if (testcaseResultEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseResultServiceServiceImpl ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestcaseResultEntity is missing");
         }
 
@@ -290,7 +289,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testcaseResultEntity == null) {
-            LOGGER.error("caught InvalidParameterException in TestcaseResultServiceServiceImpl ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestcaseResultEntity is missing");
         }
         List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, testRequestService, contextInfo);
@@ -312,7 +311,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 
@@ -325,7 +324,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 

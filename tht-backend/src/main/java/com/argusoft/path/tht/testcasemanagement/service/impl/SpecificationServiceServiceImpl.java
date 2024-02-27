@@ -2,13 +2,12 @@ package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.SpecificationRepository;
@@ -30,10 +29,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.util.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,7 +70,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             DataValidationErrorException {
 
         if (specificationEntity == null) {
-            LOGGER.error("caught InvalidParameterException in SpecificationServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
 
@@ -113,7 +109,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             DataValidationErrorException {
 
         if (specificationEntity == null) {
-            LOGGER.error("caught InvalidParameterException in SpecificationServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
 
@@ -190,7 +186,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             throws InvalidParameterException,
             OperationFailedException {
         if (specificationEntity == null) {
-            LOGGER.error("caught InvalidParameterException in SpecificationServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
         List<ValidationResultInfo> errors = SpecificationValidator.validateSpecification(validationTypeKey, specificationEntity, this, testcaseService, componentService, contextInfo);
@@ -220,7 +216,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 

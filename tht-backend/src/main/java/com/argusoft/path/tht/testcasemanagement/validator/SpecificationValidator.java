@@ -3,6 +3,7 @@ package com.argusoft.path.tht.testcasemanagement.validator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -10,10 +11,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
@@ -41,9 +39,9 @@ public class SpecificationValidator {
                 componentService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error("caught DataValidationErrorException in SpecificationValidator ");
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + SpecificationValidator.class.getSimpleName());
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     validationResultEntities);
         }
 
@@ -52,8 +50,8 @@ public class SpecificationValidator {
     public static List<ValidationResultInfo> validateSpecification(String validationTypeKey, SpecificationEntity specificationEntity, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error("caught InvalidParameterException in SpecificationValidator ");
-            throw new InvalidParameterException("validationTypeKey is missing");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationValidator.class.getSimpleName());
+            throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
@@ -82,13 +80,12 @@ public class SpecificationValidator {
                                 .getSpecificationById(specificationEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
-                        LOGGER.error("caught DoesNotExistException in SpecificationValidator ", ex);
+                        LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + SpecificationValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
-                                        "The id supplied to the update does not "
-                                                + "exists"));
+                                        ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
                     }
                 }
 
@@ -105,7 +102,7 @@ public class SpecificationValidator {
                 validateCreateSpecification(errors, specificationEntity, specificationService, contextInfo);
                 break;
             default:
-                throw new InvalidParameterException("Invalid validationTypeKey");
+                throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
         // For : Id
@@ -137,12 +134,12 @@ public class SpecificationValidator {
             try {
                 testcaseEntitySet.add(testcaseService.getTestcaseById(item.getId(), contextInfo));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in SpecificationValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + SpecificationValidator.class.getSimpleName(), ex);
                 String fieldName = "testcase";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied for the testcase does not exists"));
+                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         });
         specificationEntity.setTestcases(testcaseEntitySet);
@@ -153,12 +150,12 @@ public class SpecificationValidator {
                         componentService.getComponentById(specificationEntity.getComponent().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in SpecificationValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + SpecificationValidator.class.getSimpleName(), ex);
                 String fieldName = "component";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied for the component does not exists"));
+                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         }
     }
@@ -175,7 +172,7 @@ public class SpecificationValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    fieldName + " must be provided"));
+                    fieldName + ValidateConstant.MUST_PROVIDED));
         }
         // check meta version id
         else if (!specificationEntity.getVersion()
@@ -183,9 +180,7 @@ public class SpecificationValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    "someone else has updated the Specification since you"
-                            + " started updating, you might want to"
-                            + " refresh your copy."));
+                    ValidateConstant.SOMEONE_UPDATED+ "Specification"+ ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
         validateNotUpdatable(errors, specificationEntity, specificationService, originalEntity);
@@ -215,9 +210,9 @@ public class SpecificationValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied to the create already exists"));
+                               ValidateConstant.ID_SUPPLIED+ fieldName+ ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in SpecificationValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + SpecificationValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
         }
@@ -275,7 +270,7 @@ public class SpecificationValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "Given Specification with same name already exists."));
+                                "Given Specification"+ ValidateConstant.NAME_ALREADY_EXIST));
             }
         }
     }

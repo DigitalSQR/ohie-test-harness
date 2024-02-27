@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.reportmanagement.restcontroller;
 
-import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.*;
 
 /**

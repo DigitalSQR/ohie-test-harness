@@ -198,10 +198,6 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
         return id;
     }
 
-    public void setPrimaryId(String id) {
-        this.id = id;
-    }
-
     public String getDocumentType() { return documentType; }
 
     public void setDocumentType(String documentType) { this.documentType = documentType; }
