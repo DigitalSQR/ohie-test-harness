@@ -110,10 +110,6 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
         return id;
     }
 
-    public void setPrimaryId(String id) {
-        this.id = id;
-    }
-
     private Root<TestcaseOptionEntity> getTestcaseOptionEntityRoot() {
         return testcaseOptionEntityRoot;
     }

@@ -2,6 +2,7 @@ package com.argusoft.path.tht.systemconfiguration.security.handler;
 
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -156,7 +157,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                 response.sendRedirect(s);
             }
         } catch (Exception e) {
-            LOGGER.error("caught Exception in OnSsoAuthenticationSuccessHandler ", e);
+            LOGGER.error(ValidateConstant.EXCEPTION + OnSsoAuthenticationSuccessHandler.class.getSimpleName(), e);
             //TODO: Add appropriate message.
             response.setStatus(500);
             e.printStackTrace();
@@ -167,7 +168,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
         try {
             return userService.getUserByEmail(oauth2User.<String>getAttribute("email"), contextInfo);
         } catch (DoesNotExistException ex) {
-            LOGGER.error("caught DoesNotExistException in OnSsoAuthenticationSuccessHandler ", ex);
+            LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + OnSsoAuthenticationSuccessHandler.class.getSimpleName(), ex);
             //If user not exists then create as Assessee.
             UserEntity userEntity = new UserEntity();
             userEntity.setEmail(oauth2User.<String>getAttribute("email"));

@@ -130,10 +130,6 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         return id;
     }
 
-    public void setPrimaryId(String id) {
-        this.id = id;
-    }
-
     public String getRole() {
         return role;
     }

@@ -2,6 +2,7 @@ package com.argusoft.path.tht.Audit.Service;
 
 import com.argusoft.path.tht.Audit.constant.AuditServiceConstant;
 import com.argusoft.path.tht.Audit.filter.SearchFilter;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -35,7 +36,7 @@ public class AuditServiceImpl implements AuditService{
             String tableName = searchFilter.getName();
             tableName = tableName.toUpperCase();
             if (AuditServiceConstant.EntityType.valueOf(tableName).getEntityClass() == null) {
-                LOGGER.error("Caught Exception in searchAudit");
+                LOGGER.error(ValidateConstant.EXCEPTION+ AuditServiceImpl.class.getSimpleName());
                 throw new DoesNotExistException("No Audit available for " + tableName);
             }
 
@@ -49,7 +50,7 @@ public class AuditServiceImpl implements AuditService{
                     true, true);
 
             if (searchFilter.getName() == null) {
-                LOGGER.error("Caught Exception in searchAudit");
+                LOGGER.error(ValidateConstant.EXCEPTION+ AuditServiceImpl.class.getSimpleName());
                 throw new InvalidParameterException("Table name not provided");
             }
             if (ids != null && !ids.isEmpty()) {
@@ -69,7 +70,7 @@ public class AuditServiceImpl implements AuditService{
 
         }
         catch (Exception ex)
-        {   LOGGER.error("Caught Exception in searchAudit");
+        {   LOGGER.error(ValidateConstant.EXCEPTION+ AuditServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Invalid parameter value provided");
         }
     }

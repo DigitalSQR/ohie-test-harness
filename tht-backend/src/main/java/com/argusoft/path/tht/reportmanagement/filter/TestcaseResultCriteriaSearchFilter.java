@@ -259,10 +259,6 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
         return id;
     }
 
-    public void setPrimaryId(String id) {
-        this.id = id;
-    }
-
     public Boolean getAutomated() {
         return isAutomated;
     }

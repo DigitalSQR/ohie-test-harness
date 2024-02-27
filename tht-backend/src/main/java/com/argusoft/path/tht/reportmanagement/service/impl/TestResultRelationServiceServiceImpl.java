@@ -87,6 +87,7 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
         TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter();
         testResultRelationCriteriaSearchFilter.setId(resultRelationIds);
 
+
         List<TestResultRelationEntity> testResultRelationEntities = this.searchTestResultRelation(testResultRelationCriteriaSearchFilter, contextInfo);
 
         if(resultRelationIds !=null && resultRelationIds.size() != testResultRelationEntities.size()){

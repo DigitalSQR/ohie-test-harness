@@ -1,24 +1,19 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
-import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.ComponentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.validator.ComponentValidator;
-import com.google.common.collect.Multimap;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +26,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import java.io.IOException;
-import java.util.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,7 +65,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             DataValidationErrorException {
 
         if (componentEntity == null) {
-            LOGGER.error("caught InvalidParameterException in ComponentServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("componentEntity is missing");
         }
 
@@ -112,7 +103,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             DataValidationErrorException {
 
         if (componentEntity == null) {
-            LOGGER.error("caught InvalidParameterException in ComponentServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("componentEntity is missing");
         }
 
@@ -185,7 +176,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             OperationFailedException {
 
         if (componentEntity == null) {
-            LOGGER.error("caught InvalidParameterException in ComponentServiceServiceImpl");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("componentEntity is missing");
         }
 
@@ -217,7 +208,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 

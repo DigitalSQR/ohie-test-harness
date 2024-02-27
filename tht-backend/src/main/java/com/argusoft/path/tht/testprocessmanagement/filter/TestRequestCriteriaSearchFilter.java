@@ -123,10 +123,6 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
         return id;
     }
 
-    public void setPrimaryId(String id) {
-        this.id = id;
-    }
-
     private Root<TestRequestEntity> getTestRequestEntityRoot() {
         return testRequestEntityRoot;
     }

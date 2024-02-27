@@ -14,14 +14,12 @@ import com.argusoft.path.tht.fileservice.validator.DocumentValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
-import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
-import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +52,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             fileContentByFilePathAndFileName = FileService.getFileContentByFilePathAndFileName(null, fileId);
         } catch (IOException e) {
-            LOGGER.error("caught IOException in DocumentServiceImpl ", e);
+            LOGGER.error(ValidateConstant.IO_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             throw new OperationFailedException("Exception occurred due to I/O Exception", e);
         }
         return fileContentByFilePathAndFileName;
@@ -74,7 +72,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             fileDetails = storeFileAndGetFileDetails(file, validationAllowedTypes);
         } catch (InvalidFileTypeException e) {
-            LOGGER.error("caught InvalidFileTypeException in DocumentServiceImpl ", e);
+            LOGGER.error(ValidateConstant.INVALID_FILE_TYPE_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             DocumentValidator.setErrorMessageForFileType(e);
         }
 
@@ -92,7 +90,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             fileDetails = FileService.storeFile(file, multipartFileTypeTesterPredicate);
         } catch (IOException e) {
-            LOGGER.error("caught IOException in DocumentServiceImpl ", e);
+            LOGGER.error(ValidateConstant.IO_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             throw new OperationFailedException("Operation Failed due to IOException", e);
         }
         return fileDetails;
@@ -102,7 +100,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             return FileService.detectInputStreamTypeWithTika(file.getInputStream());
         } catch (IOException e) {
-            LOGGER.error("caught IOException in DocumentServiceImpl ", e);
+            LOGGER.error(ValidateConstant.IO_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
         }
     }
@@ -118,7 +116,7 @@ public class DocumentServiceImpl implements DocumentService {
                     .orElseThrow(() -> new DoesNotExistException("DocumentEntity does not found with id : " + documentId));
 
         } catch (InvalidParameterException e) {
-            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             throw new OperationFailedException("InvalidParameterException while getting document ", e);
         }
 
@@ -149,7 +147,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             documentsByRefObjectUriAndRefObjectId = getDocumentsByRefObjectUriAndRefObjectId(refObjUri, refId, contextInfo);
         } catch (InvalidParameterException e) {
-            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             //TODO add logger
         }
 
@@ -200,7 +198,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
 
@@ -224,7 +222,7 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             documentEntities = getDocumentsByFileId(fileId, contextInfo);
         } catch (InvalidParameterException e) {
-            LOGGER.error("caught InvalidParameterException in DocumentServiceImpl ", e);
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             throw new OperationFailedException("Error fetching document by fileId", e);
             //ADD LOGGER
         }

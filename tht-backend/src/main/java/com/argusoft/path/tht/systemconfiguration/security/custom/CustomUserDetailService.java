@@ -2,6 +2,7 @@ package com.argusoft.path.tht.systemconfiguration.security.custom;
 
 import com.argusoft.path.tht.captcha.util.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
@@ -52,28 +53,28 @@ public class CustomUserDetailService implements UserDetailsService {
             try {
                 UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
                 if (!StringUtils.hasLength(user.getPassword()) || !EncryptDecrypt.checkRawString(password, user.getPassword())) {
-                    LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
-                    throw new UsernameNotFoundException("Credential are incorrect.");
+                    LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+                    throw new UsernameNotFoundException("Credential are incorrect.");   
                 }
 
                 //If User is not active
                 if (!Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, user.getState())) {
                     if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
                         userService.resendVerification(user.getEmail(), new ContextInfo());
-                        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
+                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("Pending email verification.") {
                         };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, user.getState())) {
-                        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
+                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("Pending admin approval.") {
                         };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_REJECTED, user.getState())) {
-                        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
+                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("Admin approval has been rejected.") {
                         };
                     } else {
                         //Only state left is UserServiceConstants.USER_STATUS_INACTIVE.
-                        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
+                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("User is inactive.") {
                         };
                     }
@@ -94,12 +95,12 @@ public class CustomUserDetailService implements UserDetailsService {
                         authorities);
 
             } catch (NumberFormatException | DoesNotExistException | InvalidParameterException e) {
-                LOGGER.error("caught DoesNotExistException in CustomUserDetailService ", e);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + CustomUserDetailService.class.getSimpleName(), e);
                 throw new UsernameNotFoundException("Credential are incorrect.") {
                 };
             }
         }
-        LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
+        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
         throw new UsernameNotFoundException("requestAttributes is incorrect") {
         };
     }

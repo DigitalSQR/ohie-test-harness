@@ -4,6 +4,7 @@ import ca.uhn.fhir.util.CollectionUtil;
 import com.argusoft.path.tht.captcha.util.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -38,9 +39,9 @@ public class UserValidator {
         ValidationUtils.validateRequired(updatePasswordInfo.getNewPassword(), "newPassword", errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            LOGGER.error("caught DataValidationErrorException in UserValidator ");
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + UserValidator.class.getSimpleName());
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     errors);
         }
     }
@@ -53,9 +54,9 @@ public class UserValidator {
                 userEntity,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
-            LOGGER.error("caught DataValidationErrorException in UserValidator ");
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + UserValidator.class.getSimpleName());
             throw new DataValidationErrorException(
-                    "Error(s) occurred in the validating",
+                    ValidateConstant.ERRORS,
                     validationResultEntitys);
         }
     }
@@ -84,12 +85,12 @@ public class UserValidator {
                 roleEntitySet.add(userService.getRoleById(item.getId(), contextInfo));
             } catch (DoesNotExistException | InvalidParameterException |
                      OperationFailedException ex) {
-                LOGGER.error("caught DoesNotExistException in UserValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserValidator.class.getSimpleName(), ex);
                 String fieldName = "roles";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied for the role does not exists"));
+                                ValidateConstant.ID_SUPPLIED+ fieldName+ ValidateConstant.DOES_NOT_EXIST));
             }
         });
         userEntity.setRoles(roleEntitySet);
@@ -165,13 +166,12 @@ public class UserValidator {
                                 .getUserById(userEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
-                        LOGGER.error("caught DoesNotExistException in UserValidator ", ex);
+                        LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
-                                        "The id supplied to the update does not "
-                                                + "exists"));
+                                        ValidateConstant.ID_SUPPLIED+ "update" + ValidateConstant.DOES_NOT_EXIST));
                     }
                 }
 
@@ -188,8 +188,8 @@ public class UserValidator {
                 validateCreateUser(userService, errors, userEntity, contextInfo);
                 break;
             default:
-                LOGGER.error("caught InvalidParameterException in UserValidator ");
-                throw new InvalidParameterException("Invalid validationTypeKey");
+                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + UserValidator.class.getSimpleName());
+                throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
         // For : Id
@@ -234,7 +234,7 @@ public class UserValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    fieldName + " must be provided"));
+                    fieldName + ValidateConstant.MUST_PROVIDED));
         }
         // check meta version id
         else if (!userEntity.getVersion()
@@ -242,9 +242,7 @@ public class UserValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    "someone else has updated the user since you"
-                            + " started updating, you might want to"
-                            + " refresh your copy."));
+                    ValidateConstant.SOMEONE_UPDATED+ "user"+ ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
         validateNotUpdatable(errors, userEntity, originalEntity, contextInfo);
@@ -281,9 +279,9 @@ public class UserValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "The id supplied to the create already exists"));
+                                ValidateConstant.ID_SUPPLIED+ "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in UserValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
         }

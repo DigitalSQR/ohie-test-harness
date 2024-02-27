@@ -10,6 +10,7 @@ import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -137,11 +138,11 @@ public class TestcaseExecutioner {
             TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = new TestcaseResultEntitiesAndIgenericClient(testcaseResultEntities, iGenericClientMap);
             return testcaseResultEntitiesAndIgenericClient;
         } catch (DataValidationErrorException e) {
-            LOGGER.error("caught DataValidationException in TestcaseExecutioner ", e);
+            LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), e);
             throw new OperationFailedException(e);
         } catch (InvalidParameterException | OperationFailedException | VersionMismatchException |
                  DoesNotExistException e) {
-            LOGGER.error("caught OperationFailedException in TestcaseExecutioner ", e);
+            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), e);
             throw new OperationFailedException(e.getMessage(), e);
         }
     }
@@ -175,10 +176,10 @@ public class TestcaseExecutioner {
             System.out.println("??????????????????????????????????????????????????????");
         } catch (DoesNotExistException | InvalidParameterException | OperationFailedException |
                  VersionMismatchException ex) {
-            LOGGER.error("caught OperationFailedException in TestcaseExecutioner ", ex);
+            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), ex);
             throw new OperationFailedException("Operation failed while updating testcaseResults", ex);
         } catch (DataValidationErrorException ex) {
-            LOGGER.error("caught DataValidationErrorException in TestcaseExecutioner ", ex);
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), ex);
             throw new OperationFailedException(ex);
         }
     }
@@ -199,7 +200,7 @@ public class TestcaseExecutioner {
 
                 updateTestCaseResultByValidationResult(testcaseResult, validationResultInfo, startDateForTestCase, contextInfo);
             } catch (Exception e) {
-                LOGGER.error("caught Exception in TestcaseExecutioner ", e);
+                LOGGER.error(ValidateConstant.EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), e);
                 e.printStackTrace();
                 //TODO: add system failure log and connect it with testResult by refObjUri/refId.
                 try {
@@ -210,12 +211,12 @@ public class TestcaseExecutioner {
                     updateTestCaseResultForSystemError(testcaseResult, startDateForTestCase, errorMessage, contextInfo);
                 } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
                          VersionMismatchException | DoesNotExistException ex) {
-                    LOGGER.error("caught Exception in TestcaseExecutioner ", e);
+                    LOGGER.error(ValidateConstant.EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), e);
                     ex.printStackTrace();
                 }
             }
         }catch (Exception e){
-            LOGGER.error("caught Exception in TestcaseExecutioner ", e);
+            LOGGER.error(ValidateConstant.EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), e);
         }
     }
 

@@ -136,11 +136,6 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
         return id;
     }
 
-    public void setPrimaryId(String id) {
-        this.id = id;
-    }
-
-
     public String getQuestionType() {
         return questionType;
     }

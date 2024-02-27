@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.systemconfiguration.utils;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,7 +166,7 @@ public final class FHIRUtils {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             return dateFormat.parse(dateStr);
         } catch (ParseException e) {
-            LOGGER.error("caught ParseException in FHIRUtils ", e);
+            LOGGER.error(ValidateConstant.PARSE_EXCEPTION + FHIRUtils.class.getSimpleName(), e);
             throw new RuntimeException("Error parsing date", e);
         }
     }

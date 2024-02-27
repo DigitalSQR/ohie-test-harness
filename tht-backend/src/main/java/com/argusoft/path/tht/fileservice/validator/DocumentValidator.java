@@ -5,6 +5,7 @@ import com.argusoft.path.tht.fileservice.constant.DocumentTypeConstants;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
@@ -50,12 +51,12 @@ public class DocumentValidator {
                 //TODO define and add validation for update
                 break;
             default:
-                LOGGER.error("caught InvalidParameterException in Document Validator");
-                throw new InvalidParameterException("Invalid validationTypeKey");
+                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + DocumentValidator.class.getSimpleName());
+                throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException("Error(s) occurred validating ", errors);
+            throw new DataValidationErrorException(ValidateConstant.ERRORS, errors);
         }
     }
 
@@ -67,7 +68,7 @@ public class DocumentValidator {
             validationResultInfo.setLevel(ErrorLevel.ERROR);
             validationResultInfo.setElement("rankId");
             errors.add(validationResultInfo);
-            throw new DataValidationErrorException("Error(s) occured in validating ", errors);
+            throw new DataValidationErrorException(ValidateConstant.ERRORS, errors);
         }
     }
 

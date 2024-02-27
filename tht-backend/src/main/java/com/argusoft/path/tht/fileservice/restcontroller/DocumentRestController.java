@@ -26,11 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * DocumentRestController
@@ -97,6 +95,7 @@ public class DocumentRestController {
     public Page<DocumentInfo> getSearchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter,
                                                 Pageable pageable,
                                                 @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException {
+
         Page<DocumentEntity> documentBySearchFilter = documentService.searchDocument(exampleDocumentSearchFilter, pageable, contextInfo);
         return documentMapper.pageEntityToDto(documentBySearchFilter);
     }
