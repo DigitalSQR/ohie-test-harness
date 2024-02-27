@@ -7,6 +7,7 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,9 +28,11 @@ public interface UserMapper extends ModelDtoMapper<UserEntity,UserInfo> {
 
 
     @Mapping(source = "roles", target = "roleIds")
+    @Mapping(source = "password", target = "password", qualifiedByName = "setToPassword")
     UserInfo modelToDto(UserEntity userEntity);
 
     @InheritInverseConfiguration
+    @Mapping(source = "password", target = "password", qualifiedByName = "setToPasswordForModel")
     UserEntity dtoToModel(UserInfo userInfo);
 
     List<UserInfo> modelToDto(List<UserEntity> userEntities);
@@ -59,5 +62,15 @@ public interface UserMapper extends ModelDtoMapper<UserEntity,UserInfo> {
                         return roleEntity;
                     })
                     .collect(Collectors.toSet());
+    }
+
+    @Named("setToPassword")
+    default String setToPassword(String password) {
+        return null;
+    }
+
+    @Named("setToPasswordForModel")
+    default String setToPasswordForModel(String password) {
+        return password;
     }
 }

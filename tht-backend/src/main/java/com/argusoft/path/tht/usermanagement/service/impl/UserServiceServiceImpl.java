@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
+import com.argusoft.path.tht.captcha.util.EncryptDecrypt;
 import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -111,7 +112,7 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException {
 
-        contextInfo.setModule(Module.FORGOTPASSWORD);
+        contextInfo.setModule(Module.FORGOT_PASSWORD);
 
         //trim values
         updatePasswordInfo.trimObject();
@@ -133,7 +134,7 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public UserEntity resetPassword(String oldPassword, String newPassword, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
 
-        contextInfo.setModule(Module.RESETPASSWORD);
+        contextInfo.setModule(Module.RESET_PASSWORD);
 
         List<ValidationResultInfo> errors = new ArrayList<>();
         UserEntity principalUser = this.getPrincipalUser(contextInfo);
@@ -181,7 +182,6 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    @Timed(name = "resendVerification")
     public void resendVerification(String userEmail, ContextInfo contextInfo) {
         UserEntity userByEmail = null;
         try {
@@ -215,7 +215,7 @@ public class UserServiceServiceImpl implements UserService {
             DoesNotExistException, MessagingException, IOException {
 
         if(!contextInfo.isAdmin()){
-            if (Objects.equals(contextInfo.getEmail(), Constant.OAUTH2_CONTEXT.getEmail())) {
+            if (contextInfo.getModule() == Module.OAUTH2) {
                 //If method get called on google Oauth2 login then verification of email is not needed.
                 userEntity.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
             } else {
@@ -226,6 +226,7 @@ public class UserServiceServiceImpl implements UserService {
         }
 
         UserValidator.validateCreateUpdateUser(this, Constant.CREATE_VALIDATION, userEntity, contextInfo);
+        userEntity.setPassword(EncryptDecrypt.hashString(userEntity.getPassword()));
         userEntity = userRepository.saveAndFlush(userEntity);
 
         //On verification pending state, send mail for the email verification
@@ -247,6 +248,9 @@ public class UserServiceServiceImpl implements UserService {
             VersionMismatchException,
             DataValidationErrorException, InvalidParameterException {
         UserValidator.validateCreateUpdateUser(this, Constant.UPDATE_VALIDATION, userEntity, contextInfo);
+        if(contextInfo.getModule() == Module.RESET_PASSWORD || contextInfo.getModule() == Module.FORGOT_PASSWORD) {
+            userEntity.setPassword(EncryptDecrypt.hashString(userEntity.getPassword()));
+        }
         userEntity = userRepository.saveAndFlush(userEntity);
         return userEntity;
     }

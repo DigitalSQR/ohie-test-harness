@@ -114,7 +114,7 @@ public final class ValidationUtils {
             String fieldName,
             List<ValidationResultInfo> errors) {
         switch (keyCatagory) {
-            case BIGDECIMAL: {
+            case BIG_DECIMAL: {
                 try {
                     Float f = Float.parseFloat(value);
                     validateFloatRange(

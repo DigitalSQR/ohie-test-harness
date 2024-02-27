@@ -38,11 +38,11 @@ public class ContextInfo extends User implements Serializable {
     )
     private String email;
 
-    private Boolean isAssessee;
+    private Boolean isAssessee = true;
 
-    private Boolean isTester;
+    private Boolean isTester = false;
 
-    private Boolean isAdmin;
+    private Boolean isAdmin = false;
 
     private Module module;
 

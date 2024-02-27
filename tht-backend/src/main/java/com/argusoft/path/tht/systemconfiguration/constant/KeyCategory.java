@@ -11,7 +11,7 @@ public enum KeyCategory {
     STRING("STRING"),
     DATE("DATE"),
     PERCENTAGE("PERCENTAGE"),
-    BIGDECIMAL("BIGDECIMAL");
+    BIG_DECIMAL("BIG_DECIMAL");
 
     private final String name;
 

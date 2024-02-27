@@ -1,12 +1,15 @@
 package com.argusoft.path.tht.systemconfiguration.constant;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This Constant class contains all the common constant variables
@@ -18,7 +21,6 @@ public final class Constant {
     public static final String DEFAULT_SYSTEM_USER_ID = "SYSTEM_USER";
     public static final String ANONYMOUS_USER = "anonymousUser";
     public static final String ANONYMOUS_USER_NAME = "ANONYMOUS_USER";
-    public static final String OAUTH2 = "OAUTH2";
     // Constants for validating
     public static final String CREATE_VALIDATION = "create.validation";
     public static final String UPDATE_VALIDATION = "update.validation";
@@ -44,12 +46,7 @@ public final class Constant {
             = DateTimeFormatter.ofPattern(DATE_FORMATE_STRING);
     public static final DateTimeFormatter LOCAL_DATE_YYYYMMDD
             = DateTimeFormatter.ofPattern("yyyyMMdd");
-    public static ContextInfo SUPER_USER_CONTEXT;
-
-    public static ContextInfo OAUTH2_CONTEXT;
-
-    static {
-        SUPER_USER_CONTEXT = new ContextInfo(
+    public final static ContextInfo SUPER_USER_CONTEXT = new ContextInfo(
                 "ivasiwala@argusoft.com",
                 DEFAULT_SYSTEM_USER_ID,
                 "password",
@@ -57,20 +54,11 @@ public final class Constant {
                 true,
                 true,
                 true,
-                new ArrayList<>()
+                Arrays.asList(
+                        new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_ASSESSEE),
+                        new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_ADMIN),
+                        new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_TESTER))
         );
-
-        OAUTH2_CONTEXT = new ContextInfo(
-                OAUTH2,
-                DEFAULT_SYSTEM_USER_ID,
-                "password",
-                true,
-                true,
-                true,
-                true,
-                new ArrayList<>()
-        );
-    }
 
     private Constant() {
     }
