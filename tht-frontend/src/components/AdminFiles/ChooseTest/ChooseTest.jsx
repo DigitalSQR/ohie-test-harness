@@ -11,6 +11,8 @@ import { handleErrorResponse } from "../../../utils/utils";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
+import WebSocketService from "../../../api/WebSocketService";
+
 export default function ChooseTest() {
   const { testRequestId } = useParams();
   const { TESTCASE_REFOBJURI, TESTREQUEST_REFOBJURI } = RefObjUriConstants;
@@ -24,10 +26,11 @@ export default function ChooseTest() {
     useState(0);
   const [totalFinishedManual, setTotalFinishedManual] = useState(0);
   const [totalFinishedAutomated, setTotalFinishedAutomated] = useState(0);
-
+  const [listenerAddedFlag, setListenerAddedFlag] = useState(false);
   const [testcaseResults, setTestCaseResults] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
 
   useEffect(() => {
     var totalManual = 0;
@@ -76,6 +79,17 @@ export default function ChooseTest() {
       setAutomatedProgress(
         Math.floor((totalFinishedAutomated / totalAutomated) * 100)
       );
+    }
+    console.log("Aut ",totalFinishedAutomated," Man ",totalFinishedManual);
+    // Start the WebSocket Connection
+    if((totalFinishedManual<totalManual || totalFinishedAutomated<totalAutomated) 
+        && stompClient===null && testcaseResults.length>0) {
+      webSocketConnect();
+    }
+
+    // Disconnect the WebSocket onnce all of the testcase are finished
+    if(totalFinishedManual===totalManual && totalFinishedAutomated===totalAutomated) {
+      webSocketDisconnect();
     }
   }, [testcaseResults]);
 
@@ -132,7 +146,6 @@ export default function ChooseTest() {
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
-        console.log("testrequestinfo", res);
         setTestCaseName(res.name);
         dispatch(set_header(res.name));
       })
@@ -145,12 +158,34 @@ export default function ChooseTest() {
   };
 
   useEffect(() => {
+    if (stompClient && stompClient.connected) {
+      //console.log("Creating listeners ",testcaseResults.length);
+      testcaseResults.forEach((testcaseResult, index) => {
+        // Listener for the testcase if in pending
+        if (testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_PENDING) {
+          console.log("Listener = ",testcaseResult.id)
+          const destination = '/testcase-result/' + testcaseResult.id;
+          var subscription = stompClient.subscribe(destination, (msg) => {
+            console.log("Inside the test case listner!!!")
+            const parsedTestcaseResult = JSON.parse(msg.body);
+            testcaseResults[index] = parsedTestcaseResult;
+            setTestCaseResults(testcaseResults);
+            if (parsedTestcaseResult?.state === "testcase.result.status.finished") {
+              subscription.unsubscribe();
+            }
+          });
+        }
+      });
+    }
+  }, [stompClient]);
+
+  useEffect(() => {
     loadProgress();
     testCaseInfo();
   }, []);
 
   useEffect(() => {
-    console.log("manualProgress updated to:", manualProgress);
+    //console.log("manualProgress updated to:", manualProgress);
   }, [manualProgress]);
 
   return (

@@ -205,10 +205,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
 
-
-        if (!TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED.equals(testcaseResultEntity.getState())) {
-            changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
-        }
+        changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
 
         return testcaseResultEntity;
     }
@@ -579,19 +576,18 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     private void recalculateTestcaseResultEntity(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
         List<TestcaseResultEntity> filteredTestcaseResults;
         if (testcaseResultEntity.getRefObjUri().equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
-            filteredTestcaseResults = getChildByParentId(testcaseResultEntity.getId());
+            filteredTestcaseResults = getFilteredChileTestcaseResultsForTestResult(testcaseResultEntity, testcaseResultEntities);
 
-                boolean allTestcasesFinished = false;
+                boolean allTestcasesFinished = true;
                 for (TestcaseResultEntity testcaseResult : filteredTestcaseResults){
-                    if(testcaseResult.getSuccess()==null||testcaseResult.getMessage()==null){
+                    if(!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) && !testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)){
                         allTestcasesFinished = false;
                         break;
                     }
-                    allTestcasesFinished = true;
                 }
                 if(allTestcasesFinished) {
-                    List<String> failedTestcaseResultName = filteredTestcaseResults.stream().filter(tcre -> !tcre.getSuccess()).map(IdStateNameMetaEntity::getName).toList();
-                    String message = "";
+                    List<String> failedTestcaseResultName = filteredTestcaseResults.stream().filter(tcre -> tcre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) && !tcre.getSuccess()).map(IdStateNameMetaEntity::getName).toList();
+                    String message;
                     if(failedTestcaseResultName.isEmpty()){
                         message = "Passed";
                     }
@@ -604,33 +600,29 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         } else if (testcaseResultEntity.getRefObjUri().equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
             //Change to info
-            List<TestcaseResultInfo> specificationTestcaseResultInfos = getChildByParentId(testcaseResultEntity.getId()).stream().map(entity -> testcaseResultMapper.modelToDto(entity)).toList();
-            List<String> specificationTestcaseResultIds = specificationTestcaseResultInfos.stream().map(IdStateNameMetaInfo::getId).toList();
+            filteredTestcaseResults = getFilteredChileTestcaseResultsForTestResult(testcaseResultEntity, testcaseResultEntities);
 
-                boolean allTestcasesFinished = false;
-                for (TestcaseResultInfo specificationResultInfo : specificationTestcaseResultInfos){
-                    if(specificationResultInfo.getSuccess()==null){
-                        allTestcasesFinished = false;
-                        break;
-                    }
-                    allTestcasesFinished = true;
+            for(TestcaseResultEntity tcr: filteredTestcaseResults) {
+                this.recalculateTestcaseResultEntity(tcr, testcaseResultEntities);
+            }
+            boolean allTestcasesFinished = true;
+            for (TestcaseResultEntity specificationResultEntity : filteredTestcaseResults){
+                if(!specificationResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) && !specificationResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)){
+                    allTestcasesFinished = false;
+                    break;
                 }
-                if(allTestcasesFinished) {
-                    List<String> failedSpecificationTestcaseResultName = specificationTestcaseResultInfos.stream().filter(entity -> !entity.getSuccess()).map(IdStateNameMetaInfo::getName)
-                            .toList();
-                    String message = getMessage("Component <b>", testcaseResultEntity, "</b> has been failed due to failing following specification failure:", failedSpecificationTestcaseResultName);
-                    if(failedSpecificationTestcaseResultName.isEmpty()) {
-                        message = "Passed";
-                    }
-                    testcaseResultEntity.setMessage(message);
+            }
+            if(allTestcasesFinished) {
+                List<String> failedSpecificationTestcaseResultName = filteredTestcaseResults.stream().filter(entity -> entity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) && !entity.getSuccess()).map(IdStateNameMetaEntity::getName)
+                        .toList();
+                String message;
+                if(failedSpecificationTestcaseResultName.isEmpty()) {
+                    message = "Passed";
+                } else {
+                    message = getMessage("Component <b>", testcaseResultEntity, "</b> has been failed due to failing following specification failure:", failedSpecificationTestcaseResultName);
                 }
-
-            filteredTestcaseResults
-                    = testcaseResultEntities.stream()
-                    .filter(tcre -> {
-                        return tcre.getParentTestcaseResult() != null
-                                && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
-                    }).collect(Collectors.toList());
+                testcaseResultEntity.setMessage(message);
+            }
         } else {
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
@@ -682,12 +674,15 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     private static String getMessage(String x, TestcaseResultEntity testcaseResultEntity, String x1, List<String> failedSpecificationTestcaseResultName) {
         String message = x + testcaseResultEntity.getName() + x1;
-        for (int i = 0; i < (failedSpecificationTestcaseResultName.size() - 1); i++) {
+        for (int i = 0; i < (failedSpecificationTestcaseResultName.size() - 1   ); i++) {
             message = message + " <b>" + failedSpecificationTestcaseResultName.get(i) + "<b>,";
         }
-        if(failedSpecificationTestcaseResultName.size()>1)
+        if(failedSpecificationTestcaseResultName.size() > 1) {
             message = message + " and";
+        }
+
         message = message + "<b>" + failedSpecificationTestcaseResultName.get(failedSpecificationTestcaseResultName.size() - 1) + "<b>";
+
         return message;
     }
 
@@ -700,7 +695,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return specificationTestcaseResultIds;
     }
 
-    private static List<TestcaseResultEntity> getFilteredTestcaseResultsForSpecification(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
+    private static List<TestcaseResultEntity> getFilteredChileTestcaseResultsForTestResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
         List<TestcaseResultEntity> filteredTestcaseResults;
         filteredTestcaseResults
                 = testcaseResultEntities.stream()
@@ -729,42 +724,24 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void notifyTestCaseFinished(String testcaseResultEntityId, Boolean isAutomated, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-
+    public void notifyTestCaseFinished(String testcaseResultEntityId, Boolean isAutomated, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
         TestcaseResultEntity testcaseResultEntity = null;
-        try {
-            testcaseResultEntity = this.getTestcaseResultById(testcaseResultEntityId, contextInfo);
-        } catch (DoesNotExistException e) {
-            throw new RuntimeException(e);
+        testcaseResultEntity = this.getTestcaseResultById(testcaseResultEntityId, contextInfo);
+        String destination = "/testcase-result/" + testcaseResultEntity.getId();
+        testcaseResultEntity = fetchTestcaseResultStatusByInputs(
+                isManual,
+                isAutomated,
+                null,
+                null,
+                null,
+                null,
+                testcaseResultEntity,
+                contextInfo
+        );
+        System.out.println("*******" + destination);
+        msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
+        if (testcaseResultEntity.getParentTestcaseResult() != null) {
+            notifyTestCaseFinished(testcaseResultEntity.getParentTestcaseResult().getId(), isAutomated, isManual, contextInfo);
         }
-        if (testcaseResultEntity.getAutomated().equals(Boolean.TRUE)) {
-            String destination = "/testcase-result/" + testcaseResultEntity.getId();
-            fetchTestcaseResultStatusByInputs(
-                    isManual,
-                    isAutomated,
-                    null,
-                    null,
-                    null,
-                    null,
-                    testcaseResultEntity,
-                    contextInfo
-            );
-            msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
-            if (testcaseResultEntity.getParentTestcaseResult() != null) {
-                notifyTestCaseFinished(testcaseResultEntity.getParentTestcaseResult().getId(), isAutomated, isManual, contextInfo);
-            }
-        }
-    }
-
-    private List<TestcaseResultEntity> getChildByParentId(String id) {
-        List<TestcaseResultEntity> testcaseResultEntities= testcaseResultRepository.findAll();
-        List<TestcaseResultEntity> finalTestcaseResultEntities = new ArrayList<>();
-        for(TestcaseResultEntity testcaseResultEntity : testcaseResultEntities){
-            if(testcaseResultEntity.getParentTestcaseResult()!=null && testcaseResultEntity.getParentTestcaseResult().getId().equals(id) && testcaseResultEntity.getAutomated()){
-                finalTestcaseResultEntities.add(testcaseResultEntity);
-            }
-        }
-        return finalTestcaseResultEntities;
     }
 }

@@ -28,7 +28,7 @@ export default function ManualTesting() {
 	const [currentTestcase, setCurrentTestcase] = useState();
 	const [testcaseResults, setTestcaseResults] = useState();
 	const [testcaseRequestResult, setTestcaseRequestResult] = useState();
-	var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
+	const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
 	const { showLoader, hideLoader } = useLoader();
   const dispatch = useDispatch();
 	const { Item } = Tabs;
