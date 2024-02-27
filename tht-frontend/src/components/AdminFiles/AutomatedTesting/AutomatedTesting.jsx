@@ -28,7 +28,7 @@ export default function AutomatedTesting() {
   const fetchTestCaseResultDataAndStartWebSocket = async () => {
     showLoader();
     try {
-      const response = await TestResultAPI.getTestCaseResultById(
+      const response = await TestResultAPI.getTestCaseResultByTestRequestId(
         testRequestId,
         null,
         true
