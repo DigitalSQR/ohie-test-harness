@@ -166,7 +166,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 <i
                   aria-label="Applications"
                   title="Applications"
-                  className="bi bi-sliders menu-left-icon"
+                  className="bi bi-file-earmark-bar-graph menu-left-icon"
                 ></i>
                 <span> Applications </span>
               </a>
@@ -188,7 +188,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   <i
                     aria-label="Testcase Config"
                     title="Testcase Config"
-                    className="bi bi-file-earmark-bar-graph menu-left-icon"
+                    className="bi bi-sliders menu-left-icon"
                   ></i>
                   <span> TestCase Config </span>
                 </a>

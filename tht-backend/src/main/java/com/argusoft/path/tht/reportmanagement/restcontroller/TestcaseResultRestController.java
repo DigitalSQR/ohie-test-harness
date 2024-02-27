@@ -10,11 +10,19 @@ import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -142,6 +150,41 @@ public class TestcaseResultRestController {
                         contextInfo);
         return testcaseResultMapper.modelToDto(testcaseResultEntity);
     }
+
+    @ApiOperation(value = "Patch Update For TestcaseResultEntity", response = TestcaseResultInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully Updated TestcaseResult"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @PatchMapping(value = "/{testcaseResultId}", consumes = "application/json-patch+json")
+    @Transactional
+    public TestcaseResultInfo submitTestcaseResult(
+            @PathVariable("testcaseResultId") String testcaseResultId,
+            @RequestBody JsonPatch jsonPatch,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+
+        TestcaseResultInfo testcaseResultById = this.getTestcaseResultById(testcaseResultId, contextInfo);
+
+        TestcaseResultInfo testcaseResultPatched = applyPatchToTestcaseInfo(jsonPatch, testcaseResultById);
+
+        // update and return
+        TestcaseResultEntity testcaseResultEntity = testcaseResultMapper.dtoToModel(testcaseResultPatched);
+        testcaseResultEntity = testcaseResultService.updateTestcaseResult(testcaseResultEntity,contextInfo);
+        return testcaseResultMapper.modelToDto(testcaseResultEntity);
+    }
+
+    private TestcaseResultInfo applyPatchToTestcaseInfo(JsonPatch jsonPatch, TestcaseResultInfo testcaseResultInfo) throws OperationFailedException{
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode patched = jsonPatch.apply(objectMapper.convertValue(testcaseResultInfo, JsonNode.class));
+            return objectMapper.treeToValue(patched, TestcaseResultInfo.class);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            throw new OperationFailedException("Caught Exception while processing Json ",e);
+        }
+    }
+
 
     /**
      * {@inheritdoc}
