@@ -91,13 +91,13 @@ export const UserAPI = {
       throw error;
     }
   },
-  resetPassword: async function (params) {
-    console.log(params);
+  resetPassword: async function (data) {
+    console.log(data);
     try {
       const response = await api.request({
         url: "/user/reset/password",
         method: "PATCH",
-        params: params,
+        data: data,
       });
       return response;
     } catch (error) {

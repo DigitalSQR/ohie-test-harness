@@ -13,6 +13,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
+import com.argusoft.path.tht.usermanagement.models.dto.ResetPasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntity;
@@ -131,13 +132,14 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity resetPassword(String oldPassword, String newPassword, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+    public UserEntity resetPassword(ResetPasswordInfo resetPasswordInfo, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
 
         contextInfo.setModule(Module.RESETPASSWORD);
 
         List<ValidationResultInfo> errors = new ArrayList<>();
         UserEntity principalUser = this.getPrincipalUser(contextInfo);
-        UserValidator.validatePasswords(oldPassword, newPassword, principalUser.getPassword(), errors);
+        resetPasswordInfo.trimObject();
+        UserValidator.validatePasswords(resetPasswordInfo.getOldPassword(), resetPasswordInfo.getNewPassword(), principalUser.getPassword(), errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
@@ -145,7 +147,7 @@ public class UserServiceServiceImpl implements UserService {
                     errors);
         }
 
-        principalUser.setPassword(newPassword);
+        principalUser.setPassword(resetPasswordInfo.getNewPassword());
         return updateUser(principalUser, contextInfo);
     }
 
@@ -181,7 +183,6 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    @Timed(name = "resendVerification")
     public void resendVerification(String userEmail, ContextInfo contextInfo) {
         UserEntity userByEmail = null;
         try {
