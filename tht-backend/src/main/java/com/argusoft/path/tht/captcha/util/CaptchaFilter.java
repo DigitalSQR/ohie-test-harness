@@ -44,19 +44,11 @@ public class CaptchaFilter implements Filter {
 
             List<ValidationResultInfo> errors = new ArrayList<>();
 
-            if(captchaCode == null){
+            if(captchaCode == null && captcha!=null){
                 ValidationResultInfo error = new ValidationResultInfo();
                 error.setMessage("Invalid captcha");
                 error.setLevel(ErrorLevel.ERROR);
                 error.setElement("captchaCode");
-                errors.add(error);
-            }
-
-            if(captcha == null){
-                ValidationResultInfo error = new ValidationResultInfo();
-                error.setMessage("Captcha can't be null");
-                error.setLevel(ErrorLevel.ERROR);
-                error.setElement("captcha");
                 errors.add(error);
             }
 
@@ -69,6 +61,10 @@ public class CaptchaFilter implements Filter {
                 return;
             }
 
+            if(captcha == null && captchaCode==null){
+                filterChain.doFilter(request, servletResponse);
+            }
+            
             try {
                 errors = captchaService.validateCaptcha(captchaCode, captcha, (ContextInfo) request.getAttribute("contextInfo"));
             } catch (Exception e) {

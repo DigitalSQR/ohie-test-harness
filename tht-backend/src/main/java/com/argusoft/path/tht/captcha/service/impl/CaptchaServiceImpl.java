@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import org.springframework.stereotype.Service;
+
+import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,10 +35,10 @@ public class CaptchaServiceImpl implements CaptchaService {
 
     @Override
     public void setupCaptcha(CaptchaInfo captchaInfo) throws Exception {
-        Captcha captcha = CaptchaUtil.createCaptcha(250,80);
+        Captcha captcha = CaptchaUtil.createCaptcha(300,80);
         captchaInfo.setImage(CaptchaUtil.encodeBase64(captcha));
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, 10);
+        calendar.add(Calendar.MINUTE, 2);
         String code=encryptCodeAndExpiryTime(captcha.getAnswer(), calendar.getTime());
         captchaInfo.setCaptcha(code);
     }
