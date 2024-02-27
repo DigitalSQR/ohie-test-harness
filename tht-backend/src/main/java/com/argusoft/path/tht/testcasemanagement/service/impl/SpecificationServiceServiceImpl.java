@@ -16,9 +16,7 @@ import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.SpecificationValidator;
-import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Multimap;
-import io.astefanutti.metrics.aspectj.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +43,6 @@ import java.util.UUID;
  * @author Dhruv
  */
 @Service
-@Metrics(registry = "SpecificationServiceServiceImpl")
 public class SpecificationServiceServiceImpl implements SpecificationService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SpecificationServiceServiceImpl.class);
@@ -65,7 +62,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    @Timed(name = "createSpecification")
     // @Caching(evict = {
     //         @CacheEvict(value = "searchSpecifications", allEntries = true),
     //         @CacheEvict(value = "searchSpecificationsList", allEntries = true),
@@ -101,7 +97,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    @Timed(name = "updateSpecification")
     // @Caching(
     //         evict = {
     //                 @CacheEvict(value = "searchSpecifications", allEntries = true),
@@ -139,7 +134,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    @Timed(name = "searchSpecifications")
     // @Cacheable(value = "searchSpecifications", key = "{ #specificationSearchFilter, #pageable }")
     public Page<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
@@ -153,7 +147,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
 
     @Override
-    @Timed(name = "searchSpecificationsList")
     // @Cacheable(value = "searchSpecificationsList", key = "#specificationSearchFilter")
     public List<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
@@ -171,7 +164,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    @Timed(name = "getSpecificationById")
     // @Cacheable(value = "getSpecificationById", key = "#specificationId")
     public SpecificationEntity getSpecificationById(String specificationId,
                                                     ContextInfo contextInfo)
@@ -191,7 +183,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * {@inheritdoc}
      */
     @Override
-    @Timed(name = "validateSpecification")
     public List<ValidationResultInfo> validateSpecification(
             String validationTypeKey,
             SpecificationEntity specificationEntity,
@@ -207,7 +198,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
     }
 
     @Override
-    // @Timed(name = "changeState")
     // @Caching(
     //         evict = {
     //                 @CacheEvict(value = "searchSpecifications", allEntries = true),

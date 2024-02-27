@@ -11,7 +11,6 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.SpecificationMapper;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
-import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -57,7 +56,6 @@ public class SpecificationRestController {
 //            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 //    })
     //    @PostMapping("")
-    @Timed(name = "createSpecification")
     public SpecificationInfo createSpecification(
             @RequestBody SpecificationInfo specificationInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -84,7 +82,6 @@ public class SpecificationRestController {
 
     })
     @PutMapping("")
-    @Timed(name = "updateSpecification")
     public SpecificationInfo updateSpecification(
             @RequestBody SpecificationInfo specificationInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)

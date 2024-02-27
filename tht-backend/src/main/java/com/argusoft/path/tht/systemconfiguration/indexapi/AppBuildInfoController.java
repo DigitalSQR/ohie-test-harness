@@ -1,7 +1,6 @@
 package com.argusoft.path.tht.systemconfiguration.indexapi;
 
-import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("")
-@Metrics(registry = "AppBuildInfoController")
 @Api(value = "REST Endpoints for Build Info", tags = {"Build Info API"})
 public class AppBuildInfoController {
 
@@ -41,7 +39,6 @@ public class AppBuildInfoController {
                     message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("/build")
-    @Timed(name = "apiVersion")
     public String apiVersion() {
         String version = env.getProperty("info.app.version");
         String commitsha = env.getProperty("info.build.commit.sha");
@@ -63,14 +60,12 @@ public class AppBuildInfoController {
                     message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("")
-    @Timed(name = "apiIndex")
     public String apiIndex() {
         return "        <h2>Testing Harness Tool</h2>"
                 + "        <h4>Some useful links</h4>"
                 + "        <ul>"
                 + "            <li><a href=\"./swagger-ui.html#/\">API Docs</a></li>"
                 + "            <li><a href=\"./build\">Build Details</a></li>"
-                + "            <li><a href=\"./metrics\">Metrics</a></li>"
                 + "        </ul>";
     }
 
@@ -87,7 +82,6 @@ public class AppBuildInfoController {
                     message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("/service")
-    @Timed(name = "requestCsrf")
     public ResponseEntity<Object> requestCsrf() {
         return ResponseEntity.status(HttpStatus.OK).body("OK");
     }

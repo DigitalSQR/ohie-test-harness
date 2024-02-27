@@ -23,9 +23,7 @@ import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.argusoft.path.tht.usermanagement.validator.UserValidator;
-import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Multimap;
-import io.astefanutti.metrics.aspectj.Metrics;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +45,6 @@ import java.util.*;
  * @author Dhruv
  */
 @Service
-@Metrics(registry = "UserServiceServiceImpl")
 public class UserServiceServiceImpl implements UserService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserServiceServiceImpl.class);
@@ -73,14 +70,12 @@ public class UserServiceServiceImpl implements UserService {
      * {@inheritdoc}
      */
     @Override
-    @Timed(name = "logout")
     public Boolean logout(ContextInfo contextInfo)
             throws OperationFailedException {
         return defaultTokenServices.revokeToken(contextInfo.getAccessToken());
     }
 
     @Override
-    @Timed(name = "getUserByEmail")
     public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException {
 
@@ -93,7 +88,6 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    @Timed(name = "registerAssessee")
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
             throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException, MessagingException, IOException {
         defaultValueRegisterAssessee(userEntity);
@@ -102,7 +96,6 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    @Timed(name = "createForgotPasswordRequestAndSendEmail")
     public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo) {
         UserEntity userByEmail = null;
         try {
@@ -116,7 +109,6 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    @Timed(name = "updatePasswordWithVerificationToken")
     public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException {
 
         contextInfo.setModule(Module.FORGOTPASSWORD);
@@ -158,7 +150,6 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    @Timed(name = "changeState")
     public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
@@ -202,7 +193,6 @@ public class UserServiceServiceImpl implements UserService {
      * @return
      */
     @Override
-    @Timed(name = "createUser")
     public UserEntity createUser(UserEntity userEntity,
                                  ContextInfo contextInfo)
             throws OperationFailedException,
@@ -237,7 +227,6 @@ public class UserServiceServiceImpl implements UserService {
      * @return
      */
     @Override
-    @Timed(name = "updateUser")
     public UserEntity updateUser(UserEntity userEntity,
                                  ContextInfo contextInfo)
             throws OperationFailedException,
@@ -254,7 +243,6 @@ public class UserServiceServiceImpl implements UserService {
      * @return
      */
     @Override
-    @Timed(name = "searchUsers")
     public Page<UserEntity> searchUsers(
             UserSearchCriteriaFilter userSearchFilter,
             Pageable pageable,
@@ -266,7 +254,6 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    @Timed(name = "searchUsers")
     public List<UserEntity> searchUsers(
             UserSearchCriteriaFilter userSearchFilter,
             ContextInfo contextInfo)
@@ -283,7 +270,6 @@ public class UserServiceServiceImpl implements UserService {
      * @return
      */
     @Override
-    @Timed(name = "getUserById")
     public UserEntity getUserById(String userId,
                                   ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -303,7 +289,6 @@ public class UserServiceServiceImpl implements UserService {
      * {@inheritdoc}
      */
     @Override
-    @Timed(name = "validateUser")
     public List<ValidationResultInfo> validateUser(
             String validationTypeKey,
             UserEntity userEntity,
@@ -323,7 +308,6 @@ public class UserServiceServiceImpl implements UserService {
      * @return
      */
     @Override
-    @Timed(name = "getPrincipalUser")
     public UserEntity getPrincipalUser(ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException {
         return this.getUserById(contextInfo.getUsername(), contextInfo);
@@ -335,7 +319,6 @@ public class UserServiceServiceImpl implements UserService {
      * @return
      */
     @Override
-    @Timed(name = "searchRoles")
     public Page<RoleEntity> searchRoles(
             RoleSearchCriteriaFilter roleSearchFilter,
             Pageable pageable,
@@ -347,7 +330,6 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    @Timed(name = "searchRoles")
     public List<RoleEntity> searchRoles(
             RoleSearchCriteriaFilter roleSearchFilter,
             ContextInfo contextInfo)
@@ -363,7 +345,6 @@ public class UserServiceServiceImpl implements UserService {
      * @return
      */
     @Override
-    @Timed(name = "getRoleById")
     public RoleEntity getRoleById(String roleId,
                                   ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -386,7 +367,6 @@ public class UserServiceServiceImpl implements UserService {
      * @return
      */
     @Override
-    @Timed(name = "getRoles")
     public Page<RoleEntity> getRoles(Pageable pageable,
                                      ContextInfo contextInfo) {
         Page<RoleEntity> roles = roleRepository.findRoles(pageable);

@@ -37,8 +37,6 @@ import com.argusoft.path.tht.testprocessmanagement.validator.TestRequestValidato
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
-import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +58,6 @@ import static com.argusoft.path.tht.testprocessmanagement.constant.TestRequestSe
  * @author Dhruv
  */
 @Service
-@Metrics(registry = "TestRequestServiceServiceImpl")
 public class TestRequestServiceServiceImpl implements TestRequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestRequestServiceServiceImpl.class);
@@ -87,7 +84,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     private TestcaseOptionService testcaseOptionService;
 
     @Override
-    @Timed(name = "reinitializeTestingProcess")
     public void reinitializeTestingProcess(
             String testRequestId,
             String refObjUri,
@@ -130,7 +126,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Override
-    @Timed(name = "startTestingProcess")
     public void startTestingProcess(
             String testRequestId,
             String refObjUri,
@@ -178,7 +173,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * @return
      */
     @Override
-    @Timed(name = "createTestRequest")
     public TestRequestEntity createTestRequest(TestRequestEntity testRequestEntity,
                                                ContextInfo contextInfo)
             throws OperationFailedException,
@@ -210,7 +204,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * @return
      */
     @Override
-    @Timed(name = "updateTestRequest")
     public TestRequestEntity updateTestRequest(TestRequestEntity testRequestEntity,
                                                ContextInfo contextInfo)
             throws OperationFailedException,
@@ -239,7 +232,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * @return
      */
     @Override
-    @Timed(name = "searchTestRequests")
     public Page<TestRequestEntity> searchTestRequests(
             TestRequestCriteriaSearchFilter testRequestSearchFilter,
             Pageable pageable,
@@ -252,7 +244,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
 
     @Override
-    @Timed(name = "searchTestRequests")
     public List<TestRequestEntity> searchTestRequests(
             TestRequestCriteriaSearchFilter testRequestSearchFilter,
             ContextInfo contextInfo)
@@ -268,7 +259,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * @return
      */
     @Override
-    @Timed(name = "getTestRequestById")
     public TestRequestEntity getTestRequestById(String testRequestId,
                                                 ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -287,7 +277,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
      * {@inheritdoc}
      */
     @Override
-    @Timed(name = "validateTestRequest")
     public List<ValidationResultInfo> validateTestRequest(
             String validationTypeKey,
             TestRequestEntity testRequestEntity,

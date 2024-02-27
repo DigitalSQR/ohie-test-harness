@@ -30,8 +30,7 @@ import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEnti
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
-import com.codahale.metrics.annotation.Timed;
-import io.astefanutti.metrics.aspectj.Metrics;
+import com.google.common.collect.Multimap;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +52,6 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Service
-@Metrics(registry = "TestcaseResultServiceServiceImpl")
 public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultServiceServiceImpl.class);
@@ -91,7 +89,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
-    @Timed(name = "createTestcaseResult")
     public TestcaseResultEntity createTestcaseResult(TestcaseResultEntity testcaseResultEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
@@ -122,7 +119,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      *
      * @return
      */
-    @Timed(name = "updateTestcaseResult")
+
     @Override
     public TestcaseResultEntity updateTestcaseResult(TestcaseResultEntity testcaseResultEntity,
                                                      ContextInfo contextInfo)
@@ -147,7 +144,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return testcaseResultEntity;
     }
 
-    @Timed(name = "submitTestcaseResult")
+
     @Override
     public TestcaseResultEntity submitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
 
@@ -229,7 +226,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
-    @Timed(name = "searchTestcaseResults")
     public Page<TestcaseResultEntity> searchTestcaseResults(
             TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter,
             Pageable pageable,
@@ -241,7 +237,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
     @Override
-    @Timed(name = "searchTestcaseResults")
     public List<TestcaseResultEntity> searchTestcaseResults(
             TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter,
             ContextInfo contextInfo)
@@ -256,7 +251,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
-    @Timed(name = "getTestcaseResultById")
     public TestcaseResultEntity getTestcaseResultById(String testcaseResultId,
                                                       ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -275,7 +269,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * {@inheritdoc}
      */
     @Override
-    @Timed(name = "validateTestcaseResult")
     public List<ValidationResultInfo> validateTestcaseResult(
             String validationTypeKey,
             TestcaseResultEntity testcaseResultEntity,
@@ -469,7 +462,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
-    @Timed(name = "getTestcaseResultStatus")
     public TestcaseResultEntity getTestcaseResultStatus(
             String testcaseResultId,
             Boolean isManual,
