@@ -91,7 +91,7 @@ public class FileService {
 
     public static boolean validateFileType(MultipartFile file, List<String> validateAgainstTypes) throws InvalidFileTypeException, InvalidParameterException, OperationFailedException {
         if (validateAgainstTypes == null || validateAgainstTypes.isEmpty()) {
-            LOGGER.error("ValidateConstant.INVALID_PARAM_EXCEPTIONFileService ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ FileService.class.getSimpleName());
             throw new InvalidParameterException("ValidationAgainstTypes should not be null or empty to validate file type ");
         }
 
@@ -114,7 +114,7 @@ public class FileService {
         try {
             return validateFileType(file, allowedTypes);
         } catch (InvalidParameterException e) {
-            LOGGER.error("ValidateConstant.INVALID_PARAM_EXCEPTIONFileService ", e);
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ FileService.class.getSimpleName(), e);
             throw new OperationFailedException("File validation failed due to InvalidParameterException : " + e.getMessage(), e);
         }
     }

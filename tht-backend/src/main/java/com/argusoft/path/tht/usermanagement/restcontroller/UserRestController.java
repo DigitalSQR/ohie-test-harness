@@ -313,7 +313,7 @@ public class UserRestController {
             principalUser = userService
                     .getPrincipalUser(contextInfo);
         } catch (InvalidParameterException e) {
-            LOGGER.error("ValidateConstant.INVALID_PARAM_EXCEPTIONUserRestController ", e);
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ UserRestController.class.getSimpleName(), e);
             throw new OperationFailedException("InvalidParameterException while fetching principal User ", e);
         }
         return userMapper.modelToDto(principalUser);

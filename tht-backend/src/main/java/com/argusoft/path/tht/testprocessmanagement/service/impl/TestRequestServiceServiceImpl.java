@@ -212,7 +212,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             DataValidationErrorException {
 
         if (testRequestEntity == null) {
-            LOGGER.error("ValidateConstant.INVALID_PARAM_EXCEPTIONTestRequestServiceServiceImpl ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
 
@@ -285,7 +285,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testRequestEntity == null) {
-            LOGGER.error("ValidateConstant.INVALID_PARAM_EXCEPTIONTestRequestServiceServiceImpl ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
         List<ValidationResultInfo> errors = TestRequestValidator.validateTestRequest(validationTypeKey, testRequestEntity, this, userService, componentService, contextInfo);
