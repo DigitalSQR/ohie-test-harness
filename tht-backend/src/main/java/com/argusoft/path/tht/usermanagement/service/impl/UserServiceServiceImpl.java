@@ -180,6 +180,20 @@ public class UserServiceServiceImpl implements UserService {
         return userEntity;
     }
 
+    @Override
+    @Timed(name = "resendVerification")
+    public void resendVerification(String userEmail, ContextInfo contextInfo) {
+        UserEntity userByEmail = null;
+        try {
+            userByEmail = this.getUserByEmail(userEmail, contextInfo);
+            TokenVerificationEntity tokenVerification = tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
+        } catch (Exception e) {
+            LOGGER.error("caught Exception in UserServiceServiceImpl ", e);
+            // ignore it, no need to show that they are not exists in DB
+            //TODO add log
+        }
+    }
+
     private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity) throws MessagingException, IOException {
         if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
             emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());

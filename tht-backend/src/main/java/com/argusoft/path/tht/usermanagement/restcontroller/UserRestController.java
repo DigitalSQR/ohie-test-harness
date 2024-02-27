@@ -144,6 +144,16 @@ public class UserRestController {
         return vris;
     }
 
+    @PostMapping("/resend/verification")
+    public ValidationResultInfo resendVerification(@RequestParam("userEmail") String userEmail,
+                                                      @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
+        userService.resendVerification(userEmail, contextInfo);
+        ValidationResultInfo vris = new ValidationResultInfo();
+        vris.setMessage("You will receive email on you registered email !");
+        return vris;
+    }
+
+
 
     /**
      * {@inheritdoc}

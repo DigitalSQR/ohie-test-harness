@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * This TokenVerificationServiceImpl contains implementation for TokenVerification service.
@@ -133,8 +130,10 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
             OperationFailedException, MessagingException, IOException {
 
         checkForValidTokenTypeWithVerifyingInEnum(tokenType);
-
         UserEntity userById = getUserByIdAndVerifyForEmailExistense(userId, contextInfo);
+        if(Objects.equals(tokenType, TokenTypeEnum.VERIFICATION.getKey()) && !Objects.equals(userById.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
+            throw new InvalidParameterException("User "+userById.getEmail()+" is already verified");
+        }
         // inactive all the verification tokens created in past for this user
         List<TokenVerificationEntity> allTokenVerificationEntityByUser =
                 this.getAllTokenVerificationEntityByTypeAndUser(tokenType, userById.getId(), contextInfo);
@@ -158,9 +157,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
             emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         } else if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
             emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/reset/cred/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
-
         }
-
         return tokenVerification;
     }
 

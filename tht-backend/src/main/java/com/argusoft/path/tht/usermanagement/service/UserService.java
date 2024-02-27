@@ -220,4 +220,13 @@ public interface UserService {
      */
     public UserEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException;
 
+    /**
+     * resend verification email
+     *
+     * @param userEmail String of the user
+     * @param contextInfo ContextInfo
+     */
+    public void resendVerification(String userEmail, ContextInfo contextInfo);
+
+
 }

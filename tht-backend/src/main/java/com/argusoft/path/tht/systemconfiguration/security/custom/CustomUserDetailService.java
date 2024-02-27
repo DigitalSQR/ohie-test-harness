@@ -58,6 +58,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 //If User is not active
                 if (!Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, user.getState())) {
                     if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
+                        userService.resendVerification(user.getEmail(), new ContextInfo());
                         LOGGER.error("caught UsernameNotFoundException in CustomUserDetailService ");
                         throw new UsernameNotFoundException("Pending email verification.") {
                         };
