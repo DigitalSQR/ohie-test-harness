@@ -7,11 +7,10 @@ import { USER_ROLES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 import { set_header } from "../../../reducers/homeReducer";
 
-export default function Sidebar() {
+export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeMenuItem, setActiveMenuItem] = useState();
   const [user, setUser] = useState();
 

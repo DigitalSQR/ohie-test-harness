@@ -9,10 +9,11 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getHighestPriorityRole } from "../../../utils/utils";
 
-export default function Header({ headerContent }) {
+export default function Header({ headerContent, isSidebarOpen }) {
   const [userInfo, setUserInfo] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
@@ -20,12 +21,13 @@ export default function Header({ headerContent }) {
   return (
     <Fragment>
       <header>
-        <div className="pd-left-240 ps-30" id="header-col-1"></div>
         <div className="d-flex align-items-center justify-content-between heading">
           {/* <div className="bell-icon">
 						<i className="bi bi-bell side-nav-toggle"></i>
 					</div> */}
-          <h5 className="mb-0">{headerContent}</h5>
+          <h5 className={`pd-left-${isSidebarOpen ? "240" : ""} ${ !isSidebarOpen ? "marginLeft" : "" } transition ps-30`} >
+            {headerContent}
+          </h5>
           <div className="dropdown">
             <div
               className="user-dropdown"
