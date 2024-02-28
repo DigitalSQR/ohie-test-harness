@@ -93,10 +93,6 @@ public class TestResultRelationCriteriaSearchFilter extends AbstractCriteriaSear
 
     }
 
-//    public TestResultRelationCriteriaSearchFilter(List<String> id) {
-//        this.id = id;
-//    }
-
     public TestResultRelationCriteriaSearchFilter() {
     }
 

@@ -738,7 +738,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 testcaseResultEntity,
                 contextInfo
         );
-        System.out.println("*******" + destination);
         msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
         if (testcaseResultEntity.getParentTestcaseResult() != null) {
             notifyTestCaseFinished(testcaseResultEntity.getParentTestcaseResult().getId(), isAutomated, isManual, contextInfo);
