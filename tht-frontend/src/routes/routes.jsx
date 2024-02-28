@@ -8,7 +8,6 @@ import CongratulationsPage from "../components/UserFiles/CongratulationsPage";
 import ApplicationReport from "../components/AdminFiles/ApplicationReport/ApplicationReport";
 import ChooseTest from "../components/AdminFiles/ChooseTest/ChooseTest";
 import Landing from "../components/CommonFiles/Landing";
-import FunctionalTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
 import AutomatedTesting from "../components/AdminFiles/AutomatedTesting/AutomatedTesting";
 import GoogleAuth from "../components/UserFiles/GoogleAuth";
 import ForgotPassword from "../components/CommonFiles/ForgotPassword";
@@ -28,11 +27,38 @@ import UserProfile from "../components/AdminFiles/UserProfile/UserProfile";
 import ResetPassword from "../components/CommonFiles/ResetPassword/ResetPassword.jsx";
 import AddAdminUser from "../components/AdminFiles/AdminUsers/AddAdminUsers/AddAdminUser";
 import UpdateAdminUser from "../components/AdminFiles/AdminUsers/UpdateAdminUser/UpdateAdminUser";
-const PrivateRoute = () => {
+import { USER_ROLES } from "../constants/role_constants.js";
+const PrivateDashboardRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
 
   const isAuthenticated = !!token;
   return isAuthenticated ? <Landing /> : <Navigate to="/login" />;
+};
+
+const PrivateRoute = ({ roles = [], element: Element, ...rest }) => {
+  const token = useSelector((state) => state.authSlice.access_token);
+  const userRoles = useSelector((state) => state.userInfoSlice.roleIds);
+
+  const isAuthenticated = !!token;
+
+  let userRole = USER_ROLES.ROLE_ID_ASSESSEE;
+
+  if (userRoles.includes(USER_ROLES.ROLE_ID_ADMIN)) {
+    userRole = USER_ROLES.ROLE_ID_ADMIN;
+  } else if (userRoles.includes(USER_ROLES.ROLE_ID_TESTER)) {
+    userRole = USER_ROLES.ROLE_ID_TESTER;
+  } else {
+    userRole = USER_ROLES.ROLE_ID_ASSESSEE;
+  }
+  const hasRequiredRoles = roles.includes(userRole);
+
+  if (!isAuthenticated) return <Navigate to="/login" />;
+
+  return hasRequiredRoles ? (
+    <Element {...rest} />
+  ) : (
+    <Navigate to="/dashboard" />
+  );
 };
 
 const routes = createBrowserRouter([
@@ -51,41 +77,185 @@ const routes = createBrowserRouter([
     path: "/email/verify/:base64UserEmail/:base64TokenId",
     element: <EmailVerified />,
   },
-  { 
-    path: "/resend/verification/:email", 
-    element: <Login/> 
+  {
+    path: "/resend/verification/:email",
+    element: <Login />,
   },
   {
     path: "/",
-    element: <PrivateRoute />,
+    element: <PrivateDashboardRoute />,
+
     children: [
-      { path: "dashboard", element: <Dashboard /> },
-      { path: "testing-requests", element: <TestingRequests /> },
-      { path: "applications", element: <Applications /> },
-      { path: "choose-test/:testRequestId", element: <ChooseTest /> },
-      { path: "manual-testing/:testRequestId", element: <ManualTesting /> },
+      {
+        index: true,
+        path: "dashboard",
+        element: (
+          <PrivateRoute
+            roles={[
+              USER_ROLES.ROLE_ID_ADMIN,
+              USER_ROLES.ROLE_ID_ASSESSEE,
+              USER_ROLES.ROLE_ID_TESTER,
+            ]}
+            element={Dashboard}
+          />
+        ),
+      },
+      {
+        path: "testing-requests",
+        element: (
+          <PrivateRoute
+            roles={[
+              USER_ROLES.ROLE_ID_ADMIN,
+              USER_ROLES.ROLE_ID_TESTER,
+              USER_ROLES.ROLE_ID_ASSESSEE,
+            ]}
+            element={TestingRequests}
+          />
+        ),
+      },
+      {
+        path: "applications",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
+            element={Applications}
+          />
+        ),
+      },
+      {
+        path: "choose-test/:testRequestId",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={ChooseTest}
+          />
+        ),
+      },
+      {
+        path: "manual-testing/:testRequestId",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={ManualTesting}
+          />
+        ),
+      },
       {
         path: "automated-testing/:testRequestId",
-        element: <AutomatedTesting />,
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={AutomatedTesting}
+          />
+        ),
       },
-      { path: "assessee", element: <Assessee /> },
-      { path: "register-application", element: <RegisterApplication /> },
-      { path: "user-profile", element: <UserProfile /> },
-      { path: "admin-users", element: <AdminUsers /> },
-      { path: "admin-users/add-admin-user", element: <AddAdminUser/> },
-      { path: "admin-users/update-admin-user", element: <UpdateAdminUser/> },
-      // { path: "admin-users/update-admin-user", element: <AdminUsers /> },
-      { path: "testcase-config", element: <ComponentList /> },
+      {
+        path: "assessee",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
+            element={Assessee}
+          />
+        ),
+      },
+      {
+        path: "register-application",
+        element: (
+          <PrivateRoute
+            roles={[
+              USER_ROLES.ROLE_ID_ADMIN,
+              USER_ROLES.ROLE_ID_ASSESSEE,
+              USER_ROLES.ROLE_ID_TESTER,
+            ]}
+            element={RegisterApplication}
+          />
+        ),
+      },
+      {
+        path: "user-profile",
+        element: (
+          <PrivateRoute
+            roles={[
+              USER_ROLES.ROLE_ID_ADMIN,
+              USER_ROLES.ROLE_ID_ASSESSEE,
+              USER_ROLES.ROLE_ID_TESTER,
+            ]}
+            element={UserProfile}
+          />
+        ),
+      },
+      {
+        path: "admin-users",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={AdminUsers}
+          />
+        ),
+      },
+      {
+        path: "admin-users/add-admin-user",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={AddAdminUser}
+          />
+        ),
+      },
+      {
+        path: "admin-users/update-admin-user",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={UpdateAdminUser}
+          />
+        ),
+      },
+      {
+        path: "testcase-config",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={ComponentList}
+          />
+        ),
+      },
       {
         path: "component-specification/:componentId",
-        element: <ComponentSpecification />,
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={ComponentSpecification}
+          />
+        ),
       },
       {
         path: "manual-testcases/:specificationId",
-        element: <ManualTestCases />,
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={ManualTestCases}
+          />
+        ),
       },
-      { path: "edit-question/:testcaseId", element: <EditQuestion /> },
-      {path:"reset-password",element:<ResetPassword/>}
+      {
+        path: "edit-question/:testcaseId",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={EditQuestion}
+          />
+        ),
+      },
+      {
+        path: "reset-password",
+        element: (
+          <PrivateRoute
+            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            element={ResetPassword}
+          />
+        ),
+      },
     ],
   },
   { path: "", element: <Navigate to="/login" /> },
