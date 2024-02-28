@@ -331,6 +331,16 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             testcaseResultEntity.setMessage(null);
         testcaseResultEntity = testcaseResultRepository.saveAndFlush(testcaseResultEntity);
 
+        if (!testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
+            updateChildTestcaseResult(testcaseResultEntity, contextInfo);
+        }
+
+        if (testcaseResultEntity.getParentTestcaseResult() != null) {
+            updateParentTestcaseResult(testcaseResultEntity.getParentTestcaseResult(), contextInfo);
+        } else {
+            updateTestRequestState(testcaseResultEntity.getTestRequest(), contextInfo);
+        }
+
         // Notify client if the state is changed to finished
         if (TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
             notifyTestCaseFinished(
@@ -341,17 +351,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             );
         }
 
-        if (!testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
-            updateChildTestcaseResult(testcaseResultEntity, contextInfo);
-        }
-
-        if (testcaseResultEntity.getParentTestcaseResult() != null) {
-            updateParentTestcaseResult(testcaseResultEntity.getParentTestcaseResult(), contextInfo);
-        } else {
-            updateTestRequestState(testcaseResultEntity.getTestRequest(), contextInfo);
-        }
         return testcaseResultEntity;
     }
+
 
     private void updateTestRequestState(
             TestRequestEntity testRequestEntity,
@@ -435,19 +437,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
-                Long duration = 0L;
-                for (TestcaseResultEntity tcr : testcaseResultEntities) {
-                    if (tcr.getDuration() != null) {
-                        duration = duration + tcr.getDuration();
-                    }
-                }
-                testcaseResultEntity.setSuccess(
-                        testcaseResultEntities.stream()
-                                .allMatch(tre -> {
-                                    return !Objects.equals(tre.getRequired(), Boolean.TRUE)
-                                            || Objects.equals(tre.getSuccess(), Boolean.TRUE);
-                                }));
-                testcaseResultEntity.setDuration(duration);
                 updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
                 updateTestcaseResult(testcaseResultEntity, contextInfo);
@@ -546,7 +535,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         testcaseResultCriteriaSearchFilter.setFunctional(isFunctional);
         testcaseResultCriteriaSearchFilter.setWorkflow(isWorkflow);
 
-        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE, contextInfo).getContent();
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE, contextInfo).getContent().stream().map(testcaseResultEntity1 -> new TestcaseResultEntity(testcaseResultEntity1)).collect(Collectors.toList());
 
         recalculateTestcaseResultEntity(testcaseResultEntity, testcaseResultEntities);
 

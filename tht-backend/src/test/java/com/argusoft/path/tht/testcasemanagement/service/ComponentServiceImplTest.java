@@ -162,6 +162,23 @@ public class ComponentServiceImplTest extends TestingHarnessToolTestConfiguratio
 
     }
 
+//    @Test
+//    public void testGetComponents() throws InvalidParameterException, DoesNotExistException {
+//
+//        // Test case 1: Passing pageable as null
+//        assertThrows(InvalidParameterException.class, () -> {
+//            componentService.getComponents(null, contextInfo);
+//        });
+//
+//        // Test case 2: Passing pageable
+//        Pageable pageable = PageRequest.of(0, 3);
+//
+//        Page<ComponentEntity> components = componentService.getComponents(pageable, contextInfo);
+//        assertEquals(2, components.getTotalPages());
+//        assertEquals(3, components.getNumberOfElements());
+//        assertEquals(5, components.getTotalElements());
+//    }
+
     @Test
     public void testSearchComponent() throws InvalidParameterException, OperationFailedException {
 

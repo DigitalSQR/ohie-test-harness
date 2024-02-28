@@ -240,6 +240,24 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
 
     }
 
+//    @Test
+//    public void testGetSpecifications() throws InvalidParameterException, DoesNotExistException {
+//
+//        // Test case 1: Passing pageable as null
+//        assertThrows(InvalidParameterException.class, () -> {
+//            specificationService.getSpecifications(null, contextInfo);
+//        });
+//
+//        // Test case 2: Passing pageable
+//        Pageable pageable = PageRequest.of(0, 3);
+//
+//        Page<SpecificationEntity> specifications = specificationService.getSpecifications(pageable, contextInfo);
+//        assertEquals(3, specifications.getTotalPages());
+//        // per page
+//        assertEquals(3, specifications.getNumberOfElements());
+//        assertEquals(7, specifications.getTotalElements());
+//    }
+
     @Test
     public void testSearchSpecification() throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
 

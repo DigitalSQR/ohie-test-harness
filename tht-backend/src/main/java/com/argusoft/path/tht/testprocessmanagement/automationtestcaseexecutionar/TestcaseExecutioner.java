@@ -7,9 +7,11 @@ import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
+import com.argusoft.path.tht.reportmanagement.service.TestcaseResultAttributesService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
@@ -50,6 +52,8 @@ public class TestcaseExecutioner {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseExecutioner.class);
 
+    public static Map<String, String> map = new HashMap<>();
+
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
@@ -60,8 +64,12 @@ public class TestcaseExecutioner {
     private TestcaseResultService testcaseResultService;
     @Autowired
     private TestRequestService testRequestService;
+
+    @Autowired
+    private TestcaseResultAttributesService testcaseResultAttributesService;
     @Autowired
     private TestcaseExecutionStarter testcaseExecutionStarter;
+
 
     public void executeTestingProcess(
             String testRequestId,
@@ -88,8 +96,44 @@ public class TestcaseExecutioner {
                 contextInfo);
         if (testcaseResultEntitiesAndIgenericClient == null) return;
 
-        testcaseExecutionStarter.startExecution(testcaseResultEntitiesAndIgenericClient.testcaseResultEntities(), testcaseResultEntitiesAndIgenericClient.iGenericClientMap(), Constant.SUPER_USER_CONTEXT);
+        try {
+            ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(testRequestId,contextInfo);
+        } catch (DoesNotExistException | InvalidParameterException e) {
+            throw new RuntimeException(e);
+        }
+        testcaseExecutionStarter.startExecution(testcaseResultEntitiesAndIgenericClient.testcaseResultEntities(),
+                refId,
+                refObjUri,
+                testRequestId,
+                isWorkflow,
+                isFunctional,
+                isRequired,
+                isRecommended,
+                testcaseResultEntitiesAndIgenericClient.iGenericClientMap(),
+                Constant.SUPER_USER_CONTEXT);
 
+    }
+
+    @Transactional
+    private void ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(String testRequestId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException {
+        try {
+            if(testRequestId.isEmpty())
+            {
+                throw new InvalidParameterException("TestRequest Id is not present");
+            }
+            TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+            testcaseResultCriteriaSearchFilter.setRefId(testRequestId);
+            List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
+            if (testcaseResultEntity.isEmpty()) {
+                throw new DoesNotExistException("testcaseResultEntity list is empty");
+            }
+            testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResultEntity.get(0), "is_Interrupted", "false", contextInfo);
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error(ex.getMessage());
+            throw new RuntimeException(ex);
+        }
     }
 
     @Transactional
@@ -118,7 +162,11 @@ public class TestcaseExecutioner {
                             isFunctional,
                             contextInfo);
 
-            changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING, contextInfo);
+            changeTestcaseResultsState(
+                    testcaseResultEntities,
+                    TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING,
+                    Boolean.FALSE,
+                    contextInfo);
 
             if (!Objects.equals(Boolean.TRUE, isAutomated)) {
                 return null;
@@ -147,7 +195,8 @@ public class TestcaseExecutioner {
         }
     }
 
-    public void reinitializeTestingProcess(
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void stopTestingProcess(
             String testRequestId,
             String refObjUri,
             String refId,
@@ -157,23 +206,85 @@ public class TestcaseExecutioner {
             Boolean isRecommended,
             Boolean isWorkflow,
             Boolean isFunctional,
+            Boolean reset,
             ContextInfo contextInfo) throws OperationFailedException {
         try {
-            List<TestcaseResultEntity> testcaseResultEntities =
-                    fetchTestcaseResultsByInputsForReinitialize(
-                            testRequestId,
+            if (contextInfo.getModule() != Module.SYSTEM
+                    && !Objects.equals(isManual, Boolean.TRUE)
+                    && !Objects.equals(isAutomated, Boolean.FALSE)) {
+                TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+                testcaseResultCriteriaSearchFilter.setRefId(testRequestId);
+                List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
+                if(testcaseResultEntity.get(0).getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT))
+                {
+                    System.out.println(testcaseResultEntity.get(0).getState());
+                    System.out.println("Inside if condition");
+                    List<TestcaseResultEntity> results = fetchTestcaseResultsByInputsForReinitialize(testRequestId,
                             refObjUri,
                             refId,
-                            isManual,
-                            isAutomated,
+                            null,
+                            true,
                             isRequired,
                             isRecommended,
                             isWorkflow,
                             isFunctional,
                             contextInfo);
-            System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" + testcaseResultEntities.size());
-            changeTestcaseResultsState(testcaseResultEntities, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
-            System.out.println("??????????????????????????????????????????????????????");
+
+                  changeTestcaseResultsState(
+                            results,
+                            TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT,
+                            true,
+                            contextInfo);
+                    return;
+                }
+
+                ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+                while (threadGroup != null) {
+                    boolean threadGroupFlag = false;
+                    Thread[] threads = new Thread[threadGroup.activeCount()];
+                    threadGroup.enumerate(threads);
+                    for (Thread thread : threads) {
+
+
+                        if (thread.getName().equals(testRequestId + refId + refObjUri + (isWorkflow == null ? "null" : isWorkflow.toString()) + (isFunctional == null ? "null" : isFunctional.toString()) + (isRequired == null ? "null" : isRequired.toString()) + (isRecommended == null ? "null" : isRecommended.toString()))) {
+                            TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilterTwo = new TestcaseResultCriteriaSearchFilter();
+                            testcaseResultCriteriaSearchFilterTwo.setTestRequestId(testRequestId);
+                            testcaseResultCriteriaSearchFilterTwo.setRefId(refId);
+                            testcaseResultCriteriaSearchFilterTwo.setRefObjUri(refObjUri);
+                            List<TestcaseResultEntity> testcaseResultEntityTwo = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilterTwo,contextInfo);
+                            TestcaseResultEntity testcaseResult = testcaseResultEntityTwo.get(0);
+                            testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResult,"is_Interrupted","true",contextInfo);
+                            testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResult,"reset",reset.toString(),contextInfo);
+                            thread.interrupt();
+                            threadGroupFlag = true;
+                            break;
+
+                        }
+                    }
+                    threadGroup = threadGroup.getParent();
+                    if (threadGroupFlag) {
+                        break;
+                    }
+                }
+            } else {
+                List<TestcaseResultEntity> testcaseResultEntities =
+                        fetchTestcaseResultsByInputsForReinitialize(
+                                testRequestId,
+                                refObjUri,
+                                refId,
+                                isManual,
+                                isAutomated,
+                                isRequired,
+                                isRecommended,
+                                isWorkflow,
+                                isFunctional,
+                                contextInfo);
+                changeTestcaseResultsState(
+                        testcaseResultEntities,
+                        TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT,
+                        reset,
+                        contextInfo);
+            }
         } catch (DoesNotExistException | InvalidParameterException | OperationFailedException |
                  VersionMismatchException ex) {
             LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), ex);
@@ -205,8 +316,8 @@ public class TestcaseExecutioner {
                 //TODO: add system failure log and connect it with testResult by refObjUri/refId.
                 try {
                     String errorMessage = e.getMessage();
-                    if(errorMessage.length()>2000){
-                        errorMessage = errorMessage.substring(0,2000);
+                    if (errorMessage.length() > 2000) {
+                        errorMessage = errorMessage.substring(0, 2000);
                     }
                     updateTestCaseResultForSystemError(testcaseResult, startDateForTestCase, errorMessage, contextInfo);
                 } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException |
@@ -215,8 +326,8 @@ public class TestcaseExecutioner {
                     ex.printStackTrace();
                 }
             }
-        }catch (Exception e){
-            LOGGER.error(ValidateConstant.EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), e);
+        }catch (Exception e) {
+            LOGGER.error("caught Exception in TestcaseExecutioner ", e);
         }
     }
 
@@ -225,7 +336,14 @@ public class TestcaseExecutioner {
         testcaseResultService.changeState(testcaseResultId, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
     }
 
-    private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity, long startDate,String errorMessage, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void markTestcaseResultInDraft(String testcaseResultId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        testcaseResultService.changeState(testcaseResultId, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
+    }
+
+
+    private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity, long startDate, String errorMessage, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         testcaseResultEntity = testcaseResultService.getTestcaseResultById(testcaseResultEntity.getId(), contextInfo);
         testcaseResultEntity.setSuccess(Boolean.FALSE);
         testcaseResultEntity.setMessage(errorMessage);
@@ -243,7 +361,9 @@ public class TestcaseExecutioner {
         testcaseResultEntity.setMessage(validationResultInfo.getMessage());
         // Store total duration in milliseconds
         testcaseResultEntity.setDuration(System.currentTimeMillis() - startDate);
-        testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
+        if (!Thread.currentThread().isInterrupted()) {
+            testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
+        }
 
         testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
     }
@@ -336,18 +456,20 @@ public class TestcaseExecutioner {
         return client;
     }
 
-    private void changeTestcaseResultsState(List<TestcaseResultEntity> testcaseResultEntities, String newState, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+    public void changeTestcaseResultsState(
+            List<TestcaseResultEntity> testcaseResultEntities,
+            String newState,
+            Boolean reset,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
-            System.out.println("--------------------------------------------" + testcaseResult.getState());
-            if (newState.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT)
-                    || !newState.equals(testcaseResult.getState())) {
-                System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++");
+
+            if (reset || (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) && (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
                 testcaseResultService.changeState(testcaseResult.getId(), newState, contextInfo);
             }
         }
     }
 
-    private List<TestcaseResultEntity> fetchTestcaseResultsByInputsForReinitialize(
+    public List<TestcaseResultEntity> fetchTestcaseResultsByInputsForReinitialize(
             String testRequestId,
             String refObjUri,
             String refId,
@@ -495,6 +617,7 @@ public class TestcaseExecutioner {
         componentCriteriaSearchFilter.setState(Collections.singletonList(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE));
         return componentService.searchComponents(componentCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent();
     }
+
 
     private record TestcaseResultEntitiesAndIgenericClient(List<TestcaseResultEntity> testcaseResultEntities,
                                                            Map<String, IGenericClient> iGenericClientMap) {

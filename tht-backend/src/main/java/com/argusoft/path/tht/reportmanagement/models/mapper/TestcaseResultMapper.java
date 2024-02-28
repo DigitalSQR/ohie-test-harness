@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.reportmanagement.models.mapper;
 
 import com.argusoft.path.tht.common.configurations.ModelDtoMapper;
+import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultAttributesInfo;
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Mapper to covert DTO <-> Entity for the TestcaseResult.
@@ -37,6 +40,14 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
     List<TestcaseResultInfo> modelToDto(List<TestcaseResultEntity> testcaseResultEntities);
 
     List<TestcaseResultEntity> dtoToModel(List<TestcaseResultInfo> testcaseResultInfos);
+
+    default Set<TestcaseResultAttributesInfo> setToTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity)
+    {
+        if(testcaseResultEntity.getTestcaseResultAttributesEntities()==null){return null;}
+        return (Set<TestcaseResultAttributesInfo>) testcaseResultEntity.getTestcaseResultAttributesEntities().stream()
+                .map(testcaseResultAttributesEntity -> {return new TestcaseResultAttributesInfo(testcaseResultAttributesEntity.getKey(),testcaseResultAttributesEntity.getValue()
+                );}).collect(Collectors.toList());
+    }
 
     // Custom mapping method for Page<TestcaseResultEntity> to Page<TestcaseResultInfo>
     default Page<TestcaseResultInfo> pageEntityToDto(Page<TestcaseResultEntity> page) {

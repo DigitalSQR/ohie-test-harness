@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This TestRequestServiceRestController maps end points with standard service.
@@ -192,25 +194,26 @@ public class TestRequestRestController {
                 contextInfo);
     }
 
-    @ApiOperation(value = "Reinitialize automation testing process", response = Boolean.class)
+    @ApiOperation(value = "Stop automation testing process", response = Boolean.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully started automation testing process")
+            @ApiResponse(code = 200, message = "Successfully automation testing process has been stopped.")
     })
-    @PutMapping("/reinitialize-testing-process/{testRequestId}")
-    @Transactional
-    public void reinitializeTestingProcess(
+    @PutMapping("/stop-testing-process/{testRequestId}")
+    public void stopTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
-            @RequestParam("refObjUri") String refObjUri,
-            @RequestParam("refId") String refId,
+            @RequestParam(value = "refObjUri",required = true) String refObjUri,
+            @RequestParam(value = "refId",required = true) String refId,
             @RequestParam(value = "manual", required = false) Boolean isManual,
             @RequestParam(value = "automated", required = false) Boolean isAutomated,
             @RequestParam(value ="required", required = false) Boolean isRequired,
             @RequestParam(value ="recommended", required = false) Boolean isRecommended,
             @RequestParam(value ="workflow", required = false) Boolean isWorkflow,
             @RequestParam(value = "functional", required = false) Boolean isFunctional,
+            @RequestParam(value = "reset", required = false) Boolean reset,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
-        testRequestService.reinitializeTestingProcess(
+
+        testRequestService.stopTestingProcess(
                 testRequestId,
                 refObjUri,
                 refId,
@@ -220,6 +223,7 @@ public class TestRequestRestController {
                 isRecommended,
                 isWorkflow,
                 isFunctional,
+                Objects.equals(reset, Boolean.TRUE),
                 contextInfo);
     }
 

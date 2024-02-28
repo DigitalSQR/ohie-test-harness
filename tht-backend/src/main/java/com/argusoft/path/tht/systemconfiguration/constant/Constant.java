@@ -26,8 +26,8 @@ public final class Constant {
     public static final String UPDATE_VALIDATION = "update.validation";
     public static final String SUBMIT_VALIDATION = "submit.validation";
     public static final String START_PROCESS_VALIDATION = "start.process.validation";
-    public static final String REINITIALIZE_PROCESS_VALIDATION = "reinitialize.process.validation";
-    public static final String START_MANUAL_PROCESS_VALIDATION = "start.manual.process.validation";
+    public static final String STOP_PROCESS_VALIDATION = "stop.process.validation";
+    public static final String RESET_PROCESS_VALIDATION = "reset.process.validation";
     public static final String TRUE_STRING = "true";
     public static final String FALSE_STRING = "false";
     public static final Pageable SINGLE_VALUE_PAGE = PageRequest.of(0, 1);

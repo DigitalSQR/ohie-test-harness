@@ -6,7 +6,7 @@ import skipImg from "../../../../styles/images/skip.svg";
 import stopImg from "../../../../styles/images/stop.svg";
 import "./TestcaseResultRow.scss";
 
-export default function TestcaseResultRow({ testResultId, stompClient, toggleFunction, toggleClass, testcaseResultType }) {
+export default function TestcaseResultRow({ testResultId, stompClient, toggleFunction, toggleClass, testcaseResultType, changeState }) {
     const [testcaseResult, setTestcaseResult] = useState();
 
     const getButtonDisplay = () => {
@@ -70,6 +70,8 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
             } else {
                 return <img className="finished" src={failImg} alt="FAIL" />;
             }
+        } else if (state === "testcase.result.status.draft") {
+            return <img className="finished" src={stopImg} alt="PENDING" />;
         } else if (state === "testcase.result.status.pending") {
             return <img className="finished" src={stopImg} alt="PENDING" />;
         } else if (state === "testcase.result.status.skip") {
@@ -82,14 +84,17 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
     useEffect(() => {
         TestResultAPI.getTestcaseResultStatus(testResultId, { automated: true }).then((response) => {
             setTestcaseResult(response);
+            let oldTestcaseResultState = response.state;                    
             if (stompClient
                 && stompClient.connected ) {
                 const destination = '/testcase-result/' + testResultId;
                 const subscription = stompClient.subscribe(destination, (msg) => {
-                    setTestcaseResult(JSON.parse(msg.body));
-                    if (testcaseResult?.state === "testcase.result.status.finished") {
-                        subscription.unsubscribe();
+                    const testcaseResult = JSON.parse(msg.body);
+                    setTestcaseResult(testcaseResult);
+                    if(!!changeState) {
+                        changeState(testcaseResult.state, oldTestcaseResultState);
                     }
+                    oldTestcaseResultState = testcaseResult.state;
                 });
             }
         });
