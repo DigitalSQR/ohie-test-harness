@@ -163,7 +163,7 @@ const AdminUsers = () => {
                     <td>{user.email}</td>
                     <td>
                       {user?.roleIds.map((roleId) => (
-                        <span className="badges-green">{roleId.replace("role.", "").toUpperCase()}</span>
+                        <span className="badges-green my-1">{roleId.replace("role.", "").toUpperCase()}</span>
                       ))}
                     </td>
                     <td className="action-icons-container">
