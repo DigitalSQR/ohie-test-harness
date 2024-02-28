@@ -47,8 +47,8 @@ export default function ManualTesting() {
 			const res = await TestResultAPI.getTestCases(testRequestId);
 			const testcaseResults = [];
 			let testcaseRequestResult;
-      setTotalTestCasesCount(0);
-      setFinishedTestCasesCount(0);
+			let finishedTestcases = 0;
+			let totalTestcases = 0;
 			for (let item of res.content) {
 				const testcaseResult = await TestResultAPI.getTestcaseResultStatus(item.id, { manual: true });
 				if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
@@ -58,10 +58,10 @@ export default function ManualTesting() {
 					testcaseResult.childTestcaseResults = [];
 					testcaseResults[testcaseResults.length - 1].childTestcaseResults.push(testcaseResult);
 				} else if (testcaseResult.refObjUri === RefObjUriConstants.TESTCASE_REFOBJURI) {
-            setTotalTestCasesCount(prevCount => prevCount + 1);
-            if (testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
-              setFinishedTestCasesCount(prevFinishedCount => prevFinishedCount + 1);
-            }
+					totalTestcases++;
+					if (testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
+						finishedTestcases++;
+					}
 					testcaseResults[testcaseResults.length - 1]
 						.childTestcaseResults[testcaseResults[testcaseResults.length - 1].childTestcaseResults.length - 1]
 						.childTestcaseResults
@@ -72,6 +72,8 @@ export default function ManualTesting() {
 				}
 			}
 			setTestcaseResults(testcaseResults);
+			setTotalTestCasesCount(totalTestcases);
+			setFinishedTestCasesCount(finishedTestcases);
 			if (testcaseRequestResult?.state !== "testcase.result.status.finished") {
 				webSocketConnect();
 			}
@@ -102,43 +104,49 @@ export default function ManualTesting() {
           webSocketDisconnect();
         }
       });
-
       // Recieve message when the manual testcase result item is finished
       testcaseResults.forEach((component, componentIndex) => {
         // Listener for the component
-        destination = '/testcase-result/' + component.id;
-        var componentSubscription = stompClient.subscribe(destination, (msg) => {
-          const parsedComponentTestcaseResult = JSON.parse(msg.body);
-          parsedComponentTestcaseResult.childTestcaseResults = component.childTestcaseResults;
-          testcaseResults[componentIndex] = parsedComponentTestcaseResult;
-          setTestcaseResults(testcaseResults);
-          if (parsedComponentTestcaseResult?.state === "testcase.result.status.finished") {
-            componentSubscription.unsubscribe();
-          }
-        });
-        component.childTestcaseResults.forEach((specification, specificationIndex) => {
-          // Listener for the specification
-          destination = '/testcase-result/' + specification.id;
-          var specificationSubscription = stompClient.subscribe(destination, (msg) => {
-            const parsedSpecificationTestcaseResult = JSON.parse(msg.body);
-            parsedSpecificationTestcaseResult.childTestcaseResults = specification.childTestcaseResults;
-            testcaseResults[componentIndex].childTestcaseResults[specificationIndex] = parsedSpecificationTestcaseResult;
+        if (component?.state !== "testcase.result.status.finished") {
+          destination = '/testcase-result/' + component.id;
+          var componentSubscription = stompClient.subscribe(destination, (msg) => {
+            const parsedComponentTestcaseResult = JSON.parse(msg.body);
+            parsedComponentTestcaseResult.childTestcaseResults = component.childTestcaseResults;
+            testcaseResults[componentIndex] = parsedComponentTestcaseResult;
             setTestcaseResults(testcaseResults);
-            if (parsedSpecificationTestcaseResult?.state === "testcase.result.status.finished") {
-              specificationSubscription.unsubscribe();
+            if (parsedComponentTestcaseResult?.state === "testcase.result.status.finished") {
+              componentSubscription.unsubscribe();
             }
           });
-          specification.childTestcaseResults.forEach((testcase, testcaseIndex) => {
-            // Listener for the test case
-            destination = '/testcase-result/' + testcase.id;
-            var testcaseSubscription = stompClient.subscribe(destination, (msg) => {
-              const parsedTestcaseResult = JSON.parse(msg.body);
-              testcaseResults[componentIndex].childTestcaseResults[specificationIndex].childTestcaseResults[testcaseIndex] = parsedTestcaseResult;
+        }
+        component.childTestcaseResults.forEach((specification, specificationIndex) => {
+          // Listener for the specification
+          if (specification?.state !== "testcase.result.status.finished") {
+            destination = '/testcase-result/' + specification.id;
+            var specificationSubscription = stompClient.subscribe(destination, (msg) => {
+              const parsedSpecificationTestcaseResult = JSON.parse(msg.body);
+              parsedSpecificationTestcaseResult.childTestcaseResults = specification.childTestcaseResults;
+              testcaseResults[componentIndex].childTestcaseResults[specificationIndex] = parsedSpecificationTestcaseResult;
               setTestcaseResults(testcaseResults);
-              if (parsedTestcaseResult?.state === "testcase.result.status.finished") {
-                testcaseSubscription.unsubscribe();
+              if (parsedSpecificationTestcaseResult?.state === "testcase.result.status.finished") {
+                specificationSubscription.unsubscribe();
               }
             });
+          }
+          specification.childTestcaseResults.forEach((testcase, testcaseIndex) => {
+            // Listener for the test case
+            if (testcase?.state !== "testcase.result.status.finished") {
+              destination = '/testcase-result/' + testcase.id;
+              var testcaseSubscription = stompClient.subscribe(destination, (msg) => {
+                const parsedTestcaseResult = JSON.parse(msg.body);
+                testcaseResults[componentIndex].childTestcaseResults[specificationIndex].childTestcaseResults[testcaseIndex] = parsedTestcaseResult;
+                setTestcaseResults(testcaseResults);
+                if (parsedTestcaseResult?.state === "testcase.result.status.finished") {
+                  setFinishedTestCasesCount(prevCount => prevCount + 1);
+                  testcaseSubscription.unsubscribe();
+                }
+              });
+            }
           });
         });
       });
@@ -390,7 +398,6 @@ export default function ManualTesting() {
 								selectNextTestcase={selectNextTestcase}
 								refreshCurrentTestcase={refreshCurrentTestcase}
 								isLastQuestion={isLastQuestion}
-                setFinishedTestCasesCount={setFinishedTestCasesCount}
 							></TestCase>
 						</Item>
 					))}
