@@ -3,16 +3,83 @@ import { useFormik } from "formik";
 import { useLoader } from "../../loader/LoaderContext";
 import { UserAPI } from "../../../api/UserAPI";
 import { useNavigate } from "react-router-dom";
-import { notification } from "antd";
+import { Upload, notification, Modal } from "antd";
 import { userinfo_success } from "../../../reducers/UserInfoReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { store } from "../../../store/store";
 import { getHighestPriorityRole } from "../../../utils/utils";
+import { PlusOutlined } from "@ant-design/icons";
+import { DocumentAPI } from "../../../api/DocumentAPI";
+import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
+import {
+  DOCUMENT_STATE_ACTIVE,
+  DOCUMENT_STATE_INACTIVE,
+  DOCUMENT_TYPE_FOR_USER,
+} from "../../../constants/document_constants";
 const UserProfile = () => {
   const { showLoader, hideLoader } = useLoader();
   const [userDetails, setUserDetails] = useState();
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+
+  const [fileList, setFileList] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const userID = useSelector((store) => store.userInfoSlice.id);
+
+  const handleUpload = (e) => {
+    if (fileList.length !== 0) {
+      DocumentAPI.changeDocumentState(
+        fileList[0].documentId,
+        DOCUMENT_STATE_INACTIVE
+      )
+        .then(() => {
+          setFileList([]);
+        })
+        .catch((error) => {
+          notification.error({
+            description: "Something went wrong while uploading an image",
+            placement: "bottomRight",
+          });
+          return;
+        });
+    }
+    const formData = new FormData();
+    formData.append(`file`, e.file);
+    formData.append(`fileName`, e.file.name);
+    formData.append(`refId`, userID);
+    formData.append(`refObjUri`, RefObjUriConstants.USER_REFOBJURI);
+    formData.append(`documentType`, DOCUMENT_TYPE_FOR_USER.PROFILE_PICTURE);
+    return DocumentAPI.uploadDocument(formData)
+      .then(async (response) => {
+        const base64Image = await DocumentAPI.base64Document(
+          response.id,
+          response.name
+        );
+        let imageData = {
+          name: response.name,
+          status: "done",
+          url: base64Image,
+          documentId: response.id,
+        };
+
+        setFileList([imageData]);
+        notification.success({
+          description: `Picture Uploaded Successfully`,
+          placement: "bottomRight",
+        });
+      })
+      .catch((error) => {
+        notification.error({
+          description: error.data.content
+            ? error.data.content
+            : `Oops! Something went wrong, file couldn't be uploaded.`,
+        });
+      });
+  };
 
   const validate = (values) => {
     const errors = {};
@@ -26,7 +93,30 @@ const UserProfile = () => {
 
   useEffect(() => {
     fetchUser();
+    fetchDisplayPicture();
   }, []);
+  const fetchDisplayPicture = () => {
+    DocumentAPI.getDocumentsByRefObjUriAndRefId(
+      RefObjUriConstants.USER_REFOBJURI,
+      userID,
+      DOCUMENT_STATE_ACTIVE
+    ).then(async (res) => {
+      if (res.content.length !== 0) {
+        const name = res.content[0].name;
+        const id = res.content[0].id;
+
+        const base64Image = await DocumentAPI.base64Document(id, name);
+        const image = {
+          name: name,
+          status: "done",
+          url: base64Image,
+          documentId: id,
+        };
+
+        setFileList([image]);
+      }
+    });
+  };
   const fetchUser = () => {
     UserAPI.viewUser()
       .then((res) => {
@@ -48,6 +138,29 @@ const UserProfile = () => {
         });
       });
   };
+
+  const handleRemove = (file) => {
+    DocumentAPI.changeDocumentState(
+      file.documentId,
+      DOCUMENT_STATE_INACTIVE
+    ).then((response) => {
+      notification.success({
+        description: `Picture deleted successfully`,
+        placement: "bottomRight",
+      });
+      setFileList([]);
+    });
+  };
+
+  const handlePreview = (file) => {
+    setPreviewImage(file.url);
+    setPreviewTitle(file.name);
+    setPreviewOpen(true);
+
+    return false;
+  };
+
+  const handleCancel = () => setPreviewOpen(false);
 
   const formik = useFormik({
     initialValues: {
@@ -98,6 +211,42 @@ const UserProfile = () => {
           <div className="form-bg-white">
             <span className="heading-line-up">User Profile</span>
 
+            <Upload
+              onPreview={handlePreview}
+              onRemove={handleRemove}
+              fileList={fileList}
+              maxCount={1}
+              customRequest={handleUpload}
+              listType="picture-circle"
+              accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+            >
+              <button
+                style={{
+                  border: 0,
+                  background: "none",
+                }}
+                type="button"
+              >
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              </button>
+            </Upload>
+            <Modal
+              open={previewOpen}
+              title={previewTitle}
+              footer={null}
+              onCancel={handleCancel}
+            >
+              <img
+                alt="example"
+                style={{
+                  width: "100%",
+                }}
+                src={previewImage}
+              />
+            </Modal>
             <div className="row">
               <div className="col-12">
                 <div className="custom-input mb-3">
@@ -181,8 +330,10 @@ const UserProfile = () => {
             </div>
 
             {/* <div className="my-4 text-end"> */}
-            <div className="my-4" style={{ display: "flex", justifyContent: "flex-end" }}>
-
+            <div
+              className="my-4"
+              style={{ display: "flex", justifyContent: "flex-end" }}
+            >
               <button
                 className="btn btn-primary btn-white py-2 font-size-14 "
                 style={{ marginRight: "auto" }}
