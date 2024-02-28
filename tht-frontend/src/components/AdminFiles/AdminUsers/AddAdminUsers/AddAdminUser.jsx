@@ -19,6 +19,10 @@ const AddAdminUser = () => {
       label: "Tester",
       value: "role.tester",
     },
+    {
+      label: "Assessee",
+      value: "role.assessee",
+    },
   ];
   const initialValues = {
     name: "",
@@ -81,7 +85,7 @@ const AddAdminUser = () => {
       <div id="wrapper">
         <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
           <div className="form-bg-white">
-            <span className="heading-line-up">Admin User Registration</span>
+            <span className="heading-line-up">User Registration</span>
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
@@ -99,6 +103,7 @@ const AddAdminUser = () => {
                         id="name"
                         name="name"
                         className="form-control"
+                        placeholder="Name"
                       />
                       <ErrorMessage
                         name="name"
@@ -120,6 +125,7 @@ const AddAdminUser = () => {
                         id="email"
                         name="email"
                         className="form-control"
+                        placeholder="Email"
                       />
                       <ErrorMessage
                         name="email"
@@ -141,6 +147,7 @@ const AddAdminUser = () => {
                         id="password"
                         name="password"
                         className="form-control"
+                        placeholder="Password"
                       />
                       <ErrorMessage
                         name="password"

@@ -49,9 +49,6 @@ const UpdateAdminUser = () => {
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required *"),
-    password: Yup.string()
-      .required("Password is required *")
-      .min(6, "Password must be of minimum 6 characters"),
     roleIds: Yup.array().min(1, "Role is required *"),
   });
 
