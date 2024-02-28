@@ -188,9 +188,9 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   <i
                     aria-label="Testcase Config"
                     title="Testcase Config"
-                    className="bi bi-sliders menu-left-icon"
+                    className="bi bi-gear-fill menu-left-icon"
                   ></i>
-                  <span> TestCase Config </span>
+                  <span> Testcase Configuration </span>
                 </a>
               </li>
             )}

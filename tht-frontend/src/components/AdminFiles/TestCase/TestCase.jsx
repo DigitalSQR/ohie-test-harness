@@ -544,7 +544,7 @@ export default function TestCase(props) {
 											onClick={showNoteDiv}
 										>
 											<i className="bi bi-chat-right-text"></i>
-											Show Note
+											{showNote ? 'Hide Note' : 'Show Note'}
 										</button>
 									</div>
 								</div>

@@ -27,6 +27,7 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
@@ -191,7 +192,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         }
 
 
-        boolean isSuccess = isSuccessFromTestResultRelationAndSelectedOption(testResultRelationEntities, testcaseOptionEntitiesFromAudit);
+        boolean isSuccess = isSuccessFromTestResultRelationAndSelectedOption(testcaseResultId , testResultRelationEntities, testcaseOptionEntitiesFromAudit, contextInfo);
 
 
         TestcaseResultEntity testcaseResultEntity
@@ -210,25 +211,51 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return testcaseResultEntity;
     }
 
-    private boolean isSuccessFromTestResultRelationAndSelectedOption(List<TestResultRelationEntity> testResultRelationEntities, List<TestcaseOptionEntity> testcaseOptionEntitiesFromAudit) {
+
+    private boolean isSuccessFromTestResultRelationAndSelectedOption(String testcaseResultId, List<TestResultRelationEntity> testResultRelationEntities, List<TestcaseOptionEntity> testcaseOptionEntitiesFromAudit, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+
+
+        TestcaseEntity auditTestcaseEntity = getTestcaseEntityFromAuditMapping(testcaseResultId, contextInfo);
+
+
+        boolean isSingleSelectQuestion = TestcaseServiceConstants.QuestionType.SINGLE_SELECT.name().equals(auditTestcaseEntity.getQuestionType());
+
+
+        boolean isTestSuccessful = !isSingleSelectQuestion;
 
         for (TestResultRelationEntity testResultRelationEntity : testResultRelationEntities) {
-            // check if testResultRelationEntity is success or false
-            boolean isItSuccess = testcaseOptionEntitiesFromAudit.stream()
-                    .filter(testcaseOption -> testcaseOption.getId().equals(testResultRelationEntity.getRefId()))
-                    .anyMatch(TestcaseOptionEntity::getSuccess);
+            // Check if the testResultRelationEntity is marked as success or failure
+            boolean isRelationSuccess = isTestResultRelationSuccess(testResultRelationEntity, testcaseOptionEntitiesFromAudit);
 
-            if (testResultRelationEntity.getSelected() != isItSuccess) {
-                // if (relation.selected == true && isSuccess == false) return false;
-                // if (relation.selected == false && isSuccess == true) return false;
-                return false;
+            if(isSingleSelectQuestion){
+
+                if (testResultRelationEntity.getSelected() == isRelationSuccess) {
+                    isTestSuccessful = true;
+                    break;
+                }
+            } else {
+
+                if (testResultRelationEntity.getSelected() != isRelationSuccess) {
+                    isTestSuccessful = false;
+                    break;
+                }
             }
         }
 
-        return true;
+        return isTestSuccessful;
+    }
+
+    private TestcaseEntity getTestcaseEntityFromAuditMapping(String testcaseResultId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException {
+        List<Object> auditTestcaseEntities = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(testcaseResultId, TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, contextInfo);
+        return auditTestcaseEntities.stream().findFirst().map(TestcaseEntity.class::cast).get();
     }
 
 
+    private boolean isTestResultRelationSuccess(TestResultRelationEntity testResultRelationEntity, List<TestcaseOptionEntity> testcaseOptionEntitiesFromAudit) {
+        return testcaseOptionEntitiesFromAudit.stream()
+                .filter(option -> option.getId().equals(testResultRelationEntity.getRefId()))
+                .anyMatch(TestcaseOptionEntity::getSuccess);
+    }
 
     /**
      * {@inheritdoc}
