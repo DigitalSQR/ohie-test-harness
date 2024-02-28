@@ -6,7 +6,6 @@ import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
-import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
@@ -18,7 +17,6 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
@@ -30,6 +28,7 @@ import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstant
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
@@ -44,10 +43,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -88,6 +84,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     @Autowired
     SimpMessagingTemplate msgTemplate;
+    
+    @Autowired
+    TestcaseresultCallbackService testcaseresultCallbackService;
 
     /**
      * {@inheritdoc}
@@ -370,7 +369,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         // Notify client if the state is changed to finished
         if (TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
-            notifyTestCaseFinished(
+            testcaseresultCallbackService.notifyTestCaseFinished(
                     testcaseResultEntity.getId(),
                     testcaseResultEntity.getManual().equals(Boolean.TRUE) ? null : Boolean.TRUE,
                     testcaseResultEntity.getManual().equals(Boolean.TRUE) ? Boolean.TRUE : null,
@@ -515,7 +514,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 isRecommended,
                 isWorkflow,
                 isFunctional,
-                testcaseResultEntity,
+                testcaseResultEntity.getId(),
                 contextInfo);
     }
 
@@ -530,19 +529,18 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return classNames;
     }
 
-    private TestcaseResultEntity fetchTestcaseResultStatusByInputs(
+    @Override
+    public TestcaseResultEntity fetchTestcaseResultStatusByInputs(
             Boolean isManual,
             Boolean isAutomated,
             Boolean isRequired,
             Boolean isRecommended,
             Boolean isWorkflow,
             Boolean isFunctional,
-            TestcaseResultEntity testcaseResultEntity,
-            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException{
+            String testcaseResultEntityId,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
 
-
-        testcaseResultEntity = new TestcaseResultEntity(testcaseResultEntity);
-
+        TestcaseResultEntity testcaseResultEntity = this.getTestcaseResultById(testcaseResultEntityId, contextInfo);
 
         if (testcaseResultEntity.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI)) {
             if(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS.equals(testcaseResultEntity.getState())) {
@@ -731,32 +729,4 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         testcaseResultEntity.setDuration(null);
     }
 
-    private void defaultValueSubmitTestCaseResult(TestcaseResultEntity testcaseResultEntity, String selectedTestcaseOptionId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
-        testcaseResultEntity.setTester(userService.getPrincipalUser(contextInfo));
-
-        TestcaseOptionEntity testcaseOptionEntity
-            = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
-
-        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
-    }
-
-    public void notifyTestCaseFinished(String testcaseResultEntityId, Boolean isAutomated, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
-        TestcaseResultEntity testcaseResultEntity = null;
-        testcaseResultEntity = this.getTestcaseResultById(testcaseResultEntityId, contextInfo);
-        String destination = "/testcase-result/" + testcaseResultEntity.getId();
-        testcaseResultEntity = fetchTestcaseResultStatusByInputs(
-                isManual,
-                isAutomated,
-                null,
-                null,
-                null,
-                null,
-                testcaseResultEntity,
-                contextInfo
-        );
-        msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
-        if (testcaseResultEntity.getParentTestcaseResult() != null) {
-            notifyTestCaseFinished(testcaseResultEntity.getParentTestcaseResult().getId(), isAutomated, isManual, contextInfo);
-        }
-    }
 }

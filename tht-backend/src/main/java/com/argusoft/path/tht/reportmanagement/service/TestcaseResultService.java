@@ -194,4 +194,15 @@ public interface TestcaseResultService {
             InvalidParameterException, OperationFailedException;
 
     public List<String> getSubClassesNameForTestCase();
+
+    TestcaseResultEntity fetchTestcaseResultStatusByInputs(
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            String testcaseResultEntityId,
+            ContextInfo contextInfo)
+            throws InvalidParameterException, OperationFailedException, DoesNotExistException;
 }
