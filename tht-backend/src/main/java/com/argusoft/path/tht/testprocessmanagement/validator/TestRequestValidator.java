@@ -145,27 +145,10 @@ public class TestRequestValidator {
                                 ErrorLevel.ERROR,
                                 "Process for the requested input has been already started."));
             }
-        } else {
-            TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
-            searchFilter.setManual(isManual);
-            searchFilter.setAutomated(isAutomated);
-            searchFilter.setRequired(isRequired);
-            searchFilter.setRecommended(isRecommended);
-            searchFilter.setFunctional(isFunctional);
-            searchFilter.setWorkflow(isWorkflow);
-            searchFilter.setRefObjUri(refId);
-            searchFilter.setRefId(refObjUri);
-            searchFilter.setTestRequestId(testRequestId);
+        } else if(validationTypeKey.equals(Constant.STOP_PROCESS_VALIDATION)) {
 
-            List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
-            if (testcaseResultEntities.stream().anyMatch(testcaseResultEntity ->
-                    !testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED))) {
-                String fieldName = "inputData";
-                errors.add(
-                        new ValidationResultInfo(fieldName,
-                                ErrorLevel.ERROR,
-                                "Process for the requested input is not finished yet."));
-            }
+        } else if(validationTypeKey.equals(Constant.RESET_PROCESS_VALIDATION)) {
+
         }
         return errors;
     }

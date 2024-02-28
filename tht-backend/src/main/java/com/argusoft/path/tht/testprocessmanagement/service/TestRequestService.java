@@ -130,14 +130,14 @@ public interface TestRequestService {
             InvalidParameterException;
 
     /**
-     * reinitialize automation testing process by killing process and make testcase results draft again.
+     * stop automation testing process by killing process and make testcase results draft again if they are pending or in-progress.
      *
      * @param testRequestId testRequestWhich needs to be tested
      * @param isAutomated
      * @param contextInfo   information containing the principalId and locale
      *                      information about the caller of service operation
      */
-    public void reinitializeTestingProcess(
+    public void stopTestingProcess(
             String testRequestId,
             String refObjUri,
             String refId,
@@ -147,6 +147,7 @@ public interface TestRequestService {
             Boolean isRecommended,
             Boolean isWorkflow,
             Boolean isFunctional,
+            Boolean reset,
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException;
 
     /**

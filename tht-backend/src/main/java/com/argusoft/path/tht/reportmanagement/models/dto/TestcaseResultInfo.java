@@ -1,9 +1,12 @@
 package com.argusoft.path.tht.reportmanagement.models.dto;
 
+import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultAttributesEntity;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This info is for TestcaseResult DTO that contains all the TestcaseResult model's data.
@@ -137,6 +140,18 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
             dataType = "String",
             required = false)
     private String grade;
+
+
+    public Set<TestcaseResultAttributesInfo> getTestcaseResultAttributesEntities() {
+        return testcaseResultAttributesEntities;
+    }
+
+    public void setTestcaseResultAttributesEntities(Set<TestcaseResultAttributesInfo> testcaseResultAttributesEntities) {
+        this.testcaseResultAttributesEntities = testcaseResultAttributesEntities;
+    }
+
+    private Set<TestcaseResultAttributesInfo> testcaseResultAttributesEntities;
+
 
     public String getParentTestcaseResultId() {
         return parentTestcaseResultId;
@@ -280,5 +295,30 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializa
 
     public void setGrade(String grade) {
         this.grade = grade;
+    }
+
+    @Override
+    public String toString() {
+        return "TestcaseResultInfo{" +
+                "rank=" + rank +
+                ", testerId='" + testerId + '\'' +
+                ", refObjUri='" + refObjUri + '\'' +
+                ", refId='" + refId + '\'' +
+                ", message='" + message + '\'' +
+                ", testRequestId='" + testRequestId + '\'' +
+                ", hasSystemError=" + hasSystemError +
+                ", isRequired=" + isRequired +
+                ", isRecommended=" + isRecommended +
+                ", isManual=" + isManual +
+                ", isAutomated=" + isAutomated +
+                ", isSuccess=" + isSuccess +
+                ", testcaseOptionId='" + testcaseOptionId + '\'' +
+                ", parentTestcaseResultId='" + parentTestcaseResultId + '\'' +
+                ", isFunctional=" + isFunctional +
+                ", isWorkflow=" + isWorkflow +
+                ", duration=" + duration +
+                ", grade='" + grade + '\'' +
+                ", testcaseResultAttributesEntities=" + testcaseResultAttributesEntities +
+                '}';
     }
 }

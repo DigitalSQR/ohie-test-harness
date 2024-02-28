@@ -8,12 +8,30 @@ import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import WebSocketService from "../../../api/WebSocketService";
 import TestcaseResultRow from "./TestcaseResultRow/TestcaseResultRow";
 import { set_header } from "../../../reducers/homeReducer";
+import { handleErrorResponse } from "../../../utils/utils";
 import { useDispatch } from "react-redux";
+import { TestProcessAPI } from "../../../api/TestProcessAPI";
+import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
+import { Spin } from "antd";
+import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
+import {
+  StopOutlined,
+  PlayCircleOutlined,
+  InfoCircleOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
+
 export default function AutomatedTesting() {
   const { testRequestId } = useParams();
   const [testcaseName, setTestCaseName] = useState();
   const [testcaseRequestResult, setTestcaseRequestResult] = useState();
   const { showLoader, hideLoader } = useLoader();
+
+  const { TESTREQUEST_REFOBJURI } = RefObjUriConstants;
+  const [stopLoader, setStopLoader] = useState(false);
+  const [stopAndResetLoader, setStopAndResetLoader] = useState(false);
+  const [finishedTestcaseCount, setFinishedTestcaseCount] = useState(0);
+
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   const { stompClient, webSocketConnect, webSocketDisconnect } =
@@ -25,6 +43,88 @@ export default function AutomatedTesting() {
       description: "No actions yet",
     });
   };
+
+  const handleResetButton = () => {
+    const params = {
+      refObjUri: RefObjUriConstants.TESTREQUEST_REFOBJURI,
+      refId: testRequestId,
+      automated: true,
+      reset: true,
+    };
+    notification.info({
+      description: "Reset Process has been initiated",
+      placement: "bottomRight",
+    });
+    TestProcessAPI.stopTestProcess(testRequestId, params)
+      .then(() => {
+        notification.success({
+          description: "Testing Process has been Reset successully",
+          placement: "bottomRight",
+        });
+      })
+      .catch((error) => {
+        notification.info({
+          description: handleErrorResponse(error.response.data),
+          placement: "bottomRight",
+        });
+      });
+  };
+
+  const handleInterruptButton = (reset) => {
+    if (reset) {
+      setStopAndResetLoader(true);
+    } else {
+      setStopLoader(true);
+    }
+    const params = {
+      refObjUri: RefObjUriConstants.TESTREQUEST_REFOBJURI,
+      refId: testRequestId,
+      automated: true,
+      reset,
+    };
+    notification.info({
+      description: reset
+        ? "Stop and Reset process has been initiated. Please wait for some time"
+        : "Stop process has been reinitiated. Please wait for some time",
+      placement: "bottomRight",
+    });
+    TestProcessAPI.stopTestProcess(testRequestId, params)
+    .then(() => {
+      notification.success({
+        description: "Process to interrupt has been started successully",
+        placement: "bottomRight",
+      });
+    })
+    .catch((error) => {
+      notification.info({
+        description: handleErrorResponse(error.response.data),
+        placement: "bottomRight",
+      });
+    });
+  };
+
+  const handleStartTesting = () => {
+    const params = {
+      testRequestId,
+      refObjUri: TESTREQUEST_REFOBJURI,
+      automated: true,
+      refId: testRequestId,
+    };
+    TestResultAPI.startTests(params)
+      .then(() => {
+        notification.success({
+          description: "Testing Process has been started successully",
+          placement: "bottomRight",
+        });
+      })
+      .catch((error) => {
+        notification.info({
+          description: handleErrorResponse(error.response.data),
+          placement: "bottomRight",
+        });
+      });
+  };
+
   const fetchTestCaseResultDataAndStartWebSocket = async () => {
     showLoader();
     try {
@@ -33,6 +133,7 @@ export default function AutomatedTesting() {
         null,
         true
       );
+      var testcaseCount = 0;
       const grouped = [];
       for (let item of response.content) {
         item = await TestResultAPI.getTestcaseResultStatus(item.id, {
@@ -52,14 +153,16 @@ export default function AutomatedTesting() {
           grouped[grouped.length - 1].specifications[
             grouped[grouped.length - 1].specifications.length - 1
           ].testCases.push(item);
+          if(item.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
+            testcaseCount++;
+          }
         } else {
           setTestcaseRequestResult(item);
           // Start the webSocket connection
-          if (item?.state !== "testcase.result.status.finished") {
-            webSocketConnect();
-          }
+          webSocketConnect();
         }
       }
+      setFinishedTestcaseCount(testcaseCount);
       setData(grouped);
       hideLoader();
     } catch (error) {
@@ -134,15 +237,51 @@ export default function AutomatedTesting() {
     testCaseInfo();
   }, []);
 
+  let changeState = (newState, oldState) => {
+    if(oldState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS || oldState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {   
+      if(newState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
+        setFinishedTestcaseCount(1)
+      } else if(newState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT) {
+        setFinishedTestcaseCount(0)
+      }
+    }
+  }
+
   useEffect(() => {
     // Close the connection once the request is finished
     if (stompClient && stompClient.connected) {
       const destination = "/testcase-result/" + testcaseRequestResult.id;
-      const subscription = stompClient.subscribe(destination, (msg) => {
+      stompClient.subscribe(destination, (msg) => {
         const parsedTestcaseResult = JSON.parse(msg.body);
         setTestcaseRequestResult(parsedTestcaseResult);
-        if (parsedTestcaseResult?.state === "testcase.result.status.finished") {
-          webSocketDisconnect();
+      });
+      const destination2 = "/testcase-result/attribute/" + testcaseRequestResult.id;
+      stompClient.subscribe(destination2, (msg) => {
+        const parsedTestcaseResult = JSON.parse(msg.body);
+        console.log(parsedTestcaseResult);
+        if (!!parsedTestcaseResult.testcaseResultAttributesEntities) {
+          var isInterrupted = false;
+          var reset = false;
+          for(var attribute of parsedTestcaseResult.testcaseResultAttributesEntities) {
+            if(attribute.key === "is_interrupted") {
+              isInterrupted = attribute.value === "true";
+            }
+            if(attribute.key === "reset") {
+              reset = attribute.value === "true";
+            }
+          }
+          if (isInterrupted) {
+            if(reset) {
+              setStopAndResetLoader(true);
+              setStopLoader(false);
+            } else {
+              setStopLoader(true);
+              setStopAndResetLoader(false);
+            }
+          } else {
+            setStopLoader(false);
+            setStopAndResetLoader(false);
+          }
         }
       });
     }
@@ -152,24 +291,85 @@ export default function AutomatedTesting() {
     <div className="Workflow-testing-wrapper">
       <div className="container">
         <div className="col-12">
-          <div className="bcca-breadcrumb">
-            <div className="bcca-breadcrumb-item">Automated Testing</div>
-            <div
-              className="bcca-breadcrumb-item"
-              onClick={() => {
-                navigate(`/choose-test/${testRequestId}`);
-              }}
-            >
-              {testcaseName}
+          <div className="d-flex justify-content-between">
+            <div className="bcca-breadcrumb">
+              <div className="bcca-breadcrumb-item">Automated Testing</div>
+              <div
+                className="bcca-breadcrumb-item"
+                onClick={() => {
+                  navigate(`/choose-test/${testRequestId}`);
+                }}
+              >
+                {testcaseName}
+              </div>
+              <div
+                className="bcca-breadcrumb-item"
+                onClick={() => {
+                  navigate(`/applications`);
+                }}
+              >
+                Applications
+              </div>
             </div>
-            <div
-              className="bcca-breadcrumb-item"
-              onClick={() => {
-                navigate(`/applications`);
-              }}
-            >
-              Applications
-            </div>
+            {(
+              <div className="d-flex gap-2">
+                <>
+                  {" "}
+                  {testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS && ( <>
+                    <div>
+                        <button
+                          className={`btn small btn-sm mt-0 display btn-danger px-4 abtn`}
+                          onClick={() => handleInterruptButton(true)}
+                          disabled={stopAndResetLoader || stopLoader}
+                        >
+                          <ReloadOutlined />
+                          <span className="mx-2">Stop and Reset</span>
+
+                          {stopAndResetLoader && <Spin size="small" />}
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                          className="btn small btn-sm mt-0 display btn-danger px-2 btn-success abtn"
+                          onClick={() => handleInterruptButton(false)}
+                          disabled={stopAndResetLoader || stopLoader}
+                        >
+                          <StopOutlined />
+                          <span className="m-1">Stop</span>
+
+                          {stopLoader && <Spin size="small" />}
+                        </button>
+                      </div>
+                  </>
+                  )}
+                  {(testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED || (testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !!finishedTestcaseCount)) && (<>
+                    <button
+                        className={`btn small btn-sm mt-0 display btn-primary px-4 abtn`}
+                        onClick={() => handleResetButton()}
+                      >
+                        <ReloadOutlined />
+                        <span className="mx-2">Reset</span>
+                      </button>
+                      <button
+                        className={`btn small btn-sm mt-0 display btn-success px-4 abtn`}
+                        onClick={handleStartTesting}
+                      >
+                        <PlayCircleOutlined />
+                        <span className="m-1">Resume</span>
+                      </button>
+                  </>)}
+                  {testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !finishedTestcaseCount && (<>
+                      <button
+                        className="btn small btn-sm mt-0 display px-2 btn-success abtn"
+                        onClick={handleStartTesting}
+                      >
+                        <PlayCircleOutlined />
+                        <span className="m-1">Start</span>
+                      </button>
+                  </>)}
+                </>
+              </div>
+            )}
           </div>
           <div className="table-responsive mb-5">
             <table className="data-table">
@@ -210,6 +410,7 @@ export default function AutomatedTesting() {
                           stompClient={stompClient}
                           toggleClass={testcase?.class}
                           toggleFunction={toggleTestCaseRow}
+                          changeState={changeState}
                         ></TestcaseResultRow>,
                       ]),
                     ]),

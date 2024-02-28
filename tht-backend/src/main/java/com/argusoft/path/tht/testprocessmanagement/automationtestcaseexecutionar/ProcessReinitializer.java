@@ -5,9 +5,13 @@ import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearc
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -17,10 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class ProcessReinitializer {
@@ -33,44 +34,50 @@ public class ProcessReinitializer {
 
     @PostConstruct
     public void init() {
-        try {
-            ContextInfo contextInfo = Constant.SUPER_USER_CONTEXT;
-            List<TestcaseResultEntity> testcaseResults = searchInProgressTestcaseResults(contextInfo);
-            Set<String> testRequestIdSet = new HashSet<>();
-            for (TestcaseResultEntity testcaseResult : testcaseResults) {
-                if (testRequestIdSet.contains(testcaseResult.getTestRequest().getId())) {
-                    continue;
-                }
-                System.out.println("===============================" + testcaseResult.getTestRequest().getId());
-                testRequestIdSet.add(testcaseResult.getTestRequest().getId());
-                reinitInprogressTestRequest(testcaseResult.getTestRequest().getId(), contextInfo);
+        ContextInfo contextInfo = Constant.SUPER_USER_CONTEXT;
+        contextInfo.setModule(Module.SYSTEM);
+        reinitializeInProgress(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, contextInfo);
+        reinitializeInProgress(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI, contextInfo);
+        reinitializeInProgress(ComponentServiceConstants.COMPONENT_REF_OBJ_URI, contextInfo);
+        reinitializeInProgress(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, contextInfo);
+    }
+
+    public void reinitializeInProgress(String refObjUri, ContextInfo contextInfo) {
+        List<TestcaseResultEntity> testcaseResults = searchInProgressAndPendingTestcaseResults(refObjUri, contextInfo);
+        for (TestcaseResultEntity testcaseResult : testcaseResults) {
+            try {
+                stopInprogressTestRequest(testcaseResult, contextInfo);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.out.println(ex.getMessage());
         }
     }
 
-    @Transactional
-    public List<TestcaseResultEntity> searchInProgressTestcaseResults(ContextInfo contextInfo) throws Exception {
-        TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
-        searchFilter.setState(Arrays.asList(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS));
-        searchFilter.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
-        return testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public List<TestcaseResultEntity> searchInProgressAndPendingTestcaseResults(String refObjUri, ContextInfo contextInfo) {
+        try {
+            TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+            searchFilter.setState(List.of(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING));
+
+            searchFilter.setRefObjUri(refObjUri);
+            return testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
+        } catch (Exception ex) {
+            return new ArrayList<>();
+        }
     }
 
-    @Transactional
-    public void reinitInprogressTestRequest(String testRequestId, ContextInfo contextInfo) throws Exception {
-        testcaseExecutioner.reinitializeTestingProcess(
-                testRequestId,
-                TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI,
-                testRequestId,
+    public void stopInprogressTestRequest(TestcaseResultEntity testcaseResult, ContextInfo contextInfo) throws Exception {
+        testcaseExecutioner.stopTestingProcess(
+                testcaseResult.getTestRequest().getId(),
+                testcaseResult.getRefObjUri(),
+                testcaseResult.getRefId(),
+                null,
+                true,
                 null,
                 null,
                 null,
                 null,
-                null,
-                null,
+                Boolean.FALSE,
                 contextInfo);
     }
 }

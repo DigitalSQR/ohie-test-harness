@@ -45,6 +45,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -85,7 +87,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     private TestcaseOptionService testcaseOptionService;
 
     @Override
-    public void reinitializeTestingProcess(
+    public void stopTestingProcess(
             String testRequestId,
             String refObjUri,
             String refId,
@@ -95,6 +97,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             Boolean isRecommended,
             Boolean isWorkflow,
             Boolean isFunctional,
+            Boolean changeOnlyIfNotSubmitted,
             ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
@@ -109,11 +112,11 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 isRecommended,
                 isWorkflow,
                 isFunctional,
-                Constant.REINITIALIZE_PROCESS_VALIDATION,
+                Constant.STOP_PROCESS_VALIDATION,
                 testcaseResultService,
                 contextInfo);
 
-        testcaseExecutioner.reinitializeTestingProcess(
+        testcaseExecutioner.stopTestingProcess(
                 testRequestId,
                 refObjUri,
                 refId,
@@ -123,6 +126,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 isRecommended,
                 isWorkflow,
                 isFunctional,
+                changeOnlyIfNotSubmitted,
                 contextInfo);
     }
 

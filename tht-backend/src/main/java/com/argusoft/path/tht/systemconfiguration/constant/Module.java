@@ -5,5 +5,6 @@ public enum Module {
     RESET_PASSWORD,
     UI,
     DOCUMENT,
+    SYSTEM,
     OAUTH2
 }
