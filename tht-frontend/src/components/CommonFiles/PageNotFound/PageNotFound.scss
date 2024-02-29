@@ -5,29 +5,29 @@ $heading-color: #333;
 $description-color: #555;
 $link-color: #007bff;
 
-.container {
+.containerr {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
   background-color: $container-background-color;
 
-  .content {
+  .contentt {
     text-align: center;
 
-    .heading {
+    .headingg {
       font-size: 3rem;
       margin-bottom: 20px;
       color: $heading-color;
     }
 
-    .description {
+    .descriptionn {
       font-size: 1.2rem;
       margin-bottom: 20px;
       color: $description-color;
     }
 
-    .link {
+    .linkk {
       font-size: 1.2rem;
       color: $link-color;
       text-decoration: none;
