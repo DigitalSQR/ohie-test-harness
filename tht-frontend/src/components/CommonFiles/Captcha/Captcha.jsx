@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { CaptchaAPI } from "../../../api/CaptchaAPI";
 import reloadCaptchaIcon from "../../../styles/images/captcha.png";
 import "./_captcha.scss";
+import { notification } from "antd";
+
 const Captcha = (props) => {
     const [captcha,setCaptcha]=useState("");
     const[code,setCode]=useState("");
@@ -25,27 +27,31 @@ const Captcha = (props) => {
       }
     }, 1000);
 
-    
+
     setShowMessage(<p className="captcha-message">Captcha refreshes in {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</p>)
 
     return () => clearInterval(interval);
   }, [minutes, seconds]);
 
     useEffect(() => {
-        fetchCaptcha();
+        const isCaptchaRequired = process.env.REACT_APP_CAPTCHA;
+        if(isCaptchaRequired === 'true'){
+            fetchCaptcha();
+        }
     }, [])
 
     useEffect(()=>{
-        if(captcha!==""){
+        const isCaptchaRequired = process.env.REACT_APP_CAPTCHA;
+        if(isCaptchaRequired === 'true'){
             props.getCaptcha(code,captcha);
         }
     },[captcha,code])
-    
+
     const reloadCaptcha = ()=>{
         setCode("");
         setCaptcha("");
         setShowMessage(<></>)
-        fetchCaptcha(); 
+        fetchCaptcha();
         setMinutes(2);
         setSeconds(0);
     }
@@ -56,7 +62,10 @@ const Captcha = (props) => {
             setCaptcha(response.data.captcha);
             setbase64Image(response.data.image);
         } catch (error) {
-            console.error('Error fetching captcha:', error);
+            notification.error({
+                placement: "bottomRight",
+                description: "Something went wrong while fetching captcha",
+            });
         }
     };
 

@@ -79,15 +79,12 @@ export default function Login() {
   };
 
   const getCaptcha=(code,captcha)=>{
-    if(captcha)
-    {
       setCaptchaInfo({
         code:code,
         captcha:captcha
       });
-    }
-   
 }
+
   const formik = useFormik({
     initialValues: {
       username: "",
