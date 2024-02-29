@@ -2,10 +2,12 @@ package com.argusoft.path.tht.fileservice.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
 @Entity
+@Audited
 @Table(name = "document")
 public class DocumentEntity extends IdStateNameMetaEntity {
 

@@ -13,7 +13,7 @@
   import TabPane from "antd/es/tabs/TabPane";
   import { DocumentAPI } from "../../../api/DocumentAPI";
   import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
-  import {DOCUMENT_STATE_ACTIVE,DOCUMENT_STATE_INACTIVE} from "../../../constants/document_constants";
+  import {DOCUMENT_STATE_ACTIVE,DOCUMENT_STATE_INACTIVE,DOCUMENT_TYPE_FOR_TEST_CASES} from "../../../constants/document_constants";
 import { display } from "html2canvas/dist/types/css/property-descriptors/display";
 
   const ManualTestCases: React.FC = () => {
@@ -116,11 +116,13 @@ import { display } from "html2canvas/dist/types/css/property-descriptors/display
         DocumentAPI.getDocumentsByRefObjUriAndRefId(
           RefObjUriConstants.TESTCASE_REFOBJURI,
           question.id,
-          DOCUMENT_STATE_ACTIVE
+          DOCUMENT_STATE_ACTIVE,
+          DOCUMENT_TYPE_FOR_TEST_CASES.DOCUMENT_TYPE_QUESTION
         ).then(async (res) => {
-            const updatedFiles = await Promise.all(res.content.map(async (relatedDoc) => {
+            const updatedFiles = await Promise.all(res.content
+              .map(async (relatedDoc) => {
               try {
-                  const base64Image = await DocumentAPI.base64Document(relatedDoc.id,relatedDoc.name);
+                  const base64Image = await DocumentAPI.base64Document(relatedDoc.id);
                   return {
                       name: relatedDoc.name,
                       status: 'done',
@@ -254,16 +256,7 @@ import { display } from "html2canvas/dist/types/css/property-descriptors/display
                                   className="field-box option-item"
                                   key={optionIndex}
                                 >
-                                  {/* <input
-                                  type="checkbox"
-                                  id={option.id}
-                                  name={option.id}
-                                  value={option.id}
-                                  checked={option.success}
-                                  disabled
-                                  readonly={true}
-                                  autoComplete="off"
-                                  /> */}
+                                 
                                   {option.success ? <i className="bi bi-check-circle-fill me-2 text-success"></i> : <i className="bi bi-x-circle-fill me-2 text-danger"></i>}
                                   <label className={question.questionType === ManualQuestionTypeConstants.MULTI_SELECT ? "label-before-no-radius" : ""}>{option.name}</label>
                                 </div>
@@ -271,28 +264,6 @@ import { display } from "html2canvas/dist/types/css/property-descriptors/display
                           </div>
                         </div>
 
-                        {/* <div className="col-md-3 col-12 p-3">
-                          <>
-                           {questionFetched && questionAndDocument.length > 0
-                           && (questionAndDocument.find((q) => q.key === question.id)?.files.length > 0)
-                           && <Carousel arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
-                            {(
-                                questionAndDocument.find((q) => q.key === question.id)?.files.map((item) => (
-                                    <div key={item.id}>
-                                        <h3 className="spec-carousel-background">
-                                            <Image width={200}
-                                            src={item.url} />
-                                        </h3>
-                                    </div>
-                                ))
-                            )}
-                            </Carousel>}
-                            {questionFetched && (!questionAndDocument.find((q) => q.key === question.id)?.files) &&
-                              <div><FileImageOutlined style={{ fontSize: 30 }}/></div>
-                            }
-                            {!questionFetched && <div><LoadingOutlined style={{ fontSize: 30 }} spin /></div>}
-                          </>
-                        </div> */}
 
                             <div className="col-md-3 col-12 p-3 text-center">
                               <>
@@ -300,15 +271,17 @@ import { display } from "html2canvas/dist/types/css/property-descriptors/display
                                   questionAndDocument.find((q) => q.key === question.id)?.files.length > 0 ?
 
                                   (
-                                    <Carousel arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
+                                    <Image.PreviewGroup>
+                                    <Carousel infinite={false} arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
                                       {questionAndDocument.find((q) => q.key === question.id)?.files.map((item) => (
                                         <div key={item.id}>
                                           <h3 className="spec-carousel-background">
-                                            <Image width={200} src={item.url} />
+                                            <Image width={200} src={item.url} preview />
                                           </h3>
                                         </div>
                                       ))}
                                     </Carousel>
+                                    </Image.PreviewGroup>
                                   ) : (
                                     <div>
                                       <span>

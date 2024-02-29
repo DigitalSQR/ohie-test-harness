@@ -13,6 +13,7 @@ import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import { current } from "@reduxjs/toolkit";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
+import { DOCUMENT_TYPE_FOR_TEST_CASES } from "../../../constants/document_constants";
 import { DocumentAPI } from "../../../api/DocumentAPI";
 import { UploadOutlined, PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
@@ -102,7 +103,8 @@ const EditQuestion = () => {
     DocumentAPI.getDocumentsByRefObjUriAndRefId(
 			RefObjUriConstants.TESTCASE_REFOBJURI,
 			testcaseId,
-			DOCUMENT_STATE_ACTIVE
+			DOCUMENT_STATE_ACTIVE,
+      DOCUMENT_TYPE_FOR_TEST_CASES.DOCUMENT_TYPE_QUESTION
 		)
 			.then(async (res) => {
 
@@ -144,7 +146,7 @@ const EditQuestion = () => {
       formData.append(`fileName`, file.name);
       formData.append("refId", currentTestcase.id);
       formData.append("refObjUri",RefObjUriConstants.TESTCASE_REFOBJURI);
-      formData.append("documentType","document.type.testcase.question");
+      formData.append("documentType",DOCUMENT_TYPE_FOR_TEST_CASES.DOCUMENT_TYPE_QUESTION);
 
       return DocumentAPI.uploadDocument(formData);		
   };

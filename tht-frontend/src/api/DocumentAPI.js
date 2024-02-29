@@ -35,7 +35,7 @@ export const DocumentAPI = {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}
 	},
-	base64Document: function (documentId, name) {
+	base64Document: function (documentId) {
 		try {
 			return api.request({
 				url: `/document/base64/${documentId}`,
@@ -58,7 +58,7 @@ export const DocumentAPI = {
 			throw error; // You can choose to re-throw the error or handle it in a specific way
 		}
 	},
-	getDocumentsByRefObjUriAndRefId: async function (refObjUri, refId, state) {
+	getDocumentsByRefObjUriAndRefId: async function (refObjUri, refId, state, documentType) {
 		try {
 			const response = await api.request({
 				url: `/document`,
@@ -66,7 +66,8 @@ export const DocumentAPI = {
                 params: {
 					refObjUri,
 					refId,
-					state
+					state,
+					documentType
 				},
 			});
 			return response.data;
