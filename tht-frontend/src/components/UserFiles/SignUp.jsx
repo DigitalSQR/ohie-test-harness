@@ -113,12 +113,10 @@ export default function SignUp() {
   });
 
   const getCaptcha = (code, captcha) => {
-    if (captcha) {
       setCaptchaInfo({
         code: code,
         captcha: captcha
       });
-    }
   }
   const { showLoader, hideLoader } = useLoader();
 
@@ -207,7 +205,7 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       autoComplete="off"
                       onKeyDown={handleKeyPress}
-                     
+
                     />
                   </div>
                   {formik.touched.email && formik.errors.email && (

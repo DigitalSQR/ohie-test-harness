@@ -90,3 +90,6 @@ tht-file:
 
 frontend:
   google.success: /google/success
+
+captcha:
+   true
