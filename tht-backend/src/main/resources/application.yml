@@ -92,4 +92,4 @@ frontend:
   google.success: /google/success
 
 captcha:
-   true
+   false
