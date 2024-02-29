@@ -14,12 +14,11 @@ import { DocumentAPI } from "../../../api/DocumentAPI";
 
 export default function Header({ headerContent, isSidebarOpen }) {
   const [userInfo, setUserInfo] = useState();
-  const [displayPictureUrl,setDisplayPictureUrl] = useState("");
+  const [displayPictureUrl, setDisplayPictureUrl] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userID = useSelector((store) => store.userInfoSlice.id);
 
-  ;
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
@@ -55,7 +54,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
               aria-expanded="false"
             >
               <span className="user-pic">
-                <img src={displayPictureUrl?displayPictureUrl:avatar } />
+                <img src={displayPictureUrl ? displayPictureUrl : avatar} />
               </span>
               <span className="user-name">
                 {userInfo?.name}
@@ -75,6 +74,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
               </li>
               <li
                 onClick={() => {
+                  navigate("/login");
                   dispatch(log_out());
                 }}
               >
