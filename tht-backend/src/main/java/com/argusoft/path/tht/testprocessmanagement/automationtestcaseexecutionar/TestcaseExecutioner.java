@@ -217,8 +217,7 @@ public class TestcaseExecutioner {
                 List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
                 if(testcaseResultEntity.get(0).getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT))
                 {
-                    System.out.println(testcaseResultEntity.get(0).getState());
-                    System.out.println("Inside if condition");
+
                     List<TestcaseResultEntity> results = fetchTestcaseResultsByInputsForReinitialize(testRequestId,
                             refObjUri,
                             refId,
@@ -481,13 +480,6 @@ public class TestcaseExecutioner {
             Boolean isFunctional,
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         List<TestcaseResultEntity> filteredTestcaseResults;
-
-        System.out.println(isManual);
-        System.out.println(isAutomated);
-        System.out.println(isRequired);
-        System.out.println(isRecommended);
-        System.out.println(isFunctional);
-        System.out.println(isWorkflow);
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
         testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
         testcaseResultCriteriaSearchFilter.setManual(isManual);

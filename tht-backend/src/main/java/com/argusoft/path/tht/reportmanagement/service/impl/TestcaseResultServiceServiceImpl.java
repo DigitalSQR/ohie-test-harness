@@ -344,6 +344,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             testcaseResultEntity.setHasSystemError(Boolean.FALSE);
             testcaseResultEntity.setSuccess(Boolean.FALSE);
             testcaseResultEntity.setSuccess(Boolean.FALSE);
+            testcaseResultEntity.setDuration(null);
         }
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
@@ -601,6 +602,16 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                         break;
                     }
                 }
+
+                //set duration
+                Long duration = 0L;
+                for (TestcaseResultEntity tcr : filteredTestcaseResults) {
+                    if (tcr.getDuration() != null && tcr.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
+                        duration = duration + tcr.getDuration();
+                    }
+                }
+                testcaseResultEntity.setDuration(duration);
+
                 if(allTestcasesFinished) {
                     List<String> failedTestcaseResultName = filteredTestcaseResults.stream().filter(tcre -> tcre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) && !tcre.getSuccess()).map(IdStateNameMetaEntity::getName).toList();
                     String message;
@@ -621,6 +632,16 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             for(TestcaseResultEntity tcr: filteredTestcaseResults) {
                 this.recalculateTestcaseResultEntity(tcr, testcaseResultEntities);
             }
+
+            //set duration
+            Long duration = 0L;
+            for (TestcaseResultEntity tcr : filteredTestcaseResults) {
+                if (tcr.getDuration() != null && tcr.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
+                    duration = duration + tcr.getDuration();
+                }
+            }
+            testcaseResultEntity.setDuration(duration);
+
             boolean allTestcasesFinished = true;
             for (TestcaseResultEntity specificationResultEntity : filteredTestcaseResults){
                 if(!specificationResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) && !specificationResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)){
@@ -654,28 +675,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         } else if (filteredTestcaseResults.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
-            //set duration
-            Long duration = 0L;
-            for (TestcaseResultEntity tcr : filteredTestcaseResults) {
-                if (tcr.getDuration() != null) {
-                    duration = duration + tcr.getDuration();
-                }
-            }
-            testcaseResultEntity.setDuration(duration);
-
             testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
         } else if (filteredTestcaseResults.stream()
                 .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
-            //set duration
-            Long duration = System.currentTimeMillis() - testcaseResultEntity.getUpdatedAt().getTime();
-            for (TestcaseResultEntity tcr : testcaseResultEntities) {
-                if (tcr.getDuration() != null) {
-                    duration = duration + tcr.getDuration();
-                }
-            }
-            testcaseResultEntity.setDuration(duration);
-
-
             testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS);
         } else if (filteredTestcaseResults.stream()
                 .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING))) {
