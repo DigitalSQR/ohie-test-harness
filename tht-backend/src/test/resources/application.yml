@@ -61,5 +61,8 @@ tht-file:
 frontend:
   google.success: /google/success
 
+captcha:
+  false
+
 app:
   authBasicToken: dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==
