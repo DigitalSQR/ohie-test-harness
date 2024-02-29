@@ -58,7 +58,7 @@ public class ProcessReinitializer {
         try {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
             searchFilter.setState(List.of(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING));
-
+            searchFilter.setAutomated(true);
             searchFilter.setRefObjUri(refObjUri);
             return testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
         } catch (Exception ex) {

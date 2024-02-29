@@ -209,42 +209,16 @@ public class TestcaseExecutioner {
             Boolean reset,
             ContextInfo contextInfo) throws OperationFailedException {
         try {
+            //Try to interrupt running process.
+            boolean threadGroupFlag = false;
             if (contextInfo.getModule() != Module.SYSTEM
                     && !Objects.equals(isManual, Boolean.TRUE)
                     && !Objects.equals(isAutomated, Boolean.FALSE)) {
-                TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
-                testcaseResultCriteriaSearchFilter.setRefId(testRequestId);
-                List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
-                if(testcaseResultEntity.get(0).getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT))
-                {
-
-                    List<TestcaseResultEntity> results = fetchTestcaseResultsByInputsForReinitialize(testRequestId,
-                            refObjUri,
-                            refId,
-                            null,
-                            true,
-                            isRequired,
-                            isRecommended,
-                            isWorkflow,
-                            isFunctional,
-                            contextInfo);
-
-                  changeTestcaseResultsState(
-                            results,
-                            TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT,
-                            true,
-                            contextInfo);
-                    return;
-                }
-
                 ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
                 while (threadGroup != null) {
-                    boolean threadGroupFlag = false;
                     Thread[] threads = new Thread[threadGroup.activeCount()];
                     threadGroup.enumerate(threads);
                     for (Thread thread : threads) {
-
-
                         if (thread.getName().equals(testRequestId + refId + refObjUri + (isWorkflow == null ? "null" : isWorkflow.toString()) + (isFunctional == null ? "null" : isFunctional.toString()) + (isRequired == null ? "null" : isRequired.toString()) + (isRecommended == null ? "null" : isRecommended.toString()))) {
                             TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilterTwo = new TestcaseResultCriteriaSearchFilter();
                             testcaseResultCriteriaSearchFilterTwo.setTestRequestId(testRequestId);
@@ -257,7 +231,6 @@ public class TestcaseExecutioner {
                             thread.interrupt();
                             threadGroupFlag = true;
                             break;
-
                         }
                     }
                     threadGroup = threadGroup.getParent();
@@ -265,7 +238,9 @@ public class TestcaseExecutioner {
                         break;
                     }
                 }
-            } else {
+            }
+            //If process found and tried to interrupt then following operation will happen when process will actually get stopped.
+            if(!threadGroupFlag) {
                 List<TestcaseResultEntity> testcaseResultEntities =
                         fetchTestcaseResultsByInputsForReinitialize(
                                 testRequestId,

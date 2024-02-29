@@ -91,7 +91,7 @@ export default function AutomatedTesting() {
     TestProcessAPI.stopTestProcess(testRequestId, params)
     .then(() => {
       notification.success({
-        description: "Process to interrupt has been started successully",
+        description: "Process to interrupt has been started successully. Please wait for some time",
         placement: "bottomRight",
       });
     })
@@ -350,6 +350,8 @@ export default function AutomatedTesting() {
                         <ReloadOutlined />
                         <span className="mx-2">Reset</span>
                       </button>
+                  </>)}
+                  {(testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !!finishedTestcaseCount) && (<>
                       <button
                         className={`btn small btn-sm mt-0 display btn-success px-4 abtn`}
                         onClick={handleStartTesting}

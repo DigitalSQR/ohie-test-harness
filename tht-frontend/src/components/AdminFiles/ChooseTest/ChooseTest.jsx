@@ -17,12 +17,12 @@ export default function ChooseTest() {
   const { testRequestId } = useParams();
   const { TESTCASE_REFOBJURI, TESTREQUEST_REFOBJURI } = RefObjUriConstants;
   const [testcaseName, setTestCaseName] = useState();
-  const [manualProgress, setManualProgress] = useState(0);
-  const [automatedProgress, setAutomatedProgress] = useState(0);
   const [totalManualTestcaseResults, setTotalManualTestcaseResults] = useState(0);
   const [totalAutomatedTestcaseResults, setTotalAutomatedTestcaseResults] = useState(0);
   const [totalFinishedManual, setTotalFinishedManual] = useState(0);
   const [totalFinishedAutomated, setTotalFinishedAutomated] = useState(0);
+  const [totalAllManual, setTotalAllManual] = useState(0);
+  const [totalAllAutomated, setTotalAllAutomated] = useState(0);
   const [testcaseResults, setTestCaseResults] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,6 +33,8 @@ export default function ChooseTest() {
     var totalFinishedManual = 0;
     var totalAutomated = 0;
     var totalFinishedAutomated = 0;
+    var totalAllAutomated = 0;
+    var totalAllMenual = 0;
     testcaseResults.forEach((testcaseResult) => {
       if ( testcaseResult.state !== TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT) {
         if (!!testcaseResult.manual) {
@@ -48,21 +50,19 @@ export default function ChooseTest() {
           ) { totalFinishedAutomated++; }
         }
       }
+      if (!!testcaseResult.manual) {
+        totalAllMenual++;
+      }
+      if (!!testcaseResult.automated) {
+        totalAllAutomated++;
+      }
     });
+    setTotalAllManual(totalAllMenual);
+    setTotalAllAutomated(totalAllAutomated);
     setTotalFinishedManual(totalFinishedManual);
     setTotalFinishedAutomated(totalFinishedAutomated);
     setTotalManualTestcaseResults(totalManual);
     setTotalAutomatedTestcaseResults(totalAutomated);
-
-    if (totalManual !== 0) {
-      setManualProgress(Math.floor((totalFinishedManual / totalManual) * 100));
-    }
-
-    if (totalAutomated !== 0) {
-      setAutomatedProgress(
-        Math.floor((totalFinishedAutomated / totalAutomated) * 100)
-      );
-    }
 
     // Start the WebSocket Connection
     if((totalFinishedManual<totalManual || totalFinishedAutomated<totalAutomated || totalAutomated===0 || totalManual===0) 
@@ -214,14 +214,14 @@ export default function ChooseTest() {
               {totalManualTestcaseResults != 0 && (
                 <Fragment>
                   <Progress
-                    percent={Math.floor(manualProgress)}
+                    percent={Math.floor((totalFinishedManual / (!!totalFinishedManual? totalAllManual : totalManualTestcaseResults)) * 100)}
                     format={() => {
-                      if (manualProgress === 100) {
+                      if (Math.floor((totalFinishedManual / (!!totalFinishedManual? totalAllManual : totalManualTestcaseResults)) * 100) === 100) {
                         return <span>Done</span>;
                       } else {
                         return (
                           <span>
-                            {totalFinishedManual}/{totalManualTestcaseResults}
+                            {totalFinishedManual}/{!!totalFinishedManual? totalAllManual : totalManualTestcaseResults}
                           </span>
                         );
                       }
@@ -268,15 +268,15 @@ export default function ChooseTest() {
               {totalAutomatedTestcaseResults != 0 && (
                 <Fragment>
                   <Progress
-                    percent={automatedProgress}
+                    percent={Math.floor((totalFinishedAutomated / (!!totalFinishedAutomated? totalAllAutomated : totalAutomatedTestcaseResults)) * 100)}
                     format={() => {
-                      if (automatedProgress === 100) {
+                      if (Math.floor((totalFinishedAutomated / (!!totalFinishedAutomated? totalAllAutomated : totalAutomatedTestcaseResults)) * 100) === 100) {
                         return <span>Done</span>;
                       } else {
                         return (
                           <span>
                             {totalFinishedAutomated}/
-                            {totalAutomatedTestcaseResults}
+                            {!!totalFinishedAutomated ? totalAllAutomated : totalAutomatedTestcaseResults}
                           </span>
                         );
                       }

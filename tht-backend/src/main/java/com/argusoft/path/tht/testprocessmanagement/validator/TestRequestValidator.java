@@ -120,17 +120,12 @@ public class TestRequestValidator {
 
         if (validationTypeKey.equals(Constant.START_PROCESS_VALIDATION)) {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
-            searchFilter.setManual(isManual);
-            searchFilter.setAutomated(isAutomated);
-            searchFilter.setRequired(isRequired);
-            searchFilter.setRecommended(isRecommended);
-            searchFilter.setWorkflow(isWorkflow);
-            searchFilter.setFunctional(isFunctional);
             searchFilter.setRefObjUri(refObjUri);
             searchFilter.setRefId(refId);
             searchFilter.setTestRequestId(testRequestId);
 
             List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
+
             if (testcaseResultEntities.isEmpty()) {
                 String fieldName = "inputData";
                 errors.add(
@@ -138,12 +133,28 @@ public class TestRequestValidator {
                                 ErrorLevel.ERROR,
                                 "Process for the requested input doesn't have active testcaseResults."));
             }
-            if (testcaseResultEntities.stream().anyMatch(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
+            try {
+                TestcaseResultEntity testcaseResult = testcaseResultService.getTestcaseResultStatus(testcaseResultEntities.get(0).getId(),
+                        isManual,
+                        isAutomated,
+                        isRequired,
+                        isRecommended,
+                        isWorkflow,
+                        isFunctional,
+                        contextInfo);
+                if (testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS)) {
+                    String fieldName = "inputData";
+                    errors.add(
+                            new ValidationResultInfo(fieldName,
+                                    ErrorLevel.ERROR,
+                                    "Process for the requested input has been already started."));
+                }
+            } catch (DoesNotExistException ex) {
                 String fieldName = "inputData";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "Process for the requested input has been already started."));
+                                "Process for the requested input doesn't have active testcaseResults."));
             }
         } else if(validationTypeKey.equals(Constant.STOP_PROCESS_VALIDATION)) {
 
