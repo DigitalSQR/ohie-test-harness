@@ -2,6 +2,7 @@ package com.argusoft.path.tht.fileservice.validator;
 
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.fileservice.constant.DocumentTypeConstants;
+import com.argusoft.path.tht.fileservice.constant.DocumentUtil;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -92,14 +93,10 @@ public class DocumentValidator {
     }
 
     private static void isDocumentTypeValid(DocumentEntity documentEntity, List<ValidationResultInfo> errors) {
-        String refObjUri = documentEntity.getRefObjUri();
-        Set<String> validTypes = new HashSet<>();
-        if(refObjUri!=null) {
-            validTypes = DocumentTypeConstants.validDocumentTypes.getOrDefault(refObjUri, Collections.emptySet());
-        }
-        if (validTypes.isEmpty() || !validTypes.contains(documentEntity.getDocumentType())) {
+        boolean documentTypeValidForEntityRefObjectUri = DocumentUtil.isDocumentTypeValidForEntityRefObjectUri(documentEntity.getDocumentType(), documentEntity.getRefObjUri());
+        if (!documentTypeValidForEntityRefObjectUri) {
             String fieldName = "documentType";
-            LOGGER.error("Invalid document type for the given refObjUri - "+refObjUri);
+            LOGGER.error("Invalid document type for the given refObjUri - %s".formatted(documentEntity.getRefObjUri()));
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
                     fieldName + " is invalid for the given refObjUri"));

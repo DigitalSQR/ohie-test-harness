@@ -3,6 +3,7 @@ package com.argusoft.path.tht.fileservice.service;
 import com.argusoft.path.tht.fileservice.FileDetails;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
+import com.argusoft.path.tht.fileservice.constant.FileType;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
@@ -20,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class FileService {
@@ -89,7 +92,7 @@ public class FileService {
         return tika.detect(inputStream);
     }
 
-    public static boolean validateFileType(MultipartFile file, List<String> validateAgainstTypes) throws InvalidFileTypeException, InvalidParameterException, OperationFailedException {
+    public static boolean validateFileType(MultipartFile file, Set<FileType> validateAgainstTypes) throws InvalidFileTypeException, InvalidParameterException, OperationFailedException {
         if (validateAgainstTypes == null || validateAgainstTypes.isEmpty()) {
             LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ FileService.class.getSimpleName());
             throw new InvalidParameterException("ValidationAgainstTypes should not be null or empty to validate file type ");
@@ -97,18 +100,18 @@ public class FileService {
 
         try {
             String actualType = detectInputStreamTypeWithTika(file.getInputStream());
-            if (validateAgainstTypes.contains(actualType)) {
+            if (validateAgainstTypes.stream().anyMatch(allowedFileType -> allowedFileType.getType().equals(actualType))) {
                 return true;
             }
             LOGGER.error(ValidateConstant.INVALID_FILE_TYPE_EXCEPTION + FileService.class.getSimpleName());
-            throw new InvalidFileTypeException("Invalid file type, only allowed file types are : " + (String.join(",", validateAgainstTypes)));
+            throw new InvalidFileTypeException("Invalid file type, only allowed file types are : " + (validateAgainstTypes.stream().map(FileType::getName).collect(Collectors.joining(", "))));
         } catch (IOException e) {
             LOGGER.error(ValidateConstant.IO_EXCEPTION + FileService.class.getSimpleName(), e);
             throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
         }
     }
 
-    public static boolean validateFileTypeWithAllowedTypes(MultipartFile file, List<String> allowedTypes)
+    public static boolean validateFileTypeWithAllowedTypes(MultipartFile file, Set<FileType> allowedTypes)
             throws InvalidFileTypeException, OperationFailedException {
 
         try {

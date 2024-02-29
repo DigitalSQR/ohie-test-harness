@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.fileservice;
 
+import com.argusoft.path.tht.fileservice.constant.FileType;
 import com.argusoft.path.tht.fileservice.service.FileService;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
@@ -7,16 +8,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public class MultipartFileTypeTesterPredicate implements Predicate<MultipartFile> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MultipartFileTypeTesterPredicate.class);
 
-    private final List<String> allowedTypes;
+    private final Set<FileType> allowedTypes;
 
-    public MultipartFileTypeTesterPredicate(List<String> allowedTypes) throws OperationFailedException {
+    public MultipartFileTypeTesterPredicate(Set<FileType> allowedTypes) throws OperationFailedException {
         if (allowedTypes.isEmpty()) {
             LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + MultipartFileTypeTesterPredicate.class.getSimpleName());
             throw new OperationFailedException("ValidationAgainstTypes should not be null or empty to validate file type ");
