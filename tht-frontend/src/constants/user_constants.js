@@ -1,7 +1,9 @@
 export const userStateConstantNames = {
   "user.status.active": "ACTIVE",
+  "user.status.inactive": "INACTIVE",
   "user.status.rejected": "REJECTED",
   "user.status.approval.pending": "PENDING",
+  "user.status.verification.pending": "NOT VERIFIED",
 };
 
 export const userBadgeClasses = {

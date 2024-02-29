@@ -5,6 +5,7 @@ import failImg from "../../../../styles/images/failure.svg";
 import skipImg from "../../../../styles/images/skip.svg";
 import stopImg from "../../../../styles/images/stop.svg";
 import "./TestcaseResultRow.scss";
+import { TestcaseResultStateConstants } from "../../../../constants/testcaseResult_constants";
 
 export default function TestcaseResultRow({ testResultId, stompClient, toggleFunction, toggleClass, testcaseResultType, changeState }) {
     const [testcaseResult, setTestcaseResult] = useState();
@@ -60,22 +61,25 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
     };
 
     const getResultDisplay = (testcaseResult) => {
-        let state = testcaseResult?.state;
-        let success = testcaseResult?.success;
-        if (state === "testcase.result.status.finished") {
-            if (!!success) {
-                return <img className="finished" src={passImg} alt="PASS" />;
-            } else {
-                return <img className="finished" src={failImg} alt="FAIL" />;
-            }
-        } else if (state === "testcase.result.status.draft") {
+        const state = testcaseResult?.state;
+        const success = testcaseResult?.success;
+      
+        switch (state) {
+          case TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED:
+            return success ? (
+              <img className="finished" src={passImg} alt="PASS" />
+            ) : (
+              <img className="finished" src={failImg} alt="FAIL" />
+            );
+          case TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT:
+          case TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_PENDING:
             return <img className="finished" src={stopImg} alt="PENDING" />;
-        } else if (state === "testcase.result.status.pending") {
-            return <img className="finished" src={stopImg} alt="PENDING" />;
-        } else if (state === "testcase.result.status.skip") {
+          case TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP:
             return <img className="finished" src={skipImg} alt="SKIP" />;
-        } else if (state === "testcase.result.status.inprogress") {
+          case TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS:
             return <div className="spinner-border" role="status"></div>;
+          default:
+            return null;
         }
     };
 

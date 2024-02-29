@@ -25,6 +25,7 @@ export const TestRequestStateConstantNames = {
     "test.request.status.rejected": "Rejected",
     "test.request.status.inprogress": "In Progress",
     "test.request.status.finished": "Finished",
+    "test.request.status.skipped": "Skipped",
 }
 
 export const StateBadgeClasses = {

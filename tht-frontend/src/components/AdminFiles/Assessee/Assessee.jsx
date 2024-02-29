@@ -7,6 +7,7 @@ import { Pagination } from "@mui/material";
 import { userBadgeClasses } from "../../../constants/user_constants";
 import { useLoader } from "../../loader/LoaderContext";
 import { userStatusActionLabels } from "../../../constants/user_constants";
+import { ROLE_ID_ASSESSEE } from "../../../constants/role_constants";
 const Assessee = () => {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [state, setState] = useState("");
@@ -21,7 +22,7 @@ const Assessee = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [role, setRole] = useState("role.assessee");
+  const [role, setRole] = useState(ROLE_ID_ASSESSEE);
   const { showLoader, hideLoader } = useLoader();
   const fetchUserByState = (
     sortFieldName,

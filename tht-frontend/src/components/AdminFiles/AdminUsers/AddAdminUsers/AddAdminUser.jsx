@@ -7,21 +7,22 @@ import { notification } from "antd";
 import { AdminUserAPI } from "../../../../api/AdminUserAPI";
 import { useLoader } from "../../../loader/LoaderContext";
 import CustomSelect from "../CustomSelect";
+import { ROLE_ID_ADMIN, ROLE_ID_ASSESSEE, ROLE_ID_TESTER } from "../../../../constants/role_constants";
 const AddAdminUser = () => {
   const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
   const roles = [
     {
       label: "Admin",
-      value: "role.admin",
+      value: ROLE_ID_ADMIN,
     },
     {
       label: "Tester",
-      value: "role.tester",
+      value: ROLE_ID_TESTER,
     },
     {
       label: "Assessee",
-      value: "role.assessee",
+      value: ROLE_ID_ASSESSEE,
     },
   ];
   const initialValues = {

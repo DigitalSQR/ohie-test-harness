@@ -9,6 +9,7 @@ import { useLocation } from "react-router-dom";
 import { useLoader } from "../../../loader/LoaderContext";
 
 import CustomSelect from "../CustomSelect";
+import { ROLE_ID_ADMIN, ROLE_ID_ASSESSEE, ROLE_ID_TESTER } from "../../../../constants/role_constants";
 const UpdateAdminUser = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,15 +18,15 @@ const UpdateAdminUser = () => {
   const roles = [
     {
       label: "Admin",
-      value: "role.admin",
+      value: ROLE_ID_ADMIN,
     },
     {
       label: "Tester",
-      value: "role.tester",
+      value: ROLE_ID_TESTER
     },
     {
       label: "Assessee",
-      value: "role.assessee",
+      value: ROLE_ID_ASSESSEE
     },
   ];
   const { showLoader, hideLoader } = useLoader();

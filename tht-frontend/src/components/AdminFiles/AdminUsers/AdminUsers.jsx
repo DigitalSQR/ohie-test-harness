@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import { store } from "../../../store/store";
 import { Switch, notification } from "antd";
+import { ROLE_ID_ADMIN, ROLE_ID_TESTER } from "../../../constants/role_constants";
 const AdminUsers = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
@@ -69,8 +70,8 @@ const AdminUsers = () => {
       hideLoader();
       const activeUsers = data.content.filter(
         (user) =>
-          user?.roleIds.includes("role.admin") ||
-          user?.roleIds.includes("role.tester")
+          user?.roleIds.includes(ROLE_ID_ADMIN) ||
+          user?.roleIds.includes(ROLE_ID_TESTER)
       );
       setTotalPages(Math.ceil(activeUsers.length / pageSize));
 
