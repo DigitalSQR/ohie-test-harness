@@ -34,7 +34,12 @@ const PrivateDashboardRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
   const redirectUri = useLocation();
   const isAuthenticated = !!token;
-  if (!isAuthenticated && redirectUri.pathname !== "/login" ) {
+  if (
+    !isAuthenticated &&
+    !!redirectUri.pathname &&
+    redirectUri.pathname !== "/login" &&
+    redirectUri.pathname !== "/"
+  ) {
     localStorage.setItem("redirectUri", JSON.stringify(redirectUri));
   }
   return isAuthenticated ? <Landing /> : <Navigate to="/login" />;
@@ -47,7 +52,6 @@ const PrivateRoute = ({ roles = [], element: Element }) => {
   const userRoles = useSelector((state) => state.userInfoSlice.roleIds);
 
   const isAuthenticated = !!token;
-
 
   let userRole = USER_ROLES.ROLE_ID_ASSESSEE;
 
