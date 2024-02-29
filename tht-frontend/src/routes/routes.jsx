@@ -1,4 +1,4 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter, useLocation } from "react-router-dom";
 import Login from "../components/CommonFiles/Login/Login";
 import Dashboard from "../components/CommonFiles/Dashboard";
 import { useSelector } from "react-redux";
@@ -32,16 +32,22 @@ import PageNotFoud from "../components/CommonFiles/PageNotFound/PageNotFound.jsx
 import LogoutComponent from "../components/CommonFiles/LogoutComponent.jsx";
 const PrivateDashboardRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
-
+  const redirectUri = useLocation();
   const isAuthenticated = !!token;
+  if (!isAuthenticated && redirectUri.pathname !== "/login" ) {
+    localStorage.setItem("redirectUri", JSON.stringify(redirectUri));
+  }
   return isAuthenticated ? <Landing /> : <Navigate to="/login" />;
 };
 
-const PrivateRoute = ({ roles = [], element: Element, ...rest }) => {
+const PrivateRoute = ({ roles = [], element: Element }) => {
+  const loc = useLocation();
+
   const token = useSelector((state) => state.authSlice.access_token);
   const userRoles = useSelector((state) => state.userInfoSlice.roleIds);
 
   const isAuthenticated = !!token;
+
 
   let userRole = USER_ROLES.ROLE_ID_ASSESSEE;
 
@@ -54,13 +60,12 @@ const PrivateRoute = ({ roles = [], element: Element, ...rest }) => {
   }
   const hasRequiredRoles = roles.includes(userRole);
 
-  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    localStorage.setItem("intendedRoute");
+    return <Navigate to="/login" />;
+  }
 
-  return hasRequiredRoles ? (
-    <Element {...rest} />
-  ) : (
-    <Navigate to="/dashboard" />
-  );
+  return hasRequiredRoles ? <Element /> : <Navigate to="/dashboard" />;
 };
 
 const routes = createBrowserRouter([
@@ -88,7 +93,7 @@ const routes = createBrowserRouter([
     element: <PrivateDashboardRoute />,
 
     children: [
-      { path: "", element: <LogoutComponent/> },
+      { path: "", element: <LogoutComponent /> },
       {
         index: true,
         path: "dashboard",

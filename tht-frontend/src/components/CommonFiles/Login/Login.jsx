@@ -28,7 +28,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [captchaInfo, setCaptchaInfo] = useState({
     code: "",
-    captcha: ""
+    captcha: "",
   });
 
   useEffect(() => {
@@ -39,7 +39,6 @@ export default function Login() {
   const redirectToSignUp = async () => {
     navigate("/SignUp");
   };
-
 
   const setOrUnsetKeepMeLogin = (event) => {
     const { checked } = event.target;
@@ -80,11 +79,11 @@ export default function Login() {
 
   const getCaptcha=(code,captcha)=>{
       setCaptchaInfo({
-        code:code,
-        captcha:captcha
+        code: code,
+        captcha: captcha,
       });
-}
-
+    }
+  
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -93,7 +92,7 @@ export default function Login() {
     },
     validate: validate,
     onSubmit: async () => {
-      if (!captchaInfo.code && captchaInfo.captcha)  {
+      if (!captchaInfo.code && captchaInfo.captcha) {
         notification.error({
           placement: "bottomRight",
           description: "Invalid captcha",
@@ -109,25 +108,37 @@ export default function Login() {
             hideLoader();
             UserAPI.viewUser().then((user) => {
               dispatch(userinfo_success(user));
-              navigate("/dashboard");
+              const redirectUri = localStorage.getItem("redirectUri");
+              if (redirectUri) {
+                navigate(JSON.parse(redirectUri));
+                localStorage.removeItem("redirectUri");
+              } else {
+                navigate("/dashboard");
+              }
             });
           },
           (response) => {
             hideLoader();
             notification.error({
               placement: "bottomRight",
-              description: !!response.response.data[0] ? response.response.data[0].message : (!!response.response.data.error_description ? response.response.data.error_description : 'Oops something went wrong'),
+              description: !!response.response.data[0]
+                ? response.response.data[0].message
+                : !!response.response.data.error_description
+                ? response.response.data.error_description
+                : "Oops something went wrong",
             });
-          }).catch((error) => {
-            // Handle the error here
-            hideLoader();
-            notification.error({
-              placement: "bottomRight",
-              description: "Invalid username or password",
-            });
+          }
+        )
+        .catch((error) => {
+          // Handle the error here
+          hideLoader();
+          notification.error({
+            placement: "bottomRight",
+            description: "Invalid username or password",
           });
-        },
-      });
+        });
+    },
+  });
 
   return (
     <Fragment>
@@ -182,17 +193,13 @@ export default function Login() {
                       autoFocus={true}
                     />
                     {formik.touched.username && formik.errors.username && (
-                      <div
-                        className="text-danger position"
-                      >
+                      <div className="text-danger position">
                         {formik.errors.username}
                       </div>
                     )}
                   </div>
                 </div>
-                <div
-                  className="custom-input mb-3 password"
-                >
+                <div className="custom-input mb-3 password">
                   <label
                     htmlFor="exampleFormControlInput2"
                     className="form-label"
@@ -223,8 +230,9 @@ export default function Login() {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       <i
-                        className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"
-                          }`}
+                        className={`bi ${
+                          showPassword ? "bi-eye-slash" : "bi-eye"
+                        }`}
                       ></i>
                     </button>
                   </div>
@@ -232,7 +240,7 @@ export default function Login() {
                     <div className="text-danger">{formik.errors.password}</div>
                   )}
                 </div>
-                <Captcha getCaptcha={getCaptcha}/>
+                <Captcha getCaptcha={getCaptcha} />
                 <div className="d-flex justify-content-between">
                   <label className="custom-checkbox">
                     Remember me
@@ -264,9 +272,7 @@ export default function Login() {
                   >
                     Login
                   </button>
-                  <h6  className="m-2 align">
-                    OR
-                  </h6>
+                  <h6 className="m-2 align">OR</h6>
                   <h4 className="align">
                     <a href="/api/oauth2/authorization/google">
                       <img src={GoogleLoginIcon} />

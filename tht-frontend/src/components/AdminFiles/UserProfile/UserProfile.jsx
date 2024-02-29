@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useLoader } from "../../loader/LoaderContext";
 import { UserAPI } from "../../../api/UserAPI";
@@ -16,6 +16,8 @@ import {
   DOCUMENT_STATE_INACTIVE,
   DOCUMENT_TYPE_FOR_USER,
 } from "../../../constants/document_constants";
+import avatar from "../../../styles/images/defaultDP.jpeg";
+
 const UserProfile = () => {
   const { showLoader, hideLoader } = useLoader();
   const [userDetails, setUserDetails] = useState();
@@ -24,20 +26,20 @@ const UserProfile = () => {
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
 
-  const [fileList, setFileList] = useState([]);
+  const [profilePicture, setProfilePicture] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userID = useSelector((store) => store.userInfoSlice.id);
 
   const handleUpload = (e) => {
-    if (fileList.length !== 0) {
+    if (!!profilePicture) {
       DocumentAPI.changeDocumentState(
-        fileList[0].documentId,
+        profilePicture.documentId,
         DOCUMENT_STATE_INACTIVE
       )
         .then(() => {
-          setFileList([]);
+          setProfilePicture();
         })
         .catch((error) => {
           notification.error({
@@ -66,7 +68,7 @@ const UserProfile = () => {
           documentId: response.id,
         };
 
-        setFileList([imageData]);
+        setProfilePicture(imageData);
         notification.success({
           description: `Picture Uploaded Successfully`,
           placement: "bottomRight",
@@ -113,7 +115,7 @@ const UserProfile = () => {
           documentId: id,
         };
 
-        setFileList([image]);
+        setProfilePicture(image);
       }
     });
   };
@@ -139,22 +141,37 @@ const UserProfile = () => {
       });
   };
 
-  const handleRemove = (file) => {
-    DocumentAPI.changeDocumentState(
-      file.documentId,
-      DOCUMENT_STATE_INACTIVE
-    ).then((response) => {
-      notification.success({
-        description: `Picture deleted successfully`,
-        placement: "bottomRight",
-      });
-      setFileList([]);
+  const handleRemove = () => {
+    Modal.confirm({
+      title: "Delete Image",
+      content: "Are you sure about deleting this image ?",
+      okText: "Yes",
+      cancelText: "Cancel",
+      onOk() {
+        DocumentAPI.changeDocumentState(
+          profilePicture.documentId,
+          DOCUMENT_STATE_INACTIVE
+        )
+          .then((response) => {
+            notification.success({
+              description: `Picture deleted successfully`,
+              placement: "bottomRight",
+            });
+            setProfilePicture();
+          })
+          .catch((error) => {
+            notification.error({
+              description: `Error deleting Picture please try again!`,
+              placement: "bottomRight",
+            });
+          });
+      },
     });
   };
 
-  const handlePreview = (file) => {
-    setPreviewImage(file.url);
-    setPreviewTitle(file.name);
+  const handlePreview = () => {
+    setPreviewImage(profilePicture.url);
+    setPreviewTitle(profilePicture.name);
     setPreviewOpen(true);
 
     return false;
@@ -210,43 +227,110 @@ const UserProfile = () => {
         <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
           <div className="form-bg-white">
             <span className="heading-line-up">User Profile</span>
-
-            <Upload
-              onPreview={handlePreview}
-              onRemove={handleRemove}
-              fileList={fileList}
-              maxCount={1}
-              customRequest={handleUpload}
-              listType="picture-circle"
-              accept=".png,.jpg,.jpeg,image/png,image/jpeg"
-            >
-              <button
+            <div className="row" style={{ alignItems: "center" }}>
+              <div
+                className="col-12"
                 style={{
-                  border: 0,
-                  background: "none",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-                type="button"
               >
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
+                <div
+                  style={{
+                    position: "relative",
+                    width: "25%",
+                    height: "25%",
+                    overflow: "hidden",
+                    marginBottom: "8px",
+                    borderRadius: "2rem",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.lastChild.style.opacity = 1;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.lastChild.style.opacity = 0;
+                  }}
+                >
+                  <img
+                    src={profilePicture ? profilePicture.url : avatar}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                      borderRadius: "2rem",
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: "rgba(0, 0, 0, 0.5)",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      opacity: 0,
+                      transition: "opacity 0.3s",
+                    }}
+                  >
+                    {profilePicture && (
+                      <Fragment>
+                        <span
+                          onClick={handlePreview}
+                          className="bi bi-eye-fill"
+                          style={{
+                            fontSize: "2em",
+                            color: "white",
+                            marginRight: "10px",
+                          }}
+                        />
+
+                        <span
+                          onClick={handleRemove}
+                          className="bi bi-trash-fill"
+                          style={{ fontSize: "2em", color: "white" }}
+                        />
+                      </Fragment>
+                    )}
+                  </div>
                 </div>
-              </button>
-            </Upload>
-            <Modal
-              open={previewOpen}
-              title={previewTitle}
-              footer={null}
-              onCancel={handleCancel}
-            >
-              <img
-                alt="example"
-                style={{
-                  width: "100%",
-                }}
-                src={previewImage}
-              />
-            </Modal>
+                {!profilePicture && (
+                  <Upload
+                    showUploadList={false}
+                    maxCount={1}
+                    customRequest={handleUpload}
+                    previewFile={false}
+                    accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+                  >
+                    <button
+                      className="btn btn-primary btn-sm"
+                      style={{ marginTop: 8 }}
+                    >
+                      Upload
+                    </button>
+                  </Upload>
+                )}
+              </div>
+              <Modal
+                open={previewOpen}
+                title={previewTitle}
+                footer={null}
+                onCancel={handleCancel}
+              >
+                <img
+                  alt="example"
+                  style={{
+                    width: "100%",
+                  }}
+                  src={previewImage}
+                />
+              </Modal>
+            </div>
+
             <div className="row">
               <div className="col-12">
                 <div className="custom-input mb-3">
