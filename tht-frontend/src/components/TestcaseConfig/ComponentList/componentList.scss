@@ -106,6 +106,18 @@
   margin-left: 8px;
 }
 
+.edit-badge{
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap:0.5rem;
+  font-size: 12px;
+  padding: 3px 20px;
+  background-color: rgb(10, 179, 156)
+
+}
+
 .badges-orange {
   display: inline-block;
   background: $color-orange;

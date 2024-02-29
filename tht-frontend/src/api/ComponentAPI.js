@@ -1,9 +1,40 @@
 import api from "./configs/axiosConfigs";
 
 export const ComponentAPI = {
-  getComponents: async function (state) {
+  createComponent: function (data) {
+    return api
+      .request({
+        url: `/component`,
+        method: "POST",
+        data,
+      })
+      .then((response) => response.data);
+  },
+
+  updateComponent: function (data) {
+    return api
+      .request({
+        url: `/component`,
+        method: "PUT",
+        data,
+      })
+      .then((response) => response.data);
+  },
+
+  getComponents: async function (
+    sortFieldName,
+    sortDirection,
+    pageNumber,
+    pageSize,
+    state
+  ) {
     try {
       const params = {};
+      if (!!sortFieldName) {
+        params.sort = `${sortFieldName},${sortDirection}`;
+      }
+      if (pageNumber) params.page = pageNumber;
+      if (pageSize) params.size = pageSize;
       if (state) params.state = state;
       const response = await api.request({
         url: `/component`,

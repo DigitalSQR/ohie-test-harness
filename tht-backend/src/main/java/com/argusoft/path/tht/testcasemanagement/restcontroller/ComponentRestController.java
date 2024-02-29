@@ -45,13 +45,13 @@ public class ComponentRestController {
      *
      * @return
      */
-//    @ApiOperation(value = "Create new Component", response = ComponentInfo.class)
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Successfully created Component"),
-//            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-//            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
-//    })
-//    @PostMapping("")
+    @ApiOperation(value = "Create new Component", response = ComponentInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully created Component"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PostMapping("")
     @Transactional
     public ComponentInfo createComponent(
             @RequestBody ComponentInfo componentInfo,

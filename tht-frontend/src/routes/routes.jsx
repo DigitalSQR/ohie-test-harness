@@ -19,7 +19,7 @@ import RegisterApplication from "../components/CommonFiles/RegisterApplication/R
 import EmailVerified from "../components/UserFiles/EmailVerified";
 import AdminUsers from "../components/AdminFiles/AdminUsers/AdminUsers";
 import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
-import ComponentList from "../components/TestcaseConfig/ComponentList/ComponentList.tsx";
+import ComponentList from "../components/TestcaseConfig/ComponentList/ComponentList.jsx";
 import ComponentSpecification from "../components/TestcaseConfig/ComponentSpecification/ComponentSpecification.tsx";
 import ManualTestCases from "../components/TestcaseConfig/SpecQuestions/SpecQuestions.tsx";
 import EditQuestion from "../components/TestcaseConfig/EditQuestion/EditQuestion.tsx";
