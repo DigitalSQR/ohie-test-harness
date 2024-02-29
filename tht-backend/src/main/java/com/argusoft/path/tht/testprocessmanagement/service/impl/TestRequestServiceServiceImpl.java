@@ -1,5 +1,9 @@
 package com.argusoft.path.tht.testprocessmanagement.service.impl;
 
+import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
+import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
+import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
+import com.argusoft.path.tht.fileservice.service.DocumentService;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
@@ -85,6 +89,9 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     @Autowired
     private TestcaseOptionService testcaseOptionService;
+
+    @Autowired
+    private DocumentService documentService;
 
     @Override
     public void stopTestingProcess(
@@ -584,6 +591,25 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         TestcaseOptionServiceConstants.TESTCASE_OPTION_REF_OBJ_URI,
                         testcaseOptionEntity.getId(),
                         testcaseOptionEntity.getVersion(),
+                        testcaseResult
+                );
+
+                testResultRelationEntity = testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+            }
+
+            // create for documents related to question
+            DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
+            documentCriteriaSearchFilter.setRefObjUri(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
+            documentCriteriaSearchFilter.setRefId(testcaseEntity.getId());
+            documentCriteriaSearchFilter.setState(Collections.singletonList(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE));
+
+            List<DocumentEntity> documentEntities = documentService.searchDocument(documentCriteriaSearchFilter, contextInfo);
+
+            for (DocumentEntity documentEntity : documentEntities) {
+                testResultRelationEntity = createTestResultRelationEntity(
+                        DocumentServiceConstants.DOCUMENT_REF_OBJ_URI,
+                        documentEntity.getId(),
+                        documentEntity.getVersion(),
                         testcaseResult
                 );
 

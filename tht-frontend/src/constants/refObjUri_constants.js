@@ -1,4 +1,8 @@
 export const RefObjUriConstants = {
+
+	DOCUMENT_REFOBJURI:
+		"com.argusoft.path.tht.fileservice.models.dto.DocumentInfo",
+
 	TESTCASE_REFOBJURI:
 		"com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo",
 

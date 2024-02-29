@@ -125,7 +125,7 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
         List<TestResultRelationEntity> testResultRelationEntities = this.searchTestResultRelation(testResultRelationCriteriaSearchFilter, contextInfo);
 
         if(testResultRelationEntities.isEmpty()){
-            throw new DoesNotExistException("failed to find the testcase related data for the testcaseResultId "+testcaseResultId+ " with refObjUri "+refObjectUri);
+            return new ArrayList<>();
         }
 
         List<String> resultRelationIds = testResultRelationEntities.stream().map(IdMetaEntity::getId).toList();

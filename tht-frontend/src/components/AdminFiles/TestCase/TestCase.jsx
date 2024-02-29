@@ -14,7 +14,8 @@ import {
 	DOCUMENT_STATE_ACTIVE,
 	DOCUMENT_STATE_INACTIVE,
 	DOCUMENT_TYPE_FOR_USER,
-	DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS
+	DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS,
+	DOCUMENT_TYPE_FOR_TEST_CASES
 } from "../../../constants/document_constants";
 import question_img_logo from "../../../styles/images/question-img.png";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -251,47 +252,49 @@ export default function TestCase(props) {
 	const getQuestionImagesIfNotExists = () => {
 		if(currentQuestion && currentQuestion.id && (questionAndDocument.filter((questionItem) => questionItem.key === currentQuestion.id) <= 0)){
 
-        DocumentAPI.getDocumentsByRefObjUriAndRefId(
-          RefObjUriConstants.TESTCASE_REFOBJURI,
-          currentQuestion.id,
-          DOCUMENT_STATE_ACTIVE
-        ).then(async (res) => {
-            const updatedFiles = await Promise.all(res.content.map(async (relatedDoc) => {
-              try {
-                  const base64Image = await DocumentAPI.base64Document(relatedDoc.id,relatedDoc.name);
-                  return {
-                      name: relatedDoc.name,
-                      status: 'done',
-                      url: base64Image,
-                      documentId : relatedDoc.id
-                  };
-              } catch (error) {
-                  console.error(error);
-                  return {
-                      name: relatedDoc.name,
-                      status: 'error',
-                      url: null
-                  };
-              }
-          }));
-
-          let item = {};
-          item.key = currentQuestion.id
-          item.files = updatedFiles;
-
-          const updatedQuestions = [...questionAndDocument];
-          updatedQuestions.push(item);
-          setQuestionAndDocument(updatedQuestions);
-
-          })
-          .catch((err) => {
-            console.log(err);
+		TestResultRelationAPI.getTestcaseResultRelatedObject(
+			testcaseResult.id,
+			RefObjUriConstants.DOCUMENT_REFOBJURI
+		).then(async (res) => {
+			if (res && res.length > 0) {
+				const updatedFiles = await Promise.all(res
+					.filter((item) => DOCUMENT_TYPE_FOR_TEST_CASES.DOCUMENT_TYPE_QUESTION === item?.documentType)
+					.map(async (relatedDoc) => {
+					try {
+						const base64Image = await DocumentAPI.base64Document(relatedDoc.id);
+						return {
+							name: relatedDoc.name,
+							status: 'done',
+							url: base64Image,
+							documentId : relatedDoc.id
+						};
+					} catch (error) {
+						console.error(error);
+						return {
+							name: relatedDoc.name,
+							status: 'error',
+							url: null
+						};
+					}
+				}));
+	  
+				let item = {};
+				item.key = currentQuestion.id
+				item.files = updatedFiles;
+	  
+				const updatedQuestions = [...questionAndDocument];
+				updatedQuestions.push(item);
+				setQuestionAndDocument(updatedQuestions);
+			}
+		})
+		.catch((err) => {
+			console.log(err);
             notification.error({
               message: "Error Loading Files!",
               placement: "bottomRight",
             });
-          });
-		}
+		});	
+	}
 	}
 
 	const addAttachment = () => {
@@ -558,7 +561,8 @@ export default function TestCase(props) {
 							<div class="col-md-3 col-12 p-0">
 								<div class=" p-2 pt-5 q-img">
                                     <>
-                                        <Carousel arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
+									<Image.PreviewGroup>
+                                        <Carousel infinite={false} arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
                                             {questionAndDocument.length > 0 && (
                                                 questionAndDocument.find((q) => q.key === currentQuestion.id)?.files.map((item) => (
                                                     <div key={item.id}>
@@ -570,6 +574,7 @@ export default function TestCase(props) {
                                                 ))
                                             )}
                                         </Carousel>
+									</Image.PreviewGroup>
                                     </>
 								</div>
 							</div>
