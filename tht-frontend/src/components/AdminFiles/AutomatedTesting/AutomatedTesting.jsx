@@ -393,6 +393,7 @@ export default function AutomatedTesting() {
                       testcaseResultType={"component"}
                       testResultId={component.id}
                       stompClient={stompClient}
+                      toggleClass={component?.class}
                       toggleFunction={toggleComponentRow}
                     ></TestcaseResultRow>,
                     component?.specifications?.map((specification) => [

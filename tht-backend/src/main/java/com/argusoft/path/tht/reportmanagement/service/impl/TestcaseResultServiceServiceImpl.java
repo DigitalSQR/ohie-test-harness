@@ -619,7 +619,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                         message = "Passed";
                     }
                     else{
-                        message = getMessage("Specification <b>", testcaseResultEntity, "</b> has been failed due to failing following testcase failure:", failedTestcaseResultName);
+                        message = getMessage("Specification <b>", testcaseResultEntity, "</b> has been failed due to failing following testcase failure: ", failedTestcaseResultName);
                     }
                     testcaseResultEntity.setMessage(message);
                 }
@@ -656,7 +656,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 if(failedSpecificationTestcaseResultName.isEmpty()) {
                     message = "Passed";
                 } else {
-                    message = getMessage("Component <b>", testcaseResultEntity, "</b> has been failed due to failing following specification failure:", failedSpecificationTestcaseResultName);
+                    message = getMessage("Component <b>", testcaseResultEntity, "</b> has been failed due to failing following specification failure: ", failedSpecificationTestcaseResultName);
                 }
                 testcaseResultEntity.setMessage(message);
             }
