@@ -222,7 +222,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
         if (!StringUtils.hasLength(componentEntity.getId())) {
             componentEntity.setId(UUID.randomUUID().toString());
         }
-        componentEntity.setState(ComponentServiceConstants.COMPONENT_STATUS_DRAFT);
+        componentEntity.setState(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE);
 
         ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
         componentEntity.setRank(1);
