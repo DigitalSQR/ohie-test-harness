@@ -5,6 +5,9 @@ import com.argusoft.path.tht.fileservice.FileDetails;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
+import com.argusoft.path.tht.fileservice.constant.DocumentUtil;
+import com.argusoft.path.tht.fileservice.constant.FileType;
+import com.argusoft.path.tht.fileservice.event.DocumentCreatedEvent;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.fileservice.repository.DocumentRepository;
@@ -23,6 +26,7 @@ import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +51,9 @@ public class DocumentServiceImpl implements DocumentService {
     @Autowired
     DocumentRepository documentRepository;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
     private static byte[] getFileContentByFileId(String fileId) throws OperationFailedException {
         byte[] fileContentByFilePathAndFileName;
         try {
@@ -67,10 +74,13 @@ public class DocumentServiceImpl implements DocumentService {
         //validate documentEntity
         DocumentValidator.validateDocumentEntity(Constant.CREATE_VALIDATION, documentEntity, contextInfo);
 
+        //get Document Types
+        Set<FileType> allowedFileTypesForDocumentType = DocumentUtil.getAllowedFileTypesForDocumentType(documentEntity.getRefObjUri(), documentEntity.getDocumentType());
+
         //save file
         FileDetails fileDetails = null;
         try {
-            fileDetails = storeFileAndGetFileDetails(file, validationAllowedTypes);
+            fileDetails = storeFileAndGetFileDetails(file, allowedFileTypesForDocumentType);
         } catch (InvalidFileTypeException e) {
             LOGGER.error(ValidateConstant.INVALID_FILE_TYPE_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             DocumentValidator.setErrorMessageForFileType(e);
@@ -81,10 +91,11 @@ public class DocumentServiceImpl implements DocumentService {
         documentEntity.setName(fileDetails.getFileName());
 
         DocumentEntity document = documentRepository.saveAndFlush(documentEntity);
+        eventPublisher.publishEvent(new DocumentCreatedEvent(document, contextInfo));
         return document;
     }
 
-    private FileDetails storeFileAndGetFileDetails(MultipartFile file, List<String> allowedFileTypes) throws OperationFailedException, InvalidFileTypeException {
+    private FileDetails storeFileAndGetFileDetails(MultipartFile file, Set<FileType> allowedFileTypes) throws OperationFailedException, InvalidFileTypeException {
         MultipartFileTypeTesterPredicate multipartFileTypeTesterPredicate = new MultipartFileTypeTesterPredicate(allowedFileTypes);
         FileDetails fileDetails = null;
         try {
