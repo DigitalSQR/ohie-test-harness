@@ -40,9 +40,7 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
                         <b>Failed due to System Error</b>
                     </p>
                 ) : (
-                    <p>
-                        <b>{testcaseResult?.message}</b>
-                    </p>
+                    <p dangerouslySetInnerHTML={{ __html: testcaseResult?.message }} />
                 )}
             </div>
         );
