@@ -9,6 +9,8 @@ import { TestRequestAPI } from "../../api/TestRequestAPI";
 import "./landing.scss";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../reducers/homeReducer";
+import { userStateConstantNames } from "../../constants/user_constants";
+import { TestRequestStateConstantNames } from "../../constants/test_requests_constants";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -59,15 +61,7 @@ export default function Dashboard() {
 
   const userOptions = {
     labels: Object.keys(userStateCounts).map((stateKey) => {
-      const labelMap = {
-        "user.status.active": "Active",
-        "user.status.inactive": "Inactive",
-        "user.status.rejected": "Rejected",
-        "user.status.verification.pending": "Not verified",
-        "user.status.approval.pending": "Pending",
-      };
-
-      return labelMap[stateKey] || stateKey;
+      return userStateConstantNames[stateKey] || stateKey;
     }),
   };
 
@@ -75,16 +69,7 @@ export default function Dashboard() {
 
   const testRequestOptions = {
     labels: Object.keys(testRequestStateCounts).map((stateKey) => {
-      const labelMap = {
-        "test.request.status.pending": "Pending",
-        "test.request.status.accepted": "Accepted",
-        "test.request.status.rejected": "Rejected",
-        "test.request.status.inprogress": "In Progress",
-        "test.request.status.finished": "Finished",
-        "test.request.status.skipped": "Skipped",
-      };
-
-      return labelMap[stateKey] || stateKey;
+      return TestRequestStateConstantNames[stateKey] || stateKey;
     }),
   };
 
