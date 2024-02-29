@@ -6,16 +6,20 @@ import ApexChart from "react-apexcharts";
 import { USER_ROLES } from "../../constants/role_constants";
 import { store } from "../../store/store";
 import { TestRequestAPI } from "../../api/TestRequestAPI";
-import "./landing.scss"
+import "./landing.scss";
+import { useDispatch } from "react-redux";
+import { set_header } from "../../reducers/homeReducer";
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState();
   const [userChartData, setUserChartData] = useState([]);
   const [testRequestChartData, setTestRequestChartData] = useState([]);
-
+  const dispatch = useDispatch();
   const [userInfo, setUserInfo] = useState();
 
   useEffect(() => {
+    dispatch(set_header(""));
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
   }, []);
@@ -90,7 +94,7 @@ export default function Dashboard() {
     <div id="wrapper">
       <div className="pt-3">
         <div className="text-center">
-           <img src={tool_icon} alt="Tool Icon" />
+          <img src={tool_icon} alt="Tool Icon" />
           <h4 className="mt-2">Testing Harness Tool</h4>
           <p className="font-size-16 mt-4">
             Register your application to the open-source testing harness and
@@ -106,7 +110,7 @@ export default function Dashboard() {
             >
               View OpenHIE Component Specifications
             </a>
-          </p> 
+          </p>
           {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
             <div className="my-4">
               <button
@@ -119,34 +123,35 @@ export default function Dashboard() {
           )}
         </div>
         <div className="row mt-5 justify-content-around">
-        {!userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
-          <div className="col-md-4 border rounded">
-            <h5 className="mb-3 text-center mt-1">User Status Pie Chart</h5>
-            <div className="chart-container">
-              <ApexChart
-                options={userOptions}
-                series={userSeries}
-                type="pie"
-                width="100%"
-              />
+          {!userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
+            <div className="col-md-4 border rounded">
+              <h5 className="mb-3 text-center mt-1">User Status Pie Chart</h5>
+              <div className="chart-container">
+                <ApexChart
+                  options={userOptions}
+                  series={userSeries}
+                  type="pie"
+                  width="100%"
+                />
+              </div>
             </div>
-          </div>
-        )}
-        {testRequestSeries.length > 0 && (
-          <div className="col-md-4 border rounded">
-            <h5 className="mb-3 text-center mt-1">Test Request Status Pie Chart</h5>
-            <div className="chart-container">
-              <ApexChart
-                options={testRequestOptions}
-                series={testRequestSeries}
-                type="pie"
-                width="100%"
-              />
+          )}
+          {testRequestSeries.length > 0 && (
+            <div className="col-md-4 border rounded">
+              <h5 className="mb-3 text-center mt-1">
+                Test Request Status Pie Chart
+              </h5>
+              <div className="chart-container">
+                <ApexChart
+                  options={testRequestOptions}
+                  series={testRequestSeries}
+                  type="pie"
+                  width="100%"
+                />
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-      
+          )}
+        </div>
       </div>
     </div>
   );
