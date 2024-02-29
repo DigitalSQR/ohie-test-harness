@@ -29,6 +29,7 @@ import AddAdminUser from "../components/AdminFiles/AdminUsers/AddAdminUsers/AddA
 import UpdateAdminUser from "../components/AdminFiles/AdminUsers/UpdateAdminUser/UpdateAdminUser";
 import { USER_ROLES } from "../constants/role_constants.js";
 import PageNotFoud from "../components/CommonFiles/PageNotFound/PageNotFound.jsx";
+import LogoutComponent from "../components/CommonFiles/LogoutComponent.jsx";
 const PrivateDashboardRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
 
@@ -87,6 +88,7 @@ const routes = createBrowserRouter([
     element: <PrivateDashboardRoute />,
 
     children: [
+      { path: "", element: <LogoutComponent/> },
       {
         index: true,
         path: "dashboard",
@@ -259,7 +261,6 @@ const routes = createBrowserRouter([
       },
     ],
   },
-  { path: "", element: <Navigate to="/login" /> },
   { path: "*", element: <PageNotFoud /> },
 ]);
 
