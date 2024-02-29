@@ -34,53 +34,72 @@ export const setAuthToken = (token) => {
     delete api.defaults.headers.common["Authorization"];
   }
 };
+let isRefreshing = false;
+let refreshPromise = null;
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (
-      error.response.status === 401 &&
-      error.response.data.error === "invalid_token"
-    ) {
-      error.config._retry = true;
-      try {
-        const refresh_token = store.getState().authSlice.refresh_token; // Use the correct reducer name
-        const isKeepMeLogin = store.getState().authSlice.isKeepLogin;
-        if (refresh_token != null && isKeepMeLogin === true) {
-          const refreshTokenModel = {
-            refresh_token: refresh_token + "",
-            grant_type: "refresh_token",
-          };
-          setDefaultToken();
-          const response = await api.request({
-            url: `/oauth/token`,
-            method: "POST",
-            data: new URLSearchParams(refreshTokenModel),
-          });
-          store.dispatch(refreshTokenSuccess(response.data));
-          setAuthToken(response.data.access_token);
-          error.config.headers[
-            "Authorization"
-          ] = `Bearer ${response.data.access_token}`;
-          return api.request(error.config);
-        } else {
-          store.dispatch(refreshTokenFailure());
-          window.location.href = "/login";
-          return Promise.reject(error);
-          //   return Promise.reject(error);
-        }
-      } catch (refreshError) {
-        store.dispatch(refreshTokenFailure());
-        window.location.href = "/login";
+    const { config, response } = error;
 
-        return Promise.reject(error);
-        //  return Promise.reject(error);
+    // Check if the error is due to an expired token
+    if (response && response.status === 401 && response.data.error === "invalid_token") {
+      if (!isRefreshing) {
+        isRefreshing = true;
+
+        // Create a promise to await the token refresh
+        refreshPromise = new Promise((resolve, reject) => {
+          const refresh_token = store.getState().authSlice.refresh_token; // Use the correct reducer name
+          const isKeepMeLogin = store.getState().authSlice.isKeepLogin;
+          if (refresh_token != null && isKeepMeLogin === true) {
+            const refreshTokenModel = {
+              refresh_token: refresh_token + "",
+              grant_type: "refresh_token",
+            };
+            setDefaultToken();
+            api.request({
+              url: `/oauth/token`,
+              method: "POST",
+              data: new URLSearchParams(refreshTokenModel),
+            })
+              .then((response) => {
+                store.dispatch(refreshTokenSuccess(response.data));
+                setAuthToken(response.data.access_token);
+                error.config.headers["Authorization"] = `Bearer ${response.data.access_token}`;
+                resolve(response.data.access_token);
+              })
+              .catch((refreshError) => {
+                store.dispatch(refreshTokenFailure());
+                window.location.href = "/login";
+                reject(refreshError);
+              })
+              .finally(() => {
+                isRefreshing = false;
+                refreshPromise = null;
+              });
+          } else {
+            store.dispatch(refreshTokenFailure());
+            window.location.href = "/login";
+            reject(error);
+          }
+        });
       }
+
+      return refreshPromise.then((token) => {
+        config.headers["Authorization"] = `Bearer ${token}`;
+        return api.request(config);
+      }).catch((error) => {       
+        return Promise.reject(error);
+      });
     }
 
+    // For other errors, reject the promise
     return Promise.reject(error);
   }
 );
+
+
+
 
 // defining a custom error handler for all APIs
 /*const errorHandler = (error) => {
