@@ -24,30 +24,30 @@ export const ComponentAPI = {
   getComponents: async function (params) {
    
       
-      const response = await api.request({
-        url: `/component`,
-        method: "GET",
-        params,
-      });
-      return response.data;
+    const response = await api.request({
+      url: `/component`,
+      method: "GET",
+      params,
+    });
+    return response.data;
     
   },
   getComponentById: async function (componentId) {
    
-      const response = await api.request({
-        url: `/component/${componentId}`,
-        method: "GET",
-      });
-      return response.data;
+    const response = await api.request({
+      url: `/component/${componentId}`,
+      method: "GET",
+    });
+    return response.data;
     
   },
   changeState: async function (componentId, changeState) {
    
-      const response = await api.request({
-        url: `/component/state/${componentId}/${changeState}`,
-        method: "PATCH",
-      });
-      return response;
+    const response = await api.request({
+      url: `/component/state/${componentId}/${changeState}`,
+      method: "PATCH",
+    });
+    return response;
     
   },
 };
