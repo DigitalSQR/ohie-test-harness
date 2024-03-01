@@ -6,6 +6,8 @@ import { TestResultAPI } from "../../../api/TestResultAPI";
 import { Fragment, useEffect, useState } from "react";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { notification, Progress, Button } from "antd";
+import { CheckCircleFilled, SyncOutlined } from "@ant-design/icons";
+
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
 import { handleErrorResponse } from "../../../utils/utils";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
@@ -23,6 +25,7 @@ export default function ChooseTest() {
   const [totalFinishedAutomated, setTotalFinishedAutomated] = useState(0);
   const [totalAllManual, setTotalAllManual] = useState(0);
   const [totalAllAutomated, setTotalAllAutomated] = useState(0);
+  const [totalInprogressAutomated, setTotalInprogressAutomated] = useState(0);
   const [testcaseResults, setTestCaseResults] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -31,24 +34,45 @@ export default function ChooseTest() {
   useEffect(() => {
     var totalManual = 0;
     var totalFinishedManual = 0;
+    var totalInprogressAutomated = 0;
     var totalAutomated = 0;
     var totalFinishedAutomated = 0;
     var totalAllAutomated = 0;
     var totalAllMenual = 0;
     testcaseResults.forEach((testcaseResult) => {
-      if ( testcaseResult.state !== TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT) {
+      if (
+        testcaseResult.state !==
+        TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
+      ) {
         if (!!testcaseResult.manual) {
           totalManual++;
-          if ( testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
-            testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-          ) { totalFinishedManual++; }
+          if (
+            testcaseResult.state ===
+              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
+            testcaseResult.state ===
+              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+          ) {
+            totalFinishedManual++;
+          }
         }
         if (!!testcaseResult.automated) {
           totalAutomated++;
-          if ( testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
-            testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-          ) { totalFinishedAutomated++; }
+          if (
+            testcaseResult.state ===
+              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
+            testcaseResult.state ===
+              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+          ) {
+            totalFinishedAutomated++;
+          }
         }
+      }
+      if (
+        !!testcaseResult.automated &&
+        testcaseResult.state ===
+          TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS
+      ) {
+        totalInprogressAutomated++;
       }
       if (!!testcaseResult.manual) {
         totalAllMenual++;
@@ -63,16 +87,27 @@ export default function ChooseTest() {
     setTotalFinishedAutomated(totalFinishedAutomated);
     setTotalManualTestcaseResults(totalManual);
     setTotalAutomatedTestcaseResults(totalAutomated);
+    setTotalInprogressAutomated(totalInprogressAutomated);
 
     // Start the WebSocket Connection
-    if((totalFinishedManual<totalManual || totalFinishedAutomated<totalAutomated || totalAutomated===0 || totalManual===0) 
-        && stompClient===null && testcaseResults.length>0) {
+    if (
+      (totalFinishedManual < totalManual ||
+        totalFinishedAutomated < totalAutomated ||
+        totalAutomated === 0 ||
+        totalManual === 0) &&
+      stompClient === null &&
+      testcaseResults.length > 0
+    ) {
       webSocketConnect();
     }
 
     // Disconnect the WebSocket onnce all of the testcase are finished
-    if(totalFinishedManual===totalManual && totalFinishedAutomated===totalAutomated
-       && totalAutomated>0 && totalManual>0) {
+    if (
+      totalFinishedManual === totalManual &&
+      totalFinishedAutomated === totalAutomated &&
+      totalAutomated > 0 &&
+      totalManual > 0
+    ) {
       webSocketDisconnect();
     }
   }, [testcaseResults]);
@@ -134,16 +169,21 @@ export default function ChooseTest() {
     if (stompClient && stompClient.connected) {
       testcaseResults.forEach((testcaseResult, index) => {
         // Listener for the testcase if in pending
-        if (testcaseResult.state !== TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
-          const destination = '/testcase-result/' + testcaseResult.id;
+        if (
+          testcaseResult.state !==
+          TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+        ) {
+          const destination = "/testcase-result/" + testcaseResult.id;
           var subscription = stompClient.subscribe(destination, (msg) => {
             const parsedTestcaseResult = JSON.parse(msg.body);
-            setTestCaseResults(prevTestcaseResults => {
+            setTestCaseResults((prevTestcaseResults) => {
               const updatedTestcaseResults = [...prevTestcaseResults];
               updatedTestcaseResults[index] = parsedTestcaseResult;
               return updatedTestcaseResults;
             });
-            if (parsedTestcaseResult?.state === "testcase.result.status.finished") {
+            if (
+              parsedTestcaseResult?.state === "testcase.result.status.finished"
+            ) {
               subscription.unsubscribe();
             }
           });
@@ -156,9 +196,9 @@ export default function ChooseTest() {
     loadProgress();
     testCaseInfo();
     return () => {
-			// Disconnect WebSocket when component unmounts
-			webSocketDisconnect();
-		};
+      // Disconnect WebSocket when component unmounts
+      webSocketDisconnect();
+    };
   }, []);
 
   return (
@@ -205,23 +245,38 @@ export default function ChooseTest() {
               {totalManualTestcaseResults != 0 && (
                 <Fragment>
                   <Progress
-                    percent={Math.floor((totalFinishedManual / (!!totalFinishedManual? totalAllManual : totalManualTestcaseResults)) * 100)}
+                    percent={Math.floor(
+                      (totalFinishedManual /
+                        (!!totalFinishedManual
+                          ? totalAllManual
+                          : totalManualTestcaseResults)) *
+                        100
+                    )}
                     format={() => {
-                      if (Math.floor((totalFinishedManual / (!!totalFinishedManual? totalAllManual : totalManualTestcaseResults)) * 100) === 100) {
+                      if (
+                        Math.floor(
+                          (totalFinishedManual /
+                            (!!totalFinishedManual
+                              ? totalAllManual
+                              : totalManualTestcaseResults)) *
+                            100
+                        ) === 100
+                      ) {
                         return <span>Done</span>;
                       } else {
                         return (
                           <span>
-                            {totalFinishedManual}/{!!totalFinishedManual? totalAllManual : totalManualTestcaseResults}
+                            {totalFinishedManual}/
+                            {!!totalFinishedManual
+                              ? totalAllManual
+                              : totalManualTestcaseResults}
                           </span>
                         );
                       }
                     }}
                   />
                   <Button
-                    onClick={() =>
-                      navigate(`/manual-testing/${testRequestId}`)
-                    }
+                    onClick={() => navigate(`/manual-testing/${testRequestId}`)}
                   >
                     Resume
                   </Button>
@@ -256,22 +311,73 @@ export default function ChooseTest() {
                   Start Testing
                 </button>
               )}
+
               {totalAutomatedTestcaseResults != 0 && (
                 <Fragment>
                   <Progress
-                    percent={Math.floor((totalFinishedAutomated / (!!totalFinishedAutomated? totalAllAutomated : totalAutomatedTestcaseResults)) * 100)}
+                    percent={Math.floor(
+                      (totalFinishedAutomated /
+                        (!!totalFinishedAutomated
+                          ? totalAllAutomated
+                          : totalAutomatedTestcaseResults)) *
+                        100
+                    )}
                     format={() => {
-                      if (Math.floor((totalFinishedAutomated / (!!totalFinishedAutomated? totalAllAutomated : totalAutomatedTestcaseResults)) * 100) === 100) {
-                        return <span>Done</span>;
+                      if (
+                        Math.floor(
+                          (totalFinishedAutomated /
+                            (!!totalFinishedAutomated
+                              ? totalAllAutomated
+                              : totalAutomatedTestcaseResults)) *
+                            100
+                        ) === 100
+                      ) {
+                        return <CheckCircleFilled className="text-success" />;
                       } else {
                         return (
-                          <span>
-                            {totalFinishedAutomated}/
-                            {!!totalFinishedAutomated ? totalAllAutomated : totalAutomatedTestcaseResults}
-                          </span>
+                          <div>
+                            {" "}
+                            {totalInprogressAutomated != 1 ? (
+                              <div></div>
+                            ) : (
+                              <SyncOutlined spin/>
+                            )}
+                            <span className="ml-2">
+                              {" "}
+                              {totalFinishedAutomated}/
+                              {!!totalFinishedAutomated
+                                ? totalAllAutomated
+                                : totalAutomatedTestcaseResults}
+                               
+                            </span>
+                          </div>
                         );
                       }
                     }}
+                    strokeColor={
+                      totalInprogressAutomated != 1
+                        ? Math.floor(
+                            (totalFinishedAutomated /
+                              (!!totalFinishedAutomated
+                                ? totalAllAutomated
+                                : totalAutomatedTestcaseResults)) *
+                              100
+                          ) === 100
+                          ? "green"
+                          : "red"
+                        : "blue"
+                    }
+                    status={
+                      Math.floor(
+                        (totalFinishedAutomated /
+                          (!!totalFinishedAutomated
+                            ? totalAllAutomated
+                            : totalAutomatedTestcaseResults)) *
+                          100
+                      ) === 100
+                        ? "inactive"
+                        : "active"
+                    }
                   />
                   <Button
                     onClick={() =>
