@@ -79,34 +79,10 @@ export default function SignUp() {
               hideLoader();
               navigate(`/CongratulationsPage/${result.email}
               `);
-            },
-            (result) => {
-              hideLoader();
-              const messages = result.response.data.map((res) => res.message);
-              const MessageList = () => (
-                <div>
-                  {messages.map((message, index) => (
-                    <li key={index}>{message}</li>
-                  ))}
-                </div>
-              );
-
-              notification.error({
-                placement: "bottomRight",
-                message: "Error",
-                description: <MessageList />,
-              });
             }
           )
           .catch((error) => {
             hideLoader();
-            notification.error({
-              placement: "bottomRight",
-              description:
-                error.message !== undefined
-                  ? `${error.message}`
-                  : `Oops something went wrong`,
-            });
           });
       }
     },

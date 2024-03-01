@@ -43,12 +43,11 @@ const Assessee = () => {
     )
       .then((res) => {
         hideLoader();
-        console.log("the users are put here ", res);
         setAvailableUsers(res.content);
         setTotalPages(res.totalPages);
       })
       .catch((error) => {
-        console.log("Error fetching users:", error);
+        hideLoader();
       });
   };
 
@@ -83,11 +82,7 @@ const Assessee = () => {
         );
       })
       .catch((error) => {
-        notification.warning({
-          description: "Request Change failed.",
-          placement: "bottom-left",
-        });
-        throw error;
+        hideLoader();
       });
   };
 

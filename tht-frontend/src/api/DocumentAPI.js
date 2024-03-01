@@ -3,7 +3,7 @@ import api from "./configs/axiosConfigs";
 
 export const DocumentAPI = {
 	uploadDocument: async function (data) {
-		try {
+		
 			const response = await api.request({
 				url: `/document`,
 				method: "POST",
@@ -13,12 +13,10 @@ export const DocumentAPI = {
                 },
 			});
 			return response.data;
-		} catch (error) {
-			throw error; // You can choose to re-throw the error or handle it in a specific way
-		}
+		
 	},
     downloadDocument: function (documentId, name) {
-		try {
+		
 			return api.request({
 				url: `/document/file/${documentId}`,
 				method: "GET",
@@ -31,35 +29,29 @@ export const DocumentAPI = {
                 link.download = name || 'data.pdf';
                 link.click()
             });
-		} catch (error) {
-			throw error; // You can choose to re-throw the error or handle it in a specific way
-		}
+		
 	},
 	base64Document: function (documentId) {
-		try {
+		
 			return api.request({
 				url: `/document/base64/${documentId}`,
 				method: "GET",            
 			}).then((response) => {
                 return response.data;
             })
-		} catch (error) {
-			throw error; // You can choose to re-throw the error or handle it in a specific way
-		}
+		
 	},
 	changeDocumentState: async function (documentId, changeState) {
-		try {
+	
 			const response = await api.request({
 				url: `/document/state/${documentId}/${changeState}`,
 				method: "PATCH",
 			});
 			return response.data;
-		} catch (error) {
-			throw error; // You can choose to re-throw the error or handle it in a specific way
-		}
+		
 	},
 	getDocumentsByRefObjUriAndRefId: async function (refObjUri, refId, state, documentType) {
-		try {
+	
 			const response = await api.request({
 				url: `/document`,
 				method: "GET",
@@ -71,8 +63,6 @@ export const DocumentAPI = {
 				},
 			});
 			return response.data;
-		} catch (error) {
-			throw error; // You can choose to re-throw the error or handle it in a specific way
-		}
+		
 	},
 }

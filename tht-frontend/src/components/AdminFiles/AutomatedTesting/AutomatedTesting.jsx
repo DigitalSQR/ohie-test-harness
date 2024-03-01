@@ -61,12 +61,8 @@ export default function AutomatedTesting() {
           description: "Testing Process has been Reset successully",
           placement: "bottomRight",
         });
-      })
-      .catch((error) => {
-        notification.info({
-          description: handleErrorResponse(error.response.data),
-          placement: "bottomRight",
-        });
+      }).catch((error) => {
+        
       });
   };
 
@@ -94,12 +90,8 @@ export default function AutomatedTesting() {
         description: "Process to interrupt has been started successully. Please wait for some time",
         placement: "bottomRight",
       });
-    })
-    .catch((error) => {
-      notification.info({
-        description: handleErrorResponse(error.response.data),
-        placement: "bottomRight",
-      });
+    }).catch((error) => {
+        
     });
   };
 
@@ -116,12 +108,8 @@ export default function AutomatedTesting() {
           description: "Testing Process has been started successully",
           placement: "bottomRight",
         });
-      })
-      .catch((error) => {
-        notification.info({
-          description: handleErrorResponse(error.response.data),
-          placement: "bottomRight",
-        });
+      }).catch((error) => {
+        
       });
   };
 
@@ -166,7 +154,7 @@ export default function AutomatedTesting() {
       setData(grouped);
       hideLoader();
     } catch (error) {
-      console.log(error);
+      hideLoader();
     }
   };
 
@@ -223,12 +211,8 @@ export default function AutomatedTesting() {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
         setTestCaseName(res.name);
-      })
-      .catch(() => {
-        notification.error({
-          description: "Oops something went wrong!",
-          placement: "bottomRight",
-        });
+      }).catch((error) => {
+       
       });
   };
   useEffect(() => {
@@ -258,7 +242,6 @@ export default function AutomatedTesting() {
       const destination2 = "/testcase-result/attribute/" + testcaseRequestResult.id;
       stompClient.subscribe(destination2, (msg) => {
         const parsedTestcaseResult = JSON.parse(msg.body);
-        console.log(parsedTestcaseResult);
         if (!!parsedTestcaseResult.testcaseResultAttributesEntities) {
           var isInterrupted = false;
           var reset = false;

@@ -7,6 +7,8 @@ const ComponentIdConnector = ({componentId}) => {
     useEffect(() => {
         ComponentAPI.getComponentById(componentId).then((res) => {
             setComponent(res);
+        }).catch((error) => {
+       
         });
     }, []);
 

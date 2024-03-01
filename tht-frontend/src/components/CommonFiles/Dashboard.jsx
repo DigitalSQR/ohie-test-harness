@@ -36,7 +36,6 @@ export default function Dashboard() {
 
     const fetchTestRequestData = async () => {
       const response = await TestRequestAPI.getTestRequestsByState("");
-      console.log(response.content);
       setTestRequestChartData(response.content);
     };
 

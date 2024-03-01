@@ -81,14 +81,8 @@ export default function ComponentList() {
             description: responseData.description,
           });
           setUpdateResponse(responseData);
-        })
-        .catch((error) => {
-          error?.response?.data?.forEach((item) => {
-            notification.error({
-              placement: "bottomRight",
-              message: item.message,
-            });
-          });
+        }).catch((error) => {          
+         
         });
     }
     setIsModalOpen(true);
@@ -110,14 +104,7 @@ export default function ComponentList() {
             filterState
           );
         })
-        .catch((error) => {
-          error?.response?.data?.forEach((item) => {
-            notification.error({
-              placement: "bottomRight",
-              message: item.message,
-            });
-          });
-
+        .catch((error) => {          
           getAllComponents(
             sortFieldName,
             sortDirection[sortFieldName],
@@ -148,14 +135,6 @@ export default function ComponentList() {
             pageSize,
             filterState
           );
-        })
-        .catch((error) => {
-          error?.response?.data?.forEach((item) => {
-            notification.error({
-              placement: "bottomRight",
-              message: item.message,
-            });
-          });
         });
     }
     setInitialValues({ name: "", description: "" });
@@ -188,11 +167,8 @@ export default function ComponentList() {
         setComponents(res.content);
         setTotalPages(res.totalPages);
       })
-      .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: err.data?.message,
-        });
+      .catch((err) => { 
+        hideLoader();
       });
   };
   const componentRequestStates = [
@@ -224,7 +200,7 @@ export default function ComponentList() {
         );
       })
       .catch((error) => {
-        throw error;
+        hideLoader();
       });
   };
   return (

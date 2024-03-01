@@ -22,17 +22,14 @@ const RegisterApplication = () => {
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserId(userInfo.id);
-    
-    ComponentAPI.getComponents("component.status.active")
+    const params={};
+    params.state="component.status.active"
+    ComponentAPI.getComponents(params)
       .then((res) => {
         setComponents(res.content);
         hideLoader();
       })
-      .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: err.data?.message,
-        });
+      .catch((err) => {       
         hideLoader();
       });
   }, []);
@@ -85,7 +82,6 @@ const RegisterApplication = () => {
       }
     });
 
-    console.log(values, errors, touched);
 
     return errors;
   };
@@ -117,6 +113,8 @@ const RegisterApplication = () => {
               });
               hideLoader();
               navigate("/testing-requests");
+            }).catch((error) => {
+              hideLoader();
             });
           } else {
             res.forEach((err) => {
@@ -128,7 +126,9 @@ const RegisterApplication = () => {
             hideLoader();
           }
         }
-      );
+      ).catch((error) => {
+       
+      });
     },
   });
 

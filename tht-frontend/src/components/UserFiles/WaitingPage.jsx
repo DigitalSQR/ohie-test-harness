@@ -9,7 +9,6 @@ export default function WaitingPage() {
     const dispatch = useDispatch();
     const ClickHandler = () => {
         dispatch(log_out());
-        console.log('User has submitted info for verification')
     }
   return (
     <Fragment>

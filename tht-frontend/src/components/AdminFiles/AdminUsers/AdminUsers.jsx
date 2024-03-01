@@ -55,7 +55,6 @@ const AdminUsers = () => {
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
-    console.log(userInfo);
     dispatch(set_header("User Management"));
     getAllUsers();
   }, [currentPage, pageSize, sortFieldName, sortDirection]);
@@ -66,7 +65,6 @@ const AdminUsers = () => {
       sortFieldName,
       sortDirection[sortFieldName]
     ).then((data) => {
-      console.log(data);
       hideLoader();
       const activeUsers = data.content.filter(
         (user) =>

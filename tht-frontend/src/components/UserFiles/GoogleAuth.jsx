@@ -21,7 +21,6 @@ export default function GoogleAuth() {
 		param = atob(param);
 		// setResult(JSON.parse(param));
 		const result = JSON.parse(param);
-		console.log(result);
 		if (result.access_token) {
 			hideLoader();
 			dispatch(login_success(result));

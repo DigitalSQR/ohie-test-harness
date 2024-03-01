@@ -42,14 +42,7 @@ export default function UpdatePassword() {
             hideLoader();
             navigate("/login");
           })
-          .catch((error) => {
-            notification.error({
-              placement: "bottomRight",
-              description:
-                error.data?.response !== undefined
-                  ? `${error.data.response}`
-                  : "Oops something went wrong",
-            });
+          .catch((error) => {           
             hideLoader();
           });
       } else {
@@ -71,8 +64,6 @@ export default function UpdatePassword() {
   };
 
   useEffect(() => {
-    console.log("Encrypted string:", base64UserEmail);
-    console.log("Last part of the URL:", base64TokenId);
   }, []);
 
   const handleConfirmPassword = (e) => {

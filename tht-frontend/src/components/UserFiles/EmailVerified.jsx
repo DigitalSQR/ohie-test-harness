@@ -19,7 +19,6 @@ export default function EmailVerified() {
       })
       .catch((error) => {
         setIsError(true);
-        throw error;
       });
   }, []);
 

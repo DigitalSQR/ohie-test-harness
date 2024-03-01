@@ -58,23 +58,7 @@ const AddAdminUser = () => {
       })
       .catch((error) => {
         hideLoader();
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.length > 0
-        ) {
-          error.response.data.forEach((element, index) => {
-            notification.error({
-              placement: "bottomRight",
-              description: `${element.message}`,
-            });
-          });
-        } else {
-          notification.error({
-            placement: "bottomRight",
-            description: `${error.message}`,
-          });
-        }
+   
       })
       .finally(() => {
         setSubmitting(false);

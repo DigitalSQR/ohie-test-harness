@@ -2,7 +2,7 @@ import api from "./configs/axiosConfigs";
 
 export const AdminUserAPI = {
   addUser: async function (data) {
-    try {
+   
       const response = await api.request({
         url: `/user`,
         method: "POST",
@@ -10,47 +10,39 @@ export const AdminUserAPI = {
       });
 
       return response.data;
-    } catch (error) {
-      throw error;
-    }
+   
   },
   updateUserDetails: async function (data) {
-    try {
+   
       const response = await api.request({
         url: `/user/`,
         method: "PUT",
         data,
       });
       return response.data;
-    } catch (error) {
-      throw error;
-    }
+   
   },
   fetchUserDetails: async function (userId) {
-    try {
+    
       const response = await api.request({
         url: `/user/${userId}`,
         method: "GET",
       });
       return response.data;
-    } catch (error) {
-      throw error;
-    }
+    
   },
   updateUserState: async function (userId, changeState) {
-    try {
+   
       const response = await api.request({
         url: `/user/state/${userId}/${changeState}`,
         method: "PATCH",
       });
       return response.data;
-    } catch (error) {
-      throw error;
-    }
+   
   },
 
   fetchAllUsers: async function (sortFieldName="createdAt", sortDirection="desc") {
-    try {
+    
       const response = await api.request({
         url: `/user`,
         method: "GET",
@@ -59,8 +51,6 @@ export const AdminUserAPI = {
         },
       });
       return response.data;
-    } catch (error) {
-      throw error;
-    }
+   
   },
 };

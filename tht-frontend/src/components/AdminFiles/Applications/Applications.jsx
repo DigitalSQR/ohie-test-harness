@@ -67,15 +67,10 @@ const Applications = () => {
       .then((res) => {
         hideLoader();
         setTestRequests(res.content);
-        console.log(res.content);
         setTotalPages(res.totalPages);
       })
       .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: "Oops! Error fetching test requests!",
-        });
-        console.log(err);
+        hideLoader();
       });
   };
 

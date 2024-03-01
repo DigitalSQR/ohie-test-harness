@@ -87,7 +87,7 @@ export default function ChooseTest() {
         setTestCaseResults(res.data.content);
       })
       .catch((error) => {
-        throw error;
+       
       });
   };
 
@@ -115,13 +115,8 @@ export default function ChooseTest() {
           navigate(`/manual-testing/${testRequestId}`);
         }
         loadProgress();
-      })
-      .catch((error) => {
-        console.log(error);
-        notification.info({
-          description: handleErrorResponse(error.response.data),
-          placement: "bottomRight",
-        });
+      }).catch((error) => {
+       
       });
   };
 
@@ -130,12 +125,8 @@ export default function ChooseTest() {
       .then((res) => {
         setTestCaseName(res.name);
         dispatch(set_header(res.name));
-      })
-      .catch(() => {
-        notification.error({
-          description: "Oops something went wrong!",
-          placement: "bottomRight",
-        });
+      }).catch((error) => {
+       
       });
   };
 

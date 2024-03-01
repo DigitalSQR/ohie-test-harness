@@ -55,7 +55,6 @@ export default function TestCase(props) {
 		}
 
 		showLoader();
-		console.log(page);
 		selectTestcase(page - 1);
 		setSelectedOptions([]);
 		setNoteMessage();
@@ -75,7 +74,7 @@ export default function TestCase(props) {
 			selectNextTestcase();
 		})
 		.catch((error) => {
-			throw error;
+			
 		});
 	}
 
@@ -114,14 +113,9 @@ export default function TestCase(props) {
 		TestResultAPI.getTestCaseResultById(testcaseResultId)
 		.then((res) => {
 			setTestcaseResult(res)
-		})
-		.catch((error) => {
-			console.error(error);
-			notification.error({
-				message: "Error Fetching Test Case!",
-				placement: "bottomRight",
-			});
-		})
+		}).catch((error) => {
+       
+		});
 	}
 
 
@@ -150,11 +144,6 @@ export default function TestCase(props) {
 						resolve(); // Resolve the promise when the operation is successful
 					})
 					.catch((error) => {
-						notification.error({
-							message: "Error Updating Note Successfully!",
-							placement: "bottomRight",
-						});
-						reject(error); // Reject the promise if there is an error
 					});
 			} else {
 				if (showNotification) {
@@ -182,12 +171,8 @@ export default function TestCase(props) {
 			)
 				.then((res) => {
 					setUploadedFiles(res.content);
-				})
-				.catch((err) => {
-					notification.error({
-						message: "Error Loading Files!",
-						placement: "bottomRight",
-					});
+				}).catch((error) => {
+       
 				});
 		}
 	}, [testcaseResult]);
@@ -216,12 +201,8 @@ export default function TestCase(props) {
 						placement: "bottomRight",
 					});
 				}
-			})
-			.catch((err) => {
-				notification.error({
-					message: "Error Loading question!",
-					placement: "bottomRight",
-				});
+			}).catch((error) => {
+				hideLoader();
 			});
 		}
 	}, [testcaseResult]);
@@ -269,7 +250,6 @@ export default function TestCase(props) {
 							documentId : relatedDoc.id
 						};
 					} catch (error) {
-						console.error(error);
 						return {
 							name: relatedDoc.name,
 							status: 'error',
@@ -286,14 +266,9 @@ export default function TestCase(props) {
 				updatedQuestions.push(item);
 				setQuestionAndDocument(updatedQuestions);
 			}
-		})
-		.catch((err) => {
-			console.log(err);
-            notification.error({
-              message: "Error Loading Files!",
-              placement: "bottomRight",
-            });
-		});	
+		}).catch((error) => {
+          
+        });	
 	}
 	}
 
@@ -342,14 +317,8 @@ export default function TestCase(props) {
 					message: `Document Uploaded!`,
 					placement: "bottomRight",
 				});
-			})
-			.catch((err) => {
-				let msg =
-					err.response.data?.message || err.response.data[0].message;
-				notification.error({
-					message: `${msg}`,
-					placement: "bottomRight",
-				});
+			}).catch((error) => {
+       
 			});
 	};
 
@@ -366,15 +335,8 @@ export default function TestCase(props) {
 						setUploadedFiles((prev) => {
 							return prev.filter((doc) => doc.id !== file.id);
 						});
-					})
-					.catch((err) => {
-						let msg =
-							err.response.data?.message ||
-							err.response.data[0].message;
-						notification.error({
-							message: `${msg}`,
-							placement: "bottomRight",
-						});
+					}).catch((error) => {
+       
 					});
 			} else {
 				// Remove from files
@@ -395,12 +357,10 @@ export default function TestCase(props) {
 
 	const downloadFile = (file) => {
 		DocumentAPI.downloadDocument(file.id, file.name).catch((err) => {
-			console.error(err.data.message);
 		});
 	};
 
 	useEffect(() => {
-		console.log("the uploaded docs include ", uploadedFiles);
 	}, [uploadedFiles]);
 
 	const renderTooltip = (props) => (

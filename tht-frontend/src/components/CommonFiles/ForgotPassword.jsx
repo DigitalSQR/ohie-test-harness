@@ -39,14 +39,7 @@ export default function ForgotPassword() {
         hideLoader();
         navigate("/login");
       })
-      .catch((error) => {
-        notification.error({
-          placement: "bottomRight",
-          description:
-            error.data.message !== undefined
-              ? `${error?.data?.message}`
-              : "Oops something went wrong",
-        });
+      .catch((error) => {       
         hideLoader();
       });
   };

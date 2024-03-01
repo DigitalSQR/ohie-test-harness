@@ -164,12 +164,8 @@ export default function ManualTesting() {
 		TestRequestAPI.getTestRequestsById(testRequestId)
 			.then((res) => {
 				setTestCaseName(res.name);
-			})
-			.catch(() => {
-				notification.error({
-					description: "Oops something went wrong!",
-					placement: "bottomRight",
-				});
+			}).catch(() => {
+				
 			});
 	};
 
