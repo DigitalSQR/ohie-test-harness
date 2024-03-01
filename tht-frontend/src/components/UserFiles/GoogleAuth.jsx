@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login_success } from "../../reducers/authReducer";
 import { useLoader } from "../loader/LoaderContext";
@@ -10,7 +10,6 @@ import { userinfo_success } from "../../reducers/UserInfoReducer";
 
 export default function GoogleAuth() {
 	const { showLoader, hideLoader } = useLoader();
-	// const [result, setResult] = useState("");
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 

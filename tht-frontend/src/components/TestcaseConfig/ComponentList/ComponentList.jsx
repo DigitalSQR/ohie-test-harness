@@ -23,12 +23,13 @@ export default function ComponentList() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
   const [components, setComponents] = useState();
   const { showLoader, hideLoader } = useLoader();
   const [filterState, setFilterState] = useState("");
   const [updateResponse, setUpdateResponse] = useState();
   const dispatch = useDispatch();
+  const pageSize = 5;
+  
   const handleSort = (newSortFieldName) => {
     setSortFieldName(newSortFieldName);
     const newSortDirection = { ...sortDirection };

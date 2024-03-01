@@ -5,8 +5,6 @@ import { Spin } from "antd";
 import "./userIdConnector.scss";
 const UserIdConnector = ({ userId, isLink }) => {
   const [user, setUser] = useState();
-  // const [show, setShow] = useState(false);
-  // const handleClose = () => setShow(false);
   useEffect(() => {
     UserAPI.getUserById(userId).then((user) => {
       setUser(user);

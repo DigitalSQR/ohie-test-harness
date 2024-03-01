@@ -5,7 +5,6 @@ import "./EditQuestion.scss";
 import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
 import { useLoader } from "../../loader/LoaderContext";
 import { TestCaseAPI } from "../../../api/TestCaseAPI";
-import { EditedOption } from "../../../dto/EditQuestionDTO";
 import { ManualQuestionTypeConstants } from "../../../constants/testcase_constants";
 import question_img_logo from "../../../styles/images/question-img.png";
 import Accordion from 'react-bootstrap/Accordion';
@@ -27,7 +26,6 @@ const { Option: AntdOption } = Select;
 const EditQuestion = () => {
   const { testcaseId } = useParams();
   const [currentTestcase,setCurrentTestcase] = useState({});
-  const [currentTestcaseOptions, setCurrentTestcaeOptions] = useState([]);
   const [currentAccordionIndex, setCurrentAccordionIndex] = useState(null);
 
   const location = useLocation();
@@ -40,8 +38,6 @@ const EditQuestion = () => {
   const [initialQuestionType, setInitialQuestionType] = useState<string>("");
   const [editedQuestionType, setEditedQuestionType] = useState<string>("");
   const [expandedOptionIndex, setExpandedOptionIndex] = useState(null);
-  const [currentEditOption, setCurrentEditOption] = useState({});
-
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
@@ -53,7 +49,6 @@ const EditQuestion = () => {
   const [initialTestcaseOptions, setInitialTestcaseOptions] = useState([]);
   const [editedTestcaseOptions, setEditedTestcaseOptions] = useState([]);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [uploading, setUploading] = useState(false);
 
   const handleCancel = () => setPreviewOpen(false);
   const handlePreview = (file) => {
@@ -82,7 +77,6 @@ const EditQuestion = () => {
     .then((res) => {
       if(res.content && res.content.length > 0){
         console.log("----", res.content);
-        setCurrentTestcaeOptions(res.content);
         setInitialTestcaseOptions(res.content);
         setEditedTestcaseOptions(res.content);
       }
@@ -139,7 +133,6 @@ const EditQuestion = () => {
   },[testcaseId]);
 
   const handleUpload = (file) => {
-      setUploading(true);
 
       const formData = new FormData();
       formData.append(`file`, file);
@@ -248,18 +241,6 @@ const EditQuestion = () => {
       return false;
     }
   };
-
-  const [editedOptions, setEditedOptions] = useState<EditedOption[]>(
-    testcase.options.map((option) => ({
-      id: option.id,
-      label: option.name,
-      metaVersion: option.meta.version,
-      checked: false,
-      state: option.state,
-      changesMade: false,
-      success: option.success
-    }))
-  );
 
   const handleQuestionChange = (newValue: string) => {
     setEditedQuestion(newValue);

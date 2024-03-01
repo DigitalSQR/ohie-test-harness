@@ -24,13 +24,13 @@ const TestingRequests = () => {
     { label: "All", value: "" },
   ];
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const { showLoader, hideLoader } = useLoader();
   const [filterState, setFilterState] = useState("");
   const [userRoles, setUserRoles] = useState([USER_ROLES.ROLE_ID_ASSESSEE]);
   const [testRequests, setTestRequests] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
+  const pageSize = 10;
 
   const navigate = useNavigate();
   const [sortDirection, setSortDirection] = useState({

@@ -10,12 +10,6 @@ import { useFormik } from "formik";
 import Captcha from "../CommonFiles/Captcha/Captcha";
 export default function SignUp() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    name: "",
-    password: "",
-    companyName: "",
-  });
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       formik.handleSubmit();

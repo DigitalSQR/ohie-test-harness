@@ -14,7 +14,6 @@ import { TestRequestStateConstantNames } from "../../constants/test_requests_con
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [user, setUser] = useState();
   const [userChartData, setUserChartData] = useState([]);
   const [testRequestChartData, setTestRequestChartData] = useState([]);
   const dispatch = useDispatch();
@@ -95,7 +94,7 @@ export default function Dashboard() {
               View OpenHIE Component Specifications
             </a>
           </p>
-          {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
+          {userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
             <div className="my-4">
               <button
                 className="btn btn-primary btn-blue mt-2"
