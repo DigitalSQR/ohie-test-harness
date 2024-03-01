@@ -3,20 +3,20 @@ import "./componentList.scss";
 import { EditFilled } from "@ant-design/icons";
 import { ComponentAPI } from "../../../api/ComponentAPI";
 import { Switch, notification } from "antd";
-import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useLoader } from "../../loader/LoaderContext";
+import UpsertModal from "../UpsertModal/UpsertModal.jsx";
 import { ComponentsActionStateLabels } from "../../../constants/components_constants";
 import { set_header } from "../../../reducers/homeReducer";
 import { Pagination } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { Modal } from "antd";
 import sortIcon from "../../../styles/images/sort-icon.png";
+
 export default function ComponentList() {
   const [sortDirection, setSortDirection] = useState({
-    name: "desc",
+    name: "asc",
   });
-  const [sortFieldName, setSortFieldName] = useState();
+  const [sortFieldName, setSortFieldName] = useState("name");
   const [initialValues, setInitialValues] = useState({
     name: "",
     description: "",
@@ -103,15 +103,10 @@ export default function ComponentList() {
             pageSize,
             filterState
           );
+          setIsModalOpen(false);
         })
         .catch((error) => {          
-          getAllComponents(
-            sortFieldName,
-            sortDirection[sortFieldName],
-            currentPage,
-            pageSize,
-            filterState
-          );
+
         });
     } else {
       //update component
@@ -135,12 +130,12 @@ export default function ComponentList() {
             pageSize,
             filterState
           );
+          setIsModalOpen(false);
         });
     }
     setInitialValues({ name: "", description: "" });
     setUpdateResponse(null);
     setSubmitting(false);
-    setIsModalOpen(false);
   };
   const handleCancel = () => {
     setInitialValues({ name: "", description: "" });
@@ -154,14 +149,13 @@ export default function ComponentList() {
     pageSize,
     filterState
   ) => {
+    const params = {};
+    params.sort = `${sortFieldName},${sortDirection}`;
+    params.page = currentPage - 1;
+    params.size = pageSize;
+    params.state = filterState;
     showLoader();
-    ComponentAPI.getComponents(
-      sortFieldName,
-      sortDirection,
-      currentPage - 1,
-      pageSize,
-      filterState
-    )
+    ComponentAPI.getComponents(params)
       .then((res) => {
         hideLoader();
         setComponents(res.content);
@@ -301,80 +295,14 @@ export default function ComponentList() {
         </div>
       </div>
       <div>
-        <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
-          <h4 className="mb-4">
-            {!!updateResponse ? "Update Component" : "Create Component"}
-          </h4>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-            enableReinitialize
-          >
-            <Form>
-              <div className="row">
-                <div className="col-12">
-                  <div className="custom-input mb-3">
-                    <label htmlFor="name" className="form-label">
-                      Name
-                    </label>
-                    <Field
-                      type="text"
-                      id="name"
-                      name="name"
-                      className="form-control"
-                      placeholder="Name"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="div"
-                      className="error-message"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-12">
-                  <div className="custom-input mb-3">
-                    <label htmlFor="email" className="form-label">
-                      Description
-                    </label>
-                    <Field
-                      as="textarea"
-                      type="description"
-                      id="description"
-                      name="description"
-                      className="form-control"
-                      placeholder="Description"
-                      rows="5"
-                    />
-                    <ErrorMessage
-                      name="description"
-                      component="div"
-                      className="error-message"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="my-4 text-end">
-                <button
-                  type="button"
-                  className="btn btn-primary btn-white py-1 font-size-10"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-blue btn-submit py-1 font-size-10"
-                >
-                  Submit
-                </button>
-              </div>
-            </Form>
-          </Formik>
-        </Modal>
+        <UpsertModal
+          isModalOpen={isModalOpen}
+          handleCancel={handleCancel}
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          handleSubmit={handleSubmit}
+          updateResponse={updateResponse}
+        />
       </div>
       {totalPages > 1 && (
         <Pagination
