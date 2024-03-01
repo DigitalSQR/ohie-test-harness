@@ -65,8 +65,4 @@ VALUES
     (
         'SYSTEM_USER',
         'role.tester'
-    ),
-    (
-         'SYSTEM_USER',
-         'role.assessee'
     );
