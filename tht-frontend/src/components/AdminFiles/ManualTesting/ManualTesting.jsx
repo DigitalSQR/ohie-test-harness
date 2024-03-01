@@ -43,7 +43,8 @@ export default function ManualTesting() {
   const openComponentIndex = -1;
 
 	const fetchTestCaseResultDataAndStartWebSocket = async () => {
-		try {
+    try {
+      showLoader();
 			const res = await TestResultAPI.getTestCases(testRequestId);
 			const testcaseResults = [];
 			let testcaseRequestResult;
@@ -79,7 +80,9 @@ export default function ManualTesting() {
 			}
 		} catch (error) {
 			console.log(error);
-		}
+		} finally{
+      hideLoader();
+    }
 	};
 
 	useEffect(() => {
