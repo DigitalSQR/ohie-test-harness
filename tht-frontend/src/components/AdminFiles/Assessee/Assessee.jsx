@@ -21,9 +21,9 @@ const Assessee = () => {
   const [sortFieldName, setSortFieldName] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [role, setRole] = useState(ROLE_ID_ASSESSEE);
+  const role = ROLE_ID_ASSESSEE;
   const { showLoader, hideLoader } = useLoader();
+  const pageSize = 10;
   const fetchUserByState = (
     sortFieldName,
     sortDirection,

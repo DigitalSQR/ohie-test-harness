@@ -30,11 +30,11 @@ const Applications = () => {
   });
   const [sortFieldName, setSortFieldName] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const { showLoader, hideLoader } = useLoader();
   const navigate = useNavigate();
   const dispatch = useDispatch()
+  const pageSize =10
 
   useEffect(() => {
     dispatch(set_header("Applications"));

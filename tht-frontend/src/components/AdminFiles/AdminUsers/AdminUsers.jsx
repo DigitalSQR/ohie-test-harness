@@ -25,10 +25,11 @@ const AdminUsers = () => {
   });
   const [sortFieldName, setSortFieldName] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPageUsers, setCurrentPageUsers] = useState([]);
   const { showLoader, hideLoader } = useLoader();
+  const pageSize = 10;
+
   const handleOk = (userState) => {
     const changeState =
       userState == "user.status.inactive"

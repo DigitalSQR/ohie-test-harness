@@ -34,13 +34,13 @@ export default function ManualTesting() {
 	const [testcaseRequestResult, setTestcaseRequestResult] = useState();
   const [finishedTestCasesCount, setFinishedTestCasesCount] = useState(0);
   const [totalTestCasesCount, setTotalTestCasesCount] = useState(0);
-  const [openComponentIndex, setOpenComponentIndex] = useState(-1);
 	var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
 	const { showLoader, hideLoader } = useLoader();
   const dispatch = useDispatch();
 	const { Item } = Tabs;
 	const [testcaseName, setTestCaseName] = useState();
 	const navigate = useNavigate();
+  const openComponentIndex = -1;
 
 	const fetchTestCaseResultDataAndStartWebSocket = async () => {
 		try {

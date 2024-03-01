@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { AuthenticationAPI } from "../../api/AuthenticationAPI";
 import { useLoader } from "../loader/LoaderContext";
 import openhie_logo from "../../styles/images/logo.png";

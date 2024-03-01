@@ -4,7 +4,7 @@ import path_logo from "../../../styles/images/path-logo.png";
 import "./_footer.scss";
 
 export default function Footer() {
-  const [dateTime, setDateTime] = useState(new Date);
+  const dateTime = new Date();
  
   return (
     <Fragment>

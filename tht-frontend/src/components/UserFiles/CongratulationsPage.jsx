@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment } from "react";
 import openhie_logo from "../../styles/images/logo.png";
 import congratulations_icon from "../../styles/images/congratulations-icon.png";
 import { notification } from "antd";

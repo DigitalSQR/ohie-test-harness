@@ -37,15 +37,14 @@ export default function TestCase(props) {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadQuestion, setUploadedQuestion] = useState({});
 	const fileInputRef = useRef(null);
-	const [saveButton, setSaveButton] = useState("");
 	const [currentQuestion, setCurrentQuestion] = useState({});
 	const [questionAndDocument, setQuestionAndDocument] = useState([]);
 	const [noteMessage, setNoteMessage] = useState();
 	const [testcaseResult, setTestcaseResult] = useState();
 	const [editMode, setEditMode] = useState(false);
 	const [initialNoteMessage, setInitialNoteMessage] = useState();
-
 	const [showNote, setShowNote] = useState(false);
+	
 	const handlePageChange = (event, page) => {
 		let isSame = isMessageSame();
 		 // Ask for confirmation
