@@ -11,10 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author hardik
@@ -26,10 +23,9 @@ public interface DocumentService {
     /**
      * creates new Document Record
      *
-     * @param documentEntity         document related data
-     * @param file                   multipart file that should be saved
-     * @param validationAllowedTypes allowed Types to validate file with that type
-     * @param contextInfo            contextInfo
+     * @param documentEntity document related data
+     * @param file           multipart file that should be saved
+     * @param contextInfo    contextInfo
      * @return
      * @throws OperationFailedException     When Any Unexpected Exception occures
      * @throws DataValidationErrorException When Data Validation Failes
@@ -37,7 +33,7 @@ public interface DocumentService {
      */
     public DocumentEntity createDocument(DocumentEntity documentEntity,
                                          MultipartFile file,
-                                         List<String> validationAllowedTypes, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException;
+                                         ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException;
 
 
     /**
