@@ -65,9 +65,8 @@ const UpdateAdminUser = () => {
             roleIds: userData.roleIds,
           });
           setMeta(userData.meta);
-        })
-        .catch((error) => {
-          console.error("Error fetching user details:", error);
+        }).catch((response) => {
+          
         });
     }
   }, [userId]);
@@ -92,17 +91,7 @@ const UpdateAdminUser = () => {
         navigate("/admin-users");
       })
       .catch((response) => {
-        hideLoader();
-        const errorMessage =
-          response.response.data && response.response.data.length > 0
-            ? response.response.data
-                .map((element) => element.message)
-                .join(", ")
-            : "Unknown error occurred";
-        notification.error({
-          placement: "bottomRight",
-          description: errorMessage,
-        });
+        hideLoader();       
       });
   };
 

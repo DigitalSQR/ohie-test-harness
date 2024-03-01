@@ -70,7 +70,6 @@ export const stateSerializer = (input) => {
 };
 
 export const getHighestPriorityRole = (user) => {
-console.log(user.roleIds)
   if (user.roleIds.includes(ROLE_ID_ADMIN)) {
     return "ADMIN";
   } else if (user.roleIds.includes(ROLE_ID_TESTER)) {

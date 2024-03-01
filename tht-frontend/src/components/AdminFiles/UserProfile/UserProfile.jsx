@@ -40,14 +40,9 @@ const UserProfile = () => {
       )
         .then(() => {
           setProfilePicture();
-        })
-        .catch((error) => {
-          notification.error({
-            description: "Something went wrong while uploading an image",
-            placement: "bottomRight",
-          });
-          return;
-        });
+        }).catch((error) => {
+          
+        });;
     }
     const formData = new FormData();
     formData.append(`file`, e.file);
@@ -73,14 +68,9 @@ const UserProfile = () => {
           description: `Picture Uploaded Successfully`,
           placement: "bottomRight",
         });
-      })
-      .catch((error) => {
-        notification.error({
-          description: error.data.content
-            ? error.data.content
-            : `Oops! Something went wrong, file couldn't be uploaded.`,
-        });
-      });
+      }).catch((error) => {
+          
+      });;
   };
 
   const validate = (values) => {
@@ -123,21 +113,12 @@ const UserProfile = () => {
     UserAPI.viewUser()
       .then((res) => {
         setUserDetails(res);
-        console.log(res);
         formik.values.name = res.name;
         formik.values.companyName = res.companyName;
         formik.values.email = res.email;
         formik.values.roleIds = getHighestPriorityRole(res);
-      })
-      .catch((error) => {
-        const errorMessage =
-          error.response.data && error.response.data.length > 0
-            ? error.response.data.map((element) => element.message).join(", ")
-            : "Unknown error occurred";
-        notification.error({
-          placement: "bottomRight",
-          description: errorMessage,
-        });
+      }).catch((error) => {
+       
       });
   };
 
@@ -158,12 +139,8 @@ const UserProfile = () => {
               placement: "bottomRight",
             });
             setProfilePicture();
-          })
-          .catch((error) => {
-            notification.error({
-              description: `Error deleting Picture please try again!`,
-              placement: "bottomRight",
-            });
+          }).catch((error) => {
+       
           });
       },
     });
@@ -189,13 +166,11 @@ const UserProfile = () => {
     validate: validate,
     onSubmit: (values) => {
       showLoader();
-      console.log(values);
       const body = {
         ...userDetails,
         name: values.name,
         companyName: values.companyName,
       };
-      console.log(body);
       UserAPI.UpdateExistingUser(body)
         .then((response) => {
           notification.success({
@@ -207,16 +182,7 @@ const UserProfile = () => {
           window.location.reload();
         })
         .catch((response) => {
-          const errorMessage =
-            response.response.data && response.response.data.length > 0
-              ? response.response.data
-                  .map((element) => element.message)
-                  .join(", ")
-              : "Unknown error occurred";
-          notification.error({
-            placement: "bottomRight",
-            description: errorMessage,
-          });
+          hideLoader();
         });
       hideLoader();
     },

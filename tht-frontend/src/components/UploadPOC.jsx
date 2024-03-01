@@ -7,7 +7,6 @@ export default function UploadTestCases() {
   const pdfRef = useRef();
   const [files, setFiles] = useState([]);
   const onDrop = useCallback((acceptedFiles) => {
-    console.log("the accepted files are ", acceptedFiles);
     if (acceptedFiles?.length) {
       setFiles((prevFiles) => [
         ...prevFiles,
@@ -30,7 +29,6 @@ export default function UploadTestCases() {
 
   const downloadPdfHandler = () => {
     const input = pdfRef.current;
-    console.log(input);
     html2canvas(input).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4", true);

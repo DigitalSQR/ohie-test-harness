@@ -116,26 +116,11 @@ export default function Login() {
                 navigate("/dashboard");
               }
             });
-          },
-          (response) => {
-            hideLoader();
-            notification.error({
-              placement: "bottomRight",
-              description: !!response.response.data[0]
-                ? response.response.data[0].message
-                : !!response.response.data.error_description
-                ? response.response.data.error_description
-                : "Oops something went wrong",
-            });
           }
         )
         .catch((error) => {
           // Handle the error here
           hideLoader();
-          notification.error({
-            placement: "bottomRight",
-            description: "Invalid username or password",
-          });
         });
     },
   });

@@ -51,8 +51,6 @@ const authSlice = createSlice({
       state.token_type = null;
     },
     setIsKeepLoginState:(state,action) => {
-      console.log("State=",state);
-      console.log("isKeepLogin=",action);
       state.isKeepLogin = action.payload;
     }
   },

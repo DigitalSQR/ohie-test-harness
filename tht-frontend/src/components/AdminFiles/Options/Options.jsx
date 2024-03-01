@@ -26,17 +26,14 @@ export default function Options(props) {
 				res.sort((a, b) => (a.rank ?? Number.MAX_SAFE_INTEGER) - (b.rank ?? Number.MAX_SAFE_INTEGER));
 				setOptions(res);
 			} else {
+				hideLoader();
 				notification.error({
 					message: "Oops! something went wrong ,No answer found!",
 					placement: "bottomRight",
 				});
 			}
-		})
-		.catch((err) => {
-			notification.error({
-				message: "Error Loading options!",
-				placement: "bottomRight",
-			});
+		}).catch((error) => {
+			hideLoader();
 		});
 	}, []);
 
@@ -50,17 +47,14 @@ export default function Options(props) {
 				hideLoader();
 				setTestResultRelations(res.content);
 			} else {
+				hideLoader();
 				notification.error({
 					message: "Oops! something went wrong ,No Result Related Data found!",
 					placement: "bottomRight",
 				});
 			}
-		})
-		.catch((err) => {
-			notification.error({
-				message: "Error Loading result related data!" + err,
-				placement: "bottomRight",
-			});
+		}).catch((error) => {
+			hideLoader();
 		});
 	}, []);
 

@@ -4,20 +4,17 @@ import api from "./configs/axiosConfigs";
 
 export const TestResultRelationAPI = {
 	getTestcaseResultRelatedObject: async function (testcaseResultId, refObjUri) {
-		try {
+		
 			const response = await api.request({
 				url: `/testcase-result-relation/${testcaseResultId}/${refObjUri}`,
 				method: "GET"
 			});
-			// console.log(response);
 			return response.data;
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 
 	getTestcaseResultRelationInfosByTestcaseResultIdAndRefObjUri: async function (testcaseResultId, refObjUri) {
-		try {
+		
 			const params = {};
 			if(testcaseResultId) params.testcaseResultId = testcaseResultId;
 			if(refObjUri) params.refObjUri = refObjUri;
@@ -29,9 +26,7 @@ export const TestResultRelationAPI = {
 			});
 			
 			return response.data;
-		} catch (error) {
-			throw error;
-		}
+		
 	}
 
 	

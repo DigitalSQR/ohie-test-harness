@@ -32,20 +32,7 @@ export default function ResetPassword() {
           navigate("/dashboard");
         })
         .catch((error) => {
-          const messages = error.response.data.map((res) => res.message);
-          if (messages.length == 0) {
-            notification.error({
-              description:"Oops something went wrong",
-              placement:"bottomRight"
-            })
-          } else {
-            messages.map((message) => {
-              notification.error({
-                description: <div>{message}</div>,
-                placement: "bottomRight",
-              });
-            });
-          }
+          
         });
     },
   });

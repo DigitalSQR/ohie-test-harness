@@ -1,4 +1,5 @@
 import axios from "axios";
+import { notification } from "antd";
 import {
   refreshTokenSuccess,
   refreshTokenFailure,
@@ -41,7 +42,6 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const { config, response } = error;
-
     // Check if the error is due to an expired token
     if (response && response.status === 401 && response.data.error === "invalid_token") {
       if (!isRefreshing) {
@@ -91,6 +91,32 @@ api.interceptors.response.use(
       }).catch((error) => {       
         return Promise.reject(error);
       });
+    }else if(response.status > 500){
+      notification.error({
+        description: "Oops! Something went wrong",
+        placement: "bottomRight",
+      });
+    }else if(response.status == 404){
+      console.log(response);
+      notification.error({
+        description: response.data.message ? response.data.message:response.data.error,
+        placement: "bottomRight",
+      });
+    }else if(response.status >= 400){
+      if(response.data.length && response.data.length > 0){
+        response.data.forEach((error, index) => {
+          notification.error({
+            description: error.message ,
+            placement: "bottomRight",
+          });
+        })        
+      }else {
+        notification.error({
+          description: response.data.message ? response.data.message:response.data.error,
+          placement: "bottomRight",
+        });
+      }
+      
     }
 
     // For other errors, reject the promise

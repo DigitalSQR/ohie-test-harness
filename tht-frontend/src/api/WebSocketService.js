@@ -17,7 +17,6 @@ const WebSocketService = () => {
         });
 
         client.onConnect = (frame) => {
-            console.log('WebSocket connection established!', frame);
             setStompClient(client);
             stompClientRef.current = client;
             isWebSocketConnected.current = true;
@@ -30,7 +29,6 @@ const WebSocketService = () => {
         const client = stompClientRef.current;
         if (!client || !isWebSocketConnected.current) return;
         client.deactivate();
-        console.log("Disconnected from WebSocket.");
         setStompClient(null);
         stompClientRef.current = null;
         isWebSocketConnected.current = false;

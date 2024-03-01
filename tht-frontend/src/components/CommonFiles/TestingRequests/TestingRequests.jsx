@@ -39,7 +39,6 @@ const TestingRequests = () => {
   });
   const [sortFieldName, setSortFieldName] = useState("createdAt");
   const handleChangePage = (event, newPage) => {
-    console.log(newPage);
     setCurrentPage(newPage);
     fetchTestRequests(filterState, sortFieldName, sortDirection, newPage);
   };
@@ -62,17 +61,12 @@ const TestingRequests = () => {
         setTestRequests(res.content);
         setTotalPages(res.totalPages);
       })
-      .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: "Oops! Error fetching test requests!",
-        });
-        console.log(err);
+      .catch((err) => { 
+        hideLoader();
       });
   };
 
   const togglePasswordVisibility = (testUrl) => {
-    console.log("hello");
     if (testUrl.showPass) {
       testUrl.showPass = !testUrl.showPass;
     } else {
@@ -89,7 +83,6 @@ const TestingRequests = () => {
   const handleSort = (field) => {
     setSortFieldName(field);
     const newSortDirection = { ...sortDirection };
-    console.log(newSortDirection);
     newSortDirection[field] = sortDirection[field] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
     fetchTestRequests(filterState, field, newSortDirection, currentPage);
@@ -106,12 +99,7 @@ const TestingRequests = () => {
         fetchTestRequests(filterState, sortFieldName, sortDirection, currentPage);
         hideLoader();
       })
-      .catch((err) => {
-        notification.error({
-          placement: "bottomRight",
-          message: "Oops! Something went wrong!",
-        });
-        console.log(err);
+      .catch((err) => {       
         hideLoader();
       });
   };

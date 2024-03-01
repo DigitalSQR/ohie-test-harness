@@ -99,6 +99,8 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
                     oldTestcaseResultState = testcaseResult.state;
                 });
             }
+        }).catch((error) => {
+       
         });
     }, []);
 

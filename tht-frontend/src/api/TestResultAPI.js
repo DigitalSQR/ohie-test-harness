@@ -3,7 +3,7 @@ import { paramSerialize } from "../utils/utils";
 //Api's for Fetching Manual Test Case Questions and The Options.
 export const TestResultAPI = {
 	getTestCases: async function (trid) {
-		try {
+	
 			const response = await api.request({
 				url: `/testcase-result`,
 				method: "GET",
@@ -14,11 +14,8 @@ export const TestResultAPI = {
 					sort: "rank",
 				},
 			});
-			// console.log(response);
 			return response.data;
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 	getTestcaseResultStatus: async function (testcaseResultId, params) {
 		if (!!params.manual) {
@@ -39,19 +36,17 @@ export const TestResultAPI = {
 		if (!!params.functional) {
 			params.functional = true;
 		}
-		try {
+		
 			const response = await api.request({
 				url: `/testcase-result/status/${testcaseResultId}`,
 				method: "GET",
 				params,
 			});
 			return response.data;
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 	getQuestions: async function (parentTestcaseResultId, currentPage) {
-		try {
+		
 			const response = await api.request({
 				url: `/testcase-result`,
 				method: "GET",
@@ -64,13 +59,11 @@ export const TestResultAPI = {
 				},
 			});
 			return response.data;
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 
 	getTestCaseOptions: async function (testcaseId) {
-		try {
+		
 			const response = await api.request({
 				url: "/testcase-option",
 				method: "GET",
@@ -79,12 +72,10 @@ export const TestResultAPI = {
 				},
 			});
 			return response.data;
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 	saveOptions: async function (testcaseResultId, selectedTestcaseOptionIds) {
-		try {
+		
 			const params = {};
 			if(selectedTestcaseOptionIds && selectedTestcaseOptionIds.length > 0){
 				params.selectedTestcaseOptionId = selectedTestcaseOptionIds;
@@ -98,36 +89,30 @@ export const TestResultAPI = {
 				}
 			});
 			return response.data;
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 	fetchCasesForProgressBar: async function (params) {
 		params.size = 1000;
-		try {
+		
 			const response = await api.request({
 				url: "/testcase-result",
 				method: "GET",
 				params: params,
 			});
 			return response;
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 	startTests: async function (params) {
-		try {
+		
 			const response = await api.request({
 				url: `/test-request/start-testing-process/${params.testRequestId}`,
 				method: "PUT",
 				params
 			});
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 	getTestCaseResultByTestRequestId: async function (testRequestId, manual, automated) {
-		try {
+		
 			const params = {
 				testRequestId: testRequestId,
 				sort: "rank",
@@ -149,9 +134,7 @@ export const TestResultAPI = {
 			});
 
 			return response.data;
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 	getTestCaseResultById: async function(testResultId){
 		const response = await api.request({

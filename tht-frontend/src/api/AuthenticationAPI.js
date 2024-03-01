@@ -3,7 +3,7 @@ import api from "./configs/axiosConfigs";
 
 export const AuthenticationAPI = {
 	doLogin: async function (data, captchaInfo) {
-		try {
+		
 			const headers = {};
 			if (captchaInfo.captcha!=="") {
 				headers.captchaCode = captchaInfo.code;
@@ -16,9 +16,7 @@ export const AuthenticationAPI = {
 				headers: headers
 			});
 			return response.data;
-		} catch (error) {
-			throw error;
-		}
+		
 	},
 	refreshToken: async function (data) {
 			const response = await api.request({

@@ -4,7 +4,6 @@ import React, { createContext, useContext, useState } from 'react';
 const LoaderContext = createContext();
 
 export const useLoader = () => {
-    // console.log(1);
   return useContext(LoaderContext);
 };
 
