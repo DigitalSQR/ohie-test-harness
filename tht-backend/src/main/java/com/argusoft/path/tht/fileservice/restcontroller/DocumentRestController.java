@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -63,7 +62,7 @@ public class DocumentRestController {
             DataValidationErrorException,
             OperationFailedException, DoesNotExistException, InvalidParameterException {
         DocumentEntity documentEntity = documentMapper.dtoToModel(documentInfo);
-        DocumentEntity document = documentService.createDocument(documentEntity, file, getFileTypePdfPngJpeg(), contextInfo);
+        DocumentEntity document = documentService.createDocument(documentEntity, file, contextInfo);
         documentInfo = documentMapper.modelToDto(document);
         return documentInfo;
     }
@@ -179,16 +178,5 @@ public class DocumentRestController {
         Collection<String> strings = DocumentServiceConstants.DOCUMENT_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
     }
-
-
-    private List<String> getFileTypePdfPngJpeg() {
-        List<String> validationAgainstTypes = new ArrayList<>();
-        validationAgainstTypes.add("application/pdf");
-        validationAgainstTypes.add("image/png");
-        validationAgainstTypes.add("image/jpeg");
-
-        return validationAgainstTypes;
-    }
-
 
 }

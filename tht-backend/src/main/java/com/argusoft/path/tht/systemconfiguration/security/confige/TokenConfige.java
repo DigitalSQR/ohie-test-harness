@@ -33,7 +33,7 @@ public class TokenConfige {
         tokenServices.setSupportRefreshToken(true);
         tokenServices.setReuseRefreshToken(true);
         tokenServices.setRefreshTokenValiditySeconds(86400);
-        tokenServices.setAccessTokenValiditySeconds(43200);
+        tokenServices.setAccessTokenValiditySeconds(5);
         tokenServices.setTokenStore(this.tokenStore());
         return tokenServices;
     }
