@@ -75,7 +75,6 @@ const ComponentSpecification: React.FC = () => {
         console.log(res);
       })
       .catch((error) => {
-        hideLoader();
         throw error;
       });
   };

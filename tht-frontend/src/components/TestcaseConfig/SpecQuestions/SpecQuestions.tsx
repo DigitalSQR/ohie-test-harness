@@ -71,8 +71,6 @@ import { display } from "html2canvas/dist/types/css/property-descriptors/display
               optionsError
             );
             return null;
-          } finally {
-            hideLoader();
           }
         });
         const questionResults = await Promise.all(questionPromises);
@@ -185,8 +183,6 @@ import { display } from "html2canvas/dist/types/css/property-descriptors/display
         })
         .catch((error) => {
           throw error;
-        }).finally(() => {
-          hideLoader();
         });
     };
 
