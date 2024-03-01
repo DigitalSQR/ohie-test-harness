@@ -22,8 +22,9 @@ const RegisterApplication = () => {
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserId(userInfo.id);
-    
-    ComponentAPI.getComponents("component.status.active")
+    const params={};
+    params.state="component.status.active"
+    ComponentAPI.getComponents(params)
       .then((res) => {
         setComponents(res.content);
         hideLoader();

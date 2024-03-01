@@ -13,10 +13,11 @@ import { useDispatch } from "react-redux";
 import { Modal } from "antd";
 import sortIcon from "../../../styles/images/sort-icon.png";
 export default function ComponentList() {
+  
   const [sortDirection, setSortDirection] = useState({
-    name: "desc",
+    name: "asc",
   });
-  const [sortFieldName, setSortFieldName] = useState();
+  const [sortFieldName, setSortFieldName] = useState("name");
   const [initialValues, setInitialValues] = useState({
     name: "",
     description: "",
@@ -109,6 +110,7 @@ export default function ComponentList() {
             pageSize,
             filterState
           );
+          setIsModalOpen(false);
         })
         .catch((error) => {
           error?.response?.data?.forEach((item) => {
@@ -148,6 +150,7 @@ export default function ComponentList() {
             pageSize,
             filterState
           );
+          setIsModalOpen(false);
         })
         .catch((error) => {
           error?.response?.data?.forEach((item) => {
@@ -161,7 +164,6 @@ export default function ComponentList() {
     setInitialValues({ name: "", description: "" });
     setUpdateResponse(null);
     setSubmitting(false);
-    setIsModalOpen(false);
   };
   const handleCancel = () => {
     setInitialValues({ name: "", description: "" });
@@ -175,14 +177,13 @@ export default function ComponentList() {
     pageSize,
     filterState
   ) => {
+    const params ={};
+    params.sort = `${sortFieldName},${sortDirection}`;
+    params.page=currentPage-1;
+    params.size=pageSize;
+    params.state=filterState;
     showLoader();
-    ComponentAPI.getComponents(
-      sortFieldName,
-      sortDirection,
-      currentPage - 1,
-      pageSize,
-      filterState
-    )
+    ComponentAPI.getComponents(params)
       .then((res) => {
         hideLoader();
         setComponents(res.content);

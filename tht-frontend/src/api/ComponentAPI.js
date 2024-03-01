@@ -21,21 +21,8 @@ export const ComponentAPI = {
       .then((response) => response.data);
   },
 
-  getComponents: async function (
-    sortFieldName,
-    sortDirection,
-    pageNumber,
-    pageSize,
-    state
-  ) {
+  getComponents: async function (params) {
     try {
-      const params = {};
-      if (!!sortFieldName) {
-        params.sort = `${sortFieldName},${sortDirection}`;
-      }
-      if (pageNumber) params.page = pageNumber;
-      if (pageSize) params.size = pageSize;
-      if (state) params.state = state;
       const response = await api.request({
         url: `/component`,
         method: "GET",
