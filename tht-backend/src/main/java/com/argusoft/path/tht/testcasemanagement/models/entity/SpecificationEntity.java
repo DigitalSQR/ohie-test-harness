@@ -42,10 +42,15 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
         this.setRank(specificationEntity.getRank());
         this.setFunctional(specificationEntity.getFunctional());
         if(specificationEntity.getComponent()!=null){
-            this.setComponent(new ComponentEntity(specificationEntity.getComponent()));
+            this.setComponent(new ComponentEntity(specificationEntity.getComponent().getId()));
         }
-        this.setTestcases(specificationEntity.getTestcases().stream().map(TestcaseEntity::new).collect(Collectors.toSet()));
+        this.setTestcases(specificationEntity.getTestcases().stream()
+                .map(testcase -> new TestcaseEntity(testcase.getId())).collect(Collectors.toSet()));
         this.setRequired(specificationEntity.getRequired());
+    }
+
+    public SpecificationEntity(String id) {
+        this.setId(id);
     }
 
     public Boolean getFunctional() {

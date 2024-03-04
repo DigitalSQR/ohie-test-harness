@@ -101,14 +101,18 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         this.setFunctional(testcaseResultEntity.getFunctional());
 
         if (testcaseResultEntity.getTester() != null) {
-            this.setTester(new UserEntity(testcaseResultEntity.getTester()));
+            this.setTester(new UserEntity(testcaseResultEntity.getTester().getId()));
         }
         if (testcaseResultEntity.getParentTestcaseResult() != null) {
-            this.setParentTestcaseResult(new TestcaseResultEntity(testcaseResultEntity.getParentTestcaseResult()));
+            this.setParentTestcaseResult(new TestcaseResultEntity(testcaseResultEntity.getParentTestcaseResult().getId()));
         }
         if (testcaseResultEntity.getTestRequest() != null) {
-            this.setTestRequest(new TestRequestEntity(testcaseResultEntity.getTestRequest()));
+            this.setTestRequest(new TestRequestEntity(testcaseResultEntity.getTestRequest().getId()));
         }
+    }
+
+    public TestcaseResultEntity(String id) {
+        this.setId(id);
     }
 
     public Integer getRank() {

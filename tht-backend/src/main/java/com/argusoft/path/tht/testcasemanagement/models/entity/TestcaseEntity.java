@@ -42,8 +42,12 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
         this.setManual(testcaseEntity.getManual());
         this.setBeanName(testcaseEntity.getBeanName());
         if(testcaseEntity.getSpecification()!=null){
-            this.setSpecification(new SpecificationEntity(testcaseEntity.getSpecification()));
+            this.setSpecification(new SpecificationEntity(testcaseEntity.getSpecification().getId()));
         }
+    }
+
+    public TestcaseEntity(String id) {
+        this.setId(id);
     }
 
     public Integer getRank() {
