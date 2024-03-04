@@ -5,49 +5,52 @@ import "./_captcha.scss";
 import { notification } from "antd";
 
 const Captcha = (props) => {
-    const [captcha,setCaptcha]=useState("");
-    const[code,setCode]=useState("");
+    const [captcha, setCaptcha] = useState("");
+    const [code, setCode] = useState("");
     const [base64Image, setbase64Image] = useState("");
-    const [showMessage,setShowMessage]=useState("");
+    const [showMessage, setShowMessage] = useState("");
     const [minutes, setMinutes] = useState(2);
     const [seconds, setSeconds] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (seconds === 0) {
-        if (minutes === 0) {
-          clearInterval(interval);
-          reloadCaptcha();
-        } else {
-          setMinutes(minutes - 1);
-          setSeconds(59);
+    useEffect(() => {
+        const isCaptchaRequired = process.env.REACT_APP_CAPTCHA;
+        if (isCaptchaRequired === 'true') {
+            const interval = setInterval(() => {
+                if (seconds === 0) {
+                    if (minutes === 0) {
+                        clearInterval(interval);
+                        reloadCaptcha();
+                    } else {
+                        setMinutes(minutes - 1);
+                        setSeconds(59);
+                    }
+                } else {
+                    setSeconds(seconds - 1);
+                }
+            }, 1000);
+
+
+            setShowMessage(<p className="captcha-message">Captcha refreshes in {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</p>)
+
+            return () => clearInterval(interval);
         }
-      } else {
-        setSeconds(seconds - 1);
-      }
-    }, 1000);
-
-
-    setShowMessage(<p className="captcha-message">Captcha refreshes in {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</p>)
-
-    return () => clearInterval(interval);
-  }, [minutes, seconds]);
+    }, [minutes, seconds]);
 
     useEffect(() => {
         const isCaptchaRequired = process.env.REACT_APP_CAPTCHA;
-        if(isCaptchaRequired === 'true'){
+        if (isCaptchaRequired === 'true') {
             fetchCaptcha();
         }
     }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         const isCaptchaRequired = process.env.REACT_APP_CAPTCHA;
-        if(isCaptchaRequired === 'true'){
-            props.getCaptcha(code,captcha);
+        if (isCaptchaRequired === 'true') {
+            props.getCaptcha(code, captcha);
         }
-    },[captcha,code])
+    }, [captcha, code])
 
-    const reloadCaptcha = ()=>{
+    const reloadCaptcha = () => {
         setCode("");
         setCaptcha("");
         setShowMessage(<></>)
@@ -79,9 +82,9 @@ const Captcha = (props) => {
                         </label>
                         <div className="mb-3">
                             <img src={`data:image/png;base64, ${base64Image}`} alt="Captcha Image" />
-                                <button className="reload-icon" onClick={reloadCaptcha}>
-                                    <img src={reloadCaptchaIcon} alt="reload captcha"/>
-                                </button>
+                            <button className="reload-icon" onClick={reloadCaptcha}>
+                                <img src={reloadCaptchaIcon} alt="reload captcha" />
+                            </button>
                         </div>
                         {showMessage}
                         <div className="input-group">
@@ -96,7 +99,7 @@ const Captcha = (props) => {
                                 placeholder="Please type the above captcha"
                                 aria-label="captcha"
                                 aria-describedby="basic-addon1"
-                                onChange={(event)=>setCode(event.target.value)}
+                                onChange={(event) => setCode(event.target.value)}
                                 autoComplete="off"
                             />
                         </div>
