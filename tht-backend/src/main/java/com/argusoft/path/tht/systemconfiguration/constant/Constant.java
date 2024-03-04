@@ -55,7 +55,6 @@ public final class Constant {
                 true,
                 true,
                 Arrays.asList(
-                        new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_ASSESSEE),
                         new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_ADMIN),
                         new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_TESTER))
         );
