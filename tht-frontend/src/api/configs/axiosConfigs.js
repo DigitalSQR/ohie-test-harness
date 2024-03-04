@@ -99,7 +99,7 @@ api.interceptors.response.use(
     }else if(response.status == 404){
       console.log(response);
       notification.error({
-        description: response.data.message ? response.data.message:response.data.error,
+        description: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
         placement: "bottomRight",
       });
     }else if(response.status >= 400){
@@ -112,7 +112,7 @@ api.interceptors.response.use(
         })        
       }else {
         notification.error({
-          description: response.data.message ? response.data.message:response.data.error,
+          description: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
           placement: "bottomRight",
         });
       }
