@@ -17,13 +17,14 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class TestcaseExecutionStarter {
+public class TestcaseExecutionStarterListener {
 
     @Autowired
     private TestcaseExecutioner testcaseExecutioner;
@@ -34,30 +35,26 @@ public class TestcaseExecutionStarter {
     @Autowired
     private TestcaseResultService testcaseResultService;
 
-    @Autowired
-    private TestcaseResultMapper testcaseResultMapper;
-
-    @Autowired
-    SimpMessagingTemplate msgTemplate;
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseExecutionStarter.class);
-
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseExecutionStarterListener.class);
 
     @Async
     @Transactional
-    public void startExecution(List<TestcaseResultEntity> testcaseResultEntities,
-                               String refId,
-                               String refObjUri,
-                               String testRequestId,
-                               Boolean isWorkflow,
-                               Boolean isFunctional,
-                               Boolean isRequired,
-                               Boolean isRecommended,
-                               Map<String, IGenericClient> iGenericClientMap,
-                               ContextInfo contextInfo) {
+    @TransactionalEventListener
+    public void startExecution(TestcaseExecutionStartEvent event) {
+        String testRequestId = (String) event.getSource();
+        String refId = event.getRefId();
+        String refObjUri = event.getRefObjUri();
+        Boolean isWorkflow = event.getWorkflow();
+        Boolean isFunctional = event.getFunctional();
+        List<String> testcaseResultEntityIds = event.getTestcaseResultEntityIds();
+        ContextInfo contextInfo = event.getContextInfo();
+        Boolean isRequired = event.getRequired();
+        Boolean isRecommended = event.getRecommended();
+        Map<String, IGenericClient> iGenericClientMap = event.getiGenericClientMap();
+
         Thread.currentThread().setName(testRequestId + refId + refObjUri + (isWorkflow == null ? "null" : isWorkflow.toString()) + (isFunctional == null ? "null" : isFunctional.toString()) + (isRequired == null ? "null" : isRequired.toString()) + (isRecommended == null ? "null" : isRecommended.toString()));
         try {
-            int totalTestcaseResults = testcaseResultEntities.size();
+            int totalTestcaseResults = testcaseResultEntityIds.size();
 
             for (int i = 0; i < totalTestcaseResults; i++) {
 
@@ -97,13 +94,12 @@ public class TestcaseExecutionStarter {
                     }
                     break;
                 }
-                testcaseExecutioner.markTestcaseResultInProgress(testcaseResultEntities.get(i).getId(), contextInfo);
+                testcaseExecutioner.markTestcaseResultInProgress(testcaseResultEntityIds.get(i), contextInfo);
 
-                testcaseExecutioner.executeTestcase(testcaseResultEntities.get(i).getId(), iGenericClientMap, contextInfo);
+                testcaseExecutioner.executeTestcase(testcaseResultEntityIds.get(i), iGenericClientMap, contextInfo);
                 if (i == totalTestcaseResults - 1) {
                     deleteFinishedExecutionAttributes(testRequestId, contextInfo);
                 }
-
                 LOGGER.info("It has successfully executed the test case");
             }
         } catch (Exception e) {

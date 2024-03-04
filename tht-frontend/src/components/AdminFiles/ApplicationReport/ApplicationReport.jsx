@@ -68,7 +68,7 @@ const ApplicationReport = () => {
 
   const fetchTestCaseResultData = async () => {
     try {
-      const response = await TestResultAPI.getTestCaseResultById(testRequestId);
+      const response = await TestResultAPI.getTestCaseResultByTestRequestId(testRequestId);
       const requiredTestcaseResults = [];
       const recommendedTestcaseResults = [];
       const compNames = [];
