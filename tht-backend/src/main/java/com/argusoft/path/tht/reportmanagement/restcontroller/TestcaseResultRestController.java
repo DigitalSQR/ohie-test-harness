@@ -139,6 +139,7 @@ public class TestcaseResultRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @PatchMapping("/submit/{testcaseResultId}")
+    @Transactional
     public TestcaseResultInfo submitTestcaseResult(
             @PathVariable("testcaseResultId") String testcaseResultId,
             @RequestParam(value = "selectedTestcaseOptionId",required = true) Set<String> selectedTestcaseOptionIds,

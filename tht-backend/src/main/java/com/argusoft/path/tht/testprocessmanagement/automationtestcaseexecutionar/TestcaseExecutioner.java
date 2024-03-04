@@ -16,6 +16,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
@@ -24,7 +25,6 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
@@ -32,11 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,10 +67,12 @@ public class TestcaseExecutioner {
 
     @Autowired
     private TestcaseResultAttributesService testcaseResultAttributesService;
+
     @Autowired
-    private TestcaseExecutionStarter testcaseExecutionStarter;
+    private ApplicationEventPublisher applicationEventPublisher;
 
 
+    @Transactional
     public void executeTestingProcess(
             String testRequestId,
             String refObjUri,
@@ -96,26 +98,20 @@ public class TestcaseExecutioner {
                 contextInfo);
         if (testcaseResultEntitiesAndIgenericClient == null) return;
 
-        try {
-            ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(testRequestId,contextInfo);
-        } catch (DoesNotExistException | InvalidParameterException e) {
-            throw new RuntimeException(e);
-        }
-        testcaseExecutionStarter.startExecution(testcaseResultEntitiesAndIgenericClient.testcaseResultEntities(),
+        applicationEventPublisher.publishEvent(new TestcaseExecutionStartEvent(testRequestId,
+                testcaseResultEntitiesAndIgenericClient.testcaseResultEntities().stream().map(IdStateNameMetaEntity::getId).toList(),
                 refId,
                 refObjUri,
-                testRequestId,
                 isWorkflow,
                 isFunctional,
                 isRequired,
                 isRecommended,
                 testcaseResultEntitiesAndIgenericClient.iGenericClientMap(),
-                Constant.SUPER_USER_CONTEXT);
+                Constant.SUPER_USER_CONTEXT));
 
     }
 
-    @Transactional
-    private void ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(String testRequestId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException {
+    public void ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(String testRequestId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException {
         try {
             if(testRequestId.isEmpty())
             {
@@ -136,7 +132,6 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional
     public TestcaseResultEntitiesAndIgenericClient changeStateAndPrepareIgenericClient(
             String testRequestId,
             String refObjUri,
@@ -184,6 +179,9 @@ public class TestcaseExecutioner {
                 iGenericClientMap.put(componentEntity.getId(), client);
             }
             TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = new TestcaseResultEntitiesAndIgenericClient(testcaseResultEntities, iGenericClientMap);
+
+            ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(testRequestId,contextInfo);
+
             return testcaseResultEntitiesAndIgenericClient;
         } catch (DataValidationErrorException e) {
             LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION+ TestcaseExecutioner.class.getSimpleName(), e);

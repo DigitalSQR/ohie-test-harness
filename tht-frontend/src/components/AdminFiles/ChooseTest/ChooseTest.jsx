@@ -173,7 +173,7 @@ export default function ChooseTest() {
           testcaseResult.state !==
           TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
         ) {
-          const destination = "/testcase-result/" + testcaseResult.id;
+          const destination  = '/testcase-result/' + (!!testcaseResult.manual ? 'manual/' : 'automated/') + testcaseResult.id;
           var subscription = stompClient.subscribe(destination, (msg) => {
             const parsedTestcaseResult = JSON.parse(msg.body);
             setTestCaseResults((prevTestcaseResults) => {
@@ -187,7 +187,7 @@ export default function ChooseTest() {
               subscription.unsubscribe();
             }
           });
-        }
+        }  
       });
     }
   }, [stompClient]);
@@ -348,7 +348,7 @@ export default function ChooseTest() {
                               {!!totalFinishedAutomated
                                 ? totalAllAutomated
                                 : totalAutomatedTestcaseResults}
-                               
+
                             </span>
                           </div>
                         );

@@ -3,6 +3,7 @@ package com.argusoft.path.tht.reportmanagement.service.impl;
 import com.argusoft.path.tht.Audit.Service.AuditService;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
+import com.argusoft.path.tht.reportmanagement.event.TestcaseResultStateChangedEvent;
 import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
@@ -39,6 +40,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -66,9 +68,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     private TestcaseResultRepository testcaseResultRepository;
 
     @Autowired
-    TestcaseResultMapper testcaseResultMapper;
-
-    @Autowired
     private TestcaseOptionService testcaseOptionService;
 
     @Autowired
@@ -87,7 +86,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     private TestResultRelationService testResultRelationService;
 
     @Autowired
-    SimpMessagingTemplate msgTemplate;
+    ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * {@inheritdoc}
@@ -371,12 +370,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         // Notify client if the state is changed to finished
         if (TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
-            notifyTestCaseFinished(
-                    testcaseResultEntity.getId(),
-                    testcaseResultEntity.getManual().equals(Boolean.TRUE) ? null : Boolean.TRUE,
-                    testcaseResultEntity.getManual().equals(Boolean.TRUE) ? Boolean.TRUE : null,
-                    contextInfo
-            );
+            applicationEventPublisher.publishEvent(new TestcaseResultStateChangedEvent(testcaseResultId,  testcaseResultEntity.getManual(), contextInfo));
         }
 
         return testcaseResultEntity;
@@ -705,23 +699,19 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
     private static List<TestcaseResultEntity> getChildTestcaseResultFromParentTestcaseResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
-        List<TestcaseResultEntity> specificationTestcaseResultIds = testcaseResultEntities.stream()
+        return testcaseResultEntities.stream()
                 .filter(tcre -> {
                     return tcre.getParentTestcaseResult() != null
                             && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
                 }).collect(Collectors.toList());
-        return specificationTestcaseResultIds;
     }
 
     private static List<TestcaseResultEntity> getFilteredChileTestcaseResultsForTestResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
-        List<TestcaseResultEntity> filteredTestcaseResults;
-        filteredTestcaseResults
-                = testcaseResultEntities.stream()
+        return testcaseResultEntities.stream()
                 .filter(tcre -> {
                     return tcre.getParentTestcaseResult() != null
                             && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
                 }).collect(Collectors.toList());
-        return filteredTestcaseResults;
     }
 
 
@@ -731,34 +721,5 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         }
         testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
         testcaseResultEntity.setDuration(null);
-    }
-
-    private void defaultValueSubmitTestCaseResult(TestcaseResultEntity testcaseResultEntity, String selectedTestcaseOptionId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
-        testcaseResultEntity.setTester(userService.getPrincipalUser(contextInfo));
-
-        TestcaseOptionEntity testcaseOptionEntity
-            = testcaseOptionService.getTestcaseOptionById(selectedTestcaseOptionId, contextInfo);
-
-        testcaseResultEntity.setSuccess(testcaseOptionEntity.getSuccess());
-    }
-
-    public void notifyTestCaseFinished(String testcaseResultEntityId, Boolean isAutomated, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
-        TestcaseResultEntity testcaseResultEntity = null;
-        testcaseResultEntity = this.getTestcaseResultById(testcaseResultEntityId, contextInfo);
-        String destination = "/testcase-result/" + testcaseResultEntity.getId();
-        testcaseResultEntity = fetchTestcaseResultStatusByInputs(
-                isManual,
-                isAutomated,
-                null,
-                null,
-                null,
-                null,
-                testcaseResultEntity,
-                contextInfo
-        );
-        msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
-        if (testcaseResultEntity.getParentTestcaseResult() != null) {
-            notifyTestCaseFinished(testcaseResultEntity.getParentTestcaseResult().getId(), isAutomated, isManual, contextInfo);
-        }
     }
 }

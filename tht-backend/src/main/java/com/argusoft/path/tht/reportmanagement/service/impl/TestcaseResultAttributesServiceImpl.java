@@ -1,5 +1,7 @@
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
+import com.argusoft.path.tht.reportmanagement.event.TestcaseResultAttributeEvent;
+import com.argusoft.path.tht.reportmanagement.event.TestcaseResultStateChangedEvent;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultAttributesEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
@@ -11,6 +13,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +29,10 @@ private TestcaseResultAttributesRepository testcaseResultAttributesRepository;
     private TestcaseResultAttributesValidator testcaseResultAttributesValidator;
 
     @Autowired
-    TestcaseResultMapper testcaseResultMapper;
-
-    @Autowired
     TestcaseResultService testcaseResultService;
 
     @Autowired
-    SimpMessagingTemplate msgTemplate;
+    ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public Optional<TestcaseResultAttributesEntity> getTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String key, ContextInfo contextInfo)
@@ -69,7 +69,7 @@ private TestcaseResultAttributesRepository testcaseResultAttributesRepository;
             testcaseResultAttributesEntity.get().setValue(Value.toLowerCase());
             testcaseResultAttributesEntity1 = testcaseResultAttributesRepository.saveAndFlush(testcaseResultAttributesEntity.get());
         }
-        notifyButton(testcaseResultEntity.getId(), contextInfo);
+        applicationEventPublisher.publishEvent(new TestcaseResultAttributeEvent(testcaseResultEntity.getId(),contextInfo));
         return testcaseResultAttributesEntity1;
     }
 
@@ -79,22 +79,14 @@ private TestcaseResultAttributesRepository testcaseResultAttributesRepository;
     {
         try
         {
+            String testcaseResultId = testcaseResultEntity.getId();
             testcaseResultAttributesRepository.deleteByTestcaseResultEntity(testcaseResultEntity);
             testcaseResultAttributesRepository.flush();
-            notifyButton(testcaseResultEntity.getId(), contextInfo);
+            applicationEventPublisher.publishEvent(new TestcaseResultAttributeEvent(testcaseResultId,contextInfo));
         }
         catch (Exception e)
         {
          throw new DoesNotExistException(e.getMessage());
         }
     }
-
-    private void notifyButton(
-            String testResultId,
-            ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
-        String destination = "/testcase-result/attribute/" + testResultId;
-        TestcaseResultEntity testcaseResultEntity = testcaseResultService.getTestcaseResultById(testResultId, contextInfo);
-        msgTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
-    }
-
 }

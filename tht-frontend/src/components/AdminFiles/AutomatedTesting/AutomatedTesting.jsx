@@ -219,6 +219,10 @@ export default function AutomatedTesting() {
     dispatch(set_header("Automated Testing"));
     fetchTestCaseResultDataAndStartWebSocket();
     testCaseInfo();
+    return () => {
+      // Disconnect WebSocket when component unmounts
+      webSocketDisconnect();
+    };
   }, []);
 
   let changeState = (newState, oldState) => {
@@ -234,7 +238,7 @@ export default function AutomatedTesting() {
   useEffect(() => {
     // Close the connection once the request is finished
     if (stompClient && stompClient.connected) {
-      const destination = "/testcase-result/" + testcaseRequestResult.id;
+      const destination = "/testcase-result/automated/" + testcaseRequestResult.id;
       stompClient.subscribe(destination, (msg) => {
         const parsedTestcaseResult = JSON.parse(msg.body);
         setTestcaseRequestResult(parsedTestcaseResult);

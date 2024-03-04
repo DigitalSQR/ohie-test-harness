@@ -96,7 +96,7 @@ export default function ManualTesting() {
   useEffect(() => {
     if (stompClient && stompClient.connected && !!testcaseResults) {
       // Close the connection once the request is finished
-      var destination = '/testcase-result/' + testcaseRequestResult.id;
+      var destination = '/testcase-result/manual/' + testcaseRequestResult.id;
       stompClient.subscribe(destination, (msg) => {
         const parsedTestcaseResult = JSON.parse(msg.body);
         setTestcaseRequestResult(parsedTestcaseResult);
@@ -108,7 +108,7 @@ export default function ManualTesting() {
       testcaseResults.forEach((component, componentIndex) => {
         // Listener for the component
         if (component?.state !== "testcase.result.status.finished") {
-          destination = '/testcase-result/' + component.id;
+          destination = '/testcase-result/manual/' + component.id;
           var componentSubscription = stompClient.subscribe(destination, (msg) => {
             const parsedComponentTestcaseResult = JSON.parse(msg.body);
             parsedComponentTestcaseResult.childTestcaseResults = component.childTestcaseResults;
@@ -122,7 +122,7 @@ export default function ManualTesting() {
         component.childTestcaseResults.forEach((specification, specificationIndex) => {
           // Listener for the specification
           if (specification?.state !== "testcase.result.status.finished") {
-            destination = '/testcase-result/' + specification.id;
+            destination = '/testcase-result/manual/' + specification.id;
             var specificationSubscription = stompClient.subscribe(destination, (msg) => {
               const parsedSpecificationTestcaseResult = JSON.parse(msg.body);
               parsedSpecificationTestcaseResult.childTestcaseResults = specification.childTestcaseResults;
@@ -136,7 +136,7 @@ export default function ManualTesting() {
           specification.childTestcaseResults.forEach((testcase, testcaseIndex) => {
             // Listener for the test case
             if (testcase?.state !== "testcase.result.status.finished") {
-              destination = '/testcase-result/' + testcase.id;
+              destination = '/testcase-result/manual/' + testcase.id;
               var testcaseSubscription = stompClient.subscribe(destination, (msg) => {
                 const parsedTestcaseResult = JSON.parse(msg.body);
                 testcaseResults[componentIndex].childTestcaseResults[specificationIndex].childTestcaseResults[testcaseIndex] = parsedTestcaseResult;

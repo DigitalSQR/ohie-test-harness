@@ -89,7 +89,7 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
             let oldTestcaseResultState = response.state;                    
             if (stompClient
                 && stompClient.connected ) {
-                const destination = '/testcase-result/' + testResultId;
+                const destination = '/testcase-result/automated/' + testResultId;
                 const subscription = stompClient.subscribe(destination, (msg) => {
                     const testcaseResult = JSON.parse(msg.body);
                     setTestcaseResult(testcaseResult);
