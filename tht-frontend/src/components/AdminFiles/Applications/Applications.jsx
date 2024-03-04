@@ -28,7 +28,7 @@ const Applications = () => {
     name: "desc",
     productName: "desc",
   });
-  const [sortFieldName, setSortFieldName] = useState();
+  const [sortFieldName, setSortFieldName] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const { showLoader, hideLoader } = useLoader();
@@ -87,6 +87,20 @@ const Applications = () => {
       currentPage
     );
   };
+  const renderSortIcon = (fieldName) => {
+    if (sortFieldName === fieldName) {
+      return (
+        <span
+          className={`bi ${
+            sortDirection[fieldName] === "asc"
+              ? "bi-caret-up-fill"
+              : "bi-caret-down-fill"
+          }`}
+        ></span>
+      );
+    }
+    return <span className="bi-caret-down-fill"></span>;
+  };
 
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -133,22 +147,22 @@ const Applications = () => {
                 <tr>
                   <th className="col-2">
                     APP NAME{" "}
-                    <a className="ps-1" href="#">
-                      <img
-                        src={sortIcon}
-                        alt="Sort"
-                        onClick={() => handleSort("name")}
-                      />
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("name")}
+                    >
+                      {renderSortIcon("name")}
                     </a>
                   </th>
                   <th className="col-2">
                     COMPANY NAME{" "}
-                    <a className="ps-1" href="#">
-                      <img
-                        src={sortIcon}
-                        alt="Sort"
-                        onClick={() => handleSort("productName")}
-                      />
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("productName")}
+                    >
+                      {renderSortIcon("productName")}
                     </a>
                   </th>
                   <th className="col-2">DATE OF APPLICATION</th>
