@@ -6,9 +6,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import html2pdf from "html2pdf.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { TestResultAPI } from "../../../api/TestResultAPI";
+import { GradeAPI } from "../../../api/GradeAPI";
 import { UserAPI } from "../../../api/UserAPI";
 import { formatDate } from "../../../utils/utils.js";
 import { useLoader } from "../../loader/LoaderContext";
+
+import { Table, Tooltip } from "antd";
 import {
   TestcaseResultStateConstants,
   StateClasses,
@@ -34,9 +37,12 @@ const ApplicationReport = () => {
   const [testRequest, setTestRequest] = useState();
   const [user, setUser] = useState();
   const { showLoader, hideLoader } = useLoader();
+  const [ rangedGradeData, setRangedGradeData ] = useState();
+
   useEffect(() => {
     fetchTestCaseResultData();
     fetchTestCaseRequestData();
+    fetchAllGrades();
   }, []);
 
   const fetchUserDetails = async (userId) => {
@@ -59,6 +65,37 @@ const ApplicationReport = () => {
       },
     });
   };
+
+  
+  const columns = [
+    {
+      title: 'Range',
+      dataIndex: 'range',
+    },
+    {
+      title: 'Grade',
+      dataIndex: 'grade',
+    },
+  ];
+
+  const fetchAllGrades = () => {
+    GradeAPI.getAllGrades()
+    .then((res) => {
+      const formattedData = res.data.map((item, index) => {
+        const startPercentage = res.data.length == index+1 ? 0 : item.percentage + 1;
+        const endPercentage = index == 0 ? 100 : res.data[index - 1].percentage;
+        return {
+          key: item.id,
+          range: `${startPercentage}% - ${endPercentage}%`,
+          grade: item.grade
+        };
+      });
+      setRangedGradeData(formattedData);
+    })
+    .catch((err)=>{
+
+    });
+  }
 
   const fetchTestCaseRequestData = async () => {
     const response = await TestRequestAPI.getTestRequestsById(testRequestId);
@@ -432,7 +469,15 @@ const ApplicationReport = () => {
                             <th>COMPONENTS</th>
                             <th>SPECIFICATIONS</th>
                             <th>RESULTS</th>
-                            <th>GRADE</th>
+                            <th>GRADE 
+                              <>
+                                { 
+                                  <Tooltip className="ms-1" color="#f8f9fa" title={<Table dataSource={rangedGradeData} columns={columns} pagination={false}></Table>}>
+                                    <i  style={{fontSize :'14px'}}  className="bi bi-info-circle-fill"></i>
+                                  </Tooltip>
+                                  }
+                              </>
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
