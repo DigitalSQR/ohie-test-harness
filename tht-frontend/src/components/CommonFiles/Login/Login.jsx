@@ -28,7 +28,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [captchaInfo, setCaptchaInfo] = useState({
     code: "",
-    captcha: "",
+    captcha: ""
   });
 
   useEffect(() => {
@@ -39,6 +39,7 @@ export default function Login() {
   const redirectToSignUp = async () => {
     navigate("/SignUp");
   };
+
 
   const setOrUnsetKeepMeLogin = (event) => {
     const { checked } = event.target;
@@ -83,7 +84,7 @@ export default function Login() {
         captcha: captcha,
       });
     }
-  
+
   const formik = useFormik({
     initialValues: {
       username: "",
