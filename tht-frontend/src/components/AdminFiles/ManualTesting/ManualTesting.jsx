@@ -104,6 +104,7 @@ export default function ManualTesting() {
           webSocketDisconnect();
         }
       });
+
       // Recieve message when the manual testcase result item is finished
       testcaseResults.forEach((component, componentIndex) => {
         // Listener for the component
@@ -153,12 +154,13 @@ export default function ManualTesting() {
     }
   }, [stompClient]);
 
-	useEffect(() => {
-		if (!!testcaseResults && !currentComponentIndex) {
-			selectComponent(0);
-			hideLoader();
-		}
-	}, [testcaseResults]);
+  useEffect(() => {
+    if (!!testcaseResults && !currentComponentIndex) {
+      const componentIndex = testcaseResults.flat().findIndex(component => component.state !== 'testcase.result.status.finished');
+      selectComponent(componentIndex);
+      hideLoader();
+    }
+  }, [testcaseResults]);
 
 	const testCaseInfo = () => {
 		TestRequestAPI.getTestRequestsById(testRequestId)
@@ -169,12 +171,23 @@ export default function ManualTesting() {
 			});
 	};
 
-	const selectComponent = (componentIndex) => {
-		componentIndex = parseInt(componentIndex);
-		setCurrentComponent(testcaseResults[componentIndex]);
-		setCurrentComponentIndex(componentIndex);
-		selectSpecification(0, componentIndex);
-	};
+  const selectComponent = (componentIndex) => {
+    componentIndex = parseInt(componentIndex);
+    setCurrentComponent(testcaseResults[componentIndex]);
+    setCurrentComponentIndex(componentIndex);
+
+    let specificationIndex = null;
+    outerLoop: for (const component of testcaseResults) {
+      for (let i = 0; i < component.childTestcaseResults.length; i++) {
+          const specification = component.childTestcaseResults[i];
+          if (specification.state !== 'testcase.result.status.finished') {
+              specificationIndex = i;
+              break outerLoop;
+          }
+      }
+  }
+    selectSpecification(specificationIndex, componentIndex);
+  };
 
   const isLastQuestion = () => {
     return (
@@ -198,7 +211,19 @@ export default function ManualTesting() {
       testcaseResults[componentIndex].childTestcaseResults[specificationIndex]
     );
     setCurrentSpecificationIndex(specificationIndex);
-    selectTestcase(0, specificationIndex, componentIndex);
+    let testcaseIndex = null;
+    outerLoop: for (const component of testcaseResults) {
+      for (const specification of component.childTestcaseResults) {
+        for (let i = 0; i < specification.childTestcaseResults.length; i++) {
+          const testcase = specification.childTestcaseResults[i];
+          if (testcase.state !== 'testcase.result.status.finished') {
+              testcaseIndex = i;
+              break outerLoop;
+          }
+      }
+      }
+  }
+    selectTestcase(testcaseIndex, specificationIndex, componentIndex);
   };
 
   const selectTestcase = (
