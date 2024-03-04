@@ -226,7 +226,9 @@ public class UserServiceServiceImpl implements UserService {
         }
 
         UserValidator.validateCreateUpdateUser(this, Constant.CREATE_VALIDATION, userEntity, contextInfo);
-        userEntity.setPassword(EncryptDecrypt.hashString(userEntity.getPassword()));
+        if(StringUtils.hasLength(userEntity.getPassword())){
+            userEntity.setPassword(EncryptDecrypt.hashString(userEntity.getPassword()));
+        }
         userEntity = userRepository.saveAndFlush(userEntity);
 
         //On verification pending state, send mail for the email verification
