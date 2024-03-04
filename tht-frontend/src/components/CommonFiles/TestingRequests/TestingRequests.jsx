@@ -17,7 +17,6 @@ import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.js
 import { useNavigate } from "react-router-dom";
 import { store } from "../../../store/store.js";
 import { Pagination } from "@mui/material";
-import sortIcon from "../../../styles/images/sort-icon.png";
 const TestingRequests = () => {
   const testRequestStates = [
     ...TestRequestStateLabels,
@@ -87,7 +86,20 @@ const TestingRequests = () => {
     setSortDirection(newSortDirection);
     fetchTestRequests(filterState, field, newSortDirection, currentPage);
   };
-
+  const renderSortIcon = (fieldName) => {
+    if (sortFieldName === fieldName) {
+      return (
+        <span
+          className={`bi ${
+            sortDirection[fieldName] === "asc"
+              ? "bi-caret-up-fill"
+              : "bi-caret-down-fill"
+          }`}
+        ></span>
+      );
+    }
+    return <span className="bi-caret-down-fill"></span>;
+  };
   const changeState = (testRequestId, updatedState) => {
     showLoader();
     TestRequestAPI.changeState(testRequestId, updatedState)
@@ -169,22 +181,22 @@ const TestingRequests = () => {
                 <tr>
                   <th className="app-name-column">
                     APP NAME{" "}
-                    <a className="ps-1" href="#">
-                      <img
-                        src={sortIcon}
-                        alt="Sort"
-                        onClick={() => handleSort("productName")}
-                      />
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("productName")}
+                    >
+                      {renderSortIcon("productName")}
                     </a>
                   </th>
                   <th className="date-column">
                     DATE OF APPLICATION{" "}
-                    <a className="ps-1" href="#">
-                      <img
-                        src={sortIcon}
-                        alt="Sort"
-                        onClick={() => handleSort("createdAt")}
-                      />
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("createdAt")}
+                    >
+                      {renderSortIcon("createdAt")}
                     </a>
                   </th>
                   <th className="assessee-column">Assessee</th>

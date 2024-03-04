@@ -45,6 +45,21 @@ export default function ComponentList() {
     );
   };
 
+  const renderSortIcon = (fieldName) => {
+    if (sortFieldName === fieldName) {
+      return (
+        <span
+          className={`bi ${
+            sortDirection[fieldName] === "asc"
+              ? "bi-caret-up-fill"
+              : "bi-caret-down-fill"
+          }`}
+        ></span>
+      );
+    }
+    return <span className="bi-caret-down-fill"></span>;
+  };
+
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
     getAllComponents(
@@ -246,7 +261,7 @@ export default function ComponentList() {
                     href="#"
                     onClick={() => handleSort("name")}
                   >
-                    <img src={sortIcon} alt="e" />
+                    {renderSortIcon("name")}
                   </a>{" "}
                 </th>
                 <th className="col-2">Status</th>

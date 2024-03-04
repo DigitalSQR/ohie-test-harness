@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from "react";
-import sortIcon from "../../../styles/images/sort-icon.png";
 import "./assessee.scss";
 import { UserAPI } from "../../../api/UserAPI";
 import { notification } from "antd";
@@ -18,7 +17,7 @@ const Assessee = () => {
   });
 
   const userStates = [...userStatusActionLabels, { label: "All", value: "" }];
-  const [sortFieldName, setSortFieldName] = useState();
+  const [sortFieldName, setSortFieldName] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const role = ROLE_ID_ASSESSEE;
@@ -63,6 +62,21 @@ const Assessee = () => {
       currentPage,
       pageSize
     );
+  };
+
+  const renderSortIcon = (fieldName) => {
+    if (sortFieldName === fieldName) {
+      return (
+        <span
+          className={`bi ${
+            sortDirection[fieldName] === "asc"
+              ? "bi-caret-up-fill"
+              : "bi-caret-down-fill"
+          }`}
+        ></span>
+      );
+    }
+    return <span className="bi-caret-down-fill"></span>;
   };
 
   const changeState = (userId, state, newState) => {
@@ -152,7 +166,7 @@ const Assessee = () => {
                     href="#"
                     onClick={() => handleSort("name")}
                   >
-                    <img src={sortIcon} alt="e" />
+                    {renderSortIcon("name")}
                   </a>
                 </th>
                 <th className="col-1.8">
@@ -162,7 +176,7 @@ const Assessee = () => {
                     href="# "
                     onClick={() => handleSort("email")}
                   >
-                    <img src={sortIcon} alt="e" />
+                    {renderSortIcon("email")}
                   </a>
                 </th>
                 <th className="col-1.8">Company</th>
@@ -174,7 +188,7 @@ const Assessee = () => {
                     href="# "
                     onClick={() => handleSort("state")}
                   >
-                    <img src={sortIcon} alt="e" />
+                    {renderSortIcon("state")}
                   </a>
                 </th>
                 <th className="col-3">CHOOSE ACTION</th>
@@ -234,8 +248,8 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                              <i class="bi bi-slash-circle-fill text-red"></i>
-                              {" "}DISABLE
+                              <i class="bi bi-slash-circle-fill text-red"></i>{" "}
+                              DISABLE
                             </button>
                           </Fragment>
                         )}
@@ -252,10 +266,10 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                               <span>
-                              <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
-                              APPROVE
-                            </span>
+                              <span>
+                                <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                                APPROVE
+                              </span>
                             </button>
                             <button
                               type="button"
@@ -269,7 +283,7 @@ const Assessee = () => {
                               }}
                             >
                               <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-															REJECT{" "}
+                              REJECT{" "}
                             </button>
                           </Fragment>
                         )}

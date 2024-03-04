@@ -23,7 +23,7 @@ const AdminUsers = () => {
     name: "desc",
     email: "desc",
   });
-  const [sortFieldName, setSortFieldName] = useState();
+  const [sortFieldName, setSortFieldName] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPageUsers, setCurrentPageUsers] = useState([]);
@@ -38,7 +38,7 @@ const AdminUsers = () => {
     showLoader();
     AdminUserAPI.updateUserState(deleteUserId, changeState)
       .then(() => {
-        getAllUsers();
+        getAllUsers(sortFieldName, sortDirection);
         hideLoader();
         setIsModalOpen(false);
       })
@@ -57,15 +57,12 @@ const AdminUsers = () => {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
     dispatch(set_header("User Management"));
-    getAllUsers();
-  }, [currentPage, pageSize, sortFieldName, sortDirection]);
+    getAllUsers(sortFieldName, sortDirection);
+  }, []);
 
-  const getAllUsers = () => {
+  const getAllUsers = (sortFieldName, sortDirection) => {
     showLoader();
-    AdminUserAPI.fetchAllUsers(
-      sortFieldName,
-      sortDirection[sortFieldName]
-    ).then((data) => {
+    AdminUserAPI.fetchAllUsers(sortFieldName, sortDirection[sortFieldName]).then((data) => {
       hideLoader();
       const activeUsers = data.content.filter(
         (user) =>
@@ -101,7 +98,21 @@ const AdminUsers = () => {
     newSortDirection[sortFieldName] =
       sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
-    getAllUsers();
+    getAllUsers(sortFieldName, newSortDirection);
+  };
+  const renderSortIcon = (fieldName) => {
+    if (sortFieldName === fieldName) {
+      return (
+        <span
+          className={`bi ${
+            sortDirection[fieldName] === "asc"
+              ? "bi-caret-up-fill"
+              : "bi-caret-down-fill"
+          }`}
+        ></span>
+      );
+    }
+    return <span className="bi-caret-down-fill"></span>;
   };
 
   const handleChangePage = (event, newPage) => {
@@ -139,7 +150,7 @@ const AdminUsers = () => {
                       href="#"
                       onClick={() => handleSort("name")}
                     >
-                      <img src={sortIcon} alt="e" />
+                      {renderSortIcon("name")}
                     </a>
                   </th>
                   <th className="col-3">
@@ -149,7 +160,7 @@ const AdminUsers = () => {
                       href="#"
                       onClick={() => handleSort("email")}
                     >
-                      <img src={sortIcon} alt="e" />
+                      {renderSortIcon("email")}
                     </a>
                   </th>
                   <th className="col-3">ROLE</th>
