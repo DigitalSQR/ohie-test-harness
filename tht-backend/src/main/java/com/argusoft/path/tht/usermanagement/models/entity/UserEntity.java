@@ -41,6 +41,10 @@ public class UserEntity extends IdStateMetaEntity {
 
     }
 
+    public UserEntity(String id) {
+        this.setId(id);
+    }
+
     public UserEntity(UserEntity userEntity) {
         super(userEntity);
         this.setEmail(userEntity.getEmail());

@@ -32,7 +32,13 @@ public class ComponentEntity extends IdStateNameMetaEntity {
     public ComponentEntity(ComponentEntity componentEntity) {
         super(componentEntity);
         this.setRank(componentEntity.getRank());
+        this.setSpecifications(componentEntity.getSpecifications().stream()
+                .map(specification->new SpecificationEntity(specification.getId())).collect(Collectors.toSet()));
 
+    }
+
+    public ComponentEntity(String id) {
+        this.setId(id);
     }
 
     public Integer getRank() {

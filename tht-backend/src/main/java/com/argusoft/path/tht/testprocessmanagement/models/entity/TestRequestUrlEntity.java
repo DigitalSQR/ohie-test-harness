@@ -45,7 +45,7 @@ public class TestRequestUrlEntity implements Serializable {
     public TestRequestUrlEntity(TestRequestUrlEntity testRequestUrlEntity) {
         this.setTestRequestId(testRequestUrlEntity.getTestRequestId());
         if(testRequestUrlEntity.getComponent()!=null){
-            this.setComponent(new ComponentEntity(testRequestUrlEntity.getComponent()));
+            this.setComponent(new ComponentEntity(testRequestUrlEntity.getComponent().getId()));
         }
         this.setBaseUrl(testRequestUrlEntity.getBaseUrl());
         this.setUsername(testRequestUrlEntity.getUsername());

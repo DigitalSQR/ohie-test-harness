@@ -41,15 +41,19 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     public TestRequestEntity(TestRequestEntity testRequestEntity) {
         super(testRequestEntity);
         if(testRequestEntity.getAssessee()!=null){
-            this.setAssessee(new UserEntity(testRequestEntity.getAssessee()));
+            this.setAssessee(new UserEntity(testRequestEntity.getAssessee().getId()));
         }
         this.setProductName(testRequestEntity.getProductName());
         if(testRequestEntity.getApprover()!=null){
-            this.setApprover(new UserEntity(testRequestEntity.getApprover()));
+            this.setApprover(new UserEntity(testRequestEntity.getApprover().getId()));
         }
         if(testRequestEntity.getTestRequestUrls()!=null){
             this.setTestRequestUrls(testRequestEntity.getTestRequestUrls().stream().map(TestRequestUrlEntity::new).collect(Collectors.toSet()));
         }
+    }
+
+    public TestRequestEntity(String id) {
+        this.setId(id);
     }
 
     public UserEntity getAssessee() {
