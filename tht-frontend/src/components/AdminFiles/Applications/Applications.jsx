@@ -169,7 +169,8 @@ const Applications = () => {
                   <th className="col-2">
                     EMAIL ID <a className="ps-1" href="#"></a>
                   </th>
-                  <th className="col-4">CHOOSE ACTION</th>
+                  <th className="col-2">STATUS</th>
+                  <th className="col-2">CHOOSE ACTION</th>
                 </tr>
               </thead>
               <tbody>
@@ -198,23 +199,16 @@ const Applications = () => {
                       ></UserIdEmailConnector>
                     </td>
                     <td>
-                      {testRequest.state !== "test.request.status.finished" ? (
-                        <button
-                          className={StateClasses[testRequest.state]?.btnClass}
-                          onClick={() => {
-                            navigate(
-                              `/choose-test/${testRequest.id}`
-                            );
-                          }}
-                        >
-                          {" "}
-                          <i
-                            className={
-                              StateClasses[testRequest.state]?.iconClass
-                            }
-                          ></i>{" "}
-                          {StateClasses[testRequest.state]?.btnText}
-                        </button>
+                    {testRequest.state !== "test.request.status.finished" ? (
+                      <Fragment>
+                      <span
+                      className={`badge ${
+                        StateBadgeClasses[testRequest.state]
+                      }`}
+                      >
+                      {TestRequestStateConstantNames[testRequest.state]}
+                      </span>
+                      </Fragment>
                       ) : (
                         <Fragment>
                           <span
@@ -224,17 +218,35 @@ const Applications = () => {
                           >
                             {TestRequestStateConstantNames[testRequest.state]}
                           </span>
-
-                          <button
-                            class="btn btn-blue-sm report"
-                            onClick={() => viewReport(testRequest.id)}
-                          >
-                            {" "}
-                            <i class="bi bi-file-text"></i> Report
-                          </button>
                         </Fragment>
-                      )}
-                    </td>
+                        )}
+                        </td>
+                        <td>
+                          {testRequest.state !== "test.request.status.finished" ? (
+                            <button
+                              className={StateClasses[testRequest.state]?.btnClass}
+                              onClick={() => {
+                                navigate(`/choose-test/${testRequest.id}`);
+                              }}
+                            >
+                              {" "}
+                              <i
+                                className={
+                                  StateClasses[testRequest.state]?.iconClass
+                                }
+                              ></i>{" "}
+                              {StateClasses[testRequest.state]?.btnText}
+                            </button>
+                          ) : (
+                            <button
+                              class="btn btn-blue-sm report"
+                              onClick={() => viewReport(testRequest.id)}
+                            >
+                              {" "}
+                              <i class="bi bi-file-text"></i> Report
+                            </button>
+                          )}
+                        </td>
                   </tr>
                 ))}
               </tbody>
