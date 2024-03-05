@@ -40,6 +40,6 @@ export const StateClasses = {
     "testcase.result.status.finished.fail": {
         cardClass: "red",
         iconClass: "bi bi-x-circle-fill",
-        text: "FAIL"
+        text: "Needs Review"
     }
 };

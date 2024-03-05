@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Service
-@Transactional
+@Transactional(noRollbackFor = UsernameNotFoundException.class)
 public class CustomUserDetailService implements UserDetailsService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CustomUserDetailService.class);
@@ -62,7 +62,7 @@ public class CustomUserDetailService implements UserDetailsService {
                     if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
                         userService.resendVerification(user.getEmail(), new ContextInfo());
                         LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
-                        throw new UsernameNotFoundException("Pending email verification.") {
+                        throw new UsernameNotFoundException("Email verification pending. Verification email has been sent.") {
                         };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, user.getState())) {
                         LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
