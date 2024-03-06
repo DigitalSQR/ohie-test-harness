@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { Fragment, useEffect, useState } from "react";
-import openhie_logo from "../../styles/images/logo.png";
-import congratulations_icon from "../../styles/images/congratulations-icon.png";
-import { AuthenticationAPI } from "../../api/AuthenticationAPI";
+import openhie_logo from "../../../styles/images/logo.png";
+import congratulations_icon from "../../../styles/images/congratulations-icon.png";
+import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 
 export default function EmailVerified() {
   const { base64UserEmail } = useParams();

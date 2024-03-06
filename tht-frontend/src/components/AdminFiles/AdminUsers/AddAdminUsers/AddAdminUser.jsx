@@ -72,7 +72,7 @@ const AddAdminUser = () => {
   }
 
   return (
-    <div>
+    <div id="addAdminUser">
       <div id="wrapper">
         <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
           <div className="form-bg-white">
@@ -187,8 +187,9 @@ const AddAdminUser = () => {
                     </button>
                     <button
                       type="submit"
-                      className="btn btn-primary btn-blue btn-submit py-2"
+                      className="btn btn-primary btn-blue py-2"
                       disabled={hasValues(errors) || !hasValues(touched)}
+                      style={{marginLeft:"1rem"}}
                     >
                       Submit
                     </button>

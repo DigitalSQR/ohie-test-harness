@@ -73,7 +73,7 @@ const Captcha = (props) => {
     };
 
     return (
-        <>
+        <div id="captcha">
             {
                 base64Image ?
                     <div className="custom-input mb-3">
@@ -107,7 +107,7 @@ const Captcha = (props) => {
                     :
                     <></>
             }
-        </>
+        </div>
     )
 }
 

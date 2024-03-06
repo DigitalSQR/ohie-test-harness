@@ -202,6 +202,7 @@ export default function ChooseTest() {
   }, []);
 
   return (
+    <div id="chooseTest">
     <div id="wrapper">
       <div className="col-12 pt-3">
         <div className="bcca-breadcrumb">
@@ -234,7 +235,7 @@ export default function ChooseTest() {
               </p>
               {totalManualTestcaseResults == 0 && (
                 <button
-                  className="btn btn-primary btn-sm mt-4 display"
+                  className="btn btn-primary btn-sm mt-4 "
                   onClick={() => {
                     handleStartTesting(true, null);
                   }}
@@ -303,7 +304,7 @@ export default function ChooseTest() {
               </p>
               {totalAutomatedTestcaseResults == 0 && (
                 <button
-                  className="btn btn-primary small btn-sm mt-4 display"
+                  className="btn btn-primary small btn-sm mt-4 "
                   onClick={() => {
                     handleStartTesting(null, true);
                   }}
@@ -393,6 +394,7 @@ export default function ChooseTest() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

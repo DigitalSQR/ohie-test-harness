@@ -275,6 +275,7 @@ export default function AutomatedTesting() {
   }, [stompClient]);
 
   return (
+    <div>
     <div className="Workflow-testing-wrapper">
       <div className="container">
         <div className="col-12">
@@ -410,6 +411,7 @@ export default function AutomatedTesting() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

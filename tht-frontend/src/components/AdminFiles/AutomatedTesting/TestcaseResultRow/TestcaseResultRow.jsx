@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { TestResultAPI } from "../../../../api/TestResultAPI";
 import passImg from "../../../../styles/images/success.svg";
 import failImg from "../../../../styles/images/failure.svg";
@@ -107,7 +107,7 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
     }, []);
 
     return (
-        testcaseResult && <>
+        testcaseResult && <Fragment>
             <tr key={`testcase-result-${testcaseResult?.id}`} className="testcase-result-row">
                 {displayTestName()}
                 <td>{getResultDisplay(testcaseResult)}</td>
@@ -120,7 +120,7 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
                     {getErrorDisplay()}
                 </td>
             </tr>
-        </>
+        </Fragment>
 
     )
 

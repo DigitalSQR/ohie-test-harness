@@ -1,13 +1,13 @@
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import openhie_logo from "../../styles/images/logo.png";
-import capture_logo from "../../styles/images/capture-logo.png";
-import { AuthenticationAPI } from "../../api/AuthenticationAPI";
-import { useLoader } from "../loader/LoaderContext";
+import openhie_logo from "../../../styles/images/logo.png";
+import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 import { notification } from "antd";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useFormik } from "formik";
-import Captcha from "../CommonFiles/Captcha/Captcha";
+import Captcha from "../../CommonFiles/Captcha/Captcha";
+import { useLoader } from "../../loader/LoaderContext";
+import "./SignUp.scss"
 export default function SignUp() {
   const navigate = useNavigate();
   const handleKeyPress = (event) => {
@@ -293,7 +293,7 @@ export default function SignUp() {
                 <div className="my-3">
                   <button
                     disabled={!(formik.isValid && formik.dirty)}
-                    className="btn btn-primary btn-blue w-100 mt-2 login-button"
+                    className="btn btn-primary btn-blue w-100 mt-2 signup-button"
                     onClick={formik.handleSubmit}
                   >
                     Sign Up

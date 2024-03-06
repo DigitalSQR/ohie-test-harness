@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import tool_icon from "../../styles/images/tool-icon.png";
+import tool_icon from "../../../styles/images/tool-icon.png";
 import { createContext, useEffect, useState } from "react";
-import { UserAPI } from "../../api/UserAPI";
+import { UserAPI } from "../../../api/UserAPI";
 import ApexChart from "react-apexcharts";
-import { USER_ROLES } from "../../constants/role_constants";
-import { store } from "../../store/store";
-import { TestRequestAPI } from "../../api/TestRequestAPI";
-import "./landing.scss";
+import "./dashboard.scss";
+import { USER_ROLES } from "../../../constants/role_constants";
+import { store } from "../../../store/store";
+import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useDispatch } from "react-redux";
-import { set_header } from "../../reducers/homeReducer";
-import { userStateConstantNames } from "../../constants/user_constants";
-import { TestRequestStateConstantNames } from "../../constants/test_requests_constants";
+import { set_header } from "../../../reducers/homeReducer";
+import { userStateConstantNames } from "../../../constants/user_constants";
+import { TestRequestStateConstantNames } from "../../../constants/test_requests_constants";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -78,6 +78,7 @@ export default function Dashboard() {
   const testRequestSeries = Object.values(testRequestStateCounts);
 
   return (
+    <div id="dashboard">
     <div id="wrapper">
       <div className="pt-3">
         <div className="text-center">
@@ -101,7 +102,7 @@ export default function Dashboard() {
           {userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
             <div className="my-4">
               <button
-                className="btn btn-primary btn-blue mt-2"
+                className="btn btn-primary mt-2"
                 onClick={() => navigate("/register-application")}
               >
                 <i className="bi bi-pencil-square"></i> Register application
@@ -140,6 +141,7 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -98,7 +98,7 @@ const UpdateAdminUser = () => {
   };
 
   return (
-    <div>
+    <div id="updateAdminUser">
       <div id="wrapper">
         <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
           <div className="form-bg-white">
@@ -184,6 +184,7 @@ const UpdateAdminUser = () => {
                       Cancel
                     </button>
                     <button
+                      style={{marginLeft:"1rem"}}
                       className="btn btn-primary btn-blue btn-submit py-2"
                       type="submit"
                       disabled={Object.keys(errors).length > 0}

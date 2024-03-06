@@ -5,32 +5,34 @@ $heading-color: #333;
 $description-color: #555;
 $link-color: #007bff;
 
-.containerr {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: $container-background-color;
+#pageNotFound {
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: $container-background-color;
 
-  .contentt {
-    text-align: center;
+    .content {
+      text-align: center;
 
-    .headingg {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      color: $heading-color;
-    }
+      .heading {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: $heading-color;
+      }
 
-    .descriptionn {
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-      color: $description-color;
-    }
+      .description {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        color: $description-color;
+      }
 
-    .linkk {
-      font-size: 1.2rem;
-      color: $link-color;
-      text-decoration: none;
+      .link {
+        font-size: 1.2rem;
+        color: $link-color;
+        text-decoration: none;
+      }
     }
   }
 }

@@ -217,6 +217,7 @@ export default function ComponentList() {
       });
   };
   return (
+    <div id="componentList">
     <div id="wrapper">
       <div className="col-12">
         <div className="d-flex justify-content-between">
@@ -299,7 +300,7 @@ export default function ComponentList() {
                     </td>
                     <td>
                       <button
-                        className="edit-badge"
+                        className="btn btn-primary edit-badge"
                         onClick={() => upsertComponent(component?.id)}
                       >
                         <EditFilled />
@@ -333,6 +334,7 @@ export default function ComponentList() {
           shape="rounded"
         />
       )}
+    </div>
     </div>
   );
 }

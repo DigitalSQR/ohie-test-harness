@@ -1,7 +1,7 @@
 import { Fragment } from "react";
-import { AuthenticationAPI } from "../../api/AuthenticationAPI";
-import { useLoader } from "../loader/LoaderContext";
-import openhie_logo from "../../styles/images/logo.png";
+import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
+import { useLoader } from "../../loader/LoaderContext";
+import openhie_logo from "../../../styles/images/logo.png";
 import { notification } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";

@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { login_success } from "../../reducers/authReducer";
-import { useLoader } from "../loader/LoaderContext";
+import { login_success } from "../../../reducers/authReducer";
+import { useLoader } from "../../loader/LoaderContext";
 import { useNavigate } from "react-router-dom";
-import { setAuthToken } from "../../api/configs/axiosConfigs";
+import { setAuthToken } from "../../../api/configs/axiosConfigs";
 import { message, notification } from "antd";
-import { UserAPI } from "../../api/UserAPI";
-import { userinfo_success } from "../../reducers/UserInfoReducer";
+import { UserAPI } from "../../../api/UserAPI";
+import { userinfo_success } from "../../../reducers/UserInfoReducer";
 
 export default function GoogleAuth() {
 	const { showLoader, hideLoader } = useLoader();

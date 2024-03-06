@@ -1,5 +1,11 @@
-.display{
+
+  .display {
     display: contents;
     justify-content: flex-end;
     align-items: center;
-}
+  }
+  .hiddenRow {
+    padding: 0 !important;
+    visibility: none !important;
+  }
+

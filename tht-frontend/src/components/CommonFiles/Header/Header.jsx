@@ -37,11 +37,11 @@ export default function Header({ headerContent, isSidebarOpen }) {
     });
   }, []);
   return (
-    <Fragment>
+    <div id="header">
       <header>
-        <div className="d-flex align-items-center justify-content-between heading">
+        <div className="d-flex align-items-center justify-content-between heading" >
           <h5
-            className={`pd-left-${isSidebarOpen ? "240" : ""} ${
+            className={`pd-left${isSidebarOpen ? "-240" : ""} ${
               !isSidebarOpen ? "marginLeft" : ""
             } transition ps-30`}
           >
@@ -86,6 +86,6 @@ export default function Header({ headerContent, isSidebarOpen }) {
           </div>
         </div>
       </header>
-    </Fragment>
+    </div>
   );
 }

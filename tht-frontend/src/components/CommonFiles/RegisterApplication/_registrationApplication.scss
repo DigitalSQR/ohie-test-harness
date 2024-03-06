@@ -1,18 +1,17 @@
 @import "./variables";
-@import "./buttons";
-
-#wrapper {
-  transition: 0.5s;
-  margin-left: 230px;
-  padding: 90px 30px;
-  position: relative;
-  min-height: calc(100vh - 64px);
-  @media (max-width: 767.98px) {
-     margin-left: 40px;
+#registerApplication {
+  #wrapper {
+    transition: 0.5s;
+    margin-left: 230px;
+    padding: 90px 30px;
+    position: relative;
+    min-height: calc(100vh - 64px);
+    @media (max-width: 767.98px) {
+      margin-left: 40px;
+    }
   }
-}
 
-.custom-input input {
+  .custom-input input {
     height: 50px;
     border-radius: 5px;
     border: 1px solid #ccdade;
@@ -56,50 +55,96 @@
     padding: 30px;
 
     .heading-line-up {
-        display: inline-block;
-        padding: 6px;
-        padding-bottom: 0px;
-        background: $color-gray-20;
-        font-size: 20px;
-        font-weight: 600;
-        position: relative;
-        top: -42px;
-        line-height: 12px;
+      display: inline-block;
+      padding: 6px;
+      padding-bottom: 0px;
+      background: $color-gray-20;
+      font-size: 20px;
+      font-weight: 600;
+      position: relative;
+      top: -42px;
+      line-height: 12px;
 
-        @media(max-width:991px) {
-            font-size: 16px;
-        }
+      @media (max-width: 991px) {
+        font-size: 16px;
+      }
     }
-}
-.form-bg-white {
+  }
+  .form-bg-white {
     background: $color-white;
     border: 1px solid $color-light;
     border-radius: 5px;
     padding: 30px;
 
     .heading-line-up {
-        display: inline-block;
-        padding: 6px;
-        padding-bottom: 0px;
-        background: $color-gray-20;
-        font-size: 20px;
-        font-weight: 600;
-        position: relative;
-        top: -42px;
-        line-height: 12px;
+      display: inline-block;
+      padding: 6px;
+      padding-bottom: 0px;
+      background: $color-gray-20;
+      font-size: 20px;
+      font-weight: 600;
+      position: relative;
+      top: -42px;
+      line-height: 12px;
 
-        @media(max-width:991px) {
-            font-size: 16px;
-        }
+      @media (max-width: 991px) {
+        font-size: 16px;
+      }
     }
-
   }
 
-.color{
-  border-color: #ccdade
-}
+  .color {
+    border-color: #ccdade;
+  }
+  .component-checkbox {
+    zoom: 1.5;
+  }
+  .field-box {
+    border-radius: 6px;
+    background: #f0f3f5;
+    padding: 10px 15px;
+    padding-bottom: 15px;
+    margin-bottom: 10px;
+    // width: 49%;
+  }
+  .field-checkbox input[type="checkbox"] {
+    display: none;
+  }
 
-.text-end{
-  margin-top: 10px !important;
-  margin-bottom: 0px !important;
+  .field-checkbox input[type="checkbox"] + label {
+    line-height: 13px;
+    display: inline-block;
+  }
+
+  .field-checkbox input[type="checkbox"] + label:before {
+    content: " ";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: #dce4e7;
+    border: 1px solid #dce4e7;
+    border-radius: 50%;
+    transition: background 0.5s, color 0.5s;
+    margin-right: 5px;
+    vertical-align: middle;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  .field-checkbox input[type="checkbox"]:checked .field-box {
+    border: 1px solid #4db5e3;
+    background: #d1edff;
+  }
+
+  .field-checkbox input[type="checkbox"]:checked + label:before {
+    background: #fff;
+    color: #009fc8;
+    content: "\F272";
+    font-family: bootstrap-icons !important;
+  }
+
+  .text-end{
+    margin-top: 10px !important;
+    margin-bottom: 0px !important;
+  }
 }

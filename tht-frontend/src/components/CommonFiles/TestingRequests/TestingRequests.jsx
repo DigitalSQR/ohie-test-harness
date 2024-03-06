@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "./application-status.scss";
-// import "./_table.scss";
+import "./testingRequest.scss";
+import "./_table.scss";
 import {
   TestRequestStateLabels,
   TestRequestStateConstants,
@@ -129,7 +129,7 @@ const TestingRequests = () => {
     });
   };
   return (
-    <div>
+    <div id="testingRequest">
       <div id="wrapper">
         <div className="col-12 pt-3">
           <div className="row mb-2 justify-content-between">
@@ -180,7 +180,7 @@ const TestingRequests = () => {
               <thead>
                 <tr>
                   <th className="app-name-column">
-                    APP NAME{" "}
+                  PRODUCT NAME
                     <a
                       className="ps-1"
                       href="#"
@@ -252,7 +252,7 @@ const TestingRequests = () => {
                                 );
                               }}
                               type="button"
-                              className="text-uppercase btn btn-sm approval-action-button text-uppercase"
+                              className="btn btn-sm approval-action-button "
                             >
                               <span>
                                 <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
@@ -267,7 +267,7 @@ const TestingRequests = () => {
                                 );
                               }}
                               type="button"
-                              className="mx-1 btn btn-sm approval-action-button text-uppercase"
+                              className="mx-1 btn btn-sm approval-action-button "
                             >
                               <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
                               REJECT{" "}

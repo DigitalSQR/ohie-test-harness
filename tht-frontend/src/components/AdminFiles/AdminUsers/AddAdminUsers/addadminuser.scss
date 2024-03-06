@@ -1,24 +1,77 @@
 @import "../variables";
-@import "../buttons";
 
-#wrapper {
-  transition: 0.5s;
-  margin-left: 230px;
-  padding: 90px 30px;
-  position: relative;
-  min-height: calc(100vh - 64px);
-  @media (max-width: 767.98px) {
-     margin-left: 40px;
+
+#addAdminUser {
+  #wrapper {
+    transition: 0.5s;
+    margin-left: 230px;
+    padding: 90px 30px;
+    position: relative;
+    min-height: calc(100vh - 64px);
+    @media (max-width: 767.98px) {
+      margin-left: 40px;
+    }
   }
-}
 
-.custom-input input {
-    height: 50px;
-    border-radius: 5px;
-    border: 1px solid #ccdade;
-    font-size: 14px;
-    font-weight: 400;
-    color: #51516d;
+  
+  .custom-input input {
+      height: 50px;
+      border-radius: 5px;
+      border: 1px solid #ccdade;
+      font-size: 14px;
+      font-weight: 400;
+      color: #51516d;
+    }
+    .custom-input input:focus {
+      box-shadow: none;
+      border: 1px solid #ccdade;
+    }
+    .custom-input label {
+      font-weight: 500;
+      color: #51516d;
+    }
+    .custom-input .input-group-text {
+      background: #fff;
+      border: 1px solid #ccdade;
+      border-right: 0px;
+      padding: 0px;
+      height: 50px;
+      width: 46px;
+      padding-left: 15px;
+      color: #ccdade;
+      font-size: 18px;
+    }
+    .custom-input ::-ms-input-placeholder {
+      /* Edge 12-18 */
+      color: #ccdade;
+      font-weight: 400;
+    }
+    .custom-input ::placeholder {
+      color: #ccdade;
+      font-weight: 400;
+    }
+  
+  .form-bg-white {
+      background: $color-white;
+      border: 1px solid $color-light;
+      border-radius: 5px;
+      padding: 30px;
+  
+      .heading-line-up {
+          display: inline-block;
+          padding: 6px;
+          padding-bottom: 0px;
+          background: $color-gray-20;
+          font-size: 20px;
+          font-weight: 600;
+          position: relative;
+          top: -42px;
+          line-height: 12px;
+  
+          @media(max-width:991px) {
+              font-size: 16px;
+          }
+      }
   }
   .custom-input input:focus {
     box-shadow: none;
@@ -49,47 +102,8 @@
     font-weight: 400;
   }
 
-  .form-bg-white {
-    background: $color-white;
-    border: 1px solid $color-light;
-    border-radius: 5px;
-    padding: 30px;
+  .text-end{
+    margin-bottom: 0px !important;
+  }
 
-    .heading-line-up {
-        display: inline-block;
-        padding: 6px;
-        padding-bottom: 0px;
-        background: $color-gray-20;
-        font-size: 20px;
-        font-weight: 600;
-        position: relative;
-        top: -42px;
-        line-height: 12px;
-
-        @media(max-width:991px) {
-            font-size: 16px;
-        }
-    }
-}
-.form-bg-white {
-    background: $color-white;
-    border: 1px solid $color-light;
-    border-radius: 5px;
-    padding: 30px;
-
-    .heading-line-up {
-        display: inline-block;
-        padding: 6px;
-        padding-bottom: 0px;
-        background: $color-gray-20;
-        font-size: 20px;
-        font-weight: 600;
-        position: relative;
-        top: -42px;
-        line-height: 12px;
-
-        @media(max-width:991px) {
-            font-size: 16px;
-        }
-    }
 }

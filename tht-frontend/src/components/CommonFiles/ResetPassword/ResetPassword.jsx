@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { UserAPI } from "../../../api/UserAPI";
 import { notification } from "antd";
 import { useState } from "react";
-
+import "./resetPassword.scss";
 export default function ResetPassword() {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -43,6 +43,7 @@ export default function ResetPassword() {
   });
   const navigate = useNavigate();
   return (
+    <div id="resetPassword">
     <div id="wrapper">
       <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
         <div className="form-bg-white">
@@ -65,7 +66,7 @@ export default function ResetPassword() {
                   onBlur={formik.handleBlur}
                 />
                 <button
-                  className=" btn btn-outline-secondary login"
+                  className=" btn btn-outline-secondary color"
                   type="button"
                   onClick={() => setShowOldPassword(!showOldPassword)}
                 >
@@ -96,7 +97,7 @@ export default function ResetPassword() {
                   onBlur={formik.handleBlur}
                 />
                 <button
-                  className=" btn btn-outline-secondary login"
+                  className="btn btn-outline-secondary color"
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                 >
@@ -117,6 +118,7 @@ export default function ResetPassword() {
           <div className="my-4 text-end">
             <button
               className="btn btn-primary btn-white py-2 font-size-14"
+              style={{marginRight:"1rem"}}
               onClick={() => {
                 navigate("/dashboard");
                 formik.resetForm();
@@ -135,6 +137,7 @@ export default function ResetPassword() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

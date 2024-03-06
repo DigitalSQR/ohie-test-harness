@@ -1,92 +1,184 @@
-.full-page-wrapper {
-    height: 130vh;
-    width: 100vw;
+@import "./variables";
+#login {
+  .login-bg {
+    background: url(../../../styles/images/login-bg.svg);
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url("../../../styles/img/login-background.png");
-    background-position: center;
+    background-size: cover;
+    text-align: center;
+    color: white;
+    background-repeat: no-repeat;
+    background-position: center center;
+    @media (max-width: 767px) {
+      height: 40vh;
+      background-position: bottom;
+    }
   }
 
-  .full-page-wrapper .openhie-card {
-    max-height: fit-content;
-    max-width: 460px;
-    border-radius: 10px;
+  .login-form-bg {
+    width: 400px;
+    margin: 0 auto;
+    @media (max-width: 991px) {
+      width: 320px;
+    }
+  }
+
+  .custom-scrollbar {
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-right: 10px;
+    height: calc(100vh - 240px);
+    @media (max-width: 767px) {
+      height: auto;
+      padding-bottom: 30px;
+      padding-right: initial;
+    }
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  /* Track */
+  .custom-scrollbar::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px grey;
+    border-radius: 4px;
+  }
+
+  .custom-input input {
+    height: 50px;
+    border-radius: 5px;
+    border: 1px solid #ccdade;
+    font-size: 14px;
+    font-weight: 400;
+    color: #51516d;
+  }
+  .custom-input input:focus {
+    box-shadow: none;
+    border: 1px solid #ccdade;
+  }
+  .custom-input label {
+    font-weight: 500;
+    color: #51516d;
+  }
+  .custom-input .input-group-text {
     background: #fff;
-    box-shadow: 0px 0px 14px 0px rgba(0, 0, 0, 0.1);
-    padding: 50px 30px;
-    display: flex;
-    margin: auto;
-    border: 0;
+    border: 1px solid #ccdade;
+    border-right: 0px;
+    padding: 0px;
+    height: 50px;
+    width: 46px;
+    padding-left: 15px;
+    color: #ccdade;
+    font-size: 18px;
+  }
+  .custom-input ::-ms-input-placeholder {
+    /* Edge 12-18 */
+    color: #ccdade;
+    font-weight: 400;
+  }
+  .custom-input ::placeholder {
+    color: #ccdade;
+    font-weight: 400;
   }
 
-  .openhie-form .form-label,
-.openhie-form .form-check-label {
-  color: #62666a;
+  /* Handle */
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #9a9a9a;
+    border-radius: 4px;
+  }
+
+
+
+.custom-checkbox {
+  display: block;
+  position: relative;
+  padding-left:30px;
+  font-weight: 400;
+  cursor: pointer;
   font-size: 14px;
-  font-family: Open Sans;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-bottom: 5px;
-}
-.openhie-form .form-control {
-  display: inline-flex;
-  padding: 14.5px 15px;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 10px;
-  border: 1px solid #f0f4f7;
-  background: #f8faff;
-  color: #62666a;
-  font-size: 16px;
-  font-family: Open Sans;
-}
-
-@media (max-width: 991px) {
-  .openhie-form .checkbox-group .form-check-inline {
-    width: 50%;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
   }
 }
 
-.openhie-primary {
-    border-radius: 10px ;
-    background: #009fc8 ;
-    display: flex ;
-    padding: 10px 20px ;
-    gap: 5px ;
-    text-transform: uppercase;
-    color: #fff ;
-    font-size: 16px ;
-    font-weight: 600 ;
-    text-transform: uppercase;
-    align-items: center;
-    justify-content: center;
-    width: fit-content;
-  }
 
-.position{
+/* Create a custom checkbox */
+.custom-checkbox .checkmark {
   position: absolute;
-  top: 100%;
+  top: 0;
   left: 0;
-  padding-bottom: 0.5rem;
-}  
-
-.password{
-  margin-top: 0.5rem;
+  height: 20px;
+  width: 20px;
+  border-radius: 2px;
+  border:1px solid $color-light;
 }
 
-.login{
-  border-color: #ccdade;
+
+/* When the checkbox is checked, add a blue background */
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: $color-blue;
+  border-color: $color-blue;
+  border-radius: 2px;
 }
 
-.align{
-  text-align: center;
+/* Create the checkmark/indicator (hidden when not checked) */
+.custom-checkbox .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
 }
 
-.login-button{
-  text-align: center !important;
-  font-size: 17px !important;
-  height: 52px !important;
-  padding-top:6px !important;
+/* Show the checkmark when checked */
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.custom-checkbox .checkmark:after {
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+  .position {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    padding-bottom: 0.5rem;
+  }
+
+  .password {
+    margin-top: 0.5rem;
+  }
+
+  .login {
+    border-color: #ccdade;
+  }
+
+  .align {
+    text-align: center;
+  }
+
+  .login-button{
+    text-align: center !important;
+    font-size: 17px !important;
+    height: 52px !important;
+    padding-top:6px !important;
+  }
 }
