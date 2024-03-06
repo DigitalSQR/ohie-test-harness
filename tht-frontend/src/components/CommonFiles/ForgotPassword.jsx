@@ -5,6 +5,7 @@ import openhie_logo from "../../styles/images/logo.png";
 import { notification } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import "./forgotPassword.scss";
 
 export default function ForgotPassword() {
   const { showLoader, hideLoader } = useLoader();
@@ -100,21 +101,21 @@ export default function ForgotPassword() {
               </div>
 
               <div className="buttonWrapper">
+              <button
+                  id="submitButton"
+                  onClick={backToLogin}
+                  className=" mx-2 btn btn-blue back-button"
+                >
+                  <span>Back to Login</span>
+                  <span id="loader"></span>
+                </button>
                 <button
                   disabled={!(formik.isValid && formik.dirty)}
                   id="submitButton"
                   onClick={VerifyEmail}
-                  className="btn btn-primary"
+                  className="btn btn-blue forgot-button"
                 >
                   <span>Continue</span>
-                  <span id="loader"></span>
-                </button>
-                <button
-                  id="submitButton"
-                  onClick={backToLogin}
-                  className=" mx-2 btn btn-primary"
-                >
-                  <span>Back to Login</span>
                   <span id="loader"></span>
                 </button>
               </div>

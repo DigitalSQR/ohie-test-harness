@@ -15,7 +15,6 @@ export default function SignUp() {
       formik.handleSubmit();
     }
   };
-  const [confirmPassword, setconfirmPassword] = useState("");
   const [captchaInfo, setCaptchaInfo] = useState({
     code: "",
     captcha: ""
@@ -27,18 +26,36 @@ export default function SignUp() {
       errors.email = "Please enter email.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
       errors.email = "Please enter a valid email address";
+    }else if(values.email.length > 255){
+      errors.email = "Email must have less than 255 characters."
     }
 
     if (values.password.length == 0) {
       errors.password = "Please enter password.";
+    }else if(values.password.length < 6) {
+      errors.password = "Password must be of minimum 6 characters"
+    }else if(values.password.length > 255) {
+      errors.password = "Password must have less than 255 characters."
+    }
+
+    if (values.confirmPassword.length == 0) {
+      errors.confirmPassword = "Please enter Confirm password.";
+    }else if(values.confirmPassword.length < 6) {
+      errors.confirmPassword = "Confirm Password must be of minimum 6 characters"
+    }else if(values.confirmPassword.length > 255) {
+      errors.confirmPassword = "Confirm must have less than 255 characters."
     }
 
     if (values.name.length == 0) {
       errors.name = "Please enter name.";
+    } else if(values.name.length > 1000) {
+      errors.password = "Password must have less than 1000 characters."
     }
 
     if (values.companyName.length == 0) {
       errors.companyName = "Please enter your company's name.";
+    }else if(values.companyName.length > 255) {
+      errors.companyName = "Company name must have less than 255 characters."
     }
 
     return errors;
@@ -49,11 +66,12 @@ export default function SignUp() {
       email: "",
       name: "",
       password: "",
+      confirmPassword: "",
       companyName: "",
     },
     validate: validate,
     onSubmit: () => {
-      if (formik.values.password != confirmPassword) {
+      if (formik.values.password != formik.values.confirmPassword) {
         notification.error({
           placement: "bottomRight",
           description: "Passwords do not match.",
@@ -254,22 +272,28 @@ export default function SignUp() {
                       <i className="bi bi-lock"></i>
                     </span>
                     <input
+                      name="confirmPassword"
                       type="password"
                       className="form-control border-start-0 ps-0"
                       placeholder="Confirm Password"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
-                      onChange={(e) => setconfirmPassword(e.target.value)}
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      value={formik.values.confirmPassword}    
                       autoComplete="off"
                       onKeyDown={handleKeyPress}
                     />
                   </div>
+                  {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                    <div className="text-danger">{formik.errors.confirmPassword}</div>
+                   )} 
                 </div>
                 <Captcha getCaptcha={getCaptcha} />
                 <div className="my-3">
                   <button
                     disabled={!(formik.isValid && formik.dirty)}
-                    className="btn btn-primary btn-blue w-100 mt-2"
+                    className="btn btn-primary btn-blue w-100 mt-2 login-button"
                     onClick={formik.handleSubmit}
                   >
                     Sign Up

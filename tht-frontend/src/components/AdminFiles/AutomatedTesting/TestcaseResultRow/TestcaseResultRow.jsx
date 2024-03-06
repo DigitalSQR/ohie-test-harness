@@ -34,6 +34,7 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
     };
 
     const getErrorDisplay = () => {
+        const messageSanitize = testcaseResult?.message.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
         return (
             <div className={"collapse " + toggleClass + " expanded-row"}>
                 {testcaseResult?.hasSystemError ? (
@@ -41,7 +42,8 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
                         <b>Failed due to System Error</b>
                     </p>
                 ) : (
-                    <p dangerouslySetInnerHTML={{ __html: testcaseResult?.message }} />
+                    <p dangerouslySetInnerHTML={{ __html: messageSanitize}}>
+                    </p>
                 )}
             </div>
         );

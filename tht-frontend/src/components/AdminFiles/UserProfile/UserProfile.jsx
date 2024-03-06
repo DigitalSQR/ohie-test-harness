@@ -77,8 +77,13 @@ const UserProfile = () => {
     const errors = {};
     if (values.name.length === 0) {
       errors.name = "Please enter your name.";
-    } else if (values.companyName.length === 0) {
+    } else if(values.name.length > 1000) {
+      errors.password = "Password must have less than 1000 characters."
+    }
+    if (values.companyName.length == 0) {
       errors.companyName = "Please enter your company's name.";
+    }else if(values.companyName.length > 255) {
+      errors.companyName = "Company name must have less than 255 characters."
     }
     return errors;
   };
@@ -302,6 +307,7 @@ const UserProfile = () => {
                 <div className="custom-input mb-3">
                   <label htmlFor="name" className="form-label">
                     <b>Name</b>
+                    <span className="text-danger">*</span>
                   </label>
                   <input
                     type="text"
@@ -324,6 +330,7 @@ const UserProfile = () => {
                 <div className="custom-input mb-3">
                   <label htmlFor="companyName" className="form-label">
                     <b>Company Name</b>
+                    <span className="text-danger">*</span>
                   </label>
                   <input
                     type="text"
@@ -348,13 +355,14 @@ const UserProfile = () => {
                 <div className="custom-input mb-3">
                   <label htmlFor="roleIds" className="form-label">
                     <b>Role</b>
+                    <span className="text-danger">*</span>
                   </label>
                   <input
                     type="text"
                     name="roleIds"
                     id="roleIds"
                     value={formik.values.roleIds}
-                    className="form-control"
+                    className="form-control disable-field"
                     disabled
                   ></input>
                 </div>
@@ -365,10 +373,11 @@ const UserProfile = () => {
                 <div className="custom-input mb-3">
                   <label htmlFor="email" className="form-label">
                     <b>Email</b>
+                    <span className="text-danger">*</span>
                   </label>
                   <input
                     type="email"
-                    className="form-control"
+                    className="form-control disable-field"
                     id="email"
                     placeholder="Your Email"
                     name="email"
@@ -385,7 +394,7 @@ const UserProfile = () => {
               style={{ display: "flex", justifyContent: "flex-end" }}
             >
               <button
-                className="btn btn-primary btn-white py-2 font-size-14 "
+                className="btn btn-primary btn-white py-2 font-size-14 reset-button"
                 style={{ marginRight: "auto" }}
                 onClick={() => {
                   navigate("/reset-password");
@@ -404,7 +413,7 @@ const UserProfile = () => {
                 Cancel
               </button>
               <button
-                disabled={!(formik.isValid && formik.dirty)}
+                disabled={!(formik.isValid)}
                 onClick={formik.handleSubmit}
                 className="btn btn-primary btn-blue btn-submit py-2 font-size-14"
                 type="submit"

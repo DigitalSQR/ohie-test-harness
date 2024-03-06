@@ -72,8 +72,11 @@ export default function ComponentList() {
   };
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required *"),
-    description: Yup.string().required("Description is required *"),
+    name: Yup.string().required("Name is required *")
+    .min(3, "Name must be of minimum 3 characters")
+    .max(1000, "Name must have less than 1000 characters"),
+    description: Yup.string().required("Description is required *")
+    .max(1000, "Description must have less than 1000 characters"),
   });
 
   useEffect(() => {
@@ -296,7 +299,7 @@ export default function ComponentList() {
                     </td>
                     <td>
                       <button
-                        className="btn btn-primary edit-badge"
+                        className="edit-badge"
                         onClick={() => upsertComponent(component?.id)}
                       >
                         <EditFilled />

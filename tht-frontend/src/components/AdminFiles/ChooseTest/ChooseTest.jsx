@@ -204,10 +204,10 @@ export default function ChooseTest() {
   return (
     <div id="wrapper">
       <div className="col-12 pt-3">
-        <div class="bcca-breadcrumb">
-          <div class="bcca-breadcrumb-item">{testcaseName}</div>
+        <div className="bcca-breadcrumb">
+          <div className="bcca-breadcrumb-item">{testcaseName}</div>
           <div
-            class="bcca-breadcrumb-item"
+            className="bcca-breadcrumb-item"
             onClick={() => {
               navigate(`/applications`);
             }}

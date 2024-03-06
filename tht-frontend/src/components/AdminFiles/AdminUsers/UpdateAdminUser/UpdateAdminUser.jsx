@@ -44,13 +44,15 @@ const UpdateAdminUser = () => {
     password: formData.password,
     roleIds: formData.roleIds,
   };
-
+  
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required *"),
+    name: Yup.string().required("Name is required")
+      .max(1000, "Name must have less than 1000 characters"),
     email: Yup.string()
       .email("Invalid email address")
-      .required("Email is required *"),
-    roleIds: Yup.array().min(1, "Role is required *"),
+      .required("Email is required")
+      .max(255, "Email must have less than 255 characters"),
+    roleIds: Yup.array().min(1, "Role is required"),
   });
 
   useEffect(() => {
@@ -107,19 +109,20 @@ const UpdateAdminUser = () => {
               onSubmit={handleSubmit}
               enableReinitialize={true}
             >
-              {(formikProps) => (
+              {({ errors}) => (
                 <Form>
                   <div className="row">
                     <div className="col-12">
                       <div className="custom-input mb-3">
                         <label htmlFor="name" className="form-label">
                           Name
+                          <span className="text-danger">*</span>
                         </label>
                         <Field
                           type="name"
                           className="form-control"
                           id="name"
-                          placeholder="Your Email"
+                          placeholder="Your Name"
                           name="name"
                         />
                         <div className="error-message">
@@ -134,10 +137,11 @@ const UpdateAdminUser = () => {
                       <div className="custom-input mb-3">
                         <label htmlFor="email" className="form-label">
                           Email
+                          <span className="text-danger">*</span>
                         </label>
                         <Field
                           type="email"
-                          className="form-control"
+                          className="form-control disable-field"
                           id="email"
                           placeholder="Your Email"
                           name="email"
@@ -149,33 +153,12 @@ const UpdateAdminUser = () => {
                       </div>
                     </div>
                   </div>
-
-                  <div className="row">
-                    <div className="col-12">
-                      <div className="custom-input mb-3">
-                        <label htmlFor="password" className="form-label">
-                          Password
-                        </label>
-                        <Field
-                          type="password"
-                          className="form-control"
-                          id="password"
-                          placeholder="Your Password"
-                          name="password"
-                          disabled={true}
-                        />
-                        <div className="error-message">
-                          <ErrorMessage name="password" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
                   <div className="row">
                     <div className="col-12">
                       <div className="custom-input mb-3">
                         <label htmlFor="role" className="form-label">
                           Role
+                          <span className="text-danger">*</span>
                         </label>
                         <Field
                           className="custom-select"
@@ -187,14 +170,13 @@ const UpdateAdminUser = () => {
                         />
                       </div>
                       <div className="error-message">
-                        <ErrorMessage name="roleIds" />
-                      </div>
+                          <ErrorMessage name="roleIds" />
+                        </div>
                     </div>
                   </div>
-
                   <div className="my-4 text-end">
                     <button
-                      className="btn btn-primary btn-white py-2 font-size-14"
+                      className="btn btn-primary btn-white py-2"
                       onClick={() => {
                         navigate("/admin-users");
                       }}
@@ -202,8 +184,9 @@ const UpdateAdminUser = () => {
                       Cancel
                     </button>
                     <button
-                      className="btn btn-primary btn-blue btn-submit py-2 font-size-14"
+                      className="btn btn-primary btn-blue btn-submit py-2"
                       type="submit"
+                      disabled={Object.keys(errors).length > 0}
                     >
                       Update
                     </button>

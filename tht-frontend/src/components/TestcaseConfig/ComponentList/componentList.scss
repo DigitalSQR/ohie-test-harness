@@ -107,15 +107,17 @@
 }
 
 .edit-badge{
-  
   display: flex;
   justify-content: center;
   align-items: center;
   gap:0.5rem;
   font-size: 12px;
   padding: 3px 20px;
-  background-color: rgb(10, 179, 156)
-
+  background-color: rgb(10, 179, 156);
+  border-color: rgb(10, 179, 156);
+  color:white;
+  border-radius: 6px;
+  border-style: none;
 }
 
 .badges-orange {
@@ -177,4 +179,3 @@
 .edit-icon {
   margin-right: 8px;
 }
-  

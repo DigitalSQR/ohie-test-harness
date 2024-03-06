@@ -69,11 +69,18 @@ export default function Login() {
       errors.username = "Please enter your email.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.username.trim())) {
       errors.username = "Please enter a valid email address";
+    }else if(values.username.length > 255){
+      errors.email = "Username must have less than 255 characters."
     }
 
     if (values.password.length == 0) {
       errors.password = "Please enter password.";
+    }else if(values.password.length < 6) {
+      errors.password = "Password must be of minimum 6 characters"
+    }else if(values.password.length > 255) {
+      errors.password = "Password must have less than 255 characters."
     }
+
 
     return errors;
   };
@@ -254,7 +261,7 @@ export default function Login() {
                     disabled={!(formik.isValid && formik.dirty)}
                     type="submit"
                     onClick={formik.handleSubmit}
-                    className="btn btn-primary btn-blue w-100"
+                    className="btn btn-primary btn-blue w-100 login-button"
                   >
                     Login
                   </button>

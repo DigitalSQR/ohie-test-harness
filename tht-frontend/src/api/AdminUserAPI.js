@@ -12,6 +12,17 @@ export const AdminUserAPI = {
       return response.data;
    
   },
+  validateUser: async function (validationTypeKey, data) {
+			const response = await api.request({
+				url: `/user/validate`,
+				method: "POST",
+				params: {
+					validationTypeKey
+				},
+				data
+			});
+			return response.data;
+	},
   updateUserDetails: async function (data) {
    
       const response = await api.request({
