@@ -138,7 +138,7 @@ const routes = createBrowserRouter([
         path: "choose-test/:testRequestId",
         element: (
           <PrivateRoute
-            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            roles={[USER_ROLES.ROLE_ID_ADMIN,USER_ROLES.ROLE_ID_TESTER]}
             element={ChooseTest}
           />
         ),
@@ -147,7 +147,7 @@ const routes = createBrowserRouter([
         path: "manual-testing/:testRequestId",
         element: (
           <PrivateRoute
-            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            roles={[USER_ROLES.ROLE_ID_ADMIN,USER_ROLES.ROLE_ID_TESTER]}
             element={ManualTesting}
           />
         ),
@@ -156,7 +156,7 @@ const routes = createBrowserRouter([
         path: "automated-testing/:testRequestId",
         element: (
           <PrivateRoute
-            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            roles={[USER_ROLES.ROLE_ID_ADMIN,USER_ROLES.ROLE_ID_TESTER]}
             element={AutomatedTesting}
           />
         ),

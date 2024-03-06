@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class AuditController {
     @Autowired
     AuditService auditService;
     @GetMapping("")
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public List<Object> searchAudit(
             @RequestParam(name = "tableName", required = true) String tableName,
             @RequestParam(name = "id", required = true) List<String> ids,

@@ -26,6 +26,7 @@ import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +61,7 @@ public class TestcaseResultRestController {
 //            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 //    })
 //    @PostMapping("")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public TestcaseResultInfo createTestcaseResult(
             @RequestBody TestcaseResultInfo TestcaseResultInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -88,7 +89,7 @@ public class TestcaseResultRestController {
 //
 //    })
 //    @PutMapping("")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public TestcaseResultInfo updateTestcaseResult(
             @RequestBody TestcaseResultInfo TestcaseResultInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -139,7 +140,8 @@ public class TestcaseResultRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @PatchMapping("/submit/{testcaseResultId}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
     public TestcaseResultInfo submitTestcaseResult(
             @PathVariable("testcaseResultId") String testcaseResultId,
             @RequestParam(value = "selectedTestcaseOptionId",required = true) Set<String> selectedTestcaseOptionIds,
@@ -160,7 +162,8 @@ public class TestcaseResultRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @PatchMapping(value = "/{testcaseResultId}", consumes = "application/json-patch+json")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
     public TestcaseResultInfo submitTestcaseResult(
             @PathVariable("testcaseResultId") String testcaseResultId,
             @RequestBody JsonPatch jsonPatch,
@@ -234,14 +237,14 @@ public class TestcaseResultRestController {
     }
 
 
-    @ApiOperation(value = "To change status of TestcaseResult", response = DocumentInfo.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated TestcaseResult"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
-    })
-    @PatchMapping("/state/{testcaseResultId}/{changeState}")
-    @Transactional
+//    @ApiOperation(value = "To change status of TestcaseResult", response = DocumentInfo.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "Successfully updated TestcaseResult"),
+//            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+//            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+//    })
+//    @PatchMapping("/state/{testcaseResultId}/{changeState}")
+//    @Transactional
     public TestcaseResultInfo updateTestcaseResultState(@PathVariable("testcaseResultId") String testcaseResultId,
                                                         @PathVariable("changeState") String changeState,
                                                         @RequestAttribute("contextInfo") ContextInfo contextInfo)

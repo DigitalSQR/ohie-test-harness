@@ -54,7 +54,7 @@ public class DocumentRestController {
 
     })
     @PostMapping
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DocumentInfo createDocument(@ModelAttribute DocumentInfo documentInfo,
                                        @ModelAttribute("file") MultipartFile file,
                                        @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -105,7 +105,7 @@ public class DocumentRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{documentId}/{changeState}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DocumentInfo updateDocumentState(@PathVariable("documentId") String documentId,
                                             @PathVariable("changeState") String changeState,
                                             @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -121,7 +121,7 @@ public class DocumentRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PutMapping("/rank/{documentId}/{rankId}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public DocumentInfo changeDocumentRank(@PathVariable("documentId") String documentId,
                                             @PathVariable("rankId") Integer rankId,
                                             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
