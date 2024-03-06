@@ -22,23 +22,27 @@ export default function Dashboard() {
   useEffect(() => {
     dispatch(set_header(""));
     const userInfo = store.getState().userInfoSlice;
+    console.log(userInfo);
     setUserInfo(userInfo);
+    if(userInfo.roleIds.includes('role.tester') || userInfo.roleIds.includes('role.admin'))
+    {
+    const fetchUserData = async () => {
+
+      const response = await UserAPI.getUsers();
+      setUserChartData(response.content);
+    };
+    fetchUserData();
+  }
   }, []);
 
   // const userContext = createContext(userInfo);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const response = await UserAPI.getUsers();
-      setUserChartData(response.content);
-    };
 
     const fetchTestRequestData = async () => {
       const response = await TestRequestAPI.getTestRequestsByState("");
       setTestRequestChartData(response.content);
     };
-
-    fetchUserData();
     fetchTestRequestData();
   }, []);
 

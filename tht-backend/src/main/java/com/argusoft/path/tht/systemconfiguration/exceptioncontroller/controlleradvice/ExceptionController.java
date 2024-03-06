@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.AccessDeniedException;
 
 /**
  * This class is manage occurred exceptions and its response error massages.
@@ -84,7 +85,14 @@ public class ExceptionController {
         LOGGER.error(ValidateConstant.NULL_POINTER_EXCEPTION + ExceptionController.class.getSimpleName(), exception);
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex)
+    {
+        ValidationResultInfo error = new ValidationResultInfo();
+        error.setMessage("Access Denied");
+        error.setLevel(ErrorLevel.ERROR);
+        return new ResponseEntity<>(error,HttpStatus.FORBIDDEN);
+    }
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Object> handleExceptionToJustPrintLog(Exception exception) throws Exception {
         LOGGER.error(ValidateConstant.EXCEPTION + ExceptionController.class.getSimpleName(), exception);

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -28,6 +29,7 @@ import java.util.Properties;
 @EnableAuthorizationServer
 @EnableCaching
 @EnableScheduling
+@EnableMethodSecurity
 public class TestingHarnessToolApplication implements CommandLineRunner {
 
     @Autowired

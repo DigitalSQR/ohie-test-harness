@@ -38,7 +38,7 @@ public class TestcaseExecutionStarterListener {
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseExecutionStarterListener.class);
 
     @Async
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @TransactionalEventListener
     public void startExecution(TestcaseExecutionStartEvent event) {
         String testRequestId = (String) event.getSource();

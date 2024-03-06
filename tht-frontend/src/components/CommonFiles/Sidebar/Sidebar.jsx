@@ -197,7 +197,8 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
           </>
         )}
         {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) &&
-          !user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+          !user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+          !user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER) && (
             <Fragment>
               {" "}
               <li>
@@ -207,9 +208,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
-                  onClick={() =>
-                    handleMenuItemClick("/testing-requests")
-                  }
+                  onClick={() => handleMenuItemClick("/testing-requests")}
                 >
                   <i
                     aria-label="Testing Requests"

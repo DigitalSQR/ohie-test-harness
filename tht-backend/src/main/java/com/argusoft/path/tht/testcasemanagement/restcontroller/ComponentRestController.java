@@ -15,6 +15,7 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,7 +53,8 @@ public class ComponentRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public ComponentInfo createComponent(
             @RequestBody ComponentInfo componentInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -79,7 +81,8 @@ public class ComponentRestController {
 
     })
     @PutMapping("")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public ComponentInfo updateComponent(
             @RequestBody ComponentInfo componentInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -151,6 +154,7 @@ public class ComponentRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public List<ValidationResultInfo> validateComponent(
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,
@@ -171,7 +175,8 @@ public class ComponentRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{componentId}/{changeState}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public ComponentInfo updateComponentState(@PathVariable("componentId") String componentId,
                                               @PathVariable("changeState") String changeState,
                                               @RequestAttribute("contextInfo") ContextInfo contextInfo)

@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +56,8 @@ public class TestRequestRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.assessee')")
     public TestRequestInfo createTestRequest(
             @RequestBody TestRequestInfo testRequestInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -68,6 +70,8 @@ public class TestRequestRestController {
         return testRequestMapper.modelToDto(testRequestEntity);
 
     }
+
+//    PreAuthorize for this is not in use
 
     /**
      * {@inheritdoc}
@@ -82,7 +86,7 @@ public class TestRequestRestController {
 
     })
     @PutMapping("")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public TestRequestInfo updateTestRequest(
             @RequestBody TestRequestInfo testRequestInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -170,6 +174,7 @@ public class TestRequestRestController {
             @ApiResponse(code = 200, message = "Successfully started automation testing process")
     })
     @PutMapping("/start-testing-process/{testRequestId}")
+    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
     public void startTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
             @RequestParam(value = "refObjUri") String refObjUri,
@@ -199,6 +204,7 @@ public class TestRequestRestController {
             @ApiResponse(code = 200, message = "Successfully automation testing process has been stopped.")
     })
     @PutMapping("/stop-testing-process/{testRequestId}")
+    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
     public void stopTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
             @RequestParam(value = "refObjUri",required = true) String refObjUri,
@@ -212,7 +218,6 @@ public class TestRequestRestController {
             @RequestParam(value = "reset", required = false) Boolean reset,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
-
         testRequestService.stopTestingProcess(
                 testRequestId,
                 refObjUri,
@@ -234,7 +239,8 @@ public class TestRequestRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{testRequestId}/{changeState}")
-    @Transactional
+    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
+    @Transactional(rollbackFor = Exception.class)
     public TestRequestInfo updateTestRequestState(@PathVariable("testRequestId") String testRequestId,
                                                   @PathVariable("changeState") String changeState,
                                                   @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -243,12 +249,14 @@ public class TestRequestRestController {
         return testRequestMapper.modelToDto(testRequestEntity);
     }
 
+
     @ApiOperation(value = "Retrieves all status of test request.", response = Multimap.class)
     @ApiResponses(value = {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
+
     @GetMapping("status/mapping")
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
         Collection<String> strings = TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP.get(sourceStatus);

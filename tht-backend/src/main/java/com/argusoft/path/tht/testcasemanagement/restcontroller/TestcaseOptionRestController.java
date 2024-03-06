@@ -20,6 +20,7 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,14 +50,15 @@ public class TestcaseOptionRestController {
      *
      * @return
      */
-//    @ApiOperation(value = "Create new TestcaseOption", response = TestcaseOptionInfo.class)
-//    @ApiResponses(value = {
-//            @ApiResponse(code = 200, message = "Successfully created TestcaseOption"),
-//            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-//            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
-//    })
-//    @PostMapping("")
-    @Transactional
+    @ApiOperation(value = "Create new TestcaseOption", response = TestcaseOptionInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully created TestcaseOption"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PostMapping("")
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public TestcaseOptionInfo createTestcaseOption(
             @RequestBody TestcaseOptionInfo testcaseOptionInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -83,7 +85,8 @@ public class TestcaseOptionRestController {
 
     })
     @PutMapping("")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public TestcaseOptionInfo updateTestcaseOption(
             @RequestBody TestcaseOptionInfo testcaseOptionInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -154,6 +157,7 @@ public class TestcaseOptionRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public List<ValidationResultInfo> validateTestcaseOption(
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,
@@ -174,7 +178,8 @@ public class TestcaseOptionRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{testcaseOptionId}/{changeState}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public TestcaseOptionInfo updateTestcaseOptionState(@PathVariable("testcaseOptionId") String testcaseOptionId,
                                                         @PathVariable("changeState") String changeState,
                                                         @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -190,7 +195,8 @@ public class TestcaseOptionRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping(value = "/{testcaseOptionId}",consumes = "application/json-patch+json")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public TestcaseOptionInfo patchTestcaseOption(@PathVariable("testcaseOptionId") String testcaseOptionId,
                                                   @RequestBody JsonPatch jsonPatch,
                                                   @RequestAttribute("contextInfo") ContextInfo contextInfo)

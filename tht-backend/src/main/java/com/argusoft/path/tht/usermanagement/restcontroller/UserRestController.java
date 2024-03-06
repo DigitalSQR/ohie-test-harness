@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +67,7 @@ public class UserRestController {
             @ApiResponse(code = 200, message = "Successfully logout user")
     })
     @PostMapping("/logout")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Boolean logout(@RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException {
         return userService.logout(contextInfo);
@@ -85,7 +86,7 @@ public class UserRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/register")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public UserInfo registerAssessee(
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -100,7 +101,7 @@ public class UserRestController {
 
 
     @PostMapping("/verify/{base64UserEmail}/{base64TokenId}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ValidationResultInfo verifyUser(@PathVariable("base64UserEmail") String base64UserEmail,
                                            @PathVariable("base64TokenId") String base64TokenId,
                                            @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -122,7 +123,7 @@ public class UserRestController {
     }
 
     @PostMapping("/update/password/")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public ValidationResultInfo updatePassword(@RequestBody UpdatePasswordInfo updatePasswordInfo,
                                                @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException, DoesNotExistException,
@@ -167,7 +168,8 @@ public class UserRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAuthority('role.admin')")
     public UserInfo createUser(
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -194,7 +196,7 @@ public class UserRestController {
 
     })
     @PutMapping("")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public UserInfo updateUser(
             @RequestBody UserInfo userInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
@@ -217,8 +219,9 @@ public class UserRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{userId}/{changeState}")
-    @Transactional
-    public UserInfo updateDocumentState(@PathVariable("userId") String userId,
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
+    public UserInfo updateUserState(@PathVariable("userId") String userId,
                                         @PathVariable("changeState") String changeState,
                                         @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {

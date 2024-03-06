@@ -72,7 +72,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         try {
             CustomOauth2User oauth2User = (CustomOauth2User) authentication.getPrincipal();

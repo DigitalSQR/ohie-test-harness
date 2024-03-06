@@ -72,7 +72,7 @@ public class TestcaseExecutioner {
     private ApplicationEventPublisher applicationEventPublisher;
 
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void executeTestingProcess(
             String testRequestId,
             String refObjUri,
@@ -193,7 +193,7 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public void stopTestingProcess(
             String testRequestId,
             String refObjUri,
@@ -267,7 +267,7 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public void executeTestcase(String testcaseResultId, Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
         try {
             TestcaseResultEntity testcaseResult = testcaseResultService.getTestcaseResultById(testcaseResultId, contextInfo);
@@ -303,13 +303,13 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public void markTestcaseResultInProgress(String testcaseResultId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         testcaseResultService.changeState(testcaseResultId, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
     }
 
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
     public void markTestcaseResultInDraft(String testcaseResultId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         testcaseResultService.changeState(testcaseResultId, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
     }
