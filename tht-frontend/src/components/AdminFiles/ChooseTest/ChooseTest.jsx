@@ -262,7 +262,7 @@ export default function ChooseTest() {
                             100
                         ) === 100
                       ) {
-                        return <span>Done</span>;
+                        return <CheckCircleFilled  color="#52C41A"/>;
                       } else {
                         return (
                           <span>
@@ -332,7 +332,7 @@ export default function ChooseTest() {
                             100
                         ) === 100
                       ) {
-                        return <CheckCircleFilled className="text-success" />;
+                        return <CheckCircleFilled  color="#52C41A"/>;
                       } else {
                         return (
                           <div>
@@ -363,7 +363,7 @@ export default function ChooseTest() {
                                 : totalAutomatedTestcaseResults)) *
                               100
                           ) === 100
-                          ? "green"
+                          ? "#52C41A"
                           : "red"
                         : "blue"
                     }
