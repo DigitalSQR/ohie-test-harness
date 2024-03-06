@@ -18,6 +18,13 @@ const CustomSelect = ({
     );
   };
 
+  const onBlur = (option) => {
+    form.setFieldTouched(
+      field.name,
+      true
+    );
+  };
+
   const getValue = () => {
     if (options && field.value) {
       return isMulti
@@ -35,6 +42,7 @@ const CustomSelect = ({
       name={field.name}
       value={getValue()}
       onChange={onChange}
+      onBlur={onBlur}
       placeholder={placeholder}
       options={options}
       isMulti={isMulti}

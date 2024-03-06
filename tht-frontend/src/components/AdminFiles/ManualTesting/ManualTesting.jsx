@@ -37,7 +37,7 @@ export default function ManualTesting() {
 	var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
 	const { showLoader, hideLoader } = useLoader();
   const dispatch = useDispatch();
-	const { Item } = Tabs;
+	const { TabPane } = Tabs;
 	const [testcaseName, setTestCaseName] = useState();
 	const navigate = useNavigate();
   const openComponentIndex = -1;
@@ -399,7 +399,7 @@ export default function ManualTesting() {
 					}}
 				>
 					{testcaseResults[currentComponentIndex].childTestcaseResults.map((specification, index) => (
-						<Item
+						<TabPane
 							key={index}
 							value={specification.id}
 							tab={
@@ -420,7 +420,7 @@ export default function ManualTesting() {
 								refreshCurrentTestcase={refreshCurrentTestcase}
 								isLastQuestion={isLastQuestion}
 							></TestCase>
-						</Item>
+						</TabPane>
 					))}
 				</Tabs>
 			)}

@@ -33,17 +33,26 @@
   background: #009fc8;
   border-color: #009fc8;
 }
+.btn-blue:disabled{
+  pointer-events: auto! important;
+  cursor: not-allowed! important;
+  background-color: #009fc8;
+  border-color: #009fc8;
+  opacity:0.5;
+}
 
 .btn-white {
   background: #fff;
   transition: all 0.5s;
   text-transform: uppercase;
-  padding: 15px 30px;
+  padding: 0px 0px;
   text-align: center;
-  font-size: 18px;
+  font-size: 15px;
   color: #51516d;
   font-weight: 600;
   border-color: #ccdade;
+  height:36px;
+  width:87px;
 }
 .btn-white:hover {
   background: #1991b1;

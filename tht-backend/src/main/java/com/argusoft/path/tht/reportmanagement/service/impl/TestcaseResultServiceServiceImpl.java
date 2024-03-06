@@ -690,7 +690,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             message = message + " <b>" + failedSpecificationTestcaseResultName.get(i) + "<b>,";
         }
         if(failedSpecificationTestcaseResultName.size() > 1) {
-            message = message + " and";
+            message = message + " and ";
         }
 
         message = message + "<b>" + failedSpecificationTestcaseResultName.get(failedSpecificationTestcaseResultName.size() - 1) + "<b>";

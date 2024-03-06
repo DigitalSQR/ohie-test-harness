@@ -371,9 +371,15 @@ export default function TestCase(props) {
 		var style = {};
 		if (page != null && (type !== "previous" && type !== "next")) {
 			if (page === currentTestcaseIndex) {
-				style.border = "2px solid #1976d2";
+				style.border = "4px solid #b6cce1";
+				style.color = "black";
+				style.width = "40px";
+				style.height = "40px";
+				style.borderRadius = "50%";
+				style.backgroundColor = "white";
 			} if (currentSpecification.childTestcaseResults[page]?.state === "testcase.result.status.finished") {
-				style.backgroundColor = "#a7ffa7";
+				style.backgroundColor = "#078707";
+				style.color = "white";
 			}
 		}
 		return style;

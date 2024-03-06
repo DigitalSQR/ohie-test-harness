@@ -42,26 +42,27 @@ const RegisterApplication = () => {
     if (values.testRequestUrls.length === 0) {
       errors.testRequestUrls = "Please select atleast one component";
     }
-    if (values.testRequestUrls.length === 0) {
-      errors.testRequestUrls = "Please select atleast one component";
-    }
 
     if (values.name === "") {
       errors.name = "Application Name is required";
-    }
-    if (values.name === "") {
-      errors.name = "Application Name is required";
+    }else if(values.name.length < 3){
+      errors.name = "Application name must be of minimum 3 characters"
+    }else if (values.name.length > 1000) {
+      errors.name = "Application name must have less than 1000 characters.";
     }
 
     if (values.productName === "") {
       errors.productName = "Product Name is required";
-    }
-    if (values.productName === "") {
-      errors.productName = "Product Name is required";
+    }else if(values.productName.length < 3){
+      errors.productName = "Product name must be of minimum 3 characters"
+    }else if (values.productName.length > 1000) {
+      errors.productName = "Product name must have less than 1000 characters.";
     }
 
     if (values.description === "") {
       errors.description = "Application Description is required";
+    }else if (values.description.length > 1000) {
+      errors.description = "Application description must have less than 1000 characters.";
     }
 
     values.testRequestUrls.forEach((url, index) => {
@@ -70,15 +71,30 @@ const RegisterApplication = () => {
           `testRequestUrls[${modifiedComponentId(url.componentId)}].username`
         ] = "Username is required";
       }
+      else if (url.username.length > 255) {
+        errors[
+          `testRequestUrls[${modifiedComponentId(url.componentId)}].username`
+        ] = "Username must have less than 255 characters";
+      }
       if (url.password === "") {
         errors[
           `testRequestUrls[${modifiedComponentId(url.componentId)}].password`
         ] = "Password is required";
       }
+      else if (url.password.length > 255) {
+        errors[
+          `testRequestUrls[${modifiedComponentId(url.componentId)}].password`
+        ] = "Password must have less than 255 characters";
+      }
       if (url.baseUrl === "") {
         errors[
           `testRequestUrls[${modifiedComponentId(url.componentId)}].baseUrl`
         ] = "BaseUrl is required";
+      }
+      else if (url.baseUrl.length > 255) {
+        errors[
+          `testRequestUrls[${modifiedComponentId(url.componentId)}].baseUrl`
+        ] = "BaseUrl must have less than 255 characters";
       }
     });
 
@@ -433,6 +449,8 @@ const RegisterApplication = () => {
                                       ></i>
                                     </button>
                                   )}
+                                  </div>
+                                  <div>
                                   {touched?.[
                                     modifiedComponentId(url.componentId)
                                   ]?.password &&
@@ -535,9 +553,9 @@ const RegisterApplication = () => {
             ) : null}
           </div>
 
-          <div className="my-4 text-end">
+          <div className="text-end">
             <button
-              className="btn btn-primary btn-white py-2 font-size-14 mx-2"
+              className="btn btn-primary btn-white py-2 mx-2"
               onClick={() => {
                 navigate("/dashboard");
               }}
@@ -548,12 +566,7 @@ const RegisterApplication = () => {
               disabled={!(formik.isValid && formik.dirty)}
               type="button"
               onClick={formik.handleSubmit}
-              className="btn btn-primary btn-blue py-2 font-size-14"
-              style={{
-                background: !(formik.isValid && formik.dirty)
-                  ? "#6e5f1"
-                  : "#009fc8",
-              }}
+              className="btn btn-primary btn-blue py-2"
             >
               submit
             </button>

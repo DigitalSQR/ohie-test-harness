@@ -41,6 +41,7 @@ const AdminUsers = () => {
         getAllUsers(sortFieldName, sortDirection);
         hideLoader();
         setIsModalOpen(false);
+        setDeleteUserId(null);
       })
       .catch((error) => {
         console.error("Error updating user state:", error);
@@ -51,6 +52,7 @@ const AdminUsers = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setDeleteUserId(null);
   };
 
   useEffect(() => {
@@ -83,14 +85,18 @@ const AdminUsers = () => {
     navigate(`/admin-users/update-admin-user?userId=${userId}`);
   };
 
-  const handleToggleChange = (userId, userState) => {
+  const handleToggleChange = (userId) => {
     setDeleteUserId(userId);
-    if (userState == "user.status.active") {
-      setIsModalOpen(true);
-    } else {
-      handleOk(userState);
-    }
   };
+
+  useEffect(() => {
+    let user = currentPageUsers.filter(user => user.id == deleteUserId)[0];
+    if (user?.state == "user.status.active") {
+      setIsModalOpen(true);
+    } else if (user?.state) {
+      handleOk(user.state);
+    }
+  }, [deleteUserId])
 
   const handleSort = (sortFieldName) => {
     setSortFieldName(sortFieldName);
@@ -187,11 +193,12 @@ const AdminUsers = () => {
                       {userInfo?.id !== user?.id && (
                         <span className="form-check form-switch">
                           <Switch
-                            defaultChecked={
+                            defaultChecked= "true"
+                            checked={
                               user?.state === "user.status.active"
                             }
                             onChange={() =>
-                              handleToggleChange(user.id, user.state)
+                              handleToggleChange(user.id)
                             }
                             checkedChildren="ACTIVE"
                             unCheckedChildren="INACTIVE"

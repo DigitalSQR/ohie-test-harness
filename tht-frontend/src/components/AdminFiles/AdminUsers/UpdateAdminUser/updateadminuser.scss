@@ -20,7 +20,7 @@
     font-weight: 400;
     color: #51516d;
   }
-  .custom-input input:focus {
+  .custom-input input:focus, .custom-input textarea:focus {
     box-shadow: none;
     border: 1px solid #ccdade;
   }
@@ -97,4 +97,7 @@
 .error-message{
   color: red;
   margin-top: 5px;
+}
+.disable-field:hover:disabled{
+   cursor: not-allowed;
 }

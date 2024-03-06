@@ -1,14 +1,16 @@
-
 .btn-blue{
     background: $color-blue;
     transition: all .5s;
-    padding: 15px 30px;
+    padding: 0px 0px;
     text-align: center;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
+    height:36px;
+    width: 87px;
     border-color: $color-blue;
     &:hover{
         background: $color-blue-80;
          border-color: $color-blue-80;
     }
 }
+

@@ -12,6 +12,11 @@ export default function ResetPassword() {
     const errors = {};
     if (values.newPassword.length === 0) {
       errors.newPassword = "Please enter your new password.";
+    }else if(values.newPassword.length < 6) {
+      errors.newPassword = "Password must be of minimum 6 characters"
+    }
+    else if(values.newPassword.length > 255) {
+      errors.newPassword = "Password must have less than 255 characters."
     }
 
     return errors;

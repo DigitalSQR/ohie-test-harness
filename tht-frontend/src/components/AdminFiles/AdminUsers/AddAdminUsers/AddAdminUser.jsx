@@ -31,16 +31,18 @@ const AddAdminUser = () => {
     password: "",
     roleIds: [],
   };
-
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required *"),
+    name: Yup.string().required("Name is required")
+                      .max(1000,"Name must have less than 1000 characters"),
     email: Yup.string()
       .email("Invalid email address")
-      .required("Email is required *"),
+      .required("Email is required")
+      .max(255, "Email must have less than 255 characters"),
     password: Yup.string()
-      .required("Password is required *")
-      .min(6, "Password must be of minimum 6 characters"),
-    roleIds: Yup.array().min(1, "Role is required *"),
+      .required("Password is required")
+      .min(6, "Password must be of minimum 6 characters")
+      .max(15, "Password must have less than 15 characters"),
+    roleIds: Yup.array().min(1, "Role is required"),
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
@@ -65,6 +67,10 @@ const AddAdminUser = () => {
       });
   };
 
+  const hasValues = (errors) => {
+    return Object.keys(errors).length > 0;
+  }
+
   return (
     <div>
       <div id="wrapper">
@@ -76,112 +82,119 @@ const AddAdminUser = () => {
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
             >
-              <Form>
-                <div className="row">
-                  <div className="col-12">
-                    <div className="custom-input mb-3">
-                      <label htmlFor="name" className="form-label">
-                        Name
-                      </label>
-                      <Field
-                        type="text"
-                        id="name"
-                        name="name"
-                        className="form-control"
-                        placeholder="Name"
-                      />
-                      <ErrorMessage
-                        name="name"
-                        component="div"
-                        className="error-message"
-                      />
+              {({ errors, touched }) => (
+                <Form>
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="custom-input mb-3">
+                        <label htmlFor="name" className="form-label">
+                          Name
+                          <span className="text-danger">*</span>
+                        </label>
+                        <Field
+                          type="text"
+                          id="name"
+                          name="name"
+                          className="form-control"
+                          placeholder="Name"
+                        />
+                        <ErrorMessage
+                          name="name"
+                          component="div"
+                          className="error-message"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="row">
-                  <div className="col-12">
-                    <div className="custom-input mb-3">
-                      <label htmlFor="email" className="form-label">
-                        Email
-                      </label>
-                      <Field
-                        type="email"
-                        id="email"
-                        name="email"
-                        className="form-control"
-                        placeholder="Email"
-                      />
-                      <ErrorMessage
-                        name="email"
-                        component="div"
-                        className="error-message"
-                      />
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="custom-input mb-3">
+                        <label htmlFor="email" className="form-label">
+                          Email
+                          <span className="text-danger">*</span>
+                        </label>
+                        <Field
+                          type="email"
+                          id="email"
+                          name="email"
+                          className="form-control"
+                          placeholder="Email"
+                        />
+                        <ErrorMessage
+                          name="email"
+                          component="div"
+                          className="error-message"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="row">
-                  <div className="col-12">
-                    <div className="custom-input mb-3">
-                      <label htmlFor="password" className="form-label">
-                        Password
-                      </label>
-                      <Field
-                        type="password"
-                        id="password"
-                        name="password"
-                        className="form-control"
-                        placeholder="Password"
-                      />
-                      <ErrorMessage
-                        name="password"
-                        component="div"
-                        className="error-message"
-                      />
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="custom-input mb-3">
+                        <label htmlFor="password" className="form-label">
+                          Password
+                          <span className="text-danger">*</span>
+                        </label>
+                        <Field
+                          type="password"
+                          id="password"
+                          name="password"
+                          className="form-control"
+                          placeholder="Password"
+                        />
+                        <ErrorMessage
+                          name="password"
+                          component="div"
+                          className="error-message"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="row">
-                  <div className="col-12">
-                    <div className="custom-input mb-3">
-                      <label htmlFor="role" className="form-label">
-                        Role
-                      </label>
-                      <Field
-                        className="custom-select mb-2"
+                  <div className="row">
+                    <div className="col-12">
+                      <div className="custom-input mb-3">
+                        <label htmlFor="role" className="form-label">
+                          Role
+                          <span className="text-danger">*</span>
+                        </label>
+                        <Field
+                          className="custom-select mb-2"
+                          name="roleIds"
+                          options={roles}
+                          component={CustomSelect}
+                          placeholder="Select Roles"
+                          isMulti={true}
+                        />
+                      </div>
+                      <ErrorMessage
                         name="roleIds"
-                        options={roles}
-                        component={CustomSelect}
-                        placeholder="Select Roles"
-                        isMulti={true}
+                        component="div"
+                        className="error-message"
                       />
                     </div>
-                    <ErrorMessage
-                      name="roleIds"
-                      component="div"
-                      className="error-message"
-                    />
                   </div>
-                </div>
 
-                <div className="my-4 text-end">
-                  <button
-                    className="btn btn-primary btn-white py-2 font-size-14"
-                    onClick={() => {
-                      navigate("/admin-users");
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-blue btn-submit py-2 font-size-14"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </Form>
+                  <div className="my-4 text-end">
+                    <button
+                      className="btn btn-primary btn-white py-2"
+                      onClick={() => {
+                        navigate("/admin-users");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn btn-primary btn-blue btn-submit py-2"
+                      disabled={hasValues(errors) || !hasValues(touched)}
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </Form>
+              )}
             </Formik>
           </div>
         </div>
