@@ -48,9 +48,10 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
   }, [location]);
 
   return (
+    <div id="sideBar">
     <div
       className={
-        isSidebarOpen ? "sidebar-wrapper open" : "sidebar-wrapper shrink"
+        isSidebarOpen ? "sidebar-wrapper" : "sidebar-wrapper shrink"
       }
       id="mySidenav"
     >
@@ -221,6 +222,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
             </Fragment>
           )}
       </ul>
+    </div>
     </div>
   );
 }

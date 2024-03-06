@@ -1,10 +1,10 @@
 import { Fragment } from "react";
-import openhie_logo from "../../styles/images/logo.png";
-import congratulations_icon from "../../styles/images/congratulations-icon.png";
+import openhie_logo from "../../../styles/images/logo.png";
+import congratulations_icon from "../../../styles/images/congratulations-icon.png";
 import { notification } from "antd";
-import { AuthenticationAPI } from "../../api/AuthenticationAPI";
+import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 import { useNavigate, useParams } from "react-router-dom";
-import { useLoader } from "../loader/LoaderContext";
+import { useLoader } from "../../loader/LoaderContext";
 export default function CongratulationsPage() {
   const { showLoader, hideLoader } = useLoader();
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function CongratulationsPage() {
         hideLoader();
         navigate("/login");
       })
-      .catch((error) => {       
+      .catch((error) => {
         hideLoader();
       });
   };
@@ -32,7 +32,10 @@ export default function CongratulationsPage() {
       <div className="container-fluid ps-0">
         <div className="row">
           <div className="col-md-6 col-12 col-sm-12 p-0">
-            <div className="login-bg">
+            <div
+              className="login-bg"
+              style={{ height: "max(100vh,100%)", overflowY: "hidden" }}
+            >
               <div className="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
                 <h1>Testing Harness Test Automation</h1>
                 <p className="font-size-16 mt-3">

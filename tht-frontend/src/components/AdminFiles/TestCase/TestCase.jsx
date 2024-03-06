@@ -386,7 +386,7 @@ export default function TestCase(props) {
 	}
 
 	return (
-		<Fragment>
+		<div id="testCase">
 			<div className="col-12 non-fuctional-requirement">
 				<div className="container">
 					<div className="row heading">
@@ -416,6 +416,7 @@ export default function TestCase(props) {
 									</b>
 								</h2>
 								<Options
+
 									refId={testcaseResult.refId}
 									testcaseResultInfo={testcaseResult}
 									setSelectedOptions={setSelectedOptions}
@@ -458,9 +459,9 @@ export default function TestCase(props) {
 								{showNote && <div className="text-end m-3 position-relative" id="note-textarea">
 									<textarea className="form-control note-text-area" rows="3" disabled={!editMode} value={noteMessage} onChange={handleOnChangeForNote}></textarea>
 									<div className="note-text-area-button-group">
-										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Cancel" onClick={handleCancelNoteButtonClick}><i class="bi bi-x-lg"></i></span>}
-										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Save Note" onClick={handleSaveNote}><i class="bi bi-floppy"></i></span>}
-										{!editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Edit Note"  onClick={handleEditNoteButtonClick}><i class="bi bi-pencil-square"></i></span>}
+										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Cancel" onClick={handleCancelNoteButtonClick}><i className="bi bi-x-lg"></i></span>}
+										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Save Note" onClick={handleSaveNote}><i className="bi bi-floppy"></i></span>}
+										{!editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Edit Note"  onClick={handleEditNoteButtonClick}><i className="bi bi-pencil-square"></i></span>}
 									</div>
 								</div>}
 								<div className="text-end mb-3">
@@ -523,8 +524,8 @@ export default function TestCase(props) {
 								</div>
 								{/* Photos upload code above */}
 							</div>
-							<div class="col-md-3 col-12 p-0">
-								<div class=" p-2 pt-5 q-img">
+							<div className="col-md-3 col-12 p-0">
+								<div className=" p-2 pt-5 q-img">
                                     <>
 									<Image.PreviewGroup>
                                         <Carousel infinite={false} arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
@@ -561,6 +562,6 @@ export default function TestCase(props) {
 					)}
 				/>
 			</div>
-		</Fragment>
+		</div>
 	);
 }

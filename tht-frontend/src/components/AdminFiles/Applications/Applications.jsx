@@ -112,8 +112,8 @@ const Applications = () => {
   };
 
   return (
-    <div>
-      <div id="wrapper">
+    <div id="applications">
+      <div id="wrapper" >
         <div className="col-12">
           <div className="row mb-2 justify-content-between">
             <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">

@@ -121,6 +121,7 @@ const Assessee = () => {
   }, [state]);
 
   return (
+    <div id="assessee">
     <div id="wrapper">
       <div className="col-12">
         <div className="row mb-2 justify-content-between">
@@ -325,6 +326,7 @@ const Assessee = () => {
           shape="rounded"
         />
       )}
+    </div>
     </div>
   );
 };

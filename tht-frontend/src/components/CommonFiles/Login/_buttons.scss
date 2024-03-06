@@ -1,0 +1,46 @@
+@import "./_variables.scss";
+
+.btn-blue {
+  background: $color-blue;
+  transition: all 0.5s;
+  padding: 15px 30px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  border-color: $color-blue;
+  &:hover {
+    background: $color-blue-80;
+    border-color: $color-blue-80;
+  }
+
+  text-transform: uppercase;
+}
+
+.btn-white {
+  background: #fff;
+  transition: all 0.5s;
+  text-transform: uppercase;
+  padding: 15px 30px;
+  text-align: center;
+  font-size: 18px;
+  color: #51516d;
+  font-weight: 600;
+  border-color: #ccdade;
+}
+.btn-white:hover {
+  background: #1991b1;
+  border-color: #1991b1;
+}
+.btn-white i {
+  padding-right: 6px;
+}
+.btn-white:focus {
+  box-shadow: none;
+  background: #fff;
+  color: #51516d;
+  border-color: #ccdade;
+}
+
+.btn-submit {
+  margin-left: 10px;
+}

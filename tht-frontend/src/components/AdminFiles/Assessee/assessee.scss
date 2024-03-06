@@ -1,28 +1,66 @@
 @import "./variables";
-@import "./buttons";
-
-#wrapper {
+#assessee {
+  #wrapper {
     transition: 0.5s;
     margin-left: 230px;
     padding: 90px 30px;
     position: relative;
     min-height: calc(100vh - 64px);
     @media (max-width: 767.98px) {
-       margin-left: 40px;
+      margin-left: 40px;
     }
   }
 
-  .action-button{
+  .action-button {
     margin-right: 10px;
-    color:white;
+    color: white;
     background: #009fc8;
   }
-  .action-button:hover{
-    color:white;
+  .action-button:hover {
+    color: white;
     background: #009fc8;
   }
-.custom-input {
-  input {
+  .custom-input {
+    input {
+      height: 50px;
+      border-radius: 5px;
+      border: 1px solid $color-light;
+      font-size: 14px;
+      font-weight: 400;
+      color: $color-black-50;
+      &:focus {
+        box-shadow: none;
+        border: 1px solid $color-light;
+      }
+    }
+    label {
+      font-weight: 500;
+      color: $color-black-50;
+    }
+    .input-group-text {
+      background: $color-white;
+      border: 1px solid $color-light;
+      border-right: 0px;
+      padding: 0px;
+      height: 50px;
+      width: 46px;
+      padding-left: 15px;
+      color: $color-light;
+      font-size: 18px;
+    }
+    ::-ms-input-placeholder {
+      /* Edge 12-18 */
+      color: $color-light;
+      font-weight: 400;
+    }
+
+    ::placeholder {
+      color: $color-light;
+      font-weight: 400;
+    }
+  }
+
+  .custom-select {
     height: 50px;
     border-radius: 5px;
     border: 1px solid $color-light;
@@ -34,234 +72,200 @@
       border: 1px solid $color-light;
     }
   }
-  label {
-    font-weight: 500;
-    color: $color-black-50;
+
+  .custom-select-sm {
+    height: 32px;
+    font-size: 13px;
   }
-  .input-group-text {
+
+  .compliance-card {
+    border-radius: 4px;
+    border: 1px solid #e0e9f1;
     background: $color-white;
-    border: 1px solid $color-light;
-    border-right: 0px;
-    padding: 0px;
-    height: 50px;
-    width: 46px;
-    padding-left: 15px;
-    color: $color-light;
-    font-size: 18px;
-  }
-  ::-ms-input-placeholder {
-    /* Edge 12-18 */
-    color: $color-light;
-    font-weight: 400;
-  }
+    padding: 0px 30px;
+    margin-bottom: 30px;
 
-  ::placeholder {
-    color: $color-light;
-    font-weight: 400;
-  }
-}
+    @media (max-width: 567.98px) {
+      padding: 0 15px;
+    }
 
-.custom-select {
-  height: 50px;
-  border-radius: 5px;
-  border: 1px solid $color-light;
-  font-size: 14px;
-  font-weight: 400;
-  color: $color-black-50;
-  &:focus {
-    box-shadow: none;
-    border: 1px solid $color-light;
-  }
-}
+    .c-card-header {
+      padding: 15px 0px;
+      color: #333;
+      font-size: 18px;
+      font-weight: 700;
+      border-bottom: 1px solid #e0e9f1;
+    }
 
-.custom-select-sm {
-  height: 32px;
-  font-size: 13px;
-}
+    .c-card-body {
+      padding: 15px 0px;
 
-.compliance-card {
-  border-radius: 4px;
-  border: 1px solid #e0e9f1;
-  background: $color-white;
-  padding: 0px 30px;
-  margin-bottom: 30px;
-
-  @media (max-width: 567.98px) {
-    padding: 0 15px;
-  }
-
-  .c-card-header {
-    padding: 15px 0px;
-    color: #333;
-    font-size: 18px;
-    font-weight: 700;
-    border-bottom: 1px solid #e0e9f1;
-  }
-
-  .c-card-body {
-    padding: 15px 0px;
-
-    .data-table {
-      th {
-        color: #306380;
-        font-weight: 700;
-        line-height: 24px;
-      }
-
-      td {
-        color: #4a6980;
-        font-size: 14px;
-        line-height: 24px;
-
-        i {
-          margin-left: 7px;
+      .data-table {
+        th {
+          color: #306380;
+          font-weight: 700;
+          line-height: 24px;
         }
-
-        &.pass {
-          color: #0ab39c;
-          font-size: 14px;
-          font-weight: 600;
-          white-space: nowrap;
-        }
-
-        &.fail {
-          color: #f66;
-          font-size: 14px;
-          font-weight: 600;
-          text-transform: uppercase;
-          white-space: nowrap;
-        }
-      }
-
-      .result {
-        background: $color-white;
 
         td {
-          color: #51516d;
-          font-size: 16px;
-          font-weight: 600;
+          color: #4a6980;
+          font-size: 14px;
+          line-height: 24px;
+
+          i {
+            margin-left: 7px;
+          }
+
+          &.pass {
+            color: #0ab39c;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+          }
+
+          &.fail {
+            color: #f66;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+          }
         }
 
-        td.red{
-          color: #f66;
-        }
-        td.green{
-          color: #0ab39c;
+        .result {
+          background: $color-white;
+
+          td {
+            color: #51516d;
+            font-size: 16px;
+            font-weight: 600;
+          }
+
+          td.red {
+            color: #f66;
+          }
+          td.green {
+            color: #0ab39c;
+          }
         }
       }
     }
   }
-}
 
-.gradeA {
-  background-color: #66bb6a;
-  color: $color-white;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 22px;
-  padding: 4px 10px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
-.gradeB {
-  background-color: #d36d80;
-  color: $color-white;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 22px;
-  padding: 4px 10px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
-
-.badges-green {
-  display: inline-block;
-  background: $color-green-20;
-  color: $color-green;
-  border-radius: 4px;
-  padding: 0px 20px;
-  border: 1px solid $color-green-10;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 22px;
-}
-
-.badges-green-dark {
-  display: inline-block;
-  background: $color-green-40;
-  color: $color-white;
-  border-radius: 4px;
-  padding: 0px 20px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 22px;
-}
-
-.badges-orange {
-  display: inline-block;
-  background: $color-orange;
-  color: $color-white;
-  border-radius: 4px;
-  padding: 0px 20px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 22px;
-}
-
-.badges-red {
-  display: inline-block;
-  background: $color-red; 
-  color: $color-white;
-  border-radius: 4px;
-  padding: 0px 20px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 22px;
-}
-
-.no-wrap {
-  white-space: nowrap;
-}
-
-.text-green-50 {
-  color: $color-green-40;
-}
-.text-red {
-  color: $color-red;
-}
-
-.data-table {
-  width: 100%;
-  background: $color-white;
-  th {
-    padding: 12px;
-    font-size: 12px;
+  .gradeA {
+    background-color: #66bb6a;
+    color: $color-white;
+    font-size: 13px;
     font-weight: 700;
-    text-transform: uppercase;
-    line-height: 18px;
+    line-height: 22px;
+    padding: 4px 10px;
+    border-radius: 4px;
     white-space: nowrap;
   }
-  td {
-    border-top: 1px solid $color-gray-20;
-    padding: 12px;
-    font-weight: 500;
+
+  .gradeB {
+    background-color: #d36d80;
+    color: $color-white;
     font-size: 13px;
-    border-top: 1px solid $color-gray-5;
-    line-height: 18px;
+    font-weight: 700;
+    line-height: 22px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
   }
-}
 
-.data-table > tbody > tr:nth-of-type(odd) {
-  background: $color-gray-10;
-}
+  .badges-green {
+    display: inline-block;
+    background: $color-green-20;
+    color: $color-green;
+    border-radius: 4px;
+    padding: 0px 20px;
+    border: 1px solid $color-green-10;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+  }
 
-.pagination-ui{
-  display: flex;
-  justify-content: center;
-  margin-top: 40px;
+  .badges-green-dark {
+    display: inline-block;
+    background: $color-green-40;
+    color: $color-white;
+    border-radius: 4px;
+    padding: 0px 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+  }
+
+  .badges-orange {
+    display: inline-block;
+    background: $color-orange;
+    color: $color-white;
+    border-radius: 4px;
+    padding: 0px 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+  }
+
+  .badges-red {
+    display: inline-block;
+    background: $color-red;
+    color: $color-white;
+    border-radius: 4px;
+    padding: 0px 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+  }
+
+  .no-wrap {
+    white-space: nowrap;
+  }
+
+  .text-green-50 {
+    color: $color-green-40;
+  }
+  .text-red {
+    color: $color-red;
+  }
+
+  .data-table {
+    width: 100%;
+    background: $color-white;
+    th {
+      padding: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 18px;
+      white-space: nowrap;
+    }
+    td {
+      border-top: 1px solid $color-gray-20;
+      padding: 12px;
+      font-weight: 500;
+      font-size: 13px;
+      border-top: 1px solid $color-gray-5;
+      line-height: 18px;
+    }
+  }
+
+  .data-table > tbody > tr:nth-of-type(odd) {
+    background: $color-gray-10;
+  }
+
+  .pagination-ui {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .table-responsive {
+    margin-top: 3rem;
+  }
 }

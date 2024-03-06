@@ -7,7 +7,7 @@ import doc_logo from "../../../styles/images/doc.png";
 import pdf_logo from "../../../styles/images/pdf.png";
 import img_logo from "../../../styles/images/img.png";
 import question_img_logo from "../../../styles/images/question-img.png";
-import "./functional-testing.scss";
+import "./manual-testing.scss";
 import { Tabs, notification } from "antd";
 import { Select } from "antd";
 import { Option } from "antd/es/mentions";
@@ -37,7 +37,7 @@ export default function ManualTesting() {
 	var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
 	const { showLoader, hideLoader } = useLoader();
   const dispatch = useDispatch();
-	const { TabPane } = Tabs;
+	const { Item } = Tabs;
 	const [testcaseName, setTestCaseName] = useState();
 	const navigate = useNavigate();
   const openComponentIndex = -1;
@@ -296,12 +296,12 @@ export default function ManualTesting() {
 
 
 	return !!testcaseResults && !!currentComponent && (
-    <>
+    <div id="manualQuestions">
 		<div id="wrapper" className="stepper-wrapper">
-			<div class="bcca-breadcrumb">
-				<div class="bcca-breadcrumb-item">Manual Testing</div>
-				<div class="bcca-breadcrumb-item" onClick={()=>{navigate(`/choose-test/${testRequestId}`)}}>{testcaseName}</div>
-				<div class="bcca-breadcrumb-item" onClick={()=>{navigate(`/applications`)}}>Applications</div>
+			<div className="bcca-breadcrumb">
+				<div className="bcca-breadcrumb-item">Manual Testing</div>
+				<div className="bcca-breadcrumb-item" onClick={()=>{navigate(`/choose-test/${testRequestId}`)}}>{testcaseName}</div>
+				<div className="bcca-breadcrumb-item" onClick={()=>{navigate(`/applications`)}}>Applications</div>
 			</div>
 			<span>
 				<b>Component  </b>
@@ -339,18 +339,18 @@ export default function ManualTesting() {
 					})}
 			</Select>
 
-      <div class="offcanvas offcanvas-end" tabindex="-1" id="manualTesting" aria-labelledby="manualTestingLabel">
-            <div class="offcanvas-header">
-              <div class="offcanvas-title">
+      <div className="offcanvas offcanvas-end" tabIndex="-1" id="manualTesting" aria-labelledby="manualTestingLabel">
+            <div className="offcanvas-header">
+              <div className="offcanvas-title">
                 <h5 id="manualTestingLabel">Manual Testing </h5>
-                <div class="answeredQuest">
+                <div className="answeredQuest">
                   <h6> {finishedTestCasesCount}/{totalTestCasesCount} </h6>
                 </div>
               </div>
 
-              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+              <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-            <div class="offcanvas-body">
+            <div className="offcanvas-body">
               <CAccordion activeItemKey={openComponentIndex}>
 
                 {testcaseResults.map((component, outerIndex) => (
@@ -399,7 +399,7 @@ export default function ManualTesting() {
 					}}
 				>
 					{testcaseResults[currentComponentIndex].childTestcaseResults.map((specification, index) => (
-						<TabPane
+						<Item
 							key={index}
 							value={specification.id}
 							tab={
@@ -420,7 +420,7 @@ export default function ManualTesting() {
 								refreshCurrentTestcase={refreshCurrentTestcase}
 								isLastQuestion={isLastQuestion}
 							></TestCase>
-						</TabPane>
+						</Item>
 					))}
 				</Tabs>
 			)}
@@ -429,7 +429,7 @@ export default function ManualTesting() {
     <div className="fixed-button">
       <button data-bs-toggle="offcanvas" href="#manualTesting" aria-controls="manualTesting">{finishedTestCasesCount}/{totalTestCasesCount}</button>
     </div>
-    </>
+    </div>
 
 	);
 }

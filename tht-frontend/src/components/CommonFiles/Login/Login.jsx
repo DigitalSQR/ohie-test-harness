@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import "./login.scss";
+// import "./_buttons.scss";
 import openhie_logo from "../../../styles/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import {
@@ -134,7 +135,7 @@ export default function Login() {
   });
 
   return (
-    <Fragment>
+    <div id="login">
       <div className="container-fluid ps-0">
         <div className="row">
           <div className="col-md-6 col-12 col-sm-12 p-0">
@@ -287,6 +288,6 @@ export default function Login() {
           </div>
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 }

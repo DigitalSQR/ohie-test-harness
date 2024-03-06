@@ -191,7 +191,7 @@ const ApplicationReport = () => {
   return (
     <div>
       <Header />
-      <div>
+      <div id="report">
         <div className="application-report">
           <div className="container">
             <div className="col-12">

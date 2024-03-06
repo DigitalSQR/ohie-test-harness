@@ -1,9 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useFormik } from "formik";
+import "./userProfile.scss";
 import { useLoader } from "../../loader/LoaderContext";
 import { UserAPI } from "../../../api/UserAPI";
 import { useNavigate } from "react-router-dom";
 import { Upload, notification, Modal } from "antd";
+import ImgCrop from "antd-img-crop";
 import { userinfo_success } from "../../../reducers/UserInfoReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { store } from "../../../store/store";
@@ -193,7 +195,7 @@ const UserProfile = () => {
     },
   });
   return (
-    <div>
+    <div id="userProfile">
       <div id="wrapper">
         <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
           <div className="form-bg-white">
@@ -270,6 +272,7 @@ const UserProfile = () => {
                   </div>
                 </div>
                 {!profilePicture && (
+                  <ImgCrop>
                   <Upload
                     showUploadList={false}
                     maxCount={1}
@@ -278,12 +281,13 @@ const UserProfile = () => {
                     accept=".png,.jpg,.jpeg,image/png,image/jpeg"
                   >
                     <button
-                      className="btn btn-primary btn-sm"
+                      className="btn btn-primary btn-sm btn-blue"
                       style={{ marginTop: 8 }}
                     >
                       Upload
                     </button>
                   </Upload>
+                  </ImgCrop>
                 )}
               </div>
               <Modal
@@ -394,7 +398,7 @@ const UserProfile = () => {
               style={{ display: "flex", justifyContent: "flex-end" }}
             >
               <button
-                className="btn btn-primary btn-white py-2 font-size-14 reset-button"
+                className="btn btn-primary btn-white py-2 font-size-11 reset-button"
                 style={{ marginRight: "auto" }}
                 onClick={() => {
                   navigate("/reset-password");
@@ -415,7 +419,8 @@ const UserProfile = () => {
               <button
                 disabled={!(formik.isValid)}
                 onClick={formik.handleSubmit}
-                className="btn btn-primary btn-blue btn-submit py-2 font-size-14"
+                className="btn btn-primary btn-blue btn-submit  font-size-14"
+                style={{marginLeft:"1rem"}}
                 type="submit"
               >
                 Update

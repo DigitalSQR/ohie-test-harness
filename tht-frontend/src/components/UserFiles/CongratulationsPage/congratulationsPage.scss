@@ -1,0 +1,24 @@
+.login-bg{
+    background: url(../styles/images/login-bg.svg);
+    height:fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    text-align: center;
+    color: white;
+    background-repeat: no-repeat;
+    background-position: center center;
+    @media(max-width:767px){
+        height: 40vh;
+        background-position: bottom;
+    }
+}
+
+.login-form-bg {
+    width: 400px;
+    margin: 0 auto;
+    @media (max-width: 991px) {
+      width: 320px;
+    }
+  }

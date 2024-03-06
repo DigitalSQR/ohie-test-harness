@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
-import openhie_logo from "../../styles/images/logo.png";
+import openhie_logo from "../../../styles/images/logo.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { notification } from "antd";
-import { AuthenticationAPI } from "../../api/AuthenticationAPI";
-import { useLoader } from "../loader/LoaderContext";
+import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
+import { useLoader } from "../../loader/LoaderContext";
 import { useFormik } from "formik";
 
 export default function UpdatePassword() {

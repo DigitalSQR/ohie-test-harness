@@ -112,9 +112,10 @@ export default function Options(props) {
 
 
 	return (
+		<div id="options">
 		<div className="custom-multiselect field-checkbox">
 			{options && options.map((option, index) => (
-				<div className="field-box">
+				<div className="field-box" key={option.id}>
 					<div className="option-item">
 						<input
 							key={option.id}
@@ -131,6 +132,7 @@ export default function Options(props) {
 					</div>
 				</div>
 			))}
+		</div>
 		</div>
 	);
 }

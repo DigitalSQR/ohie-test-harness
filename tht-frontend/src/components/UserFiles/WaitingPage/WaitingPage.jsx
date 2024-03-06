@@ -1,7 +1,7 @@
 import { Fragment } from "react";
-import Header from "../CommonFiles/Header/Header";
+import Header from "../../CommonFiles/Header/Header";
 import { useDispatch } from "react-redux";
-import { log_out } from "../../reducers/authReducer";
+import { log_out } from "../../../reducers/authReducer";
 import { useNavigate } from "react-router-dom";
 
 export default function WaitingPage() {

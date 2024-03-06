@@ -201,7 +201,7 @@ const RegisterApplication = () => {
   };
 
   return (
-    <form>
+    <div id="registerApplication">
       <div id="wrapper">
         <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
           <div className="form-bg-white">
@@ -573,7 +573,7 @@ const RegisterApplication = () => {
           </div>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

@@ -1,15 +1,15 @@
 import { Fragment, useState } from "react";
-import Header from "./Header/Header";
-import Sidebar from "./Sidebar/Sidebar";
+import Header from "../Header/Header";
+import Sidebar from "../Sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
-import Footer from "./Footer/Footer";
+import Footer from "../Footer/Footer";
 import { useSelector } from "react-redux";
-
+import "./landing.scss";
 export default function Landing() {
   const header = useSelector((state) => state.homeSlice.header);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   return (
-    <Fragment>
+    <div id="landing">
       <Header headerContent={header} isSidebarOpen={isSidebarOpen} />
       <div>
         <Sidebar
@@ -19,6 +19,6 @@ export default function Landing() {
         <main>{<Outlet />}</main>
       </div>
       <Footer />
-    </Fragment>
+    </div>
   );
 }

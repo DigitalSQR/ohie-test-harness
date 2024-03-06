@@ -7,7 +7,7 @@ export default function Footer() {
   const dateTime = new Date();
  
   return (
-    <Fragment>
+    <div id="footer">
       <footer>
         <div className="pe-2 d-sm-flex d-none">
           Testing Harness Tool © {dateTime.getFullYear()} <span className="ps-2">|</span>{" "}
@@ -21,6 +21,6 @@ export default function Footer() {
           <img src={path_logo} />
         </div>
       </footer>
-    </Fragment>
+    </div>
   );
 }
