@@ -34,6 +34,8 @@ public class UserServiceConstants {
     public static final List<String> USER_STATUS = new ArrayList<>();
     public static final Multimap<String, String> USER_STATUS_MAP = ArrayListMultimap.create();
 
+    public static final String CLIENT_ID = "tht";
+
     static {
         USER_STATUS.add(USER_STATUS_VERIFICATION_PENDING);
         USER_STATUS.add(USER_STATUS_APPROVAL_PENDING);

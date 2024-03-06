@@ -228,5 +228,6 @@ public interface UserService {
      */
     public void resendVerification(String userEmail, ContextInfo contextInfo);
 
+    public void revokeAccessTokenOnStateChange(String clientId, String userName);
 
 }

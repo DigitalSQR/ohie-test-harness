@@ -20,6 +20,7 @@ import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntit
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.enums.TokenTypeEnum;
 import com.argusoft.path.tht.usermanagement.repository.RoleRepository;
+import com.argusoft.path.tht.usermanagement.repository.TokenVerificationRepository;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
@@ -31,7 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -55,6 +58,8 @@ public class UserServiceServiceImpl implements UserService {
     @Autowired
     RoleRepository roleRepository;
 
+    @Autowired
+    TokenStore tokenStore;
 
     @Autowired
     private TokenVerificationService tokenVerificationService;
@@ -177,6 +182,11 @@ public class UserServiceServiceImpl implements UserService {
         userEntity.setState(stateKey);
 
         userEntity = this.updateUser(userEntity, contextInfo);
+
+        if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE))
+        {
+            revokeAccessTokenOnStateChange(UserServiceConstants.CLIENT_ID,userEntity.getId());
+        }
         sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity);
         return userEntity;
     }
@@ -397,6 +407,15 @@ public class UserServiceServiceImpl implements UserService {
         roleEntity.setId(UserServiceConstants.ROLE_ID_ASSESSEE);
         userEntity.getRoles().clear();
         userEntity.getRoles().add(roleEntity);
+    }
+    @Override
+    public void revokeAccessTokenOnStateChange(String clientId, String userName)
+    {
+        Collection<OAuth2AccessToken> accessToken = tokenStore.findTokensByClientIdAndUserName(clientId,userName);
+        for(OAuth2AccessToken oAuth2AccessToken : accessToken)
+        {
+            defaultTokenServices.revokeToken(oAuth2AccessToken.getValue());
+        }
     }
 
 }
