@@ -193,5 +193,33 @@ public interface TestcaseResultService {
             throws DoesNotExistException,
             InvalidParameterException, OperationFailedException;
 
+    /**
+     * Retrieves a TestcaseResult corresponding to the given filters.
+     *
+     * @param testRequestId TestcaseResultId of TestcaseResult to be retrieved
+     * @param isManual
+     * @param isAutomated
+     * @param isRequired
+     * @param isRecommended
+     * @param isWorkflow
+     * @param isFunctional
+     * @param contextInfo   information containing the principalId and locale
+     *                      information about the caller of service operation
+     * @return a list of TestcaseResult
+     * @throws DoesNotExistException     a TestcaseResultId in TestcaseResultIds not found
+     * @throws InvalidParameterException invalid contextInfo
+     */
+    public List<TestcaseResultEntity> getMultipleTestcaseResultStatus(
+            String testRequestId,
+            Boolean isManual,
+            Boolean isAutomated,
+            Boolean isRequired,
+            Boolean isRecommended,
+            Boolean isWorkflow,
+            Boolean isFunctional,
+            ContextInfo contextInfo)
+            throws DoesNotExistException,
+            InvalidParameterException, OperationFailedException;
+
     public List<String> getSubClassesNameForTestCase();
 }

@@ -44,13 +44,12 @@ export default function ManualTesting() {
 
 	const fetchTestCaseResultDataAndStartWebSocket = async () => {
 		try {
-			const res = await TestResultAPI.getTestCases(testRequestId);
+			const res = await TestResultAPI.getMultipleTestcaseResultStatus({manual:true,testRequestId});
 			const testcaseResults = [];
 			let testcaseRequestResult;
 			let finishedTestcases = 0;
 			let totalTestcases = 0;
-			for (let item of res.content) {
-				const testcaseResult = await TestResultAPI.getTestcaseResultStatus(item.id, { manual: true });
+			for (let testcaseResult of res) {
 				if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
 					testcaseResult.childTestcaseResults = [];
 					testcaseResults.push(testcaseResult);

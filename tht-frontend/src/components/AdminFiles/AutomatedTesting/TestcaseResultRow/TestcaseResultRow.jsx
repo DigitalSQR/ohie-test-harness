@@ -7,8 +7,8 @@ import stopImg from "../../../../styles/images/stop.svg";
 import "./TestcaseResultRow.scss";
 import { TestcaseResultStateConstants } from "../../../../constants/testcaseResult_constants";
 
-export default function TestcaseResultRow({ testResultId, stompClient, toggleFunction, toggleClass, testcaseResultType, changeState }) {
-    const [testcaseResult, setTestcaseResult] = useState();
+export default function TestcaseResultRow({ testcaseResultItem, stompClient, toggleFunction, toggleClass, testcaseResultType, changeState }) {
+    const [testcaseResult, setTestcaseResult] = useState(testcaseResultItem);
 
     const getButtonDisplay = () => {
         return (
@@ -86,25 +86,19 @@ export default function TestcaseResultRow({ testResultId, stompClient, toggleFun
     };
 
     useEffect(() => {
-        TestResultAPI.getTestcaseResultStatus(testResultId, { automated: true }).then((response) => {
-            setTestcaseResult(response);
-            let oldTestcaseResultState = response.state;                    
-            if (stompClient
-                && stompClient.connected ) {
-                const destination = '/testcase-result/automated/' + testResultId;
-                const subscription = stompClient.subscribe(destination, (msg) => {
-                    const testcaseResult = JSON.parse(msg.body);
-                    setTestcaseResult(testcaseResult);
-                    if(!!changeState) {
-                        changeState(testcaseResult.state, oldTestcaseResultState);
-                    }
-                    oldTestcaseResultState = testcaseResult.state;
-                });
-            }
-        }).catch((error) => {
-       
-        });
-    }, []);
+        let oldTestcaseResultState = testcaseResult.state;
+        if (stompClient && stompClient.connected) {
+            const destination = '/testcase-result/automated/' + testcaseResult.id;
+            const subscription = stompClient.subscribe(destination, (msg) => {
+                const parsedMessage = JSON.parse(msg.body);
+                setTestcaseResult(parsedMessage);
+                if (!!changeState) {
+                    changeState(parsedMessage.state, oldTestcaseResultState);
+                }
+                oldTestcaseResultState = parsedMessage.state;
+            });
+        }
+    }, [stompClient]);
 
     return (
         testcaseResult && <Fragment>

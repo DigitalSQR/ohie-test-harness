@@ -155,7 +155,14 @@ export const TestResultAPI = {
 		});
 		
 		return response.data;
+	},
+	getMultipleTestcaseResultStatus: async function (params) {
+		const response = await api.request({
+			url: `/testcase-result/status`,
+			method: "GET",
+			params,
+		});
+		return response.data;
 	}
-
 
 };
