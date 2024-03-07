@@ -19,14 +19,14 @@ export const TestRequestStateLabels = [
 ];
 
 export const TestRequestStateConstantNames = {
-    "test.request.status.draft": "Draft",
-    "test.request.status.pending": "Pending",
-    "test.request.status.accepted": "Accepted",
-    "test.request.status.rejected": "Rejected",
-    "test.request.status.inprogress": "In Progress",
-    "test.request.status.finished": "Finished",
-    "test.request.status.skipped": "Skipped",
-}
+    "test.request.status.draft": "DRAFT",
+    "test.request.status.pending": "PENDING",
+    "test.request.status.accepted": "ACCEPTED",
+    "test.request.status.rejected": "REJECTED",
+    "test.request.status.inprogress": "IN PROGRESS",
+    "test.request.status.finished": "FINISHED",
+    "test.request.status.skipped": "SKIPPED",
+  };
 
 export const StateBadgeClasses = {
     "test.request.status.draft": "badges-orange",
