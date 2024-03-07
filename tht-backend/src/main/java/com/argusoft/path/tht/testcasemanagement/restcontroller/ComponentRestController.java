@@ -7,6 +7,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
+import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.ComponentMapper;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
@@ -206,7 +207,7 @@ public class ComponentRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/configuration/validate")
-    public List<ValidationResultInfo> validateTestCaseConfiguration(
+    public List<TestcaseValidationResultInfo> validateTestCaseConfiguration(
             @RequestParam(name = "refObjUri") String refObjUri,
             @RequestParam(name = "refId") String refId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo

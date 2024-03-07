@@ -4,6 +4,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -144,7 +145,7 @@ public interface ComponentService {
      * @throws InvalidParameterException invalid parameters
      * @throws OperationFailedException operation  failed
      */
-    public List<ValidationResultInfo> validateTestCaseConfiguration(
+    public List<TestcaseValidationResultInfo> validateTestCaseConfiguration(
             String refObjUri,
             String refId,
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException;
