@@ -219,6 +219,26 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   <span> Testing Requests</span>
                 </a>
               </li>
+              <li>
+              <a
+                className={
+                  activeMenuItem === "/applications"
+                    ? "active menu-like-item"
+                    : "menu-like-item"
+                }
+                onClick={() => {
+                  handleMenuItemClick("/applications");
+                  dispatch(set_header("Applications"));
+                }}
+              >
+                <i
+                  aria-label="Applications"
+                  title="Applications"
+                  className="bi bi-file-earmark-bar-graph menu-left-icon"
+                ></i>
+                <span> Applications </span>
+              </a>
+            </li>
             </Fragment>
           )}
       </ul>
