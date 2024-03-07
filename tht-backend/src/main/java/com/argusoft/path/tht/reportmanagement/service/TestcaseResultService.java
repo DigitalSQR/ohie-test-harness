@@ -3,8 +3,8 @@ package com.argusoft.path.tht.reportmanagement.service;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -154,7 +154,7 @@ public interface TestcaseResultService {
      * change state of testcaseResult with id and giving the expected state
      *
      * @param testcaseResultId id of the testcaseResult
-     * @param stateKey         expected statekey
+     * @param stateKey         expected state key
      * @param contextInfo      ContextInfo
      * @return DocumentEntity
      * @throws DoesNotExistException        when document does not exists for that id
@@ -169,12 +169,12 @@ public interface TestcaseResultService {
      * Retrieves a TestcaseResult corresponding to the given filters.
      *
      * @param testcaseResultId TestcaseResultId of TestcaseResult to be retrieved
-     * @param isManual
-     * @param isAutomated
-     * @param isRequired
-     * @param isRecommended
-     * @param isWorkflow
-     * @param isFunctional
+     * @param isManual boolean manual value
+     * @param isAutomated boolean automated value
+     * @param isRequired boolean required value
+     * @param isRecommended boolean recommended value
+     * @param isWorkflow boolean workflow value
+     * @param isFunctional boolean functional value
      * @param contextInfo      information containing the principalId and locale
      *                         information about the caller of service operation
      * @return a list of TestcaseResult
@@ -221,5 +221,10 @@ public interface TestcaseResultService {
             throws DoesNotExistException,
             InvalidParameterException, OperationFailedException;
 
+   /**
+     * Retrieves classes extending Test case class
+     *
+     * @return classes name
+     */
     public List<String> getSubClassesNameForTestCase();
 }

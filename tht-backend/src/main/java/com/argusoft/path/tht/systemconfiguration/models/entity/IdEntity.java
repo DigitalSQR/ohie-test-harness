@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.systemconfiguration.models.entity;
 
+import org.hibernate.envers.Audited;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import java.util.UUID;
  * @author Dhruv
  */
 @MappedSuperclass
+@Audited
 public class IdEntity {
 
     @Id

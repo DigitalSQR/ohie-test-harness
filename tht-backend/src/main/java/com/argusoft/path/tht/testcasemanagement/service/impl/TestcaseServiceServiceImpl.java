@@ -5,8 +5,8 @@ import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
@@ -18,10 +18,6 @@ import com.argusoft.path.tht.testcasemanagement.validator.TestcaseValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.cache.annotation.CacheEvict;
-// import org.springframework.cache.annotation.CachePut;
-// import org.springframework.cache.annotation.Cacheable;
-// import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,11 +56,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
-    // @Caching(evict = {
-    //         @CacheEvict(value = "searchTestcases", allEntries = true),
-    //         @CacheEvict(value = "searchTestcasesList", allEntries = true),
-    //         @CacheEvict(value = "getTestcases", allEntries = true)
-    // })
     public TestcaseEntity createTestcase(TestcaseEntity testcaseEntity,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
@@ -95,15 +86,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
-    // @Caching(
-    //         evict = {
-    //                 @CacheEvict(value = "searchTestcases", allEntries = true),
-    //                 @CacheEvict(value = "searchTestcasesList", allEntries = true),
-    //                 @CacheEvict(value = "getTestcases", allEntries = true)
-    //         }, put = {
-    //         @CachePut(value = "getTestcaseById",
-    //                 key = "#testcaseEntity.getId()")
-    // })
     public TestcaseEntity updateTestcase(TestcaseEntity testcaseEntity,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
@@ -132,7 +114,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
-    // @Cacheable(value = "searchTestcases", key = "{ #testcaseSearchFilter, #pageable }")
     public Page<TestcaseEntity> searchTestcases(
             TestcaseCriteriaSearchFilter testcaseSearchFilter,
             Pageable pageable,
@@ -144,7 +125,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
 
 
     @Override
-    // @Cacheable(value = "searchTestcasesList", key = "#testcaseSearchFilter")
     public List<TestcaseEntity> searchTestcases(
             TestcaseCriteriaSearchFilter testcaseSearchFilter,
             ContextInfo contextInfo)
@@ -159,7 +139,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
-    // @Cacheable(value = "getTestcaseById", key = "#testcaseId")
     public TestcaseEntity getTestcaseById(String testcaseId,
                                           ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -195,15 +174,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     }
 
     @Override
-    // @Caching(
-    //         evict = {
-    //                 @CacheEvict(value = "searchTestcases", allEntries = true),
-    //                 @CacheEvict(value = "searchTestcasesList", allEntries = true),
-    //                 @CacheEvict(value = "getTestcases", allEntries = true)
-    //         }, put = {
-    //         @CachePut(value = "getTestcaseById",
-    //                 key = "#testcaseId")
-    // })
     public TestcaseEntity changeState(String testcaseId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 

@@ -3,14 +3,12 @@ package com.argusoft.path.tht.usermanagement.models.dto;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdInfo;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
-
 /**
  * This info is for User DTO that contains all the Role model's data.
  *
  * @author Dhruv
  */
-public class RoleInfo extends IdInfo implements Serializable {
+public class RoleInfo extends IdInfo {
 
     @ApiModelProperty(notes = "The name for User model",
             allowEmptyValue = false,

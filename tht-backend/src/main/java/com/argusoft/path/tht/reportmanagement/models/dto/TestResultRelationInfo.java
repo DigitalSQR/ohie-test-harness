@@ -2,9 +2,7 @@ package com.argusoft.path.tht.reportmanagement.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdMetaInfo;
 
-import java.io.Serializable;
-
-public class TestResultRelationInfo extends IdMetaInfo implements Serializable {
+public class TestResultRelationInfo extends IdMetaInfo {
 
     private String refObjUri;
 

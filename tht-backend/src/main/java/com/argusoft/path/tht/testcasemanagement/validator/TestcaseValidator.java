@@ -8,8 +8,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
@@ -224,7 +224,6 @@ public class TestcaseValidator {
     //Validation For :Id
     private static void validateTestcaseEntityId(TestcaseEntity testcaseEntity,
                                                  List<ValidationResultInfo> errors) {
-        ValidationUtils.validateNotEmpty(testcaseEntity.getId(), "id", errors);
         ValidationUtils.validateLength(testcaseEntity.getId(),
                 "id",
                 0,

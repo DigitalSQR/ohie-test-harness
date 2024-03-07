@@ -3,7 +3,6 @@ package com.argusoft.path.tht.testprocessmanagement.models.dto;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +11,7 @@ import java.util.Set;
  *
  * @author Dhruv
  */
-public class TestRequestInfo extends IdStateNameMetaInfo implements Serializable {
+public class TestRequestInfo extends IdStateNameMetaInfo {
 
 
     @ApiModelProperty(notes = "The assesseeId of the testRequest",

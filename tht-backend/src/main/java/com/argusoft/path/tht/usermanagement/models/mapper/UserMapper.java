@@ -1,6 +1,6 @@
 package com.argusoft.path.tht.usermanagement.models.mapper;
 
-import com.argusoft.path.tht.common.configurations.ModelDtoMapper;
+import com.argusoft.path.tht.systemconfiguration.models.mapper.ModelDtoMapper;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -9,8 +9,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 import java.util.Set;
@@ -38,13 +36,6 @@ public interface UserMapper extends ModelDtoMapper<UserEntity,UserInfo> {
     List<UserInfo> modelToDto(List<UserEntity> userEntities);
 
     List<UserEntity> dtoToModel(List<UserInfo> userInfos);
-
-    // Custom mapping method for Page<UserEntity> to Page<UserDto>
-    default Page<UserInfo> pageEntityToDto(Page<UserEntity> page) {
-        List<UserEntity> userEntities = page.getContent();
-        List<UserInfo> userDtoList = this.modelToDto(userEntities);
-        return new PageImpl<>(userDtoList, page.getPageable(), page.getTotalElements());
-    }
 
     default Set<String> setToRoleIds(Set<RoleEntity> roles) {
         if(roles==null){return null;}

@@ -1,13 +1,13 @@
 package com.argusoft.path.tht.reportmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
-import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "testcase_result_relation")
+@Audited
 public class TestResultRelationEntity extends IdMetaEntity {
 
     @Column(name = "ref_obj_uri")

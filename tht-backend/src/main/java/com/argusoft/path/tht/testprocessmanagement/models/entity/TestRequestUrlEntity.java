@@ -4,7 +4,6 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * This model is mapped to testRequestUrl table in database.
@@ -15,7 +14,7 @@ import java.io.Serializable;
 @Audited
 @Table(name = "test_request_url")
 @IdClass(TestRequestUrlEntityId.class)
-public class TestRequestUrlEntity implements Serializable {
+public class TestRequestUrlEntity {
 
     @Id
     @Column(name = "test_request_id")

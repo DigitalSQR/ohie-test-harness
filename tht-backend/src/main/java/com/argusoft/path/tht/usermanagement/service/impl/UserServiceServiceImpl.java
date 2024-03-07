@@ -1,16 +1,16 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
-import com.argusoft.path.tht.captcha.util.EncryptDecrypt;
 import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
-import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
+import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
+import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.captcha.util.EncryptDecrypt;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
@@ -21,7 +21,6 @@ import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntit
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.enums.TokenTypeEnum;
 import com.argusoft.path.tht.usermanagement.repository.RoleRepository;
-import com.argusoft.path.tht.usermanagement.repository.TokenVerificationRepository;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
@@ -41,7 +40,10 @@ import org.springframework.util.StringUtils;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * This UserServiceServiceImpl contains implementation for User service.

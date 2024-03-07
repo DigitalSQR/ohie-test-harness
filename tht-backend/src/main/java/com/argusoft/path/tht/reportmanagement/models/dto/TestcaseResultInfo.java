@@ -1,19 +1,16 @@
 package com.argusoft.path.tht.reportmanagement.models.dto;
 
-import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultAttributesEntity;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This info is for TestcaseResult DTO that contains all the TestcaseResult model's data.
  *
  * @author Dhruv
  */
-public class TestcaseResultInfo extends IdStateNameMetaInfo implements Serializable {
+public class TestcaseResultInfo extends IdStateNameMetaInfo {
 
     @ApiModelProperty(notes = "The unique rank of the TestcaseResult",
             allowEmptyValue = false,

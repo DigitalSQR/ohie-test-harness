@@ -1,6 +1,6 @@
 package com.argusoft.path.tht.testprocessmanagement.models.mapper;
 
-import com.argusoft.path.tht.common.configurations.ModelDtoMapper;
+import com.argusoft.path.tht.systemconfiguration.models.mapper.ModelDtoMapper;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestUrlInfo;
@@ -12,8 +12,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -44,13 +42,6 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity,Test
     List<TestRequestInfo> modelToDto(List<TestRequestEntity> testRequestEntities);
 
     List<TestRequestEntity> dtoToModel(List<TestRequestInfo> testRequestInfos);
-
-    // Custom mapping method for Page<TestRequestEntity> to Page<TestRequestInfo>
-    default Page<TestRequestInfo> pageEntityToDto(Page<TestRequestEntity> page) {
-        List<TestRequestEntity> testRequestEntities = page.getContent();
-        List<TestRequestInfo> testRequestDtoList = this.modelToDto(testRequestEntities);
-        return new PageImpl<>(testRequestDtoList, page.getPageable(), page.getTotalElements());
-    }
 
     default Set<TestRequestUrlInfo> setToTestRequestUrls(TestRequestEntity testRequestEntity) {
         if(testRequestEntity.getTestRequestUrls()==null){ return null;}

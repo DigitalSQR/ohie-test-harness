@@ -3,9 +3,7 @@ package com.argusoft.path.tht.fileservice.models.dto;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
-
-public class DocumentInfo extends IdStateNameMetaInfo implements Serializable {
+public class DocumentInfo extends IdStateNameMetaInfo {
 
     @ApiModelProperty(notes = "The unique rank of the component",
             allowEmptyValue = false,

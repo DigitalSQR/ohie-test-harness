@@ -1,17 +1,14 @@
 package com.argusoft.path.tht.testcasemanagement.service;
 
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This interface provides contract for Testcase API.
@@ -128,6 +125,21 @@ public interface TestcaseService {
             throws DoesNotExistException,
             InvalidParameterException;
 
+    /**
+     * Change the state of testcase option
+     *
+     * @param testcaseId  TestcaseId of Testcase to be retrieved
+     * @param stateKey    state type to which test case state to be changed
+     * @param contextInfo information containing the principalId and locale
+     *                    information about the caller of service operation
+     * @return changed state testcase
+     * @throws DoesNotExistException        a TestcaseId in TestcaseIds not found
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
+     */
     public TestcaseEntity changeState(String testcaseId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
 }

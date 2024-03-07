@@ -5,8 +5,8 @@ import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
@@ -18,10 +18,6 @@ import com.argusoft.path.tht.testcasemanagement.validator.TestcaseOptionValidato
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.cache.annotation.CacheEvict;
-// import org.springframework.cache.annotation.CachePut;
-// import org.springframework.cache.annotation.Cacheable;
-// import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -54,11 +50,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
-    // @Caching(evict = {
-    //         @CacheEvict(value = "searchTestcaseOptions", allEntries = true),
-    //         @CacheEvict(value = "searchTestcaseOptionsList", allEntries = true),
-    //         @CacheEvict(value = "getTestcaseOptions", allEntries = true)
-    // })
     public TestcaseOptionEntity createTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
@@ -89,15 +80,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
-    // @Caching(
-    //         evict = {
-    //                 @CacheEvict(value = "searchTestcaseOptions", allEntries = true),
-    //                 @CacheEvict(value = "searchTestcaseOptionsList", allEntries = true),
-    //                 @CacheEvict(value = "getTestcaseOptions", allEntries = true)
-    //         }, put = {
-    //         @CachePut(value = "getTestcaseOptionById",
-    //                 key = "#testcaseOptionEntity.getId()")
-    // })
     public TestcaseOptionEntity updateTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
@@ -125,7 +107,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
-    // @Cacheable(value = "searchTestcaseOptions", key = "{ #testcaseOptionCriteriaSearchFilter, #pageable }")
     public Page<TestcaseOptionEntity> searchTestcaseOptions(
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             Pageable pageable,
@@ -137,7 +118,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
 
     @Override
-    // @Cacheable(value = "searchTestcaseOptionsList", key = "#testcaseOptionCriteriaSearchFilter")
     public List<TestcaseOptionEntity> searchTestcaseOptions(
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             ContextInfo contextInfo)
@@ -152,7 +132,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
-    // @Cacheable(value = "getTestcaseOptionById", key = "#testcaseOptionId")
     public TestcaseOptionEntity getTestcaseOptionById(String testcaseOptionId,
                                                       ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -186,15 +165,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
     }
 
     @Override
-    // @Caching(
-    //         evict = {
-    //                 @CacheEvict(value = "searchTestcaseOptions", allEntries = true),
-    //                 @CacheEvict(value = "searchTestcaseOptionsList", allEntries = true),
-    //                 @CacheEvict(value = "getTestcaseOptions", allEntries = true)
-    //         }, put = {
-    //         @CachePut(value = "getTestcaseOptionById",
-    //                 key = "#testcaseOptionId")
-    // })
     public TestcaseOptionEntity changeState(String testcaseOptionId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
         List<ValidationResultInfo> errors = new ArrayList<>();

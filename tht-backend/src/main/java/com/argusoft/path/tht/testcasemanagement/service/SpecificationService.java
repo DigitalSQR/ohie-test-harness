@@ -1,17 +1,14 @@
 package com.argusoft.path.tht.testcasemanagement.service;
 
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This interface provides contract for Specification API.
@@ -128,6 +125,22 @@ public interface SpecificationService {
                                                     ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException;
+
+    /**
+     * Change the state of specification
+     *
+     * @param specificationId SpecificationId of Specification to be retrieved
+     * @param stateKey        state type to which specification state to be changed
+     * @param contextInfo     information containing the principalId and locale
+     *                        information about the caller of service operation
+     * @return changed state specification
+     * @throws DoesNotExistException        a SpecificationId in SpecificationIds not found
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
+     */
 
     public SpecificationEntity changeState(String specificationId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 

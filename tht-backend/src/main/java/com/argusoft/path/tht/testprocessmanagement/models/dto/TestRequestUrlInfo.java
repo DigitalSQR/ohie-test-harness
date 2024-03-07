@@ -2,14 +2,12 @@ package com.argusoft.path.tht.testprocessmanagement.models.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
-
 /**
  * This info is for TestRequestUrl DTO that contains all the TestRequestUrl model's data.
  *
  * @author Dhruv
  */
-public class TestRequestUrlInfo implements Serializable {
+public class TestRequestUrlInfo {
 
     @ApiModelProperty(notes = "The componentId of the testRequestUrl",
             allowEmptyValue = false,

@@ -3,23 +3,27 @@ package com.argusoft.path.tht.reportmanagement.service;
 import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+/**
+ * This interface provides contract for TestResultRelation API.
+ *
+ * @author Hardik
+ */
 public interface TestResultRelationService {
 
     /**
-     * Creates a new TestcaseResult.In the TestcaseResult Id, Description, and Meta information may
-     * not be set in the supplied TestcaseResultInfo.
+     * Creates a new TestcaseResultRelation
      *
-     * @param testResultRelationEntity TestcaseResult
+     * @param testResultRelationEntity TestcaseResultRelation
      * @param contextInfo          information containing the principalId and locale
      *                             information about the caller of service operation
-     * @return TestcaseResultInfo the TestcaseResult just created
+     * @return TestcaseResultRelation the TestcaseResultRelation just created
      * @throws DataValidationErrorException supplied data is invalid
      * @throws InvalidParameterException    TestcaseResultInfo or contextInfo is not valid
      * @throws OperationFailedException     unable to complete request
@@ -31,12 +35,12 @@ public interface TestResultRelationService {
             DataValidationErrorException;
 
     /**
-     * Updates an existing TestcaseResult.
+     * Updates an existing TestcaseResultRelation.
      *
-     * @param testResultRelationEntity the new data for the TestcaseResult
+     * @param testResultRelationEntity the new data for the TestcaseResultRelation
      * @param contextInfo          information containing the principalId and locale
      *                             information about the caller of service operation
-     * @return TestcaseResultInfo the details of TestcaseResult just updated
+     * @return TestcaseResultRelation the details of TestcaseResultRelation just updated
      * @throws DataValidationErrorException supplied data is invalid
      * @throws InvalidParameterException    TestcaseResultInfo or contextInfo is not valid
      * @throws OperationFailedException     unable to complete request
@@ -44,22 +48,22 @@ public interface TestResultRelationService {
      *                                      was attempted on an out of date version
      */
     public TestResultRelationEntity updateTestcaseResult(TestResultRelationEntity testResultRelationEntity,
-                                                     ContextInfo contextInfo)
+                                                         ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException,
             InvalidParameterException, DoesNotExistException;
 
     /**
-     * Retrieves a list of TestcaseResults corresponding to the given TestcaseResult Name.The
+     * Retrieves a list of TestcaseResultRelation corresponding to the criteria
      * returned list may be in any order with unique set.
      *
-     * @param testcaseResultSearchFilter
+     * @param testResultRelationCriteriaSearchFilter criteria to search and filter test result relation
      * @param pageable                   Contains Index number of the Page, Max size of the single
      *                                   page,Name of the field for sorting and sortDirection sorting direction
      * @param contextInfo                information containing the principalId and locale
      *                                   information about the caller of service operation
-     * @return a list of TestcaseResult name start with given TestcaseResultName found
+     * @return a list of TestcaseResultRelation
      * @throws InvalidParameterException invalid contextInfo
      * @throws OperationFailedException  unable to complete request
      */
@@ -71,22 +75,21 @@ public interface TestResultRelationService {
 
 
     /**
-     * Retrieves a list of TestcaseResults corresponding to the given TestcaseResult Name.The
+     * Retrieves a list of TestcaseResultRelation corresponding to the criteria.The
      * returned list may be in any order with unique set.
      *
-     * @param testcaseResultSearchFilter
+     * @param  testResultRelationCriteriaSearchFilter criteria to search and filter test result relation
      * @param contextInfo                information containing the principalId and locale
      *                                   information about the caller of service operation
-     * @return a list of TestcaseResult name start with given TestcaseResultName found
+     * @return a list of TestcaseResultRelation
      * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
      */
     public List<TestResultRelationEntity> searchTestResultRelation(TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter,
                                                                    ContextInfo contextInfo)
             throws InvalidParameterException;
 
     /**
-     * Validates a TestcaseResult.Depending on the value of validationType, this
+     * Validates a TestcaseResultRelation.Depending on the value of validationType, this
      * validation could be limited to tests on just the current object and its
      * directly contained sub-objects or expanded to perform all tests related
      * to this object
@@ -95,7 +98,7 @@ public interface TestResultRelationService {
      * @param testResultRelationEntity the TestcaseResult information to be tested
      * @param contextInfo          information containing the principalId and locale
      *                             information about the caller of service operation
-     * @return Results TestcaseResult performing the validation
+     * @return Results TestcaseResultRelation performing the validation
      * @throws InvalidParameterException TestcaseResultInfo or contextInfo is not valid
      * @throws OperationFailedException  unable to complete request
      */
@@ -106,13 +109,13 @@ public interface TestResultRelationService {
             OperationFailedException, DataValidationErrorException;
 
     /**
-     * Retrieves a TestcaseResult corresponding to the given TestcaseResult Id.
+     * Retrieves a TestcaseResultRelation corresponding to the given TestcaseResultRelation id.
      *
-     * @param testcaseResultId TestcaseResultId of TestcaseResult to be retrieved
+     * @param testResultRelationId TestcaseResultRelationId of TestcaseResultRelation to be retrieved
      * @param contextInfo      information containing the principalId and locale
      *                         information about the caller of service operation
-     * @return a list of TestcaseResult
-     * @throws DoesNotExistException     a TestcaseResultId in TestcaseResultIds not found
+     * @return TestResultRelation
+     * @throws DoesNotExistException     a TestcaseResultRelationId in TestcaseResultRelationIds not found
      * @throws InvalidParameterException invalid contextInfo
      */
     public TestResultRelationEntity getTestResultRelationById(String testResultRelationId,
@@ -121,11 +124,36 @@ public interface TestResultRelationService {
             InvalidParameterException;
 
 
+    /**
+     * Retrieves list of object of TestResultRelation from audit mapping
+     *
+     * @param resultRelationIds list of result relation ids
+     * @param contextInfo       information containing the principalId and locale
+     *                          information about the caller of service operation
+     * @return list of object from audit mapping
+     * @throws DoesNotExistException        TestcaseResultRelationId in TestcaseResultRelationIds not found
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+     * @throws DataValidationErrorException supplied data is invalid
+     */
     public List<Object> getTestResultRelationEntitiesFromAuditMapping(List<String> resultRelationIds,
                                                                       ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException, OperationFailedException, DataValidationErrorException;
 
+    /**
+     * Retrieves list of object of TestResultRelation from audit mapping
+     *
+     * @param testcaseResultId id of testcase result
+     * @param refObjectUri     refObjectUri
+     * @param contextInfo      information containing the principalId and locale
+     *                         information about the caller of service operation
+     * @return list of object from audit mapping
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws DoesNotExistException        TestcaseResultId in TestcaseResultIds not found
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws OperationFailedException     unable to complete request
+     */
 
     public List<Object> getTestResultRelationEntitiesFromAuditMapping(String testcaseResultId, String refObjectUri, ContextInfo contextInfo)
             throws InvalidParameterException, DoesNotExistException,
