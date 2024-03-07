@@ -3,6 +3,7 @@ package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutiona
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -12,6 +13,8 @@ import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.Map;
 @Component
 public class SHRF8TestCase1 implements TestCase {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(SHRF8TestCase1.class);
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
         try {
@@ -82,6 +86,7 @@ public class SHRF8TestCase1 implements TestCase {
             return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         } catch (Exception e) {
+            LOGGER.error(ValidateConstant.EXCEPTION + SHRF8TestCase1.class.getSimpleName(), e);
             return new ValidationResultInfo(ErrorLevel.ERROR, "OPERATION FAILED");
         }
     }

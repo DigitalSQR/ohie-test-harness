@@ -276,6 +276,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(testRequestId)) {
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestId is missing");
         }
         TestRequestCriteriaSearchFilter testRequestCriteriaSearchFilter = new TestRequestCriteriaSearchFilter(testRequestId);
@@ -321,6 +322,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         ValidationUtils.transitionValid(TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, testRequestEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     errors);

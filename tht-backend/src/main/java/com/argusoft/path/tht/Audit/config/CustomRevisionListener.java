@@ -40,7 +40,6 @@ public class CustomRevisionListener implements RevisionListener {
             EntityManager entityManager = this.applicationContext.getBean(EntityManager.class);
             Query query = entityManager.createQuery("SELECT MAX(revisionNumber) FROM revinfo");
             Integer maxRevision = (Integer) query.getSingleResult();
-            System.out.println(maxRevision);
             return (maxRevision != null) ? maxRevision + 1 : 1;
         }
         catch (Exception ex)

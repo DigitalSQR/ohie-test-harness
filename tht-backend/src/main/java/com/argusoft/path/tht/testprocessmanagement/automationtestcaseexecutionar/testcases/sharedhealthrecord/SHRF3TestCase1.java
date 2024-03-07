@@ -4,6 +4,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -392,6 +393,7 @@ public class SHRF3TestCase1 implements TestCase {
             return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
+            logger.error(ValidateConstant.EXCEPTION + SHRF3TestCase1.class.getSimpleName(), ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

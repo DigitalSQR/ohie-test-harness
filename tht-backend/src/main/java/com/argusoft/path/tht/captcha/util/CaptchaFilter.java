@@ -3,6 +3,7 @@ package com.argusoft.path.tht.captcha.util;
 
 import com.argusoft.path.tht.captcha.service.CaptchaService;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
@@ -92,7 +93,6 @@ public class CaptchaFilter implements Filter {
                 }
             }
         }
-
         filterChain.doFilter(request, servletResponse);
     }
 }

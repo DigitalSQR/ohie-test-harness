@@ -37,7 +37,6 @@ public class SHRF5TestCase3 implements TestCase {
 
             Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "9414473", "555-555-5555", "john.doe@example.com", client);
             MethodOutcome patientOutcome = client.create().resource(patient).execute();
-            System.out.println("Patient reference id: " + patientOutcome.getId().getIdPart());
             if (!patientOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Patient");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Patient");
@@ -74,7 +73,6 @@ public class SHRF5TestCase3 implements TestCase {
 
             Observation observationTwo = FHIRUtils.createObservation(patientOutcome.getId().getIdPart(), practitionerOneOutcome.getId().getIdPart(), "Code", 24.4);
             MethodOutcome observationTwoOutcome = client.create().resource(observationTwo).execute();
-            System.out.println("observationTwoOutcome reference id: " + observationTwoOutcome.getId().getIdPart());
             if (!observationTwoOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating ObservationTwo");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Observation");
@@ -105,7 +103,6 @@ public class SHRF5TestCase3 implements TestCase {
                     .execute();
             int expectedTotal = 2;
             int actualTotal = bundle.getTotal();
-            System.out.println(actualTotal);
             if (actualTotal != expectedTotal) {
 
                 LOGGER.error(testCaseName + "Testcase Failed because expected " + expectedTotal + " entries, but found " + actualTotal);

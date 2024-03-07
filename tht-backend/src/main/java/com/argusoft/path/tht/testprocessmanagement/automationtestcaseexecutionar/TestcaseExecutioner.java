@@ -115,19 +115,21 @@ public class TestcaseExecutioner {
         try {
             if(testRequestId.isEmpty())
             {
+                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
                 throw new InvalidParameterException("TestRequest Id is not present");
             }
             TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
             testcaseResultCriteriaSearchFilter.setRefId(testRequestId);
             List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
             if (testcaseResultEntity.isEmpty()) {
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
                 throw new DoesNotExistException("testcaseResultEntity list is empty");
             }
             testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResultEntity.get(0), "is_Interrupted", "false", contextInfo);
         }
         catch (Exception ex)
         {
-            LOGGER.error(ex.getMessage());
+            LOGGER.error(ValidateConstant.EXCEPTION + TestcaseExecutioner.class.getSimpleName(), ex);
             throw new RuntimeException(ex);
         }
     }
@@ -299,7 +301,7 @@ public class TestcaseExecutioner {
                 }
             }
         }catch (Exception e) {
-            LOGGER.error("caught Exception in TestcaseExecutioner ", e);
+            LOGGER.error(ValidateConstant.EXCEPTION + TestcaseExecutioner.class.getSimpleName(), e);
         }
     }
 
@@ -453,6 +455,7 @@ public class TestcaseExecutioner {
             Boolean isFunctional,
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         List<TestcaseResultEntity> filteredTestcaseResults;
+
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
         testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
         testcaseResultCriteriaSearchFilter.setManual(isManual);
@@ -470,6 +473,7 @@ public class TestcaseExecutioner {
         }).findFirst();
 
         if (!optionalTestcaseResultEntity.isPresent()) {
+            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
             throw new OperationFailedException("No TestRequest doesn't have testcases for selected inputs.");
         }
 
@@ -536,6 +540,7 @@ public class TestcaseExecutioner {
         }).findFirst();
 
         if (!optionalTestcaseResultEntity.isPresent()) {
+            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
             throw new OperationFailedException("No TestRequest doesn't have testcases for selected inputs.");
         }
 

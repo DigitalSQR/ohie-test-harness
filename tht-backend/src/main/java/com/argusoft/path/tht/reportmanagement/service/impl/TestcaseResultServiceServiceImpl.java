@@ -333,6 +333,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         ValidationUtils.transitionValid(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP, testcaseResultEntity.getState(), stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     errors);
@@ -347,6 +348,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         }
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     errors);

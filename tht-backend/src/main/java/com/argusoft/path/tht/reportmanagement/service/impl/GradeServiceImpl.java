@@ -5,10 +5,13 @@ import com.argusoft.path.tht.reportmanagement.repository.GradeRepository;
 import com.argusoft.path.tht.reportmanagement.service.GradeService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class GradeServiceImpl implements GradeService {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(GradeServiceImpl.class);
 
     @Autowired
     private GradeRepository gradeRepository;
@@ -52,6 +57,7 @@ public class GradeServiceImpl implements GradeService {
             validationResultInfo.setElement("Percentage");
             validationResultInfo.setLevel(ErrorLevel.ERROR);
             validationResultInfo.setMessage("Percentage is not in range of 0 and 100");
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + GradeServiceImpl.class.getSimpleName());
             throw new DataValidationErrorException("Invalid percentage data while updating grade entity", Collections.singletonList(validationResultInfo));
         }
         return null;
