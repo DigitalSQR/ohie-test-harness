@@ -23,12 +23,16 @@ const Applications = () => {
     ...TestRequestActionStateLabels,
     { label: "All", value: "" },
   ];
-  const [filterState, setFilterState] = useState("");
-  const [testRequests, setTestRequests] = useState([]);
-  const [sortDirection, setSortDirection] = useState({
+
+  const obj = {
     name: "desc",
     productName: "desc",
-  });
+    approver: "desc",
+    state: "desc",
+  };
+  const [filterState, setFilterState] = useState("");
+  const [testRequests, setTestRequests] = useState([]);
+  const [sortDirection, setSortDirection] = useState(obj);
   const [sortFieldName, setSortFieldName] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -85,7 +89,7 @@ const Applications = () => {
 
   const handleSort = (sortFieldName) => {
     setSortFieldName(sortFieldName);
-    const newSortDirection = { ...sortDirection };
+    const newSortDirection = { ...obj };
     newSortDirection[sortFieldName] =
       sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
@@ -122,7 +126,7 @@ const Applications = () => {
 
   return (
     <div id="applications">
-      <div id="wrapper" >
+      <div id="wrapper">
         <div className="col-12">
           <div className="row mb-2 justify-content-between">
             <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
@@ -174,11 +178,29 @@ const Applications = () => {
                       {renderSortIcon("productName")}
                     </a>
                   </th>
-                  <th className="col-2">DATE OF APPLICATION</th>
                   <th className="col-2">
-                    EMAIL ID <a className="ps-1" href="#"></a>
+                    DATE OF APPLICATION
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("createdAt")}
+                    >
+                      {renderSortIcon("createdAt")}
+                    </a>
                   </th>
-                  <th className="col-2">STATUS</th>
+                  <th className="col-2">
+                    EMAIL ID
+                  </th>
+                  <th className="col-2">
+                    STATUS
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("state")}
+                    >
+                      {renderSortIcon("state")}
+                    </a>
+                  </th>
                   <th className="col-2">CHOOSE ACTION</th>
                 </tr>
               </thead>
@@ -201,7 +223,7 @@ const Applications = () => {
                         ? testRequest.productName
                         : "-"}
                     </td>
-                    <td>{formatDate(testRequest.meta.updatedAt)}</td>
+                    <td>{formatDate(testRequest.meta.createdAt)}</td>
                     <td>
                       <UserIdEmailConnector
                         userId={testRequest.assesseeId}

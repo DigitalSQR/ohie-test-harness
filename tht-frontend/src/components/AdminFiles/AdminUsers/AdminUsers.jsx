@@ -6,13 +6,15 @@ import "./_table.scss";
 import { useNavigate } from "react-router-dom";
 import { Pagination } from "@mui/material";
 import { Button, Modal } from "antd";
-import sortIcon from "../../../styles/images/sort-icon.png";
 import { useLoader } from "../../loader/LoaderContext";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import { store } from "../../../store/store";
 import { Switch, notification } from "antd";
-import { ROLE_ID_ADMIN, ROLE_ID_TESTER } from "../../../constants/role_constants";
+import {
+  ROLE_ID_ADMIN,
+  ROLE_ID_TESTER,
+} from "../../../constants/role_constants";
 const AdminUsers = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
@@ -20,10 +22,11 @@ const AdminUsers = () => {
   const [deleteUserId, setDeleteUserId] = useState();
   const [userInfo, setUserInfo] = useState();
   const dispatch = useDispatch();
-  const [sortDirection, setSortDirection] = useState({
+  const obj = {
     name: "desc",
     email: "desc",
-  });
+  };
+  const [sortDirection, setSortDirection] = useState(obj);
   const [sortFieldName, setSortFieldName] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -65,7 +68,10 @@ const AdminUsers = () => {
 
   const getAllUsers = (sortFieldName, sortDirection) => {
     showLoader();
-    AdminUserAPI.fetchAllUsers(sortFieldName, sortDirection[sortFieldName]).then((data) => {
+    AdminUserAPI.fetchAllUsers(
+      sortFieldName,
+      sortDirection[sortFieldName]
+    ).then((data) => {
       hideLoader();
       const activeUsers = data.content.filter(
         (user) =>
@@ -101,7 +107,7 @@ const AdminUsers = () => {
 
   const handleSort = (sortFieldName) => {
     setSortFieldName(sortFieldName);
-    const newSortDirection = { ...sortDirection };
+    const newSortDirection = { ...obj };
     newSortDirection[sortFieldName] =
       sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);

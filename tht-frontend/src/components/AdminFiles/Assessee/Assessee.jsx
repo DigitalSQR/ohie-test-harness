@@ -10,11 +10,14 @@ import { ROLE_ID_ASSESSEE } from "../../../constants/role_constants";
 const Assessee = () => {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [state, setState] = useState("");
-  const [sortDirection, setSortDirection] = useState({
+  const obj = {
     name: "desc",
     email: "desc",
     createdAt: "desc",
-  });
+    companyName: "desc",
+    state: "desc",
+  }
+  const [sortDirection, setSortDirection] = useState(obj);
 
   const userStates = [...userStatusActionLabels, { label: "All", value: "" }];
   const [sortFieldName, setSortFieldName] = useState("name");
@@ -52,7 +55,7 @@ const Assessee = () => {
 
   const handleSort = (newSortFieldName) => {
     setSortFieldName(newSortFieldName);
-    const newSortDirection = { ...sortDirection };
+    const newSortDirection = {...obj};
     newSortDirection[newSortFieldName] =
       sortDirection[newSortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
@@ -180,8 +183,24 @@ const Assessee = () => {
                     {renderSortIcon("email")}
                   </a>
                 </th>
-                <th className="col-1.8">Company</th>
-                <th className="col-1.8">requested date</th>
+                <th className="col-1.8">Company
+                <a
+                className="ps-1"
+                href="# "
+                onClick={() => handleSort("companyName")}
+              >
+                {renderSortIcon("companyName")}
+              </a>
+                </th>
+                <th className="col-1.8">requested date
+                <a
+                className="ps-1"
+                href="# "
+                onClick={() => handleSort("createdAt")}
+              >
+                {renderSortIcon("createdAt")}
+              </a>
+                </th>
                 <th className="col-1.8">
                   Status
                   <a
