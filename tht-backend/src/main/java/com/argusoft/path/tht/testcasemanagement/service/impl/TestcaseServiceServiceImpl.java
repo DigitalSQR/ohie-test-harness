@@ -221,7 +221,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         if (!StringUtils.hasLength(testcaseEntity.getId())) {
             testcaseEntity.setId(UUID.randomUUID().toString());
         }
-        testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_DRAFT);
+        testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
 
         TestcaseCriteriaSearchFilter searchFilter = new TestcaseCriteriaSearchFilter();
 

@@ -222,7 +222,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         if (!StringUtils.hasLength(specificationEntity.getId())) {
             specificationEntity.setId(UUID.randomUUID().toString());
         }
-        specificationEntity.setState(SpecificationServiceConstants.SPECIFICATION_STATUS_DRAFT);
+        specificationEntity.setState(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE);
         SpecificationCriteriaSearchFilter searchFilter = new SpecificationCriteriaSearchFilter();
 
         specificationEntity.setRank(1);

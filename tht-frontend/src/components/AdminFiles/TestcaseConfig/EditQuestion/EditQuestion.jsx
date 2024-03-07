@@ -1,61 +1,51 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Button, Select, Switch, notification, Modal } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import { Switch, notification, Modal } from "antd";
 import "./EditQuestion.scss";
-import { TestCaseOptionsAPI } from "../../../api/TestCaseOptionsAPI";
-import { useLoader } from "../../loader/LoaderContext";
-import { TestCaseAPI } from "../../../api/TestCaseAPI";
-import { ManualQuestionTypeConstants } from "../../../constants/testcase_constants";
-import question_img_logo from "../../../styles/images/question-img.png";
+import { TestCaseOptionsAPI } from "../../../../api/TestCaseOptionsAPI";
+import { useLoader } from "../../../loader/LoaderContext";
+import { TestCaseAPI } from "../../../../api/TestCaseAPI";
+import { SpecificationAPI } from "../../../../api/SpecificationAPI";
+import { ComponentAPI } from "../../../../api/ComponentAPI";
+import { ManualQuestionTypeConstants } from "../../../../constants/testcase_constants";
+import TestCaseOptionUpsertModal from "./TestCaseOptionUpsertModal/TestCaseOptionUpsertModal";
 import Accordion from "react-bootstrap/Accordion";
-import Card from "react-bootstrap/Card";
-import Form from "react-bootstrap/Form";
-import { current } from "@reduxjs/toolkit";
-import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
-import { DOCUMENT_TYPE_FOR_TEST_CASES } from "../../../constants/document_constants";
-import { DocumentAPI } from "../../../api/DocumentAPI";
-import {
-  UploadOutlined,
-  PlusOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
-import { message, Upload } from "antd";
-import type { UploadFile, UploadProps } from "antd";
+import { RefObjUriConstants } from "../../../../constants/refObjUri_constants";
+import { DOCUMENT_TYPE_FOR_TEST_CASES } from "../../../../constants/document_constants";
+import { DocumentAPI } from "../../../../api/DocumentAPI";
+import { PlusOutlined } from "@ant-design/icons";
+import { Upload } from "antd";
 
 import {
   DOCUMENT_STATE_ACTIVE,
   DOCUMENT_STATE_INACTIVE,
-} from "../../../constants/document_constants";
-import { reach } from "yup";
+} from "../../../../constants/document_constants";
 
-const { Option: AntdOption } = Select;
-
-const EditQuestion = () => {
+export default function EditQuestion() {
   const { testcaseId } = useParams();
   const [currentTestcase, setCurrentTestcase] = useState({});
   const [currentAccordionIndex, setCurrentAccordionIndex] = useState(null);
-
-  const location = useLocation();
   const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
-  let { testcase, name, componentId } = location.state;
-
-  const [editedQuestion, setEditedQuestion] = useState<string>("");
-  const [initialQuestion, setInitialQuestion] = useState<string>("");
-  const [initialQuestionType, setInitialQuestionType] = useState<string>("");
-  const [editedQuestionType, setEditedQuestionType] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editedQuestion, setEditedQuestion] = useState("");
+  const [initialQuestion, setInitialQuestion] = useState("");
+  const [initialQuestionType, setInitialQuestionType] = useState();
+  const [editedQuestionType, setEditedQuestionType] = useState();
   const [expandedOptionIndex, setExpandedOptionIndex] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
 
-  const [changesMade, setChangesMade] = useState<boolean>(false);
-  const [changesMadeToEditOption, setChangesMadeToEditOption] =
-    useState<boolean>(false);
+  const [component, setComponent] = useState();
+  const [specification, setSpecification] = useState();
+
+  const [changesMade, setChangesMade] = useState(false);
+  const [changesMadeToEditOption, setChangesMadeToEditOption] = useState(false);
 
   const [initialTestcaseOptions, setInitialTestcaseOptions] = useState([]);
   const [editedTestcaseOptions, setEditedTestcaseOptions] = useState([]);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [fileList, setFileList] = useState();
 
   const handleCancel = () => setPreviewOpen(false);
   const handlePreview = (file) => {
@@ -63,7 +53,7 @@ const EditQuestion = () => {
   };
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
 
-  useEffect(() => {
+  const fetchData = () => {
     TestCaseAPI.getTestCasesById(testcaseId)
       .then((res) => {
         setCurrentTestcase(res);
@@ -139,6 +129,28 @@ const EditQuestion = () => {
           placement: "bottomRight",
         });
       });
+  };
+
+  const fetchCompSpecDetails = () => {
+    TestCaseAPI.getTestCasesById(testcaseId)
+      .then((resp1) => {
+        SpecificationAPI.getSpecificationById(resp1.specificationId)
+          .then((resp2) => {
+            setSpecification(resp2);
+            ComponentAPI.getComponentById(resp2.componentId)
+              .then((resp3) => {
+                setComponent(resp3);
+              })
+              .catch((error) => {});
+          })
+          .catch((error) => {});
+      })
+      .catch((error) => {});
+  };
+
+  useEffect(() => {
+    fetchData();
+    fetchCompSpecDetails();
   }, [testcaseId]);
 
   const handleUpload = (file) => {
@@ -188,7 +200,7 @@ const EditQuestion = () => {
     });
   };
 
-  const props: UploadProps = {
+  const props = {
     onRemove: (file) => {
       if (file) {
         confirmDocumentChangeToInactive(file);
@@ -210,36 +222,23 @@ const EditQuestion = () => {
     },
     customRequest: (options) => {
       if (options.file) {
-        handleUpload(options.file)
-          .then(async (response) => {
-            const base64Image = await DocumentAPI.base64Document(
-              response.id,
-              response.name
-            );
-            let imageData = {
-              name: response.name,
-              status: "done",
-              url: base64Image,
-              documentId: response.id,
-            };
-            const updatedFileList = [...fileList];
-            updatedFileList.push(imageData);
-            setFileList(updatedFileList);
-          })
-          .catch((error) => {
-            console.error("Error saving option:", error);
-            const errorMessage =
-              error.response.data && error.response.data.length > 0
-                ? error.response.data
-                    .map((element) => element.message)
-                    .join(", ")
-                : "Unknown error occurred";
+        handleUpload(options.file).then(async (response) => {
+          const base64Image = await DocumentAPI.base64Document(
+            response.id,
+            response.name
+          );
+          let imageData = {
+            name: response.name,
+            status: "done",
+            url: base64Image,
+            documentId: response.id,
+          };
+          const updatedFileList = [...fileList];
+          updatedFileList.push(imageData);
+          setFileList(updatedFileList);
+        }).catch((error)=>{
 
-            notification.error({
-              placement: "bottomRight",
-              description: errorMessage,
-            });
-          });
+        });
       }
     },
     onDrop(event) {
@@ -254,11 +253,11 @@ const EditQuestion = () => {
     },
   };
 
-  const handleQuestionChange = (newValue: string) => {
+  const handleQuestionChange = (newValue) => {
     setEditedQuestion(newValue);
   };
 
-  const handleQuestionTypeChange = (newValue: string) => {
+  const handleQuestionTypeChange = (newValue) => {
     setEditedQuestionType(newValue);
   };
 
@@ -304,14 +303,6 @@ const EditQuestion = () => {
     } finally {
       hideLoader();
     }
-  };
-
-  const handleClick = (path: string, state: object) => {
-    navigate(path, { state });
-  };
-
-  const handleSave = (path: string, state: object) => {
-    navigate(path, { state });
   };
 
   const toggleOption = (index) => {
@@ -366,18 +357,7 @@ const EditQuestion = () => {
           message: "Option saved successfully",
         });
       })
-      .catch((error) => {
-        console.error("Error saving option:", error);
-        const errorMessage =
-          error.response.data && error.response.data.length > 0
-            ? error.response.data.map((element) => element.message).join(", ")
-            : "Unknown error occurred";
-
-        notification.error({
-          placement: "bottomRight",
-          description: errorMessage,
-        });
-      });
+      .catch((error) => {});
   };
 
   const changeOptionState = (index) => {
@@ -410,18 +390,7 @@ const EditQuestion = () => {
             message: "State Changed successfully",
           });
         })
-        .catch((error) => {
-          console.error("Error saving option:", error);
-          const errorMessage =
-            error.response.data && error.response.data.length > 0
-              ? error.response.data.map((element) => element.message).join(", ")
-              : "Unknown error occurred";
-
-          notification.error({
-            placement: "bottomRight",
-            description: errorMessage,
-          });
-        });
+        .catch((error) => {});
     };
 
     if (
@@ -435,161 +404,167 @@ const EditQuestion = () => {
 
   return (
     currentTestcase && (
-      <div id="editQuestion">
-        <div id="wrapper">
-          <div className="bcca-breadcrumb">
-            <div className="bcca-breadcrumb-item">Question</div>
-            <div
-              className="bcca-breadcrumb-item"
-              onClick={() =>
-                handleSave(`/manual-testcases/${testcaseId}`, {
-                  name,
-                  componentId,
-                  specificationId: testcase.testcase.specificationId,
-                })
-              }
-            >
-              Edit Manual Testing Question
-            </div>
-            <div
-              className="bcca-breadcrumb-item"
-              onClick={() =>
-                handleClick(`/component-specification/${componentId}`, {
-                  name,
-                  componentId,
-                })
-              }
-            >
-              {" "}
-              {name}{" "}
-            </div>
-            <div
-              className="bcca-breadcrumb-item"
-              onClick={() => {
-                navigate("/testcase-config");
-              }}
-            >
-              Components
-            </div>
+      <div id="wrapper">
+        <div className="bcca-breadcrumb">
+          <div className="bcca-breadcrumb-item">Question</div>
+          <div
+            className="bcca-breadcrumb-item"
+            onClick={() => navigate(`/testcase-config/manual-testcases/${specification?.id}`)}
+          >
+            {specification?.name} - Manual Configuration
           </div>
-          <div className="col-12 my-4">
-            <div className="card">
-              <div className="card-header">Edit Question</div>
-              <div className="card-body row">
-                <div className="col-md-8 col-12">
-                  <form>
-                    <div className="form-group mb-3">
-                      <label htmlFor="question" className="mb-2">
-                        Question
+          <div
+            className="bcca-breadcrumb-item"
+            onClick={() =>
+              navigate(`/testcase-config/component-specification/${component?.id}`)
+            }
+          >
+            {" "}
+            {component?.name}{" "}
+          </div>
+          <div
+            className="bcca-breadcrumb-item"
+            onClick={() => {
+              navigate("/testcase-config");
+            }}
+          >
+            Components
+          </div>
+        </div>
+        <div className="col-12 my-4">
+          <div className="card">
+            <div className="card-header">Manage Question</div>
+            <div className="card-body row">
+              <div className="col-md-8 col-12">
+                <form>
+                  <div className="form-group mb-3">
+                    <label htmlFor="question" className="mb-2">
+                      Question
+                    </label>
+                    <textarea
+                      className="form-control"
+                      id="question"
+                      rows={3}
+                      value={editedQuestion}
+                      onChange={(e) => handleQuestionChange(e.target.value)}
+                      placeholder="Enter your question"
+                    ></textarea>
+                  </div>
+                  <div className="form-group mb-3">
+                    <label>Question Type</label>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="questionType"
+                        id="multiSelect"
+                        value={ManualQuestionTypeConstants.MULTI_SELECT}
+                        checked={editedQuestionType === "MULTI_SELECT"}
+                        onChange={(e) =>
+                          handleQuestionTypeChange(e.target.value)
+                        }
+                      />
+                      <label className="form-check-label" htmlFor="multiSelect">
+                        Multi Select
                       </label>
-                      <textarea
-                        className="form-control"
-                        id="question"
-                        rows={3}
-                        value={editedQuestion}
-                        onChange={(e) => handleQuestionChange(e.target.value)}
-                        placeholder="Enter your question"
-                      ></textarea>
                     </div>
-                    <div className="form-group mb-3">
-                      <label>Question Type</label>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="questionType"
-                          id="multiSelect"
-                          value={ManualQuestionTypeConstants.MULTI_SELECT}
-                          checked={editedQuestionType === "MULTI_SELECT"}
-                          onChange={(e) =>
-                            handleQuestionTypeChange(e.target.value)
-                          }
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="multiSelect"
-                        >
-                          Multi Select
-                        </label>
-                      </div>
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="questionType"
-                          id="singleSelect"
-                          value={ManualQuestionTypeConstants.SINGLE_SELECT}
-                          checked={editedQuestionType === "SINGLE_SELECT"}
-                          onChange={(e) =>
-                            handleQuestionTypeChange(e.target.value)
-                          }
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="singleSelect"
-                        >
-                          Single Select
-                        </label>
-                      </div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name="questionType"
+                        id="singleSelect"
+                        value={ManualQuestionTypeConstants.SINGLE_SELECT}
+                        checked={editedQuestionType === "SINGLE_SELECT" || !editedQuestionType}
+                        onChange={(e) =>
+                          handleQuestionTypeChange(e.target.value)
+                        }
+                      />
+                      <label
+                        className="form-check-label"  
+                        htmlFor="singleSelect"
+                      >
+                        Single Select
+                      </label>
                     </div>
-                    <button
-                      disabled={!changesMade}
-                      onClick={handleSaveQuestion}
-                      type="button"
-                      className="btn btn-primary mt-3"
-                    >
-                      Save
-                    </button>
-                  </form>
-                </div>
-                <div className="col-md-4 image-border-left">
-                  <div>
-                    <div className="p-2 pt-2 q-img">
-                      {/* <label>Reference Images</label> */}
-                      <>
-                        <div className="d-flex justify-content-between">
-                          <Upload
-                            {...props}
-                            listType="picture-card"
-                            accept=".png,.jpg,.jpeg,image/png,image/jpeg"
-                            fileList={fileList}
-                          >
-                            <button
-                              style={{
-                                border: 0,
-                                background: "none",
-                              }}
-                              type="button"
-                            >
-                              <div>
-                                <PlusOutlined />
-                                <div style={{ marginTop: 8 }}>Upload</div>
-                              </div>
-                            </button>
-                          </Upload>
-                        </div>
-                        <Modal
-                          open={previewOpen}
-                          title={previewTitle}
-                          footer={null}
-                          onCancel={handleCancel}
+                  </div>
+                  <button
+                    disabled={!changesMade}
+                    onClick={handleSaveQuestion}
+                    type="button"
+                    className="btn btn-primary mt-3"
+                  >
+                    Save
+                  </button>
+                </form>
+              </div>
+              <div className="col-md-4 image-border-left">
+                <div>
+                  <div className="p-2 pt-2 q-img">
+                    {/* <label>Reference Images</label> */}
+                    <>
+                      <div className="d-flex justify-content-between">
+                        <Upload
+                          {...props}
+                          listType="picture-card"
+                          accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+                          fileList={fileList}
                         >
-                          <img
-                            alt="example"
+                          <button
                             style={{
-                              width: "100%",
+                              border: 0,
+                              background: "none",
                             }}
-                            src={previewImage}
-                          />
-                        </Modal>
-                      </>
-                    </div>
+                            type="button"
+                          >
+                            <div>
+                              <PlusOutlined />
+                              <div style={{ marginTop: 8 }}>Upload</div>
+                            </div>
+                          </button>
+                        </Upload>
+                      </div>
+                      <Modal
+                        open={previewOpen}
+                        title={previewTitle}
+                        footer={null}
+                        onCancel={handleCancel}
+                      >
+                        <img
+                          alt="example"
+                          style={{
+                            width: "100%",
+                          }}
+                          src={previewImage}
+                        />
+                      </Modal>
+                    </>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="card mt-3">
-              <div className="card-header">Edit Options</div>
+          </div>
+          <div className="d-flex justify-content-end my-3">
+            <div>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary menu-like-item"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <i className="bi bi-plus"></i>
+                Add Option
+              </button>
+            </div>
+          </div>
+
+          <div className="card mt-3">
+            <div className="card-header">Manage Options</div>
+
+            {initialTestcaseOptions.length < 1 ? (
+              <div className="text-center my-4 fs-6">
+                No Options yet for the current testcase
+              </div>
+            ) : (
               <Accordion onSelect={(index) => handleSelectAccordionItem(index)}>
                 {editedTestcaseOptions.map((option, index) => (
                   <div key={index}>
@@ -663,12 +638,17 @@ const EditQuestion = () => {
                   </div>
                 ))}
               </Accordion>
-            </div>
+            )}
           </div>
         </div>
+
+        <TestCaseOptionUpsertModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          testcaseId={testcaseId}
+          fetchData={fetchData}
+        />
       </div>
     )
   );
-};
-
-export default EditQuestion;
+}
