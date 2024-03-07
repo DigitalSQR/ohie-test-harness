@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.reportmanagement.restcontroller;
 
-import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
@@ -11,8 +10,6 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +20,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -257,6 +253,44 @@ public class TestcaseResultRestController {
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         TestcaseResultEntity testcaseResultEntity = testcaseResultService.changeState(testcaseResultId, changeState, contextInfo);
         return testcaseResultMapper.modelToDto(testcaseResultEntity);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @ApiOperation(value = "Retrieves multiple TestcaseResult status corresponding to the given filters", response = TestcaseResultInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResults"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/status")
+    public List<TestcaseResultInfo> getMultipleTestcaseResultStatus(
+            @RequestParam(value = "testRequestId", required = false) String testRequestId,
+            @RequestParam(value = "manual", required = false) Boolean isManual,
+            @RequestParam(value = "automated", required = false) Boolean isAutomated,
+            @RequestParam(value = "required", required = false) Boolean isRequired,
+            @RequestParam(value = "recommended", required = false) Boolean isRecommended,
+            @RequestParam(value = "workflow", required = false) Boolean isWorkflow,
+            @RequestParam(value = "functional", required = false) Boolean isFunctional,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException,
+            InvalidParameterException, OperationFailedException {
+
+        List<TestcaseResultEntity> testcaseResults = testcaseResultService.getMultipleTestcaseResultStatus(
+                testRequestId,
+                isManual,
+                isAutomated,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
+                contextInfo);
+
+        return testcaseResultMapper.modelToDto(testcaseResults);
     }
 
     /**

@@ -10,7 +10,7 @@ const WebSocketService = () => {
         if (isWebSocketConnected.current) return;
 
         const client = new Client({
-            brokerURL: process.env.REACT_APP_WEB_SOCKET_URL || 'ws://https://tht.argusoft.com/api/socket',
+            brokerURL: process.env.REACT_APP_WEB_SOCKET_URL || 'wss://tht.argusoft.com/api/socket',
             reconnectDelay: 5000,
             heartbeatIncoming: 30000,
             heartbeatOutgoing: 30000,

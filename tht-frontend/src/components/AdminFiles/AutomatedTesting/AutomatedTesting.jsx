@@ -116,17 +116,10 @@ export default function AutomatedTesting() {
   const fetchTestCaseResultDataAndStartWebSocket = async () => {
     showLoader();
     try {
-      const response = await TestResultAPI.getTestCaseResultByTestRequestId(
-        testRequestId,
-        null,
-        true
-      );
+      const response = await TestResultAPI.getMultipleTestcaseResultStatus({testRequestId,automated:true});
       var testcaseCount = 0;
       const grouped = [];
-      for (let item of response.content) {
-        item = await TestResultAPI.getTestcaseResultStatus(item.id, {
-          automated: true,
-        });
+      for (let item of response) {
         if (item.refObjUri.split(".").pop() === "ComponentInfo") {
           grouped.push({
             ...item,
@@ -379,7 +372,7 @@ export default function AutomatedTesting() {
                     <TestcaseResultRow
                       key={`component-result-${component?.id}`}
                       testcaseResultType={"component"}
-                      testResultId={component.id}
+                      testcaseResultItem={component}
                       stompClient={stompClient}
                       toggleClass={component?.class}
                       toggleFunction={toggleComponentRow}
@@ -388,7 +381,7 @@ export default function AutomatedTesting() {
                       <TestcaseResultRow
                         key={`specification-result-${specification?.id}`}
                         testcaseResultType={"specification"}
-                        testResultId={specification.id}
+                        testcaseResultItem={specification}
                         stompClient={stompClient}
                         toggleClass={specification?.class}
                         toggleFunction={toggleSpecificationRow}
@@ -397,7 +390,7 @@ export default function AutomatedTesting() {
                         <TestcaseResultRow
                           key={`testcase-result-${testcase?.id}`}
                           testcaseResultType={"testcase"}
-                          testResultId={testcase.id}
+                          testcaseResultItem={testcase}
                           stompClient={stompClient}
                           toggleClass={testcase?.class}
                           toggleFunction={toggleTestCaseRow}

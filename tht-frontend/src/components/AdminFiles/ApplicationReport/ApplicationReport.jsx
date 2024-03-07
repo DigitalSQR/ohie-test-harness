@@ -105,85 +105,51 @@ const ApplicationReport = () => {
 
   const fetchTestCaseResultData = async () => {
     try {
-      const response = await TestResultAPI.getTestCaseResultByTestRequestId(testRequestId);
+      const [requiredResponse, recommendedResponse] = await Promise.all([
+        TestResultAPI.getMultipleTestcaseResultStatus({ testRequestId, required: true }),
+        TestResultAPI.getMultipleTestcaseResultStatus({ testRequestId, recommended: true })
+      ]);
       const requiredTestcaseResults = [];
       const recommendedTestcaseResults = [];
-      const compNames = [];
+      const compNames = new Set();
       const passedRequiredComponentNames = [];
-      for (let item of response.content) {
-        if (item.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI) {
-          if (!!item.required) {
-            const requiredTestRequestTestcaseResult =
-              await TestResultAPI.getTestcaseResultStatus(item.id, {
-                required: true,
-              });
-            setRequiredTestRequestTestcaseResult(
-              requiredTestRequestTestcaseResult
-            );
-          }
-          if (!!item.recommended) {
-            const recommendedTestRequestTestcaseResult =
-              await TestResultAPI.getTestcaseResultStatus(item.id, {
-                recommended: true,
-              });
-            setRecommendedTestRequestTestcaseResult(
-              recommendedTestRequestTestcaseResult
-            );
-          }
+      for (let testcaseResult of requiredResponse) {
+        if (testcaseResult.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI) {
+          setRequiredTestRequestTestcaseResult(testcaseResult);
         }
-        if (item.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
-          compNames.push(item.name);
-          if (!!item.required) {
-            const componentTestcaseResult =
-              await TestResultAPI.getTestcaseResultStatus(item.id, {
-                required: true,
-              });
-            if (!!componentTestcaseResult.success) {
-              passedRequiredComponentNames.push(componentTestcaseResult.name);
-            }
-
-            requiredTestcaseResults.push({
-              ...componentTestcaseResult,
-              specifications: [],
-            });
+        else if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
+          compNames.add(testcaseResult.name);
+          if (!!testcaseResult.success) {
+            passedRequiredComponentNames.push(testcaseResult.name);
           }
-          if (!!item.recommended) {
-            const componentTestcaseResult =
-              await TestResultAPI.getTestcaseResultStatus(item.id, {
-                recommended: true,
-              });
-            recommendedTestcaseResults.push({
-              ...componentTestcaseResult,
-              specifications: [],
-            });
-          }
-        } else if (
-          item.refObjUri === RefObjUriConstants.SPECIFICATION_REFOBJURI
-        ) {
-          if (!!item.required) {
-            const specificationTestcaseResult =
-              await TestResultAPI.getTestcaseResultStatus(item.id, {
-                required: true,
-              });
-            requiredTestcaseResults[
-              requiredTestcaseResults.length - 1
-            ].specifications.push(specificationTestcaseResult);
-          }
-          if (!!item.recommended) {
-            const specificationTestcaseResult =
-              await TestResultAPI.getTestcaseResultStatus(item.id, {
-                recommended: true,
-              });
-            recommendedTestcaseResults[
-              recommendedTestcaseResults.length - 1
-            ].specifications.push(specificationTestcaseResult);
-          }
+          requiredTestcaseResults.push({
+            ...testcaseResult,
+            specifications: [],
+          });
+        }
+        else if (testcaseResult.refObjUri === RefObjUriConstants.SPECIFICATION_REFOBJURI) {
+          requiredTestcaseResults[requiredTestcaseResults.length - 1].specifications.push(testcaseResult);
+        }
+      }
+      for (let testcaseResult of recommendedResponse) {
+        if (testcaseResult.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI) {
+          setRecommendedTestRequestTestcaseResult(testcaseResult);
+        }
+        else if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
+          compNames.add(testcaseResult.name);
+          recommendedTestcaseResults.push({
+            ...testcaseResult,
+            specifications: [],
+          });
+        }
+        else if (testcaseResult.refObjUri === RefObjUriConstants.SPECIFICATION_REFOBJURI) {
+          recommendedTestcaseResults[recommendedTestcaseResults.length - 1].specifications.push(testcaseResult);
         }
       }
       setRequiredTestcaseResults(requiredTestcaseResults);
       setRecommendedTestcaseResults(recommendedTestcaseResults);
       setPassReqCompNames(passedRequiredComponentNames);
-      setComponentNames(compNames);
+      setComponentNames([...compNames]);
     } catch (error) {
       console.log(error);
     }
