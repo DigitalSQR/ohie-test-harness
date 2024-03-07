@@ -131,4 +131,21 @@ public interface ComponentService {
 
     public ComponentEntity changeState(String componentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
+
+    /**
+     * validates testcase configurations.
+     *
+     * @param refObjUri regObjUri
+     * @param refId refId
+     * @param contextInfo information containing the principalId and locale
+     *                    information about the caller of service operation
+     *
+     * @return a list of validation Results
+     * @throws InvalidParameterException invalid parameters
+     * @throws OperationFailedException operation  failed
+     */
+    public List<ValidationResultInfo> validateTestCaseConfiguration(
+            String refObjUri,
+            String refId,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException;
 }

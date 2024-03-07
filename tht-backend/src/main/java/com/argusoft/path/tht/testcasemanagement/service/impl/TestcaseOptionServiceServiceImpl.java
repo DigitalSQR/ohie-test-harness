@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
@@ -195,21 +196,12 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
     //                 key = "#testcaseOptionId")
     // })
     public TestcaseOptionEntity changeState(String testcaseOptionId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
 
-        //validate given stateKey
-        ValidationUtils.statusPresent(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS, stateKey, errors);
+        List<ValidationResultInfo> errors = new ArrayList<>();
 
         TestcaseOptionEntity testcaseOptionEntity = this.getTestcaseOptionById(testcaseOptionId, contextInfo);
 
-        //validate transition
-        ValidationUtils.transitionValid(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_MAP, testcaseOptionEntity.getState(), stateKey, errors);
-
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    ValidateConstant.ERRORS,
-                    errors);
-        }
+        CommonStateChangeValidator.validateStateChange(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS,TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_MAP,testcaseOptionEntity.getState(),stateKey,errors);
 
         testcaseOptionEntity.setState(stateKey);
         testcaseOptionEntity = testcaseOptionRepository.saveAndFlush(testcaseOptionEntity);

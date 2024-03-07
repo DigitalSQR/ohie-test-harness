@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.validator;
 
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
@@ -11,6 +12,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
@@ -339,6 +341,7 @@ public class SpecificationValidator {
             SpecificationEntity.setDescription(SpecificationEntity.getDescription().trim());
         }
     }
+
 
 
 }

@@ -21,6 +21,7 @@ import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.argusoft.path.tht.usermanagement.service.impl.UserServiceServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -385,4 +386,13 @@ public class UserValidator {
             errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR, "Old password can not be usable as new password."));
         }
     }
+
+    public static void validateChangeState(UserEntity userEntity, UserService userService, List<ValidationResultInfo>errors,String stateKey,ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+
+        //validate for one admin should active all time
+        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ADMIN))){
+            UserValidator.oneAdminShouldActiveValidation(userEntity, userService, errors, contextInfo);
+        }
+    }
+
 }

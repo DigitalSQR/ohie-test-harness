@@ -1,6 +1,8 @@
 package com.argusoft.path.tht.fileservice.validator;
 
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
+import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.constant.DocumentTypeConstants;
 import com.argusoft.path.tht.fileservice.constant.DocumentUtil;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
@@ -105,5 +107,6 @@ public class DocumentValidator {
                     fieldName + " is invalid for the given refObjUri"));
         }
     }
+
 
 }

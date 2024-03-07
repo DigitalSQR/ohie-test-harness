@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.fileservice.service.impl;
 
 
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.fileservice.FileDetails;
 import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
@@ -197,21 +198,12 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentEntity changeState(String documentID, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
-        List<ValidationResultInfo> errors = new ArrayList<>();
 
-        //validate given stateKey
-        ValidationUtils.statusPresent(DocumentServiceConstants.DOCUMENT_STATUS, stateKey, errors);
+        List<ValidationResultInfo> errors = new ArrayList<>();
 
         DocumentEntity documentEntity = this.getDocument(documentID, contextInfo);
 
-        //validate transition
-        ValidationUtils.transitionValid(DocumentServiceConstants.DOCUMENT_STATUS_MAP, documentEntity.getState(), stateKey, errors);
-
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    ValidateConstant.ERRORS,
-                    errors);
-        }
+        CommonStateChangeValidator.validateStateChange(DocumentServiceConstants.DOCUMENT_STATUS,DocumentServiceConstants.DOCUMENT_STATUS_MAP,documentEntity.getState(),stateKey,errors);
 
         documentEntity.setState(stateKey);
         documentEntity = documentRepository.saveAndFlush(documentEntity);

@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
 import com.argusoft.path.tht.Audit.Service.AuditService;
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.event.TestcaseResultStateChangedEvent;
@@ -324,20 +325,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         List<ValidationResultInfo> errors = new ArrayList<>();
 
-        //validate given stateKey
-        ValidationUtils.statusPresent(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS, stateKey, errors);
-
         TestcaseResultEntity testcaseResultEntity = this.getTestcaseResultById(testcaseResultId, contextInfo);
 
-        //validate transition
-        ValidationUtils.transitionValid(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP, testcaseResultEntity.getState(), stateKey, errors);
-
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
-            throw new DataValidationErrorException(
-                    ValidateConstant.ERRORS,
-                    errors);
-        }
+        CommonStateChangeValidator.validateStateChange(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS,TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP,testcaseResultEntity.getState(),stateKey,errors);
 
         if (!stateKey.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
             testcaseResultEntity.setMessage(null);
@@ -345,13 +335,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             testcaseResultEntity.setSuccess(Boolean.FALSE);
             testcaseResultEntity.setSuccess(Boolean.FALSE);
             testcaseResultEntity.setDuration(null);
-        }
-
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
-            throw new DataValidationErrorException(
-                    ValidateConstant.ERRORS,
-                    errors);
         }
 
         testcaseResultEntity.setState(stateKey);
