@@ -17,6 +17,7 @@ import { Pagination } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer.jsx";
+import { UserAPI } from "../../../api/UserAPI";
 const Applications = () => {
   const testRequestStates = [
     ...TestRequestActionStateLabels,
@@ -31,10 +32,11 @@ const Applications = () => {
   const [sortFieldName, setSortFieldName] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [userRole, setUserRole] = useState([]);
   const { showLoader, hideLoader } = useLoader();
   const navigate = useNavigate();
-  const dispatch = useDispatch()
-  const pageSize =10
+  const dispatch = useDispatch();
+  const pageSize = 10;
 
   useEffect(() => {
     dispatch(set_header("Applications"));
@@ -47,6 +49,13 @@ const Applications = () => {
     }
   }, [filterState]);
 
+  useEffect(() => {
+    UserAPI.viewUser()
+      .then((res) => {
+        setUserRole(res.roleIds);
+      })
+      .catch((error) => {});
+  });
   const getAllTestRequests = (
     filterState,
     sortFieldName,
@@ -199,16 +208,16 @@ const Applications = () => {
                       ></UserIdEmailConnector>
                     </td>
                     <td>
-                    {testRequest.state !== "test.request.status.finished" ? (
-                      <Fragment>
-                      <span
-                      className={`badge ${
-                        StateBadgeClasses[testRequest.state]
-                      }`}
-                      >
-                      {TestRequestStateConstantNames[testRequest.state]}
-                      </span>
-                      </Fragment>
+                      {testRequest.state !== "test.request.status.finished" ? (
+                        <Fragment>
+                          <span
+                            className={`badge ${
+                              StateBadgeClasses[testRequest.state]
+                            }`}
+                          >
+                            {TestRequestStateConstantNames[testRequest.state]}
+                          </span>
+                        </Fragment>
                       ) : (
                         <Fragment>
                           <span
@@ -219,34 +228,41 @@ const Applications = () => {
                             {TestRequestStateConstantNames[testRequest.state]}
                           </span>
                         </Fragment>
-                        )}
-                        </td>
-                        <td>
-                          {testRequest.state !== "test.request.status.finished" ? (
-                            <button
-                              className={StateClasses[testRequest.state]?.btnClass}
-                              onClick={() => {
-                                navigate(`/choose-test/${testRequest.id}`);
-                              }}
-                            >
-                              {" "}
-                              <i
-                                className={
-                                  StateClasses[testRequest.state]?.iconClass
-                                }
-                              ></i>{" "}
-                              {StateClasses[testRequest.state]?.btnText}
-                            </button>
-                          ) : (
-                            <button
-                              class="btn btn-blue-sm report"
-                              onClick={() => viewReport(testRequest.id)}
-                            >
-                              {" "}
-                              <i class="bi bi-file-text"></i> Report
-                            </button>
-                          )}
-                        </td>
+                      )}
+                    </td>
+                    <td>
+                      {testRequest.state !== "test.request.status.finished" ? (
+                        userRole.includes("role.tester") ||
+                        userRole.includes("role.admin") ? (
+                          <button
+                            className={
+                              StateClasses[testRequest.state]?.btnClass
+                            }
+                            onClick={() => {
+                              navigate(`/choose-test/${testRequest.id}`);
+                            }}
+                          >
+                            {" "}
+                            <i
+                              className={
+                                StateClasses[testRequest.state]?.iconClass
+                              }
+                            ></i>{" "}
+                            {StateClasses[testRequest.state]?.btnText}
+                          </button>
+                        ) : (
+                          <></>
+                        )
+                      ) : (
+                        <button
+                          class="btn btn-blue-sm report"
+                          onClick={() => viewReport(testRequest.id)}
+                        >
+                          {" "}
+                          <i class="bi bi-file-text"></i> Report
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

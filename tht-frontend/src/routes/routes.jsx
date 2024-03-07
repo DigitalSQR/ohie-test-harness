@@ -129,7 +129,7 @@ const routes = createBrowserRouter([
         path: "applications",
         element: (
           <PrivateRoute
-            roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
+            roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER, USER_ROLES.ROLE_ID_ASSESSEE]}
             element={Applications}
           />
         ),
