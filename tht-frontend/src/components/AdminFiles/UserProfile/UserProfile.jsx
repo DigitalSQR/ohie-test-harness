@@ -19,6 +19,7 @@ import {
   DOCUMENT_TYPE_FOR_USER,
 } from "../../../constants/document_constants";
 import avatar from "../../../styles/images/defaultDP.jpeg";
+import { set_header } from "../../../reducers/homeReducer";
 
 const UserProfile = () => {
   const { showLoader, hideLoader } = useLoader();
@@ -91,6 +92,7 @@ const UserProfile = () => {
   };
 
   useEffect(() => {
+    dispatch(set_header("User Profile"));
     fetchUser();
     fetchDisplayPicture();
   }, []);
