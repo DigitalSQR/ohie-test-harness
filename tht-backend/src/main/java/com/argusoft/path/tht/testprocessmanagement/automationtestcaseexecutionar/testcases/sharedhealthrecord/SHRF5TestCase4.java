@@ -39,7 +39,6 @@ public class SHRF5TestCase4 implements TestCase {
             String identifierValue = "IHERED-994";
             Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", identifierSystem, identifierValue, true, "9414473", "555-555-5555", "john.doe@example.com", client);
             MethodOutcome patientOutcome = client.create().resource(patient).execute();
-            System.out.println("Patient reference id: " + patientOutcome.getId().getIdPart());
             if (!patientOutcome.getCreated()) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Patient");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Patient");
@@ -91,7 +90,6 @@ public class SHRF5TestCase4 implements TestCase {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Composition");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create operative Composition");
             }
-            System.out.println("operativeNoteOutcome id:" + operativeNoteOneOutcome.getId().getIdPart());
             DocumentReference documentReferenceOperativeNoteOne = FHIRUtils.createDocumentReference(patientOutcome.getId().getIdPart(), practitionerOneOutcome.getId().getIdPart(), client.getServerBase() + "/Composition/" + operativeNoteOneOutcome.getId().getIdPart(), "Patient OperativeNote");
             MethodOutcome documentReferenceOperativeNoteOneOutcome = client.create().resource(documentReferenceOperativeNoteOne).execute();
 
@@ -106,7 +104,6 @@ public class SHRF5TestCase4 implements TestCase {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Composition");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Discharge Composition");
             }
-            System.out.println("dischargeSummaryOutcome id: " + dischargeSummaryOneOutcome.getId().getIdPart());
 
             DocumentReference documentReferenceDischargeNoteOne = FHIRUtils.createDocumentReference(patientOutcome.getId().getIdPart(), practitionerOneOutcome.getId().getIdPart(), client.getServerBase() + "/Composition/" + dischargeSummaryOneOutcome.getId().getIdPart(), "Patient Discharge Note");
             MethodOutcome documentReferenceDischargeNoteOneOutcome = client.create().resource(documentReferenceDischargeNoteOne).execute();

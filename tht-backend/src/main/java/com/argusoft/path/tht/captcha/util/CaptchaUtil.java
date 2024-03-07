@@ -2,6 +2,9 @@ package com.argusoft.path.tht.captcha.util;
 
 import cn.apiclub.captcha.Captcha;
 import cn.apiclub.captcha.backgrounds.GradiatedBackgroundProducer;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,6 +12,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
 public class CaptchaUtil {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(CaptchaUtil.class);
 
     //create captcha object
     public static Captcha createCaptcha(int width, int height){
@@ -33,6 +38,7 @@ public class CaptchaUtil {
             imageData = new String(array);
 
         }catch (Exception e){
+            LOGGER.error(ValidateConstant.EXCEPTION + CaptchaUtil.class.getSimpleName(), e);
             e.printStackTrace();
         }
         return imageData;

@@ -8,6 +8,7 @@ import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity
 import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultAttributesService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import org.slf4j.Logger;
@@ -103,7 +104,7 @@ public class TestcaseExecutionStarterListener {
                 LOGGER.info("It has successfully executed the test case");
             }
         } catch (Exception e) {
-            LOGGER.error("exception caught while stopping test progress", e);
+            LOGGER.error(ValidateConstant.EXCEPTION + TestcaseExecutionStarterListener.class.getSimpleName(), e);
         }
     }
 

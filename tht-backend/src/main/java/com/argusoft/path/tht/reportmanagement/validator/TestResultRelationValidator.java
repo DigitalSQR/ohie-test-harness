@@ -5,6 +5,7 @@ import com.argusoft.path.tht.reportmanagement.service.TestResultRelationService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
@@ -42,7 +43,7 @@ public class TestResultRelationValidator {
                 testResultRelationEntity,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error("caught DataValidationErrorException in TestResultRelationValidator ");
+            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
@@ -52,11 +53,11 @@ public class TestResultRelationValidator {
     public static List<ValidationResultInfo> validateTestResultRelation(String validationTypeKey, TestResultRelationService testResultRelationService, TestcaseResultService testcaseResultService, TestResultRelationEntity testResultRelationEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (testResultRelationEntity == null) {
-            LOGGER.error("caught InvalidParameterException in testResultRelationEntity ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
             throw new InvalidParameterException("testResultRelationEntity is missing");
         }
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error("caught InvalidParameterException in TestResultValidator ");
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
             throw new InvalidParameterException("validationTypeKey is missing");
         }
 
@@ -78,7 +79,7 @@ public class TestResultRelationValidator {
                                 .getTestResultRelationById(testResultRelationEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
-                        LOGGER.error("caught DoesNotExistException in TestcaseResultValidator ", ex);
+                        LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
@@ -99,7 +100,7 @@ public class TestResultRelationValidator {
                 validateCreateTestResultRelation(testResultRelationEntity,testResultRelationService ,errors, contextInfo);
                 break;
             default:
-                LOGGER.error("caught InvalidParameterException in TestResultValidator ");
+                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
@@ -121,7 +122,7 @@ public class TestResultRelationValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in TestcaseResultValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
                 // This is ok because created id should be unique
             }
         }
@@ -164,7 +165,7 @@ public class TestResultRelationValidator {
                         testcaseResultService.getTestcaseResultById(testResultRelationEntity.getTestcaseResultEntity().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("caught DoesNotExistException in TestResultValidator ", ex);
+                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
                 String fieldName = "testcaseResult";
                 errors.add(
                         new ValidationResultInfo(fieldName,

@@ -7,6 +7,7 @@ import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -23,6 +24,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.http.entity.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +44,8 @@ import java.util.*;
 @RequestMapping("/testcase-result")
 @Api(value = "REST API for TestcaseResult services", tags = {"TestcaseResult API"})
 public class TestcaseResultRestController {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultRestController.class);
 
     @Autowired
     private TestcaseResultService testcaseResultService;
@@ -185,6 +190,7 @@ public class TestcaseResultRestController {
             JsonNode patched = jsonPatch.apply(objectMapper.convertValue(testcaseResultInfo, JsonNode.class));
             return objectMapper.treeToValue(patched, TestcaseResultInfo.class);
         } catch (JsonPatchException | JsonProcessingException e) {
+            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseResultRestController.class.getSimpleName(), e);
             throw new OperationFailedException("Caught Exception while processing Json ",e);
         }
     }

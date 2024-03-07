@@ -57,7 +57,6 @@ public class SHRF5TestCase1 implements TestCase {
                 LOGGER.error(testCaseName + "Testcase Failed when creating organization");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization");
             }
-            System.out.println("Organization reference id: " + organizationOneOutcome.getId().getIdPart());
 
             String patientId = patientOutcome.getId().getIdPart();
 
