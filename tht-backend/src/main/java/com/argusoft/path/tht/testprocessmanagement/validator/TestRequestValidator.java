@@ -18,6 +18,7 @@ import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
@@ -551,7 +552,7 @@ public class TestRequestValidator {
                     if (!ComponentServiceConstants.COMPONENT_STATUS_ACTIVE.equals(testRequestUrlEntity.getComponent().getState())) {
                         errors.add(new ValidationResultInfo("component", ErrorLevel.WARN, "Component " + testRequestUrlEntity.getComponent().getName() + " will be skipped as it is inactive in Testcase Configuration. To activate this component, please contact administrator."));
                     } else {
-                        List<ValidationResultInfo> validationResultEntities = ComponentValidator.validateTestCaseConfiguration(
+                        List<TestcaseValidationResultInfo> validationResultEntities = ComponentValidator.validateTestCaseConfiguration(
                                 testRequestUrlEntity.getComponent().getId(),
                                 ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
                                 componentService,
@@ -559,7 +560,7 @@ public class TestRequestValidator {
                                 testcaseService,
                                 testcaseOptionService,
                                 contextInfo);
-                        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+                        if (containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
                             errors.add(
                                     new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
                                             ErrorLevel.ERROR,
@@ -569,5 +570,28 @@ public class TestRequestValidator {
                 }
             }
         }
+    }
+
+    private static boolean containsErrors(
+            List<TestcaseValidationResultInfo> errors,
+            ErrorLevel errorLevel) {
+        return hasValidationErrors(errors,
+                errorLevel,
+                new ArrayList<>());
+    }
+
+    private static boolean hasValidationErrors(
+            List<TestcaseValidationResultInfo> validationResults,
+            ErrorLevel threshold, List<String> ignoreFields) {
+        if (validationResults == null) {
+            return false;
+        }
+        return validationResults.stream().anyMatch(validationResult
+                -> //Ignore any fields that are in the list
+                ((ignoreFields == null
+                        || (!ignoreFields.contains(validationResult.getElement())))
+                        && ValidationResultInfo.isSurpassingThreshold(validationResult.getLevel(),
+                        threshold))
+        );
     }
 }

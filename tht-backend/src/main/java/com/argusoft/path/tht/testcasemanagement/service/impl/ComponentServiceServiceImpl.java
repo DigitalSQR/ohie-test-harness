@@ -11,6 +11,7 @@ import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.ComponentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
@@ -219,7 +220,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
-    public List<ValidationResultInfo> validateTestCaseConfiguration(String refObjUri, String refId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public List<TestcaseValidationResultInfo> validateTestCaseConfiguration(String refObjUri, String refId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         return ComponentValidator.validateTestCaseConfiguration(refObjUri, refId, this, specificationService, testcaseService, testcaseOptionService, contextInfo);
     }
 
