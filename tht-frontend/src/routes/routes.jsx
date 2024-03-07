@@ -19,10 +19,10 @@ import RegisterApplication from "../components/CommonFiles/RegisterApplication/R
 import EmailVerified from "../components/UserFiles/EmailVerified/EmailVerified.jsx";
 import AdminUsers from "../components/AdminFiles/AdminUsers/AdminUsers";
 import ManualTesting from "../components/AdminFiles/ManualTesting/ManualTesting";
-import ComponentList from "../components/TestcaseConfig/ComponentList/ComponentList.jsx";
-import ComponentSpecification from "../components/TestcaseConfig/ComponentSpecification/ComponentSpecification.tsx";
-import ManualTestCases from "../components/TestcaseConfig/SpecQuestions/SpecQuestions.tsx";
-import EditQuestion from "../components/TestcaseConfig/EditQuestion/EditQuestion.tsx";
+import ComponentList from "../components/AdminFiles/TestcaseConfig/ComponentList/ComponentList";
+import ComponentSpecification from "../components/AdminFiles/TestcaseConfig/ComponentSpecification/ComponentSpecification";
+import ManualTestCases from "../components/AdminFiles/TestcaseConfig/SpecQuestions/SpecQuestions.jsx";
+import EditQuestion from "../components/AdminFiles/TestcaseConfig/EditQuestion/EditQuestion.jsx";
 import UserProfile from "../components/AdminFiles/UserProfile/UserProfile";
 import ResetPassword from "../components/CommonFiles/ResetPassword/ResetPassword.jsx";
 import AddAdminUser from "../components/AdminFiles/AdminUsers/AddAdminUsers/AddAdminUser";
@@ -138,7 +138,7 @@ const routes = createBrowserRouter([
         path: "choose-test/:testRequestId",
         element: (
           <PrivateRoute
-            roles={[USER_ROLES.ROLE_ID_ADMIN,USER_ROLES.ROLE_ID_TESTER]}
+            roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
             element={ChooseTest}
           />
         ),
@@ -147,7 +147,7 @@ const routes = createBrowserRouter([
         path: "manual-testing/:testRequestId",
         element: (
           <PrivateRoute
-            roles={[USER_ROLES.ROLE_ID_ADMIN,USER_ROLES.ROLE_ID_TESTER]}
+            roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
             element={ManualTesting}
           />
         ),
@@ -156,7 +156,7 @@ const routes = createBrowserRouter([
         path: "automated-testing/:testRequestId",
         element: (
           <PrivateRoute
-            roles={[USER_ROLES.ROLE_ID_ADMIN,USER_ROLES.ROLE_ID_TESTER]}
+            roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
             element={AutomatedTesting}
           />
         ),
@@ -233,7 +233,7 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "component-specification/:componentId",
+        path: "testcase-config/component-specification/:componentId",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -242,7 +242,7 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "manual-testcases/:specificationId",
+        path: "testcase-config/manual-testcases/:specificationId",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -251,7 +251,7 @@ const routes = createBrowserRouter([
         ),
       },
       {
-        path: "edit-question/:testcaseId",
+        path: "testcase-config/edit-question/:testcaseId",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}

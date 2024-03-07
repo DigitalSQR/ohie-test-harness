@@ -1,13 +1,22 @@
 import api from "./configs/axiosConfigs";
 export const TestCaseAPI = {
-  getTestCasesBySpecificationId: async function (specificationId) {
+
+  createTestCase: function (data) {
+    return api
+      .request({
+        url: `/testcase`,
+        method: "POST",
+        data,
+      })
+      .then((response) => response.data);
+  },
+
+  getTestCasesBySpecificationId: async function (params) {
    
       const response = await api.request({
         url: `/testcase`,
         method: "GET",
-        params: {
-          specificationId: specificationId,
-        },
+        params
       });
       return response.data;
    

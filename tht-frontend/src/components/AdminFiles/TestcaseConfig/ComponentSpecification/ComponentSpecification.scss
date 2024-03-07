@@ -117,6 +117,26 @@
     height: 100%; /* Set a fixed height for the container */
   }
 
+  .edit-badge{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:0.5rem;
+    font-size: 12px;
+    padding: 3px 20px;
+    background-color: rgb(10, 179, 156);
+    border-color: rgb(10, 179, 156);
+    color:white;
+    border-radius: 6px;
+    border-style: none;
+  }
+
+  .pagination-ui {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
   // .ant-tabs-nav-wrap {
   //   margin-bottom: -32px; /* Adjust this value to reduce space below tabs */
   // }

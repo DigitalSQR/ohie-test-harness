@@ -213,7 +213,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         if (!StringUtils.hasLength(testcaseOptionEntity.getId())) {
             testcaseOptionEntity.setId(UUID.randomUUID().toString());
         }
-        testcaseOptionEntity.setState(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_DRAFT);
+        testcaseOptionEntity.setState(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_ACTIVE);
         TestcaseOptionCriteriaSearchFilter searchFilter = new TestcaseOptionCriteriaSearchFilter();
 
         testcaseOptionEntity.setRank(1);

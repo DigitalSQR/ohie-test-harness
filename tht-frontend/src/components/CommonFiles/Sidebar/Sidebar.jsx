@@ -177,7 +177,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               <li>
                 <a
                   className={
-                    activeMenuItem === "/testcase-config"
+                    activeMenuItem.includes("/testcase-config")
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
