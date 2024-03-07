@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
 import com.argusoft.path.tht.captcha.util.EncryptDecrypt;
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.emailservice.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -159,26 +160,13 @@ public class UserServiceServiceImpl implements UserService {
     public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
-        //validate given stateKey
-        ValidationUtils.statusPresent(UserServiceConstants.USER_STATUS, stateKey, errors);
 
         UserEntity userEntity = this.getUserById(userId, contextInfo);
         String oldState = userEntity.getState();
 
-        //validate transition
-        ValidationUtils.transitionValid(UserServiceConstants.USER_STATUS_MAP, oldState, stateKey, errors);
+        UserValidator.validateChangeState(userEntity,this,errors,stateKey,contextInfo);
 
-        //validate for one admin should active all time
-        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ADMIN))){
-            UserValidator.oneAdminShouldActiveValidation(userEntity, this, errors, contextInfo);
-        }
-
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + UserServiceServiceImpl.class.getSimpleName());
-            throw new DataValidationErrorException(
-                    ValidateConstant.ERRORS,
-                    errors);
-        }
+        CommonStateChangeValidator.validateStateChange(UserServiceConstants.USER_STATUS,UserServiceConstants.USER_STATUS_MAP,userEntity.getState(),stateKey,errors);
 
         userEntity.setState(stateKey);
 

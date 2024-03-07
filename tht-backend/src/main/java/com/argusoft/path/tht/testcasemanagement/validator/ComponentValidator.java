@@ -11,19 +11,27 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ComponentValidator {
 
@@ -54,7 +62,7 @@ public class ComponentValidator {
             OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ ComponentValidator.class.getSimpleName());
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE
@@ -88,7 +96,7 @@ public class ComponentValidator {
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
-                                        ErrorLevel.ERROR,ValidateConstant.ID_SUPPLIED+ "update" + ValidateConstant.DOES_NOT_EXIST));
+                                        ErrorLevel.ERROR, ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
                     }
                 }
 
@@ -104,7 +112,7 @@ public class ComponentValidator {
                 validateCreateComponent(errors, componentEntity, componentService, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ ComponentValidator.class.getSimpleName());
+                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
@@ -138,7 +146,7 @@ public class ComponentValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
+                                ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         });
         componentEntity.setSpecifications(specificationEntitySet);
@@ -163,7 +171,7 @@ public class ComponentValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    ValidateConstant.SOMEONE_UPDATED+ " Component " + ValidateConstant.REFRESH_COPY));
+                    ValidateConstant.SOMEONE_UPDATED + " Component " + ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
         validateNotUpdatable(errors, componentEntity, originalEntity);
@@ -192,7 +200,7 @@ public class ComponentValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ "create" + ValidateConstant.ALREADY_EXIST));
+                                ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
                 LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + ComponentValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
@@ -244,7 +252,7 @@ public class ComponentValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "Given Component"+ ValidateConstant.NAME_ALREADY_EXIST));
+                                "Given Component" + ValidateConstant.NAME_ALREADY_EXIST));
             }
         }
     }
@@ -272,7 +280,7 @@ public class ComponentValidator {
 
     //Validation For :Order
     private static void validateComponentEntityRank(ComponentEntity componentEntity,
-                                                     List<ValidationResultInfo> errors) {
+                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(componentEntity.getRank(),
                 "rank",
                 1,
@@ -289,6 +297,7 @@ public class ComponentValidator {
                 1000,
                 errors);
     }
+
     //trim all Component field
     private static void trimComponent(ComponentEntity ComponentEntity) {
         if (ComponentEntity.getId() != null) {
@@ -299,6 +308,152 @@ public class ComponentValidator {
         }
         if (ComponentEntity.getDescription() != null) {
             ComponentEntity.setDescription(ComponentEntity.getDescription().trim());
+        }
+    }
+
+    public static List<ValidationResultInfo> validateTestCaseConfiguration(
+            String refObjUri,
+            String refId,
+            ComponentService componentService,
+            SpecificationService specificationService,
+            TestcaseService testcaseService,
+            TestcaseOptionService testcaseOptionService,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        // VALIDATE
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        if (StringUtils.hasLength(refObjUri)) {
+            if (ComponentServiceConstants.COMPONENT_REF_OBJ_URI.equals(refObjUri)) {
+                try {
+                    ComponentEntity componentEntity = componentService.getComponentById(refId, contextInfo);
+                    validateComponent(componentEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                } catch (DoesNotExistException e) {
+                    errors.add(
+                            new ValidationResultInfo(ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                                    ErrorLevel.ERROR,
+                                    ValidateConstant.ID_SUPPLIED + " validate component" + ValidateConstant.DOES_NOT_EXIST));
+                }
+            } else if (SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI.equals(refObjUri)) {
+                try {
+                    SpecificationEntity specificationEntity = specificationService.getSpecificationById(refId, contextInfo);
+                    validateSpecification(specificationEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                } catch (DoesNotExistException e) {
+                    errors.add(
+                            new ValidationResultInfo(ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                                    ErrorLevel.ERROR,
+                                    ValidateConstant.ID_SUPPLIED + " validate specification " + ValidateConstant.DOES_NOT_EXIST));
+                }
+            } else if (TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(refObjUri)) {
+                try {
+                    TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(refId, contextInfo);
+                    validateTestcase(testcaseEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                } catch (DoesNotExistException e) {
+                    errors.add(
+                            new ValidationResultInfo(ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                                    ErrorLevel.ERROR,
+                                    ValidateConstant.ID_SUPPLIED + " validate testcase" + ValidateConstant.DOES_NOT_EXIST));
+                }
+            }
+        } else {
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+            componentCriteriaSearchFilter.setState(Collections.singletonList(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE));
+            List<ComponentEntity> componentEntities = componentService.searchComponents(componentCriteriaSearchFilter, contextInfo);
+            for (ComponentEntity componentEntity : componentEntities) {
+                validateComponent(componentEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+            }
+        }
+
+        return errors;
+    }
+
+    private static void validateComponent(
+            ComponentEntity componentEntity,
+            ComponentService componentService,
+            SpecificationService specificationService,
+            TestcaseService testcaseService,
+            TestcaseOptionService testcaseOptionService,
+            List<ValidationResultInfo> errors,
+            ContextInfo contextInfo
+    ) throws InvalidParameterException, OperationFailedException {
+        errors.add(
+                new ValidationResultInfo(ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                        ErrorLevel.OK,
+                        componentEntity.getName()));
+
+        SpecificationCriteriaSearchFilter specificationCriteriaSearchFilter = new SpecificationCriteriaSearchFilter();
+        specificationCriteriaSearchFilter.setComponentId(componentEntity.getId());
+        specificationCriteriaSearchFilter.setState(Collections.singletonList(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE));
+        List<SpecificationEntity> specificationEntities = specificationService.searchSpecifications(specificationCriteriaSearchFilter, contextInfo);
+        if(specificationEntities.isEmpty()) {
+            errors.add(
+                    new ValidationResultInfo(ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                            ErrorLevel.ERROR,
+                            componentEntity.getName() + "doesn't have any active specifications"));
+        }
+        for (SpecificationEntity specificationEntity : specificationEntities) {
+            validateSpecification(specificationEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+        }
+    }
+
+
+    private static void validateSpecification(
+            SpecificationEntity specificationEntity,
+            ComponentService componentService,
+            SpecificationService specificationService,
+            TestcaseService testcaseService,
+            TestcaseOptionService testcaseOptionService,
+            List<ValidationResultInfo> errors,
+            ContextInfo contextInfo
+    ) throws InvalidParameterException, OperationFailedException {
+        errors.add(
+                new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
+                        ErrorLevel.OK,
+                        specificationEntity.getName()));
+
+        TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter = new TestcaseCriteriaSearchFilter();
+        testcaseCriteriaSearchFilter.setSpecificationId(specificationEntity.getId());
+        testcaseCriteriaSearchFilter.setState(Collections.singletonList(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE));
+        List<TestcaseEntity> testcaseEntities = testcaseService.searchTestcases(testcaseCriteriaSearchFilter, contextInfo);
+        if(testcaseEntities.isEmpty()) {
+            errors.add(
+                    new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
+                            ErrorLevel.ERROR,
+                            specificationEntity.getName() + "doesn't have any active testcases"));
+        }
+        for (TestcaseEntity testcaseEntity : testcaseEntities) {
+            validateTestcase(testcaseEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+        }
+    }
+
+    private static void validateTestcase(
+            TestcaseEntity testcaseEntity,
+            ComponentService componentService,
+            SpecificationService specificationService,
+            TestcaseService testcaseService,
+            TestcaseOptionService testcaseOptionService,
+            List<ValidationResultInfo> errors,
+            ContextInfo contextInfo
+    ) throws InvalidParameterException, OperationFailedException {
+        if(!testcaseEntity.getManual()) {
+            return;
+        }
+        errors.add(
+                new ValidationResultInfo(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
+                        ErrorLevel.OK,
+                        testcaseEntity.getName()));
+        TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter = new TestcaseOptionCriteriaSearchFilter();
+        testcaseOptionCriteriaSearchFilter.setTestcaseId(testcaseEntity.getId());
+        testcaseOptionCriteriaSearchFilter.setState(Collections.singletonList(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_ACTIVE));
+        List<TestcaseOptionEntity> testcaseOptionEntities = testcaseOptionService.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, contextInfo);
+        if(testcaseOptionEntities.isEmpty()) {
+            errors.add(
+                    new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
+                            ErrorLevel.ERROR,
+                            testcaseEntity.getName() + "doesn't have any active testcase options"));
+        } else if(testcaseOptionEntities.stream().noneMatch(TestcaseOptionEntity::getSuccess)) {
+            errors.add(
+                    new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
+                            ErrorLevel.ERROR,
+                            testcaseEntity.getName() + "doesn't have any active testcase options for the success."));
         }
     }
 }

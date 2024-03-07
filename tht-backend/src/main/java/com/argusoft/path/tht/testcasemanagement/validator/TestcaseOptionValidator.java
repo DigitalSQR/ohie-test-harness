@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.validator;
 
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
@@ -313,5 +314,6 @@ public class TestcaseOptionValidator {
             TestcaseOptionEntity.setDescription(TestcaseOptionEntity.getDescription().trim());
         }
     }
+
 }
 

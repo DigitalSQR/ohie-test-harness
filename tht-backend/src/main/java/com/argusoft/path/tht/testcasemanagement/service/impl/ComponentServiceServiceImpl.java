@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
@@ -8,11 +9,14 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.ComponentRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.ComponentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +50,12 @@ public class ComponentServiceServiceImpl implements ComponentService {
 
     @Autowired
     private SpecificationService specificationService;
+
+    @Autowired
+    private TestcaseService testcaseService;
+
+    @Autowired
+    private TestcaseOptionService testcaseOptionService;
 
     /**
      * {@inheritdoc}
@@ -198,24 +208,19 @@ public class ComponentServiceServiceImpl implements ComponentService {
     public ComponentEntity changeState(String componentID, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
-        //validate given stateKey
-        ValidationUtils.statusPresent(ComponentServiceConstants.COMPONENT_STATUS, stateKey, errors);
-
         ComponentEntity componentEntity = this.getComponentById(componentID, contextInfo);
 
-        //validate transition
-        ValidationUtils.transitionValid(ComponentServiceConstants.COMPONENT_STATUS_MAP, componentEntity.getState(), stateKey, errors);
-
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    ValidateConstant.ERRORS,
-                    errors);
-        }
+        CommonStateChangeValidator.validateStateChange(ComponentServiceConstants.COMPONENT_STATUS,ComponentServiceConstants.COMPONENT_STATUS_MAP,componentEntity.getState(),stateKey,errors);
 
         componentEntity.setState(stateKey);
         componentEntity = componentRepository.saveAndFlush(componentEntity);
 
         return componentEntity;
+    }
+
+    @Override
+    public List<ValidationResultInfo> validateTestCaseConfiguration(String refObjUri, String refId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        return ComponentValidator.validateTestCaseConfiguration(refObjUri, refId, this, specificationService, testcaseService, testcaseOptionService, contextInfo);
     }
 
     private void defaultValueCreateComponent(ComponentEntity componentEntity, ContextInfo contextInfo) throws InvalidParameterException {

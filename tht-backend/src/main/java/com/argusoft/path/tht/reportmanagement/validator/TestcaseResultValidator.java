@@ -2,6 +2,8 @@ package com.argusoft.path.tht.reportmanagement.validator;
 
 import com.argusoft.path.tht.Audit.Service.AuditService;
 import com.argusoft.path.tht.Audit.constant.AuditServiceConstant;
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
+import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
@@ -562,4 +564,5 @@ public class TestcaseResultValidator {
     public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
         TestcaseResultValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
     }
+
 }

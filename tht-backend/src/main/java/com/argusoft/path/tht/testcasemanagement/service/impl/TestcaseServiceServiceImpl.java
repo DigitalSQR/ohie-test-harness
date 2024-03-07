@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
@@ -206,19 +207,9 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     public TestcaseEntity changeState(String testcaseId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
-        //validate given stateKey
-        ValidationUtils.statusPresent(TestcaseServiceConstants.TESTCASE_STATUS, stateKey, errors);
-
         TestcaseEntity testcaseEntity = this.getTestcaseById(testcaseId, contextInfo);
 
-        //validate transition
-        ValidationUtils.transitionValid(TestcaseServiceConstants.TESTCASE_STATUS_MAP, testcaseEntity.getState(), stateKey, errors);
-
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            throw new DataValidationErrorException(
-                    ValidateConstant.ERRORS,
-                    errors);
-        }
+        CommonStateChangeValidator.validateStateChange(TestcaseServiceConstants.TESTCASE_STATUS, TestcaseServiceConstants.TESTCASE_STATUS_MAP,testcaseEntity.getState(),stateKey,errors);
 
         testcaseEntity.setState(stateKey);
         testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);

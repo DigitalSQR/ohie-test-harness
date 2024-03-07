@@ -11,14 +11,16 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.ComponentMapper;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.google.common.collect.Multimap;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.io.IOException;
 import java.util.Collection;
@@ -195,5 +197,20 @@ public class ComponentRestController {
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
         Collection<String> strings = ComponentServiceConstants.COMPONENT_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
+    }
+
+    @ApiOperation(value = "Validates testcase configurations.", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/configuration/validate")
+    public List<ValidationResultInfo> validateTestCaseConfiguration(
+            @RequestParam(name = "refObjUri") String refObjUri,
+            @RequestParam(name = "refId") String refId,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo
+    ) throws InvalidParameterException, OperationFailedException {
+        return componentService.validateTestCaseConfiguration(refObjUri, refId, contextInfo);
     }
 }

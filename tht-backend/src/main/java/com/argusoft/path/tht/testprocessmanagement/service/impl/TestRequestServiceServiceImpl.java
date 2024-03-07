@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testprocessmanagement.service.impl;
 
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
@@ -77,6 +78,12 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     @Autowired
     private ComponentService componentService;
+
+    @Autowired
+    private SpecificationService specificationService;
+
+    @Autowired
+    private TestcaseService testcaseService;
 
     @Autowired
     private UserService userService;
@@ -307,26 +314,16 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     @Override
     public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
         TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
 
         defaultValueChangeState(testRequestEntity, stateKey, contextInfo);
 
-        List<ValidationResultInfo> errors = new ArrayList<>();
+        TestRequestValidator.validateChangeState(testRequestEntity, stateKey, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
 
-        //validate given stateKey
-        ValidationUtils.statusPresent(TEST_REQUEST_STATUS, stateKey, errors);
+        CommonStateChangeValidator.validateStateChange(TestRequestServiceConstants.TEST_REQUEST_STATUS,TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP,testRequestEntity.getState(),stateKey,errors);
 
-        validateChangeStateForAccepted(testRequestEntity,stateKey);
-
-        //validate transition
-        ValidationUtils.transitionValid(TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, testRequestEntity.getState(), stateKey, errors);
-
-        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
-            throw new DataValidationErrorException(
-                    ValidateConstant.ERRORS,
-                    errors);
-        }
 
         testRequestEntity.setState(stateKey);
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
@@ -686,7 +683,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(contextInfo.getUsername());
         testcaseResultEntity.setTester(userEntity);
-        if (!!StringUtils.hasLength(parentTestcaseResultId)) {
+        if (StringUtils.hasLength(parentTestcaseResultId)) {
             TestcaseResultEntity parentTestcaseResult = new TestcaseResultEntity();
             parentTestcaseResult.setId(parentTestcaseResultId);
             testcaseResultEntity.setParentTestcaseResult(parentTestcaseResult);

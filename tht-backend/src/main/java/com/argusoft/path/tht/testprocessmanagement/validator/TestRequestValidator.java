@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testprocessmanagement.validator;
 
+import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
@@ -14,7 +15,23 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
+import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.argusoft.path.tht.testcasemanagement.validator.ComponentValidator;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
@@ -28,6 +45,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+
+import static com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants.TEST_REQUEST_STATUS;
+
+import static com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants.TEST_REQUEST_STATUS;
 
 @Component
 public class TestRequestValidator {
@@ -508,5 +529,45 @@ public class TestRequestValidator {
     @Autowired
     public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
         TestRequestValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
+    }
+
+
+    public static void validateChangeState(TestRequestEntity testRequestEntity,
+                                           String nextStateKey,
+                                           ComponentService componentService,
+                                           SpecificationService specificationService,
+                                           TestcaseService testcaseService,
+                                           TestcaseOptionService testcaseOptionService,
+                                           List<ValidationResultInfo> errors,
+                                           ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        if(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextStateKey)) {
+
+            Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();
+
+            if (testRequestUrls.isEmpty()) {
+                errors.add(new ValidationResultInfo("component", ErrorLevel.ERROR,"Components not found to test"));
+            } else {
+                for(TestRequestUrlEntity testRequestUrlEntity: testRequestUrls) {
+                    if (!ComponentServiceConstants.COMPONENT_STATUS_ACTIVE.equals(testRequestUrlEntity.getComponent().getState())) {
+                        errors.add(new ValidationResultInfo("component", ErrorLevel.WARN, "Component " + testRequestUrlEntity.getComponent().getName() + " will be skipped as it is inactive in Testcase Configuration. To activate this component, please contact administrator."));
+                    } else {
+                        List<ValidationResultInfo> validationResultEntities = ComponentValidator.validateTestCaseConfiguration(
+                                testRequestUrlEntity.getComponent().getId(),
+                                ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                                componentService,
+                                specificationService,
+                                testcaseService,
+                                testcaseOptionService,
+                                contextInfo);
+                        if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
+                            errors.add(
+                                    new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
+                                            ErrorLevel.ERROR,
+                                            "Testcase configuration for Component " + testRequestUrlEntity.getComponent().getName() + " are invalid. Please contact administrator."));
+                        }
+                    }
+                }
+            }
+        }
     }
 }
