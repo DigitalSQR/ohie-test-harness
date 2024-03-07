@@ -1,92 +1,234 @@
-# testing-harness-tool
+# Testing-harness-tool
+Testing harness tool is a complete test framework that will facilitate testing how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines.
 
+## Index
+- [Prerequisite](#prerequisite)
+- [Project Setup](#project-setup)
 
+## [Prerequisite](#prerequisites)
+1. [Git Installed](#git-installation)
+2. [Node Installed](#node-installation)
+3. [JDK Installed](#jdk-installation)
+4. [Postgress Installed](#postgress-installation)
+5. [Maven Installed](#maven-installation)
 
-## Getting started
+## [Git Installation](#git-installation)
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+### Windows
+1. Visit the [official Git website](https://git-scm.com/).
+2. Download the Windows installer.
+3. Run the installer and follow the installation wizard instructions.
+4. Once installed, open Command Prompt or Git Bash and verify Git installation by running:
+   ```
+   git --version
+   ```
+### macOS
+1. Git is pre-installed on macOS. To check if Git is already installed, open a terminal window and run:
+    ```
+    git --version
+    ```
+2. If Git is not installed, you can install it using Homebrew. Install Homebrew if you haven't already by running:
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+3. Once Homebrew is installed, use it to install git:
+    ```
+    brew install git
+    ```
+### Linux (Ubuntu)
+1. Open a terminal window.
+2. Update the package index and install Git using apt:
+    ```
+    sudo apt update
+    sudo apt install git
+    ```
+3. Verify Git installation by running:
+    ```
+    git --version
+    ```
+## [Node Installation](#node-installation)
+### Windows
+1. Visit the [official Node.js website](https://nodejs.org/).
+2. Download the Windows installer for Node.js version 18.18.0.
+3. Run the installer and follow the installation wizard instructions.
+4. Once installed, open a command prompt and verify the Node.js version by running:
+   ```bash
+   node -v
+   ```
+### macOS
+1. Open a terminal window.
+2. Install Homebrew if you haven't already. Run the following command:
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+3. Once Homebrew is installed, use it to install Node.js:
+    ```
+    brew install node@18
+    ```
+4. Verify Node.js and npm installation by running:
+    ```
+    node -v
+    npm -v
+    ```
+### Linux (Ubuntu)
+1. Open a terminal window.
+2. Update the package index and install Node.js using apt:
+    ```
+    sudo apt update
+    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+    ```
+3. Verify Node.js and npm installation by running:
+    ```
+    node -v
+    npm -v
+    ```
+## [JDK Installation](#jdk-installation)
+### Windows
+1. Visit the [official Oracle JDK website](https://www.oracle.com/java/technologies/javase-jdk17-downloads.html).
+2. Download the Windows installer (.msi) for JDK 17.
+3. Run the installer and follow the installation wizard instructions.
+4. Once installed, set the `JAVA_HOME` environment variable:
+   - Right-click on 'This PC' or 'My Computer' and select 'Properties'.
+   - Click on 'Advanced system settings'.
+   - Click on 'Environment Variables'.
+   - Under 'System variables', click 'New' and add a variable named `JAVA_HOME` with the JDK installation directory as its value (e.g., `C:\Program Files\Java\jdk-17`).
+   - Click 'OK' to save changes.
+### macOS
+1. Open a terminal window.
+2. Install Homebrew if you haven't already. Run the following command:
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+3. Once Homebrew is installed, use it to install AdoptOpenJDK 17:
+    ```
+    brew install --cask adoptopenjdk/openjdk/adoptopenjdk17
+    ```
+4. Verify the installation by running:
+    ```
+    java -version
+    ```
+### Linux (Ubuntu)
+1. Open a terminal window.
+2. Update the package index and install OpenJDK 17 using apt:
+    ```
+    sudo apt update
+    sudo apt install openjdk-17-jdk
+    ```
+3. Verify the installation by running:
+    ```
+    java -version
+    ```
+## [Postgress Installation](#postgress-installation)
+### Windows
+1. Visit the official PostgreSQL website.
+2. Download the installer for your Windows version (either 32-bit or 64-bit).
+3. Run the installer and follow the installation wizard instructions.
+4. During installation, you'll be prompted to set a password for the default postgres user. Remember this password as it will be needed later.
+5. Complete the installation process.
+6. Optionally, you may install pgAdmin, a graphical administration tool for PostgreSQL, which is often bundled with the PostgreSQL installer.
+### macOS
+1. Open a terminal window.
+2. Install Homebrew if you haven't already. Run the following command:
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+3. Once Homebrew is installed, use it to install PostgreSQL:
+    ```
+    brew install postgresql
+    ```
+4. Start the PostgreSQL service:
+    ```
+    brew services start postgresql
+    ```
+### Linux (Ubuntu)
+1. Open a terminal window.
+2. Update the package index and install PostgreSQL:
+    ```
+    sudo apt update
+    sudo apt install postgresql
+    ```
+3. PostgreSQL will automatically create a default user called postgres. You may need to set a password for this user using:
+    ```
+    sudo passwd postgres
+    ```
+4. Start the PostgreSQL service:
+    ```
+    sudo service postgresql start
+    ```
+## [Maven Installation](#maven-installation)
+### Step 1: Download Maven
+Visit the [official Apache Maven website](https://maven.apache.org/download.cgi) and download the latest stable release of Maven.
+### Step 2: Extract the Archive
+Once the download is complete, extract the downloaded archive file to a location on your system. For example, on Unix-based systems, you can use the following command to extract the archive:
 ```
-cd existing_repo
-git remote add origin https://argusgit.argusoft.com/path/testing-harness-tool.git
-git branch -M main
-git push -uf origin main
+tar -zxvf apache-maven-<version>.tar.gz
 ```
+Replace <version> with the version number of Maven you downloaded.
+### Step 3: Set up Environment Variables
+#### Windows
+1. Open Control Panel and go to System and Security > System > Advanced system settings.
+2. Click on the "Environment Variables" button.
+3. Under "System Variables", click "New" and add the following variables:
+    - Variable name: M2_HOME
+    - Variable value: Path to the directory where Maven is extracted (e.g., C:\apache-maven-<version>).
+4. Find the "Path" variable under "System Variables", click "Edit", and add the following entry:
+    %M2_HOME%\bin
+5. Click "OK" to save the changes.
+#### macOS/Linux
+1. Open a terminal window.
+2. Edit the .bash_profile or .bashrc file in your home directory and add the following lines:
+    ```
+    export M2_HOME=/path/to/apache-maven-<version>
+    export PATH=$PATH:$M2_HOME/bin
+    ```
+    Replace /path/to/apache-maven-<version> with the actual path where Maven is extracted.
+3. Save the changes and exit the text editor.
+### Step 4: Verify Installation
+To verify that Maven is installed correctly, open a new terminal or command prompt window and run the following command:
+    ```
+    mvn -v
+    ```
+## [Project Setup](#project-setup)
+1. [Clone git repository](#clone-git-repository)
+2. [Setting Up Logging Service](#logging-service)
+3. [Database configuration](#database-configuration)
 
-## Integrate with your tools
+### [Clone git repository](#clone-git-repository)
+If you want to access the repository anonymously or if you don't have SSH keys set up on your GitLab account, use HTTPS. Run the following command in your terminal:
+    ```
+    git clone https://argusgit.argusoft.com/path/testing-harness-tool.git
+    ```
 
-- [ ] [Set up project integrations](https://argusgit.argusoft.com/path/testing-harness-tool/-/settings/integrations)
+### [Setting Up Logging Service](#logging-service)
+#### Step 1: Create Directories
+1. Open a terminal window.
+2. Navigate to the `/srv` directory:
+   ```
+   cd /srv
+   ```
+3. Create a directory named tht:
+    ```
+    mkdir tht
+    ```
+4. Inside the tht directory, create two more directories:
+    -   error-logs to store error logs based on dates.
+        ```
+        mkdir tht/error-logs
+        ```
+    -   files where DocumentService related files will be stored.
+        ```
+        mkdir tht/files
+        ```
+#### Step 2: Set Permissions
+Run this command for permission update:
+    ```
+    sudo chmod -R a+rwx /srv/tht
+    ```
 
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+### [Database configuration](#database-configuration)
+The Testing Harness Tool uses a PostgreSQL database to store testing data. The name of the database used by the application is `testing_harness_tool`.
+You can create the database using the following SQL command:
+```sql
+CREATE DATABASE testing_harness_tool;
+```
