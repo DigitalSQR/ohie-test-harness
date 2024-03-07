@@ -36,8 +36,7 @@ const ApplicationReport = () => {
   const [passReqCompNames, setPassReqCompNames] = useState([]);
   const [testRequest, setTestRequest] = useState();
   const [user, setUser] = useState();
-  const { showLoader, hideLoader } = useLoader();
-  const [ rangedGradeData, setRangedGradeData ] = useState();
+  const [rangedGradeData, setRangedGradeData] = useState();
 
   useEffect(() => {
     fetchTestCaseResultData();
@@ -66,36 +65,35 @@ const ApplicationReport = () => {
     });
   };
 
-  
   const columns = [
     {
-      title: 'Range',
-      dataIndex: 'range',
+      title: "Range",
+      dataIndex: "range",
     },
     {
-      title: 'Grade',
-      dataIndex: 'grade',
+      title: "Grade",
+      dataIndex: "grade",
     },
   ];
 
   const fetchAllGrades = () => {
     GradeAPI.getAllGrades()
-    .then((res) => {
-      const formattedData = res.data.map((item, index) => {
-        const startPercentage = res.data.length == index+1 ? 0 : item.percentage + 1;
-        const endPercentage = index == 0 ? 100 : res.data[index - 1].percentage;
-        return {
-          key: item.id,
-          range: `${startPercentage}% - ${endPercentage}%`,
-          grade: item.grade
-        };
-      });
-      setRangedGradeData(formattedData);
-    })
-    .catch((err)=>{
-
-    });
-  }
+      .then((res) => {
+        const formattedData = res.data.map((item, index) => {
+          const startPercentage =
+            res.data.length == index + 1 ? 0 : item.percentage + 1;
+          const endPercentage =
+            index == 0 ? 100 : res.data[index - 1].percentage;
+          return {
+            key: item.id,
+            range: `${startPercentage}% - ${endPercentage}%`,
+            grade: item.grade,
+          };
+        });
+        setRangedGradeData(formattedData);
+      })
+      .catch((err) => {});
+  };
 
   const fetchTestCaseRequestData = async () => {
     const response = await TestRequestAPI.getTestRequestsById(testRequestId);
@@ -206,7 +204,7 @@ const ApplicationReport = () => {
                         <p>
                           Application Date:
                           <span>
-                            {formatDate(testRequest?.meta?.updatedAt)}
+                            {formatDate(testRequest?.meta?.createdAt)}
                           </span>
                         </p>
                       </div>
@@ -435,13 +433,27 @@ const ApplicationReport = () => {
                             <th>COMPONENTS</th>
                             <th>SPECIFICATIONS</th>
                             <th>RESULTS</th>
-                            <th>GRADE 
+                            <th>
+                              GRADE
                               <>
-                                { 
-                                  <Tooltip className="ms-1" color="#f8f9fa" title={<Table dataSource={rangedGradeData} columns={columns} pagination={false}></Table>}>
-                                    <i  style={{fontSize :'14px'}}  className="bi bi-info-circle-fill"></i>
+                                {
+                                  <Tooltip
+                                    className="ms-1"
+                                    color="#f8f9fa"
+                                    title={
+                                      <Table
+                                        dataSource={rangedGradeData}
+                                        columns={columns}
+                                        pagination={false}
+                                      ></Table>
+                                    }
+                                  >
+                                    <i
+                                      style={{ fontSize: "14px" }}
+                                      className="bi bi-info-circle-fill"
+                                    ></i>
                                   </Tooltip>
-                                  }
+                                }
                               </>
                             </th>
                           </tr>

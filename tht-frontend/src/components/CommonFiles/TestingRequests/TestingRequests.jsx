@@ -32,10 +32,13 @@ const TestingRequests = () => {
   const pageSize = 10;
 
   const navigate = useNavigate();
-  const [sortDirection, setSortDirection] = useState({
+  const obj = {
     productName: "desc",
     createdAt: "desc",
-  });
+    assessee: "desc",
+    state: "desc"
+  }
+  const [sortDirection, setSortDirection] = useState(obj);
   const [sortFieldName, setSortFieldName] = useState("createdAt");
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -81,7 +84,7 @@ const TestingRequests = () => {
 
   const handleSort = (field) => {
     setSortFieldName(field);
-    const newSortDirection = { ...sortDirection };
+    const newSortDirection = { ...obj };
     newSortDirection[field] = sortDirection[field] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
     fetchTestRequests(filterState, field, newSortDirection, currentPage);
@@ -180,7 +183,7 @@ const TestingRequests = () => {
               <thead>
                 <tr>
                   <th className="app-name-column">
-                  PRODUCT NAME
+                    PRODUCT NAME
                     <a
                       className="ps-1"
                       href="#"
@@ -199,8 +202,26 @@ const TestingRequests = () => {
                       {renderSortIcon("createdAt")}
                     </a>
                   </th>
-                  <th className="assessee-column">Assessee</th>
-                  <th className="status-column">STATUS</th>
+                  <th className="assessee-column">
+                    Assessee
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("assessee")}
+                    >
+                      {renderSortIcon("assessee")}
+                    </a>
+                  </th>
+                  <th className="status-column">
+                    STATUS
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("state")}
+                    >
+                      {renderSortIcon("state")}
+                    </a>
+                  </th>
                   <th className="actions-column">
                     <span
                       className={
@@ -227,7 +248,7 @@ const TestingRequests = () => {
                   <>
                     <tr key={testRequest.id}>
                       <td>{testRequest.productName}</td>
-                      <td>{formatDate(testRequest.meta.updatedAt)}</td>
+                      <td>{formatDate(testRequest.meta.createdAt)}</td>
                       <td>
                         <UserIdConnector
                           isLink={true}
