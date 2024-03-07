@@ -71,7 +71,6 @@ logging:
   level:
     org.springframework.http: INFO
     org.springframework.web: INFO
-    com.argusoft.path.tht: INFO
     org.flywaydb.core: INFO
     org:
       hibernate:
@@ -88,8 +87,8 @@ exception:
 tht-file:
   location: /srv/tht/files
 
-frontend:
-  google.success: /google/success
-
 captcha:
    false
+
+frontend:
+    google.success: /google/success

@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.fileservice.restcontroller;
 
-import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
@@ -8,7 +7,7 @@ import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.fileservice.models.mapper.DocumentMapper;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.google.common.collect.Multimap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * DocumentRestController

@@ -13,8 +13,6 @@ import java.util.List;
  */
 public class DataValidationErrorException extends Exception {
 
-    private static final long serialVersionUID = 1L;
-
     private final List<ValidationResultInfo> validationResults;
 
     public DataValidationErrorException() {

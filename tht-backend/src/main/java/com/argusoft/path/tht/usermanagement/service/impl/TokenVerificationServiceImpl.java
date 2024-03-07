@@ -1,8 +1,8 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
-import com.argusoft.path.tht.emailservice.service.EmailService;
+import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.usermanagement.constant.TokenVerificationConstants;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntity;

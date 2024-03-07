@@ -9,8 +9,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
@@ -280,7 +280,6 @@ public class SpecificationValidator {
     //Validation For :Id
     private static void validateSpecificationEntityId(SpecificationEntity specificationEntity,
                                                       List<ValidationResultInfo> errors) {
-        ValidationUtils.validateNotEmpty(specificationEntity.getId(), "id", errors);
         ValidationUtils.validateLength(specificationEntity.getId(),
                 "id",
                 0,

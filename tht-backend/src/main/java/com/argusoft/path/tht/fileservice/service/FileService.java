@@ -1,10 +1,10 @@
 package com.argusoft.path.tht.fileservice.service;
 
-import com.argusoft.path.tht.fileservice.FileDetails;
-import com.argusoft.path.tht.fileservice.InvalidFileTypeException;
-import com.argusoft.path.tht.fileservice.MultipartFileTypeTesterPredicate;
 import com.argusoft.path.tht.fileservice.constant.FileType;
+import com.argusoft.path.tht.fileservice.models.dto.FileDetails;
+import com.argusoft.path.tht.fileservice.predicate.MultipartFileTypeTesterPredicate;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidFileTypeException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import org.apache.commons.io.FilenameUtils;
@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;

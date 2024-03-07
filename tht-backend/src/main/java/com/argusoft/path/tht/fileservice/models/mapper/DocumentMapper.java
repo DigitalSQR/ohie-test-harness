@@ -1,8 +1,8 @@
 package com.argusoft.path.tht.fileservice.models.mapper;
 
-import com.argusoft.path.tht.common.configurations.ModelDtoMapper;
 import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
+import com.argusoft.path.tht.systemconfiguration.models.mapper.ModelDtoMapper;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;

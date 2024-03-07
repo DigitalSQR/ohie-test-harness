@@ -5,8 +5,8 @@ import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
@@ -16,14 +16,9 @@ import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.SpecificationValidator;
-import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.cache.annotation.CacheEvict;
-// import org.springframework.cache.annotation.CachePut;
-// import org.springframework.cache.annotation.Cacheable;
-// import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -59,11 +54,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    // @Caching(evict = {
-    //         @CacheEvict(value = "searchSpecifications", allEntries = true),
-    //         @CacheEvict(value = "searchSpecificationsList", allEntries = true),
-    //         @CacheEvict(value = "getSpecifications", allEntries = true)
-    // })
     public SpecificationEntity createSpecification(SpecificationEntity specificationEntity,
                                                    ContextInfo contextInfo)
             throws OperationFailedException,
@@ -94,15 +84,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    // @Caching(
-    //         evict = {
-    //                 @CacheEvict(value = "searchSpecifications", allEntries = true),
-    //                 @CacheEvict(value = "searchSpecificationsList", allEntries = true),
-    //                 @CacheEvict(value = "getSpecifications", allEntries = true)
-    //         }, put = {
-    //         @CachePut(value = "getSpecificationById",
-    //                 key = "#specificationEntity.getId()")
-    // })
     public SpecificationEntity updateSpecification(SpecificationEntity specificationEntity,
                                                    ContextInfo contextInfo)
             throws OperationFailedException,
@@ -131,7 +112,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    // @Cacheable(value = "searchSpecifications", key = "{ #specificationSearchFilter, #pageable }")
     public Page<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
             Pageable pageable,
@@ -144,7 +124,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
 
     @Override
-    // @Cacheable(value = "searchSpecificationsList", key = "#specificationSearchFilter")
     public List<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
             ContextInfo contextInfo)
@@ -161,7 +140,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
-    // @Cacheable(value = "getSpecificationById", key = "#specificationId")
     public SpecificationEntity getSpecificationById(String specificationId,
                                                     ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -195,15 +173,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
     }
 
     @Override
-    // @Caching(
-    //         evict = {
-    //                 @CacheEvict(value = "searchSpecifications", allEntries = true),
-    //                 @CacheEvict(value = "searchSpecificationsList", allEntries = true),
-    //                 @CacheEvict(value = "getSpecifications", allEntries = true)
-    //         }, put = {
-    //         @CachePut(value = "getSpecificationById",
-    //                 key = "#specificationId")
-    // })
     public SpecificationEntity changeState(String specificationId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
         List<ValidationResultInfo> errors = new ArrayList<>();

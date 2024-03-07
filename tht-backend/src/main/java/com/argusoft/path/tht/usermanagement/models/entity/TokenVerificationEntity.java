@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.usermanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateMetaEntity;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "token_verification")
+@Audited
 public class TokenVerificationEntity extends IdStateMetaEntity {
 
     @OneToOne(cascade = {}, fetch = FetchType.LAZY)

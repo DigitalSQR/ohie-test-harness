@@ -3,14 +3,12 @@ package com.argusoft.path.tht.testcasemanagement.models.dto;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
-
 /**
  * This info is for Testcase DTO that contains all the Testcase model's data.
  *
  * @author Dhruv
  */
-public class TestcaseOptionInfo extends IdStateNameMetaInfo implements Serializable {
+public class TestcaseOptionInfo extends IdStateNameMetaInfo {
 
     @ApiModelProperty(notes = "The unique rank of the testcaseOption",
             allowEmptyValue = false,

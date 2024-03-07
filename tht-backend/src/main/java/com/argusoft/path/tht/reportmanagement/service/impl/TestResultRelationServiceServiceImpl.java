@@ -1,19 +1,22 @@
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
-import com.argusoft.path.tht.Audit.Service.AuditService;
-import com.argusoft.path.tht.Audit.constant.AuditServiceConstant;
-import com.argusoft.path.tht.Audit.filter.SearchFilter;
 import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.reportmanagement.repository.TestResultRelationRepository;
 import com.argusoft.path.tht.reportmanagement.service.TestResultRelationService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.reportmanagement.validator.TestResultRelationValidator;
+import com.argusoft.path.tht.systemconfiguration.audit.constant.AuditServiceConstant;
+import com.argusoft.path.tht.systemconfiguration.audit.filter.SearchFilter;
+import com.argusoft.path.tht.systemconfiguration.audit.service.AuditService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,14 +48,14 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
     }
 
     @Override
-    public TestResultRelationEntity updateTestcaseResult(TestResultRelationEntity testResultRelationEntity, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
+    public TestResultRelationEntity updateTestcaseResult(TestResultRelationEntity testResultRelationEntity, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidParameterException {
         TestResultRelationValidator.validateCreateUpdateTestResultRelation(Constant.UPDATE_VALIDATION, testResultRelationEntity, this, testcaseResultService ,contextInfo);
         testResultRelationEntity = testResultRelationRepository.saveAndFlush(testResultRelationEntity);
         return testResultRelationEntity;
     }
 
     @Override
-    public Page<TestResultRelationEntity> searchTestResultRelation(TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter, Pageable pageable, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException {
+    public Page<TestResultRelationEntity> searchTestResultRelation(TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter, Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException {
         Specification<TestResultRelationEntity> testResultRelationEntitySpecification = testResultRelationCriteriaSearchFilter.buildSpecification(contextInfo);
         return testResultRelationRepository.findAll(testResultRelationEntitySpecification, pageable);
     }

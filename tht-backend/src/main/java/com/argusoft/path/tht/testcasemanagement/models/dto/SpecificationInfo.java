@@ -3,7 +3,6 @@ package com.argusoft.path.tht.testcasemanagement.models.dto;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -11,7 +10,7 @@ import java.util.Set;
  *
  * @author Dhruv
  */
-public class SpecificationInfo extends IdStateNameMetaInfo implements Serializable {
+public class SpecificationInfo extends IdStateNameMetaInfo {
 
     @ApiModelProperty(notes = "The unique rank of the specification",
             allowEmptyValue = false,

@@ -12,8 +12,9 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.RefObjectUriAndRefIdValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
@@ -45,7 +46,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants.TEST_REQUEST_STATUS;
 
@@ -431,7 +434,6 @@ public class TestRequestValidator {
     //Validation For :Id
     private static void validateTestRequestEntityId(TestRequestEntity testRequestEntity,
                                                     List<ValidationResultInfo> errors) {
-        ValidationUtils.validateNotEmpty(testRequestEntity.getId(), "id", errors);
         ValidationUtils.validateLength(testRequestEntity.getName(),
                 "id",
                 0,

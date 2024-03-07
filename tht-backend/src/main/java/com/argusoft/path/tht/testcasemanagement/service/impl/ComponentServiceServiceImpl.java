@@ -5,8 +5,8 @@ import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
@@ -22,10 +22,6 @@ import com.argusoft.path.tht.testcasemanagement.validator.ComponentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.cache.annotation.CacheEvict;
-// import org.springframework.cache.annotation.CachePut;
-// import org.springframework.cache.annotation.Cacheable;
-// import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -64,11 +60,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    // @Caching(evict = {
-    //         @CacheEvict(value = "searchComponents", allEntries = true),
-    //         @CacheEvict(value = "searchComponentsList", allEntries = true),
-    //         @CacheEvict(value = "getComponents", allEntries = true)
-    // })
     public ComponentEntity createComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
             throws OperationFailedException,
@@ -98,15 +89,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    // @Caching(
-    //         evict = {
-    //                 @CacheEvict(value = "searchComponents", allEntries = true),
-    //                 @CacheEvict(value = "searchComponentsList", allEntries = true),
-    //                 @CacheEvict(value = "getComponents", allEntries = true)
-    //         }, put = {
-    //         @CachePut(value = "getComponentById",
-    //                 key = "#componentEntity.getId()")
-    // })
     public ComponentEntity updateComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
             throws OperationFailedException,
@@ -134,7 +116,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    // @Cacheable(value = "searchComponents", key = "{ #componentCriteriaSearchFilter, #pageable }")
     public Page<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
             Pageable pageable,
@@ -145,7 +126,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
-    // @Cacheable(value = "searchComponentsList", key = "#componentCriteriaSearchFilter")
     public List<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
             ContextInfo contextInfo)
@@ -160,7 +140,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    // @Cacheable(value = "getComponentById", key = "#componentId")
     public ComponentEntity getComponentById(String componentId,
                                             ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -197,15 +176,6 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
-    // @Caching(
-    //         evict = {
-    //                 @CacheEvict(value = "searchComponents", allEntries = true),
-    //                 @CacheEvict(value = "searchComponentsList", allEntries = true),
-    //                 @CacheEvict(value = "getComponents", allEntries = true)
-    //         }, put = {
-    //         @CachePut(value = "getComponentById",
-    //                 key = "#componentID")
-    // })
     public ComponentEntity changeState(String componentID, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 

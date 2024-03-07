@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.reportmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "grade")
+@Audited
 public class GradeEntity extends IdMetaEntity {
 
     @Column(name = "percentage", nullable = false)

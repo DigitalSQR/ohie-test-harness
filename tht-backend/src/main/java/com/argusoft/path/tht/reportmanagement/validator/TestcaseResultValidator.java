@@ -1,15 +1,12 @@
 package com.argusoft.path.tht.reportmanagement.validator;
 
-import com.argusoft.path.tht.Audit.Service.AuditService;
-import com.argusoft.path.tht.Audit.constant.AuditServiceConstant;
-import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
-import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestResultRelationService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
+import com.argusoft.path.tht.systemconfiguration.audit.service.AuditService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
@@ -17,9 +14,10 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
+import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.RefObjectUriAndRefIdValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
@@ -28,7 +26,6 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEnti
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
-import com.argusoft.path.tht.testprocessmanagement.validator.RefObjectUriAndRefIdValidator;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -379,7 +376,6 @@ public class TestcaseResultValidator {
     //Validation For :Id
     private static void validateTestcaseResultEntityId(TestcaseResultEntity testcaseResultEntity,
                                                        List<ValidationResultInfo> errors) {
-        ValidationUtils.validateNotEmpty(testcaseResultEntity.getId(), "id", errors);
         ValidationUtils.validateLength(testcaseResultEntity.getId(),
                 "id",
                 0,
