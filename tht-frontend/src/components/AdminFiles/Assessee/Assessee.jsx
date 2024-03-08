@@ -308,7 +308,7 @@ const Assessee = () => {
                           </Fragment>
                         )}
 
-                        {user.state === "user.status.inactive" && (
+                        {(user.state === "user.status.inactive" || user.state==="user.status.rejected") && (
                           <button
                             type="button"
                             className="text-uppercase btn btn-sm approval-action-button text-uppercase"
