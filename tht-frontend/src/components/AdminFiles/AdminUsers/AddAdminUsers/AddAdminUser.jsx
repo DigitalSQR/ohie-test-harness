@@ -95,7 +95,11 @@ const AddAdminUser = () => {
                           type="text"
                           id="name"
                           name="name"
-                          className="form-control"
+                          className={`form-control ${
+                            touched.name && errors.name
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           placeholder="Name"
                         />
                         <ErrorMessage
@@ -118,7 +122,11 @@ const AddAdminUser = () => {
                           type="email"
                           id="email"
                           name="email"
-                          className="form-control"
+                          className={`form-control ${
+                            touched.email && errors.email
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           placeholder="Email"
                         />
                         <ErrorMessage
@@ -141,7 +149,11 @@ const AddAdminUser = () => {
                           type="password"
                           id="password"
                           name="password"
-                          className="form-control"
+                          className={`form-control ${
+                            touched.password && errors.password
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           placeholder="Password"
                         />
                         <ErrorMessage
@@ -160,19 +172,23 @@ const AddAdminUser = () => {
                           <span className="text-danger">*</span>
                         </label>
                         <Field
-                          className="custom-select mb-2"
+                          className={`custom-select ${
+                            touched.roleIds && errors.roleIds
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           name="roleIds"
                           options={roles}
                           component={CustomSelect}
                           placeholder="Select Roles"
                           isMulti={true}
                         />
-                      </div>
-                      <ErrorMessage
+                        <ErrorMessage
                         name="roleIds"
                         component="div"
                         className="error-message"
                       />
+                      </div>       
                     </div>
                   </div>
 

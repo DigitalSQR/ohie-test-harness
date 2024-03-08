@@ -109,7 +109,7 @@ const UpdateAdminUser = () => {
               onSubmit={handleSubmit}
               enableReinitialize={true}
             >
-              {({ errors}) => (
+              {({ errors, touched}) => (
                 <Form>
                   <div className="row">
                     <div className="col-12">
@@ -120,7 +120,11 @@ const UpdateAdminUser = () => {
                         </label>
                         <Field
                           type="name"
-                          className="form-control"
+                          className={`form-control ${
+                            touched.name && errors.name
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           id="name"
                           placeholder="Your Name"
                           name="name"
@@ -141,7 +145,11 @@ const UpdateAdminUser = () => {
                         </label>
                         <Field
                           type="email"
-                          className="form-control disable-field"
+                          className={`form-control disable-field ${
+                            touched.email && errors.email
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           id="email"
                           placeholder="Your Email"
                           name="email"
@@ -161,17 +169,21 @@ const UpdateAdminUser = () => {
                           <span className="text-danger">*</span>
                         </label>
                         <Field
-                          className="custom-select"
+                          className={`custom-select ${
+                            touched.roleIds && errors.roleIds
+                              ? "is-invalid"
+                              : ""
+                          }`}
                           name="roleIds"
                           options={roles}
                           component={CustomSelect}
                           placeholder="Select Roles"
                           isMulti={true}
                         />
-                      </div>
-                      <div className="error-message">
+                        <div className="error-message">
                           <ErrorMessage name="roleIds" />
                         </div>
+                      </div>                    
                     </div>
                   </div>
                   <div className="my-4 text-end">
@@ -187,7 +199,7 @@ const UpdateAdminUser = () => {
                       style={{marginLeft:"1rem"}}
                       className="btn btn-primary btn-blue btn-submit py-2"
                       type="submit"
-                      disabled={Object.keys(errors).length > 0}
+                      disabled={(Object.keys(touched).length == 0)  || Object.keys(errors).length > 0}
                     >
                       Update
                     </button>

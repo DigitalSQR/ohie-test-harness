@@ -55,8 +55,8 @@ const RegisterApplication = () => {
       errors.productName = "Product Name is required";
     }else if(values.productName.length < 3){
       errors.productName = "Product name must be of minimum 3 characters"
-    }else if (values.productName.length > 1000) {
-      errors.productName = "Product name must have less than 1000 characters.";
+    }else if (values.productName.length > 255) {
+      errors.productName = "Product name must have less than 255 characters.";
     }
 
     if (values.description === "") {
@@ -229,12 +229,11 @@ const RegisterApplication = () => {
                     autoComplete="off"
                     required
                   />
-                </div>
-                {formik.touched.name && formik.errors.name && (
-                  <div className="text-danger">{formik.errors.name}</div>
+                  {formik.touched.name && formik.errors.name && (
+                  <div className="error-message">{formik.errors.name}</div>
                 )}
+                </div>             
               </div>
-
               <div className="col-sm-6 col-12">
                 <div className="custom-input mb-3">
                   <label htmlFor="productName" className="form-label">
@@ -256,10 +255,10 @@ const RegisterApplication = () => {
                     autoComplete="off"
                     required
                   />
-                </div>
-                {formik.touched.productName && formik.errors.productName && (
-                  <div className="text-danger">{formik.errors.productName}</div>
-                )}
+                  {formik.touched.productName && formik.errors.productName && (
+                    <div className="error-message">{formik.errors.productName}</div>
+                  )}
+                </div>   
               </div>
             </div>
             <div className="row">
@@ -285,10 +284,10 @@ const RegisterApplication = () => {
                     autoComplete="off"
                     required
                   ></textarea>
-                </div>
-                {formik.touched.description && formik.errors.description && (
-                  <div className="text-danger">{formik.errors.description}</div>
+                  {formik.touched.description && formik.errors.description && (
+                  <div className="error-message">{formik.errors.description}</div>
                 )}
+                </div>
               </div>
             </div>
 
@@ -369,15 +368,14 @@ const RegisterApplication = () => {
                                     }
                                     autoComplete="off"
                                   />
-                                </div>
-                                {touched?.[modifiedComponentId(url.componentId)]
+                                  {touched?.[modifiedComponentId(url.componentId)]
                                   ?.username &&
                                   formik.errors[
                                     "testRequestUrls[" +
                                       modifiedComponentId(url.componentId) +
                                       "].username"
                                   ] && (
-                                    <div className="text-danger">
+                                    <div className="error-message">
                                       {
                                         formik.errors[
                                           "testRequestUrls[" +
@@ -389,9 +387,11 @@ const RegisterApplication = () => {
                                       }
                                     </div>
                                   )}
+                                </div>
+                                
                               </div>
                               <div className=" custom-input col-sm-6 col-12">
-                                <div className=" input-group mb-3 position-relative">
+                                <div className=" input-group position-relative">
                                   <input
                                     id={
                                       "testRequestUrls[" + index + "].password"
@@ -459,7 +459,7 @@ const RegisterApplication = () => {
                                         modifiedComponentId(url.componentId) +
                                         "].password"
                                     ] && (
-                                      <div className="text-danger">
+                                      <div className="error-message">
                                         {
                                           formik.errors[
                                             "testRequestUrls[" +
@@ -478,7 +478,7 @@ const RegisterApplication = () => {
 
                             <div className="row">
                               <div className="col-12">
-                                <div className="custom-input mb-3">
+                                <div className="custom-input">
                                   <label
                                     htmlFor="baseUrl"
                                     className="form-label"
@@ -526,7 +526,7 @@ const RegisterApplication = () => {
                                       modifiedComponentId(url.componentId) +
                                       "].baseUrl"
                                   ] && (
-                                    <div className="text-danger">
+                                    <div className="error-message">
                                       {
                                         formik.errors[
                                           "testRequestUrls[" +
@@ -549,7 +549,7 @@ const RegisterApplication = () => {
               );
             })}
             {formik.errors.testRequestUrls ? (
-              <div className="text-danger">{formik.errors.testRequestUrls}</div>
+              <div className="error-message">{formik.errors.testRequestUrls}</div>
             ) : null}
           </div>
 

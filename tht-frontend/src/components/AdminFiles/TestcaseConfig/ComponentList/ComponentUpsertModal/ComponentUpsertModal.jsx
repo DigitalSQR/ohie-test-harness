@@ -163,7 +163,7 @@ const UpsertModal = ({
 
                 <button
                   type="submit"
-                  className={`btn btn-primary btn-blue btn-submit py-1 font-size-10`}
+                  className={`btn btn-primary btn-blue btn-submit py-1 mx-2 font-size-10`}
                   disabled={!isValid || !dirty}
                 >
                   Submit

@@ -299,7 +299,7 @@ export default function AutomatedTesting() {
                   {testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS && ( <>
                     <div>
                         <button
-                          className={`btn small btn-sm mt-0 display btn-danger px-4 abtn`}
+                          className={`btn small btn-sm mt-0 btn-danger px-4 abtn`}
                           onClick={() => handleInterruptButton(true)}
                           disabled={stopAndResetLoader || stopLoader}
                         >
@@ -311,7 +311,7 @@ export default function AutomatedTesting() {
                       </div>
                       <div>
                         <button
-                          className="btn small btn-sm mt-0 display btn-danger px-2 btn-success abtn"
+                          className="btn small btn-sm mt-0 btn-danger px-2 abtn"
                           onClick={() => handleInterruptButton(false)}
                           disabled={stopAndResetLoader || stopLoader}
                         >
@@ -325,7 +325,7 @@ export default function AutomatedTesting() {
                   )}
                   {(testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED || (testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !!finishedTestcaseCount)) && (<>
                     <button
-                        className={`btn small btn-sm mt-0 display btn-primary px-4 abtn`}
+                        className={`btn small btn-sm mt-0 btn-primary px-4 abtn`}
                         onClick={() => handleResetButton()}
                       >
                         <ReloadOutlined />
@@ -334,7 +334,7 @@ export default function AutomatedTesting() {
                   </>)}
                   {(testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !!finishedTestcaseCount) && (<>
                       <button
-                        className={`btn small btn-sm mt-0 display btn-success px-4 abtn`}
+                        className={`btn small btn-sm mt-0 btn-success px-4 abtn`}
                         onClick={handleStartTesting}
                       >
                         <PlayCircleOutlined />
@@ -343,7 +343,7 @@ export default function AutomatedTesting() {
                   </>)}
                   {testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !finishedTestcaseCount && (<>
                       <button
-                        className="btn small btn-sm mt-0 display px-2 btn-success abtn"
+                        className="btn small btn-sm mt-0 px-2 btn-success abtn"
                         onClick={handleStartTesting}
                       >
                         <PlayCircleOutlined />

@@ -70,6 +70,9 @@
   padding-top: 40px;
   padding-left: 15px;
 }
+ul li a {
+  cursor: pointer;
+}
 @media (max-width: 767.98px) {
   .sidebar-wrapper .logo-white {
     position: relative;
