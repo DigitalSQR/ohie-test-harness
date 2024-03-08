@@ -6,14 +6,12 @@ import { Fragment, useEffect, useState } from "react";
 import { USER_ROLES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 import { set_header } from "../../../reducers/homeReducer";
-
 export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeMenuItem, setActiveMenuItem] = useState();
   const [user, setUser] = useState();
-
   /*
    * This is to expand/shrink the wrapper when the side menu bar is toogled
    * To Do: Refactor the structure in such a way that margins are removed from the pages
@@ -26,17 +24,14 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
       wrapper.classList.toggle("expand");
     }
   };
-
   const handleMenuItemClick = (path) => {
     setActiveMenuItem(path);
     navigate(path);
   };
-
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUser(userInfo);
   }, []);
-
   useEffect(() => {
     setActiveMenuItem(location.pathname);
     let wrapper = document.getElementById("wrapper");
@@ -46,7 +41,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
         : wrapper.classList.add("expand");
     }
   }, [location]);
-
   return (
     <div id="sideBar">
     <div
@@ -61,8 +55,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
       <div className="logo-white">
         <img src={logo} alt="Logo" />
       </div>
-
-      <ul className="side-menu">
+      <ul className="side-menu" style={{cursor:"pointer"}}>
         <li>
           <a
             className={
@@ -103,11 +96,9 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   title="User"
                   className="bi bi-person menu-left-icon"
                 ></i>
-
                 <span> Assessees </span>
               </a>
             </li>
-
             {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
               <li>
                 <a
@@ -126,16 +117,14 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                     title="User"
                     className="bi bi-person menu-left-icon"
                   ></i>
-
                   <span> User Management </span>
                 </a>
               </li>
             )}
-
             <li>
               <a
                 className={
-                  activeMenuItem === "/testing-requests" || activeMenuItem==="/register-application"
+                  activeMenuItem === "/testing-requests"
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }
@@ -172,7 +161,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 <span> Applications </span>
               </a>
             </li>
-
             {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
               <li>
                 <a

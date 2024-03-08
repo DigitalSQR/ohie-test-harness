@@ -269,7 +269,7 @@ export default function AutomatedTesting() {
 
   return (
     <div>
-    <div className="Workflow-testing-wrapper">
+    <div id="wrapper">
       <div className="container">
         <div className="col-12">
           <div className="d-flex justify-content-between">

@@ -275,6 +275,7 @@ const Applications = () => {
                         )
                       ) : (
                         <button
+                          style={{ cursor: "pointer" }}
                           class="btn btn-blue-sm report"
                           onClick={() => viewReport(testRequest.id)}
                         >
