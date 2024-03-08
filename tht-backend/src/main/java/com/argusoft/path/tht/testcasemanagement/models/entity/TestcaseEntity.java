@@ -29,6 +29,9 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     @Column(name = "question_type")
     private String questionType;
 
+    @Column(name = "failure_message", length = 1000)
+    private String failureMessage;
+
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "specification_id")
     private SpecificationEntity specification;
@@ -41,7 +44,8 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
         this.setRank(testcaseEntity.getRank());
         this.setManual(testcaseEntity.getManual());
         this.setBeanName(testcaseEntity.getBeanName());
-        if(testcaseEntity.getSpecification()!=null){
+        this.setFailureMessage(testcaseEntity.getFailureMessage());
+        if(testcaseEntity.getSpecification()!=null) {
             this.setSpecification(new SpecificationEntity(testcaseEntity.getSpecification().getId()));
         }
     }
@@ -88,5 +92,13 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
 
     public void setQuestionType(String questionType) {
         this.questionType = questionType;
+    }
+
+    public String getFailureMessage() {
+        return failureMessage;
+    }
+
+    public void setFailureMessage(String failureMessage) {
+        this.failureMessage = failureMessage;
     }
 }

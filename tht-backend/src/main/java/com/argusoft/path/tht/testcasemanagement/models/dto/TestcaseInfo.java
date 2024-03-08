@@ -31,6 +31,13 @@ public class TestcaseInfo extends IdStateNameMetaInfo {
             required = false)
     private Boolean isManual;
 
+    @ApiModelProperty(notes = "The failureMessage of the testcase",
+            allowEmptyValue = false,
+            example = "failureMessage",
+            dataType = "String",
+            required = false)
+    private String failureMessage;
+
     @ApiModelProperty(notes = "The questionType of the testcase",
             allowEmptyValue = false,
             example = "singleSelect, multiSelect",
@@ -83,5 +90,13 @@ public class TestcaseInfo extends IdStateNameMetaInfo {
 
     public void setQuestionType(String questionType) {
         this.questionType = questionType;
+    }
+
+    public String getFailureMessage() {
+        return failureMessage;
+    }
+
+    public void setFailureMessage(String failureMessage) {
+        this.failureMessage = failureMessage;
     }
 }
