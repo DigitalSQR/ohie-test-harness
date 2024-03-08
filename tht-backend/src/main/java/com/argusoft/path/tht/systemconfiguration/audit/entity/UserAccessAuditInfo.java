@@ -1,10 +1,11 @@
 package com.argusoft.path.tht.systemconfiguration.audit.entity;
 
+import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 
-public class UserAccessAuditInfo {
+public class UserAccessAuditInfo extends IdStateNameMetaInfo {
 
     @ApiModelProperty(notes = "The username for UserAccessAudit model",
             allowEmptyValue = true,
