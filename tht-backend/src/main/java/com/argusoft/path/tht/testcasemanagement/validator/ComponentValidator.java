@@ -374,7 +374,7 @@ public class ComponentValidator {
                             ErrorLevel.WARN,
                             ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
                             componentEntity.getName(),
-                            componentEntity.getName() + " is not active",
+                            "The component is inactive.",
                             false));
         } else if (componentEntity.getSpecifications().stream().noneMatch(specificationEntity -> SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE.equals(specificationEntity.getState()))) {
             errors.add(
@@ -382,7 +382,7 @@ public class ComponentValidator {
                             ErrorLevel.ERROR,
                             ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
                             componentEntity.getName(),
-                            componentEntity.getName() + "doesn't have any active specifications",
+                            "There are no active components for this specification.",
                             false));
         } else {
             errors.add(
@@ -414,7 +414,7 @@ public class ComponentValidator {
                             ErrorLevel.WARN,
                             SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
                             specificationEntity.getName(),
-                            specificationEntity.getName() + " is not active",
+                            "The specification is inactive.",
                             false));
         } else if (specificationEntity.getTestcases().stream().noneMatch(testcaseEntity -> TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE.equals(testcaseEntity.getState()))) {
             errors.add(
@@ -422,7 +422,7 @@ public class ComponentValidator {
                             ErrorLevel.ERROR,
                             SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
                             specificationEntity.getName(),
-                            specificationEntity.getName() + "doesn't have any active testcases",
+                            "There are no active testcases for this specification.",
                             false));
         } else {
             errors.add(
@@ -433,7 +433,7 @@ public class ComponentValidator {
                             null,
                             false));
             for (TestcaseEntity testcaseEntity : specificationEntity.getTestcases()) {
-                validateSpecification(specificationEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                validateTestcase(testcaseEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
             }
         }
     }
@@ -457,7 +457,7 @@ public class ComponentValidator {
                             ErrorLevel.WARN,
                             TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
                             testcaseEntity.getName(),
-                            testcaseEntity.getName() + " is not active",
+                            "The testcase is inactive",
                             false));
             return;
         }
@@ -473,7 +473,7 @@ public class ComponentValidator {
                             ErrorLevel.ERROR,
                             TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
                             testcaseEntity.getName(),
-                            testcaseEntity.getName() + "doesn't have any active testcase options",
+                            "There are no active options available for the Testcase.",
                             true));
         } else if (testcaseOptionEntities.stream().noneMatch(TestcaseOptionEntity::getSuccess)) {
             errors.add(
@@ -481,7 +481,7 @@ public class ComponentValidator {
                     ErrorLevel.ERROR,
                             TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
                     testcaseEntity.getName(),
-                    testcaseEntity.getName() + "doesn't have any active testcase options for the success",
+                    "The Testcase lacks any active options containing the correct answer, with all options being incorrect.",
                     false));
         } else {
             errors.add(
