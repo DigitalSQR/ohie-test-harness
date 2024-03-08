@@ -81,15 +81,16 @@ export default function Dashboard() {
     <div id="dashboard">
     <div id="wrapper">
       <div className="pt-3">
-        <div className="text-center">
+        <div className="text-center row">
+          <div className="col-6 offset-3 text-center">
           <img src={tool_icon} alt="Tool Icon" />
           <h4 className="mt-2">Testing Harness Tool</h4>
-          <p className="font-size-16 mt-4">
+          <div className="font-size-16 mt-4">
             Register your application to the open-source testing harness and
             complete test framework that will facilitate testing how well
             technologies align to the OpenHIE Architecture specification and
             health and data content, as specified by WHO SMART Guidelines.
-          </p>
+          </div>
           <p className="my-4">
             <a
               className="text-blue font-weight-500"
@@ -109,6 +110,7 @@ export default function Dashboard() {
               </button>
             </div>
           )}
+        </div>
         </div>
         <div className="row mt-5 justify-content-around">
           {!userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (

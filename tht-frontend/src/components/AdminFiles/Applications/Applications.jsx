@@ -206,7 +206,7 @@ const Applications = () => {
                 {testRequests.length === 0 ? (
                   <>
                     <tr>
-                      <td className="text-center" colSpan={5}>
+                      <td className="text-center" colSpan={6}>
                         No test requests found. Register one or wait for test
                         request to be approved
                       </td>
