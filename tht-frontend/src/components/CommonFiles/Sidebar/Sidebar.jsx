@@ -43,72 +43,49 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
   }, [location]);
   return (
     <div id="sideBar">
-    <div
-      className={
-        isSidebarOpen ? "sidebar-wrapper" : "sidebar-wrapper shrink"
-      }
-      id="mySidenav"
-    >
-      <div className="close-sidemenu-icon" onClick={toggleSidebar}>
-        <i className="bi bi-filter-left"></i>
-      </div>
-      <div className="logo-white">
-        <img src={logo} alt="Logo" />
-      </div>
-      <ul className="side-menu" style={{cursor:"pointer"}}>
-        <li>
-          <a
-            className={
-              activeMenuItem === "/dashboard"
-                ? "active menu-like-item"
-                : "menu-like-item"
-            }
-            onClick={() => {
-              handleMenuItemClick("/dashboard");
-              dispatch(set_header(""));
-            }}
-          >
-            <i
-              aria-label="Dashboard"
-              title="Dashboard"
-              className="bi bi-columns-gap menu-left-icon"
-            ></i>
-            <span> Dashboard </span>
-          </a>
-        </li>
-        {(user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
-          user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)) && (
-          <>
-            <li>
-              <a
-                className={
-                  activeMenuItem === "/assessee"
-                    ? "active menu-like-item"
-                    : "menu-like-item"
-                }
-                onClick={() => {
-                  handleMenuItemClick("/assessee");
-                  dispatch(set_header("Assessee"));
-                }}
-              >
-                <i
-                  aria-label="User"
-                  title="User"
-                  className="bi bi-person menu-left-icon"
-                ></i>
-                <span> Assessees </span>
-              </a>
-            </li>
-            {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+      <div
+        className={isSidebarOpen ? "sidebar-wrapper" : "sidebar-wrapper shrink"}
+        id="mySidenav"
+      >
+        <div className="close-sidemenu-icon" onClick={toggleSidebar}>
+          <i className="bi bi-filter-left"></i>
+        </div>
+        <div className="logo-white">
+          <img src={logo} alt="Logo" />
+        </div>
+        <ul className="side-menu" style={{ cursor: "pointer" }}>
+          <li>
+            <a
+              className={
+                activeMenuItem === "/dashboard"
+                  ? "active menu-like-item"
+                  : "menu-like-item"
+              }
+              onClick={() => {
+                handleMenuItemClick("/dashboard");
+                dispatch(set_header(""));
+              }}
+            >
+              <i
+                aria-label="Dashboard"
+                title="Dashboard"
+                className="bi bi-columns-gap menu-left-icon"
+              ></i>
+              <span> Dashboard </span>
+            </a>
+          </li>
+          {(user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+            user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)) && (
+            <>
               <li>
                 <a
                   className={
-                    activeMenuItem === "/admin-users"
+                    activeMenuItem === "/assessee"
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
                   onClick={() => {
-                    handleMenuItemClick("/admin-users");
+                    handleMenuItemClick("/assessee");
                     dispatch(set_header("Assessee"));
                   }}
                 >
@@ -117,79 +94,31 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                     title="User"
                     className="bi bi-person menu-left-icon"
                   ></i>
-                  <span> User Management </span>
+                  <span> Assessees </span>
                 </a>
               </li>
-            )}
-            <li>
-              <a
-                className={
-                  activeMenuItem === "/testing-requests"
-                    ? "active menu-like-item"
-                    : "menu-like-item"
-                }
-                onClick={() => {
-                  handleMenuItemClick("/testing-requests");
-                  dispatch(set_header("Testing Requests"));
-                }}
-              >
-                <i
-                  aria-label="Testing Requests"
-                  title="Testing Requests"
-                  className="bi bi-file-earmark-plus menu-left-icon"
-                ></i>
-                <span> Testing Requests</span>
-              </a>
-            </li>
-            <li>
-              <a
-                className={
-                  activeMenuItem === "/applications"
-                    ? "active menu-like-item"
-                    : "menu-like-item"
-                }
-                onClick={() => {
-                  handleMenuItemClick("/applications");
-                  dispatch(set_header("Applications"));
-                }}
-              >
-                <i
-                  aria-label="Applications"
-                  title="Applications"
-                  className="bi bi-file-earmark-bar-graph menu-left-icon"
-                ></i>
-                <span> Applications </span>
-              </a>
-            </li>
-            {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
-              <li>
-                <a
-                  className={
-                    activeMenuItem.includes("/testcase-config")
-                      ? "active menu-like-item"
-                      : "menu-like-item"
-                  }
-                  onClick={() => {
-                    handleMenuItemClick("/testcase-config");
-                    dispatch(set_header("Components"));
-                  }}
-                >
-                  <i
-                    aria-label="Testcase Config"
-                    title="Testcase Config"
-                    className="bi bi-gear-fill menu-left-icon"
-                  ></i>
-                  <span> Testcase Configuration </span>
-                </a>
-              </li>
-            )}
-          </>
-        )}
-        {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) &&
-          !user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) &&
-          !user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER) && (
-            <Fragment>
-              {" "}
+              {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+                <li>
+                  <a
+                    className={
+                      activeMenuItem === "/admin-users"
+                        ? "active menu-like-item"
+                        : "menu-like-item"
+                    }
+                    onClick={() => {
+                      handleMenuItemClick("/admin-users");
+                      dispatch(set_header("User Management"));
+                    }}
+                  >
+                    <i
+                      aria-label="User"
+                      title="User"
+                      className="bi bi-person menu-left-icon"
+                    ></i>
+                    <span> User Management </span>
+                  </a>
+                </li>
+              )}
               <li>
                 <a
                   className={
@@ -197,7 +126,10 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
-                  onClick={() => handleMenuItemClick("/testing-requests")}
+                  onClick={() => {
+                    handleMenuItemClick("/testing-requests");
+                    dispatch(set_header("Testing Requests"));
+                  }}
                 >
                   <i
                     aria-label="Testing Requests"
@@ -208,29 +140,95 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 </a>
               </li>
               <li>
-              <a
-                className={
-                  activeMenuItem === "/applications"
-                    ? "active menu-like-item"
-                    : "menu-like-item"
-                }
-                onClick={() => {
-                  handleMenuItemClick("/applications");
-                  dispatch(set_header("Applications"));
-                }}
-              >
-                <i
-                  aria-label="Applications"
-                  title="Applications"
-                  className="bi bi-file-earmark-bar-graph menu-left-icon"
-                ></i>
-                <span> Applications </span>
-              </a>
-            </li>
-            </Fragment>
+                <a
+                  className={
+                    activeMenuItem === "/applications"
+                      ? "active menu-like-item"
+                      : "menu-like-item"
+                  }
+                  onClick={() => {
+                    handleMenuItemClick("/applications");
+                    dispatch(set_header("Applications"));
+                  }}
+                >
+                  <i
+                    aria-label="Applications"
+                    title="Applications"
+                    className="bi bi-file-earmark-bar-graph menu-left-icon"
+                  ></i>
+                  <span> Applications </span>
+                </a>
+              </li>
+              {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+                <li>
+                  <a
+                    className={
+                      activeMenuItem.includes("/testcase-config")
+                        ? "active menu-like-item"
+                        : "menu-like-item"
+                    }
+                    onClick={() => {
+                      handleMenuItemClick("/testcase-config");
+                      dispatch(set_header("Components"));
+                    }}
+                  >
+                    <i
+                      aria-label="Testcase Config"
+                      title="Testcase Config"
+                      className="bi bi-gear-fill menu-left-icon"
+                    ></i>
+                    <span> Testcase Configuration </span>
+                  </a>
+                </li>
+              )}
+            </>
           )}
-      </ul>
-    </div>
+          {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) &&
+            !user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+            !user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER) && (
+              <Fragment>
+                {" "}
+                <li>
+                  <a
+                    className={
+                      activeMenuItem === "/testing-requests"
+                        ? "active menu-like-item"
+                        : "menu-like-item"
+                    }
+                    onClick={() => handleMenuItemClick("/testing-requests")}
+                  >
+                    <i
+                      aria-label="Testing Requests"
+                      title="Testing Requests"
+                      className="bi bi-file-earmark-plus menu-left-icon"
+                    ></i>
+                    <span> Testing Requests</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className={
+                      activeMenuItem === "/applications"
+                        ? "active menu-like-item"
+                        : "menu-like-item"
+                    }
+                    onClick={() => {
+                      handleMenuItemClick("/applications");
+                      dispatch(set_header("Applications"));
+                    }}
+                  >
+                    <i
+                      aria-label="Applications"
+                      title="Applications"
+                      className="bi bi-file-earmark-bar-graph menu-left-icon"
+                    ></i>
+                    <span> Applications </span>
+                  </a>
+                </li>
+              </Fragment>
+            )}
+        </ul>
+      </div>
     </div>
   );
 }
