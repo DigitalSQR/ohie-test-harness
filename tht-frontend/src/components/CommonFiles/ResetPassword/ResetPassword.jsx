@@ -7,6 +7,7 @@ import "./resetPassword.scss";
 export default function ResetPassword() {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const validate = (values) => {
     const errors = {};
@@ -18,17 +19,21 @@ export default function ResetPassword() {
     else if(values.newPassword.length > 255) {
       errors.newPassword = "Password must have less than 255 characters."
     }
-
+    if(values.confirmPassword !== values.newPassword) {
+      errors.confirmPassword = "Confirm password does not match"
+    }
     return errors;
   };
   const formik = useFormik({
     initialValues: {
       oldPassword: "",
       newPassword: "",
+      confirmPassword: "",
     },
     validate: validate,
     onSubmit: (values) => {
-      UserAPI.resetPassword(values)
+      const { confirmPassword, ...reqBody } = values;
+      UserAPI.resetPassword(reqBody)
         .then((response) => {
           notification.success({
             description: "Password changed successfully",
@@ -59,7 +64,7 @@ export default function ResetPassword() {
                   className="form-control input-group"
                   style={{ borderRadius: "6px 0px 0px 6px" }}
                   id="oldPassword"
-                  placeholder="Old password"
+                  placeholder="Old Password"
                   name="oldPassword"
                   value={formik.values.oldPassword}
                   onChange={formik.handleChange}
@@ -80,8 +85,8 @@ export default function ResetPassword() {
             </div>
           </div>
           <div className="row">
-            <div className="col-12">
-              <div className="custom-input input-group mb-3">
+            <div className="col-12 mb-3">
+              <div className="custom-input input-group">
                 <label htmlFor="password" className="form-label input-group">
                   <b>New Password</b>
                 </label>
@@ -90,7 +95,7 @@ export default function ResetPassword() {
                   className="form-control"
                   style={{ borderRadius: "6px 0px 0px 6px" }}
                   id="newPassword"
-                  placeholder="New password"
+                  placeholder="New Password"
                   name="newPassword"
                   value={formik.values.newPassword}
                   onChange={formik.handleChange}
@@ -113,6 +118,44 @@ export default function ResetPassword() {
                   {formik.errors.newPassword}
                 </div>
               )}
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-12 mb-3">
+              <div className="custom-input input-group">
+                <label htmlFor="confirmPassword" className="form-label input-group">
+                  <b>Confirm New Password</b>
+                </label>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  className="form-control"
+                  style={{ borderRadius: "6px 0px 0px 6px" }}
+                  id="confirmPassword"
+                  placeholder="Confirm New Password"
+                  name="confirmPassword"
+                  value={formik.values.confirmPassword}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                <button
+                  className="btn btn-outline-secondary color"
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <i
+                    className={`bi ${
+                      showConfirmPassword ? "bi-eye-slash" : "bi-eye"
+                    }`}
+                  ></i>
+                </button>
+                
+              </div>
+              {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                <div className="text-danger position-flex">
+                  {formik.errors.confirmPassword}
+                </div>
+              )}
+              
             </div>
           </div>
           <div className="my-4 text-end">

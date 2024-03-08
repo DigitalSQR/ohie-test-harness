@@ -297,10 +297,10 @@ const TestingRequests = () => {
                             <table className="data-table">
                               <thead>
                                 <tr>
-                                  <th className="col-2">Component</th>
-                                  <th className="col-2">Base Url</th>
-                                  <th className="col-2">Username</th>
-                                  <th className="col-2">Password</th>
+                                  <th style={{width:'24%'}}>Component</th>
+                                  <th style={{width:'24%'}}>Base Url</th>
+                                  <th style={{width:'24%'}}>Username</th>
+                                  <th style={{width:'24%'}}>Password</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -319,7 +319,9 @@ const TestingRequests = () => {
                                           {testUrls.showPass
                                             ? testUrls.password
                                             : "*********"}
-                                          <i
+                                        </td>
+                                        <td>
+                                        <i
                                             className={`bi ${
                                               testUrls.showPass
                                                 ? "bi-eye-fill"
