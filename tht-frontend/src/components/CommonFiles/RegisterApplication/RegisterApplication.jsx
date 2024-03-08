@@ -205,7 +205,7 @@ const RegisterApplication = () => {
       <div id="wrapper">
         <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
           <div className="form-bg-white">
-            <span className="heading-line-up">Application Details</span>
+            <span className="heading-line-up">Test Request Details</span>
 
             <div className="row">
               <div className="col-sm-6 col-12">

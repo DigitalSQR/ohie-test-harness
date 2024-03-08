@@ -135,7 +135,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
             <li>
               <a
                 className={
-                  activeMenuItem === "/testing-requests"
+                  activeMenuItem === "/testing-requests" || activeMenuItem==="/register-application"
                     ? "active menu-like-item"
                     : "menu-like-item"
                 }

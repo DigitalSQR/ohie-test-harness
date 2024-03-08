@@ -172,7 +172,7 @@ const TestingRequests = () => {
                   className="btn btn-sm btn-outline-secondary menu-like-item"
                 >
                   <i className="bi bi-plus"></i>
-                  Register Application
+                  Register Test Request
                 </button>
               </div>
             </div>
