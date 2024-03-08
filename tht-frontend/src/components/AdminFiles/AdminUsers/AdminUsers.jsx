@@ -158,23 +158,23 @@ const AdminUsers = () => {
                 <tr>
                   <th className="col-3">
                     NAME
-                    <a
+                    <span
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("name")}
                     >
                       {renderSortIcon("name")}
-                    </a>
+                    </span>
                   </th>
                   <th className="col-3">
                     EMAIL
-                    <a
+                    <span
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("email")}
                     >
                       {renderSortIcon("email")}
-                    </a>
+                    </span>
                   </th>
                   <th className="col-3">ROLE</th>
                   <th className="col-3">ACTIONS</th>

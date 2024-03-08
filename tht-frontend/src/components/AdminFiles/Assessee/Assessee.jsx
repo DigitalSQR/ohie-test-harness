@@ -3,7 +3,7 @@ import "./assessee.scss";
 import { UserAPI } from "../../../api/UserAPI";
 import { notification } from "antd";
 import { Pagination } from "@mui/material";
-import { userBadgeClasses } from "../../../constants/user_constants";
+import { userBadgeClasses, userStateConstantNames} from "../../../constants/user_constants";
 import { useLoader } from "../../loader/LoaderContext";
 import { userStatusActionLabels } from "../../../constants/user_constants";
 import { ROLE_ID_ASSESSEE } from "../../../constants/role_constants";
@@ -130,7 +130,7 @@ const Assessee = () => {
         <div className="row mb-2 justify-content-between">
           <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
             <div className="d-flex align-items-baseline ">
-              <span className="pe-3 text-nowrap">Status :</span>
+              <span className="pe-3 text-nowrap fw-bold">Status </span>
               <div className="mb-3">
                 <select
                   className="form-select custom-select custom-select-sm"
@@ -163,55 +163,55 @@ const Assessee = () => {
           <table className=" data-table">
             <thead>
               <tr>
-                <th className="col-1.8">
+                <th className="col-2">
                   NAME
-                  <a
+                  <span
                     className="ps-1"
                     href="#"
                     onClick={() => handleSort("name")}
                   >
                     {renderSortIcon("name")}
-                  </a>
+                  </span>
                 </th>
-                <th className="col-1.8">
+                <th className="col-2.5">
                   Email
-                  <a
+                  <span
                     className="ps-1"
                     href="# "
                     onClick={() => handleSort("email")}
                   >
                     {renderSortIcon("email")}
-                  </a>
+                  </span>
                 </th>
-                <th className="col-1.8">Company
-                <a
+                <th className="col-2">Company
+                <span
                 className="ps-1"
                 href="# "
                 onClick={() => handleSort("companyName")}
               >
                 {renderSortIcon("companyName")}
-              </a>
+              </span>
                 </th>
-                <th className="col-1.8">requested date
-                <a
+                <th className="col-1.2">requested date
+                <span
                 className="ps-1"
                 href="# "
                 onClick={() => handleSort("createdAt")}
               >
                 {renderSortIcon("createdAt")}
-              </a>
+              </span>
                 </th>
-                <th className="col-1.8">
+                <th className="col-1.9">
                   Status
-                  <a
+                  <span
                     className="ps-1"
                     href="# "
                     onClick={() => handleSort("state")}
                   >
                     {renderSortIcon("state")}
-                  </a>
+                  </span>
                 </th>
-                <th className="col-3">CHOOSE ACTION</th>
+                <th className="col-1.9">CHOOSE ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -230,14 +230,7 @@ const Assessee = () => {
                   month: "short",
                   year: "numeric",
                 });
-                let currentStatus = "";
-                if (user.state === "user.status.verification.pending") {
-                  currentStatus = "Email not verified";
-                } else if (user.state) {
-                  const parts = user.state.split(".");
-
-                  currentStatus = parts[parts.length - 1];
-                }
+                let currentStatus = userStateConstantNames[user.state];    
                 return (
                   <Fragment key={user.id}>
                     <tr>
@@ -250,7 +243,7 @@ const Assessee = () => {
                       )}
                       <td>{formattedDate}</td>
                       <td>
-                        <span className={userBadgeClasses[user.state]}>
+                        <span className= {"status " + userBadgeClasses[user.state]}>
                           {currentStatus.toUpperCase()}
                         </span>
                       </td>

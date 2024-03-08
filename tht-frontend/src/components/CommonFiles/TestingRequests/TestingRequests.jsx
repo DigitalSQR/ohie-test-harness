@@ -32,13 +32,10 @@ const TestingRequests = () => {
   const pageSize = 10;
 
   const navigate = useNavigate();
-  const obj = {
+  const [sortDirection, setSortDirection] = useState({
     productName: "desc",
     createdAt: "desc",
-    assessee: "desc",
-    state: "desc"
-  }
-  const [sortDirection, setSortDirection] = useState(obj);
+  });
   const [sortFieldName, setSortFieldName] = useState("createdAt");
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -84,7 +81,7 @@ const TestingRequests = () => {
 
   const handleSort = (field) => {
     setSortFieldName(field);
-    const newSortDirection = { ...obj };
+    const newSortDirection = { ...sortDirection };
     newSortDirection[field] = sortDirection[field] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
     fetchTestRequests(filterState, field, newSortDirection, currentPage);
@@ -139,7 +136,7 @@ const TestingRequests = () => {
             <div className="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12">
               <div className="custom-input custom-input-sm mb-3">
                 <div className="d-flex align-items-baseline">
-                  <span className="pe-3 text-nowrap">Status :</span>
+                  <span className="pe-3 text-nowrap fw-bold">Status </span>
                   <div className="mb-3">
                     <select
                       onChange={(e) => {
@@ -183,45 +180,27 @@ const TestingRequests = () => {
               <thead>
                 <tr>
                   <th className="app-name-column">
-                    PRODUCT NAME
-                    <a
+                  PRODUCT NAME
+                    <span
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("productName")}
                     >
                       {renderSortIcon("productName")}
-                    </a>
+                    </span>
                   </th>
                   <th className="date-column">
                     DATE OF APPLICATION{" "}
-                    <a
+                    <span
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("createdAt")}
                     >
                       {renderSortIcon("createdAt")}
-                    </a>
+                    </span>
                   </th>
-                  <th className="assessee-column">
-                    Assessee
-                    <a
-                      className="ps-1"
-                      href="#"
-                      onClick={() => handleSort("assessee")}
-                    >
-                      {renderSortIcon("assessee")}
-                    </a>
-                  </th>
-                  <th className="status-column">
-                    STATUS
-                    <a
-                      className="ps-1"
-                      href="#"
-                      onClick={() => handleSort("state")}
-                    >
-                      {renderSortIcon("state")}
-                    </a>
-                  </th>
+                  <th className="assessee-column">Assessee</th>
+                  <th className="status-column">STATUS</th>
                   <th className="actions-column">
                     <span
                       className={
@@ -248,7 +227,7 @@ const TestingRequests = () => {
                   <>
                     <tr key={testRequest.id}>
                       <td>{testRequest.productName}</td>
-                      <td>{formatDate(testRequest.meta.createdAt)}</td>
+                      <td>{formatDate(testRequest.meta.updatedAt)}</td>
                       <td>
                         <UserIdConnector
                           isLink={true}
@@ -256,7 +235,7 @@ const TestingRequests = () => {
                         />
                       </td>
                       <td>
-                        <span className={StateBadgeClasses[testRequest.state]}>
+                        <span className={"status "+ StateBadgeClasses[testRequest.state]}>
                           {TestRequestStateConstantNames[testRequest.state]}
                         </span>
                       </td>

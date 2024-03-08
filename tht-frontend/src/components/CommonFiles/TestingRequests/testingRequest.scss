@@ -31,11 +31,12 @@
     background: #0ab39c;
     color: #fff;
     border-radius: 4px;
-    padding: 0px 20px;
+    padding: 0px 0px;
     text-align: center;
     font-size: 12px;
     font-weight: 700;
     line-height: 22px;
+    margin-left: 0px;
   }
 
   .badges-orange {
@@ -43,7 +44,7 @@
     background: #ff8a65;
     color: #fff;
     border-radius: 4px;
-    padding: 0px 20px;
+    padding: 0px 0px;
     text-align: center;
     font-size: 12px;
     font-weight: 700;
@@ -114,5 +115,8 @@
 
   .table-responsive {
     margin-top: 3rem;
+  }
+  .status{
+    width:75% !important;
   }
 }

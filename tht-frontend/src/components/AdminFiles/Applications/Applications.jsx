@@ -160,44 +160,44 @@ const Applications = () => {
                 <tr>
                   <th className="col-2">
                     APP NAME{" "}
-                    <a
+                    <span
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("name")}
                     >
                       {renderSortIcon("name")}
-                    </a>
+                    </span>
                   </th>
                   <th className="col-2">
                     COMPANY NAME{" "}
-                    <a
+                    <span
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("productName")}
                     >
                       {renderSortIcon("productName")}
-                    </a>
+                    </span>
                   </th>
                   <th className="col-2">
                     DATE OF APPLICATION
-                    <a
+                    <span
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("createdAt")}
                     >
                       {renderSortIcon("createdAt")}
-                    </a>
+                    </span>
                   </th>
                   <th className="col-2">EMAIL ID</th>
                   <th className="col-2">
                     STATUS
-                    <a
+                    <span
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("state")}
                     >
                       {renderSortIcon("state")}
-                    </a>
+                    </span>
                   </th>
                   <th className="col-2">CHOOSE ACTION</th>
                 </tr>
@@ -231,7 +231,7 @@ const Applications = () => {
                       {testRequest.state !== "test.request.status.finished" ? (
                         <Fragment>
                           <span
-                            className={`badge ${
+                            className={`status badge ${
                               StateBadgeClasses[testRequest.state]
                             }`}
                           >
@@ -241,7 +241,7 @@ const Applications = () => {
                       ) : (
                         <Fragment>
                           <span
-                            className={`badge ${
+                            className={`status badge ${
                               StateBadgeClasses[testRequest.state]
                             }`}
                           >
@@ -275,12 +275,16 @@ const Applications = () => {
                         )
                       ) : (
                         <button
-                          style={{ cursor: "pointer" }}
-                          class="btn btn-blue-sm report"
+                        style={{ cursor: "pointer" }}
+                        className={StateClasses[testRequest.state]?.btnClass}
                           onClick={() => viewReport(testRequest.id)}
                         >
                           {" "}
-                          <i class="bi bi-file-text"></i> Report
+                          <i
+                            className={
+                              StateClasses[testRequest.state]?.iconClass
+                            }
+                          ></i>Report
                         </button>
                       )}
                     </td>

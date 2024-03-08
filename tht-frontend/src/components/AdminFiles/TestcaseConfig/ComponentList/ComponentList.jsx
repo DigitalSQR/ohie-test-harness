@@ -194,13 +194,13 @@ export default function ComponentList() {
                 <tr>
                   <th className="col-6">
                     Component Name{" "}
-                    <a
+                    <span
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("name")}
                     >
                       {renderSortIcon("name")}
-                    </a>{" "}
+                    </span>{" "}
                   </th>
                   <th className="col-2">Status</th>
                   <th className="col-2">Action</th>

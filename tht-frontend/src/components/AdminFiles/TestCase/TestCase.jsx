@@ -512,7 +512,7 @@ export default function TestCase(props) {
 								<div className="text-end mb-3">
 									<button
 										disabled={!testcaseResult.testcaseOptionId && !selectedOptions.length}
-										className="cst-btn-group btn btn-primary"
+										className="cst-btn-group btn btn-blue save-and-next"
 										onClick={() => {
 											handleSaveandNext();
 										}}

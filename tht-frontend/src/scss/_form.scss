@@ -12,6 +12,18 @@
             border: 1px solid $color-light;
         }
     }
+    textarea{
+        height: 100px;
+        border-radius: 5px;
+        border: 1px solid $color-light;
+        font-size: 14px;
+        font-weight: 400;
+        color: $color-black-50;
+        &:focus{
+            box-shadow: none;
+            border: 1px solid $color-light;
+        }
+    }
     label{
         font-weight: 500;
         color: $color-black-50;
@@ -115,3 +127,13 @@
     padding: 0px 15px;
     justify-content: space-between;
 }
+
+.error-message {
+  color: red;
+  font-size: 13px;
+ }
+
+.is-invalid {
+  border-color: red !important;
+} 
+  

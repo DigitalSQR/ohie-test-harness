@@ -3,7 +3,7 @@ export const userStateConstantNames = {
   "user.status.inactive": "INACTIVE",
   "user.status.rejected": "REJECTED",
   "user.status.approval.pending": "PENDING",
-  "user.status.verification.pending": "NOT VERIFIED",
+  "user.status.verification.pending": "UNVERIFIED",
 };
 
 export const userBadgeClasses = {
@@ -15,7 +15,14 @@ export const userBadgeClasses = {
 };
 
 export const userStatusActionLabels = [
-  { label: "Accepted", value: "user.status.active" },
+  { 
+    label: "Active", 
+    value: "user.status.active" 
+  },
+  {
+    label: "Inactive",
+    value: "user.status.inactive",
+  },
   {
     label: "Rejected",
     value: "user.status.rejected",

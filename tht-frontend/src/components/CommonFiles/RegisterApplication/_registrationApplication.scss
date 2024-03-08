@@ -19,6 +19,18 @@
     font-weight: 400;
     color: #51516d;
   }
+  .custom-input textarea{
+    height: 100px;
+    border-radius: 5px;
+    border: 1px solid $color-light;
+    font-size: 14px;
+    font-weight: 400;
+    color: $color-black-50;
+    &:focus{
+        box-shadow: none;
+        border: 1px solid $color-light;
+    }
+}
   .custom-input input:focus {
     box-shadow: none;
     border: 1px solid #ccdade;
