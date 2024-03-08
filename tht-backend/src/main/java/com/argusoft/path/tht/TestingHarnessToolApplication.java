@@ -14,6 +14,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.sql.DataSource;
@@ -27,6 +28,7 @@ import java.util.Properties;
 @SpringBootApplication
 @EnableSwagger2
 @EnableAuthorizationServer
+@EnableTransactionManagement
 @EnableCaching
 @EnableScheduling
 @EnableMethodSecurity

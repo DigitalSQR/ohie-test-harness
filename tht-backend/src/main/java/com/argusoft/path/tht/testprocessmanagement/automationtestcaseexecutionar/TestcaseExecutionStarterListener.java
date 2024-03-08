@@ -8,15 +8,14 @@ import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultAttributesService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -60,39 +59,7 @@ public class TestcaseExecutionStarterListener {
             for (int i = 0; i < totalTestcaseResults; i++) {
 
                 if (Thread.currentThread().isInterrupted()) {
-
-                    TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
-                    testcaseResultCriteriaSearchFilter.setRefId(testRequestId);
-                    List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
-                    if (testcaseResultEntity.isEmpty()) {
-
-                        LOGGER.error("TestcaseResultEntity list is empty");
-                        throw new DoesNotExistException("testcaseResultEntity list is empty");
-
-                    }
-
-                    TestcaseResultEntity testcaseResultTestRequestEntity = testcaseResultEntity.get(0);
-                    Optional<TestcaseResultAttributesEntity> testcaseResultAttributesEntity = testcaseResultAttributesService.getTestcaseResultAttributes(testcaseResultTestRequestEntity, "reset", contextInfo);
-
-                    List<TestcaseResultEntity> results = testcaseExecutioner.fetchTestcaseResultsByInputsForReinitialize(testRequestId,
-                            refObjUri,
-                            refId,
-                            null,
-                            true,
-                            isRequired,
-                            isRecommended,
-                            isWorkflow,
-                            isFunctional,
-                            contextInfo);
-
-                    testcaseExecutioner.changeTestcaseResultsState(
-                            results,
-                            TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT,
-                            testcaseResultAttributesEntity.isPresent() && testcaseResultAttributesEntity.get().getValue().equals("true"),
-                            contextInfo);
-                    if (testcaseResultAttributesEntity.isPresent() && testcaseResultAttributesEntity.get().getValue().equals("true")) {
-                        deleteFinishedExecutionAttributes(testRequestId, contextInfo);
-                    }
+                    stopProcess(testRequestId, contextInfo, refObjUri, refId, isRequired, isRecommended, isWorkflow, isFunctional);
                     break;
                 }
                 testcaseExecutioner.markTestcaseResultInProgress(testcaseResultEntityIds.get(i), contextInfo);
@@ -105,6 +72,42 @@ public class TestcaseExecutionStarterListener {
             }
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + TestcaseExecutionStarterListener.class.getSimpleName(), e);
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+    public void stopProcess(String testRequestId, ContextInfo contextInfo, String refObjUri, String refId, Boolean isRequired, Boolean isRecommended, Boolean isWorkflow, Boolean isFunctional) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
+        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+        testcaseResultCriteriaSearchFilter.setRefId(testRequestId);
+        List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
+        if (testcaseResultEntity.isEmpty()) {
+
+            LOGGER.error("TestcaseResultEntity list is empty");
+            throw new DoesNotExistException("testcaseResultEntity list is empty");
+
+        }
+
+        TestcaseResultEntity testcaseResultTestRequestEntity = testcaseResultEntity.get(0);
+        Optional<TestcaseResultAttributesEntity> testcaseResultAttributesEntity = testcaseResultAttributesService.getTestcaseResultAttributes(testcaseResultTestRequestEntity, "reset", contextInfo);
+
+        List<TestcaseResultEntity> results = testcaseExecutioner.fetchTestcaseResultsByInputsForReinitialize(testRequestId,
+                refObjUri,
+                refId,
+                null,
+                true,
+                isRequired,
+                isRecommended,
+                isWorkflow,
+                isFunctional,
+                contextInfo);
+
+        testcaseExecutioner.changeTestcaseResultsState(
+                results,
+                TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT,
+                testcaseResultAttributesEntity.isPresent() && testcaseResultAttributesEntity.get().getValue().equals("true"),
+                contextInfo);
+        if (testcaseResultAttributesEntity.isPresent() && testcaseResultAttributesEntity.get().getValue().equals("true")) {
+            deleteFinishedExecutionAttributes(testRequestId, contextInfo);
         }
     }
 
