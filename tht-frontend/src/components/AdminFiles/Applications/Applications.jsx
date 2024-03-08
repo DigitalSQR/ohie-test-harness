@@ -59,7 +59,7 @@ const Applications = () => {
         setUserRole(res.roleIds);
       })
       .catch((error) => {});
-  });
+  },[]);
   const getAllTestRequests = (
     filterState,
     sortFieldName,
@@ -188,9 +188,7 @@ const Applications = () => {
                       {renderSortIcon("createdAt")}
                     </a>
                   </th>
-                  <th className="col-2">
-                    EMAIL ID
-                  </th>
+                  <th className="col-2">EMAIL ID</th>
                   <th className="col-2">
                     STATUS
                     <a
