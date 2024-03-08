@@ -1,4 +1,3 @@
-
 @import "../scss/_header.scss";
 @import "../scss/_sidebar.scss";
 @import "../scss/_utilities.scss";
@@ -7,13 +6,15 @@
 @import "../scss/_table.scss";
 @import "../scss/_form.scss";
 @import "../scss/_common.scss";
-@import "../scss/_footer.scss";  
-
+@import "../scss/_footer.scss";
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 14px;
   line-height: 24px;
   font-weight: 400;
   color: $color-black-50;
+}
+.expand {
+  margin-left: 30px !important;
 }

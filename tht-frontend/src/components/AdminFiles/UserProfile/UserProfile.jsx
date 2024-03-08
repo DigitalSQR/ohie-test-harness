@@ -24,69 +24,64 @@ import { set_header } from "../../../reducers/homeReducer";
 const UserProfile = () => {
   const { showLoader, hideLoader } = useLoader();
   const [userDetails, setUserDetails] = useState();
-
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
-
+  const [uploadedFlag, setUploadedFlag] = useState(false);
+  const [previousImage, setPreviousImage] = useState();
   const [profilePicture, setProfilePicture] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const userID = useSelector((store) => store.userInfoSlice.id);
 
-  const handleUpload = (e) => {
-    if (!!profilePicture) {
+  const handleUpload = () => {
+    if (!!previousImage && profilePicture !== previousImage) {
       DocumentAPI.changeDocumentState(
-        profilePicture.documentId,
+        previousImage.documentId,
         DOCUMENT_STATE_INACTIVE
-      )
-        .then(() => {
-          setProfilePicture();
-        }).catch((error) => {
-          
-        });;
+      );
     }
     const formData = new FormData();
-    formData.append(`file`, e.file);
-    formData.append(`fileName`, e.file.name);
-    formData.append(`refId`, userID);
-    formData.append(`refObjUri`, RefObjUriConstants.USER_REFOBJURI);
-    formData.append(`documentType`, DOCUMENT_TYPE_FOR_USER.PROFILE_PICTURE);
-    return DocumentAPI.uploadDocument(formData)
-      .then(async (response) => {
-        const base64Image = await DocumentAPI.base64Document(
-          response.id,
-          response.name
-        );
-        let imageData = {
-          name: response.name,
-          status: "done",
-          url: base64Image,
-          documentId: response.id,
-        };
-
-        setProfilePicture(imageData);
-        notification.success({
-          description: `Picture Uploaded Successfully`,
-          placement: "bottomRight",
-        });
-      }).catch((error) => {
-          
-      });;
+    if (!!profilePicture && profilePicture !== previousImage) {
+      formData.append(`file`, profilePicture.file);
+      formData.append(`fileName`, profilePicture.file.name);
+      formData.append(`refId`, userID);
+      formData.append(`refObjUri`, RefObjUriConstants.USER_REFOBJURI);
+      formData.append(`documentType`, DOCUMENT_TYPE_FOR_USER.PROFILE_PICTURE);
+      return DocumentAPI.uploadDocument(formData)
+        .then(async (response) => {
+          const base64Image = await DocumentAPI.base64Document(
+            response.id,
+            response.name
+          );
+          let imageData = {
+            name: response.name,
+            status: "done",
+            url: base64Image,
+            documentId: response.id,
+          };
+          setPreviewImage(imageData);
+          notification.success({
+            description: `Picture Uploaded Successfully`,
+            placement: "bottomRight",
+          });
+        })
+        .catch((error) => {});
+    }
   };
 
   const validate = (values) => {
     const errors = {};
     if (values.name.length === 0) {
       errors.name = "Please enter your name.";
-    } else if(values.name.length > 1000) {
-      errors.password = "Password must have less than 1000 characters."
+    } else if (values.name.length > 1000) {
+      errors.password = "Password must have less than 1000 characters.";
     }
     if (values.companyName.length == 0) {
       errors.companyName = "Please enter your company's name.";
-    }else if(values.companyName.length > 255) {
-      errors.companyName = "Company name must have less than 255 characters."
+    } else if (values.companyName.length > 255) {
+      errors.companyName = "Company name must have less than 255 characters.";
     }
     return errors;
   };
@@ -113,7 +108,7 @@ const UserProfile = () => {
           url: base64Image,
           documentId: id,
         };
-
+        setPreviousImage(image);
         setProfilePicture(image);
       }
     });
@@ -126,9 +121,8 @@ const UserProfile = () => {
         formik.values.companyName = res.companyName;
         formik.values.email = res.email;
         formik.values.roleIds = getHighestPriorityRole(res);
-      }).catch((error) => {
-       
-      });
+      })
+      .catch((error) => {});
   };
 
   const handleRemove = () => {
@@ -138,26 +132,18 @@ const UserProfile = () => {
       okText: "Yes",
       cancelText: "Cancel",
       onOk() {
-        DocumentAPI.changeDocumentState(
-          profilePicture.documentId,
-          DOCUMENT_STATE_INACTIVE
-        )
-          .then((response) => {
-            notification.success({
-              description: `Picture deleted successfully`,
-              placement: "bottomRight",
-            });
-            setProfilePicture();
-          }).catch((error) => {
-       
-          });
+        notification.success({
+          description: `Picture deleted successfully`,
+          placement: "bottomRight",
+        });
+        setProfilePicture();
+        setUploadedFlag(true);
       },
     });
   };
 
   const handlePreview = () => {
     setPreviewImage(profilePicture.url);
-    setPreviewTitle(profilePicture.name);
     setPreviewOpen(true);
 
     return false;
@@ -186,9 +172,11 @@ const UserProfile = () => {
             placement: "bottomRight",
             description: `User Updated Successfully`,
           });
+          handleUpload();
+
           dispatch(userinfo_success(body));
           navigate("/dashboard");
-          window.location.reload();
+          // window.location.reload();
         })
         .catch((response) => {
           hideLoader();
@@ -196,6 +184,18 @@ const UserProfile = () => {
       hideLoader();
     },
   });
+  const handlePictureSelect = (e) => {
+    setUploadedFlag(true);
+    setProfilePicture(() => {
+      const currentImage = {
+        file: e.file,
+        name: e.file.name,
+        url: URL.createObjectURL(e.file),
+      };
+      return currentImage;
+    });
+  };
+
   return (
     <div id="userProfile">
       <div id="wrapper">
@@ -275,20 +275,22 @@ const UserProfile = () => {
                 </div>
                 {!profilePicture && (
                   <ImgCrop>
-                  <Upload
-                    showUploadList={false}
-                    maxCount={1}
-                    customRequest={handleUpload}
-                    previewFile={false}
-                    accept=".png,.jpg,.jpeg,image/png,image/jpeg"
-                  >
-                    <button
-                      className="btn btn-primary btn-sm btn-blue"
-                      style={{ marginTop: 8 }}
+                    <Upload
+                      type="button"
+                      showUploadList={false}
+                      maxCount={1}
+                      customRequest={(e) => handlePictureSelect(e)}
+                      previewFile={false}
+                      accept=".png,.jpg,.jpeg,image/png,image/jpeg"
                     >
-                      Upload
-                    </button>
-                  </Upload>
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm btn-blue"
+                        style={{ marginTop: 8 }}
+                      >
+                        Upload
+                      </button>
+                    </Upload>
                   </ImgCrop>
                 )}
               </div>
@@ -419,10 +421,10 @@ const UserProfile = () => {
                 Cancel
               </button>
               <button
-                disabled={!(formik.isValid)}
+                disabled={!((formik.isValid && formik.dirty) || uploadedFlag)}
                 onClick={formik.handleSubmit}
                 className="btn btn-primary btn-blue btn-submit  font-size-14"
-                style={{marginLeft:"1rem"}}
+                style={{ marginLeft: "1rem" }}
                 type="submit"
               >
                 Update

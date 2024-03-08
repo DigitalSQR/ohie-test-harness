@@ -6,20 +6,20 @@ import { USER_ROLE_NAMES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 import { log_out } from "../../../reducers/authReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getHighestPriorityRole } from "../../../utils/utils";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { DOCUMENT_STATE_ACTIVE } from "../../../constants/document_constants";
 import { DocumentAPI } from "../../../api/DocumentAPI";
 
 export default function Header({ headerContent, isSidebarOpen }) {
+  const location = useLocation();
   const [userInfo, setUserInfo] = useState();
   const [displayPictureUrl, setDisplayPictureUrl] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userID = useSelector((store) => store.userInfoSlice.id);
-
-  useEffect(() => {
+  const getUserInfo = () => {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
     DocumentAPI.getDocumentsByRefObjUriAndRefId(
@@ -33,13 +33,25 @@ export default function Header({ headerContent, isSidebarOpen }) {
 
         const url = await DocumentAPI.base64Document(id, name);
         setDisplayPictureUrl(url);
+      } else {
+        setDisplayPictureUrl();
       }
     });
+  };
+
+  useEffect(() => {
+    getUserInfo();
   }, []);
+  useEffect(() => {
+    if (location.pathname == "/dashboard") {
+      getUserInfo();
+    }
+  }, [location]);
+
   return (
-    <div id="header">
+    <div id="header" style={{ cursor: "pointer" }}>
       <header>
-        <div className="d-flex align-items-center justify-content-between heading" >
+        <div className="d-flex align-items-center justify-content-between heading">
           <h5
             className={`pd-left${isSidebarOpen ? "-240" : ""} ${
               !isSidebarOpen ? "marginLeft" : ""

@@ -1,3 +1,4 @@
+@import "./variables";
 #applications {
   #wrapper {
     transition: 0.5s;
@@ -227,12 +228,59 @@
     font-size: 13px;
     transition: all 0.5s;
     font-weight: 700;
-    margin-left: 1rem;
     border: none;
     border-radius: 4px;
   }
 
   .table-responsive {
     margin-top: 3rem;
+  }
+
+  .badges-green {
+    display: inline-block;
+    background: $color-green-20;
+    color: $color-green;
+    border-radius: 4px;
+    padding: 0px 20px;
+    border: 1px solid $color-green-10;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+  }
+
+  .badges-green-dark {
+    display: inline-block;
+    background: $color-green-40;
+    color: $color-white;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+  }
+
+  .badges-orange {
+    display: inline-block;
+    background: $color-orange;
+    color: $color-white;
+    border-radius: 4px;
+    padding: 0px 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+  }
+
+  .badges-red {
+    display: inline-block;
+    background: $color-red;
+    color: $color-white;
+    border-radius: 4px;
+    padding: 0px 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
   }
 }
