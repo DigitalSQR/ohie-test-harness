@@ -19,9 +19,12 @@ import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.ComponentValidator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -60,6 +63,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
+    @Cacheable(value="createComponent")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public ComponentEntity createComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
             throws OperationFailedException,
@@ -89,6 +94,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
+    @Cacheable(value="updateComponent")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public ComponentEntity updateComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
             throws OperationFailedException,
@@ -116,6 +123,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
+    @Cacheable(value="searchComponents")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public Page<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
             Pageable pageable,
@@ -126,6 +135,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
+    @Cacheable(value="searchComponentsList")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public List<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
             ContextInfo contextInfo)
@@ -140,6 +151,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
+    @Cacheable(value="getComponentById")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public ComponentEntity getComponentById(String componentId,
                                             ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -176,6 +189,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
+    @Cacheable(value="componentChangeState")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public ComponentEntity changeState(String componentID, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 

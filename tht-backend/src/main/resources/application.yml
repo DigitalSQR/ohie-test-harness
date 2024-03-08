@@ -7,6 +7,20 @@ spring:
     caches:
       authenticationCache:
         time-to-live: 300000
+    jcache:
+      config: classpath:jcache/ehcache.xml
+      jpa:
+        properties:
+          javax:
+            missing_cache_strategy: create
+            persistence:
+              sharedCache:
+                mode: ENABLE_SELECTIVE
+          hibernate:
+            cache:
+              use_second_level_cache: true
+              region:
+                factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
   jackson:
     serialization:
       fail-on-empty-beans: false

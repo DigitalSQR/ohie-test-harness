@@ -15,9 +15,12 @@ import com.argusoft.path.tht.testcasemanagement.repository.TestcaseOptionReposit
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.TestcaseOptionValidator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -50,6 +53,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
+    @Cacheable(value="createTestcaseOption")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public TestcaseOptionEntity createTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
@@ -80,6 +85,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
+    @Cacheable(value="updateTestcaseOption")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public TestcaseOptionEntity updateTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
@@ -107,6 +114,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
+    @Cacheable(value="searchTestcaseOptions")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public Page<TestcaseOptionEntity> searchTestcaseOptions(
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             Pageable pageable,
@@ -118,6 +127,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
 
     @Override
+    @Cacheable(value="searchTestcaseOptionsList")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public List<TestcaseOptionEntity> searchTestcaseOptions(
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
             ContextInfo contextInfo)
@@ -132,6 +143,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      * @return
      */
     @Override
+    @Cacheable(value="getTestcaseOptionById")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public TestcaseOptionEntity getTestcaseOptionById(String testcaseOptionId,
                                                       ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -165,6 +178,8 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
     }
 
     @Override
+    @Cacheable(value="testcaseOptionChangeState")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public TestcaseOptionEntity changeState(String testcaseOptionId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
         List<ValidationResultInfo> errors = new ArrayList<>();

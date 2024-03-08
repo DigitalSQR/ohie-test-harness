@@ -16,9 +16,13 @@ import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.SpecificationValidator;
+import com.google.common.collect.Multimap;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -54,6 +58,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
+    @Cacheable(value="createSpecification")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public SpecificationEntity createSpecification(SpecificationEntity specificationEntity,
                                                    ContextInfo contextInfo)
             throws OperationFailedException,
@@ -84,6 +90,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
+    @Cacheable(value="updateSpecification")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public SpecificationEntity updateSpecification(SpecificationEntity specificationEntity,
                                                    ContextInfo contextInfo)
             throws OperationFailedException,
@@ -112,6 +120,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
+    @Cacheable(value="searchSpecifications")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public Page<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
             Pageable pageable,
@@ -124,6 +134,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
 
     @Override
+    @Cacheable(value="searchSpecificationsList")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public List<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
             ContextInfo contextInfo)
@@ -140,6 +152,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      * @return
      */
     @Override
+    @Cacheable(value="getSpecificationById")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public SpecificationEntity getSpecificationById(String specificationId,
                                                     ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -173,6 +187,8 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
     }
 
     @Override
+    @Cacheable(value="specificationChangeState")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public SpecificationEntity changeState(String specificationId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
         List<ValidationResultInfo> errors = new ArrayList<>();

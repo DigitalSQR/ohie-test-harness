@@ -15,9 +15,12 @@ import com.argusoft.path.tht.testcasemanagement.repository.TestcaseRepository;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.validator.TestcaseValidator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,6 +59,8 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
+    @Cacheable(value="createTestcase")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public TestcaseEntity createTestcase(TestcaseEntity testcaseEntity,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
@@ -86,6 +91,8 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
+    @Cacheable(value="updateTestcase")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public TestcaseEntity updateTestcase(TestcaseEntity testcaseEntity,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
@@ -114,6 +121,8 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      * @return
      */
     @Override
+    @Cacheable(value="searchTestcases")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public Page<TestcaseEntity> searchTestcases(
             TestcaseCriteriaSearchFilter testcaseSearchFilter,
             Pageable pageable,
@@ -125,6 +134,8 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
 
 
     @Override
+    @Cacheable(value="searchTestcasesList")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public List<TestcaseEntity> searchTestcases(
             TestcaseCriteriaSearchFilter testcaseSearchFilter,
             ContextInfo contextInfo)
@@ -174,6 +185,8 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     }
 
     @Override
+    @Cacheable(value="testcaseChangeState")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public TestcaseEntity changeState(String testcaseId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
