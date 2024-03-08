@@ -30,6 +30,7 @@ import UpdateAdminUser from "../components/AdminFiles/AdminUsers/UpdateAdminUser
 import { USER_ROLES } from "../constants/role_constants.js";
 import PageNotFoud from "../components/CommonFiles/PageNotFound/PageNotFound.jsx";
 import LogoutComponent from "../components/CommonFiles/LogoutComponent.jsx";
+import ValidateConfigFacts from "../components/AdminFiles/TestcaseConfig/ValidateConfigFacts/ValidateConfigFacts.jsx";
 const PrivateDashboardRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
   const redirectUri = useLocation();
@@ -230,6 +231,12 @@ const routes = createBrowserRouter([
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
             element={ComponentList}
           />
+        ),
+      },
+      {
+        path: "validate-config",
+        element: (
+          <ValidateConfigFacts/>
         ),
       },
       {

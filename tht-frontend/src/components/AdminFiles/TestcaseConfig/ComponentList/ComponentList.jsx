@@ -10,6 +10,8 @@ import { set_header } from "../../../../reducers/homeReducer";
 import { Pagination } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { FileSearchOutlined } from "@ant-design/icons";
+import ValidateConfigFacts from "../ValidateConfigFacts/ValidateConfigFacts.jsx";
 
 export default function ComponentList() {
   const navigate = useNavigate();
@@ -178,6 +180,11 @@ export default function ComponentList() {
               </div>
             </div>
             <div className="d-flex align-items-baseline justify-content-end">
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary me-2"
+              onClick={() =>  navigate("/validate-config")}
+            ><FileSearchOutlined className="me-1" />Validate Configuration</button>
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"

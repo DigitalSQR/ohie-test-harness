@@ -50,4 +50,10 @@ export const ComponentAPI = {
     return response;
     
   },
+  validateConfiguration: function(refObjectUri, refId){
+    return api.request({
+      url: `/component/configuration/validate`,
+      method: "GET"
+    });
+  }
 };

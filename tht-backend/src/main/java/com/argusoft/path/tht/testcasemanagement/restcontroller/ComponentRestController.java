@@ -208,8 +208,8 @@ public class ComponentRestController {
     })
     @GetMapping("/configuration/validate")
     public List<TestcaseValidationResultInfo> validateTestCaseConfiguration(
-            @RequestParam(name = "refObjUri") String refObjUri,
-            @RequestParam(name = "refId") String refId,
+            @RequestParam(name = "refObjUri",required = false) String refObjUri,
+            @RequestParam(name = "refId", required = false) String refId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo
     ) throws InvalidParameterException, OperationFailedException {
         return componentService.validateTestCaseConfiguration(refObjUri, refId, contextInfo);

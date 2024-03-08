@@ -59,8 +59,6 @@ public class TestcaseOptionValidator {
         // check Common ForeignKey
         validateCommonForeignKey(testcaseOptionEntity, testcaseService, errors, contextInfo);
 
-        validateOptionsForCorrectness(testcaseOptionEntity, errors, testcaseOptionService, contextInfo);
-
         // check Common Unique
         validateCommonUnique(testcaseOptionEntity,
                 validationTypeKey,
@@ -118,28 +116,6 @@ public class TestcaseOptionValidator {
                 errors);
         return errors;
 
-    }
-
-
-    private static void validateOptionsForCorrectness(TestcaseOptionEntity testcaseOption, List<ValidationResultInfo> errors, TestcaseOptionService testcaseOptionService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter = new TestcaseOptionCriteriaSearchFilter();
-        testcaseOptionCriteriaSearchFilter.setTestcaseId(testcaseOption.getTestcase().getId());
-        testcaseOptionCriteriaSearchFilter.setState(Collections.singletonList(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_ACTIVE));
-        List<TestcaseOptionEntity> testcaseOptionList = testcaseOptionService.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, contextInfo);
-
-        testcaseOptionList.removeIf(option -> option.getId().equals(testcaseOption.getId()));
-
-        testcaseOptionList.add(testcaseOption);
-
-        boolean isAnyTrue = testcaseOptionList.stream().anyMatch(testcaseOption1 -> testcaseOption1.getSuccess().equals(Boolean.TRUE));
-
-        if (!isAnyTrue) {
-            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-            validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("One of the testcase option must be true");
-            validationResultInfo.setElement("isSuccess");
-            errors.add(validationResultInfo);
-        }
     }
 
     private static void validateCommonForeignKey(TestcaseOptionEntity testcaseOptionEntity
