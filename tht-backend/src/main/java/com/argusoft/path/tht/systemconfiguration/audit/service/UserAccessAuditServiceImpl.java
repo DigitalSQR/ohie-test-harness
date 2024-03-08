@@ -4,9 +4,13 @@ import com.argusoft.path.tht.systemconfiguration.audit.entity.UserAccessAuditEnt
 import com.argusoft.path.tht.systemconfiguration.audit.entity.UserAccessAuditInfo;
 import com.argusoft.path.tht.systemconfiguration.audit.mapper.UserAccessAuditMapper;
 import com.argusoft.path.tht.systemconfiguration.audit.repository.UserAccessAuditRepository;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserAccessAuditServiceImpl implements UserAccessAuditService{
@@ -26,6 +30,27 @@ public class UserAccessAuditServiceImpl implements UserAccessAuditService{
         userAccessAuditRepository.save(userAccessAuditEntity);
 
         return userAccessAuditMapper.convertUserAccessAuditToUserAccessAuditInfo(userAccessAuditEntity);
+    }
+
+    @Override
+    public UserAccessAuditInfo getUserAccessAuditById(String userAccessAuditId,
+                                                      ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+        try {
+            Long.parseLong(userAccessAuditId);
+        } catch (NumberFormatException e) {
+            throw new InvalidParameterException("userAccessAuditId must be an long integer value");
+        }
+
+        Optional<UserAccessAuditEntity> userAccessAuditOptional
+                = userAccessAuditRepository.findById(Long.parseLong(userAccessAuditId));
+        if (!userAccessAuditOptional.isPresent()) {
+            throw new DoesNotExistException("userAccessAudit by id :"
+                    + userAccessAuditId
+                    + " not found");
+        }
+
+        return this.userAccessAuditMapper.convertUserAccessAuditToUserAccessAuditInfo(
+                userAccessAuditOptional.get());
     }
 
 }

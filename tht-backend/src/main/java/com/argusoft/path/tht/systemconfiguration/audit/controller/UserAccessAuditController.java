@@ -2,6 +2,8 @@ package com.argusoft.path.tht.systemconfiguration.audit.controller;
 
 import com.argusoft.path.tht.systemconfiguration.audit.entity.UserAccessAuditInfo;
 import com.argusoft.path.tht.systemconfiguration.audit.validator.UserAccessAuditValidator;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +17,7 @@ public class UserAccessAuditController {
 
     @PostMapping("")
     public UserAccessAuditInfo createUserAccessAudit(@RequestBody UserAccessAuditInfo userAccessAuditInfo,
-                                                     @RequestAttribute(name = "contextInfo") ContextInfo contextInfo){
+                                                     @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException {
         return this.userAccessAuditValidator.createUserAccessAudit(userAccessAuditInfo, contextInfo);
     }
 
