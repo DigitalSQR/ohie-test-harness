@@ -195,7 +195,7 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void stopTestingProcess(
             String testRequestId,
             String refObjUri,
@@ -220,23 +220,22 @@ public class TestcaseExecutioner {
                     threadGroup.enumerate(threads);
                     for (Thread thread : threads) {
                         if (thread.getName().equals(testRequestId + refId + refObjUri + (isWorkflow == null ? "null" : isWorkflow.toString()) + (isFunctional == null ? "null" : isFunctional.toString()) + (isRequired == null ? "null" : isRequired.toString()) + (isRecommended == null ? "null" : isRecommended.toString()))) {
-                            TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilterTwo = new TestcaseResultCriteriaSearchFilter();
-                            testcaseResultCriteriaSearchFilterTwo.setTestRequestId(testRequestId);
-                            testcaseResultCriteriaSearchFilterTwo.setRefId(refId);
-                            testcaseResultCriteriaSearchFilterTwo.setRefObjUri(refObjUri);
-                            List<TestcaseResultEntity> testcaseResultEntityTwo = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilterTwo,contextInfo);
-                            TestcaseResultEntity testcaseResult = testcaseResultEntityTwo.get(0);
-                            testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResult,"is_Interrupted","true",contextInfo);
-                            testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResult,"reset",reset.toString(),contextInfo);
                             thread.interrupt();
                             threadGroupFlag = true;
-                            break;
                         }
                     }
-                    threadGroup = threadGroup.getParent();
                     if (threadGroupFlag) {
+                        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+                        testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestId);
+                        testcaseResultCriteriaSearchFilter.setRefId(refId);
+                        testcaseResultCriteriaSearchFilter.setRefObjUri(refObjUri);
+                        List<TestcaseResultEntity> testcaseResultEntityTwo = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
+                        TestcaseResultEntity testcaseResult = testcaseResultEntityTwo.get(0);
+                        testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResult,"is_Interrupted", "true", contextInfo);
+                        testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResult,"reset", reset.toString(), contextInfo);
                         break;
                     }
+                    threadGroup = threadGroup.getParent();
                 }
             }
             //If process found and tried to interrupt then following operation will happen when process will actually get stopped.
@@ -305,17 +304,10 @@ public class TestcaseExecutioner {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public void markTestcaseResultInProgress(String testcaseResultId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         testcaseResultService.changeState(testcaseResultId, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS, contextInfo);
     }
-
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
-    public void markTestcaseResultInDraft(String testcaseResultId, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
-        testcaseResultService.changeState(testcaseResultId, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
-    }
-
 
     private void updateTestCaseResultForSystemError(TestcaseResultEntity testcaseResultEntity, long startDate, String errorMessage, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, VersionMismatchException, DoesNotExistException {
         testcaseResultEntity = testcaseResultService.getTestcaseResultById(testcaseResultEntity.getId(), contextInfo);
