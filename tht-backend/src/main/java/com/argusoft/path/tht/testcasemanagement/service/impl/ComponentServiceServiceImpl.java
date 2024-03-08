@@ -63,7 +63,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    @Cacheable(value="createComponent")
+    @Cacheable(value="myCache")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public ComponentEntity createComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
@@ -94,7 +94,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    @Cacheable(value="updateComponent")
+    @Cacheable(value="myCache")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public ComponentEntity updateComponent(ComponentEntity componentEntity,
                                            ContextInfo contextInfo)
@@ -123,7 +123,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      * @return
      */
     @Override
-    @Cacheable(value="searchComponents")
+    @Cacheable(value="myCache")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public Page<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
@@ -135,7 +135,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
-    @Cacheable(value="searchComponentsList")
+    @Cacheable(value="myCache")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public List<ComponentEntity> searchComponents(
             ComponentCriteriaSearchFilter componentCriteriaSearchFilter,

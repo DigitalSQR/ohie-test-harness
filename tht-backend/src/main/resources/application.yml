@@ -8,7 +8,7 @@ spring:
       authenticationCache:
         time-to-live: 300000
     jcache:
-      config: classpath:jcache/ehcache.xml
+      config: classpath:ehcache.xml
       jpa:
         properties:
           javax:
