@@ -23,11 +23,7 @@ const UpdateAdminUser = () => {
     {
       label: "Tester",
       value: ROLE_ID_TESTER
-    },
-    {
-      label: "Assessee",
-      value: ROLE_ID_ASSESSEE
-    },
+    }
   ];
   const { showLoader, hideLoader } = useLoader();
   const [state, setState] = useState();

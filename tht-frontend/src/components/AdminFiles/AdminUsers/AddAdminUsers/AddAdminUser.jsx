@@ -19,11 +19,7 @@ const AddAdminUser = () => {
     {
       label: "Tester",
       value: ROLE_ID_TESTER,
-    },
-    {
-      label: "Assessee",
-      value: ROLE_ID_ASSESSEE,
-    },
+    }
   ];
   const initialValues = {
     name: "",
