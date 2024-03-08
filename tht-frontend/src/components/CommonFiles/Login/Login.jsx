@@ -156,7 +156,7 @@ export default function Login() {
               <div className="text-center">
                 <img src={openhie_logo} />
               </div>
-              <div className="custom-scrollbar sm-cut">
+              <div className="sm-cut">
                 <div
                   className="custom-input mb-4"
                   style={{ position: "relative" }}
@@ -274,7 +274,7 @@ export default function Login() {
                     </a>
                   </h4>
                 </div>
-                <div className="text-center">
+                <div className="text-center mb-3">
                   <a
                     href=""
                     onClick={redirectToSignUp}

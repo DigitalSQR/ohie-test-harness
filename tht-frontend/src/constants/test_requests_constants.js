@@ -33,7 +33,7 @@ export const StateBadgeClasses = {
     "test.request.status.pending": "badges-orange",
     "test.request.status.accepted": "badges-green-dark",
     "test.request.status.rejected": "badges-orange",
-    "test.request.status.inprogress": "badges-orange",
+    "test.request.status.inprogress": "badges-blue",
     "test.request.status.finished": "badges-green-dark",
 };
 
