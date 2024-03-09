@@ -279,6 +279,7 @@ export default function ManualTestCases() {
 
         <div className="d-flex justify-content-between align-items-center">
           <Tabs
+            type="card"
             className="mt-5"
             activeKey={activeTab}
             items={items}
@@ -312,6 +313,7 @@ export default function ManualTestCases() {
               <div className="row">
                 <div className="col-12 col-md-8 offset-md-2"></div>
                 <Tabs
+                  type="card"
                   defaultActiveKey="1"
                   tabPosition="top"
                   className="questions-tabs mt-3"
