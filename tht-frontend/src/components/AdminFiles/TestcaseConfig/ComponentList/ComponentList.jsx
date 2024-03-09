@@ -16,10 +16,9 @@ import ValidateConfigFacts from "../ValidateConfigFacts/ValidateConfigFacts.jsx"
 export default function ComponentList() {
   const navigate = useNavigate();
   const [sortDirection, setSortDirection] = useState({
-    name: "desc",
-    createdAt: "desc",
+    name: "asc",
   });
-  const [sortFieldName, setSortFieldName] = useState("createdAt");
+  const [sortFieldName, setSortFieldName] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [components, setComponents] = useState();
@@ -44,20 +43,20 @@ export default function ComponentList() {
       filterState
     );
   };
-
+  
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
         <span
           className={`bi ${
             sortDirection[fieldName] === "asc"
-              ? "bi-caret-up-fill"
-              : "bi-caret-down-fill"
+              ? "bi bi-sort-up-alt"
+              : "bi bi-sort-down"
           }`}
         ></span>
       );
     }
-    return <span className="bi-caret-down-fill"></span>;
+    return <span className="bi bi-arrow-down-up"></span>;
   };
 
   const handleChangePage = (event, newPage) => {
@@ -101,7 +100,7 @@ export default function ComponentList() {
   };
 
   const refreshAllComponents = () => {
-    getAllComponents("createdAt", "desc", currentPage, pageSize, filterState);
+    getAllComponents(sortFieldName, sortDirection[sortFieldName], currentPage, pageSize, filterState);
   };
 
   const componentRequestStates = [

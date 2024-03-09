@@ -23,7 +23,7 @@ const AdminUsers = () => {
   const [userInfo, setUserInfo] = useState();
   const dispatch = useDispatch();
   const obj = {
-    name: "desc",
+    name: "asc",
     email: "desc",
   };
   const [sortDirection, setSortDirection] = useState(obj);
@@ -113,19 +113,20 @@ const AdminUsers = () => {
     setSortDirection(newSortDirection);
     getAllUsers(sortFieldName, newSortDirection);
   };
+
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
         <span
           className={`bi ${
             sortDirection[fieldName] === "asc"
-              ? "bi-caret-up-fill"
-              : "bi-caret-down-fill"
+              ? "bi bi-sort-up-alt"
+              : "bi bi-sort-down"
           }`}
         ></span>
       );
     }
-    return <span className="bi-caret-down-fill"></span>;
+    return <span className="bi bi-arrow-down-up"></span>;
   };
 
   const handleChangePage = (event, newPage) => {
@@ -177,7 +178,9 @@ const AdminUsers = () => {
                     </span>
                   </th>
                   <th className="col-3">ROLE</th>
-                  <th className="col-3">ACTIONS</th>
+                  <th className="col-3">
+                    ACTIONS
+                  </th>
                 </tr>
               </thead>
               <tbody>

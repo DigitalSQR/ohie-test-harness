@@ -17,6 +17,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonUtil;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
@@ -251,8 +252,8 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             ContextInfo contextInfo)
             throws InvalidParameterException {
 
-        Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildSpecification(contextInfo);
-        return testRequestRepository.findAll(testRequestEntitySpecification, pageable);
+        Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildSpecification(pageable, contextInfo);
+        return testRequestRepository.findAll(testRequestEntitySpecification, CommonUtil.getPageable(pageable));
     }
 
 

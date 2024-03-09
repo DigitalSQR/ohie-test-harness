@@ -16,11 +16,12 @@ const Assessee = () => {
     createdAt: "desc",
     companyName: "desc",
     state: "desc",
+    default: "asc",
   }
   const [sortDirection, setSortDirection] = useState(obj);
 
   const userStates = [...userStatusActionLabels, { label: "All", value: "" }];
-  const [sortFieldName, setSortFieldName] = useState("name");
+  const [sortFieldName, setSortFieldName] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const role = ROLE_ID_ASSESSEE;
@@ -73,13 +74,13 @@ const Assessee = () => {
         <span
           className={`bi ${
             sortDirection[fieldName] === "asc"
-              ? "bi-caret-up-fill"
-              : "bi-caret-down-fill"
+              ? "bi bi-sort-up-alt"
+              : "bi bi-sort-down"
           }`}
         ></span>
       );
     }
-    return <span className="bi-caret-down-fill"></span>;
+    return <span className="bi bi-arrow-down-up"></span>;
   };
 
   const changeState = (userId, state, newState) => {
@@ -211,7 +212,16 @@ const Assessee = () => {
                     {renderSortIcon("state")}
                   </span>
                 </th>
-                <th className="col-1.9">CHOOSE ACTION</th>
+                <th className="col-1.9">
+                  ACTION
+                  <span
+                    className="ps-1"
+                    href="# "
+                    onClick={() => handleSort("default")}
+                  >
+                    {renderSortIcon("default")}
+                  </span>
+                </th>
               </tr>
             </thead>
             <tbody>

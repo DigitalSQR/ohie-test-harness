@@ -3,6 +3,7 @@ package com.argusoft.path.tht.systemconfiguration.examplefilter;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
@@ -26,7 +27,20 @@ public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchF
         };
     }
 
+    @Override
+    public final Specification<T> buildSpecification(Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException {
+        validateSearchFilter();
+        return (root, query, criteriaBuilder) -> {
+            BiFunction<Root<T>, CriteriaBuilder, Predicate> predicateFunction = preparePredicate(contextInfo);
+            modifyCriteriaQuery(criteriaBuilder, root, query, pageable);
+            return predicateFunction.apply(root, criteriaBuilder);
+        };
+    }
+
     protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<T> root, CriteriaQuery<?> query) {
+    }
+
+    protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<T> root, CriteriaQuery<?> query, Pageable pageable) {
     }
 
 
