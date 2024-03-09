@@ -9,6 +9,10 @@
     border-radius: 4px;
   }
 
+  .capitalize-words {
+    text-transform: capitalize;
+  }
+
   /*** breadcrumb items ***/
   .bcca-breadcrumb-item {
     transition: all 0.2s ease-in-out;

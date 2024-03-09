@@ -268,7 +268,7 @@ const ApplicationReport = () => {
                   <div className="c-card-header">Compliance</div>
                   <div className="c-card-body">
                     <div className="table-responsive">
-                      <table className="data-table">
+                      <table className="data-table capitalize-words">
                         <thead>
                           <tr>
                             <th>COMPONENTS</th>
@@ -424,7 +424,7 @@ const ApplicationReport = () => {
                   <div className="c-card-header">Conformance</div>
                   <div className="c-card-body">
                     <div className="table-responsive">
-                      <table className="data-table">
+                      <table className="data-table capitalize-words">
                         <thead>
                           <tr>
                             <th>COMPONENTS</th>

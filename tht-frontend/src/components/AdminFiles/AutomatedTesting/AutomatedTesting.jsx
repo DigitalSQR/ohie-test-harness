@@ -355,7 +355,7 @@ export default function AutomatedTesting() {
             )}
           </div>
           <div className="table-responsive mb-5">
-            <table className="data-table">
+            <table className="data-table capitalize-words">
               <thead>
                 <tr>
                   <th>Component</th>

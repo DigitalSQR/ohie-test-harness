@@ -14,6 +14,14 @@
     background-color: #009fc8;
   }
 
+  .capitalize-words {
+    text-transform: capitalize;
+  }
+
+  .toLowerCase-words{
+    text-transform: lowercase;
+  }
+
   .btn-submit {
     margin-left: 10px;
   }

@@ -185,7 +185,7 @@ export default function ComponentSpecification() {
         </div>
         <div>
           <div className="table-responsive mt-3">
-            <table className="data-table">
+            <table className="data-table capitalize-words">
               <thead>
                 <tr>
                   <th className="col-3">

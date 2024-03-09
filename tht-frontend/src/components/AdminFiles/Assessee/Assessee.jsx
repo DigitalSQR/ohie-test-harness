@@ -161,7 +161,7 @@ const Assessee = () => {
           </div>
         </div>
         <div className="table-responsive">
-          <table className=" data-table">
+          <table className=" data-table capitalize-words">
             <thead>
               <tr>
                 <th className="col-2">
@@ -245,7 +245,7 @@ const Assessee = () => {
                   <Fragment key={user.id}>
                     <tr>
                       <td>{user.name}</td>
-                      <td>{user.email}</td>
+                      <td className = "toLowerCase-words" >{user.email}</td>
                       {user.companyName ? (
                         <td>{user.companyName}</td>
                       ) : (

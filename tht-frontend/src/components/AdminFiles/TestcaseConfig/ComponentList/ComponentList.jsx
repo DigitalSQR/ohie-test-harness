@@ -195,7 +195,7 @@ export default function ComponentList() {
             </div>
           </div>
           <div className="table-responsive">
-            <table className="data-table">
+            <table className="data-table capitalize-words">
               <thead>
                 <tr>
                   <th className="col-6">
