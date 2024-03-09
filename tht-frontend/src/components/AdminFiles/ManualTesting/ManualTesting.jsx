@@ -409,6 +409,7 @@ export default function ManualTesting() {
           </div>
 			{!!currentSpecification && (
 				<Tabs
+          type="card"
 					activeKey={currentSpecificationIndex.toString()}
 					onChange={(val) => {
 						selectSpecification(val, currentComponentIndex);
