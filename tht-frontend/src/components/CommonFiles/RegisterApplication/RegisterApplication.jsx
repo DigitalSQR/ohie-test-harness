@@ -556,7 +556,7 @@ const RegisterApplication = () => {
 
           <div className="text-end">
             <button
-              className="btn btn-primary btn-white py-2 mx-2"
+              className="btn btn-primary btn-white mx-2"
               onClick={() => {
                 navigate("/dashboard");
               }}
@@ -567,7 +567,7 @@ const RegisterApplication = () => {
               disabled={!(formik.isValid && formik.dirty)}
               type="button"
               onClick={formik.handleSubmit}
-              className="btn btn-primary btn-blue py-2"
+              className="btn btn-primary btn-blue"
             >
               submit
             </button>

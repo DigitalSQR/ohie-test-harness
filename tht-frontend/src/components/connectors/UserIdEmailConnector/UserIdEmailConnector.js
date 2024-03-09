@@ -14,7 +14,7 @@ const UserIdEmailConnector = ({ userId }) => {
   return (
     <span>
       {user?.email ? (
-        <p className="user-email">{user?.email}</p>
+          user?.email
       ) : (
         <Spin indicator={<LoadingOutlined className="loading-indicator" />} />
       )}

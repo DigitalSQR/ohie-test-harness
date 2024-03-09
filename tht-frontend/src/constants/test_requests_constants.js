@@ -45,17 +45,17 @@ export const TestRequestActionStateLabels = [
 
 export const StateClasses = {
     "test.request.status.accepted": {
-        btnClass: "btn btn-green-sm",
+        btnClass: "btn btn-sm w-75 btn-outline-success",
         iconClass: "bi bi-play-fill",
         btnText: "Start"
     },
     "test.request.status.inprogress": {
-        btnClass: "btn btn-orange-sm",
+        btnClass: "btn btn-sm w-75 btn-outline-success",
         iconClass: "bi bi-play-fill",
         btnText: "Resume"
     },
     "test.request.status.finished": {
-        btnClass: "btn btn-blue-sm",
+        btnClass: "btn btn-sm w-75 btn-outline-secondary",
         iconClass: "bi bi-file-text",
         btnText: "Report"
     }

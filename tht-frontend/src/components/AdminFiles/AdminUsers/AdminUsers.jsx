@@ -157,7 +157,7 @@ const AdminUsers = () => {
             <table className="data-table capitalize-words">
               <thead>
                 <tr>
-                  <th className="col-3">
+                  <th style={{width:"30%"}}>
                     NAME
                     <span
                       className="ps-1"
@@ -167,7 +167,7 @@ const AdminUsers = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
-                  <th className="col-3">
+                  <th style={{width:"20%"}}>
                     EMAIL
                     <span
                       className="ps-1"
@@ -177,10 +177,9 @@ const AdminUsers = () => {
                       {renderSortIcon("email")}
                     </span>
                   </th>
-                  <th className="col-3">ROLE</th>
-                  <th className="col-3">
-                    ACTIONS
-                  </th>
+                  <th style={{width:"20%"}}>ROLE</th>
+                  <th style={{width:"15%"}}>STATUS</th>
+                  <th style={{width:"15%"}}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
@@ -193,15 +192,9 @@ const AdminUsers = () => {
                         <span className="badges-green my-1">{roleId.replace("role.", "").toUpperCase()}</span>
                       ))}
                     </td>
-                    <td className="action-icons-container">
-                      <span
-                        className="action-icon"
-                        onClick={() => handleEdit(user.id)}
-                      >
-                        <EditOutlined />
-                      </span>
-                      {userInfo?.id !== user?.id && (
-                        <span className="form-check form-switch">
+                    <td>
+                    {userInfo?.id !== user?.id && (
+                        <span className="">
                           <Switch
                             defaultChecked= "true"
                             checked={
@@ -215,6 +208,15 @@ const AdminUsers = () => {
                           />
                         </span>
                       )}
+                    </td>
+                    <td className="action-icons-container">
+                      <button
+                        className="btn w-50 btn-sm btn-outline-success"
+                        onClick={() => handleEdit(user.id)}
+                      >
+                        <i class="bi bi-pencil-square"></i>{" "}
+                        Edit
+                      </button>
                     </td>
                   </tr>
                 ))}

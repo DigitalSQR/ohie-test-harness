@@ -185,7 +185,7 @@ const TestingRequests = () => {
             <table className="data-table capitalize-words">
               <thead>
                 <tr>
-                  <th className="app-name-column">
+                  <th className="app-name-columnapp-name-column">
                   PRODUCT NAME
                     <span
                       className="ps-1"
@@ -265,13 +265,13 @@ const TestingRequests = () => {
                                 );
                               }}
                               type="button"
-                              className="btn btn-sm approval-action-button "
+                              className="btn btn-sm btn-outline-success"
                             >
                               <span>
-                                <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
-                                APPROVE{" "}
+                              <i className="bi bi-check-circle-fill font-size-16"></i>{" "}
+                                Approve{" "}
                               </span>
-                            </button>
+                            </button>&nbsp;
                             <button
                               onClick={() => {
                                 changeState(
@@ -280,13 +280,26 @@ const TestingRequests = () => {
                                 );
                               }}
                               type="button"
-                              className="mx-1 btn btn-sm approval-action-button "
+                              className="btn btn-sm btn-outline-danger"
                             >
-                              <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                              REJECT{" "}
+                              <i className="bi bi-x-circle-fill font-size-16"></i>{" "}
+                              Reject{" "}
                             </button>
                           </>
                         ) : null}
+                        {
+                          testRequest.state ==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED 
+                          && 
+                          <button
+                              onClick={() => {navigate(`/application-report/${testRequest.id}`)}}
+                              type="button"
+                              className="btn btn-sm btn-outline-secondary"
+                            >
+                              <i className="bi bi-file-text font-size-16"></i>{" "}
+                              Report{" "}
+                          </button>
+                        }
                         <span
                           onClick={() => toggleRow(testRequest.id)}
                           type="button"

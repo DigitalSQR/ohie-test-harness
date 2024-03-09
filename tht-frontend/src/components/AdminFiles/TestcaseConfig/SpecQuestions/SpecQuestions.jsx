@@ -320,20 +320,17 @@ export default function ManualTestCases() {
                 >
                   {questions?.map((question, index) => (
                     <TabPane tab={`Question ${index + 1}`} key={index + 1}>
-                      <div className="col-11 non-fuctional-requirement mt-3">
+                      <div className="col-12 non-fuctional-requirement mt-3">
                         <div className="container-fluid">
                           <div className="row heading">
                             <div className="col-md-7 col-12 p-0">
                               <h2>Question</h2>
                             </div>
 
-                            <div className="col-md-3 col-12 d-md-flex d-none p-0">
+                            <div className="col-md-5 col-12 d-md-flex d-none p-0">
                               <h2 className="border-left">Reference</h2>
                             </div>
 
-                            <div className="col-md-2 col-12 d-md-flex d-none p-0">
-                              <h2 className="border-left">Action</h2>
-                            </div>
                           </div>
 
                           <div className="row question-box">
@@ -371,9 +368,31 @@ export default function ManualTestCases() {
                                     )
                                   )}
                               </div>
+                              <div className="text-end">
+                                <span className="me-2">
+                                  <Switch
+                                    checked={
+                                      question?.testcase?.state ===
+                                      "testcase.status.active"
+                                    }
+                                    onChange={() =>
+                                      changeTestCaseState(
+                                        question.id,
+                                        question.testcase?.state
+                                      )
+                                    }
+                                    checkedChildren="ACTIVE"
+                                    unCheckedChildren="INACTIVE"
+                                  />
+                                </span>
+                                <button onClick={() => handleUpdate(question)} style={{borderRight:"0",borderBottom:"0"}} className="btn btn-outline-success rounded-0">
+                                <i class="bi bi-pencil-square"></i>&nbsp;
+                                  Edit Question
+                                </button>
+                              </div>
                             </div>
 
-                            <div className="col-md-3 col-12 p-3 text-center">
+                            <div className="col-md-5 col-12 p-3 text-center">
                               <>
                                 {questionFetched &&
                                 questionAndDocument.length > 0 &&
@@ -426,29 +445,7 @@ export default function ManualTestCases() {
                               </>
                             </div>
 
-                            <div className="col-md-2 col-12 p-0">
-                              <div className="question-actions p-2 pt-5">
-                                <span className="edit-icon">
-                                  <EditFilled
-                                    onClick={() => handleUpdate(question)}
-                                  />
-                                </span>
-                                <Switch
-                                  checked={
-                                    question?.testcase?.state ===
-                                    "testcase.status.active"
-                                  }
-                                  onChange={() =>
-                                    changeTestCaseState(
-                                      question.id,
-                                      question.testcase?.state
-                                    )
-                                  }
-                                  checkedChildren="ACTIVE"
-                                  unCheckedChildren="INACTIVE"
-                                />
-                              </div>
-                            </div>
+
                           </div>
                         </div>
                       </div>
