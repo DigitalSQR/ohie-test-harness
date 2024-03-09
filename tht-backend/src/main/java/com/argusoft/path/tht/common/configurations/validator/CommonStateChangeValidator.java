@@ -20,16 +20,28 @@ public class CommonStateChangeValidator {
 
     public static void validateStateChange(List<String> correctStatus, Multimap<String,String> correctStatusMap, String state, String stateKey, List<ValidationResultInfo> errors) throws DataValidationErrorException {
 
-        //validate given stateKey
-        ValidationUtils.statusPresent(correctStatus, stateKey, errors);
-
-        //validate transition
-        ValidationUtils.transitionValid(correctStatusMap, state, stateKey, errors);
+        validateStateChangeByMap(correctStatus, correctStatusMap, state, stateKey, errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     errors);
         }
+    }
+
+    public static List<ValidationResultInfo> validateStateChangeByMap(
+            List<String> correctStatus,
+            Multimap<String,String> correctStatusMap,
+            String state,
+            String stateKey,
+            List<ValidationResultInfo> errors) {
+
+        //validate given stateKey
+        ValidationUtils.statusPresent(correctStatus, stateKey, errors);
+
+        //validate transition
+        ValidationUtils.transitionValid(correctStatusMap, state, stateKey, errors);
+
+        return errors;
     }
 }

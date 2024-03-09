@@ -182,4 +182,19 @@ public interface TestRequestService {
      * @throws DataValidationErrorException when validation fails
      */
     public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
+    /**
+     * Validates a TestRequest statechange.
+     *
+     * @param testRequestId testRequestId to change state
+     * @param stateKey      new state
+     * @param contextInfo   information containing the principalId and locale
+     *                      information about the caller of service operation
+     * @return Results TestRequest performing the validation
+     * @throws InvalidParameterException TestRequestInfo or contextInfo is not valid
+     * @throws OperationFailedException  unable to complete request
+     */
+    public List<ValidationResultInfo> validateChangeState(String testRequestId, String stateKey, ContextInfo contextInfo)
+            throws InvalidParameterException,
+            OperationFailedException;
 }

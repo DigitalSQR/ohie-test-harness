@@ -180,9 +180,9 @@ public class TestRequestRestController {
             @RequestParam(value = "refId") String refId,
             @RequestParam(value = "manual", required = false) Boolean isManual,
             @RequestParam(value = "automated", required = false) Boolean isAutomated,
-            @RequestParam(value ="required", required = false) Boolean isRequired,
-            @RequestParam(value ="recommended", required = false) Boolean isRecommended,
-            @RequestParam(value ="workflow", required = false) Boolean isWorkflow,
+            @RequestParam(value = "required", required = false) Boolean isRequired,
+            @RequestParam(value = "recommended", required = false) Boolean isRecommended,
+            @RequestParam(value = "workflow", required = false) Boolean isWorkflow,
             @RequestParam(value = "functional", required = false) Boolean isFunctional,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         testRequestService.startTestingProcess(
@@ -206,13 +206,13 @@ public class TestRequestRestController {
     @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
     public void stopTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
-            @RequestParam(value = "refObjUri",required = true) String refObjUri,
-            @RequestParam(value = "refId",required = true) String refId,
+            @RequestParam(value = "refObjUri", required = true) String refObjUri,
+            @RequestParam(value = "refId", required = true) String refId,
             @RequestParam(value = "manual", required = false) Boolean isManual,
             @RequestParam(value = "automated", required = false) Boolean isAutomated,
-            @RequestParam(value ="required", required = false) Boolean isRequired,
-            @RequestParam(value ="recommended", required = false) Boolean isRecommended,
-            @RequestParam(value ="workflow", required = false) Boolean isWorkflow,
+            @RequestParam(value = "required", required = false) Boolean isRequired,
+            @RequestParam(value = "recommended", required = false) Boolean isRecommended,
+            @RequestParam(value = "workflow", required = false) Boolean isWorkflow,
             @RequestParam(value = "functional", required = false) Boolean isFunctional,
             @RequestParam(value = "reset", required = false) Boolean reset,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -229,6 +229,23 @@ public class TestRequestRestController {
                 isFunctional,
                 Objects.equals(reset, Boolean.TRUE),
                 contextInfo);
+    }
+
+
+    @ApiOperation(value = "To change status of TestRequest", response = DocumentInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated TestRequest"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/validate/state/{testRequestId}/{changeState}")
+    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
+    @Transactional(rollbackFor = Exception.class)
+    public List<ValidationResultInfo> validateTestRequestState(@PathVariable("testRequestId") String testRequestId,
+                                                               @PathVariable("changeState") String changeState,
+                                                               @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws InvalidParameterException, OperationFailedException {
+        return testRequestService.validateChangeState(testRequestId, changeState, contextInfo);
     }
 
     @ApiOperation(value = "To change status of TestRequest", response = DocumentInfo.class)

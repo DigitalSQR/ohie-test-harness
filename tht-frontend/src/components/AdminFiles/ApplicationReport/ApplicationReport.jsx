@@ -80,9 +80,8 @@ const ApplicationReport = () => {
 
         const rangedGradeData = {};
         res.data.forEach((item, index) => {
-          const startPercentage = index === 0 ? 0 : res.data[index - 1].percentage + 1;
-          const endPercentage = index === res.data.length - 1 ? 100 : item.percentage;
-          rangedGradeData[item.grade] = `${startPercentage}% - ${endPercentage}%`;
+          const endPercentage = index === 0 ? 100 : res.data[index - 1].percentage - 1;
+          rangedGradeData[item.grade] = `${item.percentage}% - ${endPercentage}%`;
         });
 
         setColumns(columns);
@@ -658,7 +657,7 @@ const ApplicationReport = () => {
                 </div>
 
                 <div className="compliance-card">
-                  <div className="c-card-header">Grade Ranges</div>
+                  <div className="c-card-header">Grade Legend</div>
                   <div className="c-card-body">
                     <Table
                       dataSource={[{ key: 1 }]} // Providing a dummy data source with one row
