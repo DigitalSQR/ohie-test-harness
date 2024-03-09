@@ -262,7 +262,7 @@ const Assessee = () => {
                           <Fragment>
                             <button
                               type="button"
-                              className="text-uppercase btn btn-sm approval-action-button text-uppercase"
+                              className="btn w-50 btn-sm btn-outline-danger"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -271,8 +271,8 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                              <i class="bi bi-slash-circle-fill text-red"></i>{" "}
-                              DISABLE
+                              <i class="bi bi-ban-fill"></i>{" "}
+                              Disable
                             </button>
                           </Fragment>
                         )}
@@ -280,7 +280,7 @@ const Assessee = () => {
                           <Fragment>
                             <button
                               type="button"
-                              className="text-uppercase btn btn-sm approval-action-button text-uppercase  "
+                              className="btn w-50 btn-sm btn-outline-success"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -290,13 +290,13 @@ const Assessee = () => {
                               }}
                             >
                               <span>
-                                <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
-                                APPROVE
+                                <i className="bi bi-check-circle-fill font-size-16"></i>{" "}
+                                Approve
                               </span>
-                            </button>
+                            </button>&nbsp;
                             <button
                               type="button"
-                              className=" mx-1 text-uppercase btn btn-sm approval-action-button text-uppercase"
+                              className="btn w-50 btn-sm btn-outline-danger"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -305,8 +305,8 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                              <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                              REJECT{" "}
+                              <i className="bi bi-x-circle-fill font-size-16"></i>{" "}
+                              Reject{" "}
                             </button>
                           </Fragment>
                         )}
@@ -314,7 +314,7 @@ const Assessee = () => {
                         {(user.state === "user.status.inactive" || user.state==="user.status.rejected") && (
                           <button
                             type="button"
-                            className="text-uppercase btn btn-sm approval-action-button text-uppercase"
+                            className="btn w-50 btn-sm btn-outline-success"
                             onClick={() => {
                               changeState(
                                 user.id,
@@ -324,7 +324,7 @@ const Assessee = () => {
                             }}
                           >
                             <span>
-                              <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                              <i className="bi bi-check-circle-fill font-size-16"></i>{" "}
                               Enable
                             </span>
                           </button>

@@ -184,45 +184,45 @@ export default function ComponentSpecification() {
           </div>
         </div>
         <div>
-          <div className="table-responsive mt-3">
-            <table className="data-table capitalize-words">
-              <thead>
-                <tr>
-                  <th className="col-3">
-                    Specifications{" "}
-                    <a
-                      className="ps-1"
-                      href="#"
-                      onClick={() => handleSort("name")}
-                    >
-                      {renderSortIcon("name")}
-                    </a>{" "}
-                  </th>
-                  <th className="col-2">
-                    Specification Type
-                    <a
-                      className="ps-1"
-                      href="#"
-                      onClick={() => handleSort("isFunctional")}
-                    >
-                      {renderSortIcon("isFunctional")}
-                    </a>{" "}
-                  </th>
-                  <th className="col-2">
-                    Required / Recommended
-                    <a
-                      className="ps-1"
-                      href="#"
-                      onClick={() => handleSort("isRequired")}
-                    >
-                      {renderSortIcon("isRequired")}
-                    </a>{" "}
-                  </th>
-                  <th className="col-2">Status</th>
-                  <th className="col-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
+            <div className="table-responsive mt-3">
+              <table className="data-table capitalize-words">
+                <thead>
+                  <tr>
+                    <th style={{width:'30%'}}>
+                      Specifications{" "}
+                      <a
+                        className="ps-1"
+                        href="#"
+                        onClick={() => handleSort("name")}
+                      >
+                        {renderSortIcon("name")}
+                      </a>{" "}
+                    </th>
+                    <th style={{width:'30%'}}>
+                      Specification Type
+                      <a
+                        className="ps-1"
+                        href="#"
+                        onClick={() => handleSort("isFunctional")}
+                      >
+                        {renderSortIcon("isFunctional")}
+                      </a>{" "}
+                    </th>
+                    <th style={{width:'10%'}}>
+                      Required / Recommended
+                      <a
+                        className="ps-1"
+                        href="#"
+                        onClick={() => handleSort("isRequired")}
+                      >
+                        {renderSortIcon("isRequired")}
+                      </a>{" "}
+                    </th>
+                    <th style={{width: "10%"}}>Status</th>
+                    <th style={{width:'20%'}}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
                 {specifications && specifications.length > 0 ? (
                   specifications.map((specification) => (
                     <tr key={specification.name}>
@@ -237,8 +237,8 @@ export default function ComponentSpecification() {
                           ? "Required"
                           : "Recommended"}
                       </td>
-                      <td className="action-icons-container">
-                        <Switch
+                      <td>
+                      <Switch
                           checked={
                             specification?.state ===
                             "specification.status.active"
@@ -253,35 +253,35 @@ export default function ComponentSpecification() {
                           unCheckedChildren="INACTIVE"
                         />
                       </td>
-
-                      <td>
-                        <div className="d-flex gap-3"> 
-                          <button
-                            className="edit-badge"
-                            onClick={() => {
-                              setSpecificationId(specification?.id);
-                              setIsModalOpen(true);
-                            }}
-                          >
-                            <EditFilled />
-                            EDIT
-                          </button>
-                          <button
-                            className="edit-badge"
-                            onClick={() =>
-                              navigate(
-                                `/testcase-config/manual-testcases/${specification?.id}`
-                              )
-                            }
-                          >
-                            <EyeOutlined />
-                            TESTCASES
-                          </button>
+                      <td className="action-icons-container">
+                        <div className="d-flex">
+                        <button
+                          className="btn w-50 btn-sm btn-outline-success"
+                          onClick={() => {
+                            setSpecificationId(specification?.id);
+                            setIsModalOpen(true);
+                          }}
+                        >
+                          <i class="bi bi-pencil-square"></i>{" "}
+                          Edit
+                        </button>&nbsp;
+                        <button
+                          className="btn w-50 btn-sm btn-outline-secondary"
+                          onClick={() =>
+                            navigate(
+                              `/testcase-config/manual-testcases/${specification?.id}`
+                            )
+                          }
+                        >
+                          <i class="bi bi-eye"></i>{" "}
+                          View
+                        </button>
                         </div>
                       </td>
+
+
                     </tr>
-                  ))
-                ) : (
+                  )) ) : (
                   <tr>
                     <td colSpan={6}>
                       <p className="text-center">

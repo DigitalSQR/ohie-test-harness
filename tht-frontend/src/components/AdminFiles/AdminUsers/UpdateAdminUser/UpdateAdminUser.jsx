@@ -184,7 +184,7 @@ const UpdateAdminUser = () => {
                   </div>
                   <div className="my-4 text-end">
                     <button
-                      className="btn btn-primary btn-white py-2"
+                      className="btn btn-primary btn-white"
                       onClick={() => {
                         navigate("/admin-users");
                       }}
@@ -193,7 +193,7 @@ const UpdateAdminUser = () => {
                     </button>
                     <button
                       style={{marginLeft:"1rem"}}
-                      className="btn btn-primary btn-blue btn-submit py-2"
+                      className="btn btn-primary btn-blue btn-submit"
                       type="submit"
                       disabled={(Object.keys(touched).length == 0)  || Object.keys(errors).length > 0}
                     >

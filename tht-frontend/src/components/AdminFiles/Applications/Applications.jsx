@@ -295,7 +295,7 @@ const Applications = () => {
                             className={
                               StateClasses[testRequest.state]?.iconClass
                             }
-                          ></i>Report
+                          ></i>{" "}Report
                         </button>
                       )}
                     </td>

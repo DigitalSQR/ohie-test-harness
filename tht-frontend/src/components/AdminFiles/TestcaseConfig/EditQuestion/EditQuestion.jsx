@@ -492,9 +492,9 @@ export default function EditQuestion() {
                     disabled={!changesMade}
                     onClick={handleSaveQuestion}
                     type="button"
-                    className="btn btn-primary mt-3"
+                    className="btn btn-sm btn-primary mt-3"
                   >
-                    Save
+                    Update Question
                   </button>
                 </form>
               </div>
@@ -610,16 +610,16 @@ export default function EditQuestion() {
                         <div className="row">
                           <div className="col-auto">
                             <button
-                              className="btn btn-primary mt-3"
+                              className="btn btn-sm btn-primary mt-3"
                               disabled={!changesMadeToEditOption}
                               onClick={() => handleSaveOption(index)}
                             >
-                              Save Option
+                              Update Option
                             </button>
                           </div>
                           <div className="col-auto">
-                            <div className="mt-4">
-                              <span className="form-check form-switch">
+                            <div className="mt-3">
+                              <span >
                                 <Switch
                                   onChange={() => changeOptionState(index)}
                                   checked={

@@ -43,7 +43,7 @@ export default function ComponentList() {
       filterState
     );
   };
-  
+
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
@@ -209,7 +209,7 @@ export default function ComponentList() {
                     </span>{" "}
                   </th>
                   <th className="col-2">Status</th>
-                  <th className="col-4">Actions</th>
+                  <th className="col-2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -242,29 +242,27 @@ export default function ComponentList() {
                         />
                       </td>
                       <td>
-                        <div className="d-flex gap-3">
-                          <button
-                            className=" edit-badge"
-                            onClick={() => {
-                              setComponentId(component?.id);
-                              setIsModalOpen(true);
-                            }}
-                          >
-                            <EditFilled />
-                            EDIT
-                          </button>
-                          <button
-                            className="edit-badge"
-                            onClick={() =>
-                              navigate(
-                                `/testcase-config/component-specification/${component?.id}`
-                              )
-                            }
-                          >
-                            <EyeOutlined />
-                            SPECIFICATIONS
-                          </button>
-                        </div>
+                        <button
+                          className="btn btn-sm btn-outline-success"
+                          onClick={() => {
+                            setComponentId(component?.id);
+                            setIsModalOpen(true);
+                          }}
+                        >
+                          <i class="bi bi-pencil-square"></i>{" "}
+                          Edit
+                        </button>&nbsp;
+                        <button
+                          className="btn btn-sm btn-outline-secondary"
+                          onClick={() =>
+                            navigate(
+                              `/testcase-config/component-specification/${component?.id}`
+                            )
+                          }
+                        >
+                          <i class="bi bi-eye"></i>{" "}
+                          View
+                        </button>
                       </td>
                     </tr>
                   ))

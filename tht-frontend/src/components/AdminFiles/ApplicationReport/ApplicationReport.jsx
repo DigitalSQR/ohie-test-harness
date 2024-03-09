@@ -97,6 +97,14 @@ const ApplicationReport = () => {
     setTestRequest(response);
   };
 
+  const goBackOrRedirect = () => {
+    if (navigate.length > 3) {
+      navigate(-1);
+    } else {
+      navigate("/testing-requests");
+    }
+  };
+
   const fetchTestCaseResultData = async () => {
     try {
       const [requiredResponse, recommendedResponse] = await Promise.all([
@@ -162,7 +170,7 @@ const ApplicationReport = () => {
                 <div>
                   <button
                     onClick={() => {
-                      navigate("/applications");
+                      goBackOrRedirect();
                     }}
                     className="btn btn-link  py-2 font-size-14"
                   >
