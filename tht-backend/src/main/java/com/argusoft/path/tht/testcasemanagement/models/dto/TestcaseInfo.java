@@ -45,6 +45,13 @@ public class TestcaseInfo extends IdStateNameMetaInfo {
             required = true)
     private String specificationId;
 
+    @ApiModelProperty(notes = "The failureMessage of the specification",
+            allowEmptyValue = false,
+            example = "failureMessage",
+            dataType = "String",
+            required = true)
+    private String failureMessage;
+
     public Integer getRank() {
         return rank;
     }
@@ -83,5 +90,13 @@ public class TestcaseInfo extends IdStateNameMetaInfo {
 
     public void setQuestionType(String questionType) {
         this.questionType = questionType;
+    }
+
+    public String getFailureMessage() {
+        return failureMessage;
+    }
+
+    public void setFailureMessage(String failureMessage) {
+        this.failureMessage = failureMessage;
     }
 }

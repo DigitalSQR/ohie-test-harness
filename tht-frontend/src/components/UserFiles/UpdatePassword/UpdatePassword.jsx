@@ -49,7 +49,7 @@ export default function UpdatePassword() {
         clearPasswords();
         notification.error({
           placement: "bottomRight",
-          description: `Passwords do not match`,
+          description: `Confirm password does not match with the password.`,
         });
       }
     },

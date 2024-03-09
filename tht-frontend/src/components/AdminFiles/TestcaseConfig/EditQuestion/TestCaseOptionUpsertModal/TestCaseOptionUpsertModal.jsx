@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { TestCaseOptionsAPI } from "../../../../../api/TestCaseOptionsAPI";
+import "./TestCaseOptionUpsertModal.scss";
 import { Modal, notification } from "antd";
 import Select from "react-select";
 import * as Yup from "yup";

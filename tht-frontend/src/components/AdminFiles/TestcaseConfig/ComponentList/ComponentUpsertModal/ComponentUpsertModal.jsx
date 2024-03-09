@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { ComponentAPI } from "../../../../../api/ComponentAPI";
 import { Modal, notification } from "antd";
+import "./ComponentUpsertModal.scss";
 import * as Yup from "yup";
 const UpsertModal = ({
   isModalOpen,
@@ -155,7 +156,7 @@ const UpsertModal = ({
               <div className="my-4 text-end">
                 <button
                   type="button"
-                  className="btn btn-primary btn-white py-1 font-size-10"
+                  className="btn btn-primary btn-white py-1 font-size-10 mx-3"
                   onClick={handleCancel}
                 >
                   Cancel

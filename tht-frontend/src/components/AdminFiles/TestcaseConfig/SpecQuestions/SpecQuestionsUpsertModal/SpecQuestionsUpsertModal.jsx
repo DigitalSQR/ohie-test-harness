@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { TestCaseAPI } from "../../../../../api/TestCaseAPI";
 import { Modal, notification } from "antd";
+import { ManualQuestionTypeConstants } from "../../../../../constants/testcase_constants";
 import * as Yup from "yup";
+import "./SpecQuestionsUpsertModal.scss"
 import { useNavigate } from "react-router-dom";
 const UpsertModal = ({
   isModalOpen,
@@ -13,6 +15,7 @@ const UpsertModal = ({
   const [initialValues, setInitialValues] = useState({
     name: "",
     description: "",
+    questionType: ManualQuestionTypeConstants.SINGLE_SELECT
   });
   const validationSchema = Yup.object({
     name: Yup.string()
@@ -46,18 +49,18 @@ const UpsertModal = ({
   };
 
   const handleCancel = () => {
-    setInitialValues({ name: "", description: "" });
+    setInitialValues({ name: "", description: "", questionType: ManualQuestionTypeConstants.SINGLE_SELECT });
     setIsModalOpen(false);
   };
 
   useEffect(() => {
-    setInitialValues({ name: "", description: "" });
+    setInitialValues({ name: "", description: "", questionType: ManualQuestionTypeConstants.SINGLE_SELECT });
   }, [isModalOpen]);
 
   return (
     <div>
       <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
-        <h4 className="mb-4">Create TestCase</h4>
+        <h4 className="mb-4">Create Testcase</h4>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -87,29 +90,33 @@ const UpsertModal = ({
                   </div>
                 </div>
               </div>
-              {/* <div className="row">
-                <div className="col-12">
-                  <div className="custom-input mb-3">
-                    <label htmlFor="email" className="form-label">
-                      Description
+              <div>
+                <div id="questionTypeRadioGroup" className="form-radio-label">
+                  Question Type
+                </div>
+                <div role="group" aria-labelledby="questionTypeRadioGroup">
+                  <div>
+                    <label className="questionTypeRadioGroup">
+                      <Field
+                        type="radio"
+                        name="questionType"
+                        value={ManualQuestionTypeConstants.SINGLE_SELECT}
+                      />
+                      <span className="ms-2">Single Select</span>
                     </label>
-                    <Field
-                      as="textarea"
-                      type="description"
-                      id="description"
-                      name="description"
-                      className="form-control"
-                      placeholder="Description"
-                      rows="5"
-                    />
-                    <ErrorMessage
-                      name="description"
-                      component="div"
-                      className="error-message"
-                    />
+                  </div>
+                  <div>
+                    <label className="questionTypeRadioGroup">
+                      <Field
+                        type="radio"
+                        name="questionType"
+                        value={ManualQuestionTypeConstants.MULTI_SELECT}
+                      />
+                      <span className="ms-2">Multi Select</span>
+                    </label>
                   </div>
                 </div>
-              </div> */}
+              </div>
               <div className="my-4 text-end">
                 <button
                   type="button"

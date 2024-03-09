@@ -209,8 +209,7 @@ export default function ComponentList() {
                     </span>{" "}
                   </th>
                   <th className="col-2">Status</th>
-                  <th className="col-2">Action</th>
-                  <th className="col-2">View Specification</th>
+                  <th className="col-4">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -224,7 +223,7 @@ export default function ComponentList() {
                   components?.map((component) => (
                     <tr key={component?.id}>
                       <td>
-                        {component?.name}
+                        <p className="fs-5 fw-bold">{component?.name}</p>
                         <p className="description">{component.description}</p>
                       </td>
                       <td>
@@ -243,29 +242,29 @@ export default function ComponentList() {
                         />
                       </td>
                       <td>
-                        <button
-                          className=" edit-badge"
-                          onClick={() => {
-                            setComponentId(component?.id);
-                            setIsModalOpen(true);
-                          }}
-                        >
-                          <EditFilled />
-                          EDIT
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          className="edit-badge"
-                          onClick={() =>
-                            navigate(
-                              `/testcase-config/component-specification/${component?.id}`
-                            )
-                          }
-                        >
-                          <EyeOutlined />
-                          VIEW
-                        </button>
+                        <div className="d-flex gap-3">
+                          <button
+                            className=" edit-badge"
+                            onClick={() => {
+                              setComponentId(component?.id);
+                              setIsModalOpen(true);
+                            }}
+                          >
+                            <EditFilled />
+                            EDIT
+                          </button>
+                          <button
+                            className="edit-badge"
+                            onClick={() =>
+                              navigate(
+                                `/testcase-config/component-specification/${component?.id}`
+                              )
+                            }
+                          >
+                            <EyeOutlined />
+                            SPECIFICATIONS
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))

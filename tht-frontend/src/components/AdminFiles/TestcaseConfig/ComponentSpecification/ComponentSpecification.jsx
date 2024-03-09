@@ -184,48 +184,47 @@ export default function ComponentSpecification() {
           </div>
         </div>
         <div>
-          {specifications && specifications?.length > 0 ? (
-            <div className="table-responsive mt-3">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th className="col-4">
-                      Specifications{" "}
-                      <a
-                        className="ps-1"
-                        href="#"
-                        onClick={() => handleSort("name")}
-                      >
-                        {renderSortIcon("name")}
-                      </a>{" "}
-                    </th>
-                    <th className="col-2">
-                      Specification Type
-                      <a
-                        className="ps-1"
-                        href="#"
-                        onClick={() => handleSort("isFunctional")}
-                      >
-                        {renderSortIcon("isFunctional")}
-                      </a>{" "}
-                    </th>
-                    <th className="col-2">
-                      Required / Recommended
-                      <a
-                        className="ps-1"
-                        href="#"
-                        onClick={() => handleSort("isRequired")}
-                      >
-                        {renderSortIcon("isRequired")}
-                      </a>{" "}
-                    </th>
-                    <th className="col-2">Action</th>
-                    <th className="col-1">Edit</th>
-                    <th className="col-1">View Testcases</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {specifications?.map((specification) => (
+          <div className="table-responsive mt-3">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th className="col-3">
+                    Specifications{" "}
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("name")}
+                    >
+                      {renderSortIcon("name")}
+                    </a>{" "}
+                  </th>
+                  <th className="col-2">
+                    Specification Type
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("isFunctional")}
+                    >
+                      {renderSortIcon("isFunctional")}
+                    </a>{" "}
+                  </th>
+                  <th className="col-2">
+                    Required / Recommended
+                    <a
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("isRequired")}
+                    >
+                      {renderSortIcon("isRequired")}
+                    </a>{" "}
+                  </th>
+                  <th className="col-2">Status</th>
+                  <th className="col-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {specifications && specifications.length > 0 ? (
+                  specifications.map((specification) => (
                     <tr key={specification.name}>
                       <td>{specification.name}</td>
                       <td>
@@ -255,44 +254,45 @@ export default function ComponentSpecification() {
                         />
                       </td>
 
-                      <td className="col-1.5">
-                        <button
-                          className="edit-badge"
-                          onClick={() => {
-                            setSpecificationId(specification?.id);
-                            setIsModalOpen(true);
-                          }}
-                        >
-                          <EditFilled />
-                          EDIT
-                        </button>
-                      </td>
-                      <td className="col-1.5">
-                        {" "}
-                        <button
-                          className="edit-badge"
-                          onClick={() =>
-                            navigate(
-                              `/testcase-config/manual-testcases/${specification?.id}`
-                            )
-                          }
-                        >
-                          <EyeOutlined />
-                          VIEW
-                        </button>
+                      <td>
+                        <div className="d-flex gap-3"> 
+                          <button
+                            className="edit-badge"
+                            onClick={() => {
+                              setSpecificationId(specification?.id);
+                              setIsModalOpen(true);
+                            }}
+                          >
+                            <EditFilled />
+                            EDIT
+                          </button>
+                          <button
+                            className="edit-badge"
+                            onClick={() =>
+                              navigate(
+                                `/testcase-config/manual-testcases/${specification?.id}`
+                              )
+                            }
+                          >
+                            <EyeOutlined />
+                            TESTCASES
+                          </button>
+                        </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="text-center mt-5  ">
-              <h4>
-                <i>No specifications found</i>
-              </h4>
-            </div>
-          )}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6}>
+                      <p className="text-center">
+                        No Specifications found for the given component
+                      </p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
         <ComponentSpecificationUpsertModal
           isModalOpen={isModalOpen}
