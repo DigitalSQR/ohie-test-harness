@@ -26,6 +26,9 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     @Column(name = "bean_name")
     private String beanName;
 
+    @Column(name = "failure_message", length = 1000)
+    private String failureMessage;
+
     @Column(name = "question_type")
     private String questionType;
 
@@ -88,5 +91,13 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
 
     public void setQuestionType(String questionType) {
         this.questionType = questionType;
+    }
+
+    public String getFailureMessage() {
+        return failureMessage;
+    }
+
+    public void setFailureMessage(String failureMessage) {
+        this.failureMessage = failureMessage;
     }
 }

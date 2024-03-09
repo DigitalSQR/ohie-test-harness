@@ -4,8 +4,9 @@ import { TestCaseAPI } from "../../../../api/TestCaseAPI";
 import { SpecificationAPI } from "../../../../api/SpecificationAPI";
 import { ComponentAPI } from "../../../../api/ComponentAPI";
 import { useLoader } from "../../../loader/LoaderContext";
+import { Empty } from "antd";
 import {
-  EditOutlined,
+  EditFilled,
   LeftOutlined,
   RightOutlined,
   LoadingOutlined,
@@ -251,33 +252,41 @@ export default function ManualTestCases() {
   return (
     <div id="SpecQuestions">
       <div id="wrapper">
-        <div className="d-flex justify-content-between">
-          <div className="bcca-breadcrumb">
-            <div className="bcca-breadcrumb-item">
-              {specificationDetails?.name} - Manual Configuration
-            </div>
-            <div
-              className="bcca-breadcrumb-item"
-              onClick={() =>
-                handleClick(
-                  `/testcase-config/component-specification/${componetDetails?.id}`
-                )
-              }
-            >
-              {" "}
-              {componetDetails?.name}{" "}
-            </div>
-            <div
-              className="bcca-breadcrumb-item"
-              onClick={() => {
-                navigate("/testcase-config");
-              }}
-            >
-              Components
-            </div>
+        <div className="bcca-breadcrumb">
+          <div className="bcca-breadcrumb-item">
+            {specificationDetails?.name} - Manual Configuration
           </div>
+          <div
+            className="bcca-breadcrumb-item"
+            onClick={() =>
+              handleClick(
+                `/testcase-config/component-specification/${componetDetails?.id}`
+              )
+            }
+          >
+            {" "}
+            {componetDetails?.name}{" "}
+          </div>
+          <div
+            className="bcca-breadcrumb-item"
+            onClick={() => {
+              navigate("/testcase-config");
+            }}
+          >
+            Components
+          </div>
+        </div>
+
+        <div className="d-flex justify-content-between align-items-center">
+          <Tabs
+            className="mt-5"
+            activeKey={activeTab}
+            items={items}
+            onChange={onChange}
+          />
+
           {activeTab === "2" && (
-            <div>
+            <div className="mt-5 create-testcase-button">
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
@@ -289,19 +298,16 @@ export default function ManualTestCases() {
             </div>
           )}
         </div>
-        <Tabs
-          className="mt-5"
-          activeKey={activeTab}
-          items={items}
-          onChange={onChange}
-        />
 
         {activeTab === "2" ? (
           <div className="">
             {!questions || questions?.length === 0 ? (
-              <h4 className="text-center mt-5">
-                No Questions found for the given Specification
-              </h4>
+              <Empty
+                imageStyle={{
+                  height: 200, // Adjust the height of the image
+                }}
+                description={<span>No Data</span>} // Custom description message
+              />
             ) : (
               <div className="row">
                 <div className="col-12 col-md-8 offset-md-2"></div>
@@ -423,7 +429,7 @@ export default function ManualTestCases() {
                             <div className="col-md-2 col-12 p-0">
                               <div className="question-actions p-2 pt-5">
                                 <span className="edit-icon">
-                                  <EditOutlined
+                                  <EditFilled
                                     onClick={() => handleUpdate(question)}
                                   />
                                 </span>
@@ -453,7 +459,12 @@ export default function ManualTestCases() {
             )}
           </div>
         ) : (
-          "No data Found"
+          <Empty
+            imageStyle={{
+              height: 200, // Adjust the height of the image
+            }}
+            description={<span>No Data</span>} // Custom description message
+          />
         )}
 
         <div>
@@ -465,6 +476,6 @@ export default function ManualTestCases() {
           />
         </div>
       </div>
-    </div> 
+    </div>
   );
 }

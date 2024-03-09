@@ -434,7 +434,7 @@ public class TestRequestValidator {
     //Validation For :Id
     private static void validateTestRequestEntityId(TestRequestEntity testRequestEntity,
                                                     List<ValidationResultInfo> errors) {
-        ValidationUtils.validateLength(testRequestEntity.getName(),
+        ValidationUtils.validateLength(testRequestEntity.getId(),
                 "id",
                 0,
                 1000,

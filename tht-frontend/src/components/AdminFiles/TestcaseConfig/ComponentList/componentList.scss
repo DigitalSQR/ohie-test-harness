@@ -111,14 +111,19 @@
     align-items: center;
     gap:0.5rem;
     font-size: 12px;
-    padding: 3px 20px;
+    padding: 5px 20px;
     background-color: rgb(10, 179, 156);
     border-color: rgb(10, 179, 156);
     color:white;
     border-radius: 6px;
     border-style: none;
+    min-width: 10rem;
   }
 
+  .edit-badge:hover {
+    background-color: darken(rgb(10, 179, 156), 10%); /* Darken the background color on hover */
+  }
+  
   .badges-orange {
     display: inline-block;
     background: $color-orange;

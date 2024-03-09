@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 import { useLoader } from "../../../loader/LoaderContext";
 
 import CustomSelect from "../CustomSelect";
-import { ROLE_ID_ADMIN, ROLE_ID_ASSESSEE, ROLE_ID_TESTER } from "../../../../constants/role_constants";
+import { ROLE_ID_ADMIN, ROLE_ID_TESTER } from "../../../../constants/role_constants";
 const UpdateAdminUser = () => {
   const navigate = useNavigate();
   const location = useLocation();

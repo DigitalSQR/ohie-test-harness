@@ -74,7 +74,7 @@ export default function SignUp() {
       if (formik.values.password != formik.values.confirmPassword) {
         notification.error({
           placement: "bottomRight",
-          description: "Passwords do not match.",
+          description: "Confirm password does not match with the password.",
         });
       } else {
         if (!captchaInfo.code && captchaInfo.captcha) {

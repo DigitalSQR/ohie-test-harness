@@ -130,6 +130,9 @@ public class TestcaseValidator {
         //For : description
         validateTestcaseEntityDescription(testcaseEntity,
                 errors);
+        //For : failureMessage
+        validateTestcaseEntityFailureMessage(testcaseEntity,
+                errors);
 
         return errors;
 
@@ -244,8 +247,18 @@ public class TestcaseValidator {
     //Validation For :Description
     private static void validateTestcaseEntityDescription(TestcaseEntity testcaseEntity,
                                                    List<ValidationResultInfo> errors) {
-        ValidationUtils.validateLength(testcaseEntity.getName(),
+        ValidationUtils.validateLength(testcaseEntity.getDescription(),
                 "description",
+                0,
+                1000,
+                errors);
+    }
+
+    //Validation For :Failure Message
+    private static void validateTestcaseEntityFailureMessage(TestcaseEntity testcaseEntity,
+                                                          List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseEntity.getFailureMessage(),
+                "failureMessage",
                 0,
                 1000,
                 errors);
