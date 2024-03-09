@@ -9,8 +9,6 @@ import { store } from "../../../store/store";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
-import { userStateConstantNames } from "../../../constants/user_constants";
-import { TestRequestStateConstantNames } from "../../../constants/test_requests_constants";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -46,36 +44,7 @@ export default function Dashboard() {
     fetchTestRequestData();
   }, []);
 
-  const userStateCounts = userChartData.reduce((counts, user) => {
-    const state = user.state;
-    counts[state] = (counts[state] || 0) + 1;
-    return counts;
-  }, {});
 
-  const testRequestStateCounts = testRequestChartData.reduce(
-    (counts, testRequest) => {
-      const state = testRequest.state;
-      counts[state] = (counts[state] || 0) + 1;
-      return counts;
-    },
-    {}
-  );
-
-  const userOptions = {
-    labels: Object.keys(userStateCounts).map((stateKey) => {
-      return userStateConstantNames[stateKey] || stateKey;
-    }),
-  };
-
-  const userSeries = Object.values(userStateCounts);
-
-  const testRequestOptions = {
-    labels: Object.keys(testRequestStateCounts).map((stateKey) => {
-      return TestRequestStateConstantNames[stateKey] || stateKey;
-    }),
-  };
-
-  const testRequestSeries = Object.values(testRequestStateCounts);
 
   return (
     <div id="dashboard">
@@ -111,36 +80,6 @@ export default function Dashboard() {
             </div>
           )}
         </div>
-        </div>
-        <div className="row mt-5 justify-content-around">
-          {!userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
-            <div className="col-md-4 border rounded">
-              <h5 className="mb-3 text-center mt-1">User Status Pie Chart</h5>
-              <div className="chart-container">
-                <ApexChart
-                  options={userOptions}
-                  series={userSeries}
-                  type="pie"
-                  width="100%"
-                />
-              </div>
-            </div>
-          )}
-          {testRequestSeries.length > 0 && (
-            <div className="col-md-4 border rounded">
-              <h5 className="mb-3 text-center mt-1">
-                Test Request Status Pie Chart
-              </h5>
-              <div className="chart-container">
-                <ApexChart
-                  options={testRequestOptions}
-                  series={testRequestSeries}
-                  type="pie"
-                  width="100%"
-                />
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -50,7 +50,7 @@ const ApplicationReport = () => {
     setUser({ name: response.name, email: response.email });
   };
   const generatePDF = () => {
-    const element = document.getElementById("report");
+    const element = document.getElementById("reportprint");
 
     html2pdf(element, {
       margin: 5,
@@ -176,6 +176,7 @@ const ApplicationReport = () => {
                   </button>
                 </div>
               </div>
+              <div id="reportprint">
               <div id="report">
                 <div className="report-details">
                   <div className="container-fluid">
@@ -658,6 +659,7 @@ const ApplicationReport = () => {
                     />
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>
