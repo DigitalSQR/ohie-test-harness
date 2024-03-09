@@ -164,7 +164,7 @@ const Assessee = () => {
           <table className=" data-table capitalize-words">
             <thead>
               <tr>
-                <th className="col-2">
+                <th style={{width:"20%"}}>
                   NAME
                   <span
                     className="ps-1"
@@ -174,7 +174,7 @@ const Assessee = () => {
                     {renderSortIcon("name")}
                   </span>
                 </th>
-                <th className="col-2.5">
+                <th style={{width:"25%"}}>
                   Email
                   <span
                     className="ps-1"
@@ -184,7 +184,7 @@ const Assessee = () => {
                     {renderSortIcon("email")}
                   </span>
                 </th>
-                <th className="col-2">Company
+                <th style={{width:"10%"}}>Company
                 <span
                 className="ps-1"
                 href="# "
@@ -193,7 +193,7 @@ const Assessee = () => {
                 {renderSortIcon("companyName")}
               </span>
                 </th>
-                <th className="col-1.2">requested date
+                <th style={{width:"10%"}}>requested date
                 <span
                 className="ps-1"
                 href="# "
@@ -202,7 +202,7 @@ const Assessee = () => {
                 {renderSortIcon("createdAt")}
               </span>
                 </th>
-                <th className="col-1.9">
+                <th style={{width:"10%"}}>
                   Status
                   <span
                     className="ps-1"
@@ -212,7 +212,7 @@ const Assessee = () => {
                     {renderSortIcon("state")}
                   </span>
                 </th>
-                <th className="col-1.9">
+                <th style={{width:"25%"}}>
                   ACTION
                   <span
                     className="ps-1"
