@@ -225,7 +225,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             DataValidationErrorException {
 
         if (testRequestEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ TestRequestServiceServiceImpl.class.getSimpleName());
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
 
@@ -307,6 +307,22 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Override
+    public List<ValidationResultInfo> validateChangeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+        try {
+            TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
+            TestRequestValidator.validateChangeState(testRequestEntity, stateKey, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+            CommonStateChangeValidator.validateStateChangeByMap(TestRequestServiceConstants.TEST_REQUEST_STATUS, TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, testRequestEntity.getState(), stateKey, errors);
+        } catch (DoesNotExistException ex) {
+            errors.add(
+                    new ValidationResultInfo("id",
+                            ErrorLevel.ERROR,
+                            ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+        }
+        return errors;
+    }
+
+    @Override
     public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
         List<ValidationResultInfo> errors = new ArrayList<>();
@@ -317,7 +333,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
         TestRequestValidator.validateChangeState(testRequestEntity, stateKey, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
 
-        CommonStateChangeValidator.validateStateChange(TestRequestServiceConstants.TEST_REQUEST_STATUS,TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP,testRequestEntity.getState(),stateKey,errors);
+        CommonStateChangeValidator.validateStateChange(TestRequestServiceConstants.TEST_REQUEST_STATUS, TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, testRequestEntity.getState(), stateKey, errors);
 
 
         testRequestEntity.setState(stateKey);
@@ -328,7 +344,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     private void validateChangeStateForAccepted(TestRequestEntity testRequestEntity, String nextState) throws DataValidationErrorException {
-        if(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextState)) {
+        if (TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextState)) {
 
             Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();
 
@@ -560,7 +576,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     private void createTestResultRelationsForManualTestcase(TestcaseEntity testcaseEntity, TestcaseResultEntity testcaseResult, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
 
-        if(testcaseEntity.getManual()) {
+        if (testcaseEntity.getManual()) {
 
             // create for question
             TestResultRelationEntity testResultRelationEntity = createTestResultRelationEntity(

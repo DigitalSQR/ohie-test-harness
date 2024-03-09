@@ -411,7 +411,7 @@ export default function EditQuestion() {
             className="bcca-breadcrumb-item"
             onClick={() => navigate(`/testcase-config/manual-testcases/${specification?.id}`)}
           >
-            {specification?.name} - Manual Configuration
+            {specification?.name} - Testcase Configuration
           </div>
           <div
             className="bcca-breadcrumb-item"

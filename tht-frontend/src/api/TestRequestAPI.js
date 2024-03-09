@@ -63,4 +63,11 @@ export const TestRequestAPI = {
 			return response.data;
 		
 	},
+	validateChangeState: async function (id, state) {
+			const response = await api.request({
+				url: `/test-request/validate/state/${id}/${state}`,
+				method: "PATCH"
+			});
+			return response.data;	
+	},
 };

@@ -555,13 +555,14 @@ public class TestRequestValidator {
                         errors.add(new ValidationResultInfo("component", ErrorLevel.WARN, "Component " + testRequestUrlEntity.getComponent().getName() + " will be skipped as it is inactive in Testcase Configuration. To activate this component, please contact administrator."));
                     } else {
                         List<TestcaseValidationResultInfo> validationResultEntities = ComponentValidator.validateTestCaseConfiguration(
-                                testRequestUrlEntity.getComponent().getId(),
                                 ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
+                                testRequestUrlEntity.getComponent().getId(),
                                 componentService,
                                 specificationService,
                                 testcaseService,
                                 testcaseOptionService,
                                 contextInfo);
+
                         if (containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
                             errors.add(
                                     new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,

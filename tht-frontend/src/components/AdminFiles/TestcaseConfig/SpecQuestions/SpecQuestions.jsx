@@ -59,7 +59,7 @@ export default function ManualTestCases() {
   useEffect(() => {
     fetchData(false);
     fetchCompSpecDetails();
-    dispatch(set_header("Manual Configuration"));
+    dispatch(set_header("Testcase Configuration"));
   }, []);
 
   const fetchCompSpecDetails = () => {
@@ -254,7 +254,7 @@ export default function ManualTestCases() {
       <div id="wrapper">
         <div className="bcca-breadcrumb">
           <div className="bcca-breadcrumb-item">
-            {specificationDetails?.name} - Manual Configuration
+            {specificationDetails?.name} - Testcase Configuration
           </div>
           <div
             className="bcca-breadcrumb-item"

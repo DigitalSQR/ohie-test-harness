@@ -63,7 +63,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               }
               onClick={() => {
                 handleMenuItemClick("/dashboard");
-                dispatch(set_header(""));
+                dispatch(set_header("Dashboard"));
               }}
             >
               <i
@@ -183,9 +183,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               )}
             </>
           )}
-          {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) &&
-            !user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) &&
-            !user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER) && (
+          {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
               <Fragment>
                 {" "}
                 <li>
@@ -195,34 +193,17 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                         ? "active menu-like-item"
                         : "menu-like-item"
                     }
-                    onClick={() => handleMenuItemClick("/testing-requests")}
+                    onClick={() => {
+                      handleMenuItemClick("/testing-requests");
+                      dispatch(set_header("Testing Requests"));
+                    }}
                   >
                     <i
                       aria-label="Testing Requests"
                       title="Testing Requests"
                       className="bi bi-file-earmark-plus menu-left-icon"
                     ></i>
-                    <span> Testing Requests</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className={
-                      activeMenuItem === "/applications"
-                        ? "active menu-like-item"
-                        : "menu-like-item"
-                    }
-                    onClick={() => {
-                      handleMenuItemClick("/applications");
-                      dispatch(set_header("Applications"));
-                    }}
-                  >
-                    <i
-                      aria-label="Applications"
-                      title="Applications"
-                      className="bi bi-file-earmark-bar-graph menu-left-icon"
-                    ></i>
-                    <span> Applications </span>
+                    <span> Testing Requests </span>
                   </a>
                 </li>
               </Fragment>

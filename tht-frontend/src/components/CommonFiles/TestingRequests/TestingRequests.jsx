@@ -11,7 +11,7 @@ import { USER_ROLES } from "../../../constants/role_constants.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
 import { useLoader } from "../../loader/LoaderContext.js";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
-import { notification } from "antd";
+import { notification, Modal } from "antd";
 import { formatDate } from "../../../utils/utils.js";
 import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.jsx";
 import { useNavigate } from "react-router-dom";
@@ -103,20 +103,65 @@ const TestingRequests = () => {
     return <span className="bi bi-arrow-down-up"></span>;
   };
 
-  const changeState = (testRequestId, updatedState) => {
+  const changeState = (testRequestId, updatedState, proceedAnyways) => {
     showLoader();
-    TestRequestAPI.changeState(testRequestId, updatedState)
-      .then((res) => {
-        notification.success({
-          placement: "bottomRight",
-          message: "Status updated successfully!",
-        });
-        fetchTestRequests(filterState, sortFieldName, sortDirection, currentPage);
+    TestRequestAPI.validateChangeState(testRequestId, updatedState)
+    .then((validationResults) => {
+      let warnings = [];
+      let errors = [];
+      for(let validationResult of validationResults) {
+        if(validationResult.level === "WARN") {
+          warnings.push(validationResult.message);
+        } else if(validationResult.level === "ERROR") {
+          errors.push(validationResult.message);
+        } 
+      }
+      if(!!errors.length) {
         hideLoader();
-      })
-      .catch((err) => {       
+        errors.forEach((error, index) => {
+          notification.error({
+            description: error,
+            placement: "bottomRight",
+          });
+        })
+      } else if(!!warnings.length && !proceedAnyways) {
         hideLoader();
-      });
+        Modal.confirm({
+          title: "Test Request Status Update",
+          content: (
+            <div>
+              <p><strong>Please review the following warnings:</strong></p>
+              <ul style={{ paddingLeft: 20 }}>
+                {warnings.map((warning, index) => (
+                  <li key={index}>{warning}</li>
+                ))}
+              </ul>
+            </div>
+          ),
+          okText: "Procced Anyway",
+          cancelText: "Cancel",
+          width: 600,
+          onOk() {
+            changeState(testRequestId, updatedState, true);
+          },
+        }); 
+      } else {
+        TestRequestAPI.changeState(testRequestId, updatedState)
+        .then((res) => {
+          notification.success({
+            placement: "bottomRight",
+            message: "Status updated successfully!",
+          });
+          fetchTestRequests(filterState, sortFieldName, sortDirection, currentPage);
+          hideLoader();
+        })
+        .catch((err) => {       
+          hideLoader();
+        }); 
+      }
+    }).catch((err) => {       
+      hideLoader();
+    });
   };
 
   const toggleRow = (trid) => {
