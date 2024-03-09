@@ -16,12 +16,11 @@ export default function ComponentSpecification() {
   const [specifications, setSpecifications] = useState();
   const { showLoader, hideLoader } = useLoader();
   const [sortDirection, setSortDirection] = useState({
-    name: "desc",
-    createdAt: "desc",
+    name: "asc",
     isRequired: "desc",
     isFunctional: "desc",
   });
-  const [sortFieldName, setSortFieldName] = useState("createdAt");
+  const [sortFieldName, setSortFieldName] = useState("name");
   const [componentDetails, setComponentDetails] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [specificationId, setSpecificationId] = useState();
@@ -51,14 +50,15 @@ export default function ComponentSpecification() {
         <span
           className={`bi ${
             sortDirection[fieldName] === "asc"
-              ? "bi-caret-up-fill"
-              : "bi-caret-down-fill"
+              ? "bi bi-sort-up-alt"
+              : "bi bi-sort-down"
           }`}
         ></span>
       );
     }
-    return <span className="bi-caret-down-fill"></span>;
+    return <span className="bi bi-arrow-down-up"></span>;
   };
+
   const handleSort = (newSortFieldName) => {
     setSortFieldName(newSortFieldName);
     const newSortDirection = { ...sortDirection };
@@ -79,7 +79,7 @@ export default function ComponentSpecification() {
   };
 
   const refreshAllSpecifications = () => {
-    fetchData("createdAt", "desc", currentPage, pageSize);
+    fetchData(sortFieldName, sortDirection[sortFieldName], currentPage, pageSize);
   };
 
   const fetchData = async (

@@ -10,6 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.util.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonUtil;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
@@ -269,8 +270,8 @@ public class UserServiceServiceImpl implements UserService {
             ContextInfo contextInfo)
             throws
             InvalidParameterException {
-        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildSpecification(contextInfo);
-        return this.userRepository.findAll(userEntitySpecification, pageable);
+        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildSpecification(pageable, contextInfo);
+        return this.userRepository.findAll(userEntitySpecification, CommonUtil.getPageable(pageable));
     }
 
     @Override

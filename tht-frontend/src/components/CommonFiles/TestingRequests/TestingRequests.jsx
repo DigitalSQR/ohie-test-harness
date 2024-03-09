@@ -35,8 +35,9 @@ const TestingRequests = () => {
   const [sortDirection, setSortDirection] = useState({
     productName: "desc",
     createdAt: "desc",
+    default: "acs",
   });
-  const [sortFieldName, setSortFieldName] = useState("createdAt");
+  const [sortFieldName, setSortFieldName] = useState("default");
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
     fetchTestRequests(filterState, sortFieldName, sortDirection, newPage);
@@ -86,20 +87,22 @@ const TestingRequests = () => {
     setSortDirection(newSortDirection);
     fetchTestRequests(filterState, field, newSortDirection, currentPage);
   };
+
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
         <span
           className={`bi ${
             sortDirection[fieldName] === "asc"
-              ? "bi-caret-up-fill"
-              : "bi-caret-down-fill"
+              ? "bi bi-sort-up-alt"
+              : "bi bi-sort-down"
           }`}
         ></span>
       );
     }
-    return <span className="bi-caret-down-fill"></span>;
+    return <span className="bi bi-arrow-down-up"></span>;
   };
+
   const changeState = (testRequestId, updatedState) => {
     showLoader();
     TestRequestAPI.changeState(testRequestId, updatedState)
@@ -208,6 +211,13 @@ const TestingRequests = () => {
                       }
                     >
                       Actions
+                      <span
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("default")}
+                    >
+                      {renderSortIcon("default")}
+                    </span>
                     </span>
                   </th>
                 </tr>

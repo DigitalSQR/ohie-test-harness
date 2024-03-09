@@ -7,6 +7,8 @@ import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -55,7 +57,9 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     }
 
     @Override
-    protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<UserEntity> root, CriteriaQuery<?> query) {
+    protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<UserEntity> root, CriteriaQuery<?> query, Pageable pageable) {
+        Sort.Order order = pageable.getSort().getOrderFor("default");
+        if(order == null) { return; }
         Expression<Object> stateWiseDefaultOrder = criteriaBuilder.selectCase()
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_APPROVAL_PENDING), 1)
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING), 2)
@@ -63,8 +67,11 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_INACTIVE), 4)
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_REJECTED), 5)
                 .otherwise(6);
-
-        query.orderBy(criteriaBuilder.asc(stateWiseDefaultOrder));
+        if(order.isAscending()) {
+            query.orderBy(criteriaBuilder.asc(stateWiseDefaultOrder));
+        } else {
+            query.orderBy(criteriaBuilder.desc(stateWiseDefaultOrder));
+        }
     }
 
     @Override

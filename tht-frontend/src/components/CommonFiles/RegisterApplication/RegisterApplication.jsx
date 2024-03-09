@@ -24,6 +24,7 @@ const RegisterApplication = () => {
     setUserId(userInfo.id);
     const params={};
     params.state="component.status.active"
+    params.sort="rank,asc"
     ComponentAPI.getComponents(params)
       .then((res) => {
         setComponents(res.content);

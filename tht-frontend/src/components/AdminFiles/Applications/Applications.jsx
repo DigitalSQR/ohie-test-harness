@@ -29,11 +29,12 @@ const Applications = () => {
     productName: "desc",
     approver: "desc",
     state: "desc",
+    default: "asc",
   };
   const [filterState, setFilterState] = useState("");
   const [testRequests, setTestRequests] = useState([]);
   const [sortDirection, setSortDirection] = useState(obj);
-  const [sortFieldName, setSortFieldName] = useState("name");
+  const [sortFieldName, setSortFieldName] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [userRole, setUserRole] = useState([]);
@@ -91,7 +92,7 @@ const Applications = () => {
     setSortFieldName(sortFieldName);
     const newSortDirection = { ...obj };
     newSortDirection[sortFieldName] =
-      sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
+    sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
     getAllTestRequests(
       filterState,
@@ -100,19 +101,20 @@ const Applications = () => {
       currentPage
     );
   };
+
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
         <span
           className={`bi ${
             sortDirection[fieldName] === "asc"
-              ? "bi-caret-up-fill"
-              : "bi-caret-down-fill"
+              ? "bi bi-sort-up-alt"
+              : "bi bi-sort-down"
           }`}
         ></span>
       );
     }
-    return <span className="bi-caret-down-fill"></span>;
+    return <span className="bi bi-arrow-down-up"></span>;
   };
 
   const handleChangePage = (event, newPage) => {
@@ -199,7 +201,16 @@ const Applications = () => {
                       {renderSortIcon("state")}
                     </span>
                   </th>
-                  <th className="col-2">CHOOSE ACTION</th>
+                  <th className="col-2">
+                    ACTION
+                    <span
+                      className="ps-1"
+                      href="#"
+                      onClick={() => handleSort("default")}
+                    >
+                      {renderSortIcon("default")}
+                    </span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
