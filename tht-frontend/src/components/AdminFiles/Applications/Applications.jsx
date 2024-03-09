@@ -160,7 +160,7 @@ const Applications = () => {
             <table className=" data-table capitalize-words">
               <thead>
                 <tr>
-                  <th className="col-2">
+                  <th style={{width:"15%"}}>
                     APP NAME{" "}
                     <span
                       className="ps-1"
@@ -170,7 +170,7 @@ const Applications = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
-                  <th className="col-2">
+                  <th style={{width:"10%"}}>
                     COMPANY NAME{" "}
                     <span
                       className="ps-1"
@@ -180,7 +180,7 @@ const Applications = () => {
                       {renderSortIcon("productName")}
                     </span>
                   </th>
-                  <th className="col-2">
+                  <th style={{width:"20%"}}>
                     DATE OF APPLICATION
                     <span
                       className="ps-1"
@@ -190,8 +190,8 @@ const Applications = () => {
                       {renderSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th className="col-2">EMAIL ID</th>
-                  <th className="col-2">
+                  <th style={{width:"20%"}}>EMAIL ID</th>
+                  <th style={{width:"15%"}}>
                     STATUS
                     <span
                       className="ps-1"
@@ -201,7 +201,7 @@ const Applications = () => {
                       {renderSortIcon("state")}
                     </span>
                   </th>
-                  <th className="col-2">
+                  <th style={{width:"20%"}}>
                     ACTION
                     <span
                       className="ps-1"

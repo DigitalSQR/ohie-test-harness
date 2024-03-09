@@ -385,7 +385,7 @@ export default function ManualTestCases() {
                                     unCheckedChildren="INACTIVE"
                                   />
                                 </span>
-                                <button onClick={() => handleUpdate(question)} style={{borderRight:"0",borderBottom:"0"}} className="btn btn-outline-success rounded-0">
+                                <button onClick={() => handleUpdate(question)} className="btn btn-outline-success rounded-0">
                                 <i class="bi bi-pencil-square"></i>&nbsp;
                                   Edit Question
                                 </button>
