@@ -253,7 +253,7 @@ export default function Login() {
                       navigate("/forgotpassword");
                     }}
                   >
-                    Reset Password
+                    Forgot Password
                   </a>
                 </div>
 

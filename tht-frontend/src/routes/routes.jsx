@@ -270,7 +270,9 @@ const routes = createBrowserRouter([
         path: "reset-password",
         element: (
           <PrivateRoute
-            roles={[USER_ROLES.ROLE_ID_ADMIN]}
+            roles={[USER_ROLES.ROLE_ID_ADMIN,
+              USER_ROLES.ROLE_ID_ASSESSEE,
+              USER_ROLES.ROLE_ID_TESTER]}
             element={ResetPassword}
           />
         ),

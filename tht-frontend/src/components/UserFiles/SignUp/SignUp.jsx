@@ -49,7 +49,7 @@ export default function SignUp() {
     if (values.name.length == 0) {
       errors.name = "Please enter name.";
     } else if(values.name.length > 1000) {
-      errors.password = "Password must have less than 1000 characters."
+      errors.name = "Name must have less than 1000 characters."
     }
 
     if (values.companyName.length == 0) {

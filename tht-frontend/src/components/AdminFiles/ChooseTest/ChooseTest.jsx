@@ -284,7 +284,11 @@ export default function ChooseTest() {
                   <Button
                     onClick={() => navigate(`/manual-testing/${testRequestId}`)}
                   >
-                    Resume
+                    {
+                    totalAllManual === totalFinishedManual ?
+                    "Modify" :
+                    "Resume"
+                    }
                   </Button>
                 </Fragment>
               )}

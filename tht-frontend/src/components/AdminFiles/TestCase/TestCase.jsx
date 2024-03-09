@@ -3,7 +3,7 @@ import { TestResultAPI } from "../../../api/TestResultAPI";
 import Options from "../Options/Options";
 import { Pagination, PaginationItem } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
-import { Button, notification, Modal ,Carousel, Image } from "antd";
+import { Button, notification, Modal, Carousel, Image } from "antd";
 import { EditOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "./testcase.scss";
 import { DocumentAPI } from "../../../api/DocumentAPI";
@@ -44,11 +44,11 @@ export default function TestCase(props) {
 	const [editMode, setEditMode] = useState(false);
 	const [initialNoteMessage, setInitialNoteMessage] = useState();
 	const [showNote, setShowNote] = useState(false);
-	
+	const [isModified, setIsModified] = useState(true);
 	const handlePageChange = (event, page) => {
 		let isSame = isMessageSame();
-		 // Ask for confirmation
-		 if (!isSame && !window.confirm("Continuing will discard unsaved note changes. Are you sure?")) {
+		// Ask for confirmation
+		if (!isSame && !window.confirm("Continuing will discard unsaved note changes. Are you sure?")) {
 			// If user cancels, do nothing
 			return;
 		}
@@ -68,13 +68,13 @@ export default function TestCase(props) {
 
 	const submitOptions = () => {
 		TestResultAPI.saveOptions(testcaseResult.id, selectedOptions)
-		.then((res) => {
-			refreshCurrentTestcase(res);
-			selectNextTestcase();
-		})
-		.catch((error) => {
-			
-		});
+			.then((res) => {
+				refreshCurrentTestcase(res);
+				selectNextTestcase();
+			})
+			.catch((error) => {
+
+			});
 	}
 
 	const handleSaveandNext = () => {
@@ -84,37 +84,42 @@ export default function TestCase(props) {
 				placement: "bottomRight",
 			});
 		} else {
-			if(isMessageSame()){
-				submitOptions();
+			if (!isModified) {
+				selectNextTestcase();
 			}
-			else{
-				Modal.confirm({
-					title: 'Note Saving Confirmation',
-					content: 'Would you like to save the notes before proceeding?',
-					okText: 'Save',
-					cancelText: 'Discard',
-					onOk() {
-						saveTestcaseResultWithNote()
-						.then(() => {
+			else {
+				if (isMessageSame()) {
+					submitOptions();
+				}
+				else {
+					Modal.confirm({
+						title: 'Note Saving Confirmation',
+						content: 'Would you like to save the notes before proceeding?',
+						okText: 'Save',
+						cancelText: 'Discard',
+						onOk() {
+							saveTestcaseResultWithNote()
+								.then(() => {
+									submitOptions();
+								});
+						},
+						onCancel() {
 							submitOptions();
-						});
-					},
-					onCancel(){
-						submitOptions();
-					}
+						}
 
-				});
+					});
+				}
 			}
 		}
 	};
 
 	const getCurrentTestcaseResultById = (testcaseResultId) => {
 		TestResultAPI.getTestCaseResultById(testcaseResultId)
-		.then((res) => {
-			setTestcaseResult(res)
-		}).catch((error) => {
-       
-		});
+			.then((res) => {
+				setTestcaseResult(res)
+			}).catch((error) => {
+
+			});
 	}
 
 
@@ -162,7 +167,7 @@ export default function TestCase(props) {
 	}
 
 	useEffect(() => {
-		if(testcaseResult){
+		if (testcaseResult) {
 			DocumentAPI.getDocumentsByRefObjUriAndRefId(
 				RefObjUriConstants.TESTCASE_RESULT_REFOBJURI,
 				testcaseResult.id,
@@ -171,7 +176,7 @@ export default function TestCase(props) {
 				.then((res) => {
 					setUploadedFiles(res.content);
 				}).catch((error) => {
-       
+
 				});
 		}
 	}, [testcaseResult]);
@@ -180,7 +185,7 @@ export default function TestCase(props) {
 		setShowNote(false);
 		setCurrentQuestion({});
 		showLoader();
-		if(testcaseResult){
+		if (testcaseResult) {
 
 			// set note message to show message
 			setNoteMessage(testcaseResult.message);
@@ -212,8 +217,8 @@ export default function TestCase(props) {
 
 	const handleCancelNoteButtonClick = () => {
 		let isSame = isMessageSame();
-		 // Ask for confirmation
-		 if (!isSame && !window.confirm("Are you sure you want to cancel? Any unsaved changes will be lost.")) {
+		// Ask for confirmation
+		if (!isSame && !window.confirm("Are you sure you want to cancel? Any unsaved changes will be lost.")) {
 			// If user cancels, do nothing
 			return;
 		}
@@ -227,48 +232,48 @@ export default function TestCase(props) {
 
 	useEffect(() => {
 		getQuestionImagesIfNotExists();
-	},[currentQuestion]);
+	}, [currentQuestion]);
 
 	const getQuestionImagesIfNotExists = () => {
-		if(currentQuestion && currentQuestion.id && (questionAndDocument.filter((questionItem) => questionItem.key === currentQuestion.id) <= 0)){
+		if (currentQuestion && currentQuestion.id && (questionAndDocument.filter((questionItem) => questionItem.key === currentQuestion.id) <= 0)) {
 
-		TestResultRelationAPI.getTestcaseResultRelatedObject(
-			testcaseResult.id,
-			RefObjUriConstants.DOCUMENT_REFOBJURI
-		).then(async (res) => {
-			if (res && res.length > 0) {
-				const updatedFiles = await Promise.all(res
-					.filter((item) => DOCUMENT_TYPE_FOR_TEST_CASES.DOCUMENT_TYPE_QUESTION === item?.documentType)
-					.map(async (relatedDoc) => {
-					try {
-						const base64Image = await DocumentAPI.base64Document(relatedDoc.id);
-						return {
-							name: relatedDoc.name,
-							status: 'done',
-							url: base64Image,
-							documentId : relatedDoc.id
-						};
-					} catch (error) {
-						return {
-							name: relatedDoc.name,
-							status: 'error',
-							url: null
-						};
-					}
-				}));
-	  
-				let item = {};
-				item.key = currentQuestion.id
-				item.files = updatedFiles;
-	  
-				const updatedQuestions = [...questionAndDocument];
-				updatedQuestions.push(item);
-				setQuestionAndDocument(updatedQuestions);
-			}
-		}).catch((error) => {
-          
-        });	
-	}
+			TestResultRelationAPI.getTestcaseResultRelatedObject(
+				testcaseResult.id,
+				RefObjUriConstants.DOCUMENT_REFOBJURI
+			).then(async (res) => {
+				if (res && res.length > 0) {
+					const updatedFiles = await Promise.all(res
+						.filter((item) => DOCUMENT_TYPE_FOR_TEST_CASES.DOCUMENT_TYPE_QUESTION === item?.documentType)
+						.map(async (relatedDoc) => {
+							try {
+								const base64Image = await DocumentAPI.base64Document(relatedDoc.id);
+								return {
+									name: relatedDoc.name,
+									status: 'done',
+									url: base64Image,
+									documentId: relatedDoc.id
+								};
+							} catch (error) {
+								return {
+									name: relatedDoc.name,
+									status: 'error',
+									url: null
+								};
+							}
+						}));
+
+					let item = {};
+					item.key = currentQuestion.id
+					item.files = updatedFiles;
+
+					const updatedQuestions = [...questionAndDocument];
+					updatedQuestions.push(item);
+					setQuestionAndDocument(updatedQuestions);
+				}
+			}).catch((error) => {
+
+			});
+		}
 	}
 
 	const addAttachment = () => {
@@ -302,7 +307,7 @@ export default function TestCase(props) {
 			"refObjUri",
 			RefObjUriConstants.TESTCASE_RESULT_REFOBJURI
 		);
-		formData.append("documentType",DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS.DOCUMENT_TYPE_EVIDENCE);
+		formData.append("documentType", DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS.DOCUMENT_TYPE_EVIDENCE);
 		DocumentAPI.uploadDocument(formData)
 			.then((res) => {
 				setUploadedFiles((prevFiles) => [
@@ -317,12 +322,12 @@ export default function TestCase(props) {
 					placement: "bottomRight",
 				});
 			}).catch((error) => {
-       
+
 			});
 	};
 
 	const deleteFile = (file, index) => {
-		if(file){
+		if (file) {
 			if (file.id) {
 				// delete from db (DocumentAPI)
 				DocumentAPI.changeDocumentState(file.id, DOCUMENT_STATE_INACTIVE)
@@ -335,7 +340,7 @@ export default function TestCase(props) {
 							return prev.filter((doc) => doc.id !== file.id);
 						});
 					}).catch((error) => {
-       
+
 					});
 			} else {
 				// Remove from files
@@ -421,6 +426,7 @@ export default function TestCase(props) {
 									testcaseResultInfo={testcaseResult}
 									setSelectedOptions={setSelectedOptions}
 									currentQuestion={currentQuestion}
+									setIsModified={setIsModified}
 									testcaseOptionId={
 										testcaseResult.testcaseOptionId
 									}
@@ -461,7 +467,7 @@ export default function TestCase(props) {
 									<div className="note-text-area-button-group">
 										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Cancel" onClick={handleCancelNoteButtonClick}><i className="bi bi-x-lg"></i></span>}
 										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Save Note" onClick={handleSaveNote}><i className="bi bi-floppy"></i></span>}
-										{!editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Edit Note"  onClick={handleEditNoteButtonClick}><i className="bi bi-pencil-square"></i></span>}
+										{!editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Edit Note" onClick={handleEditNoteButtonClick}><i className="bi bi-pencil-square"></i></span>}
 									</div>
 								</div>}
 								<div className="text-end mb-3">
@@ -519,29 +525,29 @@ export default function TestCase(props) {
 									>
 										{!!isLastQuestion()
 											? "Save"
-											: "Save and Next"}
+											: selectedOptions.length ? !isModified ? "Next" : "Save and Next" : "Save and Next"}
 									</button>
 								</div>
 								{/* Photos upload code above */}
 							</div>
 							<div className="col-md-3 col-12 p-0">
 								<div className=" p-2 pt-5 q-img">
-                                    <>
-									<Image.PreviewGroup>
-                                        <Carousel infinite={false} arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
-                                            {questionAndDocument.length > 0 && (
-                                                questionAndDocument.find((q) => q.key === currentQuestion.id)?.files.map((item) => (
-                                                    <div key={item.id}>
-                                                        <h3 className="testcase-carousel-background">
-                                                            <Image width={200}
-                                                                   src={item.url} />
-                                                        </h3>
-                                                    </div>
-                                                ))
-                                            )}
-                                        </Carousel>
-									</Image.PreviewGroup>
-                                    </>
+									<>
+										<Image.PreviewGroup>
+											<Carousel infinite={false} arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
+												{questionAndDocument.length > 0 && (
+													questionAndDocument.find((q) => q.key === currentQuestion.id)?.files.map((item) => (
+														<div key={item.id}>
+															<h3 className="testcase-carousel-background">
+																<Image width={200}
+																	src={item.url} />
+															</h3>
+														</div>
+													))
+												)}
+											</Carousel>
+										</Image.PreviewGroup>
+									</>
 								</div>
 							</div>
 						</div>
@@ -557,7 +563,7 @@ export default function TestCase(props) {
 					renderItem={(item) => (
 						<PaginationItem
 							{...item}
-							style={getStatusColor(item.page-1,item.type)}
+							style={getStatusColor(item.page - 1, item.type)}
 						/>
 					)}
 				/>
