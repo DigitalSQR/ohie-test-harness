@@ -11,6 +11,14 @@
     }
   }
 
+  .capitalize-words {
+    text-transform: capitalize;
+  }
+
+  .toLowerCase-words{
+    text-transform: lowercase;
+  }
+
   .action-button {
     margin-right: 10px;
     color: white;

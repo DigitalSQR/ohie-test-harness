@@ -13,6 +13,14 @@
     }
   }
 
+  .capitalize-words {
+    text-transform: capitalize;
+  }
+
+  .toLowerCase-words{
+    text-transform: lowercase;
+  }
+
   .btn-blue {
     background: #009fc8;
     transition: all 0.5s;

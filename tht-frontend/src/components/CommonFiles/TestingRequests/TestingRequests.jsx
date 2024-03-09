@@ -182,7 +182,7 @@ const TestingRequests = () => {
           </div>
 
           <div className="table-responsive">
-            <table className="data-table">
+            <table className="data-table capitalize-words">
               <thead>
                 <tr>
                   <th className="app-name-column">
@@ -307,7 +307,7 @@ const TestingRequests = () => {
                           id="Accordion"
                         >
                           <div className="mx-5 my-3">
-                            <table className="data-table">
+                            <table className="data-table capitialize-words">
                               <thead>
                                 <tr>
                                   <th style={{width:'24%'}}>Component</th>
@@ -326,9 +326,9 @@ const TestingRequests = () => {
                                             componentId={testUrls.componentId}
                                           ></ComponentIdConnector>
                                         </td>
-                                        <td>{testUrls.baseUrl}</td>
-                                        <td>{testUrls.username}</td>
-                                        <td key={testRequest.id}>
+                                        <td className = "toLowerCase-words">{testUrls.baseUrl}</td>
+                                        <td className = "toLowerCase-words">{testUrls.username}</td>
+                                        <td className = "toLowerCase-words" key={testRequest.id}>
                                           {testUrls.showPass
                                             ? testUrls.password
                                             : "*********"}

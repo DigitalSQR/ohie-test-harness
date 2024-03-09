@@ -157,7 +157,7 @@ const Applications = () => {
             </div>
           </div>
           <div className="table-responsive">
-            <table className=" data-table">
+            <table className=" data-table capitalize-words">
               <thead>
                 <tr>
                   <th className="col-2">
@@ -233,7 +233,7 @@ const Applications = () => {
                         : "-"}
                     </td>
                     <td>{formatDate(testRequest.meta.createdAt)}</td>
-                    <td>
+                    <td className = "toLowerCase-words">
                       <UserIdEmailConnector
                         userId={testRequest.assesseeId}
                       ></UserIdEmailConnector>

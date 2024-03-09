@@ -15,6 +15,11 @@
     font-weight: 600;
     margin-bottom: 0;
   }
+
+  .capitalize-words {
+    text-transform: capitalize;
+  }
+
   @media (max-width: 567.98px) {
     .application-report h2 {
       font-size: 14px;

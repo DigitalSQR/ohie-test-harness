@@ -154,7 +154,7 @@ const AdminUsers = () => {
           </div>
 
           <div className="table-responsive">
-            <table className="data-table">
+            <table className="data-table capitalize-words">
               <thead>
                 <tr>
                   <th className="col-3">
@@ -187,7 +187,7 @@ const AdminUsers = () => {
                 {currentPageUsers?.map((user) => (
                   <tr key={user.id}>
                     <td>{user.name}</td>
-                    <td>{user.email}</td>
+                    <td className = "toLowerCase-words">{user.email}</td>
                     <td>
                       {user?.roleIds.map((roleId) => (
                         <span className="badges-green my-1">{roleId.replace("role.", "").toUpperCase()}</span>
