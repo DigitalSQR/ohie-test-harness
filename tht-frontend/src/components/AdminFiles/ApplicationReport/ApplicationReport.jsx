@@ -37,6 +37,7 @@ const ApplicationReport = () => {
   const [testRequest, setTestRequest] = useState();
   const [user, setUser] = useState();
   const [rangedGradeData, setRangedGradeData] = useState();
+  const [columns, setColumns] = useState([]);
 
   useEffect(() => {
     fetchTestCaseResultData();
@@ -65,32 +66,27 @@ const ApplicationReport = () => {
     });
   };
 
-  const columns = [
-    {
-      title: "Range",
-      dataIndex: "range",
-    },
-    {
-      title: "Grade",
-      dataIndex: "grade",
-    },
-  ];
-
   const fetchAllGrades = () => {
     GradeAPI.getAllGrades()
       .then((res) => {
-        const formattedData = res.data.map((item, index) => {
-          const startPercentage =
-            res.data.length == index + 1 ? 0 : item.percentage + 1;
-          const endPercentage =
-            index == 0 ? 100 : res.data[index - 1].percentage;
-          return {
-            key: item.id,
-            range: `${startPercentage}% - ${endPercentage}%`,
-            grade: item.grade,
-          };
+        const columns = res.data.map(item => ({
+          title: `Grade ${item.grade}`,
+          dataIndex: item.grade,
+          key: item.grade,
+          width: 150,
+          align: 'center',
+          render: (text, record) => rangedGradeData[item.grade],
+        }));
+
+        const rangedGradeData = {};
+        res.data.forEach((item, index) => {
+          const startPercentage = index === 0 ? 0 : res.data[index - 1].percentage + 1;
+          const endPercentage = index === res.data.length - 1 ? 100 : item.percentage;
+          rangedGradeData[item.grade] = `${startPercentage}% - ${endPercentage}%`;
         });
-        setRangedGradeData(formattedData);
+
+        setColumns(columns);
+        setRangedGradeData(rangedGradeData);
       })
       .catch((err) => {});
   };
@@ -433,29 +429,7 @@ const ApplicationReport = () => {
                             <th>COMPONENTS</th>
                             <th>SPECIFICATIONS</th>
                             <th>RESULTS</th>
-                            <th>
-                              GRADE
-                              <>
-                                {
-                                  <Tooltip
-                                    className="ms-1"
-                                    color="#f8f9fa"
-                                    title={
-                                      <Table
-                                        dataSource={rangedGradeData}
-                                        columns={columns}
-                                        pagination={false}
-                                      ></Table>
-                                    }
-                                  >
-                                    <i
-                                      style={{ fontSize: "14px" }}
-                                      className="bi bi-info-circle-fill"
-                                    ></i>
-                                  </Tooltip>
-                                }
-                              </>
-                            </th>
+                            <th>GRADE</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -671,6 +645,17 @@ const ApplicationReport = () => {
                         </tbody>
                       </table>
                     </div>
+                  </div>
+                </div>
+
+                <div className="compliance-card">
+                  <div className="c-card-header">Grade Ranges</div>
+                  <div className="c-card-body">
+                    <Table
+                      dataSource={[{ key: 1 }]} // Providing a dummy data source with one row
+                      columns={columns}
+                      pagination={false}
+                    />
                   </div>
                 </div>
               </div>
