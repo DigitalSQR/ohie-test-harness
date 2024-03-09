@@ -162,6 +162,8 @@ const TestingRequests = () => {
                 </div>
               </div>
             </div>
+            
+            {userRoles.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
             <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
               <div className="d-flex align-items-baseline justify-content-end">
                 <button
@@ -176,6 +178,7 @@ const TestingRequests = () => {
                 </button>
               </div>
             </div>
+          )}
           </div>
 
           <div className="table-responsive">

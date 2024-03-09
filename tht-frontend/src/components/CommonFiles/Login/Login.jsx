@@ -176,7 +176,7 @@ export default function Login() {
                       className={"form-control border-start-0 ps-0"}
                       name="username"
                       id="exampleFormControlInput1"
-                      autoComplete="off"
+                      autoComplete="on"
                       value={formik.values.username}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
