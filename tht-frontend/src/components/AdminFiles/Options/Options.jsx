@@ -8,7 +8,7 @@ import { Button, notification } from "antd";
 import { ManualQuestionTypeConstants } from "../../../constants/testcase_constants";
 
 export default function Options(props) {
-	const { refId, testcaseResultInfo ,setSelectedOptions, currentQuestion ,testcaseOptionId } = props;
+	const { refId, testcaseResultInfo ,setSelectedOptions, currentQuestion ,testcaseOptionId ,setIsModified} = props;
 	const [options, setOptions] = useState([]);
 	const [currentOptions, setCurrentOptions] = useState([]);
 	const [testResultRelationInfos, setTestResultRelations] = useState([]);
@@ -36,6 +36,10 @@ export default function Options(props) {
 			hideLoader();
 		});
 	}, []);
+	useEffect(()=>{
+		const selectedOption = testResultRelationInfos.filter(item => item.selected).map(item => item.refId);
+		setIsModified(JSON.stringify(selectedOption) !== JSON.stringify(currentOptions));
+	},[currentOptions]);
 
 	useEffect(() => {
 		showLoader();

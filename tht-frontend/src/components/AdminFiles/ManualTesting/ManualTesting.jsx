@@ -155,7 +155,13 @@ export default function ManualTesting() {
 
   useEffect(() => {
     if (!!testcaseResults && !currentComponentIndex) {
-      const componentIndex = testcaseResults.flat().findIndex(component => component.state !== 'testcase.result.status.finished');
+      let componentIndex;
+      if (totalTestCasesCount === finishedTestCasesCount) {
+        componentIndex = 0;
+      }
+      else {
+        componentIndex = testcaseResults.flat().findIndex(component => component.state !== 'testcase.result.status.finished');
+      }
       selectComponent(componentIndex);
       hideLoader();
     }
@@ -174,17 +180,18 @@ export default function ManualTesting() {
     componentIndex = parseInt(componentIndex);
     setCurrentComponent(testcaseResults[componentIndex]);
     setCurrentComponentIndex(componentIndex);
-
-    let specificationIndex = null;
-    outerLoop: for (const component of testcaseResults) {
-      for (let i = 0; i < component.childTestcaseResults.length; i++) {
+    let specificationIndex = 0;
+    if (totalTestCasesCount !== finishedTestCasesCount) {
+      outerLoop: for (const component of testcaseResults) {
+        for (let i = 0; i < component.childTestcaseResults.length; i++) {
           const specification = component.childTestcaseResults[i];
           if (specification.state !== 'testcase.result.status.finished') {
-              specificationIndex = i;
-              break outerLoop;
+            specificationIndex = i;
+            break outerLoop;
           }
+        }
       }
-  }
+    }
     selectSpecification(specificationIndex, componentIndex);
   };
 
@@ -210,18 +217,20 @@ export default function ManualTesting() {
       testcaseResults[componentIndex].childTestcaseResults[specificationIndex]
     );
     setCurrentSpecificationIndex(specificationIndex);
-    let testcaseIndex = null;
-    outerLoop: for (const component of testcaseResults) {
-      for (const specification of component.childTestcaseResults) {
-        for (let i = 0; i < specification.childTestcaseResults.length; i++) {
-          const testcase = specification.childTestcaseResults[i];
-          if (testcase.state !== 'testcase.result.status.finished') {
+    let testcaseIndex = 0;
+    if (totalTestCasesCount !== finishedTestCasesCount) {
+      outerLoop: for (const component of testcaseResults) {
+        for (const specification of component.childTestcaseResults) {
+          for (let i = 0; i < specification.childTestcaseResults.length; i++) {
+            const testcase = specification.childTestcaseResults[i];
+            if (testcase.state !== 'testcase.result.status.finished') {
               testcaseIndex = i;
               break outerLoop;
+            }
           }
+        }
       }
-      }
-  }
+    }
     selectTestcase(testcaseIndex, specificationIndex, componentIndex);
   };
 
@@ -258,7 +267,15 @@ export default function ManualTesting() {
       ].childTestcaseResults.length -
       1
     ) {
-      selectNextSpecification();
+      if (
+        currentSpecificationIndex ===
+        testcaseResults[currentComponentIndex].childTestcaseResults.length -1
+      ){
+        selectNextComponent();
+      }
+      else{
+        selectNextSpecification();
+      }
     } else {
       selectTestcase(
         currentTestcaseIndex + 1,
