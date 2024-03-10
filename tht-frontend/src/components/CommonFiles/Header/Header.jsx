@@ -1,24 +1,54 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import avatar from "../../../styles/images/defaultDP.jpeg";
 import "./_header.scss";
-import { UserAPI } from "../../../api/UserAPI";
-import { USER_ROLE_NAMES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 import { log_out } from "../../../reducers/authReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getHighestPriorityRole } from "../../../utils/utils";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { DOCUMENT_STATE_ACTIVE } from "../../../constants/document_constants";
 import { DocumentAPI } from "../../../api/DocumentAPI";
+import UseEventEmitter from "../EventEmitter/EventEmitter";
+import { APP_EVENTS } from "../../../constants/event_constants";
 
+/**
+ * Header Component
+ *
+ * This component renders the header bar of the application.
+ * It displays the provided header content and handles the sidebar state.
+ *
+ * Props:
+ *   - headerContent: The content to display in the header.
+ *   - isSidebarOpen: A boolean indicating whether the sidebar is open or closed.
+ *
+ * Usage Example:
+ *   <Header headerContent="My App" isSidebarOpen={true} />
+ */
 export default function Header({ headerContent, isSidebarOpen }) {
-  const location = useLocation();
+  // State and Hooks.
+  // Holds information about the current user.
   const [userInfo, setUserInfo] = useState();
+  
+  // Holds the URL of the user's display picture.
   const [displayPictureUrl, setDisplayPictureUrl] = useState("");
+
+  // A dispatch function for triggering Redux actions.
   const dispatch = useDispatch();
+
+  // A function for navigating between routes.
   const navigate = useNavigate();
+
+  // Retrieves the user ID from the Redux store.
   const userID = useSelector((store) => store.userInfoSlice.id);
+
+  // Function: getUserInfo
+  // Description: Fetches user information from the Redux store and updates the state with the retrieved data. It also fetches the user's display picture URL from the server.
+  // Steps:
+  //   1. Retrieves user information from the Redux store.
+  //   2. Sets the state with the retrieved user information.
+  //   3. Retrieves the user's display picture URL from the server by making an API call.
+  //   4. Updates the state with the fetched display picture URL.
   const getUserInfo = () => {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
@@ -33,20 +63,35 @@ export default function Header({ headerContent, isSidebarOpen }) {
 
         const url = await DocumentAPI.base64Document(id, name);
         setDisplayPictureUrl(url);
-      } else {
+      } else if (res.content.length === 0) {
         setDisplayPictureUrl();
       }
     });
   };
 
+  // Effect to fetch user data when the component mounts.
   useEffect(() => {
     getUserInfo();
   }, []);
+
+  // Called when REFRESH_USER_PROFILE events emits from any component.
+  const handleUserProfileRefresh = () => {
+    getUserInfo();
+  };
+
+  // Effect to register event to refresh user profile.
   useEffect(() => {
-    if (location.pathname == "/dashboard") {
-      getUserInfo();
-    }
-  }, [location]);
+    UseEventEmitter.addListener(
+      APP_EVENTS.REFRESH_USER_PROFILE,
+      handleUserProfileRefresh
+    );
+    return () => {
+      UseEventEmitter.removeListener(
+        APP_EVENTS.REFRESH_USER_PROFILE,
+        handleUserProfileRefresh
+      );
+    };
+  }, []);
 
   return (
     <div id="header" style={{ cursor: "pointer" }}>
