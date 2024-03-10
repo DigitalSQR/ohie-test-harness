@@ -1,3 +1,7 @@
+--create FR automated testcases.
+--
+--@author dhruv
+--@since 2023-09-13
 INSERT INTO
         component (
                 id,
@@ -14,7 +18,7 @@ INSERT INTO
 VALUES
         (
                 'component.facility.registry',
-                'Facility Registry',
+                'Facility Registry (FR)',
                 'Facility Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
                 'component.status.active',
                 2,
@@ -63,7 +67,7 @@ VALUES
                 'FRF-9 Specification of the Facility Registry (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
                 'specification.status.active',
                 10,
-                false,
+                true,
                 false,
                 'component.facility.registry',
                 'ivasiwala@argusoft.com',

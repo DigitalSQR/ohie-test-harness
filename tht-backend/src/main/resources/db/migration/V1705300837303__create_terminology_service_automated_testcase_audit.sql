@@ -1,3 +1,7 @@
+--create TS automated testcases audit.
+--
+--@author dhruv
+--@since 2023-09-13
 INSERT INTO
     component_aud (
         id,
@@ -88,7 +92,7 @@ VALUES
         'TSWF-8 Specification of the Terminology Repository Component (https://guides.ohie.org/arch-spec/introduction/terminology-service-workflow/expand-value-set)',
         'specification.status.active',
         8,
-        true,
+        false,
         true,
         'component.terminology.service',
         'ivasiwala@argusoft.com',

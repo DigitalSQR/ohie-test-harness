@@ -1,3 +1,7 @@
+--create HWR automated testcases audit.
+--
+--@author dhruv
+--@since 2023-09-13
 INSERT INTO
     component_aud (
         id,
@@ -72,7 +76,7 @@ VALUES
         'specification.status.active',
         3,
         false,
-        true,
+        false,
         'component.health.worker.registry',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',

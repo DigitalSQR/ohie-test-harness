@@ -1,3 +1,7 @@
+--create SHR automated testcases audit.
+--
+--@author dhruv
+--@since 2023-09-13
 INSERT INTO
     component_aud (
         id,
@@ -72,7 +76,7 @@ VALUES
         'specification.status.active',
         4,
         false,
-        true,
+        false,
         'component.shared.health.record',
         'ivasiwala@argusoft.com',
         'ivasiwala@argusoft.com',

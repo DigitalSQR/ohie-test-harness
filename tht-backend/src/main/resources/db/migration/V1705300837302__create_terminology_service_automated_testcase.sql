@@ -1,3 +1,7 @@
+--create TS automated testcases.
+--
+--@author dhruv
+--@since 2023-09-13
             INSERT INTO component (id,
                        name,
                        description,
@@ -9,7 +13,7 @@
                        updated_at,
                        version)
             VALUES ('component.terminology.service',
-                'Terminology Service',
+                    'Terminology Service (TS)',
                 'Terminology Service Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-terminology-service-ts)',
                 'component.status.active',
                 10,
@@ -132,7 +136,7 @@
                         'TSWF-8 Specification of the Terminology Repository Component (https://guides.ohie.org/arch-spec/introduction/terminology-service-workflow/expand-value-set)',
                         'specification.status.active',
                         8,
-                        true,
+                        false,
                         true,
                         'component.terminology.service',
                         'ivasiwala@argusoft.com',
