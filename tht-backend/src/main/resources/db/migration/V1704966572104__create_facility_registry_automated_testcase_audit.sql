@@ -1,3 +1,7 @@
+--create FR automated testcases audit.
+--
+--@author dhruv
+--@since 2023-09-13
 INSERT INTO
         component_aud (
                 id,
@@ -74,7 +78,7 @@ VALUES
                 'FRF-9 Specification of the Facility Registry (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-facility-registry-fr)',
                 'FRF-9',
                 'specification.status.active',
-                false,
+                true,
                 false,
                 10,
                 0

@@ -1,3 +1,7 @@
+--create HWR automated testcases.
+--
+--@author dhruv
+--@since 2023-09-13
         INSERT INTO component (id,
                        name,
                        description,
@@ -9,7 +13,7 @@
                        updated_at,
                        version)
         VALUES ('component.health.worker.registry',
-                'Health Worker Registry',
+                'Health Worker Registry (HWR)',
                 'Health Worker Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-health-worker-registry-hwr)',
                 'component.status.active',
                 5,
@@ -64,7 +68,7 @@
             'specification.status.active',
             3,
             false,
-            true,
+             false,
             'component.health.worker.registry',
             'ivasiwala@argusoft.com',
             'ivasiwala@argusoft.com',

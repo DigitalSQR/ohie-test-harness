@@ -1,4 +1,4 @@
---create CR testcases.
+--create CR automated testcases.
 --
 --@author dhruv
 --@since 2023-09-13
@@ -18,7 +18,7 @@ INSERT INTO
 VALUES
     (
         'component.client.registry',
-        'Client Registry',
+        'Client Registry (CR)',
         'Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
         'component.status.active',
         1,
