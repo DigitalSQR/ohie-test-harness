@@ -8,9 +8,7 @@ import { Upload, notification, Modal } from "antd";
 import ImgCrop from "antd-img-crop";
 import { userinfo_success } from "../../../reducers/UserInfoReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { store } from "../../../store/store";
 import { getHighestPriorityRole } from "../../../utils/utils";
-import { PlusOutlined } from "@ant-design/icons";
 import { DocumentAPI } from "../../../api/DocumentAPI";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import {
@@ -20,30 +18,67 @@ import {
 } from "../../../constants/document_constants";
 import avatar from "../../../styles/images/defaultDP.jpeg";
 import { set_header } from "../../../reducers/homeReducer";
+import UseEventEmitter from "../../CommonFiles/EventEmitter/EventEmitter";
+import { APP_EVENTS } from "../../../constants/event_constants";
 
-const UserProfile = () => {
+/**
+ * UserProfile Component:
+ * Displays the user profile information and provides functionality to update the user details and profile picture.
+ */
+export default function UserProfile () {
+
+  // Function to display the loader.
   const { showLoader, hideLoader } = useLoader();
+
+  // State to store the user details.
   const [userDetails, setUserDetails] = useState();
+
+  // State to control the visibility of the image preview modal.
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  // State to store the URL of the image to be previewed.
   const [previewImage, setPreviewImage] = useState("");
+
+  // State to store the title of the image preview modal.
   const [previewTitle, setPreviewTitle] = useState("");
+
+  // State to track if a new image has been uploaded.
   const [uploadedFlag, setUploadedFlag] = useState(false);
+
+  // State to store the previous profile picture.
   const [previousImage, setPreviousImage] = useState();
+
+  // State to store the current profile picture.
   const [profilePicture, setProfilePicture] = useState();
+
+  // Function to navigate to different routes.
   const navigate = useNavigate();
+
+  // Function to dispatch actions to the Redux store.
   const dispatch = useDispatch();
 
+  // Selector to retrieve the user ID from the Redux store.
   const userID = useSelector((store) => store.userInfoSlice.id);
 
+  // Function to handle profile picture upload
   const handleUpload = () => {
-    if (!!previousImage && profilePicture !== previousImage) {
+
+    // If there is a previous profile picture and the picture has deleted.
+    if (previousImage && profilePicture === undefined) {
+
+      // Change the state of the previous image document to inactive
       DocumentAPI.changeDocumentState(
         previousImage.documentId,
         DOCUMENT_STATE_INACTIVE
-      );
-    }
-    const formData = new FormData();
-    if (!!profilePicture && profilePicture !== previousImage) {
+      ).then((res)=>{        
+        // Refresh the user profile after successful document state change
+        refreshUserProfile();
+      }).catch((error) => {
+        // Handle the error here
+        hideLoader();
+      });
+    }else if (profilePicture && profilePicture !== previousImage) {
+      const formData = new FormData();
       formData.append(`file`, profilePicture.file);
       formData.append(`fileName`, profilePicture.file.name);
       formData.append(`refId`, userID);
@@ -62,15 +97,18 @@ const UserProfile = () => {
             documentId: response.id,
           };
           setPreviewImage(imageData);
-          notification.success({
-            description: `Picture Uploaded Successfully`,
-            placement: "bottomRight",
-          });
+          refreshUserProfile();
+          
         })
-        .catch((error) => {});
+        .catch((error) => {
+          hideLoader();
+        });
+    }else {
+       refreshUserProfile();
     }
   };
 
+  // Function to validate form input values.
   const validate = (values) => {
     const errors = {};
     if (values.name.length === 0) {
@@ -86,11 +124,14 @@ const UserProfile = () => {
     return errors;
   };
 
+  // useEffect hook used to update the header title, fetch user data, and display profile picture on component mount.
   useEffect(() => {
     dispatch(set_header("User Profile"));
     fetchUser();
     fetchDisplayPicture();
   }, []);
+
+  // Function to fetch and display the user's profile picture.
   const fetchDisplayPicture = () => {
     DocumentAPI.getDocumentsByRefObjUriAndRefId(
       RefObjUriConstants.USER_REFOBJURI,
@@ -113,6 +154,8 @@ const UserProfile = () => {
       }
     });
   };
+
+  // Function to fetch user details from the API.
   const fetchUser = () => {
     UserAPI.viewUser()
       .then((res) => {
@@ -125,17 +168,14 @@ const UserProfile = () => {
       .catch((error) => {});
   };
 
+  // Function to handle the removal of the profile picture.
   const handleRemove = () => {
     Modal.confirm({
       title: "Delete Image",
       content: "Are you sure about deleting this image ?",
       okText: "Yes",
       cancelText: "Cancel",
-      onOk() {
-        notification.success({
-          description: `Picture deleted successfully`,
-          placement: "bottomRight",
-        });
+      onOk() {       
         setProfilePicture();
         setUploadedFlag(true);
       },
@@ -151,6 +191,7 @@ const UserProfile = () => {
 
   const handleCancel = () => setPreviewOpen(false);
 
+  // Formik hook to manage form state, validation, and submission.
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -172,18 +213,19 @@ const UserProfile = () => {
             placement: "bottomRight",
             description: `User Updated Successfully`,
           });
-          handleUpload();
-
           dispatch(userinfo_success(body));
-          navigate("/dashboard");
-          // window.location.reload();
+          handleUpload();
+          hideLoader();          
+          navigate(-1);
         })
         .catch((response) => {
           hideLoader();
         });
-      hideLoader();
+     
     },
   });
+
+  // Function to handle the selection of a new profile picture.
   const handlePictureSelect = (e) => {
     setUploadedFlag(true);
     setProfilePicture(() => {
@@ -194,6 +236,11 @@ const UserProfile = () => {
       };
       return currentImage;
     });
+  };
+
+  // Function to emit an event to refresh the user profile.
+  const refreshUserProfile = () => {
+    UseEventEmitter.emit(APP_EVENTS.REFRESH_USER_PROFILE, "");
   };
 
   return (
@@ -261,13 +308,14 @@ const UserProfile = () => {
                             fontSize: "2em",
                             color: "white",
                             marginRight: "10px",
+                            cursor: "pointer"
                           }}
                         />
 
                         <span
                           onClick={handleRemove}
                           className="bi bi-trash-fill"
-                          style={{ fontSize: "2em", color: "white" }}
+                          style={{ fontSize: "2em", color: "white",cursor: "pointer" }}
                         />
                       </Fragment>
                     )}
@@ -414,7 +462,7 @@ const UserProfile = () => {
               <button
                 className="btn btn-primary btn-white py-2 font-size-14"
                 onClick={() => {
-                  navigate("/dashboard");
+                  navigate(-1);
                   formik.resetForm();
                 }}
               >
@@ -436,4 +484,3 @@ const UserProfile = () => {
     </div>
   );
 };
-export default UserProfile;
