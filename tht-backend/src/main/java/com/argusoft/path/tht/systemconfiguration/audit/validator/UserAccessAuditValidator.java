@@ -95,56 +95,6 @@ public class UserAccessAuditValidator {
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
-        // For : Id
-        validateUserAccessAuditInfoId(userAccessAuditInfo,
-                errors);
-
-        // For :TypeId
-        // For :User_name
-        validateUserAccessAuditInfoUserName(userAccessAuditInfo,
-                originalInfo,
-                validationTypeKey,
-                errors,
-                contextInfo);
-        // For :Timestamp
-        validateUserAccessAuditInfoTimestamp(userAccessAuditInfo,
-                originalInfo,
-                validationTypeKey,
-                errors,
-                contextInfo);
-        // For :Location
-        validateUserAccessAuditInfoLocation(userAccessAuditInfo,
-                originalInfo,
-                validationTypeKey,
-                errors,
-                contextInfo);
-        // For :Message
-        validateUserAccessAuditInfoMessage(userAccessAuditInfo,
-                originalInfo,
-                validationTypeKey,
-                errors,
-                contextInfo);
-        // For :ipAddress
-        validateUserAccessAuditInfoIpAddress(userAccessAuditInfo,
-                originalInfo,
-                validationTypeKey,
-                errors,
-                contextInfo);
-        // For :typeId
-        validateUserAccessAuditInfoTypeId(userAccessAuditInfo,
-                originalInfo,
-                validationTypeKey,
-                errors,
-                contextInfo);
-        // For :stateId
-        validateUserAccessAuditInfoStateId(userAccessAuditInfo,
-                originalInfo,
-                validationTypeKey,
-                errors,
-                contextInfo);
-        errors.addAll(this.userAccessAuditServiceImp
-                .validateUserAccessAudit(validationTypeKey, userAccessAuditInfo, contextInfo));
-
         return errors;
 
     }
