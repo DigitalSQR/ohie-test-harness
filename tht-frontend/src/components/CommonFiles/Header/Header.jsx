@@ -29,7 +29,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
   // State and Hooks.
   // Holds information about the current user.
   const [userInfo, setUserInfo] = useState();
-  
+
   // Holds the URL of the user's display picture.
   const [displayPictureUrl, setDisplayPictureUrl] = useState("");
 
@@ -69,7 +69,10 @@ export default function Header({ headerContent, isSidebarOpen }) {
     });
   };
 
-  // Effect to fetch user data when the component mounts.
+  const capitalizeFirstLetter = (word) => {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  };
+
   useEffect(() => {
     getUserInfo();
   }, []);
@@ -117,8 +120,8 @@ export default function Header({ headerContent, isSidebarOpen }) {
                 {userInfo?.name}
                 <i className="bi bi-chevron-down"></i>
               </span>
-              <span className="font-size-12">
-                {userInfo ? getHighestPriorityRole(userInfo) : ""}
+              <span style={{fontSize:"12px"}}>
+                {userInfo ? capitalizeFirstLetter(getHighestPriorityRole(userInfo)) : ""}
               </span>
             </div>
             <ul className="dropdown-menu">
