@@ -203,7 +203,7 @@ export default function ComponentList() {
             <table className="data-table capitalize-words">
               <thead>
                 <tr>
-                  <th className="col-6">
+                  <th className="col-4">
                     Component Name{" "}
                     <span
                       className="ps-1"
@@ -213,8 +213,8 @@ export default function ComponentList() {
                       {renderSortIcon("name")}
                     </span>{" "}
                   </th>
-                  <th className="col-2">Status</th>
-                  <th className="col-2">Actions</th>
+                  <th className="col-3">Status</th>
+                  <th className="col-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
