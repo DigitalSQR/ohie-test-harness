@@ -5,8 +5,6 @@
 INSERT INTO
     component_aud (
         id,
-        rev,
-        revtype,
         name,
         description,
         state,
@@ -15,14 +13,14 @@ INSERT INTO
         updated_by,
         created_at,
         updated_at,
-        version
+        version,
+        rev,
+        revtype
     )
 VALUES
     (
         'component.client.registry',
-        1,
-        0,
-        'Client Registry',
+        'Client Registry (CR)',
         'Client Registry Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/client-registry)',
         'component.status.active',
         1,
@@ -30,6 +28,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
+        0,
+        1,
         0
     );
 
@@ -47,9 +47,9 @@ INSERT INTO
         updated_by,
         created_at,
         updated_at,
+        version,
         rev,
-        revtype,
-        version
+        revtype
     )
 VALUES
     (
@@ -65,8 +65,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -82,8 +82,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -99,8 +99,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -116,8 +116,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -133,8 +133,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -150,8 +150,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -167,8 +167,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -184,8 +184,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     );
 
@@ -203,9 +203,9 @@ INSERT INTO
         updated_by,
         created_at,
         updated_at,
+        version,
         rev,
-        revtype,
-        version
+        revtype
     )
 VALUES
     (
@@ -221,8 +221,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -238,8 +238,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -255,8 +255,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -272,8 +272,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -289,8 +289,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -306,8 +306,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -323,8 +323,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -340,8 +340,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -357,8 +357,8 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     ),
     (
@@ -374,8 +374,7 @@ VALUES
         'ivasiwala@argusoft.com',
         Now(),
         Now(),
-        1,
         0,
+        1,
         0
     );
-

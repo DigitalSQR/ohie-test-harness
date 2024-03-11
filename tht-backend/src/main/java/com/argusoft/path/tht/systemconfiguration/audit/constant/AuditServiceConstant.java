@@ -2,7 +2,10 @@ package com.argusoft.path.tht.systemconfiguration.audit.constant;
 
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.models.mapper.DocumentMapperImpl;
+import com.argusoft.path.tht.reportmanagement.constant.GradeServiceConstants;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
+import com.argusoft.path.tht.reportmanagement.models.dto.GradeInfo;
+import com.argusoft.path.tht.reportmanagement.models.mapper.GradeMapperImpl;
 import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapperImpl;
 import com.argusoft.path.tht.systemconfiguration.models.mapper.ModelDtoMapper;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
@@ -33,8 +36,8 @@ public final class AuditServiceConstant {
             TESTCASE_OPTION(com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity.class,com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseOptionMapperImpl.class, TestcaseOptionServiceConstants.TESTCASE_OPTION_REF_OBJ_URI),
             TESTCASE_RESULT(com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity.class,com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapperImpl.class, TestcaseResultServiceConstants.TESTCASE_RESULT_REF_OBJ_URI),
             TEST_REQUEST(com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity.class,com.argusoft.path.tht.testprocessmanagement.models.mapper.TestRequestMapperImpl.class, TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI),
-            DOCUMENT(com.argusoft.path.tht.fileservice.models.entity.DocumentEntity.class, com.argusoft.path.tht.fileservice.models.mapper.DocumentMapperImpl.class, DocumentServiceConstants.DOCUMENT_REF_OBJ_URI);
-
+            DOCUMENT(com.argusoft.path.tht.fileservice.models.entity.DocumentEntity.class, com.argusoft.path.tht.fileservice.models.mapper.DocumentMapperImpl.class, DocumentServiceConstants.DOCUMENT_REF_OBJ_URI),
+            GRADE(com.argusoft.path.tht.reportmanagement.models.entity.GradeEntity.class,com.argusoft.path.tht.reportmanagement.models.mapper.GradeMapperImpl.class, GradeServiceConstants.GRADE_REF_OBJ_URI);
             private final Class<?> entityClass;
             private final Class<? extends ModelDtoMapper<?,?>> mapperImplClass;
 
@@ -76,6 +79,7 @@ public final class AuditServiceConstant {
                     case TESTCASE_RESULT -> new TestcaseResultMapperImpl();
                     case TEST_REQUEST -> new TestRequestMapperImpl();
                     case DOCUMENT -> new DocumentMapperImpl();
+                    case GRADE -> new GradeMapperImpl();
                     default -> throw new InvalidParameterException("Unsupported entity type: " + entityType);
                 };
 
