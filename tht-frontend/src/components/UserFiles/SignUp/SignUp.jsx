@@ -303,7 +303,7 @@ export default function SignUp() {
                 <div className="text-center mb-5">
                   Already have an account?{" "}
                   <a
-                    onClick={ClickHandler}
+                    onMouseDown={ClickHandler}
                     className="font-weight-500 ps-2 text-blue"
                     href="#"
                   >
