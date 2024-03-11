@@ -257,7 +257,7 @@ const Assessee = () => {
                       ) : (
                         <td>&ndash;</td>
                       )}
-                      
+
                       <td>
                         <span className= {"status " + userBadgeClasses[user.state]}>
                           {currentStatus.toUpperCase()}

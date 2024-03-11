@@ -111,16 +111,16 @@ const ValidateConfigFacts = ({
         let treeData = [];
     
         while (RefObjUriConstants.COMPONENT_REFOBJURI === validationResults[index]?.refObjUri) {
-            const componentNode = createNode(validationResults[index]);
+            const componentNode = createNode(validationResults[index],index);
             index++;
     
             while (RefObjUriConstants.SPECIFICATION_REFOBJURI === validationResults[index]?.refObjUri) {
-                const specNode = createNode(validationResults[index]);
+                const specNode = createNode(validationResults[index],index);
                 componentNode.children.push(specNode);
                 index++;
     
                 while (RefObjUriConstants.TESTCASE_REFOBJURI === validationResults[index]?.refObjUri) {
-                    const testCaseNode = createNode(validationResults[index]);
+                    const testCaseNode = createNode(validationResults[index],index);
                     specNode.children.push(testCaseNode);
                     index++;
                 }
@@ -134,8 +134,8 @@ const ValidateConfigFacts = ({
     }, [validationResults]);
     
     // Function to create a node object
-    const createNode = (data) => ({
-        key: data.key,
+    const createNode = (data,index) => ({
+        key: index,
         title: data.message,
         element: data.element,
         errorLevel: data.level,
@@ -154,7 +154,7 @@ const ValidateConfigFacts = ({
     const tableDescription = () => {
         return (
             <Collapse>
-                <Panel header="What does this data represent?" key="1">
+                <Panel header="What Does This Data Represent?" key="1">
                     <List
                     bordered
                     header={<div style={{ fontWeight: "bold" }}>This table highlights warnings and issues identified during the validation process, indicating whether the configuration accurately reflects the data or not.</div>}
@@ -178,6 +178,7 @@ const ValidateConfigFacts = ({
                 <Table columns={columns}
                     title={tableDescription}
                     bordered 
+                    className="data-table"
                     dataSource={validationResultTreeData} 
                     pagination={false}
                     expandable={{defaultExpandAllRows:true, indentSize: 24}}>
