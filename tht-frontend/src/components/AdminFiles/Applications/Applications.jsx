@@ -10,7 +10,7 @@ import {
   TestRequestStateConstantNames,
 } from "../../../constants/test_requests_constants.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
-import { notification } from "antd";
+import { Empty, notification } from "antd";
 import { formatDate } from "../../../utils/utils.js";
 import UserIdEmailConnector from "../../connectors/UserIdEmailConnector/UserIdEmailConnector.js";
 import { Pagination } from "@mui/material";
@@ -223,8 +223,7 @@ const Applications = () => {
                   <>
                     <tr>
                       <td className="text-center" colSpan={6}>
-                        No test requests found. Register one or wait for test
-                        request to be approved
+                        <Empty description="No Record Found." />
                       </td>
                     </tr>
                   </>

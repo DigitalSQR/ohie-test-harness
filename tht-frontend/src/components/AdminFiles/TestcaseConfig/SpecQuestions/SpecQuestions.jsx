@@ -150,49 +150,50 @@ export default function ManualTestCases() {
     if(questions && (questionAndDocument.filter((questionItem) => questionItem.key === questions[key].id) <= 0)){
       setQuestionFetched(false);
       let question = questions[key]
+        if(!!question){
+        DocumentAPI.getDocumentsByRefObjUriAndRefId(
+          RefObjUriConstants.TESTCASE_REFOBJURI,
+          question.id,
+          DOCUMENT_STATE_ACTIVE
+        ).then(async (res) => {
+            const updatedFiles = await Promise.all(res.content.map(async (relatedDoc) => {
+              try {
+                  const base64Image = await DocumentAPI.base64Document(relatedDoc.id,relatedDoc.name);
+                  return {
+                      name: relatedDoc.name,
+                      status: 'done',
+                      url: base64Image,
+                      documentId : relatedDoc.id
+                  };
+              } catch (error) {
+                  console.error(error);
+                  return {
+                      name: relatedDoc.name,
+                      status: 'error',
+                      url: null
+                  };
+              }
+          }));
 
-      DocumentAPI.getDocumentsByRefObjUriAndRefId(
-        RefObjUriConstants.TESTCASE_REFOBJURI,
-        question.id,
-        DOCUMENT_STATE_ACTIVE
-      ).then(async (res) => {
-          const updatedFiles = await Promise.all(res.content.map(async (relatedDoc) => {
-            try {
-                const base64Image = await DocumentAPI.base64Document(relatedDoc.id,relatedDoc.name);
-                return {
-                    name: relatedDoc.name,
-                    status: 'done',
-                    url: base64Image,
-                    documentId : relatedDoc.id
-                };
-            } catch (error) {
-                console.error(error);
-                return {
-                    name: relatedDoc.name,
-                    status: 'error',
-                    url: null
-                };
-            }
-        }));
+          let item = {};
+          item.key = question.id;
+          item.files = updatedFiles;
 
-        let item = {};
-        item.key = question.id;
-        item.files = updatedFiles;
-
-        const updatedQuestions = [...questionAndDocument];
-        updatedQuestions.push(item);
-        setQuestionAndDocument(updatedQuestions);
-        })
-        .catch((err) => {
-          console.log(err);
-          notification.error({
-            message: "Error Loading Files!",
-            placement: "bottomRight",
+          const updatedQuestions = [...questionAndDocument];
+          updatedQuestions.push(item);
+          setQuestionAndDocument(updatedQuestions);
+          })
+          .catch((err) => {
+            console.log(err);
+            notification.error({
+              message: "Error Loading Files!",
+              placement: "bottomRight",
+            });
+          })
+          .finally(()=> {
+            setQuestionFetched(true);
           });
-        })
-        .finally(()=> {
-          setQuestionFetched(true);
-        });
+      }
     }
   }, [activeKey,questions]); // Run this effect whenever activeKey changes
 
@@ -299,7 +300,7 @@ export default function ManualTestCases() {
                 imageStyle={{
                   height: 200, // Adjust the height of the image
                 }}
-                description={<span>No Data</span>} // Custom description message
+                description="Manual tests haven't been set up for this specification yet."
               />
             ) : (
               <div className="row">

@@ -11,7 +11,7 @@ import { USER_ROLES } from "../../../constants/role_constants.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
 import { useLoader } from "../../loader/LoaderContext.js";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
-import { notification, Modal } from "antd";
+import { notification, Modal, Empty } from "antd";
 import { formatDate } from "../../../utils/utils.js";
 import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.jsx";
 import { useNavigate } from "react-router-dom";
@@ -280,8 +280,7 @@ const TestingRequests = () => {
                   <>
                     <tr>
                       <td className="text-center" colSpan={7}>
-                        No test requests found in the{" "}
-                        {TestRequestStateConstantNames[filterState]} stage
+                        <Empty description="No Record Found." />
                       </td>
                     </tr>
                   </>

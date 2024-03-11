@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import "./assessee.scss";
 import { UserAPI } from "../../../api/UserAPI";
-import { notification } from "antd";
+import { Empty, notification } from "antd";
 import { Pagination } from "@mui/material";
 import { userBadgeClasses, userStateConstantNames} from "../../../constants/user_constants";
 import { useLoader } from "../../loader/LoaderContext";
@@ -233,7 +233,7 @@ const Assessee = () => {
               {availableUsers.length === 0 ? (
                 <tr>
                   <td className="text-center" colSpan="6">
-                    There are no user registration requests for this state
+                    <Empty description="No Record Found." />
                   </td>
                 </tr>
               ) : null}
