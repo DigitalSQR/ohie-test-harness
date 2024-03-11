@@ -57,7 +57,7 @@ export default function ManualTestCases() {
   };
 
   useEffect(() => {
-    fetchData(false);
+    fetchData(true);
     fetchCompSpecDetails();
     dispatch(set_header("Testcase Configuration"));
   }, []);
@@ -84,7 +84,7 @@ export default function ManualTestCases() {
       showLoader();
       const params = {};
       params.specificationId = specificationId;
-      params.isManual = isManual;
+      params.manual = isManual;
       const resp = await TestCaseAPI.getTestCasesBySpecificationId(params);
       if (resp.length < 1) {
         hideLoader();
@@ -147,7 +147,7 @@ export default function ManualTestCases() {
     if(activeKey){
       key = activeKey - 1;
     }
-    if(questions && (questionAndDocument.filter((questionItem) => questionItem.key === questions[key].id) <= 0)){
+    if(!!questions && questions.length > 0 && (questionAndDocument.filter((questionItem) => questionItem.key === questions[key].id) <= 0)){
       setQuestionFetched(false);
       let question = questions[key]
         if(!!question){
@@ -385,14 +385,14 @@ export default function ManualTestCases() {
                                   />
                                 </span>
                                 
-                                <button onClick={() => handleUpdate(question)} className="btn btn-outline-secondary rounded-0">
+                                <button onClick={() => handleUpdate(question)} type="button" className="cursor-pointer btn btn-outline-success rounded-0">
                                 <i class="bi bi-pencil-square"></i>&nbsp;
                                   Edit Question
                                 </button>
                               </div>
                             </div>
 
-                            <div className="col-md-3 col-12 p-4 text-center">
+                            <div className="col-md-3 col-12 p-2 text-center">
                               <>
                                 {questionFetched &&
                                 questionAndDocument.length > 0 &&
