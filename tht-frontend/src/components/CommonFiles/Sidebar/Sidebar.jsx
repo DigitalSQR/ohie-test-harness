@@ -6,6 +6,7 @@ import { Fragment, useEffect, useState } from "react";
 import { USER_ROLES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 import { set_header } from "../../../reducers/homeReducer";
+import { useCurrentRoute } from "../../../routes/routes";
 export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,14 +25,17 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
       wrapper.classList.toggle("expand");
     }
   };
+
   const handleMenuItemClick = (path) => {
     setActiveMenuItem(path);
     navigate(path);
   };
+
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUser(userInfo);
   }, []);
+
   useEffect(() => {
     setActiveMenuItem(location.pathname);
     let wrapper = document.getElementById("wrapper");
@@ -40,7 +44,13 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
         ? wrapper.classList.remove("expand")
         : wrapper.classList.add("expand");
     }
+
   }, [location]);
+  
+  useCurrentRoute(function (route) {
+    if (route && route.name) dispatch(set_header(route.name));
+  });
+
   return (
     <div id="sideBar">
       <div
@@ -63,7 +73,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               }
               onClick={() => {
                 handleMenuItemClick("/dashboard");
-                dispatch(set_header("Dashboard"));
               }}
             >
               <i
@@ -86,7 +95,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   }
                   onClick={() => {
                     handleMenuItemClick("/assessee");
-                    dispatch(set_header("Assessee"));
                   }}
                 >
                   <i
@@ -107,7 +115,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                     }
                     onClick={() => {
                       handleMenuItemClick("/admin-users");
-                      dispatch(set_header("User Management"));
                     }}
                   >
                     <i
@@ -128,7 +135,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   }
                   onClick={() => {
                     handleMenuItemClick("/testing-requests");
-                    dispatch(set_header("Testing Requests"));
                   }}
                 >
                   <i
@@ -148,7 +154,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   }
                   onClick={() => {
                     handleMenuItemClick("/applications");
-                    dispatch(set_header("Applications"));
                   }}
                 >
                   <i
@@ -169,7 +174,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                     }
                     onClick={() => {
                       handleMenuItemClick("/testcase-config");
-                      dispatch(set_header("Components"));
                     }}
                   >
                     <i
@@ -195,7 +199,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                     }
                     onClick={() => {
                       handleMenuItemClick("/testing-requests");
-                      dispatch(set_header("Testing Requests"));
                     }}
                   >
                     <i
