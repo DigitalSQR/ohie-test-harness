@@ -1,11 +1,9 @@
 package com.argusoft.path.tht.systemconfiguration.audit.entity;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
 public class UserAccessAuditEntity {
 
     @Id

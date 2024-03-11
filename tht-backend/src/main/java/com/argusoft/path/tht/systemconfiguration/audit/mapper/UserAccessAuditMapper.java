@@ -2,7 +2,9 @@ package com.argusoft.path.tht.systemconfiguration.audit.mapper;
 
 import com.argusoft.path.tht.systemconfiguration.audit.entity.UserAccessAuditEntity;
 import com.argusoft.path.tht.systemconfiguration.audit.entity.UserAccessAuditInfo;
+import org.mapstruct.Mapper;
 
+@Mapper(componentModel = "spring")
 public class UserAccessAuditMapper {
     public UserAccessAuditInfo convertUserAccessAuditToUserAccessAuditInfo(
             UserAccessAuditEntity userAccessAudit) {
