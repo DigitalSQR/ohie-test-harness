@@ -226,9 +226,6 @@
     height: 32px;
     font-size: 13px;
   }
-  .table-responsive {
-    margin-top: 3rem;
-  }
 
   .badges-green {
     display: inline-block;
@@ -293,5 +290,13 @@
   }
   .status{
     width:68% !important;
+  }
+
+  .text-blue-50 {
+    color: #00adff;
+  }
+
+  .font-size-16 {
+    font-size: 16px;
   }
 }

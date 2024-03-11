@@ -10,6 +10,9 @@ import { useLoader } from "../../loader/LoaderContext";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import { store } from "../../../store/store";
+import unsorted from "../../../styles/images/unsorted.png";
+import sortedUp from "../../../styles/images/sort-up.png";
+import sortedDown from "../../../styles/images/sort-down.png";
 import { Switch, notification } from "antd";
 import {
   ROLE_ID_ADMIN,
@@ -117,16 +120,18 @@ const AdminUsers = () => {
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
-        <span
-          className={`bi ${
+        <img
+          className="cursor-pointer"
+          style={{width:"8px"}}
+          src={
             sortDirection[fieldName] === "asc"
-              ? "bi bi-sort-up-alt"
-              : "bi bi-sort-down"
-          }`}
-        ></span>
+              ? sortedUp
+              : sortedDown
+          }
+        ></img>
       );
     }
-    return <span className="bi bi-arrow-down-up"></span>;
+    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
 
   const handleChangePage = (event, newPage) => {
@@ -136,8 +141,8 @@ const AdminUsers = () => {
   return (
     <div id="adminUsers">
       <div id="wrapper">
-        <div className="col-12 pt-3">
-          <div className="row mb-2 justify-content-between">
+        <div className="col-12">
+          <div className="row justify-content-between mb-4">
             <div className="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12"></div>
             <div className="col-auto ml-auto">
               <button
@@ -210,13 +215,12 @@ const AdminUsers = () => {
                       )}
                     </td>
                     <td className="action-icons-container">
-                      <button
-                        className="btn w-50 btn-sm btn-outline-success"
+                      <span className="cursor-pointer"
                         onClick={() => handleEdit(user.id)}
                       >
-                        <i class="bi bi-pencil-square"></i>{" "}
-                        Edit
-                      </button>
+                        <i class="bi bi-pencil-square text-green-50 font-size-16"></i>{" "}
+                        EDIT
+                      </span>
                     </td>
                   </tr>
                 ))}

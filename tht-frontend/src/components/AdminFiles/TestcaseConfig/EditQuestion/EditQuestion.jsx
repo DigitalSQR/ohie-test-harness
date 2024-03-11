@@ -77,7 +77,7 @@ export default function EditQuestion() {
           setEditedTestcaseOptions(res.content);
         } else {
           notification.warning({
-            message: "Options are not available for this question!",
+            message: "Options for this question are not available. Please add some.",
             placement: "bottomRight",
           });
         }
@@ -562,7 +562,7 @@ export default function EditQuestion() {
 
             {initialTestcaseOptions.length < 1 ? (
               <div className="text-center my-4 fs-6">
-                No Options yet for the current testcase
+                No options are available yet for the current test case.
               </div>
             ) : (
               <Accordion onSelect={(index) => handleSelectAccordionItem(index)}>

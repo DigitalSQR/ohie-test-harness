@@ -197,7 +197,7 @@ export default function TestCase(props) {
 				RefObjUriConstants.TESTCASE_REFOBJURI
 			).then((res) => {
 				if (res && res.length > 0) {
-					hideLoader();
+					
 					setCurrentQuestion(res[0]);
 				} else {
 					notification.error({
@@ -206,6 +206,8 @@ export default function TestCase(props) {
 					});
 				}
 			}).catch((error) => {
+				
+			}).finally(() => {
 				hideLoader();
 			});
 		}
@@ -411,12 +413,8 @@ export default function TestCase(props) {
 							<div className="col-md-9 col-12 p-0 question">
 								<h2>
 									<b>
-										{testcaseResult.refId
-											.split(".")
-											.slice(-3)
-											.join(".")
-											.toUpperCase() +
-											" "}
+										{(currentTestcaseIndex+1)+
+											". "}
 										{currentQuestion ? currentQuestion.name : " "}
 									</b>
 								</h2>

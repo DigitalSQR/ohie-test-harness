@@ -7,6 +7,9 @@ import { userBadgeClasses, userStateConstantNames} from "../../../constants/user
 import { useLoader } from "../../loader/LoaderContext";
 import { userStatusActionLabels } from "../../../constants/user_constants";
 import { ROLE_ID_ASSESSEE } from "../../../constants/role_constants";
+import unsorted from "../../../styles/images/unsorted.png";
+import sortedUp from "../../../styles/images/sort-up.png";
+import sortedDown from "../../../styles/images/sort-down.png";
 const Assessee = () => {
   const [availableUsers, setAvailableUsers] = useState([]);
   const [state, setState] = useState("");
@@ -71,16 +74,18 @@ const Assessee = () => {
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
-        <span
-          className={`bi ${
+        <img
+          className="cursor-pointer"
+          style={{width:"8px"}}
+          src={
             sortDirection[fieldName] === "asc"
-              ? "bi bi-sort-up-alt"
-              : "bi bi-sort-down"
-          }`}
-        ></span>
+              ? sortedUp
+              : sortedDown
+          }
+        ></img>
       );
     }
-    return <span className="bi bi-arrow-down-up"></span>;
+    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
 
   const changeState = (userId, state, newState) => {
@@ -128,11 +133,11 @@ const Assessee = () => {
     <div id="assessee">
     <div id="wrapper">
       <div className="col-12">
-        <div className="row mb-2 justify-content-between">
+        <div className="row mb-4 justify-content-between">
           <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
             <div className="d-flex align-items-baseline ">
-              <span className="pe-3 text-nowrap fw-bold">Status </span>
-              <div className="mb-3">
+              <span className="pe-3 text-nowrap ">Status : </span>
+              <div className="">
                 <select
                   className="form-select custom-select custom-select-sm"
                   aria-label="Default select example"
@@ -164,7 +169,7 @@ const Assessee = () => {
           <table className=" data-table capitalize-words">
             <thead>
               <tr>
-                <th style={{width:"20%"}}>
+                <th style={{width:"15%"}}>
                   NAME
                   <span
                     className="ps-1"
@@ -174,7 +179,7 @@ const Assessee = () => {
                     {renderSortIcon("name")}
                   </span>
                 </th>
-                <th style={{width:"25%"}}>
+                <th style={{width:"20%"}}>
                   Email
                   <span
                     className="ps-1"
@@ -184,16 +189,7 @@ const Assessee = () => {
                     {renderSortIcon("email")}
                   </span>
                 </th>
-                <th style={{width:"10%"}}>Company
-                <span
-                className="ps-1"
-                href="# "
-                onClick={() => handleSort("companyName")}
-              >
-                {renderSortIcon("companyName")}
-              </span>
-                </th>
-                <th style={{width:"10%"}}>requested date
+                <th style={{width:"15%"}}>requested date
                 <span
                 className="ps-1"
                 href="# "
@@ -202,7 +198,16 @@ const Assessee = () => {
                 {renderSortIcon("createdAt")}
               </span>
                 </th>
-                <th style={{width:"10%"}}>
+                <th style={{width:"15%"}}>Company
+                <span
+                className="ps-1"
+                href="# "
+                onClick={() => handleSort("companyName")}
+              >
+                {renderSortIcon("companyName")}
+              </span>
+                </th>
+                <th style={{width:"15%"}}>
                   Status
                   <span
                     className="ps-1"
@@ -212,8 +217,8 @@ const Assessee = () => {
                     {renderSortIcon("state")}
                   </span>
                 </th>
-                <th style={{width:"25%"}}>
-                  ACTION
+                <th style={{width:"20%"}}>
+                  ACTIONS
                   <span
                     className="ps-1"
                     href="# "
@@ -246,12 +251,13 @@ const Assessee = () => {
                     <tr>
                       <td>{user.name}</td>
                       <td className = "toLowerCase-words" >{user.email}</td>
+                      <td>{formattedDate}</td>
                       {user.companyName ? (
                         <td>{user.companyName}</td>
                       ) : (
                         <td>&ndash;</td>
                       )}
-                      <td>{formattedDate}</td>
+                      
                       <td>
                         <span className= {"status " + userBadgeClasses[user.state]}>
                           {currentStatus.toUpperCase()}
@@ -260,9 +266,8 @@ const Assessee = () => {
                       <td className=" no-wrap">
                         {user.state === "user.status.active" && (
                           <Fragment>
-                            <button
-                              type="button"
-                              className="btn w-50 btn-sm btn-outline-danger"
+                            <span
+                              className="cursor-pointer"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -271,16 +276,15 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                              <i class="bi bi-ban-fill"></i>{" "}
-                              Disable
-                            </button>
+                              <i class="bi bi-ban-fill text-red font-size-16"></i>{" "}
+                              DISABLE
+                            </span>
                           </Fragment>
                         )}
                         {user.state === "user.status.approval.pending" && (
                           <Fragment>
-                            <button
-                              type="button"
-                              className="btn w-50 btn-sm btn-outline-success"
+                            <span
+                            className="cursor-pointer"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -290,13 +294,12 @@ const Assessee = () => {
                               }}
                             >
                               <span>
-                                <i className="bi bi-check-circle-fill font-size-16"></i>{" "}
-                                Approve
+                                <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                              APPROVE{" "}
                               </span>
-                            </button>&nbsp;
-                            <button
-                              type="button"
-                              className="btn w-50 btn-sm btn-outline-danger"
+                            </span>&nbsp;
+                            <span
+                              className="ps-3 cursor-pointer"
                               onClick={() => {
                                 changeState(
                                   user.id,
@@ -305,16 +308,15 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                              <i className="bi bi-x-circle-fill font-size-16"></i>{" "}
-                              Reject{" "}
-                            </button>
+                              <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
+                              REJECT{" "}
+                            </span>
                           </Fragment>
                         )}
 
                         {(user.state === "user.status.inactive" || user.state==="user.status.rejected") && (
-                          <button
-                            type="button"
-                            className="btn w-50 btn-sm btn-outline-success"
+                          <span
+                            className="cursor-pointer"
                             onClick={() => {
                               changeState(
                                 user.id,
@@ -324,10 +326,10 @@ const Assessee = () => {
                             }}
                           >
                             <span>
-                              <i className="bi bi-check-circle-fill font-size-16"></i>{" "}
-                              Enable
+                              <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                              ENABLE
                             </span>
-                          </button>
+                          </span>
                         )}
                       </td>
                     </tr>

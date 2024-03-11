@@ -18,6 +18,9 @@ import { useLoader } from "../../loader/LoaderContext";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer.jsx";
 import { UserAPI } from "../../../api/UserAPI";
+import unsorted from "../../../styles/images/unsorted.png";
+import sortedUp from "../../../styles/images/sort-up.png";
+import sortedDown from "../../../styles/images/sort-down.png";
 const Applications = () => {
   const testRequestStates = [
     ...TestRequestActionStateLabels,
@@ -105,18 +108,20 @@ const Applications = () => {
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
-        <span
-          className={`bi ${
+        <img
+          className="cursor-pointer"
+          style={{width:"8px"}}
+          src={
             sortDirection[fieldName] === "asc"
-              ? "bi bi-sort-up-alt"
-              : "bi bi-sort-down"
-          }`}
-        ></span>
+              ? sortedUp
+              : sortedDown
+          }
+        ></img>
       );
     }
-    return <span className="bi bi-arrow-down-up"></span>;
+    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
-
+  
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
     getAllTestRequests(filterState, sortFieldName, sortDirection, newPage);
@@ -160,7 +165,7 @@ const Applications = () => {
             <table className=" data-table capitalize-words">
               <thead>
                 <tr>
-                  <th style={{width:"15%"}}>
+                  <th style={{width:"12%"}}>
                     APP NAME{" "}
                     <span
                       className="ps-1"
@@ -170,7 +175,7 @@ const Applications = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
-                  <th style={{width:"10%"}}>
+                  <th style={{width:"13%"}}>
                     COMPANY NAME{" "}
                     <span
                       className="ps-1"
@@ -180,7 +185,7 @@ const Applications = () => {
                       {renderSortIcon("productName")}
                     </span>
                   </th>
-                  <th style={{width:"20%"}}>
+                  <th style={{width:"15%"}}>
                     DATE OF APPLICATION
                     <span
                       className="ps-1"
@@ -202,7 +207,7 @@ const Applications = () => {
                     </span>
                   </th>
                   <th style={{width:"20%"}}>
-                    ACTION
+                    ACTIONS
                     <span
                       className="ps-1"
                       href="#"
@@ -265,10 +270,8 @@ const Applications = () => {
                       {testRequest.state !== "test.request.status.finished" ? (
                         userRole.includes("role.tester") ||
                         userRole.includes("role.admin") ? (
-                          <button
-                            className={
-                              StateClasses[testRequest.state]?.btnClass
-                            }
+                          <span 
+                            className="cursor-pointer"
                             onClick={() => {
                               navigate(`/choose-test/${testRequest.id}`);
                             }}
@@ -279,24 +282,19 @@ const Applications = () => {
                                 StateClasses[testRequest.state]?.iconClass
                               }
                             ></i>{" "}
-                            {StateClasses[testRequest.state]?.btnText}
-                          </button>
+                            {StateClasses[testRequest.state]?.btnText?.toUpperCase()}
+                          </span>
                         ) : (
                           <></>
                         )
                       ) : (
-                        <button
-                        style={{ cursor: "pointer" }}
-                        className={StateClasses[testRequest.state]?.btnClass}
+                        <span
+                        className="cursor-pointer"
                           onClick={() => viewReport(testRequest.id)}
                         >
-                          {" "}
-                          <i
-                            className={
-                              StateClasses[testRequest.state]?.iconClass
-                            }
-                          ></i>{" "}Report
-                        </button>
+                          <i className="bi bi-file-text text-green-50 font-size-16"></i>{" "}
+                              REPORT{" "}
+                        </span>
                       )}
                     </td>
                   </tr>

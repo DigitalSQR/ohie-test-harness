@@ -11,6 +11,9 @@ import { Pagination } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FileSearchOutlined } from "@ant-design/icons";
+import unsorted from "../../../../styles/images/unsorted.png";
+import sortedUp from "../../../../styles/images/sort-up.png";
+import sortedDown from "../../../../styles/images/sort-down.png";
 import ValidateConfigFacts from "../ValidateConfigFacts/ValidateConfigFacts.jsx";
 
 export default function ComponentList() {
@@ -47,16 +50,18 @@ export default function ComponentList() {
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
-        <span
-          className={`bi ${
+        <img
+          className="cursor-pointer"
+          style={{width:"8px"}}
+          src={
             sortDirection[fieldName] === "asc"
-              ? "bi bi-sort-up-alt"
-              : "bi bi-sort-down"
-          }`}
-        ></span>
+              ? sortedUp
+              : sortedDown
+          }
+        ></img>
       );
     }
-    return <span className="bi bi-arrow-down-up"></span>;
+    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
 
   const handleChangePage = (event, newPage) => {
@@ -158,7 +163,7 @@ export default function ComponentList() {
           <div className="d-flex justify-content-between">
             <div className="d-flex align-items-baseline">
               <span className="pe-3 text-nowrap">Status :</span>
-              <div className="mb-3">
+              <div className="mb-4">
                 <select
                   onChange={(e) => {
                     setFilterState(e.target.value);
@@ -209,7 +214,7 @@ export default function ComponentList() {
                     </span>{" "}
                   </th>
                   <th className="col-2">Status</th>
-                  <th className="col-2">Action</th>
+                  <th className="col-2">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -223,8 +228,7 @@ export default function ComponentList() {
                   components?.map((component) => (
                     <tr key={component?.id}>
                       <td>
-                        <p className="fs-5 fw-bold">{component?.name}</p>
-                        <p className="description">{component.description}</p>
+                        {component?.name}
                       </td>
                       <td>
                         <Switch
@@ -242,27 +246,27 @@ export default function ComponentList() {
                         />
                       </td>
                       <td>
-                        <button
-                          className="btn btn-sm btn-outline-success"
+                        <span
+                          className="cursor-pointer"
                           onClick={() => {
                             setComponentId(component?.id);
                             setIsModalOpen(true);
                           }}
                         >
-                          <i class="bi bi-pencil-square"></i>{" "}
-                          Edit
-                        </button>&nbsp;
-                        <button
-                          className="btn btn-sm btn-outline-secondary"
+                          <i class="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
+                          EDIT
+                        </span>&nbsp;
+                        <span
+                          className="cursor-pointer ps-2"
                           onClick={() =>
                             navigate(
                               `/testcase-config/component-specification/${component?.id}`
                             )
                           }
                         >
-                          <i class="bi bi-eye"></i>{" "}
-                          View
-                        </button>
+                          <i class="bi bi-eye font-size-16 text-blue-50"></i>{" "}
+                          SPECIFICATIONS
+                        </span>
                       </td>
                     </tr>
                   ))

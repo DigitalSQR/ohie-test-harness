@@ -72,7 +72,7 @@ export default function Dashboard() {
           {userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
             <div className="my-4">
               <button
-                className="btn btn-primary mt-2"
+                className="btn btn-primary mt-2 theme-blue-color"
                 onClick={() => navigate("/register-application")}
               >
                 <i className="bi bi-pencil-square"></i> Register application

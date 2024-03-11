@@ -132,11 +132,16 @@
   .text-red {
     color: #FF6666;
   }
-
-  .table-responsive {
-    margin-top: 3rem;
-  }
   .status{
     width:75% !important;
   }
+
+  .data-table tbody tr.odd {
+    background: #fff !important; /* Background for odd rows */
+  }
+
+  .data-table tbody tr.even {
+      background: #F0F6FB !important; /* Background for even rows */
+}
+
 }

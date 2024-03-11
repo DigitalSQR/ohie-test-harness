@@ -450,7 +450,7 @@ export default function UserProfile () {
               style={{ display: "flex", justifyContent: "flex-end" }}
             >
               <button
-                className="btn btn-primary btn-white py-2 font-size-11 reset-button"
+                className="btn btn-primary btn-white font-size-11 reset-button"
                 style={{ marginRight: "auto" }}
                 onClick={() => {
                   navigate("/reset-password");
@@ -460,7 +460,7 @@ export default function UserProfile () {
                 Reset Password
               </button>
               <button
-                className="btn btn-primary btn-white py-2 font-size-14"
+                className="btn btn-primary btn-white font-size-14"
                 onClick={() => {
                   navigate(-1);
                   formik.resetForm();

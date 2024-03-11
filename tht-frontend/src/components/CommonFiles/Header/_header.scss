@@ -94,4 +94,23 @@
   ul li a{
     cursor: pointer;
   }
+
+  .dropdown-menu {
+    padding: 0px;
+    border-color: #ccdade;
+  }
+  .dropdown-menu .dropdown-item {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+  .dropdown-menu .dropdown-item:active {
+    background: #009fc8;
+  }
+  
+  .dropdown-item:hover,
+  .dropdown-item:focus {
+    color: #1e2125;
+    background-color: #e9ecef;
+  }
+  
 }
