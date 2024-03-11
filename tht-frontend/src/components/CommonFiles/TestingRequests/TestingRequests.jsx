@@ -17,6 +17,9 @@ import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.js
 import { useNavigate } from "react-router-dom";
 import { store } from "../../../store/store.js";
 import { Pagination } from "@mui/material";
+import unsorted from "../../../styles/images/unsorted.png";
+import sortedUp from "../../../styles/images/sort-up.png";
+import sortedDown from "../../../styles/images/sort-down.png";
 const TestingRequests = () => {
   const testRequestStates = [
     ...TestRequestStateLabels,
@@ -91,16 +94,18 @@ const TestingRequests = () => {
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
-        <span
-          className={`bi ${
+        <img
+          className="cursor-pointer"
+          style={{width:"8px"}}
+          src={
             sortDirection[fieldName] === "asc"
-              ? "bi bi-sort-up-alt"
-              : "bi bi-sort-down"
-          }`}
-        ></span>
+              ? sortedUp
+              : sortedDown
+          }
+        ></img>
       );
     }
-    return <span className="bi bi-arrow-down-up"></span>;
+    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
 
   const changeState = (testRequestId, updatedState, proceedAnyways) => {
@@ -179,12 +184,12 @@ const TestingRequests = () => {
   return (
     <div id="testingRequest">
       <div id="wrapper">
-        <div className="col-12 pt-3">
+        <div className="col-12">
           <div className="row mb-2 justify-content-between">
             <div className="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12">
-              <div className="custom-input custom-input-sm mb-3">
+              <div className="custom-input custom-input-sm">
                 <div className="d-flex align-items-baseline">
-                  <span className="pe-3 text-nowrap fw-bold">Status </span>
+                  <span className="pe-3 text-nowrap ">Status :</span>
                   <div className="mb-3">
                     <select
                       onChange={(e) => {
@@ -281,9 +286,9 @@ const TestingRequests = () => {
                     </tr>
                   </>
                 ) : null}
-                {testRequests.map((testRequest) => (
+                {testRequests.map((testRequest,index) => (
                   <>
-                    <tr key={testRequest.id}>
+                    <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
                       <td>{testRequest.productName}</td>
                       <td>{formatDate(testRequest.meta.updatedAt)}</td>
                       <td>
@@ -302,48 +307,43 @@ const TestingRequests = () => {
                         testRequest.state ==
                           TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
                           <>
-                            <button
+                            <span
+                            className="cursor-pointer"
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
                                   TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED
                                 );
                               }}
-                              type="button"
-                              className="btn btn-sm btn-outline-success"
                             >
-                              <span>
-                              <i className="bi bi-check-circle-fill font-size-16"></i>{" "}
-                                Approve{" "}
-                              </span>
-                            </button>&nbsp;
-                            <button
+                            <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                              APPROVE{" "}
+                            </span>
+                            <span
+                              className="cursor-pointer ps-3"
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
                                   TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED
                                 );
                               }}
-                              type="button"
-                              className="btn btn-sm btn-outline-danger"
                             >
-                              <i className="bi bi-x-circle-fill font-size-16"></i>{" "}
-                              Reject{" "}
-                            </button>
+                              <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
+                                REJECT{" "}
+                            </span>
                           </>
                         ) : null}
                         {
                           testRequest.state ==
                           TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED 
                           && 
-                          <button
+                          <span
+                              className="cursor-pointer"
                               onClick={() => {navigate(`/application-report/${testRequest.id}`)}}
-                              type="button"
-                              className="btn btn-sm btn-outline-secondary"
                             >
-                              <i className="bi bi-file-text font-size-16"></i>{" "}
-                              Report{" "}
-                          </button>
+                              <i className="bi bi-file-text text-green-50 font-size-16"></i>{" "}
+                              REPORT{" "}
+                          </span>
                         }
                         <span
                           onClick={() => toggleRow(testRequest.id)}
@@ -358,10 +358,10 @@ const TestingRequests = () => {
                         </span>
                       </td>
                     </tr>
-                    <tr key={"collapseable--" + testRequest.id}>
+                    <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
                       <td colSpan="5" className="hiddenRow m-0 field-box">
                         <div
-                          className={"collapse " + testRequest.class}
+                          
                           id="Accordion"
                         >
                           <div className="mx-5 my-3">

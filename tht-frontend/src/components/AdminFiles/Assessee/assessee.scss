@@ -107,56 +107,6 @@
 
     .c-card-body {
       padding: 15px 0px;
-
-      .data-table {
-        th {
-          color: #306380;
-          font-weight: 700;
-          line-height: 24px;
-        }
-
-        td {
-          color: #4a6980;
-          font-size: 14px;
-          line-height: 24px;
-
-          i {
-            margin-left: 7px;
-          }
-
-          &.pass {
-            color: #0ab39c;
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-          }
-
-          &.fail {
-            color: #f66;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            white-space: nowrap;
-          }
-        }
-
-        .result {
-          background: $color-white;
-
-          td {
-            color: #51516d;
-            font-size: 16px;
-            font-weight: 600;
-          }
-
-          td.red {
-            color: #f66;
-          }
-          td.green {
-            color: #0ab39c;
-          }
-        }
-      }
     }
   }
 
@@ -243,42 +193,21 @@
     color: $color-red;
   }
 
-  .data-table {
-    width: 100%;
-    background: $color-white;
-    th {
-      padding: 12px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      line-height: 18px;
-      white-space: nowrap;
-    }
-    td {
-      border-top: 1px solid $color-gray-20;
-      padding: 12px;
-      font-weight: 500;
-      font-size: 13px;
-      border-top: 1px solid $color-gray-5;
-      line-height: 18px;
-    }
-  }
-
-  .data-table > tbody > tr:nth-of-type(odd) {
-    background: $color-gray-10;
-  }
-
   .pagination-ui {
     display: flex;
     justify-content: center;
     margin-top: 40px;
   }
 
-  .table-responsive {
-    margin-top: 3rem;
+  .status{
+    width:75%;
   }
 
-  .status{
-    width:105% !important;
+  .font-size-16{
+    font-size: 16px;
+  }
+
+  .text-red {
+    color: #FF6666;
   }
 }

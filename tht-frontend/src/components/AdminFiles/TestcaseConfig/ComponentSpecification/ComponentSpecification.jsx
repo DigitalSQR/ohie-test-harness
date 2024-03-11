@@ -10,6 +10,9 @@ import { set_header } from "../../../../reducers/homeReducer";
 import { useParams } from "react-router-dom";
 import { Pagination } from "@mui/material";
 import ComponentSpecificationUpsertModal from "./ComponentSpecificationUpsertModal/ComponentSpecificationUpsertModal";
+import unsorted from "../../../../styles/images/unsorted.png";
+import sortedUp from "../../../../styles/images/sort-up.png";
+import sortedDown from "../../../../styles/images/sort-down.png";
 import { ComponentAPI } from "../../../../api/ComponentAPI";
 export default function ComponentSpecification() {
   const navigate = useNavigate();
@@ -47,16 +50,18 @@ export default function ComponentSpecification() {
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
-        <span
-          className={`bi ${
+        <img
+          className="cursor-pointer"
+          style={{width:"8px"}}
+          src={
             sortDirection[fieldName] === "asc"
-              ? "bi bi-sort-up-alt"
-              : "bi bi-sort-down"
-          }`}
-        ></span>
+              ? sortedUp
+              : sortedDown
+          }
+        ></img>
       );
     }
-    return <span className="bi bi-arrow-down-up"></span>;
+    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
 
   const handleSort = (newSortFieldName) => {
@@ -156,7 +161,7 @@ export default function ComponentSpecification() {
   return (
     <div id="componentSpecification">
       <div id="wrapper" className="component-specification-page">
-        <div>
+        <div className="mb-3">
           <div className="d-flex justify-content-between align-items-center">
             <div className="bcca-breadcrumb">
               <div className="bcca-breadcrumb-item">
@@ -184,11 +189,11 @@ export default function ComponentSpecification() {
           </div>
         </div>
         <div>
-            <div className="table-responsive mt-3">
+            <div className="table-responsive">
               <table className="data-table capitalize-words">
                 <thead>
                   <tr>
-                    <th style={{width:'30%'}}>
+                    <th style={{width:'20%'}}>
                       Specifications{" "}
                       <a
                         className="ps-1"
@@ -198,7 +203,7 @@ export default function ComponentSpecification() {
                         {renderSortIcon("name")}
                       </a>{" "}
                     </th>
-                    <th style={{width:'30%'}}>
+                    <th style={{width:'20%'}}>
                       Specification Type
                       <a
                         className="ps-1"
@@ -208,7 +213,7 @@ export default function ComponentSpecification() {
                         {renderSortIcon("isFunctional")}
                       </a>{" "}
                     </th>
-                    <th style={{width:'10%'}}>
+                    <th style={{width:'20%'}}>
                       Required / Recommended
                       <a
                         className="ps-1"
@@ -218,7 +223,7 @@ export default function ComponentSpecification() {
                         {renderSortIcon("isRequired")}
                       </a>{" "}
                     </th>
-                    <th style={{width: "10%"}}>Status</th>
+                    <th style={{width: "20%"}}>Status</th>
                     <th style={{width:'20%'}}>Actions</th>
                   </tr>
                 </thead>
@@ -255,27 +260,27 @@ export default function ComponentSpecification() {
                       </td>
                       <td className="action-icons-container">
                         <div className="d-flex">
-                        <button
-                          className="btn w-50 btn-sm btn-outline-success"
+                        <span
+                          className="cursor-pointer"
                           onClick={() => {
                             setSpecificationId(specification?.id);
                             setIsModalOpen(true);
                           }}
                         >
-                          <i class="bi bi-pencil-square"></i>{" "}
-                          Edit
-                        </button>&nbsp;
-                        <button
-                          className="btn w-50 btn-sm btn-outline-secondary"
+                          <i class="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
+                          EDIT
+                        </span>&nbsp;
+                        <span
+                          className="cursor-pointer ps-2"
                           onClick={() =>
                             navigate(
                               `/testcase-config/manual-testcases/${specification?.id}`
                             )
                           }
                         >
-                          <i class="bi bi-eye"></i>{" "}
-                          View
-                        </button>
+                          <i class="bi bi-eye font-size-16 text-blue-50"></i>{" "}
+                          TESTCASES
+                        </span>
                         </div>
                       </td>
 

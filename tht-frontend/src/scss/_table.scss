@@ -2,39 +2,23 @@
 
 .data-table {
   width: 100%;
-  background: $color-white;
-  th {
+  background: #fff; }
+  .data-table th {
     padding: 12px;
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     line-height: 18px;
-    white-space: nowrap;
-  }
-  td {
-    border-top: 1px solid $color-gray-20;
+    white-space: nowrap; }
+  .data-table td {
+    border-top: 1px solid #F9F9F9;
     padding: 12px;
     font-weight: 500;
     font-size: 13px;
-    border-top: 1px solid $color-gray-3;
-    line-height: 18px;
-  }
-}
+    border-top: 1px solid #DFEFF3;
+    line-height: 18px; }
 
-.data-table > tbody > tr:nth-of-type(odd) {
-  background: $color-gray-10;
-}
+    .data-table > tbody > tr:nth-of-type(odd) {
+      background: #F0F6FB; }
 
-.data-table > tbody > tr:nth-of-type(even) {
-  background: $color-gray-10;
-}
-
-/* Apply styles to cells with .row-spaned-td class in odd rows */
-.data-table tbody tr:not([rowSpan]):nth-child(odd) td.row-spaned-td {
-  background: rgb(94 182 198 / 20%); /* Adjust this to your desired background color */
-}
-
-/* Apply styles to cells with .row-spaned-td class in even rows */
-.data-table tbody tr:not([rowSpan]):nth-child(even) td.row-spaned-td {
-  background: #DFEFF3; /* Adjust this to your desired background color */
-}
+      

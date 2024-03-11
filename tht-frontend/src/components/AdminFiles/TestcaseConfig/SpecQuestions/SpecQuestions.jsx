@@ -44,16 +44,16 @@ export default function ManualTestCases() {
   const items = [
     {
       key: "1",
-      label: "Automation",
+      label: "Manual",
     },
     {
       key: "2",
-      label: "Manual",
+      label: "Automated",
     },
   ];
   const onChange = (key) => {
     setActiveTab(key);
-    fetchData(key === "2");
+    fetchData(key === "1");
   };
 
   useEffect(() => {
@@ -137,58 +137,51 @@ export default function ManualTestCases() {
     return optionsResp.content;
   };
 
-  const handleTabChange = (activeKey) => {
-    setActiveKey(activeKey);
+  const handleTabChange = (key) => {
+    setActiveKey(key);
+  };
+
+
+  useEffect(() => {
     let key;
-    if (activeKey) {
+    if(activeKey){
       key = activeKey - 1;
     }
-    if (
-      questions &&
-      questionAndDocument.filter(
-        (questionItem) => questionItem.key === questions[key].id
-      ) <= 0
-    ) {
+    if(questions && (questionAndDocument.filter((questionItem) => questionItem.key === questions[key].id) <= 0)){
       setQuestionFetched(false);
-      let question = questions[key];
+      let question = questions[key]
 
       DocumentAPI.getDocumentsByRefObjUriAndRefId(
         RefObjUriConstants.TESTCASE_REFOBJURI,
         question.id,
-        DOCUMENT_STATE_ACTIVE,
-        DOCUMENT_TYPE_FOR_TEST_CASES.DOCUMENT_TYPE_QUESTION
-      )
-        .then(async (res) => {
-          const updatedFiles = await Promise.all(
-            res.content.map(async (relatedDoc) => {
-              try {
-                const base64Image = await DocumentAPI.base64Document(
-                  relatedDoc.id
-                );
+        DOCUMENT_STATE_ACTIVE
+      ).then(async (res) => {
+          const updatedFiles = await Promise.all(res.content.map(async (relatedDoc) => {
+            try {
+                const base64Image = await DocumentAPI.base64Document(relatedDoc.id,relatedDoc.name);
                 return {
-                  name: relatedDoc.name,
-                  status: "done",
-                  url: base64Image,
-                  documentId: relatedDoc.id,
+                    name: relatedDoc.name,
+                    status: 'done',
+                    url: base64Image,
+                    documentId : relatedDoc.id
                 };
-              } catch (error) {
+            } catch (error) {
                 console.error(error);
                 return {
-                  name: relatedDoc.name,
-                  status: "error",
-                  url: null,
+                    name: relatedDoc.name,
+                    status: 'error',
+                    url: null
                 };
-              }
-            })
-          );
+            }
+        }));
 
-          let item = {};
-          item.key = question.id;
-          item.files = updatedFiles;
+        let item = {};
+        item.key = question.id;
+        item.files = updatedFiles;
 
-          const updatedQuestions = [...questionAndDocument];
-          updatedQuestions.push(item);
-          setQuestionAndDocument(updatedQuestions);
+        const updatedQuestions = [...questionAndDocument];
+        updatedQuestions.push(item);
+        setQuestionAndDocument(updatedQuestions);
         })
         .catch((err) => {
           console.log(err);
@@ -197,11 +190,11 @@ export default function ManualTestCases() {
             placement: "bottomRight",
           });
         })
-        .finally(() => {
+        .finally(()=> {
           setQuestionFetched(true);
         });
     }
-  };
+  }, [activeKey,questions]); // Run this effect whenever activeKey changes
 
   const changeTestCaseState = (testcaseId, state) => {
     const newState =
@@ -279,28 +272,27 @@ export default function ManualTestCases() {
 
         <div className="d-flex justify-content-between align-items-center">
           <Tabs
-            type="card"
-            className="mt-5"
+            className="mt-3"
             activeKey={activeTab}
             items={items}
             onChange={onChange}
           />
 
-          {activeTab === "2" && (
-            <div className="mt-5 create-testcase-button">
+          {activeTab === "1" && (
+            <div>
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
                 onClick={() => setIsModalOpen(true)}
               >
                 <i className="bi bi-plus"></i>
-                Create Testcase
+                Create Manual Testcase
               </button>
             </div>
           )}
         </div>
 
-        {activeTab === "2" ? (
+        {activeTab === "1" ? (
           <div className="">
             {!questions || questions?.length === 0 ? (
               <Empty
@@ -313,8 +305,8 @@ export default function ManualTestCases() {
               <div className="row">
                 <div className="col-12 col-md-8 offset-md-2"></div>
                 <Tabs
-                  type="card"
-                  defaultActiveKey="1"
+                  
+                  defaultActiveKey="2"
                   tabPosition="top"
                   className="questions-tabs mt-3"
                   activeKey={activeKey}
@@ -325,18 +317,18 @@ export default function ManualTestCases() {
                       <div className="col-12 non-fuctional-requirement mt-3">
                         <div className="container-fluid">
                           <div className="row heading">
-                            <div className="col-md-7 col-12 p-0">
+                            <div className="col-md-9 col-12 p-0">
                               <h2>Question</h2>
                             </div>
 
-                            <div className="col-md-5 col-12 d-md-flex d-none p-0">
-                              <h2 className="border-left">Reference</h2>
+                            <div className="col-md-3 col-12 d-md-flex d-none p-0">
+                              <h2 className="border-left">Reference Images</h2>
                             </div>
 
                           </div>
 
                           <div className="row question-box">
-                            <div className="col-md-7 col-12 p-0 question">
+                            <div className="col-md-9 col-12 p-0 question" style={{position:"relative"}}>
                               <h2>
                                 <b>
                                   {question.rank}. {question.question}
@@ -348,7 +340,7 @@ export default function ManualTestCases() {
                                   question.options.map(
                                     (option, optionIndex) => (
                                       <div
-                                        className="field-box option-item"
+                                        className="field-box option-item-spec-question"
                                         key={optionIndex}
                                       >
                                         {option.success ? (
@@ -369,8 +361,12 @@ export default function ManualTestCases() {
                                       </div>
                                     )
                                   )}
+                                  {question.options && question.options.length <= 0
+                                  && <Empty description="Currently, there are no available options. Please go to the editing question to create some." image={Empty.PRESENTED_IMAGE_SIMPLE} />
+
+                                  }
                               </div>
-                              <div className="text-end">
+                              <div className="text-end position-absolute bottom-0 end-0">
                                 <span className="me-2">
                                   <Switch
                                     checked={
@@ -387,14 +383,15 @@ export default function ManualTestCases() {
                                     unCheckedChildren="INACTIVE"
                                   />
                                 </span>
-                                <button onClick={() => handleUpdate(question)} className="btn btn-outline-success rounded-0">
+                                
+                                <button onClick={() => handleUpdate(question)} className="btn btn-outline-secondary rounded-0">
                                 <i class="bi bi-pencil-square"></i>&nbsp;
                                   Edit Question
                                 </button>
                               </div>
                             </div>
 
-                            <div className="col-md-5 col-12 p-3 text-center">
+                            <div className="col-md-3 col-12 p-4 text-center">
                               <>
                                 {questionFetched &&
                                 questionAndDocument.length > 0 &&
@@ -424,17 +421,12 @@ export default function ManualTestCases() {
                                     </Carousel>
                                   </Image.PreviewGroup>
                                 ) : (
-                                  <div>
-                                    <span>
-                                      <FileImageOutlined
-                                        style={{
-                                          fontSize: 30,
-                                          display: "block",
-                                        }}
-                                      />
-                                      No Image Available
-                                    </span>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                                  <div style={{ textAlign: 'center' }}>
+                                    <i style={{ fontSize: 30 }} className="bi bi-card-image"></i>
+                                    <div>No Image Available</div>
                                   </div>
+                                </div>
                                 )}
                                 {!questionFetched && (
                                   <div>
@@ -462,7 +454,7 @@ export default function ManualTestCases() {
             imageStyle={{
               height: 200, // Adjust the height of the image
             }}
-            description={<span>No Data</span>} // Custom description message
+            description={"Automated tests haven't been set up for this specification yet."} // Custom description message
           />
         )}
 

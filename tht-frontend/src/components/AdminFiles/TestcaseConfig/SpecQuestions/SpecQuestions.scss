@@ -184,6 +184,7 @@
     background: #fff;
     border: 1px solid #c0cfdd;
     margin-bottom: 35px;
+    min-height: 15rem;
   }
 
   .non-fuctional-requirement .question-box h2 {
@@ -319,6 +320,7 @@
   .custom-multiselect {
     margin: 15px 15px 0;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     flex-wrap: wrap;
   }
@@ -514,6 +516,10 @@
   .create-testcase-button{
     position:relative;
     right: 8%;
+  }
+
+  .option-item-spec-question{
+    font-weight: 500;
   }
 
 }
