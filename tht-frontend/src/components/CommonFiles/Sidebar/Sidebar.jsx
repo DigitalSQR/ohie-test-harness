@@ -105,27 +105,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   <span> Assessees </span>
                 </a>
               </li>
-              {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
-                <li>
-                  <a
-                    className={
-                      activeMenuItem === "/admin-users"
-                        ? "active menu-like-item"
-                        : "menu-like-item"
-                    }
-                    onClick={() => {
-                      handleMenuItemClick("/admin-users");
-                    }}
-                  >
-                    <i
-                      aria-label="User"
-                      title="User"
-                      className="bi bi-person menu-left-icon"
-                    ></i>
-                    <span> User Management </span>
-                  </a>
-                </li>
-              )}
+              
               <li>
                 <a
                   className={
@@ -168,7 +148,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 <li>
                   <a
                     className={
-                      activeMenuItem.includes("/testcase-config")
+                      ["/testcase-config", "/validate-config"].some(item => activeMenuItem.includes(item))
                         ? "active menu-like-item"
                         : "menu-like-item"
                     }
@@ -185,6 +165,27 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   </a>
                 </li>
               )}
+              {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+                <li>
+                  <a
+                    className={
+                      ["/admin-users", "/add-admin-user"].some(item => activeMenuItem.includes(item))
+                        ? "active menu-like-item"
+                        : "menu-like-item"
+                    }
+                    onClick={() => {
+                      handleMenuItemClick("/admin-users");
+                    }}
+                  >
+                    <i
+                      aria-label="User"
+                      title="User"
+                      className="bi bi-person-gear menu-left-icon"
+                    ></i>
+                    <span> User Management </span>
+                  </a>
+                </li>
+              )}
             </>
           )}
           {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
@@ -193,7 +194,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 <li>
                   <a
                     className={
-                      activeMenuItem === "/testing-requests"
+                      ["/testing-requests", "/register-application"].some(item => activeMenuItem.includes(item))
                         ? "active menu-like-item"
                         : "menu-like-item"
                     }

@@ -46,7 +46,7 @@ const ValidateConfigFacts = ({
           key: 'element'
         },
         {
-            title: 'Component',
+            title: 'Entity',
             dataIndex: 'refObjUri',
             key: 'refObjUri',
             width: '10%',
