@@ -31,6 +31,7 @@ import { USER_ROLES } from "../constants/role_constants.js";
 import PageNotFoud from "../components/CommonFiles/PageNotFound/PageNotFound.jsx";
 import LogoutComponent from "../components/CommonFiles/LogoutComponent.jsx";
 import ValidateConfigFacts from "../components/AdminFiles/TestcaseConfig/ValidateConfigFacts/ValidateConfigFacts.jsx";
+import { matchRoutes } from "react-router-dom";
 const PrivateDashboardRoute = () => {
   const token = useSelector((state) => state.authSlice.access_token);
   const redirectUri = useLocation();
@@ -72,35 +73,38 @@ const PrivateRoute = ({ roles = [], element: Element }) => {
 
   return hasRequiredRoles ? <Element /> : <Navigate to="/dashboard" />;
 };
-
-const routes = createBrowserRouter([
-  { path: "/waiting", element: <WaitingPage /> },
-  { path: "/login", element: <Login /> },
-  { path: "/SignUp", element: <SignUp /> },
-  { path: "/CongratulationsPage/:email", element: <CongratulationsPage /> },
-  { path: "application-report/:testRequestId", element: <ApplicationReport /> },
-  { path: "/google/success", element: <GoogleAuth /> },
-  { path: "/forgotpassword", element: <ForgotPassword /> },
+const routesConfig = [
+  { path: "/waiting", element: <WaitingPage />, name: "Waiting" },
+  { path: "/login", element: <Login />, name: "Login" },
+  { path: "/SignUp", element: <SignUp />, name: "Sign Up" },
+  { path: "/CongratulationsPage/:email", element: <CongratulationsPage />, name: "Congratulations" },
+  { path: "application-report/:testRequestId", element: <ApplicationReport />, name: "Application Report" },
+  { path: "/google/success", element: <GoogleAuth />, name: "Success" },
+  { path: "/forgotpassword", element: <ForgotPassword />, name: "Forgot Password" },
   {
     path: "/reset/cred/:base64UserEmail/:base64TokenId",
     element: <UpdatePassword />,
+    name: "Reset Password"
   },
   {
     path: "/email/verify/:base64UserEmail/:base64TokenId",
     element: <EmailVerified />,
+    name: "Email Verified"
   },
   {
     path: "/resend/verification/:email",
     element: <Login />,
+    name: "Resend Verification Email"
   },
   {
     path: "/",
     element: <PrivateDashboardRoute />,
-
+    name: "",
     children: [
-      { path: "", element: <LogoutComponent /> },
+      { path: "", element: <LogoutComponent />, name: "Logout" },
       {
         index: true,
+        name: "Dashboard",
         path: "dashboard",
         element: (
           <PrivateRoute
@@ -115,6 +119,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "testing-requests",
+        name: "Testing Requests",
         element: (
           <PrivateRoute
             roles={[
@@ -128,6 +133,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "applications",
+        name: "Applications",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER, USER_ROLES.ROLE_ID_ASSESSEE]}
@@ -137,6 +143,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "choose-test/:testRequestId",
+        name: "Choose Test",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
@@ -146,6 +153,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "manual-testing/:testRequestId",
+        name: "Manual Testing",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
@@ -155,6 +163,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "automated-testing/:testRequestId",
+        name: "Automated Testing",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
@@ -164,6 +173,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "assessee",
+        name: "Assessee",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
@@ -173,6 +183,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "register-application",
+        name: "Register Application",
         element: (
           <PrivateRoute
             roles={[
@@ -186,6 +197,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "user-profile",
+        name: "Profile",
         element: (
           <PrivateRoute
             roles={[
@@ -199,6 +211,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "admin-users",
+        name: "User Management",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -208,6 +221,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "admin-users/add-admin-user",
+        name: "Add User",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -217,6 +231,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "admin-users/update-admin-user",
+        name: "Edit User",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -226,6 +241,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "testcase-config",
+        name: "Component Configuration",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -235,12 +251,14 @@ const routes = createBrowserRouter([
       },
       {
         path: "validate-config",
+        name: "Validate Testcase Configuartions",
         element: (
           <ValidateConfigFacts/>
         ),
       },
       {
         path: "testcase-config/component-specification/:componentId",
+        name: "Specification Configuration",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -250,6 +268,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "testcase-config/manual-testcases/:specificationId",
+        name: "Testcase Configuration",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -259,6 +278,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "testcase-config/edit-question/:testcaseId",
+        name: "Edit Testcase",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -268,6 +288,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "reset-password",
+        name: "Reset Password",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN,
@@ -280,6 +301,18 @@ const routes = createBrowserRouter([
     ],
   },
   { path: "*", element: <PageNotFoud /> },
-]);
+]
+
+export const useCurrentRoute = (callback) => {
+  const location = useLocation();
+  const matchedRoutes = matchRoutes(routesConfig, location);
+
+  // Find the deepest matching child route
+  const exactChildRoute = matchedRoutes.slice(-1)[0].route;
+
+  return callback(exactChildRoute || null); // Handle cases where no route matches
+}
+
+const routes = createBrowserRouter(routesConfig);
 
 export default routes;
