@@ -14,6 +14,7 @@ import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
+import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
@@ -52,6 +53,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -94,6 +97,9 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     @Autowired
     private DocumentService documentService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public void stopTestingProcess(
@@ -206,6 +212,12 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 userService,
                 componentService,
                 contextInfo);
+
+        //Fetch all admins
+        List<UserEntity> admins = userService.getUsersByRole("role.admin",contextInfo);
+
+        //Notify each admin that a test request is created
+        admins.forEach(admin -> emailService.testRequestCreatedMessage(admin.getEmail(), admin.getName(),contextInfo.getEmail()));
 
         //Create state change API to make this as Accepted or Rejected
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
@@ -335,12 +347,30 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
         CommonStateChangeValidator.validateStateChange(TestRequestServiceConstants.TEST_REQUEST_STATUS, TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, testRequestEntity.getState(), stateKey, errors);
 
+        String oldState = testRequestEntity.getState();
 
         testRequestEntity.setState(stateKey);
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
 
+        UserEntity requestingUser = testRequestEntity.getAssessee();
+
+        sendMailToTheUserOnChangeState(oldState,stateKey,requestingUser,testRequestEntity.getName());
+
+
         changeStateCallback(testRequestEntity, contextInfo);
         return testRequestEntity;
+    }
+    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity requestingUser, String testRequestName){
+        if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(newState)) {
+            //Send Email to assessee if their test request is accepted by admin
+            emailService.testRequestAcceptedMessage(requestingUser.getEmail(), requestingUser.getName(),testRequestName);
+        } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED.equals(newState)) {
+            //Send Email to assessee if their test request is rejected
+            emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(),testRequestName);
+        } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(newState)) {
+            //Send Email to assessee if their test request is finished
+            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(),testRequestName);
+        }
     }
 
     private void validateChangeStateForAccepted(TestRequestEntity testRequestEntity, String nextState) throws DataValidationErrorException {

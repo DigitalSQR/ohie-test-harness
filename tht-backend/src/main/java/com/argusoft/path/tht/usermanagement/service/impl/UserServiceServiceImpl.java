@@ -41,10 +41,8 @@ import org.springframework.util.StringUtils;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This UserServiceServiceImpl contains implementation for User service.
@@ -64,6 +62,9 @@ public class UserServiceServiceImpl implements UserService {
 
     @Autowired
     TokenStore tokenStore;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     private TokenVerificationService tokenVerificationService;
@@ -95,6 +96,7 @@ public class UserServiceServiceImpl implements UserService {
                 .findFirst()
                 .orElseThrow(() -> new DoesNotExistException("User does not found with email : " + email));
     }
+
 
     @Override
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
@@ -175,11 +177,12 @@ public class UserServiceServiceImpl implements UserService {
 
         userEntity = this.updateUser(userEntity, contextInfo);
 
+        sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity, contextInfo);
+
         if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE))
         {
             revokeAccessTokenOnStateChange(UserServiceConstants.CLIENT_ID,userEntity.getId());
         }
-        sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity);
         return userEntity;
     }
 
@@ -196,10 +199,21 @@ public class UserServiceServiceImpl implements UserService {
         }
     }
 
-    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity) throws MessagingException, IOException {
+    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws MessagingException, IOException, InvalidParameterException, DoesNotExistException {
         if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
+           //message assessee if their account is approved by admin
             emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
+        } else if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
+            //message assessee if their account is rejected by admin
+            emailService.accountRejectedMessage(userEntity.getEmail(), userEntity.getName());
+        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(newState)) {
+            //Fetch all admins
+            List<UserEntity> admins = userService.getUsersByRole("role.admin",contextInfo);
 
+            //Message all admins stating approval pending
+            admins.forEach(admin -> emailService.verifiedAndWaitingForAdminApproval(admin.getEmail(),admin.getName(), userEntity.getEmail()));
+        } else if (UserServiceConstants.USER_STATUS_ACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
+            emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName());
         }
     }
 
@@ -408,6 +422,16 @@ public class UserServiceServiceImpl implements UserService {
         {
             defaultTokenServices.revokeToken(oAuth2AccessToken.getValue());
         }
+    }
+
+    @Override
+    public List<UserEntity> getUsersByRole(String role, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+        UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
+        userSearchCriteriaFilter.setRole(role);
+        List<UserEntity> userEntities = this.searchUsers(userSearchCriteriaFilter, contextInfo);
+        return Optional.ofNullable(userEntities)
+                .filter(list -> !list.isEmpty())
+                .orElseThrow(()-> new DoesNotExistException("No user found with role : "+role));
     }
 
 }

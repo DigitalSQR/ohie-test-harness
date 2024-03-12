@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body{
+          padding: 0px;
+          margin:0px;
+          font-family: Whitney, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
+
+        }
+        .email{
+          background-color:#e6f6ea;
+          width:100%;
+          height: 100vh;
+          padding: 100px 0px;
+        }
+        .email-box{
+          width:50%;
+          margin:50px auto;
+        }
+        .logo{
+          background-color: white;
+          text-align: center;
+        }
+        .logo img{
+          width: 20%;
+        }
+        .intro-box{
+          background-color: #009FC8;
+          color:white;
+          margin: 0px;
+          padding: 20px;
+          text-align: center;
+        }
+        .intro-box h1{
+          font-size: 36px;
+          font-weight: 600;
+          line-height: 36px;
+        }
+        .email-body{
+          background-color: white;
+          padding-bottom: 30px;
+        }
+        .email-content{
+          margin: 0px auto;
+          padding: 20px;
+          cursor: auto;
+          text-align: center;
+          border-bottom: 1px solid #009FC8;
+          width: 80%;
+        }
+        .email-subject{
+          text-align: left;
+          font-weight: 400;
+        }
+        .email-content p{
+          color: #565f69;
+          font-size: 18px;
+          line-height: 24px;
+          text-align: left;
+        }
+
+    </style>
+</head>
+<body>
+<div class="email">
+    <div class="email-box">
+        <div class="logo">
+            <img src="https://www.openhealthnews.com/sites/openhealthnews.com/files/open-hie_logo_2019.jpg"/>
+        </div>
+        <div class="intro-box">
+            <h1>Welcome to testing harness tool !</h1>
+        </div>
+        <div class="email-body">
+            <div class="email-content">
+                <h1 class="email-subject">Test Request Created</h1>
+                <p>Hi!! ${username} ,</p>
+                <p>A new Test Request has been created by ${currentEmail}.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

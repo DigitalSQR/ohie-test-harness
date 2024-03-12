@@ -319,4 +319,14 @@ public interface UserService {
      */
     public void revokeAccessTokenOnStateChange(String clientId, String userName);
 
+    /**
+     * get users by role
+     *
+     * @param role String role of the users to be retrieved
+     * @param contextInfo information containing the principalId and locale
+     *                    information about the caller of service operation
+     *
+     * @return List of users with given role
+     */
+    public List<UserEntity> getUsersByRole(String role, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException;
 }
