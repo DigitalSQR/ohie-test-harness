@@ -41,7 +41,7 @@ public class ComponentRestControllerTest extends TestingHarnessToolRestTestConfi
         super.init();
         componentServiceMockImpl.init();
 
-        super.login("ivasiwala@argusoft.com",
+        super.login("noreplytestharnesstool@gmail.com",
                 "password",
                 webTestClient);
     }

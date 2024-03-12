@@ -51,7 +51,7 @@ public class SpecificationRestControllerTest extends TestingHarnessToolRestTestC
         super.init();
         specificationServiceMockImpl.init();
 
-        super.login("ivasiwala@argusoft.com",
+        super.login("noreplytestharnesstool@gmail.com",
                 "password",
                 webTestClient);
     }

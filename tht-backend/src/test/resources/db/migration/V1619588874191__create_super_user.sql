@@ -30,13 +30,13 @@ INSERT INTO
 VALUES
     (
         'SYSTEM_USER',
-        'ivasiwala@argusoft.com',
-        'Istyak Ahmed Vasiwala',
+        'noreplytestharnesstool@gmail.com',
+        'Testing Harness Tool',
         'Argusoft.Path',
         'user.status.active',
         'password',
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
+        'SYSTEM_USER',
+        'SYSTEM_USER',
         Now(),
         Now(),
         0
