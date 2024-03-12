@@ -19,9 +19,9 @@ import ValidateConfigFacts from "../ValidateConfigFacts/ValidateConfigFacts.jsx"
 export default function ComponentList() {
   const navigate = useNavigate();
   const [sortDirection, setSortDirection] = useState({
-    name: "asc",
+    rank: "asc",
   });
-  const [sortFieldName, setSortFieldName] = useState("name");
+  const [sortFieldName, setSortFieldName] = useState("rank");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [components, setComponents] = useState();
@@ -214,7 +214,16 @@ export default function ComponentList() {
                     </span>{" "}
                   </th>
                   <th className="col-3">Status</th>
-                  <th className="col-3">Actions</th>
+                  <th className="col-2">Rank{" "}
+                    <span
+                          className="ps-1"
+                          href="#"
+                          onClick={() => handleSort("rank")}
+                        >
+                          {renderSortIcon("rank")}
+                        </span>{" "}
+                    </th>
+                  <th className="col-4">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -244,6 +253,9 @@ export default function ComponentList() {
                           checkedChildren="ACTIVE"
                           unCheckedChildren="INACTIVE"
                         />
+                      </td>
+                      <td>
+                        {component?.rank}
                       </td>
                       <td>
                         <span

@@ -140,24 +140,20 @@ export default function ChooseTest() {
     }
     TestResultAPI.startTests(params)
       .then((response) => {
+        notification.success({
+          description: "Testing Process has been Started Successsfully",
+          placement: "bottomRight",
+        });
         if (!!manual) {
           navigate(`/manual-testing/${testRequestId}`);
-          notification.success({
-            description: "Testing Process has been Started Successfully",
-            placement: "bottomRight",
-          });
         }
+        if (!!automated) {
+          navigate(`/automated-testing/${testRequestId}`);
+        } 
         loadProgress();
       }).catch((error) => {
-
-      });
-    if (!!automated) {
-      notification.success({
-        description: "Testing Process has been Started Successfully",
-        placement: "bottomRight",
-      });
-      navigate(`/automated-testing/${testRequestId}`);
-    }
+       
+      });   
   };
 
   const testCaseInfo = () => {

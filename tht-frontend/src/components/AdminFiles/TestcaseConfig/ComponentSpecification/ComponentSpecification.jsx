@@ -19,11 +19,11 @@ export default function ComponentSpecification() {
   const [specifications, setSpecifications] = useState();
   const { showLoader, hideLoader } = useLoader();
   const [sortDirection, setSortDirection] = useState({
-    name: "asc",
+    rank: "asc",
     isRequired: "desc",
     isFunctional: "desc",
   });
-  const [sortFieldName, setSortFieldName] = useState("name");
+  const [sortFieldName, setSortFieldName] = useState("rank");
   const [componentDetails, setComponentDetails] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [specificationId, setSpecificationId] = useState();
@@ -223,8 +223,17 @@ export default function ComponentSpecification() {
                         {renderSortIcon("isRequired")}
                       </a>{" "}
                     </th>
-                    <th style={{width: "20%"}}>Status</th>
-                    <th style={{width:'20%'}}>Actions</th>
+                    <th style={{width: "12%"}}>Status</th>
+                    <th style={{width: "10%"}}>Rank{" "}
+                      <a
+                        className="ps-1"
+                        href="#"
+                        onClick={() => handleSort("rank")}
+                      >
+                        {renderSortIcon("rank")}
+                      </a>{" "}
+                    </th>
+                    <th style={{width:'45%'}}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -257,6 +266,9 @@ export default function ComponentSpecification() {
                           checkedChildren="ACTIVE"
                           unCheckedChildren="INACTIVE"
                         />
+                      </td>
+                      <td>
+                        {specification?.rank}
                       </td>
                       <td className="action-icons-container">
                         <div className="d-flex">
