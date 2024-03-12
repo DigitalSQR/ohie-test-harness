@@ -213,6 +213,9 @@ export default function ChooseTest() {
             placement: "bottomRight",
             message: "Testing submitted successfully!",
           });
+          const newTab = window.open(`/application-report/${testRequestId}`, '_blank');
+          newTab.focus();      
+          navigate(`/applications`);
         })
         .catch((err) => {       
           notification.error({
