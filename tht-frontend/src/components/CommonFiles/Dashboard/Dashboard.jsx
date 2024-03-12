@@ -76,7 +76,7 @@ export default function Dashboard() {
                     className="btn btn-primary mt-2 theme-blue-color"
                     onClick={() => navigate("/register-application")}
                   >
-                    <i className="bi bi-pencil-square"></i> Register application
+                    <i className="bi bi-pencil-square"></i> Register Test Request
                   </button>
                 </div>
               )}

@@ -194,7 +194,7 @@ const AdminUsers = () => {
                     <td className = "toLowerCase-words">{user.email}</td>
                     <td>
                       {user?.roleIds.map((roleId) => (
-                        <span className="badges-green my-1">{roleId.replace("role.", "").toUpperCase()}</span>
+                        <span className="badges-green my-1" key={roleId}>{roleId.replace("role.", "").toUpperCase()}</span>
                       ))}
                     </td>
                     <td>
@@ -218,7 +218,7 @@ const AdminUsers = () => {
                       <span className="cursor-pointer"
                         onClick={() => handleEdit(user.id)}
                       >
-                        <i class="bi bi-pencil-square text-green-50 font-size-16"></i>{" "}
+                        <i className="bi bi-pencil-square text-green-50 font-size-16"></i>{" "}
                         EDIT
                       </span>
                     </td>

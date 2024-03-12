@@ -253,7 +253,7 @@ export default function ComponentList() {
                             setIsModalOpen(true);
                           }}
                         >
-                          <i class="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
+                          <i className="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
                           EDIT
                         </span>&nbsp;
                         <span
@@ -264,7 +264,7 @@ export default function ComponentList() {
                             )
                           }
                         >
-                          <i class="bi bi-eye font-size-16 text-blue-50"></i>{" "}
+                          <i className="bi bi-eye font-size-16 text-blue-50"></i>{" "}
                           SPECIFICATIONS
                         </span>
                       </td>

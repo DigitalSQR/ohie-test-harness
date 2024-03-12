@@ -260,7 +260,7 @@ const TestingRequests = () => {
                   <th className="actions-column">
                     <span
                       className={
-                        userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && "mx-2"
+                        userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) ? "mx-2" : undefined
                       }
                     >
                       Actions
@@ -350,9 +350,9 @@ const TestingRequests = () => {
                           className="approval-action-button float-end my-auto display"
                         >
                           {testRequest.class === "show" ? (
-                            <i class="bi bi-chevron-double-down"></i>
+                            <i className="bi bi-chevron-double-down"></i>
                           ) : (
-                            <i class="bi bi-chevron-double-right"></i>
+                            <i className="bi bi-chevron-double-right"></i>
                           )}
                         </span>
                       </td>
@@ -377,7 +377,7 @@ const TestingRequests = () => {
                                 {testRequest.testRequestUrls.length > 0 &&
                                   testRequest.testRequestUrls.map(
                                     (testUrls) => (
-                                      <tr>
+                                      <tr id={testUrls.componentId} key={testUrls.componentId}>
                                         <td>
                                           <ComponentIdConnector
                                             componentId={testUrls.componentId}
