@@ -89,12 +89,7 @@ const RegisterApplication = () => {
           `testRequestUrls[${modifiedComponentId(url.componentId)}].fhirApiBaseUrl`
         ] = "fhirApiBaseUrl must have less than 255 characters";
       }
-      if (url.websiteUIBaseUrl === "") {
-        errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].websiteUIBaseUrl`
-        ] = "websiteUIBaseUrl is required";
-      }
-      else if (url.websiteUIBaseUrl.length > 255) {
+       if (url.websiteUIBaseUrl.length > 255) {
         errors[
           `testRequestUrls[${modifiedComponentId(url.componentId)}].websiteUIBaseUrl`
         ] = "websiteUIBaseUrl must have less than 255 characters";
@@ -524,8 +519,6 @@ const RegisterApplication = () => {
                                     className="form-label"
                                   >
                                     Website/UI Url:{" "}
-                                    <span style={{ color: "red" }}>*</span>
-                                    {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
                                   </label>
                                   <input
                                     id={

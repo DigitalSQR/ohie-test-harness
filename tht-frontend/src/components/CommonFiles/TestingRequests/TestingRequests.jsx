@@ -182,10 +182,6 @@ const TestingRequests = () => {
     });
   };
 
-useEffect(()=>{
-  console.log(testRequests);
-})
-
   return (
     <div id="testingRequest">
       <div id="wrapper">

@@ -413,8 +413,6 @@ public class TestRequestValidator {
            ValidationUtils.validateRequired(entity.getPassword(), "password", errors);
            //check for baseurl
            ValidationUtils.validateRequired(entity.getFhirApiBaseUrl(), "fhirApiBaseUrl", errors);
-           //check for websiteUiBaseurl
-           ValidationUtils.validateRequired(entity.getWebsiteUIBaseUrl(), "websiteUIBaseUrl", errors);
        }
     }
 
