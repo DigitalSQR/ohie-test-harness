@@ -79,7 +79,9 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
             ContextInfo contextInfo = Constant.SUPER_USER_CONTEXT;
             contextInfo.setModule(Module.OAUTH2);
             oauth2User.getCustomAttributes().put("userName", Constant.SUPER_USER_CONTEXT.getUsername());
-            UserEntity loggedInUser = createUserIfNotExists(oauth2User, Constant.SUPER_USER_CONTEXT);
+
+            UserCreatedIfExist userCreatedIfExistRecord = createUserIfNotExists(oauth2User, Constant.SUPER_USER_CONTEXT);
+            UserEntity loggedInUser = userCreatedIfExistRecord.userEntity;
 
             if (Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, loggedInUser.getState())) {
 
@@ -130,6 +132,12 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
 
                 String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
                 response.sendRedirect(s);
+            } else if (Boolean.TRUE.equals(userCreatedIfExistRecord.isCreated())) {
+                Map<String, Object> responseMap = new HashMap<>();
+                responseMap.put("message", "Assessee Registered Successfully, Wait For Admin Approval!");
+                responseMap.put("isUserCreatedWithOauth",true);
+                String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
+                response.sendRedirect(s);
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, loggedInUser.getState())) {
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("message", "Pending email verification.");
@@ -164,17 +172,19 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
         }
     }
 
-    private UserEntity createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException, MessagingException, IOException {
+    private UserCreatedIfExist createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException, MessagingException, IOException {
         try {
-            return userService.getUserByEmail(oauth2User.<String>getAttribute("email"), contextInfo);
+            return new UserCreatedIfExist(userService.getUserByEmail(oauth2User.<String>getAttribute("email"), contextInfo),false);
         } catch (DoesNotExistException ex) {
             LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + OnSsoAuthenticationSuccessHandler.class.getSimpleName(), ex);
             //If user not exists then create as Assessee.
             UserEntity userEntity = new UserEntity();
             userEntity.setEmail(oauth2User.<String>getAttribute("email"));
             userEntity.setName(oauth2User.<String>getAttribute("name"));
-
-            return userService.registerAssessee(userEntity, contextInfo);
+            return new UserCreatedIfExist(userService.registerAssessee(userEntity, contextInfo),false);
         }
+    }
+
+    private record UserCreatedIfExist(UserEntity userEntity, Boolean isCreated){
     }
 }

@@ -29,6 +29,10 @@ export default function GoogleAuth() {
 				navigate("/dashboard");
 			});
 
+		}
+		else if(result?.isUserCreatedWithOauth){
+			hideLoader();
+			navigate(`/CongratulationsPage/${result.email}/${result.isUserCreatedWithOauth}`);
 		} else if (result.message) {
 			hideLoader();
 			navigate("/login");

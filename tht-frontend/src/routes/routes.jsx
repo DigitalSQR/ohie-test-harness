@@ -77,7 +77,7 @@ const routesConfig = [
   { path: "/waiting", element: <WaitingPage />, name: "Waiting" },
   { path: "/login", element: <Login />, name: "Login" },
   { path: "/SignUp", element: <SignUp />, name: "Sign Up" },
-  { path: "/CongratulationsPage/:email", element: <CongratulationsPage />, name: "Congratulations" },
+  { path: "/CongratulationsPage/:email", element: <CongratulationsPage />, name: "Congratulations", children: [ { path: ":isOauthCreated" }] },
   { path: "application-report/:testRequestId", element: <ApplicationReport />, name: "Application Report" },
   { path: "/google/success", element: <GoogleAuth />, name: "Success" },
   { path: "/forgotpassword", element: <ForgotPassword />, name: "Forgot Password" },

@@ -9,6 +9,7 @@ export default function CongratulationsPage() {
   const { showLoader, hideLoader } = useLoader();
   const navigate = useNavigate();
   const params = useParams();
+  const {isOauthCreated} = useParams();
 
   const resendVerification = () => {
     showLoader();
@@ -64,24 +65,24 @@ export default function CongratulationsPage() {
                 <p>
                   Your request has been received, and we appreciate your
                   interest in ensuring healthcare systems’ adherence to OpenHIE
-                  standards. A verification link has been sent to your
+                  standards. {!isOauthCreated && `A verification link has been sent to your
                   registered email address. Click on the link to verify your
                   account. We will process the request as soon as the account is
-                  verified.
+                  verified.`}
                 </p>
 
                 <p className="my-4">
                   Once your account is approved by our admin, you will receive
-                  another email on the registered email{" "}
+                  an email on the registered email{" "}
                   <span className="fw-bold">{params.email}</span>
                 </p>
 
-                <p>
+                {!isOauthCreated && <p>
                   <a className="text-blue fw-bold" onClick={resendVerification}>
                     RESEND
                   </a>{" "}
                   Verification link.
-                </p>
+                </p>}
                 <button
                   className="btn btn-primary btn-blue w-100 my-4"
                   onClick={() => navigate("/login")}

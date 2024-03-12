@@ -58,8 +58,8 @@ public class TestingHarnessToolApplication implements CommandLineRunner {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        mailSender.setUsername("hardikraja20@gmail.com");
-        mailSender.setPassword("cyhxpyhckrbhzfji");
+        mailSender.setUsername("noreplytestharnesstool@gmail.com");
+        mailSender.setPassword("vdspvxnhjnhdklkp");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
