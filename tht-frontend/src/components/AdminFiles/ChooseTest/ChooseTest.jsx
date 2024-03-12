@@ -48,9 +48,9 @@ export default function ChooseTest() {
           totalManual++;
           if (
             testcaseResult.state ===
-              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
+            TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
             testcaseResult.state ===
-              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+            TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
           ) {
             totalFinishedManual++;
           }
@@ -59,9 +59,9 @@ export default function ChooseTest() {
           totalAutomated++;
           if (
             testcaseResult.state ===
-              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
+            TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_SKIP ||
             testcaseResult.state ===
-              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+            TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
           ) {
             totalFinishedAutomated++;
           }
@@ -70,7 +70,7 @@ export default function ChooseTest() {
       if (
         !!testcaseResult.automated &&
         testcaseResult.state ===
-          TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS
+        TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS
       ) {
         totalInprogressAutomated++;
       }
@@ -122,7 +122,7 @@ export default function ChooseTest() {
         setTestCaseResults(res.data.content);
       })
       .catch((error) => {
-       
+
       });
   };
 
@@ -144,20 +144,20 @@ export default function ChooseTest() {
           description: "Testing Process has been Started Successfully",
           placement: "bottomRight",
         });
-        if(!!manual) {
+        if (!!manual) {
           navigate(`/manual-testing/${testRequestId}`);
         }
         loadProgress();
       }).catch((error) => {
-       
+
       });
-      if (!!automated) {
-        notification.success({
-          description: "Testing Process has been Started Successfully",
-          placement: "bottomRight",
-        });
-        navigate(`/automated-testing/${testRequestId}`);
-      } 
+    if (!!automated) {
+      notification.success({
+        description: "Testing Process has been Started Successfully",
+        placement: "bottomRight",
+      });
+      navigate(`/automated-testing/${testRequestId}`);
+    }
   };
 
   const testCaseInfo = () => {
@@ -166,7 +166,7 @@ export default function ChooseTest() {
         setTestCaseName(res.name);
         dispatch(set_header(res.name));
       }).catch((error) => {
-       
+
       });
   };
 
@@ -178,7 +178,7 @@ export default function ChooseTest() {
           testcaseResult.state !==
           TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
         ) {
-          const destination  = '/testcase-result/' + (!!testcaseResult.manual ? 'manual/' : 'automated/') + testcaseResult.id;
+          const destination = '/testcase-result/' + (!!testcaseResult.manual ? 'manual/' : 'automated/') + testcaseResult.id;
           var subscription = stompClient.subscribe(destination, (msg) => {
             const parsedTestcaseResult = JSON.parse(msg.body);
             setTestCaseResults((prevTestcaseResults) => {
@@ -192,7 +192,7 @@ export default function ChooseTest() {
               subscription.unsubscribe();
             }
           });
-        }  
+        }
       });
     }
   }, [stompClient]);
@@ -206,204 +206,226 @@ export default function ChooseTest() {
     };
   }, []);
 
+  const submitHandler=()=>{
+    TestRequestAPI.changeState(testRequestId, "test.request.status.finished")
+        .then((res) => {
+          notification.success({
+            placement: "bottomRight",
+            message: "Testing submitted successfully!",
+          });
+        })
+        .catch((err) => {       
+          notification.error({
+            placement: "bottomRight",
+            message: "Something went wrong!",
+          });
+        }); 
+  }
   return (
     <div id="chooseTest">
-    <div id="wrapper">
-      <div className="col-12 pt-3">
-        <div className="bcca-breadcrumb">
-          <div className="bcca-breadcrumb-item">{testcaseName}</div>
-          <div
-            className="bcca-breadcrumb-item"
-            onClick={() => {
-              navigate(`/applications`);
-            }}
-          >
-            Applications
-          </div>
-        </div>
-        <h5>Choose Testing Type</h5>
-        <p className="text-gray">
-          Select the type to start testing application with OpenHIE.{" "}
-        </p>
-        <div className="d-flex flex-wrap">
-          <div className="testing-grid">
-            <div className="icon-box">
-              <img src={functional_logo} />
+      <div id="wrapper">
+        <div className="col-12 pt-3">
+          <div className="bcca-breadcrumb">
+            <div className="bcca-breadcrumb-item">{testcaseName}</div>
+            <div
+              className="bcca-breadcrumb-item"
+              onClick={() => {
+                navigate(`/applications`);
+              }}
+            >
+              Applications
             </div>
-            <div className="text-box">
-              <h6 className="">Manual Testing</h6>
-              <p className="mb-0">
-                If you need more info, please check out{" "}
-                <a className="text-blue" href="#">
-                  Guideline.
-                </a>
-              </p>
-              {totalManualTestcaseResults == 0 && (
-                <button
-                  className="btn btn-primary btn-sm mt-4 "
-                  onClick={() => {
-                    handleStartTesting(true, null);
-                  }}
-                >
-                  Start Testing
-                </button>
-              )}
-              {totalManualTestcaseResults != 0 && (
-                <Fragment>
-                  <Progress
-                    percent={Math.floor(
-                      (totalFinishedManual /
-                        (!!totalFinishedManual
-                          ? totalAllManual
-                          : totalManualTestcaseResults)) *
-                        100
-                    )}
-                    format={() => {
-                      if (
-                        Math.floor(
-                          (totalFinishedManual /
-                            (!!totalFinishedManual
-                              ? totalAllManual
-                              : totalManualTestcaseResults)) *
-                            100
-                        ) === 100
-                      ) {
-                        return <CheckCircleFilled  color="#52C41A"/>;
-                      } else {
-                        return (
-                          <span>
-                            {totalFinishedManual}/
-                            {!!totalFinishedManual
-                              ? totalAllManual
-                              : totalManualTestcaseResults}
-                          </span>
-                        );
-                      }
+          </div>
+          <h5>Choose Testing Type</h5>
+          <p className="text-gray">
+            Select the type to start testing application with OpenHIE.{" "}
+          </p>
+          <div className="d-flex flex-wrap">
+            <div className="testing-grid">
+              <div className="icon-box">
+                <img src={functional_logo} />
+              </div>
+              <div className="text-box">
+                <h6 className="">Manual Testing</h6>
+                <p className="mb-0">
+                  If you need more info, please check out{" "}
+                  <a className="text-blue" href="#">
+                    Guideline.
+                  </a>
+                </p>
+                {totalManualTestcaseResults == 0 && (
+                  <button
+                    className="btn btn-primary btn-sm mt-4 "
+                    onClick={() => {
+                      handleStartTesting(true, null);
                     }}
-                  />
-                  <Button
-                    onClick={() => navigate(`/manual-testing/${testRequestId}`)}
                   >
-                    {
-                    totalAllManual === totalFinishedManual ?
-                    "Modify" :
-                    "Resume"
-                    }
-                  </Button>
-                </Fragment>
-              )}
-
-              {/* <div className="progress-bar-line"> */}
-              {/* <div className="progress-fill"></div> */}
-              {/* <div className="progress-value">20%</div>  */}
-              {/* </div> */}
-            </div>
-          </div>
-          <div className="testing-grid">
-            <div className="icon-box">
-              <img src={workflow_logo} />
-            </div>
-            <div className="text-box">
-              <h6 className="">Automated Testing</h6>
-              <p className="mb-0">
-                If you need more info, please check out{" "}
-                <a className="text-blue" href="#">
-                  Guideline.
-                </a>
-              </p>
-              {totalAutomatedTestcaseResults == 0 && (
-                <button
-                  className="btn btn-primary small btn-sm mt-4 "
-                  onClick={() => {
-                    handleStartTesting(null, true);
-                  }}
-                >
-                  Start Testing
-                </button>
-              )}
-
-              {totalAutomatedTestcaseResults != 0 && (
-                <Fragment>
-                  <Progress
-                    percent={Math.floor(
-                      (totalFinishedAutomated /
-                        (!!totalFinishedAutomated
-                          ? totalAllAutomated
-                          : totalAutomatedTestcaseResults)) *
+                    Start Testing
+                  </button>
+                )}
+                {totalManualTestcaseResults != 0 && (
+                  <Fragment>
+                    <Progress
+                      percent={Math.floor(
+                        (totalFinishedManual /
+                          (!!totalFinishedManual
+                            ? totalAllManual
+                            : totalManualTestcaseResults)) *
                         100
-                    )}
-                    format={() => {
-                      if (
+                      )}
+                      format={() => {
+                        if (
+                          Math.floor(
+                            (totalFinishedManual /
+                              (!!totalFinishedManual
+                                ? totalAllManual
+                                : totalManualTestcaseResults)) *
+                            100
+                          ) === 100
+                        ) {
+                          return <CheckCircleFilled color="#52C41A" />;
+                        } else {
+                          return (
+                            <span>
+                              {totalFinishedManual}/
+                              {!!totalFinishedManual
+                                ? totalAllManual
+                                : totalManualTestcaseResults}
+                            </span>
+                          );
+                        }
+                      }}
+                    />
+                    <Button
+                      onClick={() => navigate(`/manual-testing/${testRequestId}`)}
+                    >
+                      {
+                        totalAllManual === totalFinishedManual ?
+                          "Modify" :
+                          "Resume"
+                      }
+                    </Button>
+                  </Fragment>
+                )}
+
+                {/* <div className="progress-bar-line"> */}
+                {/* <div className="progress-fill"></div> */}
+                {/* <div className="progress-value">20%</div>  */}
+                {/* </div> */}
+              </div>
+            </div>
+            <div className="testing-grid">
+              <div className="icon-box">
+                <img src={workflow_logo} />
+              </div>
+              <div className="text-box">
+                <h6 className="">Automated Testing</h6>
+                <p className="mb-0">
+                  If you need more info, please check out{" "}
+                  <a className="text-blue" href="#">
+                    Guideline.
+                  </a>
+                </p>
+                {totalAutomatedTestcaseResults == 0 && (
+                  <button
+                    className="btn btn-primary small btn-sm mt-4 "
+                    onClick={() => {
+                      handleStartTesting(null, true);
+                    }}
+                  >
+                    Start Testing
+                  </button>
+                )}
+
+                {totalAutomatedTestcaseResults != 0 && (
+                  <Fragment>
+                    <Progress
+                      percent={Math.floor(
+                        (totalFinishedAutomated /
+                          (!!totalFinishedAutomated
+                            ? totalAllAutomated
+                            : totalAutomatedTestcaseResults)) *
+                        100
+                      )}
+                      format={() => {
+                        if (
+                          Math.floor(
+                            (totalFinishedAutomated /
+                              (!!totalFinishedAutomated
+                                ? totalAllAutomated
+                                : totalAutomatedTestcaseResults)) *
+                            100
+                          ) === 100
+                        ) {
+                          return <CheckCircleFilled color="#52C41A" />;
+                        } else {
+                          return (
+                            <div>
+                              {" "}
+                              {totalInprogressAutomated != 1 ? (
+                                <div></div>
+                              ) : (
+                                <SyncOutlined spin />
+                              )}
+                              <span className="ml-2">
+                                {" "}
+                                {totalFinishedAutomated}/
+                                {!!totalFinishedAutomated
+                                  ? totalAllAutomated
+                                  : totalAutomatedTestcaseResults}
+
+                              </span>
+                            </div>
+                          );
+                        }
+                      }}
+                      strokeColor={
+                        totalInprogressAutomated != 1
+                          ? Math.floor(
+                            (totalFinishedAutomated /
+                              (!!totalFinishedAutomated
+                                ? totalAllAutomated
+                                : totalAutomatedTestcaseResults)) *
+                            100
+                          ) === 100
+                            ? "#52C41A"
+                            : "red"
+                          : "blue"
+                      }
+                      status={
                         Math.floor(
                           (totalFinishedAutomated /
                             (!!totalFinishedAutomated
                               ? totalAllAutomated
                               : totalAutomatedTestcaseResults)) *
-                            100
-                        ) === 100
-                      ) {
-                        return <CheckCircleFilled  color="#52C41A"/>;
-                      } else {
-                        return (
-                          <div>
-                            {" "}
-                            {totalInprogressAutomated != 1 ? (
-                              <div></div>
-                            ) : (
-                              <SyncOutlined spin/>
-                            )}
-                            <span className="ml-2">
-                              {" "}
-                              {totalFinishedAutomated}/
-                              {!!totalFinishedAutomated
-                                ? totalAllAutomated
-                                : totalAutomatedTestcaseResults}
-
-                            </span>
-                          </div>
-                        );
-                      }
-                    }}
-                    strokeColor={
-                      totalInprogressAutomated != 1
-                        ? Math.floor(
-                            (totalFinishedAutomated /
-                              (!!totalFinishedAutomated
-                                ? totalAllAutomated
-                                : totalAutomatedTestcaseResults)) *
-                              100
-                          ) === 100
-                          ? "#52C41A"
-                          : "red"
-                        : "blue"
-                    }
-                    status={
-                      Math.floor(
-                        (totalFinishedAutomated /
-                          (!!totalFinishedAutomated
-                            ? totalAllAutomated
-                            : totalAutomatedTestcaseResults)) *
                           100
-                      ) === 100
-                        ? "inactive"
-                        : "active"
-                    }
-                  />
-                  <Button
-                    onClick={() =>
-                      navigate(`/automated-testing/${testRequestId}`)
-                    }
-                  >
-                    Show Result
-                  </Button>
-                </Fragment>
-              )}
-              {/* <div className="progress-bar-line"></div> */}
+                        ) === 100
+                          ? "inactive"
+                          : "active"
+                      }
+                    />
+                    <Button
+                      onClick={() =>
+                        navigate(`/automated-testing/${testRequestId}`)
+                      }
+                    >
+                      Show Result
+                    </Button>
+                  </Fragment>
+                )}
+                {/* <div className="progress-bar-line"></div> */}
+              </div>
             </div>
           </div>
         </div>
+          {totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
+          <div className="message-grid">
+            <p>Testing has been successfully completed. Please click the button below to submit the results.</p>
+            <button className="submit-btn cst-btn-group btn" onClick={submitHandler}>Submit</button>
+          </div>  
+          :
+          <></>}
       </div>
-    </div>
     </div>
   );
 }
