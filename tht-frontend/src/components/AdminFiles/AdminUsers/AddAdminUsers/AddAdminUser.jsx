@@ -63,7 +63,7 @@ const AddAdminUser = () => {
           placement: "bottomRight",
           description: `User Added Successfully`,
         });
-        navigate("/admin-users");
+        navigate("/user-management");
       })
       .catch((error) => {
         hideLoader();
@@ -253,7 +253,7 @@ const AddAdminUser = () => {
                     <button
                       className="btn btn-primary btn-white py-2"
                       onClick={() => {
-                        navigate("/admin-users");
+                        navigate("/user-management");
                       }}
                     >
                       Cancel

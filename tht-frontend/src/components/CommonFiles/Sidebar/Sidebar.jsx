@@ -169,12 +169,12 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 <li>
                   <a
                     className={
-                      ["/admin-users", "/add-admin-user"].some(item => activeMenuItem.includes(item))
+                      ["/user-management", "/create-user"].some(item => activeMenuItem.includes(item))
                         ? "active menu-like-item"
                         : "menu-like-item"
                     }
                     onClick={() => {
-                      handleMenuItemClick("/admin-users");
+                      handleMenuItemClick("/user-management");
                     }}
                   >
                     <i

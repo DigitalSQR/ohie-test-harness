@@ -15,7 +15,7 @@ import { DOCUMENT_TYPE_FOR_TEST_CASES } from "../../../../constants/document_con
 import { DocumentAPI } from "../../../../api/DocumentAPI";
 import { PlusOutlined } from "@ant-design/icons";
 import { Upload } from "antd";
-
+import { Empty } from "antd";
 import {
   DOCUMENT_STATE_ACTIVE,
   DOCUMENT_STATE_INACTIVE,
@@ -561,9 +561,10 @@ export default function EditQuestion() {
             <div className="card-header">Manage Options</div>
 
             {initialTestcaseOptions.length < 1 ? (
-              <div className="text-center my-4 fs-6">
-                No options are available yet for the current test case.
-              </div>
+              <Empty
+                className="py-3"
+                description=" No Record Found"
+              />
             ) : (
               <Accordion onSelect={(index) => handleSelectAccordionItem(index)}>
                 {editedTestcaseOptions.map((option, index) => (

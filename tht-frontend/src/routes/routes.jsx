@@ -210,7 +210,7 @@ const routesConfig = [
         ),
       },
       {
-        path: "admin-users",
+        path: "user-management",
         name: "User Management",
         element: (
           <PrivateRoute
@@ -220,8 +220,8 @@ const routesConfig = [
         ),
       },
       {
-        path: "admin-users/add-admin-user",
-        name: "Add User",
+        path: "user-management/create-user",
+        name: "Create User",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN]}
@@ -230,7 +230,7 @@ const routesConfig = [
         ),
       },
       {
-        path: "admin-users/update-admin-user",
+        path: "user-management/update-admin-user",
         name: "Edit User",
         element: (
           <PrivateRoute
