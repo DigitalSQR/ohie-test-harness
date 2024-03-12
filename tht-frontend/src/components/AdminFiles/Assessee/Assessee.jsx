@@ -276,7 +276,7 @@ const Assessee = () => {
                                 );
                               }}
                             >
-                              <i class="bi bi-ban-fill text-red font-size-16"></i>{" "}
+                              <i className="bi bi-ban-fill text-red font-size-16"></i>{" "}
                               DISABLE
                             </span>
                           </Fragment>
