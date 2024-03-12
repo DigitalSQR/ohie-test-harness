@@ -5,6 +5,7 @@ import { notification } from "antd";
 import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLoader } from "../../loader/LoaderContext";
+import "./congratulationsPage.scss";
 export default function CongratulationsPage() {
   const { showLoader, hideLoader } = useLoader();
   const navigate = useNavigate();
@@ -29,7 +30,8 @@ export default function CongratulationsPage() {
   };
 
   return (
-    <Fragment>
+      <div id="congratulation">
+      <Fragment>
       <div className="container-fluid ps-0">
         <div className="row">
           <div className="col-md-6 col-12 col-sm-12 p-0">
@@ -78,7 +80,7 @@ export default function CongratulationsPage() {
                 </p>
 
                 {!isOauthCreated && <p>
-                  <a className="text-blue fw-bold" onClick={resendVerification}>
+                  <a className="text-blue fw-bold cursor-pointer" onClick={resendVerification}>
                     RESEND
                   </a>{" "}
                   Verification link.
@@ -95,5 +97,7 @@ export default function CongratulationsPage() {
         </div>
       </div>
     </Fragment>
-  );
+
+      </div>
+        );
 }

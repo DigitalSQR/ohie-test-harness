@@ -67,11 +67,11 @@ export default function ForgotPassword() {
           </div>
 
           <div className="col-md-6 col-12 col-sm-12">
-            <div className="login-form-bg pt-5">
+            <div className="login-form-bg pt-5 mt-5">
               <div className="text-center">
                 <img src={openhie_logo} />
               </div>
-              <h2 className="my-4 formTitle">Forgot Password</h2>
+              <h3 className="my-4 formTitle">Forgot Password</h3>
               <div className="custom-input mb-3">
                 <label htmlFor="Password" className="form-label">
                   Registered Email
@@ -101,14 +101,6 @@ export default function ForgotPassword() {
               </div>
 
               <div className="buttonWrapper">
-              <button
-                  id="submitButton"
-                  onClick={backToLogin}
-                  className=" mx-2 btn btn-blue back-button"
-                >
-                  <span>Back to Login</span>
-                  <span id="loader"></span>
-                </button>
                 <button
                   disabled={!(formik.isValid && formik.dirty)}
                   id="submitButton"
@@ -118,6 +110,15 @@ export default function ForgotPassword() {
                   <span>Continue</span>
                   <span id="loader"></span>
                 </button>
+              </div>
+              <div className="text-center mt-4">
+                <a
+                    onClick={backToLogin}
+                    className=" mx-2 back-button"
+                  >
+                    <span>Back to Login</span>
+                    <span id="loader"></span>
+                  </a>
               </div>
             </div>
           </div>
