@@ -92,7 +92,7 @@ const AdminUsers = () => {
   };
 
   const handleEdit = (userId) => {
-    navigate(`/admin-users/update-admin-user?userId=${userId}`);
+    navigate(`/user-management/update-admin-user?userId=${userId}`);
   };
 
   const handleToggleChange = (userId) => {
@@ -147,13 +147,13 @@ const AdminUsers = () => {
             <div className="col-auto ml-auto">
               <button
                 onClick={() => {
-                  navigate("/admin-users/add-admin-user");
+                  navigate("/user-management/create-user");
                 }}
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
               >
                 <i className="bi bi-plus"></i>
-                Add Admin User
+                Create User
               </button>
             </div>
           </div>
@@ -162,7 +162,7 @@ const AdminUsers = () => {
             <table className="data-table capitalize-words">
               <thead>
                 <tr>
-                  <th style={{width:"30%"}}>
+                  <th style={{width:"25%"}}>
                     NAME
                     <span
                       className="ps-1"
@@ -182,7 +182,7 @@ const AdminUsers = () => {
                       {renderSortIcon("email")}
                     </span>
                   </th>
-                  <th style={{width:"20%"}}>ROLE</th>
+                  <th style={{width:"25%"}}>ROLE</th>
                   <th style={{width:"15%"}}>STATUS</th>
                   <th style={{width:"15%"}}>ACTIONS</th>
                 </tr>

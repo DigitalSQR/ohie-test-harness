@@ -86,7 +86,7 @@ const UpdateAdminUser = () => {
           placement: "bottomRight",
           description: `User Updated Successfully`,
         });
-        navigate("/admin-users");
+        navigate("/user-management");
       })
       .catch((response) => {
         hideLoader();       
@@ -105,103 +105,101 @@ const UpdateAdminUser = () => {
               onSubmit={handleSubmit}
               enableReinitialize={true}
             >
-              {({ errors, touched}) => (
-                <Form>
-                  <div className="row">
-                    <div className="col-12">
-                      <div className="custom-input mb-3">
-                        <label htmlFor="name" className="form-label">
-                          Name
-                          <span className="text-danger">*</span>
-                        </label>
-                        <Field
-                          type="name"
-                          className={`form-control ${
-                            touched.name && errors.name
-                              ? "is-invalid"
-                              : ""
-                          }`}
-                          id="name"
-                          placeholder="Your Name"
-                          name="name"
-                        />
-                        <div className="error-message">
-                          <ErrorMessage name="name" />
+              {({ errors, touched, isValid, dirty }) => {
+                return (
+                  <Form>
+                    <div className="row">
+                      <div className="col-12">
+                        <div className="custom-input mb-3">
+                          <label htmlFor="name" className="form-label">
+                            Name
+                            <span className="text-danger">*</span>
+                          </label>
+                          <Field
+                            type="name"
+                            className={`form-control ${
+                              touched.name && errors.name ? "is-invalid" : ""
+                            }`}
+                            id="name"
+                            placeholder="Your Name"
+                            name="name"
+                          />
+                          <div className="error-message">
+                            <ErrorMessage name="name" />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="row">
-                    <div className="col-12">
-                      <div className="custom-input mb-3">
-                        <label htmlFor="email" className="form-label">
-                          Email
-                          <span className="text-danger">*</span>
-                        </label>
-                        <Field
-                          type="email"
-                          className={`form-control disable-field ${
-                            touched.email && errors.email
-                              ? "is-invalid"
-                              : ""
-                          }`}
-                          id="email"
-                          placeholder="Your Email"
-                          name="email"
-                          disabled={true}
-                        />
-                        <div className="error-message">
-                          <ErrorMessage name="email" />
+                    <div className="row">
+                      <div className="col-12">
+                        <div className="custom-input mb-3">
+                          <label htmlFor="email" className="form-label">
+                            Email
+                            <span className="text-danger">*</span>
+                          </label>
+                          <Field
+                            type="email"
+                            className={`form-control disable-field ${
+                              touched.email && errors.email ? "is-invalid" : ""
+                            }`}
+                            id="email"
+                            placeholder="Your Email"
+                            name="email"
+                            disabled={true}
+                          />
+                          <div className="error-message">
+                            <ErrorMessage name="email" />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="row">
-                    <div className="col-12">
-                      <div className="custom-input mb-3">
-                        <label htmlFor="role" className="form-label">
-                          Role
-                          <span className="text-danger">*</span>
-                        </label>
-                        <Field
-                          className={`custom-select ${
-                            touched.roleIds && errors.roleIds
-                              ? "is-invalid"
-                              : ""
-                          }`}
-                          name="roleIds"
-                          options={roles}
-                          component={CustomSelect}
-                          placeholder="Select Roles"
-                          isMulti={true}
-                        />
-                        <div className="error-message">
-                          <ErrorMessage name="roleIds" />
+                    <div className="row">
+                      <div className="col-12">
+                        <div className="custom-input mb-3">
+                          <label htmlFor="role" className="form-label">
+                            Role
+                            <span className="text-danger">*</span>
+                          </label>
+                          <Field
+                            className={`custom-select ${
+                              touched.roleIds && errors.roleIds
+                                ? "is-invalid"
+                                : ""
+                            }`}
+                            name="roleIds"
+                            options={roles}
+                            component={CustomSelect}
+                            placeholder="Select Roles"
+                            isMulti={true}
+                          />
+                          <div className="error-message">
+                            <ErrorMessage name="roleIds" />
+                          </div>
                         </div>
-                      </div>                    
+                      </div>
                     </div>
-                  </div>
-                  <div className="my-4 text-end">
-                    <button
-                      className="btn btn-primary btn-white"
-                      onClick={() => {
-                        navigate("/admin-users");
-                      }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      style={{marginLeft:"1rem"}}
-                      className="btn btn-primary btn-blue btn-submit"
-                      type="submit"
-                      disabled={(Object.keys(touched).length == 0)  || Object.keys(errors).length > 0}
-                    >
-                      Update
-                    </button>
-                  </div>
-                </Form>
-              )}
+                    <div className="my-4 text-end">
+                      <button
+                        className="btn btn-primary btn-white"
+                        onClick={() => {
+                          navigate("/user-management");
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        style={{ marginLeft: "1rem" }}
+                        className="btn btn-primary btn-blue btn-submit"
+                        type="submit"
+                        disabled={!isValid || !dirty}
+                      >
+                        Update
+                      </button>
+                    </div>
+                  </Form>
+                );
+              }}
             </Formik>
           </div>
         </div>

@@ -71,14 +71,14 @@ export default function ForgotPassword() {
               <div className="text-center">
                 <img src={openhie_logo} />
               </div>
-              <h2 className="my-4 formTitle">Verify Email</h2>
+              <h2 className="my-4 formTitle">Forgot Password</h2>
               <div className="custom-input mb-3">
                 <label htmlFor="Password" className="form-label">
-                  Registered email
+                  Registered Email
                 </label>
                 <div className="input-group">
                   <span className="input-group-text">
-                    <i className="bi bi-lock"></i>
+                  <i className="bi bi-envelope"></i>
                   </span>
                   <input
                     type="email"
@@ -89,7 +89,7 @@ export default function ForgotPassword() {
                     value={formik.values.enteredEmail}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    placeholder="example@tht.com"
+                    placeholder="Email"
                     aria-label="Email"
                   />
                 </div>

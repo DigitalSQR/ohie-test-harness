@@ -36,7 +36,7 @@ const UpsertModal = ({
       .then((resp) => {
         notification.success({
           placement: "bottomRight",
-          message: "Component Created Successfully",
+          message: "Testcase Created Successfully",
         });
 
         fetchData();

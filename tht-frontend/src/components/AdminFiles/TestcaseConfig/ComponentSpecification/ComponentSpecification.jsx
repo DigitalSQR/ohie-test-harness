@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { EditFilled, EyeOutlined } from "@ant-design/icons";
 import { useLoader } from "../../../loader/LoaderContext";
 import { SpecificationAPI } from "../../../../api/SpecificationAPI";
-import { Switch, Modal } from "antd";
+import { Switch, Modal, Empty } from "antd";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../../reducers/homeReducer";
 import { useParams } from "react-router-dom";
@@ -288,10 +288,8 @@ export default function ComponentSpecification() {
                     </tr>
                   )) ) : (
                   <tr>
-                    <td colSpan={6}>
-                      <p className="text-center">
-                        No Specifications found for the given component
-                      </p>
+                    <td colSpan={5}>
+                      <Empty description="No Record Found." />
                     </td>
                   </tr>
                 )}

@@ -371,7 +371,7 @@ export default function TestCase(props) {
 
 	const renderTooltip = (props) => (
 		<Tooltip id="button-tooltip" {...props}>
-			Accepted file types: PDFs and images only.
+			Accepted file types: PDFs and images only.<br/> Maximum file size: 2MB.
 		</Tooltip>
 	);
 	function getStatusColor(page, type) {

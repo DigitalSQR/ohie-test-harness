@@ -132,7 +132,7 @@ export default function Options(props) {
 							onChange={(e) => handleChange(e)}
 							autoComplete="off"
 						/>
-						<label onClick={(e) => onLabelClick(e, index)} className={currentQuestion.questionType === ManualQuestionTypeConstants.MULTI_SELECT ? "label-before-no-radius" : ""} htmlFor={option.id} >{option.name}</label>
+						<label onClick={(e) => onLabelClick(e, index)} className={currentQuestion.questionType === ManualQuestionTypeConstants.MULTI_SELECT ? "label-before-no-radius cursor-pointer" : "cursor-pointer"} htmlFor={option.id} >{option.name}</label>
 					</div>
 				</div>
 			))}
