@@ -177,7 +177,7 @@ public class TestcaseExecutioner {
             Map<String, IGenericClient> iGenericClientMap = new HashMap<>();
             for (ComponentEntity componentEntity : activeComponents) {
                 TestRequestUrlEntity testRequestUrlEntity = testRequestEntity.getTestRequestUrls().stream().filter(testRequestUrl -> testRequestUrl.getComponent().getId().equals(componentEntity.getId())).findFirst().get();
-                IGenericClient client = getClient(testRequestUrlEntity.getFhirVersion(), testRequestUrlEntity.getBaseUrl(), testRequestUrlEntity.getUsername(), testRequestUrlEntity.getPassword());
+                IGenericClient client = getClient(testRequestUrlEntity.getFhirVersion(), testRequestUrlEntity.getFhirApiBaseUrl(), testRequestUrlEntity.getUsername(), testRequestUrlEntity.getPassword());
                 iGenericClientMap.put(componentEntity.getId(), client);
             }
             TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = new TestcaseResultEntitiesAndIgenericClient(testcaseResultEntities, iGenericClientMap);

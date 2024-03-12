@@ -20,8 +20,7 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.*;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
@@ -260,9 +259,6 @@ public class TestRequestValidator {
         // For :Description
         validateTestRequestEntityDescription(testRequestEntity,
                 errors);
-        //For : ProductName
-        validateTestRequestEntityProductName(testRequestEntity,
-                errors);
         //For: testRequestUrl
         validateTestRequestEntityTestRequestUrl(testRequestEntity,
                 errors);
@@ -402,8 +398,6 @@ public class TestRequestValidator {
         ValidationUtils.validateRequired(testRequestEntity.getName(), "name", errors);
         //check the app assessee required
         ValidationUtils.validateRequired(testRequestEntity.getAssessee(), "assessee", errors);
-        //check the product name required
-        ValidationUtils.validateRequired(testRequestEntity.getProductName(), "product name", errors);
         //check the state required
         ValidationUtils.validateRequired(testRequestEntity.getState(), "state", errors);
 
@@ -418,7 +412,9 @@ public class TestRequestValidator {
            //check for password
            ValidationUtils.validateRequired(entity.getPassword(), "password", errors);
            //check for baseurl
-           ValidationUtils.validateRequired(entity.getBaseUrl(), "baseurl", errors);
+           ValidationUtils.validateRequired(entity.getFhirApiBaseUrl(), "fhirApiBaseUrl", errors);
+           //check for websiteUiBaseurl
+           ValidationUtils.validateRequired(entity.getWebsiteUIBaseUrl(), "websiteUIBaseUrl", errors);
        }
     }
 
@@ -461,15 +457,6 @@ public class TestRequestValidator {
                 errors);
     }
 
-    //Validation For :ProductName
-    private static void validateTestRequestEntityProductName(TestRequestEntity testRequestEntity,
-                                                             List<ValidationResultInfo> errors) {
-        ValidationUtils.validateLength(testRequestEntity.getProductName(),
-                "product name",
-                3,
-                255,
-                errors);
-    }
 
     //Validation For :TestRequestUrl
     private static void validateTestRequestEntityTestRequestUrl(TestRequestEntity testRequestEntity,
@@ -493,8 +480,16 @@ public class TestRequestValidator {
                             errors);
             //check for baseurl
             ValidationUtils
-                    .validateLength(entity.getBaseUrl(),
-                            "baseurl",
+                    .validateLength(entity.getFhirApiBaseUrl(),
+                            "fhirApiBaseUrl",
+                            0,
+                            255,
+                            errors);
+
+            //check for websiteUIBAseUrl
+            ValidationUtils
+                    .validateLength(entity.getWebsiteUIBaseUrl(),
+                            "websiteUiBaseUrl",
                             0,
                             255,
                             errors);
@@ -514,8 +509,11 @@ public class TestRequestValidator {
             testRequestEntity.setDescription(testRequestEntity.getDescription().trim());
         }
         testRequestEntity.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> {
-            if (testRequestUrlEntity.getBaseUrl() != null) {
-                testRequestUrlEntity.setBaseUrl(testRequestUrlEntity.getBaseUrl().trim());
+            if (testRequestUrlEntity.getFhirApiBaseUrl() != null) {
+                testRequestUrlEntity.setFhirApiBaseUrl(testRequestUrlEntity.getFhirApiBaseUrl().trim());
+            }
+            if (testRequestUrlEntity.getWebsiteUIBaseUrl() != null) {
+                testRequestUrlEntity.setWebsiteUIBaseUrl(testRequestUrlEntity.getWebsiteUIBaseUrl().trim());
             }
             if (testRequestUrlEntity.getUsername() != null) {
                 testRequestUrlEntity.setUsername(testRequestUrlEntity.getUsername().trim());
@@ -542,7 +540,7 @@ public class TestRequestValidator {
                                            TestcaseService testcaseService,
                                            TestcaseOptionService testcaseOptionService,
                                            List<ValidationResultInfo> errors,
-                                           ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+                                           ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
         if(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextStateKey)) {
 
             Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();
@@ -563,6 +561,7 @@ public class TestRequestValidator {
                                 testcaseOptionService,
                                 contextInfo);
 
+
                         if (containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
                             errors.add(
                                     new ValidationResultInfo(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
@@ -571,7 +570,16 @@ public class TestRequestValidator {
                         }
                     }
                 }
+                TestRequestValidator.validateBaseFhirUrl(testRequestEntity, errors, contextInfo);
             }
+        }
+    }
+
+    public static void validateBaseFhirUrl(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+        Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
+        for(TestRequestUrlEntity entity : urlEntitySet){
+            //check for baseurl
+            ValidationUtils.validateNotEmpty(entity.getFhirApiBaseUrl(), "fhirApiBaseUrl", errors);
         }
     }
 

@@ -25,8 +25,6 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @JoinColumn(name = "assessee_id")
     private UserEntity assessee;
 
-    @Column(name = "product_name")
-    private String productName;
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "approver_id")
@@ -43,7 +41,6 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
         if(testRequestEntity.getAssessee()!=null){
             this.setAssessee(new UserEntity(testRequestEntity.getAssessee().getId()));
         }
-        this.setProductName(testRequestEntity.getProductName());
         if(testRequestEntity.getApprover()!=null){
             this.setApprover(new UserEntity(testRequestEntity.getApprover().getId()));
         }
@@ -62,14 +59,6 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
 
     public void setAssessee(UserEntity assessee) {
         this.assessee = assessee;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
     }
 
     public UserEntity getApprover() {

@@ -48,10 +48,11 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity,Test
             return testRequestEntity.getTestRequestUrls().stream()
                     .map(testRequestUrl -> {
                         return new TestRequestUrlInfo(testRequestUrl.getComponent().getId(),
-                                testRequestUrl.getBaseUrl(),
+                                testRequestUrl.getFhirApiBaseUrl(),
                                 testRequestUrl.getUsername(),
                                 testRequestUrl.getPassword(),
-                                testRequestUrl.getFhirVersion());
+                                testRequestUrl.getFhirVersion(),
+                                testRequestUrl.getWebsiteUIBaseUrl());
                     })
                     .collect(Collectors.toSet());
     }
@@ -62,9 +63,10 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity,Test
                     .map(testRequestUrl -> {
                         TestRequestUrlEntity testRequestUrlEntity = new TestRequestUrlEntity();
                         testRequestUrlEntity.setTestRequestId(testRequestInfo.getId());
-                        testRequestUrlEntity.setBaseUrl(testRequestUrl.getBaseUrl());
+                        testRequestUrlEntity.setFhirApiBaseUrl(testRequestUrl.getFhirApiBaseUrl());
                         testRequestUrlEntity.setUsername(testRequestUrl.getUsername());
                         testRequestUrlEntity.setPassword(testRequestUrl.getPassword());
+                        testRequestUrlEntity.setWebsiteUIBaseUrl(testRequestUrl.getWebsiteUIBaseUrl());
                         testRequestUrlEntity.setFhirVersion(testRequestUrl.getFhirVersion());
 
                         ComponentEntity componentEntity = new ComponentEntity();
