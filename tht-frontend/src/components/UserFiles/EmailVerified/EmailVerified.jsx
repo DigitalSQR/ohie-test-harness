@@ -44,7 +44,7 @@ export default function EmailVerified() {
               <div className="text-center">
                 <img src={openhie_logo} />
               </div>
-              <div className="custom-scrollbar">
+              <div>
                 <div className="text-center my-4">
                   <img src={congratulations_icon} />
                 </div>
@@ -54,7 +54,10 @@ export default function EmailVerified() {
                     <h6 className="my-4">
                       Dear Assessee! Your Email has been verified.
                     </h6>
-                    <p>Please wait for Admin's Approval before loggin in.</p>
+                    <p className="my-4">
+                      Once your account is approved by our admin within 7 days, you will receive
+                      an email on the registered email
+                    </p>
                   </div>
                 ) : (
                   <div className="my-4">

@@ -88,7 +88,7 @@ const Assessee = () => {
     return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
 
-  const changeState = (userId, state, newState) => {
+  const changeState = (userId, state, newState, index) => {
     showLoader();
     UserAPI.changeState(userId, state)
       .then((res) => {
@@ -97,12 +97,8 @@ const Assessee = () => {
           description: `Request has been ${newState}`,
           placement: "bottom-left",
         });
-        fetchUserByState(
-          sortFieldName,
-          sortDirection[sortFieldName],
-          currentPage,
-          pageSize
-        );
+        availableUsers[index] = res.data;
+        setAvailableUsers(availableUsers);
       })
       .catch((error) => {
         hideLoader();
@@ -237,7 +233,7 @@ const Assessee = () => {
                   </td>
                 </tr>
               ) : null}
-              {availableUsers.map((user) => {
+              {availableUsers.map((user, index) => {
                 const formattedDate = new Date(
                   user.meta.createdAt
                 ).toLocaleDateString("en-GB", {
@@ -272,7 +268,8 @@ const Assessee = () => {
                                 changeState(
                                   user.id,
                                   "user.status.inactive",
-                                  "Inactive"
+                                  "DISABLE",
+                                  index
                                 );
                               }}
                             >
@@ -289,13 +286,14 @@ const Assessee = () => {
                                 changeState(
                                   user.id,
                                   "user.status.active",
-                                  "Approved"
+                                  "APPROVE",
+                                  index
                                 );
                               }}
                             >
                               <span>
                                 <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
-                              APPROVE{" "}
+                                APPROVE{" "}
                               </span>
                             </span>&nbsp;
                             <span
@@ -303,8 +301,9 @@ const Assessee = () => {
                               onClick={() => {
                                 changeState(
                                   user.id,
-                                  "user.status.rejected",
-                                  "Rejected"
+                                  "user.status.inactive",
+                                  "REJECT",
+                                  index
                                 );
                               }}
                             >
@@ -314,14 +313,15 @@ const Assessee = () => {
                           </Fragment>
                         )}
 
-                        {(user.state === "user.status.inactive" || user.state==="user.status.rejected") && (
+                        {user.state === "user.status.inactive" && (
                           <span
                             className="cursor-pointer"
                             onClick={() => {
                               changeState(
                                 user.id,
                                 "user.status.active",
-                                "Active"
+                                "Active",
+                                index
                               );
                             }}
                           >
