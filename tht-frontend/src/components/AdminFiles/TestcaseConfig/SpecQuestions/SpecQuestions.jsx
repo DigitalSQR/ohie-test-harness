@@ -328,15 +328,15 @@ export default function ManualTestCases() {
 
                           </div>
 
-                          <div className="row question-box">
-                            <div className="col-md-9 col-12 p-0 question" style={{position:"relative"}}>
-                              <h2>
+                          <div className="row question-box"  >
+                            <div className="col-md-9 col-12 p-0 question" style={{ display: "flex", flexDirection: "column" }}>
+                              <h2 >
                                 <b>
                                   {question.rank}. {question.question}
                                 </b>
                               </h2>
 
-                              <div className="custom-multiselect field-checkbox">
+                              <div className="custom-multiselect field-checkbox" style={{ flex: 1 }}>
                                 {question.options &&
                                   question.options.map(
                                     (option, optionIndex) => (
@@ -344,11 +344,7 @@ export default function ManualTestCases() {
                                         className="field-box option-item-spec-question"
                                         key={optionIndex}
                                       >
-                                        {option.success ? (
-                                          <i className="bi bi-check-circle-fill me-2 text-success"></i>
-                                        ) : (
-                                          <i className="bi bi-x-circle-fill me-2 text-danger"></i>
-                                        )}
+                                        
                                         <label
                                           className={
                                             question.questionType ===
@@ -356,8 +352,13 @@ export default function ManualTestCases() {
                                               ? "label-before-no-radius"
                                               : ""
                                           }
-                                        >
-                                          {option.name}
+                                        > 
+                                        {option.success ? (
+                                          <i className="bi bi-check-circle-fill me-2 text-success"></i>
+                                        ) : (
+                                          <i className="bi bi-x-circle-fill me-2 text-danger"></i>
+                                        )}
+                                        {option.name}
                                         </label>
                                       </div>
                                     )
@@ -367,7 +368,7 @@ export default function ManualTestCases() {
 
                                   }
                               </div>
-                              <div className="text-end position-absolute bottom-0 end-0">
+                              <div className="text-end" style={{ alignSelf: "flex-end" }}>
                                 <span className="me-2">
                                   <Switch
                                     checked={
