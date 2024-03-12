@@ -182,13 +182,11 @@ export default function ManualTesting() {
     setCurrentComponentIndex(componentIndex);
     let specificationIndex = 0;
     if (totalTestCasesCount !== finishedTestCasesCount) {
-      outerLoop: for (const component of testcaseResults) {
-        for (let i = 0; i < component.childTestcaseResults.length; i++) {
-          const specification = component.childTestcaseResults[i];
-          if (specification.state !== 'testcase.result.status.finished') {
-            specificationIndex = i;
-            break outerLoop;
-          }
+      for (let i = 0; i < testcaseResults[componentIndex].childTestcaseResults.length; i++) {
+        const specification = testcaseResults[componentIndex].childTestcaseResults[i];
+        if (specification.state !== 'testcase.result.status.finished') {
+          specificationIndex = i;
+          break;
         }
       }
     }
@@ -219,15 +217,12 @@ export default function ManualTesting() {
     setCurrentSpecificationIndex(specificationIndex);
     let testcaseIndex = 0;
     if (totalTestCasesCount !== finishedTestCasesCount) {
-      outerLoop: for (const component of testcaseResults) {
-        for (const specification of component.childTestcaseResults) {
-          for (let i = 0; i < specification.childTestcaseResults.length; i++) {
-            const testcase = specification.childTestcaseResults[i];
-            if (testcase.state !== 'testcase.result.status.finished') {
-              testcaseIndex = i;
-              break outerLoop;
-            }
-          }
+      let currentSpecification = testcaseResults[componentIndex].childTestcaseResults[specificationIndex];
+      for (let i = 0; i < currentSpecification.childTestcaseResults.length; i++) {
+        const testcase = currentSpecification.childTestcaseResults[i];
+        if (testcase.state !== 'testcase.result.status.finished') {
+          testcaseIndex = i;
+          break;
         }
       }
     }
@@ -267,15 +262,7 @@ export default function ManualTesting() {
       ].childTestcaseResults.length -
       1
     ) {
-      if (
-        currentSpecificationIndex ===
-        testcaseResults[currentComponentIndex].childTestcaseResults.length -1
-      ){
-        selectNextComponent();
-      }
-      else{
         selectNextSpecification();
-      }
     } else {
       selectTestcase(
         currentTestcaseIndex + 1,
