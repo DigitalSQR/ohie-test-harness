@@ -128,7 +128,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               <li>
                 <a
                   className={
-                    activeMenuItem === "/applications"
+                    ["/applications", "/choose-test","/manual-testing","/automated-testing"].some(item => activeMenuItem.includes(item))
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
