@@ -98,8 +98,8 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   }}
                 >
                   <i
-                    aria-label="User"
-                    title="User"
+                    aria-label="Assessees"
+                    title="Assessees"
                     className="bi bi-person menu-left-icon"
                   ></i>
                   <span> Assessees </span>
@@ -157,8 +157,8 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                     }}
                   >
                     <i
-                      aria-label="Testcase Config"
-                      title="Testcase Config"
+                      aria-label="Testcase Configuration"
+                      title="Testcase Configuration"
                       className="bi bi-gear-fill menu-left-icon"
                     ></i>
                     <span> Testcase Configuration </span>
@@ -178,8 +178,8 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                     }}
                   >
                     <i
-                      aria-label="User"
-                      title="User"
+                      aria-label="User Management"
+                      title="User Management"
                       className="bi bi-person-gear menu-left-icon"
                     ></i>
                     <span> User Management </span>

@@ -198,7 +198,7 @@ const Assessee = () => {
                 {renderSortIcon("createdAt")}
               </span>
                 </th>
-                <th style={{width:"15%"}}>Company
+                <th style={{width:"20%"}}>Company
                 <span
                 className="ps-1"
                 href="# "
@@ -217,7 +217,7 @@ const Assessee = () => {
                     {renderSortIcon("state")}
                   </span>
                 </th>
-                <th style={{width:"20%"}}>
+                <th style={{width:"15%"}}>
                   ACTIONS
                   <span
                     className="ps-1"
