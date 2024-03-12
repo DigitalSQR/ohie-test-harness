@@ -53,7 +53,7 @@ const ApplicationReport = () => {
     const element = document.getElementById("reportprint");
 
     html2pdf(element, {
-      margin: 5,
+      margin: [5, 5, 0, 5],
       filename: `${testRequest?.name}_report.pdf`,
       image: { type: "jpeg", quality: 1.0 },
       html2canvas: { scale: 3, letterRendering: true },
