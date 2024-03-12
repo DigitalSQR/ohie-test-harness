@@ -60,22 +60,18 @@ public class CustomUserDetailService implements UserDetailsService {
                 //If User is not active
                 if (!Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, user.getState())) {
                     if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
-                        userService.resendVerification(user.getEmail(), new ContextInfo());
+                        userService.resendVerification(user.getEmail(), Constant.SUPER_USER_CONTEXT);
                         LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
-                        throw new UsernameNotFoundException("Email verification pending. Verification email has been sent.") {
+                        throw new UsernameNotFoundException("Email verification is pending. A verification email has been dispatched.") {
                         };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, user.getState())) {
                         LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
-                        throw new UsernameNotFoundException("Pending admin approval.") {
-                        };
-                    } else if (Objects.equals(UserServiceConstants.USER_STATUS_REJECTED, user.getState())) {
-                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
-                        throw new UsernameNotFoundException("Admin approval has been rejected.") {
+                        throw new UsernameNotFoundException("Admin approval pending. Confirmation email upon approval or rejection within 7 days.") {
                         };
                     } else {
                         //Only state left is UserServiceConstants.USER_STATUS_INACTIVE.
                         LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
-                        throw new UsernameNotFoundException("User is inactive.") {
+                        throw new UsernameNotFoundException("Account is rejected/disabled. Please contact support for further assistance.") {
                         };
                     }
                 }

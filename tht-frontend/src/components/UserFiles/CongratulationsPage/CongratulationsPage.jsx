@@ -64,27 +64,38 @@ export default function CongratulationsPage() {
                   Thank you for signing up for our OpenHIE Compliance Testing
                   Tool!
                 </h6>
-                <p>
-                  Your request has been received, and we appreciate your
-                  interest in ensuring healthcare systems’ adherence to OpenHIE
-                  standards. {!isOauthCreated && `A verification link has been sent to your
-                  registered email address. Click on the link to verify your
-                  account. We will process the request as soon as the account is
-                  verified.`}
-                </p>
-
-                <p className="my-4">
-                  Once your account is approved by our admin, you will receive
-                  an email on the registered email{" "}
-                  <span className="fw-bold">{params.email}</span>
-                </p>
-
-                {!isOauthCreated && <p>
-                  <a className="text-blue fw-bold cursor-pointer" onClick={resendVerification}>
-                    RESEND
-                  </a>{" "}
-                  Verification link.
-                </p>}
+                {!isOauthCreated && (
+                  <>
+                    <p>
+                      Your request has been received, and we appreciate your
+                      interest in ensuring healthcare systems’ adherence to OpenHIE
+                      standards. A verification link has been sent to your
+                      registered email address <span className="fw-bold">{ params.email } </span> 
+                      . Click on the link to verify your account. 
+                      We will process the request as soon as the account is verified.
+                    </p>
+                    <p>
+                      <a className="text-blue fw-bold cursor-pointer" onClick={resendVerification}>
+                        RESEND
+                      </a>{" "}
+                      Verification link.
+                    </p>
+                  </>
+                )}
+                {!!isOauthCreated && (
+                  <>
+                    <p>
+                      Your request has been received, and we appreciate your
+                      interest in ensuring healthcare systems’ adherence to OpenHIE
+                      standards.
+                    </p>
+                    <p className="my-4">
+                      Once your account is approved by our admin within 7 days, you will receive
+                      an email on the registered email{" "}
+                      <span className="fw-bold">{params.email}</span>
+                    </p>
+                  </>
+                )}
                 <button
                   className="btn btn-primary btn-blue w-100 my-4"
                   onClick={() => navigate("/login")}

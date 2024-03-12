@@ -108,7 +108,7 @@ const TestingRequests = () => {
     return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
 
-  const changeState = (testRequestId, updatedState, proceedAnyways) => {
+  const changeState = (testRequestId, updatedState, index, proceedAnyways) => {
     showLoader();
     TestRequestAPI.validateChangeState(testRequestId, updatedState)
     .then((validationResults) => {
@@ -123,7 +123,7 @@ const TestingRequests = () => {
       }
       if(!!errors.length) {
         hideLoader();
-        errors.forEach((error, index) => {
+        errors.forEach((error, i) => {
           notification.error({
             description: error,
             placement: "bottomRight",
@@ -137,7 +137,7 @@ const TestingRequests = () => {
             <div>
               <p><strong>Please review the following warnings:</strong></p>
               <ul style={{ paddingLeft: 20 }}>
-                {warnings.map((warning, index) => (
+                {warnings.map((warning, i) => (
                   <li key={index}>{warning}</li>
                 ))}
               </ul>
@@ -147,7 +147,7 @@ const TestingRequests = () => {
           cancelText: "Cancel",
           width: 600,
           onOk() {
-            changeState(testRequestId, updatedState, true);
+            changeState(testRequestId, updatedState, index, true);
           },
         }); 
       } else {
@@ -157,7 +157,8 @@ const TestingRequests = () => {
             placement: "bottomRight",
             message: "Status updated successfully!",
           });
-          fetchTestRequests(filterState, sortFieldName, sortDirection, currentPage);
+          testRequests[index] = res;
+          setTestRequests(testRequests);
           hideLoader();
         })
         .catch((err) => {       
@@ -316,7 +317,8 @@ useEffect(()=>{
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
-                                  TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED
+                                  TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED,
+                                  index
                                 );
                               }}
                             >
@@ -328,7 +330,8 @@ useEffect(()=>{
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
-                                  TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED
+                                  TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED,
+                                  index
                                 );
                               }}
                             >

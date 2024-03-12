@@ -21,7 +21,6 @@ public class UserServiceConstants {
     //User status
     public static final String USER_STATUS_VERIFICATION_PENDING = "user.status.verification.pending";
     public static final String USER_STATUS_APPROVAL_PENDING = "user.status.approval.pending";
-    public static final String USER_STATUS_REJECTED = "user.status.rejected";
     public static final String USER_STATUS_ACTIVE = "user.status.active";
     public static final String USER_STATUS_INACTIVE = "user.status.inactive";
     //Role Ids
@@ -40,17 +39,15 @@ public class UserServiceConstants {
         USER_STATUS.add(USER_STATUS_VERIFICATION_PENDING);
         USER_STATUS.add(USER_STATUS_APPROVAL_PENDING);
         USER_STATUS.add(USER_STATUS_ACTIVE);
-        USER_STATUS.add(USER_STATUS_REJECTED);
         USER_STATUS.add(USER_STATUS_INACTIVE);
     }
 
     static {
         USER_STATUS_MAP.put(USER_STATUS_VERIFICATION_PENDING, USER_STATUS_APPROVAL_PENDING);
         USER_STATUS_MAP.put(USER_STATUS_APPROVAL_PENDING, USER_STATUS_ACTIVE);
-        USER_STATUS_MAP.put(USER_STATUS_APPROVAL_PENDING, USER_STATUS_REJECTED);
+        USER_STATUS_MAP.put(USER_STATUS_APPROVAL_PENDING, USER_STATUS_INACTIVE);
         USER_STATUS_MAP.put(USER_STATUS_ACTIVE, USER_STATUS_INACTIVE);
         USER_STATUS_MAP.put(USER_STATUS_INACTIVE, USER_STATUS_ACTIVE);
-        USER_STATUS_MAP.put(USER_STATUS_REJECTED, USER_STATUS_ACTIVE);
 
     }
 }

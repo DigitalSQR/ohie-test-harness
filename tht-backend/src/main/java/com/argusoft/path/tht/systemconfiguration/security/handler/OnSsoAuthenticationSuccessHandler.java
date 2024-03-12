@@ -140,26 +140,21 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                 response.sendRedirect(s);
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, loggedInUser.getState())) {
                 Map<String, Object> responseMap = new HashMap<>();
-                responseMap.put("message", "Pending email verification.");
+                responseMap.put("message", "Email verification is pending. A verification email has been dispatched.");
 
+                userService.resendVerification(oauth2User.<String>getAttribute("email"), Constant.SUPER_USER_CONTEXT);
                 String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
                 response.sendRedirect(s);
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, loggedInUser.getState())) {
                 Map<String, Object> responseMap = new HashMap<>();
-                responseMap.put("message", "Pending admin approval.");
-
-                String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
-                response.sendRedirect(s);
-            } else if (Objects.equals(UserServiceConstants.USER_STATUS_REJECTED, loggedInUser.getState())) {
-                Map<String, Object> responseMap = new HashMap<>();
-                responseMap.put("message", "Admin approval has been rejected.");
+                responseMap.put("message", "Admin approval pending. Confirmation email upon approval or rejection within 7 days.");
 
                 String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
                 response.sendRedirect(s);
             } else {
                 //Only left UserServiceConstants.USER_STATUS_INACTIVE,
                 Map<String, Object> responseMap = new HashMap<>();
-                responseMap.put("message", "User is inactive.");
+                responseMap.put("message", "Account is rejected/disabled. Please contact support for further assistance.");
 
                 String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
                 response.sendRedirect(s);

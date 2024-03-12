@@ -65,7 +65,6 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING), 2)
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_ACTIVE), 3)
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_INACTIVE), 4)
-                .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_REJECTED), 5)
                 .otherwise(6);
         if(order.isAscending()) {
             query.orderBy(criteriaBuilder.asc(stateWiseDefaultOrder));

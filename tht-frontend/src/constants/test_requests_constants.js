@@ -12,7 +12,7 @@ export const TestRequestStateConstants = {
 export const TestRequestStateLabels = [
     // {label: "Draft", value: "test.request.status.draft"},
     {label: "Pending", value: "test.request.status.pending"},
-    {label: "Accepted", value: "test.request.status.accepted"},
+    {label: "Approved", value: "test.request.status.accepted"},
     {label: "Rejected", value: "test.request.status.rejected"},
     {label: "In Progress", value: "test.request.status.inprogress"},
     {label: "Finished", value: "test.request.status.finished"},
@@ -21,7 +21,7 @@ export const TestRequestStateLabels = [
 export const TestRequestStateConstantNames = {
     "test.request.status.draft": "DRAFT",
     "test.request.status.pending": "PENDING",
-    "test.request.status.accepted": "ACCEPTED",
+    "test.request.status.accepted": "Approved",
     "test.request.status.rejected": "REJECTED",
     "test.request.status.inprogress": "IN PROGRESS",
     "test.request.status.finished": "FINISHED",
@@ -38,7 +38,7 @@ export const StateBadgeClasses = {
 };
 
 export const TestRequestActionStateLabels = [
-    {label: "Accepted", value: "test.request.status.accepted"},
+    {label: "Approved", value: "test.request.status.accepted"},
     {label: "In Progress", value: "test.request.status.inprogress"},
     {label: "Finished", value: "test.request.status.finished"},
 ];

@@ -166,7 +166,7 @@ const Applications = () => {
               <thead>
                 <tr>
                   <th style={{width:"12%"}}>
-                    APP NAME{" "}
+                    APPLICATION NAME{" "}
                     <span
                       className="ps-1"
                       href="#"
