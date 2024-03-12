@@ -35,7 +35,14 @@ public class TestRequestUrlInfo {
             example = "1",
             dataType = "String",
             required = true)
-    private String baseUrl;
+    private String fhirApiBaseUrl;
+
+    @ApiModelProperty(notes = "The website/UI url of the testRequestUrl",
+            allowEmptyValue = false,
+            example = "1",
+            dataType = "String",
+            required = true)
+    private String websiteUIBaseUrl;
 
     @ApiModelProperty(notes = "The fhirVersion of the testRequest",
             allowEmptyValue = false,
@@ -47,12 +54,13 @@ public class TestRequestUrlInfo {
     public TestRequestUrlInfo() {
     }
 
-    public TestRequestUrlInfo(String componentId, String baseUrl, String username, String password, String fhirVersion) {
+    public TestRequestUrlInfo(String componentId, String fhirApiBaseUrl, String username, String password, String fhirVersion, String websiteUIBaseUrl) {
         this.componentId = componentId;
         this.username = username;
         this.password = password;
-        this.baseUrl = baseUrl;
+        this.fhirApiBaseUrl = fhirApiBaseUrl;
         this.fhirVersion = fhirVersion;
+        this.websiteUIBaseUrl = websiteUIBaseUrl;
     }
 
     public String getComponentId() {
@@ -79,12 +87,12 @@ public class TestRequestUrlInfo {
         this.password = password;
     }
 
-    public String getBaseUrl() {
-        return baseUrl;
+    public String getFhirApiBaseUrl() {
+        return fhirApiBaseUrl;
     }
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+    public void setFhirApiBaseUrl(String fhirApiBaseUrl) {
+        this.fhirApiBaseUrl = fhirApiBaseUrl;
     }
 
     public String getFhirVersion() {
@@ -93,5 +101,13 @@ public class TestRequestUrlInfo {
 
     public void setFhirVersion(String fhirVersion) {
         this.fhirVersion = fhirVersion;
+    }
+
+    public String getWebsiteUIBaseUrl() {
+        return websiteUIBaseUrl;
+    }
+
+    public void setWebsiteUIBaseUrl(String websiteUIBaseUrl) {
+        this.websiteUIBaseUrl = websiteUIBaseUrl;
     }
 }

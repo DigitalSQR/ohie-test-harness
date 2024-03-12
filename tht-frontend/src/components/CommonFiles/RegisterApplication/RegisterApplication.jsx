@@ -52,14 +52,6 @@ const RegisterApplication = () => {
       errors.name = "Application name must have less than 1000 characters.";
     }
 
-    if (values.productName === "") {
-      errors.productName = "Product Name is required";
-    }else if(values.productName.length < 3){
-      errors.productName = "Product name must be of minimum 3 characters"
-    }else if (values.productName.length > 255) {
-      errors.productName = "Product name must have less than 255 characters.";
-    }
-
     if (values.description === "") {
       errors.description = "Application Description is required";
     }else if (values.description.length > 1000) {
@@ -87,15 +79,25 @@ const RegisterApplication = () => {
           `testRequestUrls[${modifiedComponentId(url.componentId)}].password`
         ] = "Password must have less than 255 characters";
       }
-      if (url.baseUrl === "") {
+      if (url.fhirApiBaseUrl === "") {
         errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].baseUrl`
-        ] = "BaseUrl is required";
+          `testRequestUrls[${modifiedComponentId(url.componentId)}].fhirApiBaseUrl`
+        ] = "fhirApiBaseUrl is required";
       }
-      else if (url.baseUrl.length > 255) {
+      else if (url.fhirApiBaseUrl.length > 255) {
         errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].baseUrl`
-        ] = "BaseUrl must have less than 255 characters";
+          `testRequestUrls[${modifiedComponentId(url.componentId)}].fhirApiBaseUrl`
+        ] = "fhirApiBaseUrl must have less than 255 characters";
+      }
+      if (url.websiteUIBaseUrl === "") {
+        errors[
+          `testRequestUrls[${modifiedComponentId(url.componentId)}].websiteUIBaseUrl`
+        ] = "websiteUIBaseUrl is required";
+      }
+      else if (url.websiteUIBaseUrl.length > 255) {
+        errors[
+          `testRequestUrls[${modifiedComponentId(url.componentId)}].websiteUIBaseUrl`
+        ] = "websiteUIBaseUrl must have less than 255 characters";
       }
     });
 
@@ -111,7 +113,6 @@ const RegisterApplication = () => {
     initialValues: {
       name: "",
       state: TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING,
-      productName: "",
       description: "",
       assesseeId: "",
       testRequestUrls: [],
@@ -119,7 +120,7 @@ const RegisterApplication = () => {
     validate,
     onSubmit: (values) => {
       showLoader();
-      formik.values.assesseeId = userId;
+            formik.values.assesseeId = userId;
       TestRequestAPI.validateTestRequest(CREATE_VALIDATION, values).then(
         (res) => {
           if (res.length == 0) {
@@ -159,7 +160,8 @@ const RegisterApplication = () => {
         [key]: {
           username: false,
           password: false,
-          baseUrl: false,
+          fhirApiBaseUrl: false,
+          websiteUIBaseUrl: false
         },
       });
 
@@ -168,7 +170,8 @@ const RegisterApplication = () => {
         {
           username: "",
           password: "",
-          baseUrl: "",
+          fhirApiBaseUrl: "",
+          websiteUIBaseUrl: "",
           componentId: component.id,
         },
       ]);
@@ -209,7 +212,7 @@ const RegisterApplication = () => {
             <span className="heading-line-up">Test Request Details</span>
 
             <div className="row">
-              <div className="col-sm-6 col-12">
+              <div className="col-12">
                 <div className="custom-input mb-3">
                   <label htmlFor="name" className="form-label">
                     Application Name<span style={{ color: "red" }}>*</span>
@@ -234,32 +237,6 @@ const RegisterApplication = () => {
                   <div className="error-message">{formik.errors.name}</div>
                 )}
                 </div>             
-              </div>
-              <div className="col-sm-6 col-12">
-                <div className="custom-input mb-3">
-                  <label htmlFor="productName" className="form-label">
-                    Product Name<span style={{ color: "red" }}>*</span>
-                  </label>
-                  <input
-                    id="productName"
-                    name="productName"
-                    type="text"
-                    className={`form-control ${
-                      formik.touched.productName && formik.errors.productName
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    placeholder="Product Name"
-                    value={formik.values.productName}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    autoComplete="off"
-                    required
-                  />
-                  {formik.touched.productName && formik.errors.productName && (
-                    <div className="error-message">{formik.errors.productName}</div>
-                  )}
-                </div>   
               </div>
             </div>
             <div className="row">
@@ -481,29 +458,29 @@ const RegisterApplication = () => {
                               <div className="col-12">
                                 <div className="custom-input">
                                   <label
-                                    htmlFor="baseUrl"
+                                    htmlFor="fhirApiBaseUrl"
                                     className="form-label"
                                   >
-                                    Base Url:{" "}
+                                    Fhir Api Base Url:{" "}
                                     <span style={{ color: "red" }}>*</span>
                                     {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
                                   </label>
                                   <input
                                     id={
-                                      "testRequestUrls[" + index + "].baseUrl"
+                                      "testRequestUrls[" + index + "].fhirApiBaseUrl"
                                     }
                                     name={
-                                      "testRequestUrls[" + index + "].baseUrl"
+                                      "testRequestUrls[" + index + "].fhirApiBaseUrl"
                                     }
                                     type="text"
                                     className={`form-control ${
                                       touched?.[
                                         modifiedComponentId(url.componentId)
-                                      ]?.baseUrl &&
+                                      ]?.fhirApiBaseUrl &&
                                       formik.errors[
                                         "testRequestUrls[" +
                                           modifiedComponentId(url.componentId) +
-                                          "].baseUrl"
+                                          "].fhirApiBaseUrl"
                                       ]
                                         ? "is-invalid"
                                         : ""
@@ -511,21 +488,21 @@ const RegisterApplication = () => {
                                     placeholder="../base-url/"
                                     value={
                                       formik.values.testRequestUrls[index]
-                                        .baseUrl
+                                        .fhirApiBaseUrl 
                                     }
                                     onChange={formik.handleChange}
                                     onBlur={() =>
-                                      handleBlur("baseUrl", url.componentId)
+                                      handleBlur("fhirApiBaseUrl", url.componentId)
                                     }
                                     autoComplete="off"
                                   />
                                 </div>
                                 {touched?.[modifiedComponentId(url.componentId)]
-                                  ?.baseUrl &&
+                                  ?.fhirApiBaseUrl &&
                                   formik.errors[
                                     "testRequestUrls[" +
                                       modifiedComponentId(url.componentId) +
-                                      "].baseUrl"
+                                      "].fhirApiBaseUrl"
                                   ] && (
                                     <div className="error-message">
                                       {
@@ -534,7 +511,69 @@ const RegisterApplication = () => {
                                             modifiedComponentId(
                                               url.componentId
                                             ) +
-                                            "].baseUrl"
+                                            "].fhirApiBaseUrl"
+                                        ]
+                                      }
+                                    </div>
+                                  )}
+                              </div>
+                              <div className="col-12 mt-3">
+                                <div className="custom-input">
+                                  <label
+                                    htmlFor="fhirApiBaseUrl"
+                                    className="form-label"
+                                  >
+                                    Website/UI Url:{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                    {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
+                                  </label>
+                                  <input
+                                    id={
+                                      "testRequestUrls[" + index + "].websiteUIBaseUrl"
+                                    }
+                                    name={
+                                      "testRequestUrls[" + index + "].websiteUIBaseUrl"
+                                    }
+                                    type="text"
+                                    className={`form-control ${
+                                      touched?.[
+                                        modifiedComponentId(url.componentId)
+                                      ]?.websiteUIBaseUrl &&
+                                      formik.errors[
+                                        "testRequestUrls[" +
+                                          modifiedComponentId(url.componentId) +
+                                          "].websiteUIBaseUrl"
+                                      ]
+                                        ? "is-invalid"
+                                        : ""
+                                    }`}
+                                    placeholder="../website-ui-base-url/"
+                                    value={
+                                      formik.values.testRequestUrls[index]
+                                        .websiteUIBaseUrl 
+                                    }
+                                    onChange={formik.handleChange}
+                                    onBlur={() =>
+                                      handleBlur("websiteUIBaseUrl", url.componentId)
+                                    }
+                                    autoComplete="off"
+                                  />
+                                </div>
+                                {touched?.[modifiedComponentId(url.componentId)]
+                                  ?.fhirApiBaseUrl &&
+                                  formik.errors[
+                                    "testRequestUrls[" +
+                                      modifiedComponentId(url.componentId) +
+                                      "].websiteUIBaseUrl"
+                                  ] && (
+                                    <div className="error-message">
+                                      {
+                                        formik.errors[
+                                          "testRequestUrls[" +
+                                            modifiedComponentId(
+                                              url.componentId
+                                            ) +
+                                            "].websiteUIBaseUrl"
                                         ]
                                       }
                                     </div>

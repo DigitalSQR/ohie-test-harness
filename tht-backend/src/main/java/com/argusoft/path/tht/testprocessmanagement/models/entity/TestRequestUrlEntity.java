@@ -25,8 +25,8 @@ public class TestRequestUrlEntity {
     @JoinColumn(name = "component_id")
     private ComponentEntity component;
 
-    @Column(name = "base_url")
-    private String baseUrl;
+    @Column(name = "fhir_api_base_url")
+    private String fhirApiBaseUrl;
 
     @Column(name = "username")
     private String username;
@@ -37,6 +37,9 @@ public class TestRequestUrlEntity {
     @Column(name = "fhir_version")
     private String fhirVersion;
 
+    @Column(name = "website_ui_base_url")
+    private String websiteUIBaseUrl;
+
     public TestRequestUrlEntity() {
 
     }
@@ -46,10 +49,11 @@ public class TestRequestUrlEntity {
         if(testRequestUrlEntity.getComponent()!=null){
             this.setComponent(new ComponentEntity(testRequestUrlEntity.getComponent().getId()));
         }
-        this.setBaseUrl(testRequestUrlEntity.getBaseUrl());
+        this.setFhirApiBaseUrl(testRequestUrlEntity.getFhirApiBaseUrl());
         this.setUsername(testRequestUrlEntity.getUsername());
         this.setPassword(testRequestUrlEntity.getPassword());
         this.setFhirVersion(testRequestUrlEntity.getFhirVersion());
+        this.setWebsiteUIBaseUrl(testRequestUrlEntity.getWebsiteUIBaseUrl());
     }
 
     public String getTestRequestId() {
@@ -68,12 +72,12 @@ public class TestRequestUrlEntity {
         this.component = component;
     }
 
-    public String getBaseUrl() {
-        return baseUrl;
+    public String getFhirApiBaseUrl() {
+        return fhirApiBaseUrl;
     }
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+    public void setFhirApiBaseUrl(String fhirApiBaseUrl) {
+        this.fhirApiBaseUrl = fhirApiBaseUrl;
     }
 
     public String getUsername() {
@@ -100,4 +104,11 @@ public class TestRequestUrlEntity {
         this.fhirVersion = fhirVersion;
     }
 
+    public String getWebsiteUIBaseUrl() {
+        return websiteUIBaseUrl;
+    }
+
+    public void setWebsiteUIBaseUrl(String websiteUIBaseUrl) {
+        this.websiteUIBaseUrl = websiteUIBaseUrl;
+    }
 }

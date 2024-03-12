@@ -36,7 +36,7 @@ const TestingRequests = () => {
 
   const navigate = useNavigate();
   const [sortDirection, setSortDirection] = useState({
-    productName: "desc",
+    name: "desc",
     createdAt: "desc",
     default: "acs",
   });
@@ -45,7 +45,7 @@ const TestingRequests = () => {
     setCurrentPage(newPage);
     fetchTestRequests(filterState, sortFieldName, sortDirection, newPage);
   };
-  const fetchTestRequests = (
+    const fetchTestRequests = (
     filterState,
     sortFieldName,
     sortDirection,
@@ -62,7 +62,7 @@ const TestingRequests = () => {
       .then((res) => {
         hideLoader();
         setTestRequests(res.content);
-        setTotalPages(res.totalPages);
+                setTotalPages(res.totalPages);
       })
       .catch((err) => { 
         hideLoader();
@@ -181,6 +181,11 @@ const TestingRequests = () => {
       });
     });
   };
+
+useEffect(()=>{
+  console.log(testRequests);
+})
+
   return (
     <div id="testingRequest">
       <div id="wrapper">
@@ -236,13 +241,13 @@ const TestingRequests = () => {
               <thead>
                 <tr>
                   <th className="app-name-columnapp-name-column">
-                  PRODUCT NAME
+                  APPLICATION NAME
                     <span
                       className="ps-1"
                       href="#"
-                      onClick={() => handleSort("productName")}
+                      onClick={() => handleSort("name")}
                     >
-                      {renderSortIcon("productName")}
+                      {renderSortIcon("name")}
                     </span>
                   </th>
                   <th className="date-column">
@@ -288,7 +293,7 @@ const TestingRequests = () => {
                 {testRequests.map((testRequest,index) => (
                   <>
                     <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
-                      <td>{testRequest.productName}</td>
+                      <td>{testRequest.name}</td>
                       <td>{formatDate(testRequest.meta.updatedAt)}</td>
                       <td>
                         <UserIdConnector
@@ -367,10 +372,11 @@ const TestingRequests = () => {
                             <table className="data-table capitialize-words">
                               <thead>
                                 <tr>
-                                  <th style={{width:'24%'}}>Component</th>
-                                  <th style={{width:'24%'}}>Base Url</th>
-                                  <th style={{width:'24%'}}>Username</th>
-                                  <th style={{width:'24%'}}>Password</th>
+                                  <th style={{width:'20%'}}>Component</th>
+                                  <th style={{width:'20%'}}>Fhir Api Base Url</th>
+                                  <th style={{width:'20%'}}>Website/UI Base Url</th>
+                                  <th style={{width:'20%'}}>Username</th>
+                                  <th style={{width:'20%'}}>Password</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -383,7 +389,8 @@ const TestingRequests = () => {
                                             componentId={testUrls.componentId}
                                           ></ComponentIdConnector>
                                         </td>
-                                        <td className = "toLowerCase-words">{testUrls.baseUrl}</td>
+                                        <td className = "toLowerCase-words">{testUrls.fhirApiBaseUrl }</td>
+                                        <td className = "toLowerCase-words">{testUrls.websiteUIBaseUrl}</td>
                                         <td className = "toLowerCase-words">{testUrls.username}</td>
                                         <td className = "toLowerCase-words" key={testRequest.id}>
                                           {testUrls.showPass

@@ -21,13 +21,6 @@ public class TestRequestInfo extends IdStateNameMetaInfo {
             required = true)
     private String assesseeId;
 
-    @ApiModelProperty(notes = "The productName of the testRequest",
-            allowEmptyValue = false,
-            example = "1",
-            dataType = "String",
-            required = true)
-    private String productName;
-
     @ApiModelProperty(notes = "The approverId of the testRequest",
             allowEmptyValue = false,
             example = "1",
@@ -59,14 +52,6 @@ public class TestRequestInfo extends IdStateNameMetaInfo {
 
     public void setAssesseeId(String assesseeId) {
         this.assesseeId = assesseeId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
     }
 
     public String getApproverId() {
