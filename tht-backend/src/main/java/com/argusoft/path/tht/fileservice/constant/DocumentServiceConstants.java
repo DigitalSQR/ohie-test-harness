@@ -16,12 +16,10 @@ public class DocumentServiceConstants {
     public static final String DOCUMENT_STATUS_INACTIVE = "document.status.inactive";
     public static final Multimap<String, String> DOCUMENT_STATUS_MAP = ArrayListMultimap.create();
 
-
     // Allowed Active Types
     public static final String ALLOWED_ACTIVE_SINGLE_RECORD = "document.allowed.active.single.record";
 
     public static final String ALLOWED_ACTIVE_MULTI_RECORD = "document.allowed.active.multi.record";
-
 
     public static List<String> DOCUMENT_STATUS = new ArrayList<>();
 

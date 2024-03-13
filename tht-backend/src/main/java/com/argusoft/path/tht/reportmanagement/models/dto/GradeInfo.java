@@ -8,7 +8,6 @@ public class GradeInfo extends IdMetaInfo {
 
     private String grade;
 
-
     public Integer getPercentage() {
         return percentage;
     }

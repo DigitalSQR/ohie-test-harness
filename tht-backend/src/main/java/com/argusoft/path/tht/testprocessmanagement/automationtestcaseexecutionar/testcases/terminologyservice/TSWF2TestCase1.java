@@ -18,13 +18,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class TSWF2TestCase1  implements TestCase {
+public class TSWF2TestCase1 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TSWF2TestCase1.class);
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing TSWF1TestCase1");
 
@@ -45,7 +45,6 @@ public class TSWF2TestCase1  implements TestCase {
                     .returnBundle(Bundle.class)
                     .execute();
 
-
             // checking if any element present in codeSystemList and deleting it
             if (codeSystemList.hasEntry()) {
                 for (Bundle.BundleEntryComponent entry : codeSystemList.getEntry()) {
@@ -61,12 +60,10 @@ public class TSWF2TestCase1  implements TestCase {
                     .resource(codeSystem)
                     .execute();
 
-
             // check if codeSystem got created
             if (!outcome.getCreated()) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
-
 
             // search if valueSet already present
             String valueSetUrl = "http://example.com/ValueSet/example-valueset";
@@ -75,7 +72,6 @@ public class TSWF2TestCase1  implements TestCase {
                     .where(ValueSet.URL.matches().value(valueSetUrl))
                     .returnBundle(Bundle.class)
                     .execute();
-
 
             // checking if any element present in codeSystemList and deleting it
             if (valueSetList.hasEntry()) {
@@ -96,9 +92,9 @@ public class TSWF2TestCase1  implements TestCase {
                     .resource(valueSet)
                     .execute();
 
-            if (!outcome1.getCreated())
+            if (!outcome1.getCreated()) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
-
+            }
 
             // Validate against ValueSet
             Parameters validationParameters = new Parameters()
@@ -112,7 +108,6 @@ public class TSWF2TestCase1  implements TestCase {
                     .named("$validate-code")
                     .withParameters(validationParameters)
                     .execute();
-
 
             if (!validationResults.getParameterBool("result")) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to perform validate-code operation");

@@ -18,7 +18,7 @@ import java.util.List;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface TestcaseOptionMapper extends ModelDtoMapper<TestcaseOptionEntity,TestcaseOptionInfo> {
+public interface TestcaseOptionMapper extends ModelDtoMapper<TestcaseOptionEntity, TestcaseOptionInfo> {
 
     TestcaseOptionMapper INSTANCE = Mappers.getMapper(TestcaseOptionMapper.class);
 
@@ -33,7 +33,9 @@ public interface TestcaseOptionMapper extends ModelDtoMapper<TestcaseOptionEntit
     List<TestcaseOptionEntity> dtoToModel(List<TestcaseOptionInfo> testcaseOptionInfos);
 
     default String setToTestcaseId(TestcaseEntity testcaseEntity) {
-        if (testcaseEntity == null) return null;
+        if (testcaseEntity == null) {
+            return null;
+        }
         return testcaseEntity.getId();
     }
 

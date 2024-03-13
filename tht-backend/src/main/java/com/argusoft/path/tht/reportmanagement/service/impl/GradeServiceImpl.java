@@ -30,7 +30,6 @@ public class GradeServiceImpl implements GradeService {
     @Autowired
     private GradeRepository gradeRepository;
 
-
     @Override
     public List<GradeEntity> getAllGrades(ContextInfo contextInfo) {
         List<GradeEntity> grades = gradeRepository.findAll();

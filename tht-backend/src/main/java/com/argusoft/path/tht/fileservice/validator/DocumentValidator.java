@@ -36,8 +36,8 @@ public class DocumentValidator {
     }
 
     public static void validateDocumentEntity(String validationTypeKey,
-                                              DocumentEntity documentEntity,
-                                              ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+            DocumentEntity documentEntity,
+            ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         validateRequired(documentEntity, errors);
@@ -107,6 +107,5 @@ public class DocumentValidator {
                     fieldName + " is invalid for the given refObjUri"));
         }
     }
-
 
 }

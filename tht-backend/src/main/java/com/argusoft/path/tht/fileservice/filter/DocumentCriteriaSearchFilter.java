@@ -44,7 +44,6 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     )
     private String ownerId;
 
-
     @ApiParam(
             value = "fileId of the document"
     )
@@ -63,7 +62,6 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     private Root<DocumentEntity> documentEntityRoot;
 
     private Join<DocumentEntity, UserEntity> documentEntityUserEntityJoin;
-
 
     public DocumentCriteriaSearchFilter() {
     }
@@ -88,7 +86,7 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getDocumentEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getDocumentEntityRoot().get("name")), getNameBasedOnSearchType(getName())));
 
         }
 
@@ -119,7 +117,7 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     protected List<Predicate> buildAuthorizationPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (contextInfo.isAssessee() && contextInfo.getModule() != Module.DOCUMENT ) {
+        if (contextInfo.isAssessee() && contextInfo.getModule() != Module.DOCUMENT) {
             predicates.add(criteriaBuilder.equal(this.getDocumentEntityUserEntityJoin().get("id"), contextInfo.getUsername()));
         } else {
             if (getOwnerId() != null) {
@@ -198,7 +196,11 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
         return id;
     }
 
-    public String getDocumentType() { return documentType; }
+    public String getDocumentType() {
+        return documentType;
+    }
 
-    public void setDocumentType(String documentType) { this.documentType = documentType; }
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
 }

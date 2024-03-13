@@ -6,7 +6,6 @@ import org.hibernate.envers.Audited;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +36,8 @@ public class UserEntity extends IdStateMetaEntity {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles;
-    public UserEntity(){
+
+    public UserEntity() {
 
     }
 
@@ -51,7 +51,7 @@ public class UserEntity extends IdStateMetaEntity {
         this.setName(userEntity.getName());
         this.setPassword(userEntity.getPassword());
         this.setCompanyName(userEntity.getCompanyName());
-        if(userEntity.getRoles()!=null){
+        if (userEntity.getRoles() != null) {
             this.setRoles(userEntity.getRoles().stream().map(RoleEntity::new).collect(Collectors.toSet()));
         }
 
@@ -79,12 +79,12 @@ public class UserEntity extends IdStateMetaEntity {
 
     @Override
     public String toString() {
-        return "UserEntity{" +
-                "email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", roles=" + roles +
-                '}';
+        return "UserEntity{"
+                + "email='" + email + '\''
+                + ", name='" + name + '\''
+                + ", password='" + password + '\''
+                + ", roles=" + roles
+                + '}';
     }
 
     public void setName(String name) {

@@ -5,9 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 public class CommonUtil {
+
     public static Pageable getPageable(Pageable pageable) {
         Sort.Order order = pageable.getSort().getOrderFor("default");
-        if(order == null) { return pageable; }
+        if (order == null) {
+            return pageable;
+        }
         return PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),

@@ -16,28 +16,30 @@ import java.util.Optional;
 public interface TestcaseResultAttributesService {
 
     /**
-     * Change test case result attributes if already exist if not then it will create new attributes
+     * Change test case result attributes if already exist if not then it will
+     * create new attributes
      *
      * @param testcaseResultEntity Attribute related to testcase result
-     * @param Key                  Attribute key
-     * @param Value                Attribute value
-     * @param contextInfo          information containing the principalId and locale
-     *                             information about the caller of service operation
+     * @param Key Attribute key
+     * @param Value Attribute value
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return testcase result attribute
      * @throws InvalidParameterException invalid contextInfo
      */
-    public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity,String Key, String Value,
-                                                                                  ContextInfo contextInfo)
+    public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String Key, String Value,
+            ContextInfo contextInfo)
             throws
             InvalidParameterException;
 
     /**
      * Retrieve test case result attribute
      *
-     * @param testcaseResultEntity test case result whose attribute should be retrieved
-     * @param key                  key to get value
-     * @param contextInfo          information containing the principalId and locale
-     *                             information about the caller of service operation
+     * @param testcaseResultEntity test case result whose attribute should be
+     * retrieved
+     * @param key key to get value
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return test case result attribute
      * @throws InvalidParameterException
      */
@@ -47,12 +49,13 @@ public interface TestcaseResultAttributesService {
     /**
      * Delete test case result attribute after test request is finished
      *
-     * @param testcaseResultEntity test case result whose attributes should be deleted
-     * @param contextInfo          information containing the principalId and locale
-     *                             information about the caller of service operation
+     * @param testcaseResultEntity test case result whose attributes should be
+     * deleted
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @throws DoesNotExistException testcase result not found
      */
     public void deleteTestcaseResultAttributesEntities(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo)
-        throws DoesNotExistException;
+            throws DoesNotExistException;
 
 }

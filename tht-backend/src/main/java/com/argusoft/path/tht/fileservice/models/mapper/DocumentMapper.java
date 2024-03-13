@@ -17,7 +17,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface DocumentMapper extends ModelDtoMapper<DocumentEntity, DocumentInfo> {
 
-
     DocumentMapper INSTANCE = Mappers.getMapper(DocumentMapper.class);
 
     @Mapping(source = "owner", target = "ownerId")
@@ -37,7 +36,9 @@ public interface DocumentMapper extends ModelDtoMapper<DocumentEntity, DocumentI
     }
 
     default String setToOwnerId(UserEntity owner) {
-        if (owner == null) return null;
+        if (owner == null) {
+            return null;
+        }
         return owner.getId();
     }
 

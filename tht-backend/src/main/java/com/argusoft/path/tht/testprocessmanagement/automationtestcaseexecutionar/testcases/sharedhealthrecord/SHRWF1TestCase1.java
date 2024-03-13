@@ -23,12 +23,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class SHRWF1TestCase1 implements TestCase{
+public class SHRWF1TestCase1 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF1TestCase1.class);
 
     @Override
-    public ValidationResultInfo test(Map<String,IGenericClient> iGenericClientMap, ContextInfo contextInfo){
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
 
         String testCaseName = this.getClass().getSimpleName();
         Bundle bundle = new Bundle();
@@ -46,25 +46,25 @@ public class SHRWF1TestCase1 implements TestCase{
         MethodOutcome outcome = client.create().resource(patient).execute();
 
         //Checking if patient is created
-        if(!(outcome.getCreated())){
+        if (!(outcome.getCreated())) {
             LOGGER.error("Patient Creation Failed");
-            return new ValidationResultInfo(ErrorLevel.ERROR,"Patient creation failed");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Patient creation failed");
         }
 
         String patientID = outcome.getResource().getIdElement().getIdPart();
 
         //Creating Practitioners
-        Practitioner practitioner1 = FHIRUtils.createPractitioner("Jane Doe", "female","1970-02-02","MIHERD-645","666-666-6666");
+        Practitioner practitioner1 = FHIRUtils.createPractitioner("Jane Doe", "female", "1970-02-02", "MIHERD-645", "666-666-6666");
 
-        Practitioner practitioner2 = FHIRUtils.createPractitioner("Mary Doe", "female","1980-03-03","MIHERD-646","777-777-7777");
+        Practitioner practitioner2 = FHIRUtils.createPractitioner("Mary Doe", "female", "1980-03-03", "MIHERD-646", "777-777-7777");
 
         LOGGER.info("Creating Practitioner 1");
         outcome = client.create().resource(practitioner1).execute();
 
         //Checking if practitioner is created
-        if(!(outcome.getCreated())){
+        if (!(outcome.getCreated())) {
             LOGGER.error("Practitioner 1 Creation Failed");
-            return new ValidationResultInfo(ErrorLevel.ERROR,"Practitioner 1 creation failed");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Practitioner 1 creation failed");
         }
 
         String practitionerID = outcome.getResource().getIdElement().getIdPart();
@@ -76,26 +76,24 @@ public class SHRWF1TestCase1 implements TestCase{
         outcome = client.create().resource(practitioner2).execute();
 
         //Checking if practitioner is created
-        if(!(outcome.getCreated())){
+        if (!(outcome.getCreated())) {
             LOGGER.error("Practitioner 2 Creation Failed");
-            return new ValidationResultInfo(ErrorLevel.ERROR,"Practitioner 2 creation failed");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Practitioner 2 creation failed");
         }
 
         practitionerID = outcome.getResource().getIdElement().getIdPart();
 
         participantIDs.add(practitionerID);
 
-
         //Create encounter
         LOGGER.info("Creating Encounter");
-        Encounter encounter = FHIRUtils.createEncounter(patientID,participantIDs,"inpatient","2019-04-04");
+        Encounter encounter = FHIRUtils.createEncounter(patientID, participantIDs, "inpatient", "2019-04-04");
 
         outcome = client.create().resource(encounter).execute();
 
-
         //Check if encounter is created
-        if(!(outcome.getCreated())){
-            return new ValidationResultInfo(ErrorLevel.ERROR,"Encounter creation failed");
+        if (!(outcome.getCreated())) {
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Encounter creation failed");
         }
 
         String encounterID = outcome.getResource().getIdElement().getIdPart();
@@ -104,9 +102,8 @@ public class SHRWF1TestCase1 implements TestCase{
         LOGGER.info("Fetching Encounter");
         Encounter fetchEncounter = client.read().resource(Encounter.class).withId(encounterID).execute();
 
-        String fetchedPatientID="";
-        String fetchedPractitionerID="";
-
+        String fetchedPatientID = "";
+        String fetchedPractitionerID = "";
 
         //Make a pattern for extracting the patient ID from the references
         LOGGER.info("Extracting patient and practitioner(s) IDs from encounter references");
@@ -116,7 +113,6 @@ public class SHRWF1TestCase1 implements TestCase{
 
         Matcher matcher = pattern.matcher(input);
 
-
         // Check if a match is found
         if (matcher.find()) {
             //Store the patient ID
@@ -124,19 +120,18 @@ public class SHRWF1TestCase1 implements TestCase{
 
         } else {
             LOGGER.error("Patient ID not found");
-            return new ValidationResultInfo(ErrorLevel.ERROR,"Could not find patientID");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Could not find patientID");
         }
 
         //Check if Patient ID matches
-        if(!(fetchedPatientID.equals(patientID))){
+        if (!(fetchedPatientID.equals(patientID))) {
             LOGGER.error("Patient ID does not match");
-            return new ValidationResultInfo(ErrorLevel.ERROR,"Patient ID does not match");
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Patient ID does not match");
         }
-
 
         //Loop through the participants of the encounter
         LOGGER.info("Looping through the participants");
-        for(Encounter.EncounterParticipantComponent participant: fetchEncounter.getParticipant()){
+        for (Encounter.EncounterParticipantComponent participant : fetchEncounter.getParticipant()) {
 
             //Make a pattern for extracting the practitioner ID from the references
             input = participant.getIndividual().getReference();
@@ -150,25 +145,25 @@ public class SHRWF1TestCase1 implements TestCase{
 
             } else {
                 LOGGER.error("Practitioner ID not found");
-                return new ValidationResultInfo(ErrorLevel.ERROR,"Could not find practitionerID");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Could not find practitionerID");
             }
-            boolean participantIDsMatch=false;
+            boolean participantIDsMatch = false;
 
-            for(String participantID: participantIDs){
-                if(fetchedPractitionerID.equals(participantID)){
-                    participantIDsMatch=true;
+            for (String participantID : participantIDs) {
+                if (fetchedPractitionerID.equals(participantID)) {
+                    participantIDsMatch = true;
                     break;
                 }
             }
 
             //Check if Practitioner ID matches
-            if(!participantIDsMatch){
+            if (!participantIDsMatch) {
                 LOGGER.error("Practitioner ID does not match");
-                return new ValidationResultInfo(ErrorLevel.ERROR,"Patient ID does not match");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Patient ID does not match");
             }
         }
 
-        return new ValidationResultInfo(ErrorLevel.OK,"Passed");
+        return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
     }
 }

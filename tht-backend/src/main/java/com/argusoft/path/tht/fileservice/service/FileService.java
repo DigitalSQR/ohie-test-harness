@@ -32,7 +32,7 @@ public class FileService {
     static String RESOURCE_FOLDER;
 
     public static FileDetails storeFile(MultipartFile multipartFile,
-                                        MultipartFileTypeTesterPredicate multipartFilePredicateToValidateFile)
+            MultipartFileTypeTesterPredicate multipartFilePredicateToValidateFile)
             throws IOException, InvalidFileTypeException {
 
         // Validate file type
@@ -93,7 +93,7 @@ public class FileService {
 
     public static boolean validateFileType(MultipartFile file, Set<FileType> validateAgainstTypes) throws InvalidFileTypeException, InvalidParameterException, OperationFailedException {
         if (validateAgainstTypes == null || validateAgainstTypes.isEmpty()) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ FileService.class.getSimpleName());
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + FileService.class.getSimpleName());
             throw new InvalidParameterException("ValidationAgainstTypes should not be null or empty to validate file type ");
         }
 
@@ -116,7 +116,7 @@ public class FileService {
         try {
             return validateFileType(file, allowedTypes);
         } catch (InvalidParameterException e) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION+ FileService.class.getSimpleName(), e);
+            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + FileService.class.getSimpleName(), e);
             throw new OperationFailedException("File validation failed due to InvalidParameterException : " + e.getMessage(), e);
         }
     }
@@ -126,7 +126,4 @@ public class FileService {
         RESOURCE_FOLDER = value;
     }
 
-
 }
-
-

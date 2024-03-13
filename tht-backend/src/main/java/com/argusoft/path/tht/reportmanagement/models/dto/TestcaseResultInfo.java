@@ -6,7 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Set;
 
 /**
- * This info is for TestcaseResult DTO that contains all the TestcaseResult model's data.
+ * This info is for TestcaseResult DTO that contains all the TestcaseResult
+ * model's data.
  *
  * @author Dhruv
  */
@@ -138,7 +139,6 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
             required = false)
     private String grade;
 
-
     public Set<TestcaseResultAttributesInfo> getTestcaseResultAttributesEntities() {
         return testcaseResultAttributesEntities;
     }
@@ -148,7 +148,6 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
     }
 
     private Set<TestcaseResultAttributesInfo> testcaseResultAttributesEntities;
-
 
     public String getParentTestcaseResultId() {
         return parentTestcaseResultId;
@@ -296,26 +295,26 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
 
     @Override
     public String toString() {
-        return "TestcaseResultInfo{" +
-                "rank=" + rank +
-                ", testerId='" + testerId + '\'' +
-                ", refObjUri='" + refObjUri + '\'' +
-                ", refId='" + refId + '\'' +
-                ", message='" + message + '\'' +
-                ", testRequestId='" + testRequestId + '\'' +
-                ", hasSystemError=" + hasSystemError +
-                ", isRequired=" + isRequired +
-                ", isRecommended=" + isRecommended +
-                ", isManual=" + isManual +
-                ", isAutomated=" + isAutomated +
-                ", isSuccess=" + isSuccess +
-                ", testcaseOptionId='" + testcaseOptionId + '\'' +
-                ", parentTestcaseResultId='" + parentTestcaseResultId + '\'' +
-                ", isFunctional=" + isFunctional +
-                ", isWorkflow=" + isWorkflow +
-                ", duration=" + duration +
-                ", grade='" + grade + '\'' +
-                ", testcaseResultAttributesEntities=" + testcaseResultAttributesEntities +
-                '}';
+        return "TestcaseResultInfo{"
+                + "rank=" + rank
+                + ", testerId='" + testerId + '\''
+                + ", refObjUri='" + refObjUri + '\''
+                + ", refId='" + refId + '\''
+                + ", message='" + message + '\''
+                + ", testRequestId='" + testRequestId + '\''
+                + ", hasSystemError=" + hasSystemError
+                + ", isRequired=" + isRequired
+                + ", isRecommended=" + isRecommended
+                + ", isManual=" + isManual
+                + ", isAutomated=" + isAutomated
+                + ", isSuccess=" + isSuccess
+                + ", testcaseOptionId='" + testcaseOptionId + '\''
+                + ", parentTestcaseResultId='" + parentTestcaseResultId + '\''
+                + ", isFunctional=" + isFunctional
+                + ", isWorkflow=" + isWorkflow
+                + ", duration=" + duration
+                + ", grade='" + grade + '\''
+                + ", testcaseResultAttributesEntities=" + testcaseResultAttributesEntities
+                + '}';
     }
 }

@@ -10,11 +10,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
 @Entity(name = "revision")
 @Table(name = "revision")
 @RevisionEntity(CustomRevisionListener.class)
 public class CustomRevisionEntity {
+
     @Id
     @RevisionNumber
     @Column(name = "revision_number")
@@ -40,4 +40,3 @@ public class CustomRevisionEntity {
         this.revisionTimestamp = revisionTimestamp;
     }
 }
-

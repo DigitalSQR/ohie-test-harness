@@ -2,7 +2,7 @@ package com.argusoft.path.tht.fileservice.constant;
 
 import java.util.Set;
 
-public enum UserEntityDocumentTypes implements EntityDocumentTypeEnum{
+public enum UserEntityDocumentTypes implements EntityDocumentTypeEnum {
     USER_PROFILE_PICTURE("document.type.user.profilePicture", Set.of(FileType.IMAGE_JPEG, FileType.IMAGE_PNG), DocumentServiceConstants.ALLOWED_ACTIVE_SINGLE_RECORD);
 
     private final String key;
@@ -17,10 +17,12 @@ public enum UserEntityDocumentTypes implements EntityDocumentTypeEnum{
         this.allowedActiveType = allowedActiveType;
     }
 
+    @Override
     public Set<FileType> getAllowedFileTypes() {
         return allowedFileTypes;
     }
 
+    @Override
     public String getKey() {
         return key;
     }
@@ -29,6 +31,5 @@ public enum UserEntityDocumentTypes implements EntityDocumentTypeEnum{
     public String getAllowedActiveType() {
         return this.allowedActiveType;
     }
-
 
 }

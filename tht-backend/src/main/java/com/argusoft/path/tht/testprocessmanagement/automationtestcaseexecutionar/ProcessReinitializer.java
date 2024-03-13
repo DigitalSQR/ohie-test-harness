@@ -56,7 +56,7 @@ public class ProcessReinitializer {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public List<TestcaseResultEntity> searchInProgressAndPendingTestcaseResults(String refObjUri, ContextInfo contextInfo) {
         try {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();

@@ -44,16 +44,15 @@ public class ComponentRestController {
     private ComponentMapper componentMapper;
 
     /**
-     * We can expose this API in future if needed.
-     * {@inheritdoc}
+     * We can expose this API in future if needed. {@inheritdoc}
      *
      * @return
      */
     @ApiOperation(value = "Create new Component", response = ComponentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully created Component"),
-            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+        @ApiResponse(code = 200, message = "Successfully created Component"),
+        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("")
     @Transactional(rollbackFor = Exception.class)
@@ -78,9 +77,9 @@ public class ComponentRestController {
      */
     @ApiOperation(value = "Update existing Component", response = ComponentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated Component"),
-            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+        @ApiResponse(code = 200, message = "Successfully updated Component"),
+        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 
     })
     @PutMapping("")
@@ -106,10 +105,10 @@ public class ComponentRestController {
      */
     @ApiOperation(value = "View a page of available filtered Components", response = Page.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved page"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved page"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
     public Page<ComponentInfo> searchComponents(
@@ -131,10 +130,10 @@ public class ComponentRestController {
      */
     @ApiOperation(value = "View available Component with supplied id", response = ComponentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved Component"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved Component"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{componentId}")
     public ComponentInfo getComponentById(
@@ -152,9 +151,9 @@ public class ComponentRestController {
      */
     @ApiOperation(value = "View a list of validation errors for Component", response = List.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved Validation errors"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+        @ApiResponse(code = 200, message = "Successfully retrieved Validation errors"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
@@ -170,19 +169,18 @@ public class ComponentRestController {
                 .validateComponent(validationTypeKey, componentEntity, contextInfo);
     }
 
-
     @ApiOperation(value = "To change status of Component", response = DocumentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated Component"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+        @ApiResponse(code = 200, message = "Successfully updated Component"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{componentId}/{changeState}")
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public ComponentInfo updateComponentState(@PathVariable("componentId") String componentId,
-                                              @PathVariable("changeState") String changeState,
-                                              @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            @PathVariable("changeState") String changeState,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         ComponentEntity componentEntity = componentService.changeState(componentId, changeState, contextInfo);
         return componentMapper.modelToDto(componentEntity);
@@ -190,9 +188,9 @@ public class ComponentRestController {
 
     @ApiOperation(value = "Retrieves all status of component.", response = Multimap.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/status/mapping")
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
@@ -202,13 +200,13 @@ public class ComponentRestController {
 
     @ApiOperation(value = "Validates testcase configurations.", response = List.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/configuration/validate")
     public List<TestcaseValidationResultInfo> validateTestCaseConfiguration(
-            @RequestParam(name = "refObjUri",required = false) String refObjUri,
+            @RequestParam(name = "refObjUri", required = false) String refObjUri,
             @RequestParam(name = "refId", required = false) String refId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo
     ) throws InvalidParameterException, OperationFailedException {

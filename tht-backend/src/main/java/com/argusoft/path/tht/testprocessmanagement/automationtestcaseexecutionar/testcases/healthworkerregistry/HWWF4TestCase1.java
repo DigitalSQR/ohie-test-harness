@@ -26,7 +26,7 @@ public class HWWF4TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                 ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing HWWF4TestCase1");
 
@@ -38,7 +38,7 @@ public class HWWF4TestCase1 implements TestCase {
             }
 
             //create practitioner
-            Practitioner practitioner = FHIRUtils.createPractitioner("Smith","M","1962-12-12","00010","888-888-8888");
+            Practitioner practitioner = FHIRUtils.createPractitioner("Smith", "M", "1962-12-12", "00010", "888-888-8888");
 
             MethodOutcome practitionerOutcome = client.create()
                     .resource(practitioner)
@@ -77,11 +77,10 @@ public class HWWF4TestCase1 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.OK, "Failed to update Practitioner");
             }
 
-
             LOGGER.info("Creating Location in HWR");
             //create location
             Location location = FHIRUtils.createLocation("0234", "South Wing, second floor", "Second floor of the Old South Wing, formerly in use by Psychiatry",
-                    "2328", "second wing admissions", "Den Burg", "9105 PZ", "NLD",null);
+                    "2328", "second wing admissions", "Den Burg", "9105 PZ", "NLD", null);
 
             MethodOutcome locationOutcome = client.create()
                     .resource(location)
@@ -117,7 +116,6 @@ public class HWWF4TestCase1 implements TestCase {
             if (!location.getName().equals("North Wing , first floor")) {
                 return new ValidationResultInfo(ErrorLevel.OK, "Failed to update Location");
             }
-
 
             //For Health Care Service
             LOGGER.info("Creating HealthCare Service in HWR");
@@ -166,7 +164,6 @@ public class HWWF4TestCase1 implements TestCase {
             if (!healthcareService.getName().equals("Example Care Services")) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to update HealthCare Service");
             }
-
 
             //For Practitioner Role
             LOGGER.info("Creating Practitioner Role in HWR");

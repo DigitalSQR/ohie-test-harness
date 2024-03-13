@@ -1,8 +1,8 @@
 package com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception;
 
 /**
- * This exception mainly used when updating old data that has been already updated.
- * It Also contains error message with HTTP status.
+ * This exception mainly used when updating old data that has been already
+ * updated. It Also contains error message with HTTP status.
  *
  * @author dhruv
  */

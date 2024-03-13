@@ -71,11 +71,11 @@ public class TestResultRelationCriteriaSearchFilter extends AbstractCriteriaSear
             predicates.add(criteriaBuilder.in(this.getTestResultRelationEntityRoot().get("refId")).value(getRefId()));
         }
 
-        if (getVersionOfRefEntity() !=null) {
+        if (getVersionOfRefEntity() != null) {
             predicates.add(criteriaBuilder.equal(this.getTestResultRelationEntityRoot().get("versionOfRefEntity"), getVersionOfRefEntity()));
         }
 
-        if(StringUtils.hasLength(getTestcaseResultId())){
+        if (StringUtils.hasLength(getTestcaseResultId())) {
             predicates.add(criteriaBuilder.equal(this.getTestResultRelationEntityTestcaseResultEntityJoin().get("id"), getTestcaseResultId()));
         }
 
@@ -100,22 +100,21 @@ public class TestResultRelationCriteriaSearchFilter extends AbstractCriteriaSear
         testResultRelationEntityTestcaseResultEntityJoin = null;
     }
 
-
     public Root<TestResultRelationEntity> getTestResultRelationEntityRoot() {
         return testResultRelationEntityRoot;
     }
 
     public Join<TestResultRelationEntity, TestcaseResultEntity> getTestResultRelationEntityTestcaseResultEntityJoin() {
-        if(this.testResultRelationEntityTestcaseResultEntityJoin == null){
+        if (this.testResultRelationEntityTestcaseResultEntityJoin == null) {
             this.testResultRelationEntityTestcaseResultEntityJoin = getTestResultRelationEntityRoot().join("testcaseResultEntity");
         }
         return testResultRelationEntityTestcaseResultEntityJoin;
     }
 
-
     public List<String> getId() {
         return id;
     }
+
     public void setId(List<String> id) {
         this.id = id;
     }

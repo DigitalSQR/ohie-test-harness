@@ -52,6 +52,7 @@ public class SearchFilter {
     public Long getVersionNumber() {
         return versionNumber;
     }
+
     public void setVersionNumber(Long versionNumber) {
         this.versionNumber = versionNumber;
     }

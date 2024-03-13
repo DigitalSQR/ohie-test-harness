@@ -2,12 +2,10 @@ package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
 /**
  * This TestcaseServiceServiceImpl contains implementation for Testcase service.
  *
@@ -49,7 +46,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     @Autowired
     private SpecificationService specificationService;
 
-
     /**
      * {@inheritdoc}
      *
@@ -57,7 +53,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      */
     @Override
     public TestcaseEntity createTestcase(TestcaseEntity testcaseEntity,
-                                         ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -87,7 +83,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      */
     @Override
     public TestcaseEntity updateTestcase(TestcaseEntity testcaseEntity,
-                                         ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -123,7 +119,6 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         return this.testcaseRepository.findAll(testcaseEntitySpecification, pageable);
     }
 
-
     @Override
     public List<TestcaseEntity> searchTestcases(
             TestcaseCriteriaSearchFilter testcaseSearchFilter,
@@ -140,7 +135,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
      */
     @Override
     public TestcaseEntity getTestcaseById(String testcaseId,
-                                          ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(testcaseId)) {
@@ -179,7 +174,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
 
         TestcaseEntity testcaseEntity = this.getTestcaseById(testcaseId, contextInfo);
 
-        CommonStateChangeValidator.validateStateChange(TestcaseServiceConstants.TESTCASE_STATUS, TestcaseServiceConstants.TESTCASE_STATUS_MAP,testcaseEntity.getState(),stateKey,errors);
+        CommonStateChangeValidator.validateStateChange(TestcaseServiceConstants.TESTCASE_STATUS, TestcaseServiceConstants.TESTCASE_STATUS_MAP, testcaseEntity.getState(), stateKey, errors);
 
         testcaseEntity.setState(stateKey);
         testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
@@ -196,7 +191,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         TestcaseCriteriaSearchFilter searchFilter = new TestcaseCriteriaSearchFilter();
 
         testcaseEntity.setRank(1);
-        if(testcaseEntity.getSpecification() != null) {
+        if (testcaseEntity.getSpecification() != null) {
             searchFilter.setSpecificationId(testcaseEntity.getSpecification().getId());
             List<TestcaseEntity> testCases = this.searchTestcases(searchFilter, Constant.SINGLE_PAGE_SORT_BY_RANK, contextInfo).getContent();
             if (!testCases.isEmpty()) {

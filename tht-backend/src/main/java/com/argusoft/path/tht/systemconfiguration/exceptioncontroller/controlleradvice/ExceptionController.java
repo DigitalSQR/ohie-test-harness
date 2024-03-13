@@ -37,7 +37,6 @@ public class ExceptionController {
     @Value("${exception.stack-trace.enabled}")
     private Boolean isStackTraceEnabled;
 
-
     @ExceptionHandler(value = OperationFailedException.class)
     public ResponseEntity<Object> handleException(OperationFailedException exception) {
         LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + ExceptionController.class.getSimpleName(), exception);
@@ -85,14 +84,15 @@ public class ExceptionController {
         LOGGER.error(ValidateConstant.NULL_POINTER_EXCEPTION + ExceptionController.class.getSimpleName(), exception);
         return new ResponseEntity<>(calErrorResponse(exception), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @ExceptionHandler(value = AccessDeniedException.class)
-    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex)
-    {
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
         ValidationResultInfo error = new ValidationResultInfo();
         error.setMessage("Access Denied");
         error.setLevel(ErrorLevel.ERROR);
-        return new ResponseEntity<>(error,HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
+
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Object> handleExceptionToJustPrintLog(Exception exception) throws Exception {
         LOGGER.error(ValidateConstant.EXCEPTION + ExceptionController.class.getSimpleName(), exception);

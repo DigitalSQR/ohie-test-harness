@@ -7,10 +7,10 @@ import javax.persistence.*;
 import java.util.UUID;
 
 /**
- * This model used in model those contain UUID as id, state, name and description.
+ * This model used in model those contain UUID as id, state, name and
+ * description.
  *
- * @author Dhruv
- * =
+ * @author Dhruv =
  */
 @MappedSuperclass
 @Audited

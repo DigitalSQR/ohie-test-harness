@@ -102,7 +102,11 @@ public class DocumentInfo extends IdStateNameMetaInfo {
         this.ownerId = ownerId;
     }
 
-    public String getDocumentType() { return documentType; }
+    public String getDocumentType() {
+        return documentType;
+    }
 
-    public void setDocumentType(String documentType) { this.documentType = documentType; }
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
 }

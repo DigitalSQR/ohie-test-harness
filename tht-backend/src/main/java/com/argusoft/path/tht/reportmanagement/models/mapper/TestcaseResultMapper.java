@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntity,TestcaseResultInfo> {
+public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntity, TestcaseResultInfo> {
 
     TestcaseResultMapper INSTANCE = Mappers.getMapper(TestcaseResultMapper.class);
 
@@ -39,16 +39,21 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
 
     List<TestcaseResultEntity> dtoToModel(List<TestcaseResultInfo> testcaseResultInfos);
 
-    default Set<TestcaseResultAttributesInfo> setToTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity)
-    {
-        if(testcaseResultEntity.getTestcaseResultAttributesEntities()==null){return null;}
+    default Set<TestcaseResultAttributesInfo> setToTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity) {
+        if (testcaseResultEntity.getTestcaseResultAttributesEntities() == null) {
+            return null;
+        }
         return (Set<TestcaseResultAttributesInfo>) testcaseResultEntity.getTestcaseResultAttributesEntities().stream()
-                .map(testcaseResultAttributesEntity -> {return new TestcaseResultAttributesInfo(testcaseResultAttributesEntity.getKey(),testcaseResultAttributesEntity.getValue()
-                );}).collect(Collectors.toList());
+                .map(testcaseResultAttributesEntity -> {
+                    return new TestcaseResultAttributesInfo(testcaseResultAttributesEntity.getKey(), testcaseResultAttributesEntity.getValue()
+                    );
+                }).collect(Collectors.toList());
     }
 
     default String setToTesterId(UserEntity userEntity) {
-        if (userEntity == null) return null;
+        if (userEntity == null) {
+            return null;
+        }
         return userEntity.getId();
     }
 
@@ -62,7 +67,9 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
     }
 
     default String setToTestcaseOptionId(TestcaseOptionEntity testcaseOptionEntity) {
-        if (testcaseOptionEntity == null) return null;
+        if (testcaseOptionEntity == null) {
+            return null;
+        }
         return testcaseOptionEntity.getId();
     }
 
@@ -76,7 +83,9 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
     }
 
     default String setToParentTestcaseResultId(TestcaseResultEntity parentTestcaseResult) {
-        if (parentTestcaseResult == null) return null;
+        if (parentTestcaseResult == null) {
+            return null;
+        }
         return parentTestcaseResult.getId();
     }
 
@@ -89,9 +98,10 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
         return testcaseOptionEntity;
     }
 
-
     default String setToTestRequestId(TestRequestEntity testRequestEntity) {
-        if (testRequestEntity == null) return null;
+        if (testRequestEntity == null) {
+            return null;
+        }
         return testRequestEntity.getId();
     }
 

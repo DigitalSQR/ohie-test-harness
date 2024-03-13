@@ -165,7 +165,7 @@ public class ContextInfo extends User implements Serializable {
         return isTester || isAdmin;
     }
 
-    public boolean isAdmin(){
+    public boolean isAdmin() {
         return isAdmin;
     }
 

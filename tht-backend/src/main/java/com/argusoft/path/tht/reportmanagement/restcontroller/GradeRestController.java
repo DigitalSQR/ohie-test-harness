@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.reportmanagement.restcontroller;
 
-
 import com.argusoft.path.tht.reportmanagement.models.dto.GradeInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.GradeEntity;
 import com.argusoft.path.tht.reportmanagement.models.mapper.GradeMapper;
@@ -28,13 +27,12 @@ public class GradeRestController {
     @Autowired
     private GradeMapper gradeMapper;
 
-
     @ApiOperation(value = "View a list of available grade")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved list"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved list"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/all")
     public List<GradeInfo> getGrades(
@@ -45,14 +43,14 @@ public class GradeRestController {
 
     @ApiOperation(value = "View available grade with supplied id", response = GradeInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved grade"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved grade"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{gradeId}")
     public GradeInfo getGrade(@PathVariable("gradeId") String gradeId,
-                              @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
         GradeEntity gradeById = gradeService.getGradeById(gradeId, contextInfo);
         return gradeMapper.modelToDto(gradeById);
     }

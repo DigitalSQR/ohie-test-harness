@@ -18,46 +18,45 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class TSWF7TestCase1 implements TestCase{
+public class TSWF7TestCase1 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TSWF7TestCase1.class);
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                 ContextInfo contextInfo) throws OperationFailedException {
-        try{
+            ContextInfo contextInfo) throws OperationFailedException {
+        try {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
             if (client == null) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
-            String codeSystemVersion="1.0.0";
+            String codeSystemVersion = "1.0.0";
 
-            Bundle codeSystemList =client.search()
+            Bundle codeSystemList = client.search()
                     .forResource(CodeSystem.class)
                     .where(CodeSystem.URL.matches().value("http://example.com/example/mycodesystem"))
                     .and(CodeSystem.VERSION.exactly().code(codeSystemVersion))
                     .returnBundle(Bundle.class)
                     .execute();
 
-
             // checking if any element present in codeSystemList and deleting it
-            if(codeSystemList.hasEntry()){
-                for(Bundle.BundleEntryComponent entry : codeSystemList.getEntry()){
+            if (codeSystemList.hasEntry()) {
+                for (Bundle.BundleEntryComponent entry : codeSystemList.getEntry()) {
                     CodeSystem codeSystem = (CodeSystem) entry.getResource();
                     String id = codeSystem.getIdElement().getIdPart();
-                    client.delete().resourceById("CodeSystem",id).execute();
+                    client.delete().resourceById("CodeSystem", id).execute();
                 }
             }
 
-            CodeSystem codeSystem= FHIRUtils.createCodeSystem("http://example.com/example/mycodesystem","1.0.0","MyCodeSystem","Example Code System","ACTIVE","HL7 International / Terminology Infrastructure","COMPLETE","12345","Blood Pressure","A measurement of the force of blood against the walls of the arteries.");
-            MethodOutcome outcome=client.create()
+            CodeSystem codeSystem = FHIRUtils.createCodeSystem("http://example.com/example/mycodesystem", "1.0.0", "MyCodeSystem", "Example Code System", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "12345", "Blood Pressure", "A measurement of the force of blood against the walls of the arteries.");
+            MethodOutcome outcome = client.create()
                     .resource(codeSystem)
                     .execute();
 
             // check if codeSystem got created
-            if(!outcome.getCreated()){
+            if (!outcome.getCreated()) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
@@ -73,10 +72,9 @@ public class TSWF7TestCase1 implements TestCase{
                     .withParameters(parameters)
                     .execute();
 
-            if(result.hasParameter() && result.getParameter("display").getValue().toString().equals("Blood Pressure")){
+            if (result.hasParameter() && result.getParameter("display").getValue().toString().equals("Blood Pressure")) {
                 return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             }
-
 
             return new ValidationResultInfo(ErrorLevel.ERROR, "cannot perform $lookup");
 

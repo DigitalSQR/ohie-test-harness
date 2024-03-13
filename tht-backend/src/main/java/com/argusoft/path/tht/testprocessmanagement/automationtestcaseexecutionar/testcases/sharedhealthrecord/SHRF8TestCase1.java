@@ -24,6 +24,7 @@ import java.util.Map;
 public class SHRF8TestCase1 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SHRF8TestCase1.class);
+
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
         try {
@@ -40,7 +41,6 @@ public class SHRF8TestCase1 implements TestCase {
                     .resource(newPatient)
                     .execute();
 
-
             // Check if the patient was created successfully
             if (!outcome.getCreated()) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
@@ -54,7 +54,6 @@ public class SHRF8TestCase1 implements TestCase {
 
             // Validate if the resource is a FHIR Patient
             if (resource instanceof Patient patient) {
-
 
                 List<ContactPoint> telecomList = patient.getTelecom();
                 boolean phoneNumberFound = false;
@@ -73,7 +72,6 @@ public class SHRF8TestCase1 implements TestCase {
                 if (patient.hasName() && patient.hasBirthDate() && patient.hasGender() && phoneNumberFound && emailFound) {
 
                     // Here, 'patient' is a valid FHIR Patient resource with expected fields
-
                 } else {
                     // Handle case where Patient resource is missing required fields
                     return new ValidationResultInfo(ErrorLevel.ERROR, "Patient resource is incomplete or missing required fields.");
@@ -90,6 +88,5 @@ public class SHRF8TestCase1 implements TestCase {
             return new ValidationResultInfo(ErrorLevel.ERROR, "OPERATION FAILED");
         }
     }
-
 
 }

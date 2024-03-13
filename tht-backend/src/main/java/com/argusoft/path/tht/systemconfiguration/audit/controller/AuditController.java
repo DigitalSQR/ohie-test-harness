@@ -21,6 +21,7 @@ public class AuditController {
 
     @Autowired
     AuditService auditService;
+
     @GetMapping("")
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public List<Object> searchAudit(

@@ -29,7 +29,7 @@ public class FRF9TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             String testCaseName = this.getClass().getSimpleName();
             LOGGER.info("Start testing " + testCaseName);

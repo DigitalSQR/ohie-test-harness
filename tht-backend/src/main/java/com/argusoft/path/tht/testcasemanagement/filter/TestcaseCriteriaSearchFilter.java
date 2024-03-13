@@ -18,7 +18,6 @@ import java.util.List;
 
 public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<TestcaseEntity> {
 
-
     private String id;
 
     @ApiParam(
@@ -73,7 +72,7 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestcaseEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestcaseEntityRoot().get("name")), getNameBasedOnSearchType(getName())));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
@@ -88,7 +87,7 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
             predicates.add(criteriaBuilder.equal(getTestcaseEntitySpecificationEntityJoin().get("id"), getSpecificationId()));
         }
 
-        if(StringUtils.hasLength(getQuestionType())){
+        if (StringUtils.hasLength(getQuestionType())) {
             predicates.add(criteriaBuilder.equal(getTestcaseEntityRoot().get("questionType"), getQuestionType()));
         }
 

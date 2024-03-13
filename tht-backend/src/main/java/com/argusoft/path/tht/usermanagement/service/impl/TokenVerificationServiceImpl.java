@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * This TokenVerificationServiceImpl contains implementation for TokenVerification service.
+ * This TokenVerificationServiceImpl contains implementation for
+ * TokenVerification service.
  *
  * @author Hardik
  */
@@ -61,13 +62,13 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     @Override
     public TokenVerificationEntity getTokenById(String token, ContextInfo contextInfo) throws DoesNotExistException {
         Optional<TokenVerificationEntity> tokenVerificationById = tokenVerificationRepository.findById(token);
-        return tokenVerificationById.orElseThrow(() ->
-                new DoesNotExistException("Token VerificationEntity does not exist with token " + token));
+        return tokenVerificationById.orElseThrow(()
+                -> new DoesNotExistException("Token VerificationEntity does not exist with token " + token));
     }
 
     @Override
     public Boolean verifyUserToken(String base64TokenId, String base64EmailId,
-                                   Boolean verifyForgotPasswordTokenOnly, ContextInfo contextInfo)
+            Boolean verifyForgotPasswordTokenOnly, ContextInfo contextInfo)
             throws DoesNotExistException,
             DataValidationErrorException,
             OperationFailedException,
@@ -124,19 +125,19 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
 
     @Override
     public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId,
-                                                                           String tokenType,
-                                                                           ContextInfo contextInfo) throws DoesNotExistException,
+            String tokenType,
+            ContextInfo contextInfo) throws DoesNotExistException,
             InvalidParameterException,
             OperationFailedException, MessagingException, IOException {
 
         checkForValidTokenTypeWithVerifyingInEnum(tokenType);
         UserEntity userById = getUserByIdAndVerifyForEmailExistense(userId, contextInfo);
-        if(Objects.equals(tokenType, TokenTypeEnum.VERIFICATION.getKey()) && !Objects.equals(userById.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
-            throw new InvalidParameterException("User "+userById.getEmail()+" is already verified");
+        if (Objects.equals(tokenType, TokenTypeEnum.VERIFICATION.getKey()) && !Objects.equals(userById.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
+            throw new InvalidParameterException("User " + userById.getEmail() + " is already verified");
         }
         // inactive all the verification tokens created in past for this user
-        List<TokenVerificationEntity> allTokenVerificationEntityByUser =
-                this.getAllTokenVerificationEntityByTypeAndUser(tokenType, userById.getId(), contextInfo);
+        List<TokenVerificationEntity> allTokenVerificationEntityByUser
+                = this.getAllTokenVerificationEntityByTypeAndUser(tokenType, userById.getId(), contextInfo);
         for (TokenVerificationEntity tokenVerification : allTokenVerificationEntityByUser) {
             tokenVerification.setState(TokenVerificationConstants.TOKEN_STATUS_INACTIVE);
             this.updateTokenVerificationEntity(tokenVerification.getId(), tokenVerification, contextInfo);

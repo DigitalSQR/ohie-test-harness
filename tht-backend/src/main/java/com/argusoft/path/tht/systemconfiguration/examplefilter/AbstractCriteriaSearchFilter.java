@@ -17,6 +17,7 @@ import java.util.function.BiFunction;
 public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchFilter<T> {
 
     private SearchType nameSearchType = SearchType.CONTAINING;
+
     @Override
     public final Specification<T> buildSpecification(ContextInfo contextInfo) throws InvalidParameterException {
         validateSearchFilter();
@@ -42,7 +43,6 @@ public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchF
 
     protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<T> root, CriteriaQuery<?> query, Pageable pageable) {
     }
-
 
     protected final BiFunction<Root<T>, CriteriaBuilder, Predicate> preparePredicate(ContextInfo contextInfo) {
         return (root, criteriaBuilder) -> {
@@ -72,16 +72,16 @@ public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchF
     }
 
     public String getNameBasedOnSearchType(String name) {
-            switch (nameSearchType) {
-                case EXACTLY:
-                    return name.toLowerCase();
-                case STARTING:
-                    return name.toLowerCase() + "%";
-                case ENDING:
-                    return "%" + name.toLowerCase();
-                default:
-                    //CONTAINING
-                    return "%" + name.toLowerCase() + "%";
-            }
+        switch (nameSearchType) {
+            case EXACTLY:
+                return name.toLowerCase();
+            case STARTING:
+                return name.toLowerCase() + "%";
+            case ENDING:
+                return "%" + name.toLowerCase();
+            default:
+                //CONTAINING
+                return "%" + name.toLowerCase() + "%";
+        }
     }
 }

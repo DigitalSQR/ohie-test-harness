@@ -41,9 +41,9 @@ public class CRF7TestCase1 implements TestCase {
 
                 // Checking issues for severity, diagnostics, and code
                 for (OperationOutcome.OperationOutcomeIssueComponent issue : resultOperationOutcome.getIssue()) {
-                    if (issue.hasSeverity() && issue.getSeverity() == OperationOutcome.IssueSeverity.ERROR &&
-                            issue.hasDiagnostics() && issue.getDiagnostics().equals("An error occur") && issue.hasCode() &&
-                            issue.getCode() == OperationOutcome.IssueType.PROCESSING) {
+                    if (issue.hasSeverity() && issue.getSeverity() == OperationOutcome.IssueSeverity.ERROR
+                            && issue.hasDiagnostics() && issue.getDiagnostics().equals("An error occur") && issue.hasCode()
+                            && issue.getCode() == OperationOutcome.IssueType.PROCESSING) {
                         return new ValidationResultInfo(ErrorLevel.OK, "Passed");
                     } else {
                         return new ValidationResultInfo(ErrorLevel.ERROR, "Failed because operation outcome data is not matched");

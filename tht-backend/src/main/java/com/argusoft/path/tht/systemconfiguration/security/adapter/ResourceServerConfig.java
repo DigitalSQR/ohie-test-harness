@@ -8,7 +8,6 @@ import com.argusoft.path.tht.systemconfiguration.security.handler.OnSsoAuthentic
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -18,7 +17,8 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.web.session.SessionManagementFilter;
 
 /**
- * This ResourceServerConfig configures Authorisation for APIs and CORS, CSRF, Authentication configurations.
+ * This ResourceServerConfig configures Authorisation for APIs and CORS, CSRF,
+ * Authentication configurations.
  *
  * @author Dhruv
  */
@@ -73,7 +73,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
-//                .accessDeniedHandler(customAccessDeniedHandler)
+                //                .accessDeniedHandler(customAccessDeniedHandler)
                 .and()
                 .oauth2Login()
                 .userInfoEndpoint()

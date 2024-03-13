@@ -20,10 +20,9 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface UserMapper extends ModelDtoMapper<UserEntity,UserInfo> {
+public interface UserMapper extends ModelDtoMapper<UserEntity, UserInfo> {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-
 
     @Mapping(source = "roles", target = "roleIds")
     @Mapping(source = "password", target = "password", qualifiedByName = "setToPassword")
@@ -38,21 +37,25 @@ public interface UserMapper extends ModelDtoMapper<UserEntity,UserInfo> {
     List<UserEntity> dtoToModel(List<UserInfo> userInfos);
 
     default Set<String> setToRoleIds(Set<RoleEntity> roles) {
-        if(roles==null){return null;}
-            return roles.stream()
-                    .map(RoleEntity::getId)
-                    .collect(Collectors.toSet());
+        if (roles == null) {
+            return null;
+        }
+        return roles.stream()
+                .map(RoleEntity::getId)
+                .collect(Collectors.toSet());
     }
 
     default Set<RoleEntity> setToRoles(Set<String> roleIds) {
-        if(roleIds==null){ return null;}
-            return roleIds.stream()
-                    .map(id -> {
-                        RoleEntity roleEntity = new RoleEntity();
-                        roleEntity.setId(id);
-                        return roleEntity;
-                    })
-                    .collect(Collectors.toSet());
+        if (roleIds == null) {
+            return null;
+        }
+        return roleIds.stream()
+                .map(id -> {
+                    RoleEntity roleEntity = new RoleEntity();
+                    roleEntity.setId(id);
+                    return roleEntity;
+                })
+                .collect(Collectors.toSet());
     }
 
     @Named("setToPassword")

@@ -38,7 +38,7 @@ public class CRF10TestCase1 implements TestCase {
             patient.addContact()
                     .setRelationship(Collections.singletonList(new CodeableConcept().setText("mother")))
                     .setName(new HumanName().addGiven("Clarke").setFamily("Doe")).addTelecom(new ContactPoint().
-                            setSystem(ContactPoint.ContactPointSystem.PHONE).setValue("937-439-343"));
+                    setSystem(ContactPoint.ContactPointSystem.PHONE).setValue("937-439-343"));
 
             MethodOutcome outcome = client.create().resource(patient).execute();
             String patientId = outcome.getId().getIdPart();

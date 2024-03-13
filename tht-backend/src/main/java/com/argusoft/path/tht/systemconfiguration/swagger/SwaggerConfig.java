@@ -25,7 +25,7 @@ import java.util.Collections;
 public class SwaggerConfig {
 
     private static final Contact DEFAULT_CONTACT = new Contact(
-            "Argusoft India Ltd.", "https://www.argusoft.com", "todo@argusoft.com");
+            "Argusoft India Ltd.", "https://www.argusoft.com", "info@argusoft.com");
 
     @Value("${info.app.version}")
     private String appVersion;
@@ -44,11 +44,11 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "TA User Management API",//User App Info
                 "Application programming Interface [ API ]  is at the core of enabling interoperability."
-                        + " It’s a connective tissue that facilitates data sharing and enables digital THT Management experiences. "
-                        + "It helps to expose the actions that the devloper needs.\n\n"
-                        + "THT exposes the following APIs. "
-                        + "It’s vital to know which information these APIs return.\n\n"
-                        + "Detailed information on these APIs is as follows", //JSON REST API for MGS Backend
+                + " It’s a connective tissue that facilitates data sharing and enables digital THT Management experiences. "
+                + "It helps to expose the actions that the devloper needs.\n\n"
+                + "THT exposes the following APIs. "
+                + "It’s vital to know which information these APIs return.\n\n"
+                + "Detailed information on these APIs is as follows", //JSON REST API for MGS Backend
                 appVersion,
                 "Terms of service",
                 DEFAULT_CONTACT,

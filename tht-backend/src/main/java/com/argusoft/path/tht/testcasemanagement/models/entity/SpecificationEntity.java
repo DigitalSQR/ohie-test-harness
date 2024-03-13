@@ -41,7 +41,7 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
         super(specificationEntity);
         this.setRank(specificationEntity.getRank());
         this.setFunctional(specificationEntity.getFunctional());
-        if(specificationEntity.getComponent()!=null){
+        if (specificationEntity.getComponent() != null) {
             this.setComponent(new ComponentEntity(specificationEntity.getComponent().getId()));
         }
         this.setTestcases(specificationEntity.getTestcases().stream()
@@ -72,7 +72,6 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     @Column(name = "is_required")
     private Boolean isRequired;
 
-
     public Integer getRank() {
         return rank;
     }
@@ -102,10 +101,10 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
 
     @Override
     public String toString() {
-        return "SpecificationEntity{" +
-                "rank=" + rank +
-                ", isFunctional=" + isFunctional +
-                '}';
+        return "SpecificationEntity{"
+                + "rank=" + rank
+                + ", isFunctional=" + isFunctional
+                + '}';
     }
 
 }

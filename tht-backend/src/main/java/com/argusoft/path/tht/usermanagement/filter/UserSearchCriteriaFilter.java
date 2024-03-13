@@ -59,14 +59,16 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     @Override
     protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<UserEntity> root, CriteriaQuery<?> query, Pageable pageable) {
         Sort.Order order = pageable.getSort().getOrderFor("default");
-        if(order == null) { return; }
+        if (order == null) {
+            return;
+        }
         Expression<Object> stateWiseDefaultOrder = criteriaBuilder.selectCase()
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_APPROVAL_PENDING), 1)
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING), 2)
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_ACTIVE), 3)
                 .when(criteriaBuilder.equal(root.get("state"), UserServiceConstants.USER_STATUS_INACTIVE), 4)
                 .otherwise(6);
-        if(order.isAscending()) {
+        if (order.isAscending()) {
             query.orderBy(criteriaBuilder.asc(stateWiseDefaultOrder));
         } else {
             query.orderBy(criteriaBuilder.desc(stateWiseDefaultOrder));
@@ -83,7 +85,7 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("name")), getNameBasedOnSearchType(getName())));
 
         }
 
@@ -158,6 +160,5 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         }
         return userEntityRoleEntityJoin;
     }
-
 
 }

@@ -20,22 +20,23 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+
 @Service
-public class AuditServiceImpl implements AuditService{
+public class AuditServiceImpl implements AuditService {
+
     public static final Logger LOGGER = LoggerFactory.getLogger(AuditServiceImpl.class);
     @Autowired
     EntityManager entityManager;
 
-
     @Override
-    public List<Object> searchAudit(SearchFilter searchFilter, ContextInfo contextInfo) throws DoesNotExistException , DataValidationErrorException , InvalidParameterException {
+    public List<Object> searchAudit(SearchFilter searchFilter, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException {
 
         try {
 
             String tableName = searchFilter.getName();
             tableName = tableName.toUpperCase();
             if (AuditServiceConstant.EntityType.valueOf(tableName).getEntityClass() == null) {
-                LOGGER.error(ValidateConstant.EXCEPTION+ AuditServiceImpl.class.getSimpleName());
+                LOGGER.error(ValidateConstant.EXCEPTION + AuditServiceImpl.class.getSimpleName());
                 throw new DoesNotExistException("No Audit available for " + tableName);
             }
 
@@ -49,30 +50,26 @@ public class AuditServiceImpl implements AuditService{
                     true, true);
 
             if (searchFilter.getName() == null) {
-                LOGGER.error(ValidateConstant.EXCEPTION+ AuditServiceImpl.class.getSimpleName());
+                LOGGER.error(ValidateConstant.EXCEPTION + AuditServiceImpl.class.getSimpleName());
                 throw new InvalidParameterException("Table name not provided");
             }
             if (ids != null && !ids.isEmpty()) {
                 auditQuery.add(AuditEntity.id().in(ids));
             }
-            if(searchFilter.getVersionNumber() != null)
-            {
+            if (searchFilter.getVersionNumber() != null) {
                 auditQuery.add(AuditEntity.property("version").eq(searchFilter.getVersionNumber()));
             }
             if (searchFilter.getRevType() != null) {
                 auditQuery.add(AuditEntity.revisionType().eq(RevisionType.fromRepresentation(searchFilter.getRevType())));
             }
 
-
-            List<Object> obj =  auditQuery.addOrder(AuditEntity.revisionType().desc()).getResultList();
+            List<Object> obj = auditQuery.addOrder(AuditEntity.revisionType().desc()).getResultList();
             return obj;
 
-        }
-        catch (Exception ex)
-        {   LOGGER.error(ValidateConstant.EXCEPTION+ AuditServiceImpl.class.getSimpleName());
+        } catch (Exception ex) {
+            LOGGER.error(ValidateConstant.EXCEPTION + AuditServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Invalid parameter value provided");
         }
     }
 
 }
-

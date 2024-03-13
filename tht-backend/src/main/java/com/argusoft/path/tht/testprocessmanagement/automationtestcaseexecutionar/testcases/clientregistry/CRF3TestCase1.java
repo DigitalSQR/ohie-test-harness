@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-
 @Component
 public class CRF3TestCase1 implements TestCase {
 
@@ -29,7 +28,7 @@ public class CRF3TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
 
         try {
             LOGGER.info("Start testing CRF3TestCase1");

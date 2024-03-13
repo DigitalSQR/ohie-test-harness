@@ -13,6 +13,7 @@ import java.util.List;
  * @author Dhruv
  */
 public class TestcaseResultServiceConstants {
+
     public static final String TESTCASE_RESULT_REF_OBJ_URI = TestcaseResultInfo.class.getName();
 
     //Testcase Result states

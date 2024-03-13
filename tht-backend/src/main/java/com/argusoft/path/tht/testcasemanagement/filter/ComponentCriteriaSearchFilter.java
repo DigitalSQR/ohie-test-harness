@@ -54,13 +54,12 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getComponentEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getComponentEntityRoot().get("name")), getNameBasedOnSearchType(getName())));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {
             predicates.add(criteriaBuilder.in(getComponentEntityRoot().get("state")).value(getState()));
         }
-
 
         return predicates;
     }
@@ -85,7 +84,6 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
     public void setState(List<String> state) {
         this.state = state;
     }
-
 
     public String getPrimaryId() {
         return id;

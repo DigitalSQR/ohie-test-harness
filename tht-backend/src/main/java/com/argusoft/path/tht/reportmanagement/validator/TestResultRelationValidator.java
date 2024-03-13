@@ -35,13 +35,13 @@ public class TestResultRelationValidator {
         TestResultRelationValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
     }
 
-    public static void validateCreateUpdateTestResultRelation(String validationTypeKey, TestResultRelationEntity testResultRelationEntity, TestResultRelationService testResultRelationService , TestcaseResultService testcaseResultService , ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
+    public static void validateCreateUpdateTestResultRelation(String validationTypeKey, TestResultRelationEntity testResultRelationEntity, TestResultRelationService testResultRelationService, TestcaseResultService testcaseResultService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestResultRelation(validationTypeKey,
-                testResultRelationService,
-                testcaseResultService,
-                testResultRelationEntity,
-                contextInfo);
+                        testResultRelationService,
+                        testcaseResultService,
+                        testResultRelationEntity,
+                        contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
             throw new DataValidationErrorException(
@@ -66,7 +66,7 @@ public class TestResultRelationValidator {
 
         validateCommonRequired(testResultRelationEntity, errors);
 
-        validateCommonForeignKey(testResultRelationEntity, testcaseResultService ,errors, contextInfo);
+        validateCommonForeignKey(testResultRelationEntity, testcaseResultService, errors, contextInfo);
 
         TestResultRelationEntity originalEntity = null;
 
@@ -85,7 +85,7 @@ public class TestResultRelationValidator {
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                         "The id supplied to the update does not "
-                                                + "exists"));
+                                        + "exists"));
                     }
                 }
 
@@ -97,20 +97,20 @@ public class TestResultRelationValidator {
 
                 break;
             case Constant.CREATE_VALIDATION:
-                validateCreateTestResultRelation(testResultRelationEntity,testResultRelationService ,errors, contextInfo);
+                validateCreateTestResultRelation(testResultRelationEntity, testResultRelationService, errors, contextInfo);
                 break;
             default:
                 LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
-        refObjectUriAndRefIdValidator.refObjectUriAndRefIdValidation(testResultRelationEntity.getRefObjUri(), testResultRelationEntity.getRefId(),contextInfo,errors);
+        refObjectUriAndRefIdValidator.refObjectUriAndRefIdValidation(testResultRelationEntity.getRefObjUri(), testResultRelationEntity.getRefId(), contextInfo, errors);
 
         return errors;
 
     }
 
-    private static void validateCreateTestResultRelation(TestResultRelationEntity testResultRelationEntity, TestResultRelationService testResultRelationService ,List<ValidationResultInfo> errors, ContextInfo contextInfo) {
+    private static void validateCreateTestResultRelation(TestResultRelationEntity testResultRelationEntity, TestResultRelationService testResultRelationService, List<ValidationResultInfo> errors, ContextInfo contextInfo) {
         if (testResultRelationEntity.getId() != null) {
             try {
                 testResultRelationService.getTestResultRelationById(testResultRelationEntity.getId(),
@@ -128,7 +128,6 @@ public class TestResultRelationValidator {
         }
     }
 
-
     private static void validateUpdateTestResultRelation(TestResultRelationEntity originalEntity, TestResultRelationEntity testResultRelationEntity, List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testResultRelationEntity.getId(), "id", errors);
 
@@ -138,16 +137,15 @@ public class TestResultRelationValidator {
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
                     fieldName + " must be provided"));
-        }
-        // check meta version id
+        } // check meta version id
         else if (!testResultRelationEntity.getVersion()
                 .equals(originalEntity.getVersion())) {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
                     "someone else has updated the TestResultRelation since you"
-                            + " started updating, you might want to"
-                            + " refresh your copy."));
+                    + " started updating, you might want to"
+                    + " refresh your copy."));
         }
         validateNotUpdatable(originalEntity, testResultRelationEntity, errors);
     }
@@ -159,7 +157,7 @@ public class TestResultRelationValidator {
     }
 
     private static void validateCommonForeignKey(TestResultRelationEntity testResultRelationEntity, TestcaseResultService testcaseResultService, List<ValidationResultInfo> errors, ContextInfo contextInfo) {
-        if(testResultRelationEntity.getTestcaseResultEntity().getId()!=null) {
+        if (testResultRelationEntity.getTestcaseResultEntity().getId() != null) {
             try {
                 testResultRelationEntity.setTestcaseResultEntity(
                         testcaseResultService.getTestcaseResultById(testResultRelationEntity.getTestcaseResultEntity().getId(), contextInfo)
@@ -177,20 +175,18 @@ public class TestResultRelationValidator {
 
     private static void validateCommonRequired(TestResultRelationEntity testResultRelationEntity, List<ValidationResultInfo> errors) {
         ValidationUtils.validateRequired(testResultRelationEntity.getVersionOfRefEntity(), "version", errors);
-        ValidationUtils.validateRequired(testResultRelationEntity.getRefObjUri(),"refObjUri",errors);
-        ValidationUtils.validateRequired(testResultRelationEntity.getRefId(),"refId",errors);
-        ValidationUtils.validateRequired(testResultRelationEntity.getTestcaseResultEntity(),"testcaseResultEntity",errors);
+        ValidationUtils.validateRequired(testResultRelationEntity.getRefObjUri(), "refObjUri", errors);
+        ValidationUtils.validateRequired(testResultRelationEntity.getRefId(), "refId", errors);
+        ValidationUtils.validateRequired(testResultRelationEntity.getTestcaseResultEntity(), "testcaseResultEntity", errors);
     }
 
-
     private static void trimTestResultRelation(TestResultRelationEntity testResultRelationEntity) {
-        if(testResultRelationEntity.getRefId()!=null){
+        if (testResultRelationEntity.getRefId() != null) {
             testResultRelationEntity.setRefId(testResultRelationEntity.getRefId().trim());
         }
-        if(testResultRelationEntity.getRefObjUri()!=null){
+        if (testResultRelationEntity.getRefObjUri() != null) {
             testResultRelationEntity.setRefObjUri(testResultRelationEntity.getRefObjUri().trim());
         }
     }
-
 
 }

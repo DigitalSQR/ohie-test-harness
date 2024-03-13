@@ -14,13 +14,14 @@ import javax.persistence.Query;
 
 @Component
 public class CustomRevisionListener implements RevisionListener {
+
     public static final Logger LOGGER = LoggerFactory.getLogger(CustomRevisionListener.class);
     @Autowired
     private final ApplicationContext applicationContext;
 
     @Autowired
-    public CustomRevisionListener(ApplicationContext applicationContext){
-        this.applicationContext= applicationContext;
+    public CustomRevisionListener(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -29,11 +30,10 @@ public class CustomRevisionListener implements RevisionListener {
         try {
             customRevisionEntity.setRevisionNumber(getNextRevisionNumber());
         } catch (OperationFailedException e) {
-            LOGGER.error("Caught Exception in newRevision"+ e);
+            LOGGER.error("Caught Exception in newRevision" + e);
             throw new RuntimeException(e.getMessage());
         }
     }
-
 
     private int getNextRevisionNumber() throws OperationFailedException {
         try {
@@ -41,10 +41,8 @@ public class CustomRevisionListener implements RevisionListener {
             Query query = entityManager.createQuery("SELECT MAX(revisionNumber) FROM revision");
             Integer maxRevision = (Integer) query.getSingleResult();
             return (maxRevision != null) ? maxRevision + 1 : 1;
-        }
-        catch (Exception ex)
-        {
-            LOGGER.error("Caught Exception in newRevision"+ ex);
+        } catch (Exception ex) {
+            LOGGER.error("Caught Exception in newRevision" + ex);
             throw new OperationFailedException(ex.getMessage());
         }
     }

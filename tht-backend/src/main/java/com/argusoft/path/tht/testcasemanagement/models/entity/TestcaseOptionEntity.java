@@ -29,7 +29,7 @@ public class TestcaseOptionEntity extends IdStateNameMetaEntity {
         super(testcaseOptionEntity);
         this.setRank(testcaseOptionEntity.getRank());
         this.setSuccess(testcaseOptionEntity.getSuccess());
-        if(testcaseOptionEntity.getTestcase()!=null){
+        if (testcaseOptionEntity.getTestcase() != null) {
             this.setTestcase(new TestcaseEntity(testcaseOptionEntity.getTestcase().getId()));
         }
 

@@ -2,12 +2,10 @@ package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
@@ -30,7 +28,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * This SpecificationServiceServiceImpl contains implementation for Specification service.
+ * This SpecificationServiceServiceImpl contains implementation for
+ * Specification service.
  *
  * @author Dhruv
  */
@@ -55,7 +54,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     public SpecificationEntity createSpecification(SpecificationEntity specificationEntity,
-                                                   ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -65,7 +64,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             throw new InvalidParameterException("specificationEntity is missing");
         }
 
-        defaultValueCreateSpecification(specificationEntity,contextInfo);
+        defaultValueCreateSpecification(specificationEntity, contextInfo);
 
         SpecificationValidator.validateCreateUpdateSpecification(Constant.CREATE_VALIDATION,
                 this,
@@ -85,7 +84,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     public SpecificationEntity updateSpecification(SpecificationEntity specificationEntity,
-                                                   ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -122,7 +121,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         return specificationRepository.findAll(specificationEntitySpecification, pageable);
     }
 
-
     @Override
     public List<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
@@ -133,7 +131,6 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         return specificationRepository.findAll(specificationEntitySpecification);
     }
 
-
     /**
      * {@inheritdoc}
      *
@@ -141,7 +138,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     public SpecificationEntity getSpecificationById(String specificationId,
-                                                    ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(specificationId)) {
@@ -179,7 +176,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
         SpecificationEntity specificationEntity = this.getSpecificationById(specificationId, contextInfo);
 
-        CommonStateChangeValidator.validateStateChange(SpecificationServiceConstants.SPECIFICATION_STATUS,SpecificationServiceConstants.SPECIFICATION_STATUS_MAP, specificationEntity.getState(), stateKey,errors);
+        CommonStateChangeValidator.validateStateChange(SpecificationServiceConstants.SPECIFICATION_STATUS, SpecificationServiceConstants.SPECIFICATION_STATUS_MAP, specificationEntity.getState(), stateKey, errors);
 
         specificationEntity.setState(stateKey);
         specificationEntity = specificationRepository.saveAndFlush(specificationEntity);
@@ -195,7 +192,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         SpecificationCriteriaSearchFilter searchFilter = new SpecificationCriteriaSearchFilter();
 
         specificationEntity.setRank(1);
-        if(specificationEntity.getComponent() != null) {
+        if (specificationEntity.getComponent() != null) {
             searchFilter.setComponentId(specificationEntity.getComponent().getId());
             List<SpecificationEntity> specifications = this.searchSpecifications(searchFilter, Constant.SINGLE_PAGE_SORT_BY_RANK, contextInfo).getContent();
             if (!specifications.isEmpty()) {

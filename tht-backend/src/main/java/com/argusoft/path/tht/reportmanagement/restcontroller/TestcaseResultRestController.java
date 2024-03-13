@@ -34,7 +34,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This TestcaseResultServiceRestController maps end points with standard service.
+ * This TestcaseResultServiceRestController maps end points with standard
+ * service.
  *
  * @author Dhruv
  */
@@ -52,8 +53,7 @@ public class TestcaseResultRestController {
     private TestcaseResultMapper testcaseResultMapper;
 
     /**
-     * We can expose this API in future if needed.
-     * {@inheritdoc}
+     * We can expose this API in future if needed. {@inheritdoc}
      *
      * @return
      */
@@ -79,8 +79,7 @@ public class TestcaseResultRestController {
     }
 
     /**
-     * We can expose this API in future if needed.
-     * {@inheritdoc}
+     * We can expose this API in future if needed. {@inheritdoc}
      *
      * @return
      */
@@ -114,10 +113,10 @@ public class TestcaseResultRestController {
      */
     @ApiOperation(value = "View a page of available filtered TestcaseResults", response = Page.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved page"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved page"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
     public Page<TestcaseResultInfo> searchTestcaseResults(
@@ -137,17 +136,17 @@ public class TestcaseResultRestController {
      */
     @ApiOperation(value = "Submit manual TestcaseResults", response = Page.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully Submitted TestcaseResult"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully Submitted TestcaseResult"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @PatchMapping("/submit/{testcaseResultId}")
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
     public TestcaseResultInfo submitTestcaseResult(
             @PathVariable("testcaseResultId") String testcaseResultId,
-            @RequestParam(value = "selectedTestcaseOptionId",required = true) Set<String> selectedTestcaseOptionIds,
+            @RequestParam(value = "selectedTestcaseOptionId", required = true) Set<String> selectedTestcaseOptionIds,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         TestcaseResultEntity testcaseResultEntity = testcaseResultService
                 .submitTestcaseResult(
@@ -159,10 +158,10 @@ public class TestcaseResultRestController {
 
     @ApiOperation(value = "Patch Update For TestcaseResultEntity", response = TestcaseResultInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully Updated TestcaseResult"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully Updated TestcaseResult"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @PatchMapping(value = "/{testcaseResultId}", consumes = "application/json-patch+json")
     @Transactional(rollbackFor = Exception.class)
@@ -178,21 +177,20 @@ public class TestcaseResultRestController {
 
         // update and return
         TestcaseResultEntity testcaseResultEntity = testcaseResultMapper.dtoToModel(testcaseResultPatched);
-        testcaseResultEntity = testcaseResultService.updateTestcaseResult(testcaseResultEntity,contextInfo);
+        testcaseResultEntity = testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
         return testcaseResultMapper.modelToDto(testcaseResultEntity);
     }
 
-    private TestcaseResultInfo applyPatchToTestcaseInfo(JsonPatch jsonPatch, TestcaseResultInfo testcaseResultInfo) throws OperationFailedException{
+    private TestcaseResultInfo applyPatchToTestcaseInfo(JsonPatch jsonPatch, TestcaseResultInfo testcaseResultInfo) throws OperationFailedException {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode patched = jsonPatch.apply(objectMapper.convertValue(testcaseResultInfo, JsonNode.class));
             return objectMapper.treeToValue(patched, TestcaseResultInfo.class);
         } catch (JsonPatchException | JsonProcessingException e) {
             LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseResultRestController.class.getSimpleName(), e);
-            throw new OperationFailedException("Caught Exception while processing Json ",e);
+            throw new OperationFailedException("Caught Exception while processing Json ", e);
         }
     }
-
 
     /**
      * {@inheritdoc}
@@ -201,10 +199,10 @@ public class TestcaseResultRestController {
      */
     @ApiOperation(value = "View available TestcaseResult with supplied id", response = TestcaseResultInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResult"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResult"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{testcaseResultId}")
     public TestcaseResultInfo getTestcaseResultById(
@@ -218,8 +216,7 @@ public class TestcaseResultRestController {
     }
 
     /**
-     * We can expose this API in future if needed.
-     * {@inheritdoc}
+     * We can expose this API in future if needed. {@inheritdoc}
      */
 //    @ApiOperation(value = "View a list of validation errors for TestcaseResult", response = List.class)
 //    @ApiResponses(value = {
@@ -240,7 +237,6 @@ public class TestcaseResultRestController {
                 .validateTestcaseResult(validationTypeKey, TestcaseResultEntity, contextInfo);
     }
 
-
 //    @ApiOperation(value = "To change status of TestcaseResult", response = DocumentInfo.class)
 //    @ApiResponses(value = {
 //            @ApiResponse(code = 200, message = "Successfully updated TestcaseResult"),
@@ -250,8 +246,8 @@ public class TestcaseResultRestController {
 //    @PatchMapping("/state/{testcaseResultId}/{changeState}")
 //    @Transactional
     public TestcaseResultInfo updateTestcaseResultState(@PathVariable("testcaseResultId") String testcaseResultId,
-                                                        @PathVariable("changeState") String changeState,
-                                                        @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            @PathVariable("changeState") String changeState,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         TestcaseResultEntity testcaseResultEntity = testcaseResultService.changeState(testcaseResultId, changeState, contextInfo);
         return testcaseResultMapper.modelToDto(testcaseResultEntity);
@@ -264,10 +260,10 @@ public class TestcaseResultRestController {
      */
     @ApiOperation(value = "Retrieves multiple TestcaseResult status corresponding to the given filters", response = TestcaseResultInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResults"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResults"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/status")
     public List<TestcaseResultInfo> getMultipleTestcaseResultStatus(
@@ -302,19 +298,19 @@ public class TestcaseResultRestController {
      */
     @ApiOperation(value = "Retrieves a TestcaseResult corresponding to the given filters", response = TestcaseResultInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResult"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved TestcaseResult"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/status/{testcaseResultId}")
     public TestcaseResultInfo getTestcaseResultStatus(
             @PathVariable("testcaseResultId") String testcaseResultId,
             @RequestParam(value = "manual", required = false) Boolean isManual,
             @RequestParam(value = "automated", required = false) Boolean isAutomated,
-            @RequestParam(value ="required", required = false) Boolean isRequired,
-            @RequestParam(value ="recommended", required = false) Boolean isRecommended,
-            @RequestParam(value ="workflow", required = false) Boolean isWorkflow,
+            @RequestParam(value = "required", required = false) Boolean isRequired,
+            @RequestParam(value = "recommended", required = false) Boolean isRecommended,
+            @RequestParam(value = "workflow", required = false) Boolean isWorkflow,
             @RequestParam(value = "functional", required = false) Boolean isFunctional,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
@@ -339,21 +335,21 @@ public class TestcaseResultRestController {
      */
     @ApiOperation(value = "Retrieves classes extending Test case class.", response = List.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved classes name"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved classes name"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/sub-classes")
-    public List<String> getSubClassesNameForTestCase(){
+    public List<String> getSubClassesNameForTestCase() {
         return testcaseResultService.getSubClassesNameForTestCase();
     }
 
     @ApiOperation(value = "Retrieves all status of test case result.", response = Multimap.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/status/mapping")
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {

@@ -9,13 +9,10 @@ import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import java.util.List;
 
 /**
- * @author Bhavi
- * This interface provides contract for Audit API.
+ * @author Bhavi This interface provides contract for Audit API.
  */
 public interface AuditService {
-
 
     public List<Object> searchAudit(SearchFilter searchFilter, ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException;
 }
-

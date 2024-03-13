@@ -20,7 +20,6 @@ public class TestcaseResultAttributesEntity extends IdEntity {
     @Column(name = "Value")
     private String value;
 
-
     public String getKey() {
         return key;
     }
@@ -45,12 +44,11 @@ public class TestcaseResultAttributesEntity extends IdEntity {
         this.testcaseResultEntity = testcaseResultEntity;
     }
 
-
     @Override
     public String toString() {
-        return "TestcaseResultAttributesEntity{" +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                '}';
+        return "TestcaseResultAttributesEntity{"
+                + "key='" + key + '\''
+                + ", value='" + value + '\''
+                + '}';
     }
 }

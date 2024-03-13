@@ -2,14 +2,11 @@ package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
@@ -33,7 +30,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * This ComponentServiceServiceImpl contains implementation for Component service.
+ * This ComponentServiceServiceImpl contains implementation for Component
+ * service.
  *
  * @author Dhruv
  */
@@ -61,7 +59,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     public ComponentEntity createComponent(ComponentEntity componentEntity,
-                                           ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -90,7 +88,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     public ComponentEntity updateComponent(ComponentEntity componentEntity,
-                                           ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -141,7 +139,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     public ComponentEntity getComponentById(String componentId,
-                                            ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(componentId)) {
@@ -181,7 +179,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
 
         ComponentEntity componentEntity = this.getComponentById(componentID, contextInfo);
 
-        CommonStateChangeValidator.validateStateChange(ComponentServiceConstants.COMPONENT_STATUS,ComponentServiceConstants.COMPONENT_STATUS_MAP,componentEntity.getState(),stateKey,errors);
+        CommonStateChangeValidator.validateStateChange(ComponentServiceConstants.COMPONENT_STATUS, ComponentServiceConstants.COMPONENT_STATUS_MAP, componentEntity.getState(), stateKey, errors);
 
         componentEntity.setState(stateKey);
         componentEntity = componentRepository.saveAndFlush(componentEntity);
@@ -203,9 +201,8 @@ public class ComponentServiceServiceImpl implements ComponentService {
         ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
         componentEntity.setRank(1);
         List<ComponentEntity> components = this.searchComponents(componentCriteriaSearchFilter, Constant.SINGLE_PAGE_SORT_BY_RANK, contextInfo).getContent();
-        if(!components.isEmpty()){
+        if (!components.isEmpty()) {
             componentEntity.setRank(components.get(0).getRank() + 1);
         }
     }
 }
-

@@ -1,8 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -44,7 +42,7 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
         this.setRank(testcaseEntity.getRank());
         this.setManual(testcaseEntity.getManual());
         this.setBeanName(testcaseEntity.getBeanName());
-        if(testcaseEntity.getSpecification()!=null){
+        if (testcaseEntity.getSpecification() != null) {
             this.setSpecification(new SpecificationEntity(testcaseEntity.getSpecification().getId()));
         }
     }

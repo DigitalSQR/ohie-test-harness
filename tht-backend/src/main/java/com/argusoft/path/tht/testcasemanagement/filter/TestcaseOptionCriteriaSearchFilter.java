@@ -58,7 +58,7 @@ public class TestcaseOptionCriteriaSearchFilter extends AbstractCriteriaSearchFi
         List<Predicate> predicates = new ArrayList<>();
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestcaseOptionEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestcaseOptionEntityRoot().get("name")), getNameBasedOnSearchType(getName())));
 
         }
 

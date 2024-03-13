@@ -74,7 +74,7 @@ public class ContextSetterFilter extends OncePerRequestFilter {
         request.setAttribute("contextInfo", contextInfo);
         chain.doFilter(request, response);
     }
-    
+
     @Cacheable(value = "authenticationCache", key = "#token")
     private OAuth2Authentication loadAuthentication(String token) {
         return defaultTokenServices.loadAuthentication(token);

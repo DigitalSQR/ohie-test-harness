@@ -12,8 +12,7 @@ import java.util.UUID;
 /**
  * This model used in model those contain UUID as id and state.
  *
- * @author Dhruv
- * =
+ * @author Dhruv =
  */
 @MappedSuperclass
 @Audited
@@ -26,7 +25,7 @@ public class IdStateMetaEntity extends MetaEntity {
     @Column(name = "state")
     private String state;
 
-    public IdStateMetaEntity(){
+    public IdStateMetaEntity() {
 
     }
 
@@ -42,10 +41,10 @@ public class IdStateMetaEntity extends MetaEntity {
 
     @Override
     public String toString() {
-        return "IdStateMetaEntity{" +
-                "id='" + id + '\'' +
-                ", state='" + state + '\'' +
-                '}';
+        return "IdStateMetaEntity{"
+                + "id='" + id + '\''
+                + ", state='" + state + '\''
+                + '}';
     }
 
     public void setId(String id) {

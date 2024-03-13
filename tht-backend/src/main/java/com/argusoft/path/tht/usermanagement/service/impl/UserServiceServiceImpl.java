@@ -42,7 +42,6 @@ import org.springframework.util.StringUtils;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This UserServiceServiceImpl contains implementation for User service.
@@ -75,7 +74,6 @@ public class UserServiceServiceImpl implements UserService {
     @Autowired
     private EmailService emailService;
 
-
     /**
      * {@inheritdoc}
      */
@@ -88,7 +86,9 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException {
-
+        if(!StringUtils.hasLength(email)) {
+            throw new DoesNotExistException("User does not found with email : " + email);
+        }
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
         userSearchCriteriaFilter.setEmail(email);
         List<UserEntity> userEntities = this.searchUsers(userSearchCriteriaFilter, contextInfo);
@@ -96,7 +96,6 @@ public class UserServiceServiceImpl implements UserService {
                 .findFirst()
                 .orElseThrow(() -> new DoesNotExistException("User does not found with email : " + email));
     }
-
 
     @Override
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
@@ -113,7 +112,7 @@ public class UserServiceServiceImpl implements UserService {
             userByEmail = this.getUserByEmail(userEmail, contextInfo);
             TokenVerificationEntity tokenVerification = tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.FORGOT_PASSWORD.getKey(), contextInfo);
         } catch (Exception e) {
-            LOGGER.error(ValidateConstant.EXCEPTION+ UserServiceServiceImpl.class.getSimpleName(), e);
+            LOGGER.error(ValidateConstant.EXCEPTION + UserServiceServiceImpl.class.getSimpleName(), e);
             // ignore it, no need to show that they are not exists in DB
             //TODO add log
         }
@@ -165,13 +164,12 @@ public class UserServiceServiceImpl implements UserService {
     public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
-
         UserEntity userEntity = this.getUserById(userId, contextInfo);
         String oldState = userEntity.getState();
 
-        UserValidator.validateChangeState(userEntity,this,errors,stateKey,contextInfo);
+        UserValidator.validateChangeState(userEntity, this, errors, stateKey, contextInfo);
 
-        CommonStateChangeValidator.validateStateChange(UserServiceConstants.USER_STATUS,UserServiceConstants.USER_STATUS_MAP,userEntity.getState(),stateKey,errors);
+        CommonStateChangeValidator.validateStateChange(UserServiceConstants.USER_STATUS, UserServiceConstants.USER_STATUS_MAP, userEntity.getState(), stateKey, errors);
 
         userEntity.setState(stateKey);
 
@@ -179,9 +177,8 @@ public class UserServiceServiceImpl implements UserService {
 
         sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity, contextInfo);
 
-        if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE))
-        {
-            revokeAccessTokenOnStateChange(UserServiceConstants.CLIENT_ID,userEntity.getId());
+        if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE)) {
+            revokeAccessTokenOnStateChange(UserServiceConstants.CLIENT_ID, userEntity.getId());
         }
         return userEntity;
     }
@@ -201,17 +198,17 @@ public class UserServiceServiceImpl implements UserService {
 
     private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws MessagingException, IOException, InvalidParameterException, DoesNotExistException {
         if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
-           //message assessee if their account is approved by admin
+            //message assessee if their account is approved by admin
             emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
         } else if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
             //message assessee if their account is rejected by admin
             emailService.accountRejectedMessage(userEntity.getEmail(), userEntity.getName());
         } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(newState)) {
             //Fetch all admins
-            List<UserEntity> admins = userService.getUsersByRole("role.admin",contextInfo);
+            List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
 
             //Message all admins stating approval pending
-            admins.forEach(admin -> emailService.verifiedAndWaitingForAdminApproval(admin.getEmail(),admin.getName(), userEntity.getEmail()));
+            admins.forEach(admin -> emailService.verifiedAndWaitingForAdminApproval(admin.getEmail(), admin.getName(), userEntity.getEmail()));
         } else if (UserServiceConstants.USER_STATUS_ACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
             emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName());
         }
@@ -224,7 +221,7 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public UserEntity createUser(UserEntity userEntity,
-                                 ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException,
@@ -233,15 +230,14 @@ public class UserServiceServiceImpl implements UserService {
         if (contextInfo.getModule() == Module.OAUTH2) {
             //If method get called on google Oauth2 login then verification of email is not needed.
             userEntity.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
-        }
-        else if(contextInfo.isAdmin()){
+        } else if (contextInfo.isAdmin()) {
             userEntity.setState(UserServiceConstants.USER_STATUS_ACTIVE);
-        }else {
+        } else {
             userEntity.setState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING);
         }
 
         UserValidator.validateCreateUpdateUser(this, Constant.CREATE_VALIDATION, userEntity, contextInfo);
-        if(StringUtils.hasLength(userEntity.getPassword())){
+        if (StringUtils.hasLength(userEntity.getPassword())) {
             userEntity.setPassword(EncryptDecrypt.hashString(userEntity.getPassword()));
         }
         userEntity = userRepository.saveAndFlush(userEntity);
@@ -260,12 +256,12 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public UserEntity updateUser(UserEntity userEntity,
-                                 ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException, InvalidParameterException {
         UserValidator.validateCreateUpdateUser(this, Constant.UPDATE_VALIDATION, userEntity, contextInfo);
-        if(contextInfo.getModule() == Module.RESET_PASSWORD || contextInfo.getModule() == Module.FORGOT_PASSWORD) {
+        if (contextInfo.getModule() == Module.RESET_PASSWORD || contextInfo.getModule() == Module.FORGOT_PASSWORD) {
             userEntity.setPassword(EncryptDecrypt.hashString(userEntity.getPassword()));
         }
         userEntity = userRepository.saveAndFlush(userEntity);
@@ -298,7 +294,6 @@ public class UserServiceServiceImpl implements UserService {
         return this.userRepository.findAll(userEntitySpecification);
     }
 
-
     /**
      * {@inheritdoc}
      *
@@ -306,7 +301,7 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public UserEntity getUserById(String userId,
-                                  ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(userId)) {
@@ -381,7 +376,7 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public RoleEntity getRoleById(String roleId,
-                                  ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             OperationFailedException,
             InvalidParameterException {
@@ -403,7 +398,7 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public Page<RoleEntity> getRoles(Pageable pageable,
-                                     ContextInfo contextInfo) {
+            ContextInfo contextInfo) {
         Page<RoleEntity> roles = roleRepository.findRoles(pageable);
         return roles;
     }
@@ -414,12 +409,11 @@ public class UserServiceServiceImpl implements UserService {
         userEntity.getRoles().clear();
         userEntity.getRoles().add(roleEntity);
     }
+
     @Override
-    public void revokeAccessTokenOnStateChange(String clientId, String userName)
-    {
-        Collection<OAuth2AccessToken> accessToken = tokenStore.findTokensByClientIdAndUserName(clientId,userName);
-        for(OAuth2AccessToken oAuth2AccessToken : accessToken)
-        {
+    public void revokeAccessTokenOnStateChange(String clientId, String userName) {
+        Collection<OAuth2AccessToken> accessToken = tokenStore.findTokensByClientIdAndUserName(clientId, userName);
+        for (OAuth2AccessToken oAuth2AccessToken : accessToken) {
             defaultTokenServices.revokeToken(oAuth2AccessToken.getValue());
         }
     }
@@ -431,7 +425,7 @@ public class UserServiceServiceImpl implements UserService {
         List<UserEntity> userEntities = this.searchUsers(userSearchCriteriaFilter, contextInfo);
         return Optional.ofNullable(userEntities)
                 .filter(list -> !list.isEmpty())
-                .orElseThrow(()-> new DoesNotExistException("No user found with role : "+role));
+                .orElseThrow(() -> new DoesNotExistException("No user found with role : " + role));
     }
 
 }
