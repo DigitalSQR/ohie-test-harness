@@ -140,12 +140,12 @@ export default function ChooseTest() {
     }
     TestResultAPI.startTests(params)
       .then((response) => {
-        notification.success({
-          description: "Testing Process has been Started Successfully",
-          placement: "bottomRight",
-        });
         if (!!manual) {
           navigate(`/manual-testing/${testRequestId}`);
+          notification.success({
+            description: "Testing Process has been Started Successfully",
+            placement: "bottomRight",
+          });
         }
         loadProgress();
       }).catch((error) => {
