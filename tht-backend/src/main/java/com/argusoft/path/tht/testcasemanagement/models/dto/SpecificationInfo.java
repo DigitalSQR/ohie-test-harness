@@ -6,7 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Set;
 
 /**
- * This info is for Specification DTO that contains all the Specification model's data.
+ * This info is for Specification DTO that contains all the Specification
+ * model's data.
  *
  * @author Dhruv
  */

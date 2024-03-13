@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecord;
 
-
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -18,24 +17,25 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+
 @Component
 public class SHRF5TestCase1 implements TestCase {
-    public static final Logger LOGGER = LoggerFactory.getLogger(SHRF5TestCase1.class);
-    @Override
-    public ValidationResultInfo test( Map<String, IGenericClient> iGenericClientMap,
-                                            ContextInfo contextInfo) throws OperationFailedException
 
-    {
+    public static final Logger LOGGER = LoggerFactory.getLogger(SHRF5TestCase1.class);
+
+    @Override
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             String testCaseName = this.getClass().getSimpleName();
             LOGGER.info("Start testing " + testCaseName);
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_SHARED_HEALTH_RECORD_REGISTRY_ID);
 
-                if (client == null) {
-                    LOGGER.error(testCaseName + "Failed to get IGenericClient");
-                    return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
-                }
+            if (client == null) {
+                LOGGER.error(testCaseName + "Failed to get IGenericClient");
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
 
             Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "9414473", "555-555-5555", "john.doe@example.com", client);
             MethodOutcome patientOutcome = client.create().resource(patient).execute();
@@ -69,10 +69,9 @@ public class SHRF5TestCase1 implements TestCase {
             }
             String originalCompositionId = admissionNoteOutcome.getResource().getIdElement().getIdPart();
 
-
             Bundle compositionResults = client.search().forResource(Composition.class).
                     where(Composition.PATIENT.hasId(patientId)).and(Composition.RES_ID.exactly().
-                            code(admissionNoteOutcome.getId().getIdPart())).returnBundle(Bundle.class).
+                    code(admissionNoteOutcome.getId().getIdPart())).returnBundle(Bundle.class).
                     execute();
 
             if (compositionResults.hasEntry() && compositionResults.getEntry().size() == 1) {
@@ -110,11 +109,9 @@ public class SHRF5TestCase1 implements TestCase {
             }
             LOGGER.error(testCaseName + "Test case failed because Composition has no Entry");
             return new ValidationResultInfo(ErrorLevel.ERROR, "Composition has no entry");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LOGGER.error(ValidateConstant.EXCEPTION + SHRF5TestCase1.class.getSimpleName(), ex);
-            throw new OperationFailedException(ex.getMessage(),ex);
+            throw new OperationFailedException(ex.getMessage(), ex);
         }
     }
 

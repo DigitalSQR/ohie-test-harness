@@ -22,7 +22,6 @@ public class TokenVerificationEntity extends IdStateMetaEntity {
     @Column(name = "type", nullable = false)
     private String type;
 
-
     public UserEntity getUserEntity() {
         return userEntity;
     }

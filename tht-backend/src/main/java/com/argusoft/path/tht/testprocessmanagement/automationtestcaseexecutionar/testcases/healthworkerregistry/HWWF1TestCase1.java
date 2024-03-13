@@ -26,7 +26,7 @@ public class HWWF1TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing HWWF1TestCase1");
 
@@ -38,7 +38,7 @@ public class HWWF1TestCase1 implements TestCase {
             }
 
             //create practitioner
-            Practitioner practitioner = FHIRUtils.createPractitioner("Smith","M","1962-12-12","00010","888-888-8888");
+            Practitioner practitioner = FHIRUtils.createPractitioner("Smith", "M", "1962-12-12", "00010", "888-888-8888");
 
             MethodOutcome practitionerOutcome = client.create()
                     .resource(practitioner)
@@ -65,7 +65,7 @@ public class HWWF1TestCase1 implements TestCase {
             LOGGER.info("Creating Location in HWR");
             //create location
             Location location = FHIRUtils.createLocation("0234", "South Wing, second floor", "Second floor of the Old South Wing, formerly in use by Psychiatry",
-                    "2328", "second wing admissions", "Den Burg", "9105 PZ", "NLD",null);
+                    "2328", "second wing admissions", "Den Burg", "9105 PZ", "NLD", null);
 
             MethodOutcome locationOutcome = client.create()
                     .resource(location)
@@ -153,7 +153,6 @@ public class HWWF1TestCase1 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search practitioner by name");
             }
 
-
             // Search for Location by name
             Bundle locationBundle = client.search()
                     .forResource(Location.class)
@@ -209,4 +208,3 @@ public class HWWF1TestCase1 implements TestCase {
         }
     }
 }
-

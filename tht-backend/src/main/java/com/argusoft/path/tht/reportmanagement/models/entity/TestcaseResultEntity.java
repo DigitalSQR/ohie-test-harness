@@ -1,14 +1,11 @@
 package com.argusoft.path.tht.reportmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
-import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -21,7 +18,6 @@ import java.util.Set;
 @Table(name = "testcase_result")
 public class TestcaseResultEntity extends IdStateNameMetaEntity {
 
-
     @Column(name = "rank")
     private Integer rank;
 
@@ -33,9 +29,8 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @JoinColumn(name = "parent_test_case_result_id", updatable = false)
     private TestcaseResultEntity parentTestcaseResult;
 
-    @OneToMany(mappedBy = "testcaseResultEntity",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "testcaseResultEntity", fetch = FetchType.EAGER)
     private Set<TestcaseResultAttributesEntity> testcaseResultAttributesEntities;
-
 
     @Column(name = "ref_obj_uri", updatable = false)
     private String refObjUri;
@@ -254,30 +249,30 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     public Set<TestcaseResultAttributesEntity> getTestcaseResultAttributesEntities() {
         return testcaseResultAttributesEntities;
     }
+
     public void setTestcaseResultAttributesEntities(Set<TestcaseResultAttributesEntity> testcaseResultAttributesEntities) {
         this.testcaseResultAttributesEntities = testcaseResultAttributesEntities;
     }
 
     @Override
     public String toString() {
-        return "TestcaseResultEntity{" +
-                "rank=" + rank +
-                ", testcaseResultAttributesEntities=" + testcaseResultAttributesEntities +
-                ", refObjUri='" + refObjUri + '\'' +
-                ", refId='" + refId + '\'' +
-                ", message='" + message + '\'' +
-                ", hasSystemError=" + hasSystemError +
-                ", isManual=" + isManual +
-                ", isRequired=" + isRequired +
-                ", isAutomated=" + isAutomated +
-                ", isRecommended=" + isRecommended +
-                ", isWorkflow=" + isWorkflow +
-                ", isFunctional=" + isFunctional +
-                ", isSuccess=" + isSuccess +
-                ", duration=" + duration +
-                ", grade='" + grade + '\'' +
-                '}';
+        return "TestcaseResultEntity{"
+                + "rank=" + rank
+                + ", testcaseResultAttributesEntities=" + testcaseResultAttributesEntities
+                + ", refObjUri='" + refObjUri + '\''
+                + ", refId='" + refId + '\''
+                + ", message='" + message + '\''
+                + ", hasSystemError=" + hasSystemError
+                + ", isManual=" + isManual
+                + ", isRequired=" + isRequired
+                + ", isAutomated=" + isAutomated
+                + ", isRecommended=" + isRecommended
+                + ", isWorkflow=" + isWorkflow
+                + ", isFunctional=" + isFunctional
+                + ", isSuccess=" + isSuccess
+                + ", duration=" + duration
+                + ", grade='" + grade + '\''
+                + '}';
     }
-
 
 }

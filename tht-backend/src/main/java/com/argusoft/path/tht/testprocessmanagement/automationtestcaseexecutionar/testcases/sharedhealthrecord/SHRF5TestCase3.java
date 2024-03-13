@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+
 @Component
 public class SHRF5TestCase3 implements TestCase {
 
@@ -25,7 +26,7 @@ public class SHRF5TestCase3 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             String testCaseName = this.getClass().getSimpleName();
             LOGGER.info("Start testing " + testCaseName);
@@ -96,7 +97,6 @@ public class SHRF5TestCase3 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Diagnostic Report");
             }
 
-
             Bundle bundle = (Bundle) client.search().forResource(DiagnosticReport.class)
                     .where(new ReferenceClientParam("patient").hasId(patientOutcome.getId().getIdPart()))
                     .prettyPrint()
@@ -127,8 +127,8 @@ public class SHRF5TestCase3 implements TestCase {
                     boolean performerFound = false;
                     List<Reference> performers = diagnosticReport.getPerformer();
                     for (Reference performerRef : performers) {
-                        if (performerRef.getReference().startsWith(practitionerOneReference) ||
-                                performerRef.getReference().startsWith(practitionerTwoReference)) {
+                        if (performerRef.getReference().startsWith(practitionerOneReference)
+                                || performerRef.getReference().startsWith(practitionerTwoReference)) {
                             performerFound = true;
                             break;
                         }
@@ -144,8 +144,8 @@ public class SHRF5TestCase3 implements TestCase {
                     boolean resultFound = false;
                     List<Reference> results = diagnosticReport.getResult();
                     for (Reference resultRef : results) {
-                        if (resultRef.getReference().startsWith(observationOneReference) ||
-                                resultRef.getReference().startsWith(observationTwoReference)) {
+                        if (resultRef.getReference().startsWith(observationOneReference)
+                                || resultRef.getReference().startsWith(observationTwoReference)) {
                             resultFound = true;
                             break;
                         }
@@ -164,11 +164,9 @@ public class SHRF5TestCase3 implements TestCase {
 
             LOGGER.info(testCaseName + "Testcase successfully passed!");
             return new ValidationResultInfo(ErrorLevel.OK, "Passed");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + SHRF5TestCase3.class.getSimpleName(), ex);
-            throw new OperationFailedException(ex.getMessage(),ex);
+            throw new OperationFailedException(ex.getMessage(), ex);
         }
     }
 }

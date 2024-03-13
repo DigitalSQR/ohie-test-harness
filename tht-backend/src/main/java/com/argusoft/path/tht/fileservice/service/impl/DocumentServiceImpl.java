@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.fileservice.service.impl;
 
-
 import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.constant.DocumentUtil;
@@ -65,7 +64,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
-                                         ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException {
+            ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException {
 
         defaultValueCreateDocument(documentEntity, file, contextInfo);
 
@@ -185,6 +184,7 @@ public class DocumentServiceImpl implements DocumentService {
         documentRepository.saveAndFlush(document);
         return document;
     }
+
     private List<DocumentEntity> getDocumentsByRefObjectUriAndRefObjectId(String refObjUri, String refId, ContextInfo contextInfo) throws InvalidParameterException {
         DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
         documentCriteriaSearchFilter.setRefObjUri(refObjUri);
@@ -200,7 +200,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         DocumentEntity documentEntity = this.getDocument(documentID, contextInfo);
 
-        CommonStateChangeValidator.validateStateChange(DocumentServiceConstants.DOCUMENT_STATUS,DocumentServiceConstants.DOCUMENT_STATUS_MAP,documentEntity.getState(),stateKey,errors);
+        CommonStateChangeValidator.validateStateChange(DocumentServiceConstants.DOCUMENT_STATUS, DocumentServiceConstants.DOCUMENT_STATUS_MAP, documentEntity.getState(), stateKey, errors);
 
         documentEntity.setState(stateKey);
         documentEntity = documentRepository.saveAndFlush(documentEntity);

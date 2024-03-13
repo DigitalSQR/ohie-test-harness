@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.usermanagement.models.dto;
 
-
 public class UpdatePasswordInfo {
 
     private String newPassword;

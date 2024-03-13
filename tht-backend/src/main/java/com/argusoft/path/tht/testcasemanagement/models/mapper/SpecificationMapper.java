@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface SpecificationMapper extends ModelDtoMapper<SpecificationEntity,SpecificationInfo> {
+public interface SpecificationMapper extends ModelDtoMapper<SpecificationEntity, SpecificationInfo> {
 
     SpecificationMapper INSTANCE = Mappers.getMapper(SpecificationMapper.class);
 
@@ -37,25 +37,31 @@ public interface SpecificationMapper extends ModelDtoMapper<SpecificationEntity,
     List<SpecificationEntity> dtoToModel(List<SpecificationInfo> specificationInfos);
 
     default Set<String> setToTestcaseIds(Set<TestcaseEntity> testcaseEntities) {
-        if(testcaseEntities==null){ return null; }
-            return testcaseEntities.stream()
-                    .map(TestcaseEntity::getId)
-                    .collect(Collectors.toSet());
+        if (testcaseEntities == null) {
+            return null;
+        }
+        return testcaseEntities.stream()
+                .map(TestcaseEntity::getId)
+                .collect(Collectors.toSet());
     }
 
     default Set<TestcaseEntity> setToTestcases(Set<String> testcaseIds) {
-        if(testcaseIds==null){ return null; }
-            return testcaseIds.stream()
-                    .map(id -> {
-                        TestcaseEntity testcaseEntity = new TestcaseEntity();
-                        testcaseEntity.setId(id);
-                        return testcaseEntity;
-                    })
-                    .collect(Collectors.toSet());
+        if (testcaseIds == null) {
+            return null;
+        }
+        return testcaseIds.stream()
+                .map(id -> {
+                    TestcaseEntity testcaseEntity = new TestcaseEntity();
+                    testcaseEntity.setId(id);
+                    return testcaseEntity;
+                })
+                .collect(Collectors.toSet());
     }
 
     default String setToComponentId(ComponentEntity componentEntity) {
-        if (componentEntity == null) return null;
+        if (componentEntity == null) {
+            return null;
+        }
         return componentEntity.getId();
     }
 

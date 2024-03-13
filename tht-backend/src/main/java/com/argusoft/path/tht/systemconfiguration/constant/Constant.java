@@ -46,15 +46,15 @@ public final class Constant {
     public static final DateTimeFormatter LOCAL_DATE_YYYYMMDD
             = DateTimeFormatter.ofPattern("yyyyMMdd");
     public final static ContextInfo SUPER_USER_CONTEXT = new ContextInfo(
-                "noreplytestharnesstool@gmail.com",
-                DEFAULT_SYSTEM_USER_ID,
-                "password",
-                true,
-                true,
-                true,
-                true,
-                Arrays.asList(new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_ADMIN))
-        );
+            "noreplytestharnesstool@gmail.com",
+            DEFAULT_SYSTEM_USER_ID,
+            "password",
+            true,
+            true,
+            true,
+            true,
+            Arrays.asList(new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_ADMIN))
+    );
 
     private Constant() {
     }

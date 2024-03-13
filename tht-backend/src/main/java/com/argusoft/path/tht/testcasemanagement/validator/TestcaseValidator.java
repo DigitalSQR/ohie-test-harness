@@ -32,11 +32,11 @@ public class TestcaseValidator {
     public static void validateCreateUpdateTestCase(String validationTypeKey, TestcaseEntity testcaseEntity, TestcaseService testcaseService, SpecificationService specificationService, ApplicationContext applicationContext, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestCase(validationTypeKey,
-                testcaseEntity,
-                testcaseService,
-                specificationService,
-                applicationContext,
-                contextInfo);
+                        testcaseEntity,
+                        testcaseService,
+                        specificationService,
+                        applicationContext,
+                        contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseValidator.class.getSimpleName());
             throw new DataValidationErrorException(
@@ -47,12 +47,12 @@ public class TestcaseValidator {
     }
 
     public static List<ValidationResultInfo> validateTestCase(String validationTypeKey,
-                                                              TestcaseEntity testcaseEntity,
-                                                              TestcaseService testcaseService,
-                                                              SpecificationService specificationService,
-                                                              ApplicationContext applicationContext,
-                                                              ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
-        
+            TestcaseEntity testcaseEntity,
+            TestcaseService testcaseService,
+            SpecificationService specificationService,
+            ApplicationContext applicationContext,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+
         if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
@@ -84,12 +84,12 @@ public class TestcaseValidator {
                                 .getTestcaseById(testcaseEntity.getId(),
                                         contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
-                        LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION+ TestcaseValidator.class.getSimpleName());
+                        LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseValidator.class.getSimpleName());
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
-                                        ValidateConstant.ID_SUPPLIED+ "update"+ ValidateConstant.DOES_NOT_EXIST));
+                                        ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
                     }
                 }
 
@@ -138,11 +138,10 @@ public class TestcaseValidator {
 
     }
 
-
     //validate update
     private static void validateUpdateTestcase(List<ValidationResultInfo> errors,
-                                               TestcaseEntity testcaseEntity,
-                                               TestcaseEntity originalEntity)
+            TestcaseEntity testcaseEntity,
+            TestcaseEntity originalEntity)
             throws OperationFailedException,
             InvalidParameterException {
         // required validation
@@ -153,19 +152,17 @@ public class TestcaseValidator {
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
                     fieldName + ValidateConstant.MUST_PROVIDED));
-        }
-        // check meta version id
+        } // check meta version id
         else if (!testcaseEntity.getVersion()
                 .equals(originalEntity.getVersion())) {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    ValidateConstant.SOMEONE_UPDATED+ "Test case"+ ValidateConstant.REFRESH_COPY));
+                    ValidateConstant.SOMEONE_UPDATED + "Test case" + ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
         validateNotUpdatable(errors, testcaseEntity, originalEntity);
     }
-
 
     //validate create
     private static void validateCreateTestcase(
@@ -182,7 +179,7 @@ public class TestcaseValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ "create"+ ValidateConstant.ALREADY_EXIST));
+                                ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
                 LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
@@ -192,14 +189,14 @@ public class TestcaseValidator {
 
     //Validate Required
     private static void validateCommonRequired(TestcaseEntity testcaseEntity,
-                                               List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         //check for specification
         ValidationUtils
                 .validateRequired(testcaseEntity.getSpecification(), "specification", errors);
 
         if (!Objects.equals(Boolean.TRUE, testcaseEntity.getManual())) {
             ValidationUtils.validateRequired(testcaseEntity.getBeanName(), "beanName", errors);
-        }else{
+        } else {
             ValidationUtils.validateRequired(testcaseEntity.getManual(), "manual", errors);
         }
         //check for rank
@@ -218,15 +215,15 @@ public class TestcaseValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                             TestcaseEntity testcaseEntity,
-                                             TestcaseEntity originalEntity) {
+            TestcaseEntity testcaseEntity,
+            TestcaseEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseEntity.getState(), originalEntity.getState(), "state", errors);
     }
 
     //Validation For :Id
     private static void validateTestcaseEntityId(TestcaseEntity testcaseEntity,
-                                                 List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseEntity.getId(),
                 "id",
                 0,
@@ -236,7 +233,7 @@ public class TestcaseValidator {
 
     //Validation For :Name
     private static void validateTestcaseEntityName(TestcaseEntity testcaseEntity,
-                                                   List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseEntity.getName(),
                 "name",
                 3,
@@ -246,7 +243,7 @@ public class TestcaseValidator {
 
     //Validation For :Description
     private static void validateTestcaseEntityDescription(TestcaseEntity testcaseEntity,
-                                                   List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseEntity.getDescription(),
                 "description",
                 0,
@@ -256,7 +253,7 @@ public class TestcaseValidator {
 
     //Validation For :Failure Message
     private static void validateTestcaseEntityFailureMessage(TestcaseEntity testcaseEntity,
-                                                          List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseEntity.getFailureMessage(),
                 "failureMessage",
                 0,
@@ -266,8 +263,8 @@ public class TestcaseValidator {
 
     //Validation For :BeanName
     private static void validateTestcaseEntityBeanName(TestcaseEntity testcaseEntity,
-                                                        ApplicationContext applicationContext,
-                                                        List<ValidationResultInfo> errors) {
+            ApplicationContext applicationContext,
+            List<ValidationResultInfo> errors) {
         if (!StringUtils.hasLength(testcaseEntity.getBeanName())) {
             return;
         }
@@ -279,7 +276,7 @@ public class TestcaseValidator {
         try {
             TestCase cRTestCases = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
         } catch (Exception e) {
-            LOGGER.error(ValidateConstant.EXCEPTION+ TestcaseValidator.class.getSimpleName(), e);
+            LOGGER.error(ValidateConstant.EXCEPTION + TestcaseValidator.class.getSimpleName(), e);
             errors
                     .add(new ValidationResultInfo("beanName",
                             ErrorLevel.ERROR,
@@ -289,7 +286,7 @@ public class TestcaseValidator {
 
     //Validation For :Order
     private static void validateTestcaseEntityOrder(TestcaseEntity testcaseEntity,
-                                                    List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(testcaseEntity.getRank(),
                 "rank",
                 1,
@@ -299,12 +296,12 @@ public class TestcaseValidator {
 
     //Validation For :IsManual
     private static void validateTestcaseEntityIsManual(TestcaseEntity testcaseEntity,
-                                                       List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
     }
 
     //Validation For :IsRequired
     private static void validateTestcaseEntityIsRequired(TestcaseEntity testcaseEntity,
-                                                         List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
     }
 
     //trim all Testcase field
@@ -324,9 +321,9 @@ public class TestcaseValidator {
     }
 
     private static void validateCommonForeignKey(TestcaseEntity testcaseEntity,
-                                                 List<ValidationResultInfo> errors,
-                                                 SpecificationService specificationService,
-                                                 ContextInfo contextInfo)
+            List<ValidationResultInfo> errors,
+            SpecificationService specificationService,
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
         if (testcaseEntity.getSpecification() != null) {
@@ -340,17 +337,17 @@ public class TestcaseValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ fieldName+ ValidateConstant.DOES_NOT_EXIST));
+                                ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         }
     }
 
     //Validate Common Unique
     private static void validateCommonUnique(TestcaseEntity testcaseEntity,
-                                             String validationTypeKey,
-                                             List<ValidationResultInfo> errors,
-                                             TestcaseService testcaseService,
-                                             ContextInfo contextInfo)
+            String validationTypeKey,
+            List<ValidationResultInfo> errors,
+            TestcaseService testcaseService,
+            ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || testcaseEntity.getId() != null)
@@ -365,16 +362,15 @@ public class TestcaseValidator {
             boolean flag
                     = testcaseEntities.stream().anyMatch(c -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
                     || !c.getId().equals(testcaseEntity.getId()))
-            );
+                    );
             if (flag) {
                 String fieldName = "name";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "Given Testcase"+ ValidateConstant.NAME_ALREADY_EXIST));
+                                "Given Testcase" + ValidateConstant.NAME_ALREADY_EXIST));
             }
         }
     }
-
 
 }

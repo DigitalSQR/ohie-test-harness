@@ -30,14 +30,14 @@ public class TestcaseResultAttributeEventListener {
 
     @Async
     @TransactionalEventListener
-    public void notifyAttributeChange(TestcaseResultAttributeEvent event){
+    public void notifyAttributeChange(TestcaseResultAttributeEvent event) {
         String testcaseResultId = (String) event.getSource();
         String destination = "/testcase-result/attribute/" + testcaseResultId;
         TestcaseResultEntity testcaseResultEntity = null;
         try {
             testcaseResultEntity = testcaseResultService.getTestcaseResultById(testcaseResultId, event.getContextInfo());
-        } catch (DoesNotExistException  | InvalidParameterException e) {
-            LOGGER.error("Caught exception while notifying attribute change ",e);
+        } catch (DoesNotExistException | InvalidParameterException e) {
+            LOGGER.error("Caught exception while notifying attribute change ", e);
         }
         messagingTemplate.convertAndSend(destination, testcaseResultMapper.modelToDto(testcaseResultEntity));
     }

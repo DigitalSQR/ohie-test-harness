@@ -26,7 +26,8 @@ import java.util.Map;
 @Component
 public class SHRWF2TestCase1 implements TestCase {
 
-public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.class);
+
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> isGenericClientMap, ContextInfo contextInfo) throws OperationFailedException {
         try {
@@ -118,7 +119,6 @@ public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.clas
 
                     boolean isCdaCompliant = isCdaCompliant(documentReference);
 
-
                     if (!isCdaCompliant) {
 
                         LOGGER.error("Not CDA Compliant");
@@ -134,16 +134,13 @@ public static final Logger LOGGER = LoggerFactory.getLogger(SHRWF2TestCase1.clas
             }
             LOGGER.info("Test case SHRWF2 Passed");
             return new ValidationResultInfo(ErrorLevel.OK, "Passed");
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + SHRWF2TestCase1.class.getSimpleName(), ex);
 
             throw new OperationFailedException(ex.getMessage(), ex);
         }
 
     }
-
 
     // Method to check if the DocumentReference content is CDA compliant
     private static boolean isCdaCompliant(DocumentReference documentReference) {

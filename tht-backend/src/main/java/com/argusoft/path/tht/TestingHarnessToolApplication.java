@@ -8,7 +8,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -47,9 +46,9 @@ public class TestingHarnessToolApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Flyway.configure().baselineOnMigrate(true).dataSource(dataSource)
-                    .locations(flywayLocation).
-                    load()
-                    .migrate();
+                .locations(flywayLocation).
+                load()
+                .migrate();
     }
 
     @Bean

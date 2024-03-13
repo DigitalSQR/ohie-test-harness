@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.Objects;
 
 @Component
-public class TSWF6TestCase1  implements TestCase {
+public class TSWF6TestCase1 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TSWF6TestCase1.class);
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing TSWF6TestCase1");
 
@@ -38,9 +38,9 @@ public class TSWF6TestCase1  implements TestCase {
 
             LOGGER.info("Creating CodeSystem");
             // Creating codeSystem
-            if (!Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated())
+            if (!Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated()) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
-
+            }
 
             LOGGER.info("Creating ValueSet");
             // Creating valueSet
@@ -89,7 +89,6 @@ public class TSWF6TestCase1  implements TestCase {
                 .returnBundle(Bundle.class)
                 .execute();
 
-
         // checking if any element present in codeSystemList and deleting it
         if (codeSystemList.hasEntry()) {
             for (Bundle.BundleEntryComponent entry : codeSystemList.getEntry()) {
@@ -114,7 +113,6 @@ public class TSWF6TestCase1  implements TestCase {
                 .where(ValueSet.URL.matches().value(valueSetUrl))
                 .returnBundle(Bundle.class)
                 .execute();
-
 
         // checking if any element present in codeSystemList and deleting it
         if (valueSetList.hasEntry()) {

@@ -21,10 +21,10 @@ import java.util.Map;
 public class SHRF5TestCase4 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SHRF5TestCase4.class);
-@Override
+
+    @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException
-    {
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             String testCaseName = this.getClass().getSimpleName();
             LOGGER.info("Start testing " + testCaseName);
@@ -114,7 +114,6 @@ public class SHRF5TestCase4 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Document Reference of Discharge Note");
             }
 
-
             Composition admissionNoteTwo = FHIRUtils.createAdmissionNote(patientId, organizationTwoOutcome.getId().getIdPart(), practitionerTwoOutcome.getId().getIdPart(), "Better Health Clinic");
             MethodOutcome admissionTwoNoteOutcome = client.create().resource(admissionNoteTwo).execute();
             if (!admissionTwoNoteOutcome.getCreated()) {
@@ -159,7 +158,6 @@ public class SHRF5TestCase4 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Document Reference of Discharge Note");
             }
 
-
             Bundle patientSummaryBundle = client
                     .search()
                     .byUrl(client.getServerBase() + "/Patient/" + patientOutcome.getId().getIdPart() + "/$summary").returnBundle(Bundle.class)
@@ -202,9 +200,7 @@ public class SHRF5TestCase4 implements TestCase {
             LOGGER.info(testCaseName + "Testcase successfully passed!");
             return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + SHRF5TestCase4.class.getSimpleName(), ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }

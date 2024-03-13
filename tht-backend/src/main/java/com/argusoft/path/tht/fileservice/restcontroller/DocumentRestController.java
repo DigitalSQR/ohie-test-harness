@@ -39,26 +39,24 @@ import java.util.List;
 @Api(value = "REST API for Document services", tags = {"Document API"})
 public class DocumentRestController {
 
-
     @Autowired
     private DocumentService documentService;
 
     @Autowired
     private DocumentMapper documentMapper;
 
-
     @ApiOperation(value = "Create Document", response = DocumentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully created Document"),
-            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+        @ApiResponse(code = 200, message = "Successfully created Document"),
+        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 
     })
     @PostMapping
     @Transactional(rollbackFor = Exception.class)
     public DocumentInfo createDocument(@ModelAttribute DocumentInfo documentInfo,
-                                       @ModelAttribute("file") MultipartFile file,
-                                       @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
+            @ModelAttribute("file") MultipartFile file,
+            @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws InvalidFileTypeException,
             DataValidationErrorException,
             OperationFailedException, DoesNotExistException, InvalidParameterException {
@@ -70,30 +68,29 @@ public class DocumentRestController {
 
     @ApiOperation(value = "View available Document with supplied id", response = DocumentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved Document"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved Document"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{documentId}")
     public DocumentInfo getDocument(@PathVariable("documentId") String documentId,
-                                    @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
         DocumentEntity document = documentService.getDocument(documentId, contextInfo);
         return documentMapper.modelToDto(document);
     }
 
-
     @ApiOperation(value = "View available Document with supplied id", response = DocumentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved Document"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully retrieved Document"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
     public Page<DocumentInfo> getSearchDocument(DocumentCriteriaSearchFilter exampleDocumentSearchFilter,
-                                                Pageable pageable,
-                                                @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException {
+            Pageable pageable,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException {
 
         Page<DocumentEntity> documentBySearchFilter = documentService.searchDocument(exampleDocumentSearchFilter, pageable, contextInfo);
         return documentMapper.pageEntityToDto(documentBySearchFilter);
@@ -101,15 +98,15 @@ public class DocumentRestController {
 
     @ApiOperation(value = "To change status of Document", response = DocumentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated document"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+        @ApiResponse(code = 200, message = "Successfully updated document"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{documentId}/{changeState}")
     @Transactional(rollbackFor = Exception.class)
     public DocumentInfo updateDocumentState(@PathVariable("documentId") String documentId,
-                                            @PathVariable("changeState") String changeState,
-                                            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            @PathVariable("changeState") String changeState,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         DocumentEntity documentEntity = documentService.changeState(documentId, changeState, contextInfo);
         return documentMapper.modelToDto(documentEntity);
@@ -117,29 +114,28 @@ public class DocumentRestController {
 
     @ApiOperation(value = "To change rank of Document", response = DocumentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully updated document"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+        @ApiResponse(code = 200, message = "Successfully updated document"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PutMapping("/rank/{documentId}/{rankId}")
     @Transactional(rollbackFor = Exception.class)
     public DocumentInfo changeDocumentRank(@PathVariable("documentId") String documentId,
-                                            @PathVariable("rankId") Integer rankId,
-                                            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
+            @PathVariable("rankId") Integer rankId,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
         DocumentEntity updatedDocumentEntity = documentService.changeRank(documentId, rankId, contextInfo);
         return documentMapper.modelToDto(updatedDocumentEntity);
     }
 
-
     @ApiOperation(value = "To download the document", response = DocumentInfo.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully Downloaded Document"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+        @ApiResponse(code = 200, message = "Successfully Downloaded Document"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("/file/{documentId}")
     public ResponseEntity<Resource> getFileByDocument(@PathVariable("documentId") String documentId,
-                                                      @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             OperationFailedException {
         ByteArrayResource byteArrayResourceByDocumentId = documentService.getByteArrayResourceByDocumentId(documentId, contextInfo);
@@ -158,21 +154,21 @@ public class DocumentRestController {
 
     @GetMapping("/base64/{documentId}")
     public String getFileByDocumentBase64(@PathVariable("documentId") String documentId,
-                                                    @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, OperationFailedException {
 
         ByteArrayResource byteArrayResourceByDocumentId = documentService.getByteArrayResourceByDocumentId(documentId, contextInfo);
 
         byte[] byteArrayOfFile = byteArrayResourceByDocumentId.getByteArray();
 
-        return "data:image/jpeg;base64,"+Base64.getEncoder().encodeToString(byteArrayOfFile);
+        return "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(byteArrayOfFile);
     }
 
     @ApiOperation(value = "Retrieves all status of document.", response = Multimap.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/status/mapping")
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {

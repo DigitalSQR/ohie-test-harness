@@ -2,10 +2,8 @@ package com.argusoft.path.tht.testcasemanagement.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.io.Serializable;
 
 /**
  * Information about the results of a data validation.

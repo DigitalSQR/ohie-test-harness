@@ -1,4 +1,5 @@
 package com.argusoft.path.tht.reportmanagement.constant;
+
 import com.argusoft.path.tht.reportmanagement.models.dto.GradeInfo;
 
 public class GradeServiceConstants {

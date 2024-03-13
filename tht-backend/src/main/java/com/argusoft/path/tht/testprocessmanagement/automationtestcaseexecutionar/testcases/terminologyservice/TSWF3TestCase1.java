@@ -22,44 +22,44 @@ import java.util.Map;
 public class TSWF3TestCase1 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TSWF3TestCase1.class);
+
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                 ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
 
-        try{
+        try {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
             if (client == null) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
-            String codeSystemVersion="1.0.0";
+            String codeSystemVersion = "1.0.0";
 
-            Bundle codeSystemList =client.search()
+            Bundle codeSystemList = client.search()
                     .forResource(CodeSystem.class)
                     .where(CodeSystem.URL.matches().value("http://example.com/mycodesystem"))
                     .and(CodeSystem.VERSION.exactly().code(codeSystemVersion))
                     .returnBundle(Bundle.class)
                     .execute();
 
-
             // checking if any element present in codeSystemList and deleting it
-            if(codeSystemList.hasEntry()){
-                for(Bundle.BundleEntryComponent entry : codeSystemList.getEntry()){
+            if (codeSystemList.hasEntry()) {
+                for (Bundle.BundleEntryComponent entry : codeSystemList.getEntry()) {
                     CodeSystem codeSystem = (CodeSystem) entry.getResource();
                     String id = codeSystem.getIdElement().getIdPart();
-                    client.delete().resourceById("CodeSystem",id).execute();
+                    client.delete().resourceById("CodeSystem", id).execute();
                 }
             }
 
             // creating a codeSystem
-            CodeSystem codeSystem= FHIRUtils.createCodeSystem("http://example.com/mycodesystem","1.0.0","MyCodeSystem","Example Code System","ACTIVE","HL7 International / Terminology Infrastructure","COMPLETE","12345","Blood Pressure","A measurement of the force of blood against the walls of the arteries.");
-            MethodOutcome outcome=client.create()
+            CodeSystem codeSystem = FHIRUtils.createCodeSystem("http://example.com/mycodesystem", "1.0.0", "MyCodeSystem", "Example Code System", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "12345", "Blood Pressure", "A measurement of the force of blood against the walls of the arteries.");
+            MethodOutcome outcome = client.create()
                     .resource(codeSystem)
                     .execute();
 
             // check if codeSystem got created
-            if(!outcome.getCreated()){
+            if (!outcome.getCreated()) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
@@ -72,11 +72,11 @@ public class TSWF3TestCase1 implements TestCase {
                     .execute();
 
             // checking if any element present in codeSystemList and deleting it
-            if(searchValueSet.hasEntry()){
-                for(Bundle.BundleEntryComponent entry : searchValueSet.getEntry()){
+            if (searchValueSet.hasEntry()) {
+                for (Bundle.BundleEntryComponent entry : searchValueSet.getEntry()) {
                     ValueSet valueSet = (ValueSet) entry.getResource();
                     String id = valueSet.getIdElement().getIdPart();
-                    client.delete().resourceById("ValueSet",id).execute();
+                    client.delete().resourceById("ValueSet", id).execute();
                 }
             }
 
@@ -86,19 +86,18 @@ public class TSWF3TestCase1 implements TestCase {
             // Add a concept to the ValueSet
             FHIRUtils.addConceptValueSet(valueSet, "http://example.com/mycodesystem", "123", "Example Display");
 
-            MethodOutcome valueSetOutcome=client.create()
+            MethodOutcome valueSetOutcome = client.create()
                     .resource(valueSet)
                     .execute();
 
             // check if valueSet got created
-            if(!valueSetOutcome.getCreated()){
+            if (!valueSetOutcome.getCreated()) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
             }
 
-
             // create parameter for $validate-code operation
-            UriType url=new UriType("http://hl7.org/fhir/ValueSet/example");
-            Parameters parameters=new Parameters();
+            UriType url = new UriType("http://hl7.org/fhir/ValueSet/example");
+            Parameters parameters = new Parameters();
             parameters.addParameter().setName("url").setValue(url);
 
             //expand and check the value set count
@@ -111,7 +110,7 @@ public class TSWF3TestCase1 implements TestCase {
                     .returnResourceType(ValueSet.class)
                     .execute();
 
-            if(result.getCompose().getInclude().size() == 1){
+            if (result.getCompose().getInclude().size() == 1) {
                 return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             }
 

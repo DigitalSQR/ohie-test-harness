@@ -5,7 +5,8 @@ import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
-public interface ModelDtoMapper<E,D> {
+public interface ModelDtoMapper<E, D> {
+
     D modelToDto(E entity);
 
     E dtoToModel(D dto);

@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.testcases.sharedhealthrecord;
 
-
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
@@ -26,7 +25,7 @@ public class SHRF5TestCase2 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             String testCaseName = this.getClass().getSimpleName();
             LOGGER.info("Start testing " + testCaseName);
@@ -93,7 +92,6 @@ public class SHRF5TestCase2 implements TestCase {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Composition");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Discharge Composition");
             }
-
 
             int expectedTotal = 4;
             Bundle bundle = client.search().forResource(Composition.class).where(Composition.PATIENT.hasId(patientId)).returnBundle(Bundle.class).execute();

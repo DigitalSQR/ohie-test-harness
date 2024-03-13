@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
 /**
- * This CustomUserDetailService implements UserDetailsService and authenticates user.
+ * This CustomUserDetailService implements UserDetailsService and authenticates
+ * user.
  *
  * @author Dhruv
  */
@@ -54,7 +54,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
                 if (!StringUtils.hasLength(user.getPassword()) || !EncryptDecrypt.checkRawString(password, user.getPassword())) {
                     LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
-                    throw new UsernameNotFoundException("Credential are incorrect.");   
+                    throw new UsernameNotFoundException("Credential are incorrect.");
                 }
 
                 //If User is not active
@@ -78,7 +78,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
                 List<GrantedAuthority> authorities
                         = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getId()))
-                        .collect(Collectors.toList());
+                                .collect(Collectors.toList());
 
                 return new ContextInfo(
                         user.getEmail(),

@@ -18,7 +18,6 @@ import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
-import com.argusoft.path.tht.usermanagement.service.impl.UserServiceServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -48,8 +47,8 @@ public class UserValidator {
             DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntitys
                 = validateUser(userService, validationTypeKey,
-                userEntity,
-                contextInfo);
+                        userEntity,
+                        contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
             LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + UserValidator.class.getSimpleName());
             throw new DataValidationErrorException(
@@ -60,7 +59,7 @@ public class UserValidator {
 
     //Validate Required
     private static void validateCommonRequired(UserEntity userEntity,
-                                               List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         //check the email required
         ValidationUtils
                 .validateRequired(userEntity.getEmail(), "email", errors);
@@ -73,30 +72,30 @@ public class UserValidator {
     }
 
     private static void validateCommonForeignKey(UserService userService, UserEntity userEntity,
-                                                 List<ValidationResultInfo> errors,
-                                                 ContextInfo contextInfo) {
+            List<ValidationResultInfo> errors,
+            ContextInfo contextInfo) {
         //validate Role foreignKey.
         Set<RoleEntity> roleEntitySet = new HashSet<>();
         userEntity.getRoles().stream().forEach(item -> {
             try {
                 roleEntitySet.add(userService.getRoleById(item.getId(), contextInfo));
-            } catch (DoesNotExistException | InvalidParameterException |
-                     OperationFailedException ex) {
+            } catch (DoesNotExistException | InvalidParameterException
+                    | OperationFailedException ex) {
                 LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserValidator.class.getSimpleName(), ex);
                 String fieldName = "roles";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ fieldName+ ValidateConstant.DOES_NOT_EXIST));
+                                ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         });
         userEntity.setRoles(roleEntitySet);
     }
 
     private static void validateCommonUnique(UserService userService, UserEntity userEntity,
-                                             String validationTypeKey,
-                                             List<ValidationResultInfo> errors,
-                                             ContextInfo contextInfo)
+            String validationTypeKey,
+            List<ValidationResultInfo> errors,
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
         // check unique field
@@ -115,7 +114,7 @@ public class UserValidator {
             boolean flag
                     = userEntities.stream().anyMatch(u -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
                     || !u.getId().equals(userEntity.getId()))
-            );
+                    );
             if (flag) {
                 String fieldName = "Email";
                 errors.add(
@@ -128,9 +127,9 @@ public class UserValidator {
     }
 
     public static List<ValidationResultInfo> validateUser(UserService userService,
-                                                          String validationTypeKey,
-                                                          UserEntity userEntity,
-                                                          ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+            String validationTypeKey,
+            UserEntity userEntity,
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
@@ -168,7 +167,7 @@ public class UserValidator {
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
-                                        ValidateConstant.ID_SUPPLIED+ "update" + ValidateConstant.DOES_NOT_EXIST));
+                                        ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
                     }
                 }
 
@@ -205,7 +204,7 @@ public class UserValidator {
         validateUserEntityRoles(userEntity,
                 errors);
         // For : CompanyName
-        validateUserEntityCompanyName(userEntity,errors);
+        validateUserEntityCompanyName(userEntity, errors);
         return errors;
     }
 
@@ -221,9 +220,9 @@ public class UserValidator {
 
     //validate update
     private static void validateUpdateUser(List<ValidationResultInfo> errors,
-                                           UserEntity userEntity,
-                                           UserEntity originalEntity,
-                                           ContextInfo contextInfo) {
+            UserEntity userEntity,
+            UserEntity originalEntity,
+            ContextInfo contextInfo) {
         // required validation
         ValidationUtils.validateRequired(userEntity.getId(), "id", errors);
         //check the meta required
@@ -232,14 +231,13 @@ public class UserValidator {
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
                     fieldName + ValidateConstant.MUST_PROVIDED));
-        }
-        // check meta version id
+        } // check meta version id
         else if (!userEntity.getVersion()
                 .equals(originalEntity.getVersion())) {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    ValidateConstant.SOMEONE_UPDATED+ "user"+ ValidateConstant.REFRESH_COPY));
+                    ValidateConstant.SOMEONE_UPDATED + "user" + ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
         validateNotUpdatable(errors, userEntity, originalEntity, contextInfo);
@@ -247,26 +245,26 @@ public class UserValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                             UserEntity userEntity,
-                                             UserEntity originalEntity,
-                                             ContextInfo contextInfo) {
+            UserEntity userEntity,
+            UserEntity originalEntity,
+            ContextInfo contextInfo) {
 
         // state can't be updated
         ValidationUtils.validateNotUpdatable(userEntity.getState(), originalEntity.getState(), "state", errors);
         ValidationUtils.validateNotUpdatable(userEntity.getEmail(), originalEntity.getEmail(), "email", errors);
-        if(contextInfo.getModule()!= Module.RESET_PASSWORD && contextInfo.getModule()!= Module.FORGOT_PASSWORD){
+        if (contextInfo.getModule() != Module.RESET_PASSWORD && contextInfo.getModule() != Module.FORGOT_PASSWORD) {
             userEntity.setPassword(originalEntity.getPassword());
         }
-        if(!contextInfo.isAdmin()){
+        if (!contextInfo.isAdmin()) {
             ValidationUtils.validateNotUpdatable(userEntity.getRoles(), originalEntity.getRoles(), "role", errors);
         }
     }
 
     //validate create
     private static void validateCreateUser(UserService userService,
-                                           List<ValidationResultInfo> errors,
-                                           UserEntity userEntity,
-                                           ContextInfo contextInfo) {
+            List<ValidationResultInfo> errors,
+            UserEntity userEntity,
+            ContextInfo contextInfo) {
         if (userEntity.getId() != null) {
             try {
                 userService.getUserById(userEntity.getId(),
@@ -276,7 +274,7 @@ public class UserValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ "create" + ValidateConstant.ALREADY_EXIST));
+                                ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
                 LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
@@ -286,7 +284,7 @@ public class UserValidator {
 
     //Validation For :Id
     private static void validateUserEntityId(UserEntity userEntity,
-                                             List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(userEntity.getId(),
                 "id",
                 0,
@@ -296,7 +294,7 @@ public class UserValidator {
 
     //Validation For :Name
     private static void validateUserEntityName(UserEntity userEntity,
-                                               List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(userEntity.getName(),
                 "name",
                 Constant.ALLOWED_CHARS_IN_NAMES,
@@ -311,7 +309,7 @@ public class UserValidator {
 
     //Validation For :Email
     private static void validateUserEntityEmail(UserEntity userEntity,
-                                                List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validatePattern(userEntity.getEmail(),
                 "email",
                 UserServiceConstants.EMAIL_REGEX,
@@ -326,7 +324,7 @@ public class UserValidator {
 
     //Validation For :Password
     private static void validateUserEntityPassword(UserEntity userEntity,
-                                                   List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(userEntity.getPassword(),
                 "password",
                 6,
@@ -336,7 +334,7 @@ public class UserValidator {
 
     //Validation For :Roles
     private static void validateUserEntityRoles(UserEntity userEntity,
-                                                List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateCollectionSize(userEntity.getRoles(),
                 "roles",
                 1,
@@ -346,7 +344,7 @@ public class UserValidator {
 
     //Validation For :Company Name
     private static void validateUserEntityCompanyName(UserEntity userEntity,
-                                                   List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(userEntity.getCompanyName(),
                 "company name",
                 0,
@@ -359,7 +357,7 @@ public class UserValidator {
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
         userSearchCriteriaFilter.setRole(UserServiceConstants.ROLE_ID_ADMIN);
         userSearchCriteriaFilter.setState(Collections.singletonList(UserServiceConstants.USER_STATUS_ACTIVE));
-        List<UserEntity> userList = userService.searchUsers(userSearchCriteriaFilter ,contextInfo);
+        List<UserEntity> userList = userService.searchUsers(userSearchCriteriaFilter, contextInfo);
 
         if (userList.size() == 1) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
@@ -371,8 +369,8 @@ public class UserValidator {
     }
 
     public static void validatePasswords(String oldPassword, String newPassword, String dbPassword, List<ValidationResultInfo> errors) {
-        if(newPassword.isEmpty()){
-            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR,"New password cannot be empty"));
+        if (newPassword.isEmpty()) {
+            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR, "New password cannot be empty"));
         }
         if (!EncryptDecrypt.checkRawString(oldPassword, dbPassword)) {
             errors.add(new ValidationResultInfo("Old password", ErrorLevel.ERROR, "Old password is incorrect."));
@@ -382,10 +380,10 @@ public class UserValidator {
         }
     }
 
-    public static void validateChangeState(UserEntity userEntity, UserService userService, List<ValidationResultInfo>errors,String stateKey,ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public static void validateChangeState(UserEntity userEntity, UserService userService, List<ValidationResultInfo> errors, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         //validate for one admin should active all time
-        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ADMIN))){
+        if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ADMIN))) {
             UserValidator.oneAdminShouldActiveValidation(userEntity, userService, errors, contextInfo);
         }
     }

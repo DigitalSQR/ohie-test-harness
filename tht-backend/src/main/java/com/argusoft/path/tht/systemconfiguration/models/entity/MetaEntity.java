@@ -2,7 +2,6 @@ package com.argusoft.path.tht.systemconfiguration.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.MetaInfo;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -25,13 +24,13 @@ public class MetaEntity {
 
     @Override
     public String toString() {
-        return "MetaEntity{" +
-                "createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", createdBy='" + createdBy + '\'' +
-                ", updatedBy='" + updatedBy + '\'' +
-                ", version=" + version +
-                '}';
+        return "MetaEntity{"
+                + "createdAt=" + createdAt
+                + ", updatedAt=" + updatedAt
+                + ", createdBy='" + createdBy + '\''
+                + ", updatedBy='" + updatedBy + '\''
+                + ", version=" + version
+                + '}';
     }
 
     @CreatedDate

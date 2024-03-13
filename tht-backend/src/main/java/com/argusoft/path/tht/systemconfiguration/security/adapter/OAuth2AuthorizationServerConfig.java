@@ -14,7 +14,8 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import javax.sql.DataSource;
 
 /**
- * This OAuth2AuthorizationServerConfig configures tokenService in spring security.
+ * This OAuth2AuthorizationServerConfig configures tokenService in spring
+ * security.
  *
  * @author Dhruv
  */

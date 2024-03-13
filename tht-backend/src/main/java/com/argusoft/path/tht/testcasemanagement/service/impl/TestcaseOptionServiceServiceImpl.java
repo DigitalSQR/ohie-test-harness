@@ -2,12 +2,10 @@ package com.argusoft.path.tht.testcasemanagement.service.impl;
 
 import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
@@ -29,7 +27,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * This TestcaseOptionServiceServiceImpl contains implementation for TestcaseOption service.
+ * This TestcaseOptionServiceServiceImpl contains implementation for
+ * TestcaseOption service.
  *
  * @author Dhruv
  */
@@ -51,7 +50,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     public TestcaseOptionEntity createTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
-                                                     ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -81,7 +80,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     public TestcaseOptionEntity updateTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
-                                                     ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
@@ -116,7 +115,6 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         return testcaseOptionRepository.findAll(testcaseOptionEntitySpecification, pageable);
     }
 
-
     @Override
     public List<TestcaseOptionEntity> searchTestcaseOptions(
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
@@ -133,7 +131,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     public TestcaseOptionEntity getTestcaseOptionById(String testcaseOptionId,
-                                                      ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(testcaseOptionId)) {
@@ -171,7 +169,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
         TestcaseOptionEntity testcaseOptionEntity = this.getTestcaseOptionById(testcaseOptionId, contextInfo);
 
-        CommonStateChangeValidator.validateStateChange(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS,TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_MAP,testcaseOptionEntity.getState(),stateKey,errors);
+        CommonStateChangeValidator.validateStateChange(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS, TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_MAP, testcaseOptionEntity.getState(), stateKey, errors);
 
         testcaseOptionEntity.setState(stateKey);
         testcaseOptionEntity = testcaseOptionRepository.saveAndFlush(testcaseOptionEntity);
@@ -187,7 +185,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         TestcaseOptionCriteriaSearchFilter searchFilter = new TestcaseOptionCriteriaSearchFilter();
 
         testcaseOptionEntity.setRank(1);
-        if(testcaseOptionEntity.getTestcase() != null) {
+        if (testcaseOptionEntity.getTestcase() != null) {
             searchFilter.setTestcaseId(testcaseOptionEntity.getTestcase().getId());
             List<TestcaseOptionEntity> testCaseOptions = this.searchTestcaseOptions(searchFilter, Constant.SINGLE_PAGE_SORT_BY_RANK, contextInfo).getContent();
             if (!testCaseOptions.isEmpty()) {
@@ -195,5 +193,4 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             }
         }
     }
-    }
-
+}

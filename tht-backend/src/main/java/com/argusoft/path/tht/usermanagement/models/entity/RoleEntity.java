@@ -12,7 +12,6 @@ import javax.persistence.Table;
  *
  * @author Dhruv
  */
-
 @Entity
 @Audited
 @Table(name = "role")
@@ -37,6 +36,7 @@ public class RoleEntity extends IdEntity {
         this.name = name;
     }
 
+    @Override
     public String toString() {
         return "RoleEntity{"
                 + "id=" + this.getId()

@@ -86,7 +86,6 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     )
     private Boolean isRequired;
 
-
     private Root<TestcaseResultEntity> testcaseResultEntityRoot;
 
     private Join<TestcaseResultEntity, UserEntity> testcaseResultEntityUserEntityJoin;
@@ -96,7 +95,6 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     private Join<TestcaseResultEntity, TestRequestEntity> testcaseResultEntityTestRequestEntityJoin;
 
     private Join<TestRequestEntity, UserEntity> testRequestEntityUserEntityJoinWithTestcaseResultJoin;
-
 
     public TestcaseResultCriteriaSearchFilter(String id) {
         this.id = id;
@@ -121,7 +119,7 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getTestcaseResultEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(this.getTestcaseResultEntityRoot().get("name")), getNameBasedOnSearchType(getName())));
 
         }
 
@@ -189,7 +187,6 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
         return predicates;
     }
-
 
     public String getName() {
         return name;
@@ -318,7 +315,6 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
         }
         return testcaseResultEntityUserEntityJoin;
     }
-
 
     public Join<TestcaseResultEntity, TestcaseResultEntity> getTestcaseResultEntityTestcaseResultEntityJoin() {
         if (testcaseResultEntityTestcaseResultEntityJoin == null) {

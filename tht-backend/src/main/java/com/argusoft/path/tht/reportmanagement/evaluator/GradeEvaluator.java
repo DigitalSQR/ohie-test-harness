@@ -29,7 +29,7 @@ public class GradeEvaluator {
     @Autowired
     private TestcaseResultService testcaseResultService;
 
-    public String evaluate(List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo) throws OperationFailedException{
+    public String evaluate(List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo) throws OperationFailedException {
         int totalElements = testcaseResultEntities.size();
         int successElements = testcaseResultEntities.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
         if (totalElements != 0) {
@@ -41,13 +41,12 @@ public class GradeEvaluator {
     }
 
     private static TestcaseResultCriteriaSearchFilter getTestcaseResultCriteriaSearchFilter(TestcaseResultEntity testcaseResultEntity) {
-        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter  = new TestcaseResultCriteriaSearchFilter();
+        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
 
-        if(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
+        if (TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
             testcaseResultCriteriaSearchFilter.setTestRequestId(testcaseResultEntity.getTestRequest().getId());
             testcaseResultCriteriaSearchFilter.setRefObjUri(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI);
-        }
-        else if(ComponentServiceConstants.COMPONENT_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())){
+        } else if (ComponentServiceConstants.COMPONENT_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri())) {
             testcaseResultCriteriaSearchFilter.setParentTestcaseResultId(testcaseResultEntity.getId());
         }
         return testcaseResultCriteriaSearchFilter;
@@ -62,4 +61,3 @@ public class GradeEvaluator {
         return gradeBasedOnPercentageRange.map(GradeEntity::getGrade).orElse(null);
     }
 }
-

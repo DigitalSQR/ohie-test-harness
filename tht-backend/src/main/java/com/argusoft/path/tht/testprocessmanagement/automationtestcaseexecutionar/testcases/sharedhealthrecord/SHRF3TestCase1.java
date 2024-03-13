@@ -20,6 +20,7 @@ import java.util.Map;
 
 @Component
 public class SHRF3TestCase1 implements TestCase {
+
     public static final Logger logger = LoggerFactory.getLogger(SHRF3TestCase1.class);
 
     @Override
@@ -32,7 +33,6 @@ public class SHRF3TestCase1 implements TestCase {
             }
 
             logger.info("Start testing SHRF3TestCase1");
-
 
             // Create a new patient resource with all demographic information by passing XML data and get patient in XML format.
             Patient patient = FHIRUtils.createPatient("Doe", "John", "MALE", "1990-01-01", "00001", "555-555-5555", true, "", "21468992", "xyz@gmail.com", client);
@@ -61,16 +61,13 @@ public class SHRF3TestCase1 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Patient created successfully by XML data but failed to get patient by Id in XML format");
             }
 
-
             //Create Practitioner by passing XML data and get practitioner in JSON format.
-
             Practitioner practitioner = FHIRUtils.createPractitioner("Dr. John Doe", "male", "1980-01-01", "MD", "Doctor of Medicine", "123-456-7890", "john.doe@example.com", "456 Main St", "Cityville", "Stateville", "12345");
 
             String xmlDataForPractitioner = xmlParser.encodeResourceToString(practitioner);
 
-            MethodOutcome outcomeForPractitioner =
-                    client.create().resource(xmlDataForPractitioner).execute();
-
+            MethodOutcome outcomeForPractitioner
+                    = client.create().resource(xmlDataForPractitioner).execute();
 
             // Check if the practitioner was created successfully
             if (!outcomeForPractitioner.getCreated()) {
@@ -95,9 +92,8 @@ public class SHRF3TestCase1 implements TestCase {
 
             String jsonDataForOrganization = jsonParser.encodeResourceToString(organization);
 
-            MethodOutcome outcomeForOrganization =
-                    client.create().resource(jsonDataForOrganization).execute();
-
+            MethodOutcome outcomeForOrganization
+                    = client.create().resource(jsonDataForOrganization).execute();
 
             // Check if the organization was created successfully
             if (!outcomeForOrganization.getCreated()) {
@@ -116,15 +112,13 @@ public class SHRF3TestCase1 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Organization created successfully by passing JSON data but failed to get organization by Id in XML format");
             }
 
-
             // Create Practitioner Role by passing JSON data and get practitioner in JSON format.
             PractitionerRole practitionerRole = FHIRUtils.createPractitionerRole("General Practitioner", "GP", resultPractitioner.getId(), resultOrganization.getId());
 
             String jsonDataForPractitionerRole = jsonParser.encodeResourceToString(practitionerRole);
 
-            MethodOutcome outcomeForPractitionerRole =
-                    client.create().resource(jsonDataForPractitionerRole).execute();
-
+            MethodOutcome outcomeForPractitionerRole
+                    = client.create().resource(jsonDataForPractitionerRole).execute();
 
             // Check if the practitioner role was created successfully
             if (!outcomeForPractitionerRole.getCreated()) {
@@ -143,13 +137,11 @@ public class SHRF3TestCase1 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Practitioner role created successfully by passing JSON data but failed to get practitioner role by Id by in JSON format");
             }
 
-
             // Create Encounter and getting encounter data in JSON format.
             Encounter encounter = FHIRUtils.createEncounter(resultPatient.getId(), resultPractitioner.getId(), "101");
 
-            MethodOutcome outcomeForEncounter =
-                    client.create().resource(encounter).execute();
-
+            MethodOutcome outcomeForEncounter
+                    = client.create().resource(encounter).execute();
 
             // Check if the encounter was created successfully
             if (!outcomeForEncounter.getCreated()) {
@@ -171,9 +163,8 @@ public class SHRF3TestCase1 implements TestCase {
             // Create Condition by get condition data in XML format.
             Condition condition = FHIRUtils.createCondition(resultPatient.getId(), resultEncounter.getId(), "Hypertension", "12345");
 
-            MethodOutcome outcomeForCondition =
-                    client.create().resource(condition).execute();
-
+            MethodOutcome outcomeForCondition
+                    = client.create().resource(condition).execute();
 
             // Check if the condition was created successfully
             if (!outcomeForCondition.getCreated()) {
@@ -197,8 +188,8 @@ public class SHRF3TestCase1 implements TestCase {
 
             String jsonDataForMedication = jsonParser.encodeResourceToString(medication);
 
-            MethodOutcome outcomeForMedication =
-                    client.create().resource(jsonDataForMedication).execute();
+            MethodOutcome outcomeForMedication
+                    = client.create().resource(jsonDataForMedication).execute();
 
             // Check if the medication was created successfully
             if (!outcomeForMedication.getCreated()) {
@@ -220,8 +211,8 @@ public class SHRF3TestCase1 implements TestCase {
             MedicationRequest medicationRequest = FHIRUtils.createMedicationRequest(resultMedication.getId(), resultPatient.getId());
             String xmlDataForMedicationRequest = xmlParser.encodeResourceToString(medicationRequest);
 
-            MethodOutcome outcomeForMedicationRequest =
-                    client.create().resource(xmlDataForMedicationRequest).execute();
+            MethodOutcome outcomeForMedicationRequest
+                    = client.create().resource(xmlDataForMedicationRequest).execute();
 
             // Check if the medication request was created successfully
             if (!outcomeForMedicationRequest.getCreated()) {
@@ -244,8 +235,8 @@ public class SHRF3TestCase1 implements TestCase {
 
             String jsonDataForProcedure = jsonParser.encodeResourceToString(procedure);
 
-            MethodOutcome outcomeForProcedure =
-                    client.create().resource(jsonDataForProcedure).execute();
+            MethodOutcome outcomeForProcedure
+                    = client.create().resource(jsonDataForProcedure).execute();
 
             // Check if the procedure was created successfully
             if (!outcomeForProcedure.getCreated()) {
@@ -269,8 +260,8 @@ public class SHRF3TestCase1 implements TestCase {
 
             String xmlDataForObservation = xmlParser.encodeResourceToString(observation);
 
-            MethodOutcome outcomeForObservation =
-                    client.create().resource(xmlDataForObservation).execute();
+            MethodOutcome outcomeForObservation
+                    = client.create().resource(xmlDataForObservation).execute();
 
             // Check if the observation was created successfully
             if (!outcomeForObservation.getCreated()) {
@@ -294,8 +285,8 @@ public class SHRF3TestCase1 implements TestCase {
 
             String jsonDataForAllergyIntolerance = jsonParser.encodeResourceToString(allergyIntolerance);
 
-            MethodOutcome outcomeForAllergyIntolerance =
-                    client.create().resource(jsonDataForAllergyIntolerance).execute();
+            MethodOutcome outcomeForAllergyIntolerance
+                    = client.create().resource(jsonDataForAllergyIntolerance).execute();
 
             // Check if the Allergy Intolerance was created successfully
             if (!outcomeForAllergyIntolerance.getCreated()) {
@@ -319,8 +310,8 @@ public class SHRF3TestCase1 implements TestCase {
 
             String xmlDataForImmunization = xmlParser.encodeResourceToString(immunization);
 
-            MethodOutcome outcomeForImmunization =
-                    client.create().resource(xmlDataForImmunization).execute();
+            MethodOutcome outcomeForImmunization
+                    = client.create().resource(xmlDataForImmunization).execute();
 
             // Check if the immunization was created successfully
             if (!outcomeForImmunization.getCreated()) {
@@ -344,8 +335,8 @@ public class SHRF3TestCase1 implements TestCase {
 
             String jsonDataForDiagnosticReport = jsonParser.encodeResourceToString(diagnosticReport);
 
-            MethodOutcome outcomeForDiagnosticReport =
-                    client.create().resource(jsonDataForDiagnosticReport).execute();
+            MethodOutcome outcomeForDiagnosticReport
+                    = client.create().resource(jsonDataForDiagnosticReport).execute();
 
             // Check if the Diagnostic Report was created successfully
             if (!outcomeForDiagnosticReport.getCreated()) {
@@ -369,8 +360,8 @@ public class SHRF3TestCase1 implements TestCase {
 
             String jsonDataForMedicationAdministration = jsonParser.encodeResourceToString(medicationAdministration);
 
-            MethodOutcome outcomeForMedicationAdministration =
-                    client.create().resource(jsonDataForMedicationAdministration).execute();
+            MethodOutcome outcomeForMedicationAdministration
+                    = client.create().resource(jsonDataForMedicationAdministration).execute();
 
             // Check if the Diagnostic Report was created successfully
             if (!outcomeForDiagnosticReport.getCreated()) {

@@ -26,7 +26,6 @@ public class TestResultRelationEntity extends IdMetaEntity {
     @JoinColumn(name = "testresult_id")
     private TestcaseResultEntity testcaseResultEntity;
 
-
     public String getRefObjUri() {
         return refObjUri;
     }

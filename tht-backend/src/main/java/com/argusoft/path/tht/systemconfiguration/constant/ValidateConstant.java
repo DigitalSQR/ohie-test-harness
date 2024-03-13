@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.systemconfiguration.constant;
 
 public final class ValidateConstant {
+
     public static final String MUST_PROVIDED = " must be provided";
     public static final String ERRORS = "Error(s) occurred in the validating ";
     public static final String ID_SUPPLIED = "The id supplied for the ";
@@ -20,10 +21,10 @@ public final class ValidateConstant {
     public static final String INVALID_PARAM_EXCEPTION = "caught InvalidParameterException in ";
 
     public static final String INVALID_FILE_TYPE_EXCEPTION = "caught InvalidFileTypeException in ";
-    public static final String  NULL_POINTER_EXCEPTION = "caught NullPointerException in ";
-    public static final String  OBJECT_OPTIMISTIC_LOCKING_FAILURE = "caught ObjectOptimisticLockingFailureException in ";
-    public static final String  PROPERTY_REFERENCE_EXCEPTION = "caught PropertyReferenceException in ";
-    public static final String  VERSION_MISMATCHED_EXCEPTION = "caught VersionMismatchException in ";
+    public static final String NULL_POINTER_EXCEPTION = "caught NullPointerException in ";
+    public static final String OBJECT_OPTIMISTIC_LOCKING_FAILURE = "caught ObjectOptimisticLockingFailureException in ";
+    public static final String PROPERTY_REFERENCE_EXCEPTION = "caught PropertyReferenceException in ";
+    public static final String VERSION_MISMATCHED_EXCEPTION = "caught VersionMismatchException in ";
     public static final String USER_NOT_FOUND_EXCEPTION = "caught UsernameNotFoundException in ";
     public static final String PARSE_EXCEPTION = "caught ParseException in ";
     public static final String NUMBER_FORMAT_EXCEPTION = "caught NumberFormatException in ";

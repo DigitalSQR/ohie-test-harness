@@ -14,12 +14,12 @@ public class HasMetaInfo implements Serializable {
     @ApiModelProperty(notes = "The meta of the model",
             allowEmptyValue = true,
             example = "{\n"
-                    + "\t\"createdAt\":2014-02-28 ,\n"
-                    + "\t\"createdBy\":\"userId\" ,\n"
-                    + "\t\"updatedAt\":2014-02-28 ,\n"
-                    + "\t\"updatedBy\":\"userId\" ,\n"
-                    + "\t\"version\":1\"\n"
-                    + "}",
+            + "\t\"createdAt\":2014-02-28 ,\n"
+            + "\t\"createdBy\":\"userId\" ,\n"
+            + "\t\"updatedAt\":2014-02-28 ,\n"
+            + "\t\"updatedBy\":\"userId\" ,\n"
+            + "\t\"version\":1\"\n"
+            + "}",
             dataType = "MetaInfo",
             required = false,
             readOnly = true)

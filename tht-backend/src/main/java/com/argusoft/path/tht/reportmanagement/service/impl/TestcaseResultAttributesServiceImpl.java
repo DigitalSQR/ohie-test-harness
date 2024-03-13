@@ -25,7 +25,7 @@ public class TestcaseResultAttributesServiceImpl implements TestcaseResultAttrib
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultAttributesServiceImpl.class);
     @Autowired
-private TestcaseResultAttributesRepository testcaseResultAttributesRepository;
+    private TestcaseResultAttributesRepository testcaseResultAttributesRepository;
 
     @Autowired
     private TestcaseResultAttributesValidator testcaseResultAttributesValidator;
@@ -38,32 +38,28 @@ private TestcaseResultAttributesRepository testcaseResultAttributesRepository;
 
     @Override
     public Optional<TestcaseResultAttributesEntity> getTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String key, ContextInfo contextInfo)
-            throws InvalidParameterException
-    {
-        if(key.isEmpty())
-        {
+            throws InvalidParameterException {
+        if (key.isEmpty()) {
             LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultAttributesServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Key is empty");
         }
-        return testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity,key);
+        return testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity, key);
     }
 
     @Override
-    public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity,String Key, String Value,
-                                                                                  ContextInfo contextInfo)
+    public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String Key, String Value,
+            ContextInfo contextInfo)
             throws
             InvalidParameterException {
-        if(Key.isEmpty() || Value.isEmpty())
-        {
+        if (Key.isEmpty() || Value.isEmpty()) {
             LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultAttributesServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Key or Value is empty");
         }
-        Optional<TestcaseResultAttributesEntity> testcaseResultAttributesEntity = testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity,Key.toLowerCase());
+        Optional<TestcaseResultAttributesEntity> testcaseResultAttributesEntity = testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity, Key.toLowerCase());
 
         TestcaseResultAttributesEntity testcaseResultAttributesEntity1;
 
-        if(testcaseResultAttributesEntity.isEmpty())
-        {
+        if (testcaseResultAttributesEntity.isEmpty()) {
             TestcaseResultAttributesEntity newTestcaseResultAttributesEntity = new TestcaseResultAttributesEntity();
             newTestcaseResultAttributesEntity.setTestcaseResultEntity(testcaseResultEntity);
             newTestcaseResultAttributesEntity.setKey(Key.toLowerCase());
@@ -73,25 +69,21 @@ private TestcaseResultAttributesRepository testcaseResultAttributesRepository;
             testcaseResultAttributesEntity.get().setValue(Value.toLowerCase());
             testcaseResultAttributesEntity1 = testcaseResultAttributesRepository.saveAndFlush(testcaseResultAttributesEntity.get());
         }
-        applicationEventPublisher.publishEvent(new TestcaseResultAttributeEvent(testcaseResultEntity.getId(),contextInfo));
+        applicationEventPublisher.publishEvent(new TestcaseResultAttributeEvent(testcaseResultEntity.getId(), contextInfo));
         return testcaseResultAttributesEntity1;
     }
 
     @Override
     public void deleteTestcaseResultAttributesEntities(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo)
-            throws DoesNotExistException
-    {
-        try
-        {
+            throws DoesNotExistException {
+        try {
             String testcaseResultId = testcaseResultEntity.getId();
             testcaseResultAttributesRepository.deleteByTestcaseResultEntity(testcaseResultEntity);
             testcaseResultAttributesRepository.flush();
-            applicationEventPublisher.publishEvent(new TestcaseResultAttributeEvent(testcaseResultId,contextInfo));
-        }
-        catch (Exception e)
-        {
+            applicationEventPublisher.publishEvent(new TestcaseResultAttributeEvent(testcaseResultId, contextInfo));
+        } catch (Exception e) {
             LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultAttributesServiceImpl.class.getSimpleName(), e);
-         throw new DoesNotExistException(e.getMessage());
+            throw new DoesNotExistException(e.getMessage());
         }
     }
 }

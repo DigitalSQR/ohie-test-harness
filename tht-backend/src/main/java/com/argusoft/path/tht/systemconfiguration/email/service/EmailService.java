@@ -28,7 +28,6 @@ public class EmailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-
     @Async
     public void sendMessage(
             String to, String subject, String htmlContent) throws MessagingException {
@@ -43,96 +42,100 @@ public class EmailService {
     }
 
     @Async
-    public void verifyEmailMessage(String to,String username,String link) {
-        String subject="Verify your email id";
-        String templateFileName="templates/verification-email.html";
+    public void verifyEmailMessage(String to, String username, String link) {
+        String subject = "Verify your email id";
+        String templateFileName = "templates/verification-email.html";
         String htmlContent = null;
         try {
-            htmlContent = readHtmlFile(templateFileName,username,link);
-            sendMessage(to,subject,htmlContent);
+            htmlContent = readHtmlFile(templateFileName, username, link);
+            sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ",e);
+            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ",e);
+            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
         }
     }
 
     @Async
-    public void forgotPasswordMessage(String to,String username,String link) {
-        String subject="Reset your password";
-        String templateFileName="templates/reset-password-email.html";
+    public void forgotPasswordMessage(String to, String username, String link) {
+        String subject = "Reset your password";
+        String templateFileName = "templates/reset-password-email.html";
         String htmlContent = null;
         try {
-            htmlContent = readHtmlFile(templateFileName,username,link);
-            sendMessage(to,subject,htmlContent);
+            htmlContent = readHtmlFile(templateFileName, username, link);
+            sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ",e);
+            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ",e);
+            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
         }
     }
 
     @Async
-    public void accountApprovedMessage(String to,String username) {
-        String subject="Account approval";
-        String templateFileName="templates/account-approval-email.html";
+    public void accountApprovedMessage(String to, String username) {
+        String subject = "Account approval";
+        String templateFileName = "templates/account-approval-email.html";
         String htmlContent = null;
         try {
-            htmlContent = readHtmlFile(templateFileName,username,null);
-            sendMessage(to,subject,htmlContent);
+            htmlContent = readHtmlFile(templateFileName, username, null);
+            sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ",e);
+            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ",e);
+            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
         }
 
     }
+
     @Async
-    public void accountRejectedMessage(String to,String username) {
-        String subject="Account Rejection";
-        String templateFileName="templates/account-rejection-email.html";
+    public void accountRejectedMessage(String to, String username) {
+        String subject = "Account Rejection";
+        String templateFileName = "templates/account-rejection-email.html";
         String htmlContent = null;
         try {
-            htmlContent = readHtmlFile(templateFileName,username,null);
-            sendMessage(to,subject,htmlContent);
+            htmlContent = readHtmlFile(templateFileName, username, null);
+            sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ",e);
+            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ",e);
+            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
         }
 
     }
+
     @Async
-    public void accountInactiveMessage(String to,String username) {
-        String subject="Account Deactivated";
-        String templateFileName="templates/account-inactive-email.html";
+    public void accountInactiveMessage(String to, String username) {
+        String subject = "Account Deactivated";
+        String templateFileName = "templates/account-inactive-email.html";
         String htmlContent = null;
         try {
-            htmlContent = readHtmlFile(templateFileName,username,null);
-            sendMessage(to,subject,htmlContent);
+            htmlContent = readHtmlFile(templateFileName, username, null);
+            sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ",e);
+            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ",e);
+            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
         }
 
     }
+
     @Async
     public void testRequestCreatedMessage(String to, String username, String currentEmail) {
-        String subject="Test Request Created";
-        String templateFileName="templates/test-request-created-email.html";
+        String subject = "Test Request Created";
+        String templateFileName = "templates/test-request-created-email.html";
         String htmlContent = null;
         try {
-            htmlContent = readHtmlFile(templateFileName,username,null);
+            htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
-            sendMessage(to,subject,htmlContent);
+            sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Test Request Created Message because of IOException ",e);
+            LOGGER.error("Error sending Test Request Created Message because of IOException ", e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Test Request Created Message because of MessagingException ",e);
+            LOGGER.error("Error sending Test Request Created Message because of MessagingException ", e);
         }
     }
-    private String readHtmlFile(String fileName,String username,String link) throws IOException {
+
+    private String readHtmlFile(String fileName, String username, String link) throws IOException {
         try (InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName)) {
             if (stream == null) {
                 throw new IOException("File not found: " + fileName);
@@ -148,67 +151,69 @@ public class EmailService {
             return htmlContent;
         }
     }
+
     @Async
-    public void verifiedAndWaitingForAdminApproval(String to, String username, String currentEmail){
-        String subject="Account Created. Waiting for approval.";
-        String templateFileName="templates/account-created-waiting-for-approval.html";
+    public void verifiedAndWaitingForAdminApproval(String to, String username, String currentEmail) {
+        String subject = "Account Created. Waiting for approval.";
+        String templateFileName = "templates/account-created-waiting-for-approval.html";
         String htmlContent = null;
         try {
-            htmlContent = readHtmlFile(templateFileName,username,null);
+            htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
-            sendMessage(to,subject,htmlContent);
+            sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of IOException ",e);
+            LOGGER.error("Error sending Waiting For Approval Message because of IOException ", e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ",e);
+            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ", e);
         }
     }
 
     @Async
-    public void testRequestAcceptedMessage(String to, String username, String testRequestName){
-        String subject="Test Request Accepted";
-        String templateFileName="templates/test-request-accepted.html";
+    public void testRequestAcceptedMessage(String to, String username, String testRequestName) {
+        String subject = "Test Request Accepted";
+        String templateFileName = "templates/test-request-accepted.html";
         String htmlContent = null;
         try {
-            htmlContent = readHtmlFile(templateFileName,username,null);
-            htmlContent = htmlContent.replace("${name}",testRequestName);
-            sendMessage(to,subject,htmlContent);
+            htmlContent = readHtmlFile(templateFileName, username, null);
+            htmlContent = htmlContent.replace("${name}", testRequestName);
+            sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of IOException ",e);
+            LOGGER.error("Error sending Waiting For Approval Message because of IOException ", e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ",e);
-        }
-    }
-    @Async
-    public void testRequestRejectedMessage(String to, String username, String testRequestName){
-        String subject="Test Request Rejected";
-        String templateFileName="templates/test-request-rejected.html";
-        String htmlContent = null;
-        try {
-            htmlContent = readHtmlFile(templateFileName,username,null);
-            htmlContent = htmlContent.replace("${name}",testRequestName);
-            sendMessage(to,subject,htmlContent);
-        } catch (IOException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of IOException ",e);
-        } catch (MessagingException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ",e);
-        }
-    }
-    @Async
-    public void testRequestFinishedMessage(String to, String username, String testRequestName){
-        String subject="Test Request Finished";
-        String templateFileName="templates/test-request-finished.html";
-        String htmlContent = null;
-        try {
-            htmlContent = readHtmlFile(templateFileName,username,null);
-            htmlContent = htmlContent.replace("${name}",testRequestName);
-            sendMessage(to,subject,htmlContent);
-        } catch (IOException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of IOException ",e);
-        } catch (MessagingException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ",e);
+            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ", e);
         }
     }
 
+    @Async
+    public void testRequestRejectedMessage(String to, String username, String testRequestName) {
+        String subject = "Test Request Rejected";
+        String templateFileName = "templates/test-request-rejected.html";
+        String htmlContent = null;
+        try {
+            htmlContent = readHtmlFile(templateFileName, username, null);
+            htmlContent = htmlContent.replace("${name}", testRequestName);
+            sendMessage(to, subject, htmlContent);
+        } catch (IOException e) {
+            LOGGER.error("Error sending Waiting For Approval Message because of IOException ", e);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ", e);
+        }
+    }
+
+    @Async
+    public void testRequestFinishedMessage(String to, String username, String testRequestName) {
+        String subject = "Test Request Finished";
+        String templateFileName = "templates/test-request-finished.html";
+        String htmlContent = null;
+        try {
+            htmlContent = readHtmlFile(templateFileName, username, null);
+            htmlContent = htmlContent.replace("${name}", testRequestName);
+            sendMessage(to, subject, htmlContent);
+        } catch (IOException e) {
+            LOGGER.error("Error sending Waiting For Approval Message because of IOException ", e);
+        } catch (MessagingException e) {
+            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ", e);
+        }
+    }
 
 }

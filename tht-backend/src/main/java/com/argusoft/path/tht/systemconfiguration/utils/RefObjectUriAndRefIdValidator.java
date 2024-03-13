@@ -59,7 +59,7 @@ public class RefObjectUriAndRefIdValidator {
     private UserService userService;
 
     public void refObjectUriAndRefIdValidation(String refObjUri, String refId,
-                                               ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, OperationFailedException {
+            ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(refObjUri)) {
             String fieldName = "refObjUri";

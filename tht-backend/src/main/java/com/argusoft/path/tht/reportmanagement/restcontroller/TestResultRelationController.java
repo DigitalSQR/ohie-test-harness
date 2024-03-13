@@ -35,10 +35,10 @@ public class TestResultRelationController {
 
     @ApiOperation(value = "Get Objects of Test Result Relation", response = List.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully Retrieved TestcaseResultRelationService"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully Retrieved TestcaseResultRelationService"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
     })
     @GetMapping("/{testcaseResultId}/{refObjUri}")
     public List<Object> getTestcaseResultRelatedObject(
@@ -50,14 +50,12 @@ public class TestResultRelationController {
         return entityType.createMapperObject(entityType).modelToDto(testResultRelationEntitiesFromAuditMapping);
     }
 
-
-
     @ApiOperation(value = "Get Objects of Test Result Relation", response = List.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully Retrieved TestcaseResultRelationService"),
-            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+        @ApiResponse(code = 200, message = "Successfully Retrieved TestcaseResultRelationService"),
+        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+        @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
     })
     @GetMapping("")
     public Page<TestResultRelationInfo> SearchTestResultRelationInfo(

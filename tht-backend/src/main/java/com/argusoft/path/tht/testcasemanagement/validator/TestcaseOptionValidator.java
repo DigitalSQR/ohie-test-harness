@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.testcasemanagement.validator;
 
-import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
@@ -11,8 +10,6 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
@@ -30,10 +27,10 @@ public class TestcaseOptionValidator {
     public static void validateCreateUpdateTestcaseOption(String validationTypeKey, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, TestcaseOptionEntity testcaseOptionEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestcaseOption(validationTypeKey,
-                testcaseOptionEntity,
-                testcaseOptionService,
-                testcaseService,
-                contextInfo);
+                        testcaseOptionEntity,
+                        testcaseOptionService,
+                        testcaseService,
+                        contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseOptionValidator.class.getSimpleName());
             throw new DataValidationErrorException(
@@ -79,7 +76,7 @@ public class TestcaseOptionValidator {
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
-                                        ValidateConstant.ID_SUPPLIED+ "update"+ ValidateConstant.DOES_NOT_EXIST));
+                                        ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
                     }
                 }
 
@@ -118,10 +115,10 @@ public class TestcaseOptionValidator {
 
     }
 
-    private static void validateCommonForeignKey(TestcaseOptionEntity testcaseOptionEntity
-            , TestcaseService testcaseService,
-                                                 List<ValidationResultInfo> errors,
-                                                 ContextInfo contextInfo) {
+    private static void validateCommonForeignKey(TestcaseOptionEntity testcaseOptionEntity,
+             TestcaseService testcaseService,
+            List<ValidationResultInfo> errors,
+            ContextInfo contextInfo) {
         Set<TestcaseEntity> testcaseEntitySet = new HashSet<>();
 
         if (testcaseOptionEntity.getTestcase() != null) {
@@ -135,15 +132,15 @@ public class TestcaseOptionValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ fieldName+ ValidateConstant.DOES_NOT_EXIST));
+                                ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         }
     }
 
     //validate update
     private static void validateUpdateTestcaseOption(List<ValidationResultInfo> errors,
-                                                     TestcaseOptionEntity testcaseOptionEntity,
-                                                     TestcaseOptionEntity originalEntity)
+            TestcaseOptionEntity testcaseOptionEntity,
+            TestcaseOptionEntity originalEntity)
             throws OperationFailedException,
             InvalidParameterException {
         // required validation
@@ -154,14 +151,13 @@ public class TestcaseOptionValidator {
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
                     fieldName + ValidateConstant.MUST_PROVIDED));
-        }
-        // check meta version id
+        } // check meta version id
         else if (!testcaseOptionEntity.getVersion()
                 .equals(originalEntity.getVersion())) {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    ValidateConstant.SOMEONE_UPDATED+ "TestcaseOption" + ValidateConstant.REFRESH_COPY));
+                    ValidateConstant.SOMEONE_UPDATED + "TestcaseOption" + ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
         validateNotUpdatable(errors, testcaseOptionEntity, originalEntity);
@@ -169,8 +165,8 @@ public class TestcaseOptionValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                             TestcaseOptionEntity testcaseOptionEntity,
-                                             TestcaseOptionEntity originalEntity) {
+            TestcaseOptionEntity testcaseOptionEntity,
+            TestcaseOptionEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseOptionEntity.getState(), originalEntity.getState(), "state", errors);
     }
@@ -190,7 +186,7 @@ public class TestcaseOptionValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ "create"+ ValidateConstant.ALREADY_EXIST ));
+                                ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
                 LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseOptionValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
@@ -200,7 +196,7 @@ public class TestcaseOptionValidator {
 
     //Validate Required
     private static void validateCommonRequired(TestcaseOptionEntity testcaseOptionEntity,
-                                               List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         //check for name
         ValidationUtils
                 .validateRequired(testcaseOptionEntity.getName(), "name", errors);
@@ -220,16 +216,16 @@ public class TestcaseOptionValidator {
 
     //Validate Common Unique
     private static void validateCommonUnique(TestcaseOptionEntity testcaseOptionEntity,
-                                             String validationTypeKey,
-                                             List<ValidationResultInfo> errors,
-                                             ContextInfo contextInfo)
+            String validationTypeKey,
+            List<ValidationResultInfo> errors,
+            ContextInfo contextInfo)
             throws OperationFailedException {
         // check unique field
     }
 
     //Validation For :Id
     private static void validateTestcaseOptionEntityId(TestcaseOptionEntity testcaseOptionEntity,
-                                                       List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseOptionEntity.getId(),
                 "id",
                 0,
@@ -239,7 +235,7 @@ public class TestcaseOptionValidator {
 
     //Validation For :Name
     private static void validateTestcaseOptionEntityName(TestcaseOptionEntity testcaseOptionEntity,
-                                                         List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseOptionEntity.getName(),
                 "name",
                 3,
@@ -249,7 +245,7 @@ public class TestcaseOptionValidator {
 
     //Validation For :Order
     private static void validateTestcaseOptionEntityOrder(TestcaseOptionEntity testcaseOptionEntity,
-                                                          List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(testcaseOptionEntity.getRank(),
                 "rank",
                 1,
@@ -259,7 +255,7 @@ public class TestcaseOptionValidator {
 
     //Validation For:Description
     private static void validateTestcaseOptionDescription(TestcaseOptionEntity testcaseOption,
-                                                    List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseOption.getDescription(),
                 "description",
                 0,
@@ -269,12 +265,12 @@ public class TestcaseOptionValidator {
 
     //Validation For :IsFunctional
     private static void validateTestcaseOptionEntityIsSuccess(TestcaseOptionEntity testcaseOptionEntity,
-                                                              List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
     }
 
     //Validation For :ComponentId
     private static void validateTestcaseOptionEntityComponentId(TestcaseOptionEntity testcaseOptionEntity,
-                                                                List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseOption field
@@ -291,4 +287,3 @@ public class TestcaseOptionValidator {
     }
 
 }
-

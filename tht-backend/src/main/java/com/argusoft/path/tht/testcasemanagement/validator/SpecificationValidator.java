@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.testcasemanagement.validator;
 
-import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
@@ -12,7 +11,6 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
-import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
@@ -35,11 +33,11 @@ public class SpecificationValidator {
     public static void validateCreateUpdateSpecification(String validationTypeKey, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, SpecificationEntity specificationEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateSpecification(validationTypeKey,
-                specificationEntity,
-                specificationService,
-                testcaseService,
-                componentService,
-                contextInfo);
+                        specificationEntity,
+                        specificationService,
+                        testcaseService,
+                        componentService,
+                        contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
             LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + SpecificationValidator.class.getSimpleName());
             throw new DataValidationErrorException(
@@ -87,7 +85,7 @@ public class SpecificationValidator {
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
-                                        ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
+                                        ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
                     }
                 }
 
@@ -125,12 +123,11 @@ public class SpecificationValidator {
         return errors;
     }
 
-
     private static void validateCommonForeignKey(SpecificationEntity specificationEntity,
-                                                 List<ValidationResultInfo> errors,
-                                                 TestcaseService testcaseService,
-                                                 ComponentService componentService,
-                                                 ContextInfo contextInfo) {
+            List<ValidationResultInfo> errors,
+            TestcaseService testcaseService,
+            ComponentService componentService,
+            ContextInfo contextInfo) {
         Set<TestcaseEntity> testcaseEntitySet = new HashSet<>();
         specificationEntity.getTestcases().stream().forEach(item -> {
             try {
@@ -141,7 +138,7 @@ public class SpecificationValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
+                                ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         });
         specificationEntity.setTestcases(testcaseEntitySet);
@@ -157,16 +154,16 @@ public class SpecificationValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
+                                ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         }
     }
 
     //validate update
     private static void validateUpdateSpecification(List<ValidationResultInfo> errors,
-                                                    SpecificationEntity specificationEntity,
-                                                    SpecificationService specificationService,
-                                                    SpecificationEntity originalEntity) {
+            SpecificationEntity specificationEntity,
+            SpecificationService specificationService,
+            SpecificationEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(specificationEntity.getId(), "id", errors);
         //check the meta required
@@ -175,14 +172,13 @@ public class SpecificationValidator {
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
                     fieldName + ValidateConstant.MUST_PROVIDED));
-        }
-        // check meta version id
+        } // check meta version id
         else if (!specificationEntity.getVersion()
                 .equals(originalEntity.getVersion())) {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    ValidateConstant.SOMEONE_UPDATED+ "Specification"+ ValidateConstant.REFRESH_COPY));
+                    ValidateConstant.SOMEONE_UPDATED + "Specification" + ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
         validateNotUpdatable(errors, specificationEntity, specificationService, originalEntity);
@@ -190,9 +186,9 @@ public class SpecificationValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-                                             SpecificationEntity specificationEntity,
-                                             SpecificationService specificationService,
-                                             SpecificationEntity originalEntity) {
+            SpecificationEntity specificationEntity,
+            SpecificationService specificationService,
+            SpecificationEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(specificationEntity.getState(), originalEntity.getState(), "state", errors);
     }
@@ -212,7 +208,7 @@ public class SpecificationValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                               ValidateConstant.ID_SUPPLIED+ fieldName+ ValidateConstant.ALREADY_EXIST));
+                                ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
                 LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + SpecificationValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
@@ -222,7 +218,7 @@ public class SpecificationValidator {
 
     //Validate Required
     private static void validateCommonRequired(SpecificationEntity specificationEntity,
-                                               List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         //check for name
         ValidationUtils
                 .validateRequired(specificationEntity.getName(), "name", errors);
@@ -248,10 +244,10 @@ public class SpecificationValidator {
 
     //Validate Common Unique
     private static void validateCommonUnique(SpecificationEntity specificationEntity,
-                                             String validationTypeKey,
-                                             SpecificationService specificationService,
-                                             List<ValidationResultInfo> errors,
-                                             ContextInfo contextInfo)
+            String validationTypeKey,
+            SpecificationService specificationService,
+            List<ValidationResultInfo> errors,
+            ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || specificationEntity.getId() != null)
@@ -266,20 +262,20 @@ public class SpecificationValidator {
             boolean flag
                     = specificationEntities.stream().anyMatch(c -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
                     || !c.getId().equals(specificationEntity.getId()))
-            );
+                    );
             if (flag) {
                 String fieldName = "name";
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "Given Specification"+ ValidateConstant.NAME_ALREADY_EXIST));
+                                "Given Specification" + ValidateConstant.NAME_ALREADY_EXIST));
             }
         }
     }
 
     //Validation For :Id
     private static void validateSpecificationEntityId(SpecificationEntity specificationEntity,
-                                                      List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(specificationEntity.getId(),
                 "id",
                 0,
@@ -289,7 +285,7 @@ public class SpecificationValidator {
 
     //Validation For :Name
     private static void validateSpecificationEntityName(SpecificationEntity specificationEntity,
-                                                        List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(specificationEntity.getName(),
                 "name",
                 3,
@@ -299,7 +295,7 @@ public class SpecificationValidator {
 
     //Validation For :Order
     private static void validateSpecificationEntityOrder(SpecificationEntity specificationEntity,
-                                                         List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(specificationEntity.getRank(),
                 "rank",
                 1,
@@ -309,18 +305,18 @@ public class SpecificationValidator {
 
     //Validation For :IsFunctional
     private static void validateSpecificationEntityIsFunctional(SpecificationEntity specificationEntity,
-                                                                List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
     }
 
     //Validation For :ComponentId
     private static void validateSpecificationEntityComponentId(SpecificationEntity specificationEntity,
-                                                               List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
 
     }
 
     //Validation for desc
     private static void validateSpecificationEntityDesc(SpecificationEntity specificationEntity,
-                                                    List<ValidationResultInfo> errors) {
+            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(specificationEntity.getDescription(),
                 "description",
                 0,
@@ -341,7 +337,4 @@ public class SpecificationValidator {
         }
     }
 
-
-
 }
-

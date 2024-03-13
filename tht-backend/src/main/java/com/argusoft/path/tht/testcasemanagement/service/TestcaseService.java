@@ -18,19 +18,20 @@ import java.util.List;
 public interface TestcaseService {
 
     /**
-     * Creates a new Testcase.In the Testcase Id, Description, and Meta information may
-     * not be set in the supplied TestcaseInfo.
+     * Creates a new Testcase.In the Testcase Id, Description, and Meta
+     * information may not be set in the supplied TestcaseInfo.
      *
      * @param testcaseEntity Testcase
-     * @param contextInfo    information containing the principalId and locale
-     *                       information about the caller of service operation
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return TestcaseInfo the Testcase just created
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException    TestcaseInfo or contextInfo is not valid
-     * @throws OperationFailedException     unable to complete request
+     * @throws InvalidParameterException TestcaseInfo or contextInfo is not
+     * valid
+     * @throws OperationFailedException unable to complete request
      */
     public TestcaseEntity createTestcase(TestcaseEntity testcaseEntity,
-                                         ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException;
@@ -39,54 +40,55 @@ public interface TestcaseService {
      * Updates an existing Testcase.
      *
      * @param testcaseEntity the new data for the Testcase
-     * @param contextInfo    information containing the principalId and locale
-     *                       information about the caller of service operation
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return TestcaseInfo the details of Testcase just updated
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException    TestcaseInfo or contextInfo is not valid
-     * @throws OperationFailedException     unable to complete request
-     * @throws VersionMismatchException     optimistic locking failure or the action
-     *                                      was attempted on an out of date version
+     * @throws InvalidParameterException TestcaseInfo or contextInfo is not
+     * valid
+     * @throws OperationFailedException unable to complete request
+     * @throws VersionMismatchException optimistic locking failure or the action
+     * was attempted on an out of date version
      */
     public TestcaseEntity updateTestcase(TestcaseEntity testcaseEntity,
-                                         ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException,
             InvalidParameterException;
 
     /**
-     * Retrieves a list of Testcases corresponding to the given Testcase Name.The
-     * returned list may be in any order with unique set.
+     * Retrieves a list of Testcases corresponding to the given Testcase
+     * Name.The returned list may be in any order with unique set.
      *
      * @param testcaseCriteriaSearchFilter
-     * @param pageable                     Contains Index number of the Page, Max size of the single
-     *                                     page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo                  information containing the principalId and locale
-     *                                     information about the caller of service operation
+     * @param pageable Contains Index number of the Page, Max size of the single
+     * page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return a list of Testcase name start with given TestcaseName found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
+     * @throws OperationFailedException unable to complete request
      */
     public Page<TestcaseEntity> searchTestcases(TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter,
-                                                Pageable pageable,
-                                                ContextInfo contextInfo)
+            Pageable pageable,
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
 
     /**
-     * Retrieves a list of Testcases corresponding to the given Testcase Name.The
-     * returned list may be in any order with unique set.
+     * Retrieves a list of Testcases corresponding to the given Testcase
+     * Name.The returned list may be in any order with unique set.
      *
      * @param testcaseCriteriaSearchFilter
-     * @param contextInfo                  information containing the principalId and locale
-     *                                     information about the caller of service operation
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return a list of Testcase name start with given TestcaseName found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
+     * @throws OperationFailedException unable to complete request
      */
     public List<TestcaseEntity> searchTestcases(TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter,
-                                                ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
 
@@ -97,48 +99,49 @@ public interface TestcaseService {
      * to this object
      *
      * @param validationTypeKey the identifier of the extent of validation
-     * @param testcaseEntity    the Testcase information to be tested
-     * @param contextInfo       information containing the principalId and locale
-     *                          information about the caller of service operation
+     * @param testcaseEntity the Testcase information to be tested
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return Results Testcase performing the validation
-     * @throws InvalidParameterException TestcaseInfo or contextInfo is not valid
-     * @throws OperationFailedException  unable to complete request
+     * @throws InvalidParameterException TestcaseInfo or contextInfo is not
+     * valid
+     * @throws OperationFailedException unable to complete request
      */
     public List<ValidationResultInfo> validateTestcase(String validationTypeKey,
-                                                       TestcaseEntity testcaseEntity,
-                                                       ContextInfo contextInfo)
+            TestcaseEntity testcaseEntity,
+            ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException;
 
     /**
      * Retrieves a Testcase corresponding to the given Testcase Id.
      *
-     * @param testcaseId  TestcaseId of Testcase to be retrieved
+     * @param testcaseId TestcaseId of Testcase to be retrieved
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return a list of Testcase
-     * @throws DoesNotExistException     a TestcaseId in TestcaseIds not found
+     * @throws DoesNotExistException a TestcaseId in TestcaseIds not found
      * @throws InvalidParameterException invalid contextInfo
      */
     public TestcaseEntity getTestcaseById(String testcaseId,
-                                          ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException;
 
     /**
      * Change the state of testcase option
      *
-     * @param testcaseId  TestcaseId of Testcase to be retrieved
-     * @param stateKey    state type to which test case state to be changed
+     * @param testcaseId TestcaseId of Testcase to be retrieved
+     * @param stateKey state type to which test case state to be changed
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return changed state testcase
-     * @throws DoesNotExistException        a TestcaseId in TestcaseIds not found
+     * @throws DoesNotExistException a TestcaseId in TestcaseIds not found
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException    invalid contextInfo
-     * @throws OperationFailedException     unable to complete request
-     * @throws VersionMismatchException     optimistic locking failure or the action
-     *                                      was attempted on an out of date version
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException unable to complete request
+     * @throws VersionMismatchException optimistic locking failure or the action
+     * was attempted on an out of date version
      */
     public TestcaseEntity changeState(String testcaseId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 

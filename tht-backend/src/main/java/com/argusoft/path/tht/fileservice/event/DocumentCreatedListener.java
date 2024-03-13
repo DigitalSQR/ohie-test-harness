@@ -25,11 +25,11 @@ public class DocumentCreatedListener {
 
     @EventListener
     public void changeStateBasedOnCreatedDocumentType(DocumentCreatedEvent event) throws DataValidationErrorException, OperationFailedException, VersionMismatchException {
-        try{
-            if(event.getSource() instanceof DocumentEntity createdDocument){
+        try {
+            if (event.getSource() instanceof DocumentEntity createdDocument) {
                 String allowedActiveTypeForDocumentType = DocumentUtil.getAllowedActiveTypeForDocumentType(createdDocument.getRefObjUri(), createdDocument.getDocumentType());
 
-                switch (allowedActiveTypeForDocumentType){
+                switch (allowedActiveTypeForDocumentType) {
                     case DocumentServiceConstants.ALLOWED_ACTIVE_SINGLE_RECORD -> {
                         DocumentCriteriaSearchFilter documentCriteriaSearchFilter = getDocumentCriteriaSearchFilterPrepared(createdDocument);
 
@@ -41,15 +41,16 @@ public class DocumentCreatedListener {
                             }
                         }
                     }
-                    default -> LOGGER.error("No case handled with the allowedActiveType ->%s".formatted(allowedActiveTypeForDocumentType));
+                    default ->
+                        LOGGER.error("No case handled with the allowedActiveType ->%s".formatted(allowedActiveTypeForDocumentType));
                 }
 
-            }else {
+            } else {
                 LOGGER.error("error getting source of document event in DocumentCreatedListener");
             }
         } catch (InvalidParameterException e) {
-             LOGGER.error("Caught InvalidParameterException while inactivating document state ",e);
-        } catch (DoesNotExistException e){
+            LOGGER.error("Caught InvalidParameterException while inactivating document state ", e);
+        } catch (DoesNotExistException e) {
             // ignore it
         }
     }

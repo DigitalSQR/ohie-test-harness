@@ -27,7 +27,7 @@ public interface UserService {
      * logout in application.
      *
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return UserInfo the User just created
      * @throws OperationFailedException unable to complete request
      */
@@ -38,16 +38,16 @@ public interface UserService {
      * Creates a new User.In the user Id, Description, and Meta information may
      * not be set in the supplied userInfo.
      *
-     * @param userEntity  the user data
+     * @param userEntity the user data
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return UserInfo the User just created
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException    userInfo or contextInfo is not valid
-     * @throws OperationFailedException     unable to complete request
+     * @throws InvalidParameterException userInfo or contextInfo is not valid
+     * @throws OperationFailedException unable to complete request
      */
     public UserEntity createUser(UserEntity userEntity,
-                                 ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException, DoesNotExistException, MessagingException, IOException;
@@ -58,18 +58,18 @@ public interface UserService {
     /**
      * Updates an existing User.
      *
-     * @param userEntity  the new data for the User
+     * @param userEntity the new data for the User
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return UserInfo the details of User just updated
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException    userInfo or contextInfo is not valid
-     * @throws OperationFailedException     unable to complete request
-     * @throws VersionMismatchException     optimistic locking failure or the action
-     *                                      was attempted on an out of date version
+     * @throws InvalidParameterException userInfo or contextInfo is not valid
+     * @throws OperationFailedException unable to complete request
+     * @throws VersionMismatchException optimistic locking failure or the action
+     * was attempted on an out of date version
      */
     public UserEntity updateUser(UserEntity userEntity,
-                                 ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException,
@@ -80,34 +80,33 @@ public interface UserService {
      * returned list may be in any order with unique set.
      *
      * @param userSearchFilter
-     * @param pageable         Contains Index number of the Page, Max size of the single
-     *                         page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo      information containing the principalId and locale
-     *                         information about the caller of service operation
+     * @param pageable Contains Index number of the Page, Max size of the single
+     * page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return a list of Username start with given UserName found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
+     * @throws OperationFailedException unable to complete request
      */
     public Page<UserEntity> searchUsers(UserSearchCriteriaFilter userSearchFilter,
-                                        Pageable pageable,
-                                        ContextInfo contextInfo)
+            Pageable pageable,
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
-
 
     /**
      * Retrieves a list of Users corresponding to the given User Name.The
      * returned list may be in any order with unique set.
      *
      * @param userSearchFilter
-     * @param contextInfo      information containing the principalId and locale
-     *                         information about the caller of service operation
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return a list of username start with given UserName found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException  unable to complete request
+     * @throws OperationFailedException unable to complete request
      */
     public List<UserEntity> searchUsers(UserSearchCriteriaFilter userSearchFilter,
-                                        ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
 
@@ -118,31 +117,31 @@ public interface UserService {
      * to this object
      *
      * @param validationTypeKey the identifier of the extent of validation
-     * @param userEntity        the User information to be tested
-     * @param contextInfo       information containing the principalId and locale
-     *                          information about the caller of service operation
+     * @param userEntity the User information to be tested
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return Results user performing the validation
      * @throws InvalidParameterException userInfo or contextInfo is not valid
-     * @throws OperationFailedException  unable to complete request
+     * @throws OperationFailedException unable to complete request
      */
     public List<ValidationResultInfo> validateUser(String validationTypeKey,
-                                                   UserEntity userEntity,
-                                                   ContextInfo contextInfo)
+            UserEntity userEntity,
+            ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException;
 
     /**
      * Retrieves a User corresponding to the given User Id.
      *
-     * @param userId      userId of User to be retrieved
+     * @param userId userId of User to be retrieved
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return a list of User
-     * @throws DoesNotExistException    when user does not exist for that id
+     * @throws DoesNotExistException when user does not exist for that id
      * @throws InvalidParameterException invalid contextInfo
      */
     public UserEntity getUserById(String userId,
-                                  ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException;
 
@@ -150,7 +149,7 @@ public interface UserService {
      * get logged in uses detail
      *
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return logged in User
      * @throws OperationFailedException unable to complete request
      * @throws DoesNotExistException when user does not exist for that id
@@ -160,93 +159,91 @@ public interface UserService {
             DoesNotExistException, InvalidParameterException;
 
     /**
-     * Retrieves a list of user roles. The
-     * returned list may be in any order with unique set.
+     * Retrieves a list of user roles. The returned list may be in any order
+     * with unique set.
      *
-     * @param roleSearchFilter * @param pageable  Contains Index number of the Page, Max size of the single
-     *                         page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo      information containing the principalId and locale
-     *                         information about the caller of service operation
+     * @param roleSearchFilter * @param pageable Contains Index number of the
+     * Page, Max size of the single page,Name of the field for sorting and
+     * sortDirection sorting direction
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return list of role with given search criteria
-     * @throws OperationFailedException  unable to complete request
+     * @throws OperationFailedException unable to complete request
      * @throws InvalidParameterException ContextInfo is not valid
      */
-
     public Page<RoleEntity> searchRoles(RoleSearchCriteriaFilter roleSearchFilter,
-                                        Pageable pageable,
-                                        ContextInfo contextInfo)
+            Pageable pageable,
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
-
 
     /**
-     * Retrieves a list of user roles. The
-     * returned list may be in any order with unique set.
+     * Retrieves a list of user roles. The returned list may be in any order
+     * with unique set.
      *
      * @param roleSearchFilter criteria for search role
-     * @param contextInfo      information containing the principalId and locale
-     *                         information about the caller of service operation
+     * @param contextInfo information containing the principalId and locale
+     * information about the caller of service operation
      * @return list of role with given search criteria
-     * @throws OperationFailedException  unable to complete request
+     * @throws OperationFailedException unable to complete request
      * @throws InvalidParameterException ContextInfo is not valid
      */
-
     public List<RoleEntity> searchRoles(RoleSearchCriteriaFilter roleSearchFilter,
-                                        ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
-
 
     /**
      * Retrieves role by roleId.
+     *
      * @param roleId id of role
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-
+     * information about the caller of service operation
+     *
      * @return RoleEntity
      * @throws DoesNotExistException when user does not exist for that id
      * @throws OperationFailedException unable to complete request
      * @throws InvalidParameterException ContextInfo is not valid
      */
-
     public RoleEntity getRoleById(String roleId,
-                                  ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             OperationFailedException,
             InvalidParameterException;
 
-
     /**
-     * Retrieves a list of user roles. The
-     * returned list may be in any order with unique set.
-     * @param pageable  Contains Index number of the Page, Max size of the single
-     *                    page,Name of the field for sorting and sortDirection sorting direction
+     * Retrieves a list of user roles. The returned list may be in any order
+     * with unique set.
+     *
+     * @param pageable Contains Index number of the Page, Max size of the single
+     * page,Name of the field for sorting and sortDirection sorting direction
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-
+     * information about the caller of service operation
+     *
      * @return list of role with given search criteria
      * @throws InvalidParameterException ContextInfo is not valid
      */
     public Page<RoleEntity> getRoles(Pageable pageable,
-                                     ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws InvalidParameterException;
 
     /**
      * Register Assessee
-     * @param userEntity  User information to be registered
+     *
+     * @param userEntity User information to be registered
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
-
+     * information about the caller of service operation
+     *
      * @return Registered user information
      * @throws DoesNotExistException when user does not exist for that id
-     * @throws OperationFailedException  unable to complete request
+     * @throws OperationFailedException unable to complete request
      * @throws InvalidParameterException ContextInfo is not valid
      * @throws DataValidationErrorException supplied data is invalid
      * @throws MessagingException
      * @throws IOException
      */
     public UserEntity registerAssessee(UserEntity userEntity,
-                                       ContextInfo contextInfo)
+            ContextInfo contextInfo)
             throws DoesNotExistException,
             OperationFailedException,
             InvalidParameterException,
@@ -254,51 +251,54 @@ public interface UserService {
 
     /**
      * Create forgot password request and send email for user
+     *
      * @param userEmail User email
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      */
     public void createForgotPasswordRequestAndSendEmail(String userEmail, ContextInfo contextInfo);
 
     /**
      * Update password for user
+     *
      * @param updatePasswordInfo information containing new password
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException UpdatePasswordInfo or ContextInfo is not valid
+     * @throws InvalidParameterException UpdatePasswordInfo or ContextInfo is
+     * not valid
      * @throws DoesNotExistException when user does not exist for that id
-     * @throws OperationFailedException  unable to complete request
-     * @throws VersionMismatchException  optimistic locking failure or the action
-     *                                   was attempted on an out of date version
+     * @throws OperationFailedException unable to complete request
+     * @throws VersionMismatchException optimistic locking failure or the action
+     * was attempted on an out of date version
      */
-
     public void updatePasswordWithVerificationToken(UpdatePasswordInfo updatePasswordInfo, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException;
-
 
     /**
      * Reset password of user.
      *
-     * @param resetPasswordInfo information containing old password and new password
+     * @param resetPasswordInfo information containing old password and new
+     * password
      * @param contextInfo ContextInfo
      * @return UserEntity
-     *  @throws DataValidationErrorException supplied data is invalid
-     *  @throws InvalidParameterException ResetPasswordInfo or ContextInfo is not valid
-     *  @throws DoesNotExistException  when user does not exist for that id
-     *  @throws OperationFailedException unable to complete request
-     *  @throws VersionMismatchException optimistic locking failure or the action
-     *                                   was attempted on an out of date version
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException ResetPasswordInfo or ContextInfo is not
+     * valid
+     * @throws DoesNotExistException when user does not exist for that id
+     * @throws OperationFailedException unable to complete request
+     * @throws VersionMismatchException optimistic locking failure or the action
+     * was attempted on an out of date version
      */
     public UserEntity resetPassword(ResetPasswordInfo resetPasswordInfo, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException;
 
     /**
      * change state of user with id and giving the expected state
      *
-     * @param documentId  id of the user
-     * @param stateKey   expected state key
+     * @param documentId id of the user
+     * @param stateKey expected state key
      * @param contextInfo ContextInfo
      * @return UserEntity
-     * @throws DoesNotExistException        when user does not exist for that id
+     * @throws DoesNotExistException when user does not exist for that id
      * @throws DataValidationErrorException when validation fails
      */
     public UserEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException;
@@ -324,9 +324,11 @@ public interface UserService {
      *
      * @param role String role of the users to be retrieved
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      *
      * @return List of users with given role
+     * @throws InvalidParameterException
+     * @throws DoesNotExistException
      */
     public List<UserEntity> getUsersByRole(String role, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException;
 }

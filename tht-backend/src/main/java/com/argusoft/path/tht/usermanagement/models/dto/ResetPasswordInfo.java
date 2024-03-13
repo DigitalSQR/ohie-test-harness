@@ -22,7 +22,7 @@ public class ResetPasswordInfo {
         this.newPassword = newPassword;
     }
 
-    public void trimObject(){
+    public void trimObject() {
         this.setOldPassword(this.getOldPassword().trim());
         this.setNewPassword(this.getNewPassword().trim());
     }

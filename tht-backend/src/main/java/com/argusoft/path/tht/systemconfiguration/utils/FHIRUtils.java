@@ -59,7 +59,7 @@ public final class FHIRUtils {
             patient.setBirthDateElement(new DateType(birthDate));
         }
 
-            // Setting patient identifier
+        // Setting patient identifier
         Identifier identifier = patient.addIdentifier();
         identifier.setSystem(identifierSystem);
         identifier.setValue(identifierValue);
@@ -87,7 +87,6 @@ public final class FHIRUtils {
 
         return patient;
     }
-
 
     public static Patient createPatient(
             String familyName,
@@ -172,7 +171,7 @@ public final class FHIRUtils {
     }
 
     public static Organization createOrganization(String name,
-                                                  String identifierValue, String phone, String email, String city, String state, String country) {
+            String identifierValue, String phone, String email, String city, String state, String country) {
         Organization organization = new Organization();
 
         // Set organization demographics
@@ -193,7 +192,7 @@ public final class FHIRUtils {
         return organization;
     }
 
-    public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone){
+    public static Practitioner createPractitioner(String name, String gender, String birthDate, String identifierValue, String phone) {
         Practitioner practitioner = new Practitioner();
 // set Practitioner demographics
         practitioner.addName().addGiven(name);
@@ -227,8 +226,9 @@ public final class FHIRUtils {
         practitionerRole.addIdentifier(identifier);
         return practitionerRole;
     }
+
     public static Location createLocation(String identifierValue, String name, String description, String phone,
-                                          String email, String city, String postalCode, String country, Organization organization) {
+            String email, String city, String postalCode, String country, Organization organization) {
         Location location = new Location();
 
         //set location demographics
@@ -253,12 +253,10 @@ public final class FHIRUtils {
         //set organization
         location.setManagingOrganization(new Reference(organization));
 
-
         return location;
     }
 
-
-    public static ConceptMap createConceptMap(String name, String url, String status, String sourceUri, String targetUri, String sourceCode, String targetCode, String sourceDisplay, String targetDisplay){
+    public static ConceptMap createConceptMap(String name, String url, String status, String sourceUri, String targetUri, String sourceCode, String targetCode, String sourceDisplay, String targetDisplay) {
         ConceptMap conceptMap = new ConceptMap();
 
         // Set ConceptMap metadata
@@ -280,9 +278,8 @@ public final class FHIRUtils {
         sourceElement.setDisplay(sourceDisplay);
         ConceptMap.TargetElementComponent target = sourceElement.addTarget();
         target.setCode(targetCode);
-                target.setEquivalence(Enumerations.ConceptMapEquivalence.EQUAL);
-                target.setDisplay(targetDisplay);
-
+        target.setEquivalence(Enumerations.ConceptMapEquivalence.EQUAL);
+        target.setDisplay(targetDisplay);
 
         group.addElement(sourceElement);
         conceptMap.setGroup(Collections.singletonList(group));
@@ -301,7 +298,7 @@ public final class FHIRUtils {
             boolean active,
             String phone,
             String email
-    ){
+    ) {
         // Creating a new Practitioner resource
         Practitioner practitioner = new Practitioner();
 
@@ -333,13 +330,11 @@ public final class FHIRUtils {
         ContactPoint emailContact = new ContactPoint().setSystem(ContactPoint.ContactPointSystem.EMAIL).setValue(email).setUse(ContactPoint.ContactPointUse.HOME);
         practitioner.addTelecom(phoneContact).addTelecom(emailContact);
 
-
         return practitioner;
     }
 
-
-    public static ValueSet createValueSet(String url,String name,String title,String status){
-        ValueSet valueSet=new ValueSet();
+    public static ValueSet createValueSet(String url, String name, String title, String status) {
+        ValueSet valueSet = new ValueSet();
         valueSet.setUrl(url);
         valueSet.setName(name);
         valueSet.setTitle(title);
@@ -353,11 +348,10 @@ public final class FHIRUtils {
         // Set the patient reference
         encounter.setSubject(new Reference("Patient/" + patientId));
 
-        for(String practitionerId: practitionerIds){
+        for (String practitionerId : practitionerIds) {
             encounter.addParticipant().setIndividual(new Reference("Practitioner/" + practitionerId));
         }
         // Set the practitioner reference
-
 
         // Set the encounter class (e.g., outpatient)
         encounter.setClass_(new Coding().setSystem("http://terminology.hl7.org/CodeSystem/v3-ActCode").setCode(encounterTypeCode));
@@ -386,14 +380,13 @@ public final class FHIRUtils {
         return encounter;
     }
 
-    public static DocumentReference createDocumentReference(String patientId,String practitionerId,String attachmentURL,String attachmentTitle)
-    {
+    public static DocumentReference createDocumentReference(String patientId, String practitionerId, String attachmentURL, String attachmentTitle) {
         String base64CdaContent = "PGNsaW5pY2lkYXRvcz4KICAgIDx0aXRsZT5TYW1wbGUgQ0RBIERvY3VtZW50PC90aXRsZT4KICAgIDxwYXRpZW50PjxuYW1lPkpvaG4gRG9lPC9uYW1lPjxkYXRlYmFzZT4xOTgwMDEwMTwvZGF0ZWJhc2U+CiAgICA8L3BhdGllbnQ+CjwvQ2xpY2lubmFtZURvY3VtZW50PjwvQ2xpY2lubmFtZWRhdG9ucz4=";
         DocumentReference documentReference = new DocumentReference();
         documentReference.setStatus(Enumerations.DocumentReferenceStatus.CURRENT);
         documentReference.setId("document123");
         // Set the subject (patient)
-        Reference subjectReference = new Reference("Patient/"+patientId);
+        Reference subjectReference = new Reference("Patient/" + patientId);
         documentReference.setSubject(subjectReference);
 
         // Set the content (attachment details)
@@ -427,13 +420,12 @@ public final class FHIRUtils {
         documentReference.setType(typeCodeableConcept);
 
         // Set the author (practitioner reference)
-        Reference authorReference = new Reference("Practitioner/"+practitionerId);
+        Reference authorReference = new Reference("Practitioner/" + practitionerId);
         documentReference.addAuthor(authorReference);
 
         return documentReference;
 
     }
-
 
     public static PractitionerRole createPractitionerRole(
             String id,
@@ -443,10 +435,10 @@ public final class FHIRUtils {
             boolean active,
             Location locationRef,
             HealthcareService healthcareServiceRef,
-//            Set<String> daysOfWeek,
+            //            Set<String> daysOfWeek,
             String availableStartTime,
             String availableEndTime
-    ){
+    ) {
         // Creating new PractitionerRole resource
         PractitionerRole practitionerRole = new PractitionerRole();
 
@@ -474,7 +466,6 @@ public final class FHIRUtils {
         //Set HealthcareService reference
         practitionerRole.addHealthcareService(new Reference(healthcareServiceRef));
 
-
         practitionerRole.addAvailableTime()
                 .setAvailableStartTime(String.valueOf(new TimeType(availableStartTime)))
                 .setAvailableEndTime(String.valueOf(new TimeType(availableEndTime)));
@@ -493,8 +484,7 @@ public final class FHIRUtils {
             String serviceName,
             boolean active,
             Location location
-
-    ){
+    ) {
 
         // Create a HealthcareService resource
         HealthcareService healthcareService = new HealthcareService();
@@ -523,10 +513,10 @@ public final class FHIRUtils {
         return healthcareService;
     }
 
-    public static CodeSystem createCodeSystem(String url,String version,String name,String title,String status,String publisher,String content,String code,String display,String definition) {
+    public static CodeSystem createCodeSystem(String url, String version, String name, String title, String status, String publisher, String content, String code, String display, String definition) {
 
         // create codeSystem object
-        CodeSystem codeSystem = new CodeSystem() ;
+        CodeSystem codeSystem = new CodeSystem();
 
         // add data in codeSystem
         codeSystem.setUrl(url);
@@ -538,7 +528,7 @@ public final class FHIRUtils {
         codeSystem.setContent(CodeSystem.CodeSystemContentMode.valueOf(content));
 
         // Add a concept with a code
-        CodeSystem.ConceptDefinitionComponent concept=codeSystem.addConcept();
+        CodeSystem.ConceptDefinitionComponent concept = codeSystem.addConcept();
         concept.setCode(code);
         concept.setDisplay(display);
         concept.setDefinition(definition);
@@ -557,9 +547,9 @@ public final class FHIRUtils {
             String phoneNo,
             double latitude,
             double longitude
-    ){
+    ) {
         // Create a Location reference
-        Location location=new Location();
+        Location location = new Location();
 
         // Set Location name
         location.setName(name);
@@ -591,9 +581,9 @@ public final class FHIRUtils {
         return location;
     }
 
-    public static ValueSet createValueSet(String url,String name,String title,String status,String publisherName){
+    public static ValueSet createValueSet(String url, String name, String title, String status, String publisherName) {
 
-        ValueSet valueSet=new ValueSet();
+        ValueSet valueSet = new ValueSet();
         valueSet.setUrl(url);
         valueSet.setName(name);
         valueSet.setTitle(title);
@@ -603,14 +593,14 @@ public final class FHIRUtils {
         return valueSet;
     }
 
-    public static void addConceptValueSet(ValueSet valueSet,String codeSystemUrl,String code,String display){
+    public static void addConceptValueSet(ValueSet valueSet, String codeSystemUrl, String code, String display) {
         // creating compose in ValueSet
         ValueSet.ValueSetComposeComponent compose = new ValueSet.ValueSetComposeComponent();
 
         // include a system and concept
         ValueSet.ConceptSetComponent conceptSet = compose.addInclude();
         conceptSet.setSystem(codeSystemUrl);
-        ValueSet.ConceptReferenceComponent concept= conceptSet.addConcept();
+        ValueSet.ConceptReferenceComponent concept = conceptSet.addConcept();
         concept.setCode(code);
         concept.setDisplay(display);
 
@@ -618,9 +608,7 @@ public final class FHIRUtils {
         valueSet.setCompose(compose);
     }
 
-
-    public static DiagnosticReport createDiagnosticReport(String patientId, String practitionerId, String observationId)
-    {
+    public static DiagnosticReport createDiagnosticReport(String patientId, String practitionerId, String observationId) {
         Reference patientReference = new Reference("Patient/" + patientId);
 
         // Create Practitioner reference
@@ -634,14 +622,13 @@ public final class FHIRUtils {
         diagnosticReport.setPerformer(List.of(practitionerReference));
         diagnosticReport.addResult(observationReference);
 
-
         return diagnosticReport;
     }
 
     public static Observation createObservation(String patientId, String practitionerId, String code, double value) {
         // Create Patient reference
         Reference patientReference = new Reference("Patient/" + patientId);
-        Reference practitionerReference = new Reference("Practitioner/"+practitionerId);
+        Reference practitionerReference = new Reference("Practitioner/" + practitionerId);
 
         // Create Observation
         Observation observation = new Observation();
@@ -673,11 +660,10 @@ public final class FHIRUtils {
         interpretation.addCoding().setSystem("http://snomed.info/sct").setCode("789012");
         observation.setInterpretation(List.of(interpretation));
 
-
         return observation;
     }
 
-    public static Practitioner createPractitioner(String name, String gender, String birthDate, String qualificationCode, String qualificationDisplay, String phone, String email, String addressLine, String city, String state, String postalCode){
+    public static Practitioner createPractitioner(String name, String gender, String birthDate, String qualificationCode, String qualificationDisplay, String phone, String email, String addressLine, String city, String state, String postalCode) {
         Practitioner practitioner = new Practitioner();
         practitioner.addName().addGiven(name);
         practitioner.setGender(gender.equals("M") ? Enumerations.AdministrativeGender.MALE : Enumerations.AdministrativeGender.FEMALE);
@@ -698,7 +684,7 @@ public final class FHIRUtils {
         return practitioner;
     }
 
-    public static PractitionerRole createPractitionerRole(String role, String code, String practitionerId, String organizationId){
+    public static PractitionerRole createPractitionerRole(String role, String code, String practitionerId, String organizationId) {
         PractitionerRole practitionerRole = new PractitionerRole();
         practitionerRole.getOrganization().setReference(organizationId);
         practitionerRole.getPractitioner().setReference(practitionerId);
@@ -706,7 +692,7 @@ public final class FHIRUtils {
         return practitionerRole;
     }
 
-    public static Condition createCondition(String patientId, String encounterId, String disease, String code){
+    public static Condition createCondition(String patientId, String encounterId, String disease, String code) {
         Condition condition = new Condition();
         condition.getSubject().setReference(patientId);
         condition.getEncounter().setReference(encounterId);
@@ -714,7 +700,7 @@ public final class FHIRUtils {
         return condition;
     }
 
-    public static Encounter createEncounter(String patientId, String practitionerId, String code){
+    public static Encounter createEncounter(String patientId, String practitionerId, String code) {
         Encounter encounter = new Encounter();
 
         encounter.setStatus(Encounter.EncounterStatus.INPROGRESS);  // Set the status of the encounter
@@ -725,21 +711,21 @@ public final class FHIRUtils {
         return encounter;
     }
 
-    public static Medication createMedication(String code, String name, String productType){
+    public static Medication createMedication(String code, String name, String productType) {
         Medication medication = new Medication();
         medication.getCode().addCoding().setCode(code).setSystem("http://example.org/codes").setDisplay(name);
         medication.getForm().setText(productType);
         return medication;
     }
 
-    public static MedicationRequest createMedicationRequest(String medicationId, String patientId){
+    public static MedicationRequest createMedicationRequest(String medicationId, String patientId) {
         MedicationRequest medicationRequest = new MedicationRequest();
         medicationRequest.getMedicationReference().setId(medicationId);
         medicationRequest.getSubject().setReference(patientId);
         return medicationRequest;
     }
 
-    public static MedicationAdministration createMedicationAdministration(String patientId, String practitionerId, String medicationId, String encounterId){
+    public static MedicationAdministration createMedicationAdministration(String patientId, String practitionerId, String medicationId, String encounterId) {
         MedicationAdministration medicationAdministration = new MedicationAdministration();
 
         // Set the patient reference
@@ -757,7 +743,7 @@ public final class FHIRUtils {
         return medicationAdministration;
     }
 
-    public static Procedure createProcedure(String patientId, String code, String procedureName){
+    public static Procedure createProcedure(String patientId, String code, String procedureName) {
         Procedure procedure = new Procedure();
         procedure.getSubject().setReference(patientId);
         procedure.getCode().addCoding().setCode(code).setSystem("http://example.org/codes").setDisplay(procedureName);
@@ -768,7 +754,7 @@ public final class FHIRUtils {
         return procedure;
     }
 
-    public static Observation createObservation(String patientId, String code, String observationType, Double quantity, String unit){
+    public static Observation createObservation(String patientId, String code, String observationType, Double quantity, String unit) {
         Observation observation = new Observation();
 
         observation.getSubject().setReference(patientId);
@@ -783,14 +769,13 @@ public final class FHIRUtils {
         return observation;
     }
 
-    public static AllergyIntolerance createAllergyIntolerance(String patientId, String code, String allergyFrom){
+    public static AllergyIntolerance createAllergyIntolerance(String patientId, String code, String allergyFrom) {
         AllergyIntolerance allergyIntolerance = new AllergyIntolerance();
         allergyIntolerance.getPatient().setReference(patientId);  // Reference to the patient
 
         CodeableConcept substance = new CodeableConcept();
         substance.addCoding().setCode(code).setSystem("http://snomed.info/sct").setDisplay(allergyFrom);
         allergyIntolerance.addReaction().setSubstance(substance);
-
 
         // Set the type of allergy or intolerance (e.g., allergy)
         allergyIntolerance.setType(AllergyIntolerance.AllergyIntoleranceType.ALLERGY);
@@ -807,7 +792,7 @@ public final class FHIRUtils {
         return allergyIntolerance;
     }
 
-    public static Immunization createImmunization(String patientId, String code, String vaccineName){
+    public static Immunization createImmunization(String patientId, String code, String vaccineName) {
         Immunization immunization = new Immunization();
         immunization.getPatient().setReference(patientId);
 
@@ -824,7 +809,8 @@ public final class FHIRUtils {
 
         return immunization;
     }
-    public static DiagnosticReport createDiagnosticReportWithCode(String patientId, String code, String description ){
+
+    public static DiagnosticReport createDiagnosticReportWithCode(String patientId, String code, String description) {
         DiagnosticReport diagnosticReport = new DiagnosticReport();
 
         diagnosticReport.getSubject().setReference(patientId);  // Reference to the patient
@@ -840,9 +826,7 @@ public final class FHIRUtils {
         return diagnosticReport;
     }
 
-
-    public static Composition createComposition(String title, String patientId, String organizationId, String OrganizationName)
-    {
+    public static Composition createComposition(String title, String patientId, String organizationId, String OrganizationName) {
 
         Composition composition = new Composition();
 
@@ -858,11 +842,9 @@ public final class FHIRUtils {
         // Set the subject of the composition (reference to the patient)
         composition.setSubject(new Reference("Patient/" + patientId));
 
-
         Reference custodian = new Reference("Organization/" + organizationId);
         custodian.setDisplay(OrganizationName);
         composition.setCustodian(custodian);
-
 
         // Section - History of present illness
         Composition.SectionComponent section1 = new Composition.SectionComponent();
@@ -891,8 +873,7 @@ public final class FHIRUtils {
 
     }
 
-
-    public static Composition  createAdmissionNote( String patientId, String organizationId, String practitionerId, String OrganizationName) {
+    public static Composition createAdmissionNote(String patientId, String organizationId, String practitionerId, String OrganizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -909,10 +890,10 @@ public final class FHIRUtils {
         composition.setTitle("Admission Note");
 
         // Set subject (replace with actual patient reference)
-        composition.setSubject(new Reference("Patient/"+patientId));
+        composition.setSubject(new Reference("Patient/" + patientId));
 
         // Set author (replace with actual author reference)
-        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+        composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
         custodian.setDisplay(OrganizationName);
@@ -922,7 +903,7 @@ public final class FHIRUtils {
         Composition.SectionComponent section = new Composition.SectionComponent();
         section.setTitle("Presenting Complaints");
         section.setCode(new CodeableConcept().setText("Presenting Complaints"));
-        Narrative text = new  Narrative();
+        Narrative text = new Narrative();
         text.setStatus(Narrative.NarrativeStatus.GENERATED);
         text.setDivAsString("Presented to the emergency department with severe abdominal pain");
         section.setText(text);
@@ -931,7 +912,7 @@ public final class FHIRUtils {
     }
 
     // Method to create Operative Note Composition
-    public static Composition createOperativeNote( String patientId, String organizationId,String practitionerId, String OrganizationName) {
+    public static Composition createOperativeNote(String patientId, String organizationId, String practitionerId, String OrganizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -948,10 +929,10 @@ public final class FHIRUtils {
         composition.setTitle("Operative Note");
 
         // Set subject (replace with actual patient reference)
-        composition.setSubject(new Reference("Patient/"+patientId));
+        composition.setSubject(new Reference("Patient/" + patientId));
 
         // Set author (replace with actual author reference)
-        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+        composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
         custodian.setDisplay(OrganizationName);
@@ -960,7 +941,7 @@ public final class FHIRUtils {
         Composition.SectionComponent section = new Composition.SectionComponent();
         section.setTitle("Preoperative Assessments");
         section.setCode(new CodeableConcept().setText("Preoperative Assessments"));
-        Narrative text = new  Narrative();
+        Narrative text = new Narrative();
         text.setStatus(Narrative.NarrativeStatus.GENERATED);
         text.setDivAsString("The patient underwent preoperative evaluation");
         section.setText(text);
@@ -969,7 +950,7 @@ public final class FHIRUtils {
     }
 
     // Method to create Progress Notes Composition
-    public static Composition createProgressNotes( String patientId, String organizationId, String practitionerId, String OrganizationName) {
+    public static Composition createProgressNotes(String patientId, String organizationId, String practitionerId, String OrganizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -986,10 +967,10 @@ public final class FHIRUtils {
         composition.setTitle("Progress Note");
 
         // Set subject (replace with actual patient reference)
-        composition.setSubject(new Reference("Patient/"+patientId));
+        composition.setSubject(new Reference("Patient/" + patientId));
 
         // Set author (replace with actual author reference)
-        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+        composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
         custodian.setDisplay(OrganizationName);
@@ -998,7 +979,7 @@ public final class FHIRUtils {
         Composition.SectionComponent section = new Composition.SectionComponent();
         section.setTitle("Daily Progress Notes");
         section.setCode(new CodeableConcept().setText("Daily Progress Notes"));
-        Narrative text = new  Narrative();
+        Narrative text = new Narrative();
         text.setStatus(Narrative.NarrativeStatus.GENERATED);
         text.setDivAsString("On day 2 of hospitalization, the patient's condition remained stable");
         section.setText(text);
@@ -1007,7 +988,7 @@ public final class FHIRUtils {
     }
 
     // Method to create Consultation Reports Composition
-    public static Composition createConsultationReports( String patientId, String organizationId, String practitionerId, String OrganizationName) {
+    public static Composition createConsultationReports(String patientId, String organizationId, String practitionerId, String OrganizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -1024,20 +1005,19 @@ public final class FHIRUtils {
         composition.setTitle("Consultation Report");
 
         // Set subject (replace with actual patient reference)
-        composition.setSubject(new Reference("Patient/"+patientId));
+        composition.setSubject(new Reference("Patient/" + patientId));
 
         // Set author (replace with actual author reference)
-        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+        composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
         custodian.setDisplay(OrganizationName);
         composition.setCustodian(custodian);
 
-
         Composition.SectionComponent section = new Composition.SectionComponent();
         section.setTitle("Findings");
         section.setCode(new CodeableConcept().setText("Findings"));
-        Narrative text = new  Narrative();
+        Narrative text = new Narrative();
         text.setStatus(Narrative.NarrativeStatus.GENERATED);
         text.setDivAsString("The patient was referred for cardiology consultation");
         section.setText(text);
@@ -1045,18 +1025,17 @@ public final class FHIRUtils {
         return composition;
     }
 
-    public static DocumentReference createDocumentReference(String documentReferenceId,String patientId,String practitionerId,String attachmentURL,String attachmentTitle)
-    {
+    public static DocumentReference createDocumentReference(String documentReferenceId, String patientId, String practitionerId, String attachmentURL, String attachmentTitle) {
         String base64CdaContent = "PGNsaW5pY2lkYXRvcz4KICAgIDx0aXRsZT5TYW1wbGUgQ0RBIERvY3VtZW50PC90aXRsZT4KICAgIDxwYXRpZW50PjxuYW1lPkpvaG4gRG9lPC9uYW1lPjxkYXRlYmFzZT4xOTgwMDEwMTwvZGF0ZWJhc2U+CiAgICA8L3BhdGllbnQ+CjwvQ2xpY2lubmFtZURvY3VtZW50PjwvQ2xpY2lubmFtZWRhdG9ucz4=";
         DocumentReference documentReference = new DocumentReference();
         documentReference.setId(documentReferenceId);
         documentReference.setStatus(Enumerations.DocumentReferenceStatus.CURRENT);
 
         // Set the subject (patient)
-        Reference subjectReference = new Reference("Patient/"+patientId);
+        Reference subjectReference = new Reference("Patient/" + patientId);
         documentReference.setSubject(subjectReference);
 
-            // Set the content (attachment details)
+        // Set the content (attachment details)
         DocumentReference.DocumentReferenceContentComponent content = new DocumentReference.DocumentReferenceContentComponent();
         Attachment attachment = new Attachment();
 
@@ -1068,8 +1047,8 @@ public final class FHIRUtils {
         attachment.setData(decodedContent);
 
 // Optionally set URL or title if applicable
- attachment.setUrl(attachmentURL);
- attachment.setTitle(attachmentTitle);
+        attachment.setUrl(attachmentURL);
+        attachment.setTitle(attachmentTitle);
 
 // Set the attachment in the content
         content.setAttachment(attachment);
@@ -1087,17 +1066,15 @@ public final class FHIRUtils {
         documentReference.setType(typeCodeableConcept);
 
         // Set the author (practitioner reference)
-        Reference authorReference = new Reference("Practitioner/"+practitionerId);
+        Reference authorReference = new Reference("Practitioner/" + practitionerId);
         documentReference.addAuthor(authorReference);
 
         return documentReference;
 
     }
 
-
-
     public static HealthcareService createHealthcareService(String identifierValue, String name, String comment,
-                                                            String phone, String email, List<String> specialties, Location location) {
+            String phone, String email, List<String> specialties, Location location) {
         HealthcareService healthcareService = new HealthcareService();
         // Set the identifier
         Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);
@@ -1121,9 +1098,8 @@ public final class FHIRUtils {
         return healthcareService;
     }
 
-
     // Method to create Discharge Summary Composition
-    public static Composition createDischargeSummary( String patientId, String organizationId,String practitionerId, String OrganizationName) {
+    public static Composition createDischargeSummary(String patientId, String organizationId, String practitionerId, String OrganizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -1140,10 +1116,10 @@ public final class FHIRUtils {
         composition.setTitle("Discharge Summary");
 
         // Set subject (replace with actual patient reference)
-        composition.setSubject(new Reference("Patient/"+patientId));
+        composition.setSubject(new Reference("Patient/" + patientId));
 
         // Set author (replace with actual author reference)
-        composition.addAuthor(new Reference("Practitioner/"+practitionerId));
+        composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
         custodian.setDisplay(OrganizationName);
@@ -1152,7 +1128,7 @@ public final class FHIRUtils {
         Composition.SectionComponent section = new Composition.SectionComponent();
         section.setTitle("Reason for Admission");
         section.setCode(new CodeableConcept().setText("Reason for Admission"));
-        Narrative text = new  Narrative();
+        Narrative text = new Narrative();
         text.setStatus(Narrative.NarrativeStatus.GENERATED);
         text.setDivAsString("The patient was admitted for exacerbation of congestive heart failure");
         section.setText(text);
@@ -1161,6 +1137,3 @@ public final class FHIRUtils {
         return composition;
     }
 }
-
-
-

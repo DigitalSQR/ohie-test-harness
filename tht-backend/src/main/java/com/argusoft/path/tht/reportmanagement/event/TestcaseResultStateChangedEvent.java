@@ -15,11 +15,9 @@ public class TestcaseResultStateChangedEvent extends ApplicationEvent {
         this.isManual = isManual;
     }
 
-
     public ContextInfo getContextInfo() {
         return contextInfo;
     }
-
 
     public Boolean getManual() {
         return isManual;

@@ -19,7 +19,7 @@ public interface GradeService {
      * Retrieves all grades
      *
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return list of all grades
      */
     List<GradeEntity> getAllGrades(ContextInfo contextInfo);
@@ -27,18 +27,19 @@ public interface GradeService {
     /**
      * Get grade based on percentage range
      *
-     * @param percentage  percentage based on successful and fail testcases
+     * @param percentage percentage based on successful and fail testcases
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return a grade
      */
     Optional<GradeEntity> getGradeBasedOnPercentageRange(Integer percentage, ContextInfo contextInfo);
 
     /**
      * Update existing grade
+     *
      * @param gradeEntity grade
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return updated grade
      * @throws DoesNotExistException a gradeId in gradeIds not found
      * @throws DataValidationErrorException supplied data is invalid
@@ -47,13 +48,13 @@ public interface GradeService {
 
     /**
      * Retrieve grade by existing id
+     *
      * @param id grade id
      * @param contextInfo information containing the principalId and locale
-     *                    information about the caller of service operation
+     * information about the caller of service operation
      * @return a grade
      * @throws DoesNotExistException a gradeId in gradeIds not found
      */
     GradeEntity getGradeById(String id, ContextInfo contextInfo) throws DoesNotExistException;
-
 
 }

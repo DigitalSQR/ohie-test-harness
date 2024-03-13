@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-
 @Component
 public class FRWF1TestCase1 implements TestCase {
 
@@ -28,7 +27,7 @@ public class FRWF1TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-                                     ContextInfo contextInfo) throws OperationFailedException {
+            ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing FRWF1TestCase1");
             LOGGER.info("Creating facility");
@@ -119,7 +118,7 @@ public class FRWF1TestCase1 implements TestCase {
             return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {
-            LOGGER.error(ValidateConstant.EXCEPTION+ FRWF1TestCase1.class.getSimpleName(), ex);
+            LOGGER.error(ValidateConstant.EXCEPTION + FRWF1TestCase1.class.getSimpleName(), ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }
     }

@@ -81,7 +81,11 @@ public class DocumentEntity extends IdStateNameMetaEntity {
         this.owner = owner;
     }
 
-    public String getDocumentType() { return documentType; }
+    public String getDocumentType() {
+        return documentType;
+    }
 
-    public void setDocumentType(String documentType) { this.documentType = documentType; }
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
 }

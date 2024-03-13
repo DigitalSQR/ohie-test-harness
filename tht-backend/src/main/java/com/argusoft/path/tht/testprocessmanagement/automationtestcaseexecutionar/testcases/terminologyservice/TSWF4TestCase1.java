@@ -98,13 +98,13 @@ public class TSWF4TestCase1 implements TestCase {
             }
 
             LOGGER.info("Creating coneptMaps");
-            String name1 = "MyConceptMap"+ uniqueId;
-            String name2 = "MyConceptMap2"+ uniqueId;
+            String name1 = "MyConceptMap" + uniqueId;
+            String name2 = "MyConceptMap2" + uniqueId;
 
             String url = "http://example.com/testing/myconceptmap1" + "/" + uniqueId;
             String url2 = "http://example.com/testing/myconceptmap2" + "/" + uniqueId;
 
-            ConceptMap conceptMap = FHIRUtils.createConceptMap(name1, url,"ACTIVE", sourceUrl1, targetUrl1, sourceCode1, targetCode1,"Blood Pressure","BP");
+            ConceptMap conceptMap = FHIRUtils.createConceptMap(name1, url, "ACTIVE", sourceUrl1, targetUrl1, sourceCode1, targetCode1, "Blood Pressure", "BP");
 
             MethodOutcome outcome5 = client.create()
                     .resource(conceptMap)
@@ -115,8 +115,7 @@ public class TSWF4TestCase1 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create conceptMap");
             }
 
-            ConceptMap conceptMap2 = FHIRUtils.createConceptMap(name2, url2,"ACTIVE", sourceUrl2, targetUrl2, sourceCode2, targetCode2,"Asthma","AS");
-
+            ConceptMap conceptMap2 = FHIRUtils.createConceptMap(name2, url2, "ACTIVE", sourceUrl2, targetUrl2, sourceCode2, targetCode2, "Asthma", "AS");
 
             MethodOutcome outcome6 = client.create()
                     .resource(conceptMap2)
@@ -127,7 +126,6 @@ public class TSWF4TestCase1 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create conceptMap");
             }
 
-
             // Search by Url
             LOGGER.info("Search concept map by URL");
             Bundle bundle1 = client.search()
@@ -137,7 +135,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             List<ConceptMap> maps1 = FHIRUtils.processBundle(ConceptMap.class, bundle1);
-            if(maps1.size() != 1){
+            if (maps1.size() != 1) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by url");
             }
 
@@ -151,7 +149,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             List<ConceptMap> maps2 = FHIRUtils.processBundle(ConceptMap.class, bundle2);
-            if(maps2.size() != 2){
+            if (maps2.size() != 2) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by status and name");
             }
 
@@ -164,7 +162,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             List<ConceptMap> maps3 = FHIRUtils.processBundle(ConceptMap.class, bundle3);
-            if(maps3.size() != 1){
+            if (maps3.size() != 1) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by source code");
             }
 
@@ -177,7 +175,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             List<ConceptMap> maps4 = FHIRUtils.processBundle(ConceptMap.class, bundle4);
-            if(maps4.size() != 1){
+            if (maps4.size() != 1) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by target code");
             }
 
@@ -190,7 +188,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             List<ConceptMap> maps5 = FHIRUtils.processBundle(ConceptMap.class, bundle5);
-            if(maps5.size() != 1){
+            if (maps5.size() != 1) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by source uri");
             }
 
@@ -203,14 +201,13 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             List<ConceptMap> maps6 = FHIRUtils.processBundle(ConceptMap.class, bundle6);
-            if(maps6.size() != 1){
+            if (maps6.size() != 1) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get concept map by target uri");
             }
             LOGGER.info("Test case Passed");
             return new ValidationResultInfo(ErrorLevel.OK, "Passed");
 
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             LOGGER.error(ValidateConstant.EXCEPTION + TSWF4TestCase1.class.getSimpleName(), ex);
             throw new OperationFailedException(ex.getMessage(), ex);
         }

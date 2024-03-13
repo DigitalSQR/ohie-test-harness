@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface ComponentMapper extends ModelDtoMapper<ComponentEntity,ComponentInfo> {
+public interface ComponentMapper extends ModelDtoMapper<ComponentEntity, ComponentInfo> {
 
     ComponentMapper INSTANCE = Mappers.getMapper(ComponentMapper.class);
 
@@ -35,20 +35,24 @@ public interface ComponentMapper extends ModelDtoMapper<ComponentEntity,Componen
     List<ComponentEntity> dtoToModel(List<ComponentInfo> componentInfos);
 
     default Set<String> setToSpecificationIds(Set<SpecificationEntity> specificationEntities) {
-        if(specificationEntities==null) {return null;}
-            return specificationEntities.stream()
-                    .map(SpecificationEntity::getId)
-                    .collect(Collectors.toSet());
+        if (specificationEntities == null) {
+            return null;
+        }
+        return specificationEntities.stream()
+                .map(SpecificationEntity::getId)
+                .collect(Collectors.toSet());
     }
 
     default Set<SpecificationEntity> setToSpecifications(Set<String> specificationIds) {
-        if(specificationIds==null) {return null;}
-            return specificationIds.stream()
-                    .map(id -> {
-                        SpecificationEntity specificationEntity = new SpecificationEntity();
-                        specificationEntity.setId(id);
-                        return specificationEntity;
-                    })
-                    .collect(Collectors.toSet());
+        if (specificationIds == null) {
+            return null;
+        }
+        return specificationIds.stream()
+                .map(id -> {
+                    SpecificationEntity specificationEntity = new SpecificationEntity();
+                    specificationEntity.setId(id);
+                    return specificationEntity;
+                })
+                .collect(Collectors.toSet());
     }
 }

@@ -1,8 +1,8 @@
 package com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception;
 
 /**
- * This exception mainly used when repository operations are failed.
- * It Also contains error message with HTTP status.
+ * This exception mainly used when repository operations are failed. It Also
+ * contains error message with HTTP status.
  *
  * @author Dhruv
  * @since 2023-09-13

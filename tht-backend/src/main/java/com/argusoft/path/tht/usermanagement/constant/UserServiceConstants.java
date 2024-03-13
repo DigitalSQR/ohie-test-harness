@@ -1,8 +1,6 @@
 package com.argusoft.path.tht.usermanagement.constant;
 
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
-import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseOptionInfo;
-import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -28,8 +26,8 @@ public class UserServiceConstants {
     public static final String ROLE_ID_TESTER = "role.tester";
     public static final String ROLE_ID_ASSESSEE = "role.assessee";
     //validation
-    public static final String EMAIL_REGEX =
-            "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+    public static final String EMAIL_REGEX
+            = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
     public static final List<String> USER_STATUS = new ArrayList<>();
     public static final Multimap<String, String> USER_STATUS_MAP = ArrayListMultimap.create();
 

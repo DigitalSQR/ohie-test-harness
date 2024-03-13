@@ -12,8 +12,7 @@ import java.util.UUID;
 /**
  * This model used in model those contain UUID as id.
  *
- * @author Dhruv
- * =
+ * @author Dhruv =
  */
 @MappedSuperclass
 @Audited
@@ -23,8 +22,7 @@ public class IdMetaEntity extends MetaEntity {
     @Column(name = "id")
     private String id;
 
-
-    public IdMetaEntity(){
+    public IdMetaEntity() {
 
     }
 

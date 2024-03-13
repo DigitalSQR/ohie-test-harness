@@ -22,7 +22,6 @@ import java.util.Objects;
 @Service
 public class TestcaseResultStateChangedEventListener {
 
-
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultStateChangedEventListener.class);
 
     @Autowired
@@ -37,22 +36,21 @@ public class TestcaseResultStateChangedEventListener {
     @Async
     @Transactional
     @TransactionalEventListener
-    public void notifyStateChangeWebSocket(TestcaseResultStateChangedEvent testcaseResultStateChangedEvent){
+    public void notifyStateChangeWebSocket(TestcaseResultStateChangedEvent testcaseResultStateChangedEvent) {
         String testcaseResultId = (String) testcaseResultStateChangedEvent.getSource();
         try {
             notifyTestCaseFinished(testcaseResultId, testcaseResultStateChangedEvent.getManual(), testcaseResultStateChangedEvent.getContextInfo());
         } catch (InvalidParameterException | OperationFailedException | DoesNotExistException e) {
-            LOGGER.error("Caught Exception while notifying State Change info to web socket ",e);
+            LOGGER.error("Caught Exception while notifying State Change info to web socket ", e);
         }
 
     }
 
-    private void notifyTestCaseFinished(String testcaseResultEntityId, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException
-    {
-        String destination = "/testcase-result/" + (Objects.equals(isManual, Boolean.TRUE) ? "manual/" : "automated/" ) + testcaseResultEntityId;
+    private void notifyTestCaseFinished(String testcaseResultEntityId, Boolean isManual, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
+        String destination = "/testcase-result/" + (Objects.equals(isManual, Boolean.TRUE) ? "manual/" : "automated/") + testcaseResultEntityId;
         TestcaseResultEntity testcaseResultEntity = testcaseResultService.getTestcaseResultStatus(testcaseResultEntityId,
-                Objects.equals(isManual, Boolean.TRUE)? true : null,
-                Objects.equals(isManual, Boolean.TRUE)? null : true,
+                Objects.equals(isManual, Boolean.TRUE) ? true : null,
+                Objects.equals(isManual, Boolean.TRUE) ? null : true,
                 null,
                 null,
                 null,

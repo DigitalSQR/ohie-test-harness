@@ -42,14 +42,14 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
 
     @Override
     public TestResultRelationEntity createTestcaseResult(TestResultRelationEntity testResultRelationEntity, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DataValidationErrorException {
-        TestResultRelationValidator.validateCreateUpdateTestResultRelation(Constant.CREATE_VALIDATION, testResultRelationEntity, this, testcaseResultService ,contextInfo);
+        TestResultRelationValidator.validateCreateUpdateTestResultRelation(Constant.CREATE_VALIDATION, testResultRelationEntity, this, testcaseResultService, contextInfo);
         testResultRelationEntity = testResultRelationRepository.saveAndFlush(testResultRelationEntity);
         return testResultRelationEntity;
     }
 
     @Override
     public TestResultRelationEntity updateTestcaseResult(TestResultRelationEntity testResultRelationEntity, ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidParameterException {
-        TestResultRelationValidator.validateCreateUpdateTestResultRelation(Constant.UPDATE_VALIDATION, testResultRelationEntity, this, testcaseResultService ,contextInfo);
+        TestResultRelationValidator.validateCreateUpdateTestResultRelation(Constant.UPDATE_VALIDATION, testResultRelationEntity, this, testcaseResultService, contextInfo);
         testResultRelationEntity = testResultRelationRepository.saveAndFlush(testResultRelationEntity);
         return testResultRelationEntity;
     }
@@ -68,7 +68,7 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
 
     @Override
     public List<ValidationResultInfo> validateTestcaseResult(String validationTypeKey, TestResultRelationEntity testResultRelationEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
-        return TestResultRelationValidator.validateTestResultRelation(validationTypeKey,this, testcaseResultService, testResultRelationEntity, contextInfo);
+        return TestResultRelationValidator.validateTestResultRelation(validationTypeKey, this, testcaseResultService, testResultRelationEntity, contextInfo);
     }
 
     @Override
@@ -84,16 +84,14 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
     @Override
     public List<Object> getTestResultRelationEntitiesFromAuditMapping(List<String> resultRelationIds, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException, DataValidationErrorException {
 
-
         List<Object> objects = new ArrayList<>();
 
         TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter();
         testResultRelationCriteriaSearchFilter.setId(resultRelationIds);
 
-
         List<TestResultRelationEntity> testResultRelationEntities = this.searchTestResultRelation(testResultRelationCriteriaSearchFilter, contextInfo);
 
-        if(resultRelationIds !=null && resultRelationIds.size() != testResultRelationEntities.size()){
+        if (resultRelationIds != null && resultRelationIds.size() != testResultRelationEntities.size()) {
             throw new DoesNotExistException("Failed to find all the test result related records from the database ");
         }
 
@@ -107,8 +105,8 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
             List<Object> auditObjects = auditService.searchAudit(searchFilter, contextInfo);
 
             Optional<Object> testcaseOptionFromAudit = auditObjects.stream().findFirst();
-            if(testcaseOptionFromAudit.isEmpty()){
-                throw new DoesNotExistException("Failed to find the testcase Option in TestcaseResultRelation Audit data with refId "+testResultRelationEntity.getRefId());
+            if (testcaseOptionFromAudit.isEmpty()) {
+                throw new DoesNotExistException("Failed to find the testcase Option in TestcaseResultRelation Audit data with refId " + testResultRelationEntity.getRefId());
             }
 
             objects.add(testcaseOptionFromAudit.get());
@@ -127,7 +125,7 @@ public class TestResultRelationServiceServiceImpl implements TestResultRelationS
 
         List<TestResultRelationEntity> testResultRelationEntities = this.searchTestResultRelation(testResultRelationCriteriaSearchFilter, contextInfo);
 
-        if(testResultRelationEntities.isEmpty()){
+        if (testResultRelationEntities.isEmpty()) {
             return new ArrayList<>();
         }
 
