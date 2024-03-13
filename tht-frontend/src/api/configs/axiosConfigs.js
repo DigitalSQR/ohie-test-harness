@@ -8,7 +8,7 @@ import { persistor, store } from "../../store/store";
 const api = axios.create({
   baseURL: process.env.REACT_APP_HOST || "http://192.1.200.226:8081/api"
 });
-const defaultToken = `Basic dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==`;
+const defaultToken = `Basic dGh0OnRodC1wYXRo`;
 api.defaults.headers.common["Authorization"] = defaultToken;
 
 export const setDefaultToken = () => {

@@ -1,6 +1,6 @@
 package com.argusoft.path.tht.fileservice.service.impl;
 
-import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.constant.DocumentUtil;
 import com.argusoft.path.tht.fileservice.constant.FileType;

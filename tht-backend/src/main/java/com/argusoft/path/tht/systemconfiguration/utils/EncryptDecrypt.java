@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.systemconfiguration.security.captcha.util;
+package com.argusoft.path.tht.systemconfiguration.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

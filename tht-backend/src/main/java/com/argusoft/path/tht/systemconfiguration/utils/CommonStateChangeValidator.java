@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.common.configurations.validator;
+package com.argusoft.path.tht.systemconfiguration.utils;
 
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
