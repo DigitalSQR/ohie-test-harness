@@ -285,8 +285,8 @@ public class TestcaseValidator {
     }
 
     //Validation For :Order
-    private static void validateTestcaseEntityOrder(TestcaseEntity testcaseEntity,
-            List<ValidationResultInfo> errors) {
+    public static void validateTestcaseEntityOrder(TestcaseEntity testcaseEntity,
+                                                   List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(testcaseEntity.getRank(),
                 "rank",
                 1,

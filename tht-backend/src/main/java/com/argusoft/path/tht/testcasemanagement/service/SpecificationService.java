@@ -149,4 +149,22 @@ public interface SpecificationService {
      */
     public SpecificationEntity changeState(String specificationId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
+    /**
+     * Change the state of specification
+     *
+     * @param specificationId SpecificationId of Specification to be retrieved
+     * @param rank        rank to which specification rank to be changed
+     * @param contextInfo     information containing the principalId and locale
+     *                        information about the caller of service operation
+     * @return changed state specification
+     * @throws DoesNotExistException        a SpecificationId in SpecificationIds not found
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
+     */
+
+    public SpecificationEntity changeRank(String specificationId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
 }

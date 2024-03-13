@@ -182,6 +182,49 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         return testcaseEntity;
     }
 
+
+    @Override
+    public TestcaseEntity changeRank(String testcaseId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, DataValidationErrorException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        TestcaseEntity testcaseEntity = this.getTestcaseById(testcaseId, contextInfo);
+        Integer oldRank = testcaseEntity.getRank();
+
+        testcaseEntity.setRank(rank);
+        ValidationUtils.validateRequired(rank, "rank", errors);
+        TestcaseValidator.validateTestcaseEntityOrder(testcaseEntity,errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    ValidateConstant.ERRORS,
+                    errors);
+        }
+        testcaseRepository.saveAndFlush(testcaseEntity);
+
+        TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter = new TestcaseCriteriaSearchFilter();
+        testcaseCriteriaSearchFilter.setSpecificationId(testcaseEntity.getSpecification().getId());
+        testcaseCriteriaSearchFilter.setMinRank(Integer.min(oldRank, rank));
+        testcaseCriteriaSearchFilter.setMaxRank(Integer.max(oldRank, rank));
+        List<TestcaseEntity> testcases = this.searchTestcases(testcaseCriteriaSearchFilter, contextInfo);
+
+        for(TestcaseEntity currentTestcase : testcases){
+            int testcaseRank = currentTestcase.getRank();
+            if(!currentTestcase.getId().equals(testcaseEntity.getId())){
+                if(oldRank > testcaseRank && testcaseRank >= rank){
+                    currentTestcase.setRank(testcaseRank + 1);
+                }
+                else {
+                    if (rank >= testcaseRank && testcaseRank > oldRank) {
+                        currentTestcase.setRank(testcaseRank - 1);
+                    }
+                }
+            }
+            testcaseRepository.saveAndFlush(currentTestcase);
+        }
+        return testcaseEntity;
+    }
+
+
     private void defaultValueCreateTestCase(TestcaseEntity testcaseEntity, ContextInfo contextInfo) throws InvalidParameterException {
         if (!StringUtils.hasLength(testcaseEntity.getId())) {
             testcaseEntity.setId(UUID.randomUUID().toString());

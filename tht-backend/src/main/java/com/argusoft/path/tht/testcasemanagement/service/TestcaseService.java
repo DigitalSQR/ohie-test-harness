@@ -145,4 +145,22 @@ public interface TestcaseService {
      */
     public TestcaseEntity changeState(String testcaseId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
+
+    /**
+     * Change the state of testcase option
+     *
+     * @param testcaseId  TestcaseId of Testcase to be retrieved
+     * @param rank    rank to which test case rank to be changed
+     * @param contextInfo information containing the principalId and locale
+     *                    information about the caller of service operation
+     * @return changed state testcase
+     * @throws DoesNotExistException        a TestcaseId in TestcaseIds not found
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
+     */
+    public TestcaseEntity changeRank(String testcaseId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
 }

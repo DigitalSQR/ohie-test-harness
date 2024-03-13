@@ -105,6 +105,49 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         return specificationEntity;
     }
 
+
+    @Override
+    public SpecificationEntity changeRank(String specificationId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, DataValidationErrorException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        SpecificationEntity specificationEntity = this.getSpecificationById(specificationId, contextInfo);
+        Integer oldRank = specificationEntity.getRank();
+
+        specificationEntity.setRank(rank);
+        ValidationUtils.validateRequired(rank, "rank", errors);
+        SpecificationValidator.validateSpecificationEntityOrder(specificationEntity,errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    ValidateConstant.ERRORS,
+                    errors);
+        }
+
+        specificationRepository.saveAndFlush(specificationEntity);
+
+        SpecificationCriteriaSearchFilter specificationCriteriaSearchFilter = new SpecificationCriteriaSearchFilter();
+        specificationCriteriaSearchFilter.setComponentId(specificationEntity.getComponent().getId());
+        specificationCriteriaSearchFilter.setMinRank(Integer.min(oldRank, rank));
+        specificationCriteriaSearchFilter.setMaxRank(Integer.max(oldRank, rank));
+        List<SpecificationEntity> specifications = this.searchSpecifications(specificationCriteriaSearchFilter, contextInfo);
+
+        for(SpecificationEntity currentSpecification : specifications){
+            int specificationRank = currentSpecification.getRank();
+            if(!currentSpecification.getId().equals(specificationEntity.getId())) {
+                if (oldRank > specificationRank && specificationRank >= rank) {
+                    currentSpecification.setRank(specificationRank + 1);
+                } else {
+                    if (rank >= specificationRank && specificationRank > oldRank) {
+                        currentSpecification.setRank(specificationRank - 1);
+                    }
+                }
+                specificationRepository.saveAndFlush(currentSpecification);
+            }
+        }
+        return specificationEntity;
+    }
+
+
     /**
      * {@inheritdoc}
      *

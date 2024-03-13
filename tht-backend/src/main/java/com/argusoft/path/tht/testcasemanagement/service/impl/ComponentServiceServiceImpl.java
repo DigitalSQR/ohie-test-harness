@@ -188,6 +188,48 @@ public class ComponentServiceServiceImpl implements ComponentService {
     }
 
     @Override
+    public ComponentEntity changeRank(String componentId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, DataValidationErrorException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        ComponentEntity componentEntity = this.getComponentById(componentId, contextInfo);
+        Integer oldRank = componentEntity.getRank();
+
+        componentEntity.setRank(rank);
+        ValidationUtils.validateRequired(rank, "rank", errors);
+        ComponentValidator.validateComponentEntityRank(componentEntity,errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    ValidateConstant.ERRORS,
+                    errors);
+        }
+
+        componentRepository.saveAndFlush(componentEntity);
+
+        ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+        componentCriteriaSearchFilter.setMinRank(Integer.min(oldRank, rank));
+        componentCriteriaSearchFilter.setMaxRank(Integer.max(oldRank, rank));
+        List<ComponentEntity> components = this.searchComponents(componentCriteriaSearchFilter, contextInfo);
+
+
+        for(ComponentEntity currentComponent : components){
+            int componentRank = currentComponent.getRank();
+            if(!currentComponent.getId().equals(componentEntity.getId())){
+                if(oldRank > componentRank && componentRank >= rank){
+                    currentComponent.setRank(componentRank + 1);
+                }
+                else {
+                    if (rank >= componentRank && componentRank > oldRank) {
+                        currentComponent.setRank(componentRank - 1);
+                    }
+                }
+                componentRepository.saveAndFlush(currentComponent);
+            }
+        }
+        return componentEntity;
+    }
+
+    @Override
     public List<TestcaseValidationResultInfo> validateTestCaseConfiguration(String refObjUri, String refId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         return ComponentValidator.validateTestCaseConfiguration(refObjUri, refId, this, specificationService, testcaseService, testcaseOptionService, contextInfo);
     }

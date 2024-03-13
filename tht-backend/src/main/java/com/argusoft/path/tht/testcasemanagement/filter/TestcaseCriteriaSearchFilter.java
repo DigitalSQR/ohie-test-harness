@@ -46,6 +46,17 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
     )
     private String questionType;
 
+
+    @ApiParam(
+            value = "min rank of the test case"
+    )
+    private Integer minRank;
+
+    @ApiParam(
+            value = "max rank of the test case"
+    )
+    private Integer maxRank;
+
     private Root<TestcaseEntity> testcaseEntityRoot;
 
     private Join<TestcaseEntity, SpecificationEntity> testcaseEntitySpecificationEntityJoin;
@@ -90,6 +101,15 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
         if (StringUtils.hasLength(getQuestionType())) {
             predicates.add(criteriaBuilder.equal(getTestcaseEntityRoot().get("questionType"), getQuestionType()));
         }
+
+        if (getMinRank() != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(getTestcaseEntityRoot().get("rank"), getMinRank()));
+        }
+
+        if (getMaxRank() != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(getTestcaseEntityRoot().get("rank"), getMaxRank()));
+        }
+
 
         return predicates;
     }
@@ -137,6 +157,23 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
     public String getQuestionType() {
         return questionType;
+    }
+
+
+    public Integer getMinRank() {
+        return minRank;
+    }
+
+    public void setMinRank(Integer minRank) {
+        this.minRank = minRank;
+    }
+
+    public Integer getMaxRank() {
+        return maxRank;
+    }
+
+    public void setMaxRank(Integer maxRank) {
+        this.maxRank = maxRank;
     }
 
     public void setQuestionType(String questionType) {

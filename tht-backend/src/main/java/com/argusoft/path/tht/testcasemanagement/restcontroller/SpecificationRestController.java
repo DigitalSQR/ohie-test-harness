@@ -6,6 +6,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.SpecificationMapper;
@@ -181,6 +182,25 @@ public class SpecificationRestController {
         SpecificationEntity specificationEntity = specificationService.changeState(specificationId, changeState, contextInfo);
         return specificationMapper.modelToDto(specificationEntity);
     }
+
+
+    @ApiOperation(value = "To change rank of Specification", response = SpecificationInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated Specification"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/rank/{specificationId}/{rank}")
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
+    public SpecificationInfo updateSpecificationRank(@PathVariable("specificationId") String specificationId,
+                                             @PathVariable("rank") Integer rank,
+                                             @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        SpecificationEntity specificationEntity = specificationService.changeRank(specificationId, rank, contextInfo);
+        return specificationMapper.modelToDto(specificationEntity);
+    }
+
 
     @ApiOperation(value = "Retrieves all status of specification.", response = Multimap.class)
     @ApiResponses(value = {

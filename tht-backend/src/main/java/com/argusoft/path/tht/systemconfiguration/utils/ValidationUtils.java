@@ -151,12 +151,12 @@ public final class ValidationUtils {
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                fieldName + " field must be greater than " + minValue));
+                                fieldName + " field must be greater than equal to " + minValue));
             } else if (maxValue != null && field > maxValue) {
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                fieldName + " field must be less than " + maxValue));
+                                fieldName + " field must be less than equal to " + maxValue));
             }
         }
     }
