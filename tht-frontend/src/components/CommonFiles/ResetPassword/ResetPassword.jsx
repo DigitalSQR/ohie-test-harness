@@ -160,7 +160,7 @@ export default function ResetPassword() {
           </div>
           <div className="my-4 text-end">
             <button
-              className="btn btn-primary btn-white py-2 font-size-14"
+              className="btn btn-primary btn-white font-size-14"
               style={{marginRight:"1rem"}}
               onClick={() => {
                 navigate("/dashboard");
@@ -172,7 +172,7 @@ export default function ResetPassword() {
             <button
               disabled={!(formik.isValid && formik.dirty)}
               onClick={formik.handleSubmit}
-              className="btn btn-primary btn-blue btn-submit py-2 font-size-14"
+              className="btn btn-primary btn-blue btn-submit font-size-14"
               type="submit"
             >
               Reset

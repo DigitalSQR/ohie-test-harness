@@ -4,7 +4,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.security.captcha.util.EncryptDecrypt;
+import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -83,7 +83,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 return new ContextInfo(
                         user.getEmail(),
                         user.getId(),
-                        password,
+                        user.getPassword(),
                         true,
                         true,
                         true,

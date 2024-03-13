@@ -1,6 +1,6 @@
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
-import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.event.TestcaseResultStateChangedEvent;

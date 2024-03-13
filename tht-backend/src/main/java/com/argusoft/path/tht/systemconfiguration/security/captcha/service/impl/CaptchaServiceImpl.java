@@ -7,7 +7,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.security.captcha.models.CaptchaInfo;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.service.CaptchaService;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.util.CaptchaUtil;
-import com.argusoft.path.tht.systemconfiguration.security.captcha.util.EncryptDecrypt;
+import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.validation.CaptchaValidation;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;

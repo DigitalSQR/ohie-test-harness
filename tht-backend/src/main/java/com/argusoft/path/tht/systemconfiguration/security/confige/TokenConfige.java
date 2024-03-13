@@ -32,8 +32,8 @@ public class TokenConfige {
         DefaultTokenServices tokenServices = new DefaultTokenServices();
         tokenServices.setSupportRefreshToken(true);
         tokenServices.setReuseRefreshToken(true);
-        tokenServices.setRefreshTokenValiditySeconds(86400);
-        tokenServices.setAccessTokenValiditySeconds(3000);
+        tokenServices.setRefreshTokenValiditySeconds(2592000); // 30 days
+        tokenServices.setAccessTokenValiditySeconds(36000); //10 hours
         tokenServices.setTokenStore(this.tokenStore());
         return tokenServices;
     }

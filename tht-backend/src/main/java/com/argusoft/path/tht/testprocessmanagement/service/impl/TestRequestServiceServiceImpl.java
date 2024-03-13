@@ -1,6 +1,6 @@
 package com.argusoft.path.tht.testprocessmanagement.service.impl;
 
-import com.argusoft.path.tht.common.configurations.validator.CommonStateChangeValidator;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
@@ -53,8 +53,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 

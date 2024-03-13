@@ -6,7 +6,7 @@ spring:
   cache:
     caches:
       authenticationCache:
-        time-to-live: 300000
+        time-to-live: 36000000  #10 hours
   jackson:
     serialization:
       fail-on-empty-beans: false

@@ -157,7 +157,7 @@ const ValidateConfigFacts = ({
                 <Panel header="What Does This Data Represent?" key="1">
                     <List
                     bordered
-                    header={<div style={{ fontWeight: "bold" }}>This table highlights warnings and issues identified during the validation process, indicating whether the configuration accurately reflects the data or not.</div>}
+                    header={<div style={{ fontWeight: "500" }}>This table highlights warnings and issues identified during the validation process, indicating whether the configuration accurately reflects the data or not.</div>}
                     dataSource={data}
                     renderItem={(item) => (
                         <List.Item>

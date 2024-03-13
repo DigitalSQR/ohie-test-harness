@@ -175,7 +175,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
             UserEntity userEntity = new UserEntity();
             userEntity.setEmail(oauth2User.<String>getAttribute("email"));
             userEntity.setName(oauth2User.<String>getAttribute("name"));
-            return new UserCreatedIfExist(userService.registerAssessee(userEntity, contextInfo), false);
+            return new UserCreatedIfExist(userService.registerAssessee(userEntity, contextInfo), true);
         }
     }
 

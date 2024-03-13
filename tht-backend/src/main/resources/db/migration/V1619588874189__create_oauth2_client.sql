@@ -21,7 +21,7 @@ VALUES
     (
         'tht',
         'resource_id',
-        '6ac2c7f6-9032-4d36-831f-2cc3a7fa910c',
+        '$2a$10$rulzZ1jIpBZIzwCuWpS1.uD1MKlZuZDT02bqvwQeb3E4YhErUCAji',
         'write',
         'password,authorization_code,refresh_token,implicit',
         null,
