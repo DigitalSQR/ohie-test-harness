@@ -41,8 +41,7 @@ public class CaptchaFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String requestUrl = request.getServletContext().getContextPath() + request.getServletPath();
 
-        if(isCaptchaRequired){
-            if (captchaProtectedUrls.contains(requestUrl)) {
+        if(isCaptchaRequired && (captchaProtectedUrls.contains(requestUrl))) {
                 // Captcha validation is required for this URL
                 String captchaCode = request.getHeader("captchaCode");
                 String captcha = request.getHeader("captcha");
@@ -90,7 +89,7 @@ public class CaptchaFilter implements Filter {
                     httpResponse.getWriter().write(objectMapper.writeValueAsString(errors));
                     return;
                 }
-            }
+
         }
         filterChain.doFilter(request, servletResponse);
     }

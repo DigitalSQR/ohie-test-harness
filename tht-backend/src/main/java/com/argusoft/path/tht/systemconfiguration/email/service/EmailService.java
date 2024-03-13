@@ -1,6 +1,6 @@
 package com.argusoft.path.tht.systemconfiguration.email.service;
 
-import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.constant.MessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +50,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, link);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
+            LOGGER.error(MessageConstant.Approved_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
         }
     }
 
@@ -65,9 +65,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, link);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
+            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
         }
     }
 
@@ -80,9 +80,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, null);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
+            LOGGER.error(MessageConstant.Approved_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
         }
 
     }
@@ -96,9 +96,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, null);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
+            LOGGER.error(MessageConstant.Approved_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
         }
 
     }
@@ -112,9 +112,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, null);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Account Approved Message because of IOException ", e);
+            LOGGER.error(MessageConstant.Approved_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Account Approved Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
         }
 
     }
@@ -129,9 +129,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Test Request Created Message because of IOException ", e);
+            LOGGER.error(MessageConstant.testRequest_Create_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Test Request Created Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.testRequest_Create_MessagingException_log, e);
         }
     }
 
@@ -162,9 +162,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of IOException ", e);
+            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.Waiting_MessagingException_log, e);
         }
     }
 
@@ -178,9 +178,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${name}", testRequestName);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of IOException ", e);
+            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.Waiting_MessagingException_log, e);
         }
     }
 
@@ -194,9 +194,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${name}", testRequestName);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of IOException ", e);
+            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.Waiting_MessagingException_log, e);
         }
     }
 
@@ -210,9 +210,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${name}", testRequestName);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of IOException ", e);
+            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
         } catch (MessagingException e) {
-            LOGGER.error("Error sending Waiting For Approval Message because of MessagingException ", e);
+            LOGGER.error(MessageConstant.Waiting_MessagingException_log, e);
         }
     }
 
