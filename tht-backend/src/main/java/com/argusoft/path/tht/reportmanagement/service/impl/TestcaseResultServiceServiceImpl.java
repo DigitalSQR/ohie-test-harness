@@ -99,7 +99,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         if (testcaseResultEntity == null) {
             LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
-            throw new InvalidParameterException("TestcaseResultEntity is missing");
+            throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
 
         defaultValueCreateTestCaseResult(testcaseResultEntity, contextInfo);
@@ -134,7 +134,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         if (testcaseResultEntity == null) {
             LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
-            throw new InvalidParameterException("TestcaseResultEntity is missing");
+            throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
 
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.UPDATE_VALIDATION,
@@ -301,7 +301,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             OperationFailedException {
         if (testcaseResultEntity == null) {
             LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
-            throw new InvalidParameterException("TestcaseResultEntity is missing");
+            throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
         List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, testRequestService, contextInfo);
         return errors;

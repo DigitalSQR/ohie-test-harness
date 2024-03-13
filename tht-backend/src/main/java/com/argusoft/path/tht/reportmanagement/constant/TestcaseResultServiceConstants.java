@@ -22,6 +22,7 @@ public class TestcaseResultServiceConstants {
     public static final String TESTCASE_RESULT_STATUS_PENDING = "testcase.result.status.pending";
     public static final String TESTCASE_RESULT_STATUS_INPROGRESS = "testcase.result.status.inprogress";
     public static final String TESTCASE_RESULT_STATUS_FINISHED = "testcase.result.status.finished";
+    public static final String TESTCASE_RESULT_MISSING = "TestcaseResultEntity is missing";
     public static final Multimap<String, String> TESTCASE_RESULT_STATUS_MAP = ArrayListMultimap.create();
     public static List<String> TESTCASE_RESULT_STATUS = new ArrayList<>();
 

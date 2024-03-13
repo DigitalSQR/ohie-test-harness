@@ -4,6 +4,7 @@ import cn.apiclub.captcha.Captcha;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.security.captcha.constant.CaptchaConstant;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.models.CaptchaInfo;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.service.CaptchaService;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.util.CaptchaUtil;
@@ -79,7 +80,7 @@ public class CaptchaServiceImpl implements CaptchaService {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
         // Parse the expiry time string into a Date object
 
-        Date expiryTime = dateFormat.parse(codeTimeObject.get("expiryTime").toString());
+        Date expiryTime = dateFormat.parse(codeTimeObject.get(CaptchaConstant.expiry_Time).toString());
         CaptchaValidation.validateCaptcha(
                 codeTimeObject.get("code").toString(),
                 expiryTime,
@@ -93,7 +94,7 @@ public class CaptchaServiceImpl implements CaptchaService {
         // Create a JSON object
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", code);
-        jsonObject.put("expiryTime", expiryTime);
+        jsonObject.put(CaptchaConstant.expiry_Time, expiryTime);
         // Convert JSON object to string
         return jsonObject.toString();
     }
@@ -109,10 +110,10 @@ public class CaptchaServiceImpl implements CaptchaService {
             JsonNode jsonNode = objectMapper.readTree(codeAndTime);
             // Access fields in the JsonNode
             String code = jsonNode.get("code").asText();
-            String expiryTime = jsonNode.get("expiryTime").asText();
+            String expiryTime = jsonNode.get(CaptchaConstant.expiry_Time).asText();
 
             jsonObject.put("code",code);
-            jsonObject.put("expiryTime", expiryTime);
+            jsonObject.put(CaptchaConstant.expiry_Time, expiryTime);
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + CaptchaServiceImpl.class.getSimpleName(), e);
             e.printStackTrace();
