@@ -99,21 +99,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                         true,
                         authorities);
 
-                OAuth2Request oauth2Request = new OAuth2Request(
-                        new HashMap(),
-                        "tht",
-                        authorities,
-                        true,
-                        new HashSet(Arrays.asList("write")),
-                        new HashSet(Arrays.asList("resource_id")),
-                        null,
-                        new HashSet(Arrays.asList("code")),
-                        new HashMap());
-
-                UsernamePasswordAuthenticationToken authenticationToken
-                        = new UsernamePasswordAuthenticationToken(newContextInfo, "N/A", authorities);
-
-                OAuth2Authentication auth = new OAuth2Authentication(oauth2Request, authenticationToken);
+                OAuth2Authentication auth = getAuth2Authentication(authorities, newContextInfo);
 
                 OAuth2AccessToken oAuth2AccessToken = defaultTokenServices.createAccessToken(auth);
                 Map<String, Object> responseMap = new HashMap<>();
@@ -123,18 +109,13 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                 responseMap.put("expires_in", oAuth2AccessToken.getExpiresIn());
                 responseMap.put("scope", String.join(" ", oAuth2AccessToken.getScope()));
 
-                /*ObjectMapper objectMapper = new ObjectMapper();
-                String jsonResponse = objectMapper.writeValueAsString(responseMap);
-
-                response.setContentType("application/json");
-                response.getWriter().write(jsonResponse);
-                response.getWriter().flush();*/
                 String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
                 response.sendRedirect(s);
             } else if (Boolean.TRUE.equals(userCreatedIfExistRecord.isCreated())) {
                 Map<String, Object> responseMap = new HashMap<>();
                 responseMap.put("message", "Assessee Registered Successfully, Wait For Admin Approval!");
                 responseMap.put("isUserCreatedWithOauth", true);
+                responseMap.put("email", loggedInUser.getEmail());
                 String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
                 response.sendRedirect(s);
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, loggedInUser.getState())) {
@@ -160,10 +141,26 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
             }
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + OnSsoAuthenticationSuccessHandler.class.getSimpleName(), e);
-            //TODO: Add appropriate message.
             response.setStatus(500);
-            e.printStackTrace();
         }
+    }
+
+    private static OAuth2Authentication getAuth2Authentication(List<GrantedAuthority> authorities, ContextInfo newContextInfo) {
+        OAuth2Request oauth2Request = new OAuth2Request(
+                new HashMap<>(),
+                "tht",
+                authorities,
+                true,
+                new HashSet<>(List.of("write")),
+                new HashSet<>(List.of("resource_id")),
+                null,
+                new HashSet<>(List.of("code")),
+                new HashMap<>());
+
+        UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(newContextInfo, "N/A", authorities);
+
+        return new OAuth2Authentication(oauth2Request, authenticationToken);
     }
 
     private UserCreatedIfExist createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException, MessagingException, IOException {
