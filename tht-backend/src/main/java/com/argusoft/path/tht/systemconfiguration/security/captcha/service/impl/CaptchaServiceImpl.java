@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +28,9 @@ import java.util.List;
 public class CaptchaServiceImpl implements CaptchaService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CaptchaServiceImpl.class);
-    private final String key="3a985da74fe225d6c9a29e5a9e4c1b93";
+
+    @Value("${encryption.key}")
+    private final String key;
 
     @Override
     public CaptchaInfo createCaptcha(ContextInfo contextInfo) throws Exception {
