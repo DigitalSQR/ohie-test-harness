@@ -136,6 +136,12 @@
     width:75% !important;
   }
 
+  .pagination-ui {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
   .data-table tbody tr.odd {
     background: #fff !important; /* Background for odd rows */
   }

@@ -106,25 +106,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 </a>
               </li>
               
-              <li>
-                <a
-                  className={
-                    activeMenuItem === "/testing-requests"
-                      ? "active menu-like-item"
-                      : "menu-like-item"
-                  }
-                  onClick={() => {
-                    handleMenuItemClick("/testing-requests");
-                  }}
-                >
-                  <i
-                    aria-label="Testing Requests"
-                    title="Testing Requests"
-                    className="bi bi-file-earmark-plus menu-left-icon"
-                  ></i>
-                  <span> Testing Requests</span>
-                </a>
-              </li>
+            
               <li>
                 <a
                   className={

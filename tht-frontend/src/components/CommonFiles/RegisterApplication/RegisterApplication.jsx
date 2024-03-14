@@ -456,7 +456,7 @@ const RegisterApplication = () => {
                                     htmlFor="fhirApiBaseUrl"
                                     className="form-label"
                                   >
-                                    Fhir Api Base Url:{" "}
+                                    Fhir Api Base URL:{" "}
                                     <span style={{ color: "red" }}>*</span>
                                     {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
                                   </label>
@@ -518,7 +518,7 @@ const RegisterApplication = () => {
                                     htmlFor="fhirApiBaseUrl"
                                     className="form-label"
                                   >
-                                    Website/UI Url:{" "}
+                                    Website/UI URL:{" "}
                                   </label>
                                   <input
                                     id={

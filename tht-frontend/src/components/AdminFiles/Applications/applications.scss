@@ -288,14 +288,42 @@
     font-weight: 700;
     line-height: 22px;
   }
+  .display {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .data-table tbody tr.odd {
+    background: #fff !important; /* Background for odd rows */
+  }
+
+  .data-table tbody tr.even {
+      background: #F0F6FB !important; /* Background for even rows */
+}
   .status{
     width:68% !important;
   }
 
+  .pagination-ui {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .text-green-50 {
+    color: #0AB39C;
+  }
+  .text-red {
+    color: #FF6666;
+  }
   .text-blue-50 {
     color: #00adff;
   }
 
+  .font-size-16 {
+    font-size: 16px;
+  }
   .font-size-16 {
     font-size: 16px;
   }
