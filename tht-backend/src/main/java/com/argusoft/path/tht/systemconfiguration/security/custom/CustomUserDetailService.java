@@ -7,6 +7,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
+import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
@@ -25,9 +26,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This CustomUserDetailService implements UserDetailsService and authenticates
@@ -79,9 +80,11 @@ public class CustomUserDetailService implements UserDetailsService {
                     }
                 }
 
-                List<GrantedAuthority> authorities
-                        = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getId()))
-                                .collect(Collectors.toList());
+                List<GrantedAuthority> authorities = new ArrayList<>();
+                for (RoleEntity role : user.getRoles()) {
+                    SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role.getId());
+                    authorities.add(simpleGrantedAuthority);
+                }
 
                 return new ContextInfo(
                         user.getEmail(),

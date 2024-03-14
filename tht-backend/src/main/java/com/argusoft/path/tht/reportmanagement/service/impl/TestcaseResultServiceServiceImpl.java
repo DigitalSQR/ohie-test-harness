@@ -45,7 +45,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This TestcaseResultServiceServiceImpl contains implementation for
@@ -182,7 +181,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         List<TestResultRelationEntity> testResultRelationEntities = testResultRelationService.searchTestResultRelation(testResultRelationCriteriaSearchFilter, contextInfo);
 
-        List<String> resultRelationIds = testResultRelationEntities.stream().map(IdMetaEntity::getId).collect(Collectors.toList());
+        List<String> resultRelationIds = testResultRelationEntities.stream().map(IdMetaEntity::getId).toList();
 
         List<TestcaseOptionEntity> testcaseOptionEntitiesFromAudit
                 = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(resultRelationIds, contextInfo)
@@ -565,7 +564,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         testcaseResultCriteriaSearchFilter.setFunctional(isFunctional);
         testcaseResultCriteriaSearchFilter.setWorkflow(isWorkflow);
 
-        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent().stream().map(testcaseResultEntity1 -> new TestcaseResultEntity(testcaseResultEntity1)).collect(Collectors.toList());
+        List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent().stream().map(testcaseResultEntity1 -> new TestcaseResultEntity(testcaseResultEntity1)).toList();
 
         if (!StringUtils.hasLength(testcaseResultEntity.getId())) {
             testcaseResultEntity = new TestcaseResultEntity(testcaseResultEntities.get(0));
@@ -733,7 +732,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 .filter(tcre -> {
                     return tcre.getParentTestcaseResult() != null
                             && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                }).collect(Collectors.toList());
+                }).toList();
     }
 
     private static List<TestcaseResultEntity> getFilteredChileTestcaseResultsForTestResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
@@ -741,7 +740,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 .filter(tcre -> {
                     return tcre.getParentTestcaseResult() != null
                             && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                }).collect(Collectors.toList());
+                }).toList();
     }
 
     private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity) throws InvalidParameterException, DoesNotExistException, OperationFailedException {

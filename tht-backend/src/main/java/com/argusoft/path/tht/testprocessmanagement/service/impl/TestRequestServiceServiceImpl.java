@@ -54,7 +54,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This TestRequestServiceServiceImpl contains implementation for TestRequest service.
@@ -442,7 +441,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                         return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
                                     });
                                 })
-                ).collect(Collectors.toList());
+                ).toList();
 
         Integer counter = 1;
         if (!activeComponents.isEmpty()) {
@@ -513,7 +512,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                             });
                         })
                         .sorted(Comparator.comparing(SpecificationEntity::getRank))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 if (!activeSpecifications.isEmpty()) {
                     isManual = activeSpecifications.stream().anyMatch(specificationEntity -> {
@@ -560,7 +559,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                     return testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
                                 })
                                 .sorted(Comparator.comparing(TestcaseEntity::getRank))
-                                .collect(Collectors.toList());
+                                .toList();
 
                         if (!filteredTestcases.isEmpty()) {
                             isManual = specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> {

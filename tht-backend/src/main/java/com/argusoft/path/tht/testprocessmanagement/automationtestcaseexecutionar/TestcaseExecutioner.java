@@ -38,7 +38,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This TestcaseExecutioner can start automation process by running testcases
@@ -184,7 +183,7 @@ public class TestcaseExecutioner {
             TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
             List<ComponentEntity> activeComponents = fetchActiveComponents(contextInfo).stream().filter(componentEntity
                     -> testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> testRequestUrlEntity.getComponent().getId().equals(componentEntity.getId()))
-            ).collect(Collectors.toList());
+            ).toList();
 
             Map<String, IGenericClient> iGenericClientMap = new HashMap<>();
             for (ComponentEntity componentEntity : activeComponents) {
@@ -488,26 +487,26 @@ public class TestcaseExecutioner {
                             .filter(tcre -> {
                                 return tcre.getParentTestcaseResult() != null
                                         && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                            }).collect(Collectors.toList());
+                            }).toList();
         } else if (refObjUri.equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
             List<String> specificationTestcaseResultIds = testcaseResultEntities.stream()
                     .filter(tcre -> {
                         return tcre.getParentTestcaseResult() != null
                                 && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                    }).map(tcre -> tcre.getId()).collect(Collectors.toList());
+                    }).map(tcre -> tcre.getId()).toList();
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
                             .filter(tcre -> {
                                 return tcre.getParentTestcaseResult() != null
                                         && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
-                            }).collect(Collectors.toList());
+                            }).toList();
         } else {
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
                             .filter(tcre -> {
                                 return tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
                             })
-                            .collect(Collectors.toList());
+                            .toList();
         }
 
         return filteredTestcaseResults;
@@ -555,33 +554,33 @@ public class TestcaseExecutioner {
                             .filter(tcre -> {
                                 return tcre.getParentTestcaseResult() != null
                                         && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                            }).collect(Collectors.toList());
+                            }).toList();
         } else if (refObjUri.equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
             List<String> specificationTestcaseResultIds = testcaseResultEntities.stream()
                     .filter(tcre -> {
                         return tcre.getParentTestcaseResult() != null
                                 && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                    }).map(tcre -> tcre.getId()).collect(Collectors.toList());
+                    }).map(tcre -> tcre.getId()).toList();
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
                             .filter(tcre -> {
                                 return tcre.getParentTestcaseResult() != null
                                         && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
-                            }).collect(Collectors.toList());
+                            }).toList();
         } else {
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
                             .filter(tcre -> {
                                 return tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
                             })
-                            .collect(Collectors.toList());
+                            .toList();
         }
 
         return filteredTestcaseResults.stream()
                 .filter(testcaseResultEntity1
                         -> testcaseResultEntity1.getState()
                         .equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<ComponentEntity> fetchActiveComponents(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {

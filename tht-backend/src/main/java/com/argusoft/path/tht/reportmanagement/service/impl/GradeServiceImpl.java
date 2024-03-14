@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class GradeServiceImpl implements GradeService {
@@ -33,7 +32,7 @@ public class GradeServiceImpl implements GradeService {
     @Override
     public List<GradeEntity> getAllGrades(ContextInfo contextInfo) {
         List<GradeEntity> grades = gradeRepository.findAll();
-        grades = grades.stream().sorted(Comparator.comparing(GradeEntity::getGrade)).collect(Collectors.toList());
+        grades = grades.stream().sorted(Comparator.comparing(GradeEntity::getGrade)).toList();
         return grades;
     }
 

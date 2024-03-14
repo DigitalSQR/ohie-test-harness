@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Mapper to covert DTO <-> Entity for the TestcaseResult.
@@ -47,7 +46,7 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
                 .map(testcaseResultAttributesEntity -> {
                     return new TestcaseResultAttributesInfo(testcaseResultAttributesEntity.getKey(), testcaseResultAttributesEntity.getValue()
                     );
-                }).collect(Collectors.toList());
+                }).toList();
     }
 
     default String setToTesterId(UserEntity userEntity) {

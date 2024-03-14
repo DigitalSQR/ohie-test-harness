@@ -10,6 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.security.custom.CustomOauth2User;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
+import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * OnSsoAuthenticationSuccessHandler to handle authorization and token.
@@ -92,8 +92,11 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
             if (Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, loggedInUser.getState())) {
 
                 List<GrantedAuthority> authorities
-                        = loggedInUser.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getId()))
-                                .collect(Collectors.toList());
+                        = new ArrayList<>();
+                for (RoleEntity role : loggedInUser.getRoles()) {
+                    SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role.getId());
+                    authorities.add(simpleGrantedAuthority);
+                }
 
                 ContextInfo newContextInfo = new ContextInfo(
                         oauth2User.<String>getAttribute("email"),
