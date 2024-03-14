@@ -18,6 +18,11 @@ import {
   ROLE_ID_ADMIN,
   ROLE_ID_TESTER,
 } from "../../../constants/role_constants";
+/**
+ * Admin Users Component:
+ * This component handles the users that have either the role of a tester or admin.
+ * It provides functionality to update or add a new user and assign certain roles to them.
+ */
 const AdminUsers = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
@@ -37,6 +42,7 @@ const AdminUsers = () => {
   const { showLoader, hideLoader } = useLoader();
   const pageSize = 10;
 
+  //Function to handle the state change from active to inactive and vice verca
   const handleOk = (userState) => {
     const changeState =
       userState == "user.status.inactive"
@@ -57,11 +63,13 @@ const AdminUsers = () => {
     hideLoader();
   };
 
+  //Function to close the user state inactivation confirmation modal
   const handleCancel = () => {
     setIsModalOpen(false);
     setDeleteUserId(null);
   };
 
+  //useEffect hook to update the header title, fetch the user details and call the getAllUsers function
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
@@ -69,6 +77,7 @@ const AdminUsers = () => {
     getAllUsers(sortFieldName, sortDirection);
   }, []);
 
+  //Function to get all the users that have role of either Admin or Tester to display in the component
   const getAllUsers = (sortFieldName, sortDirection) => {
     showLoader();
     AdminUserAPI.fetchAllUsers(
@@ -91,10 +100,12 @@ const AdminUsers = () => {
     });
   };
 
+  //Function that navigates to the update user component
   const handleEdit = (userId) => {
     navigate(`/user-management/update-admin-user?userId=${userId}`);
   };
 
+  //Function to toggle between the user state
   const handleToggleChange = (userId) => {
     setDeleteUserId(userId);
   };
@@ -108,6 +119,7 @@ const AdminUsers = () => {
     }
   }, [deleteUserId])
 
+  //Function to sort the rows based on sortFieldName passed as the parameter
   const handleSort = (sortFieldName) => {
     setSortFieldName(sortFieldName);
     const newSortDirection = { ...obj };
@@ -117,6 +129,7 @@ const AdminUsers = () => {
     getAllUsers(sortFieldName, newSortDirection);
   };
 
+  //Function that toggles between the sort icons corresponding to ascending or descending order
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
@@ -134,6 +147,7 @@ const AdminUsers = () => {
     return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
 
+  //Function to handle the change page in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
   };

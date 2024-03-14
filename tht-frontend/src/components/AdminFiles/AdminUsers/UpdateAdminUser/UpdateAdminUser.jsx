@@ -10,6 +10,8 @@ import { useLoader } from "../../../loader/LoaderContext";
 
 import CustomSelect from "../CustomSelect";
 import { ROLE_ID_ADMIN, ROLE_ID_TESTER } from "../../../../constants/role_constants";
+
+//Component that provides the functionality to update the user details
 const UpdateAdminUser = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,6 +53,7 @@ const UpdateAdminUser = () => {
     roleIds: Yup.array().min(1, "Role is required"),
   });
 
+  //UseEffect to fetch user Details when the component mounts to prefill the form with current user details
   useEffect(() => {
     if (userId) {
       AdminUserAPI.fetchUserDetails(userId)
@@ -69,6 +72,7 @@ const UpdateAdminUser = () => {
     }
   }, [userId]);
 
+  //Function to Submit the form with updated user details
   const handleSubmit = async (values) => {
     showLoader();
     const body = {

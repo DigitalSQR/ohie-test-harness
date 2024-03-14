@@ -26,6 +26,14 @@ import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
 import UserIdNameEmailConnector from "../../connectors/UserIdNameEmailConnector/UserIdNameEmailConnector";
+
+/**
+ * Applications Component:
+ * This component displays a table of applications with options to filter, sort, and update their statuses.
+ * It fetches application data from an API and renders them in a tabular format.
+ * Gives admin the access to approve or reject a testing application
+ */
+
 const Applications = () => {
   const testRequestStates = [
     ...TestRequestActionStateLabels,
@@ -52,12 +60,14 @@ const Applications = () => {
   const dispatch = useDispatch();
   const pageSize = 10;
 
+  //useEffect to set the header, get all the test requests when the component loads
   useEffect(() => {
     dispatch(set_header("Applications"));
     var state = filterState;
       getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
   }, [filterState]);
 
+  //useEffect to set the user role
   useEffect(() => {
     UserAPI.viewUser()
       .then((res) => {
@@ -65,6 +75,8 @@ const Applications = () => {
       })
       .catch((error) => {});
   },[]);
+
+  //Function to get all the test requests varying with the different state we want to fetch
   const getAllTestRequests = (
     filterState,
     sortFieldName,
@@ -89,6 +101,7 @@ const Applications = () => {
       });
   };
   
+  //Function to toggle between the visibility of the password i.e. to either show or hide the password
   const togglePasswordVisibility = (testUrl) => {
     if (testUrl.showPass) {
       testUrl.showPass = !testUrl.showPass;
@@ -98,6 +111,7 @@ const Applications = () => {
     setShowPassword(!showPassword);
   };
 
+  //Function to toggle the row that gives us the component details for a test request using accordian
   const toggleRow = (trid) => {
     setTestRequests((trs) => {
       return trs.map((tr) => {
@@ -111,6 +125,7 @@ const Applications = () => {
     });
   };
 
+  //Function to handle the sorting functionality based upon a certain field name
   const handleSort = (sortFieldName) => {
     setSortFieldName(sortFieldName);
     const newSortDirection = { ...obj };
@@ -125,6 +140,7 @@ const Applications = () => {
     );
   };
 
+  //Function to toggle between the sort icons depending upon whether the current sort direction is ascending or descending
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
@@ -142,15 +158,18 @@ const Applications = () => {
     return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
   
+  //Function to handle the page change in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
     getAllTestRequests(filterState, sortFieldName, sortDirection, newPage);
   };
 
+  //Function that navigates us to the application report page for a given test request id
   const viewReport = (testRequestId) => {
     navigate(`/application-report/${testRequestId}`);
   };
 
+  //Function that handles whether the test request is to approved or rejected by the admin
   const changeState = (testRequestId, updatedState, index, proceedAnyways) => {
     showLoader();
     TestRequestAPI.validateChangeState(testRequestId, updatedState)
