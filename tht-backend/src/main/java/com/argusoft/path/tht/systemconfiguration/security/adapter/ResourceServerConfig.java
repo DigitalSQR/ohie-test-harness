@@ -77,7 +77,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        //TODO: Before release add all antMatchers
+
         http.authorizeRequests()
                 .antMatchers("/socket/**").permitAll()
                 .antMatchers("/user/register").permitAll()

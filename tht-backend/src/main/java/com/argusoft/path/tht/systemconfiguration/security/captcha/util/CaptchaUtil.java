@@ -12,7 +12,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
 /**
- *
  * @author ishita
  */
 
@@ -47,7 +46,7 @@ public class CaptchaUtil {
 
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + CaptchaUtil.class.getSimpleName(), e);
-            e.printStackTrace();
+
         }
         return imageData;
     }

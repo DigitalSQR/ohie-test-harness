@@ -17,6 +17,7 @@ public class EncryptDecrypt {
     private static final String AES_ALGORITHM = "AES";
     private static final String AES_TRANSFORMATION = "AES/GCM/NoPadding";
     private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     private EncryptDecrypt() {
     }
 

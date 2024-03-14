@@ -76,7 +76,7 @@ public class FileService {
             return Files.deleteIfExists(filePath);
         } catch (IOException e) {
             LOGGER.error("{}{}", ValidateConstant.IO_EXCEPTION, FileService.class.getSimpleName(), e);
-            e.printStackTrace();
+
             return false;
         }
     }

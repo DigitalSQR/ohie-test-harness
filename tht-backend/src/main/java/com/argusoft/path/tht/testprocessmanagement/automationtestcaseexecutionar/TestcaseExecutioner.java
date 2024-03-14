@@ -320,8 +320,8 @@ public class TestcaseExecutioner {
                 updateTestCaseResultByValidationResult(testcaseResult, validationResultInfo, startDateForTestCase, contextInfo);
             } catch (Exception e) {
                 LOGGER.error(ValidateConstant.EXCEPTION + TestcaseExecutioner.class.getSimpleName(), e);
-                e.printStackTrace();
-                //TODO: add system failure log and connect it with testResult by refObjUri/refId.
+
+
                 try {
                     String errorMessage = e.getMessage();
                     if (errorMessage.length() > 2000) {
@@ -331,7 +331,7 @@ public class TestcaseExecutioner {
                 } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException
                          | VersionMismatchException | DoesNotExistException ex) {
                     LOGGER.error(ValidateConstant.EXCEPTION + TestcaseExecutioner.class.getSimpleName(), e);
-                    ex.printStackTrace();
+
                 }
             }
         } catch (Exception e) {

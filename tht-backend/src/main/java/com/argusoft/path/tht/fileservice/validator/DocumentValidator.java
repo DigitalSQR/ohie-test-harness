@@ -2,7 +2,6 @@ package com.argusoft.path.tht.fileservice.validator;
 
 import com.argusoft.path.tht.fileservice.constant.DocumentUtil;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
-import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
@@ -47,17 +46,6 @@ public class DocumentValidator {
 
         isDocumentTypeValid(documentEntity, errors);
 
-        switch (validationTypeKey) {
-            case Constant.CREATE_VALIDATION:
-                //TODO define and add validation for create
-                break;
-            case Constant.UPDATE_VALIDATION:
-                //TODO define and add validation for update
-                break;
-            default:
-                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, DocumentValidator.class.getSimpleName());
-                throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
-        }
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, DocumentValidator.class.getSimpleName());
