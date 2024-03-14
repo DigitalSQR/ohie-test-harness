@@ -7,10 +7,11 @@ import {
   StateBadgeClasses,
   StateClasses,
   TestRequestActionStateLabels,
+  TestRequestStateConstants,
   TestRequestStateConstantNames,
 } from "../../../constants/test_requests_constants.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
-import { Empty, notification } from "antd";
+import { Empty, notification, Modal } from "antd";
 import { formatDate } from "../../../utils/utils.js";
 import UserIdEmailConnector from "../../connectors/UserIdEmailConnector/UserIdEmailConnector.js";
 import { Pagination } from "@mui/material";
@@ -18,9 +19,13 @@ import { useLoader } from "../../loader/LoaderContext";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer.jsx";
 import { UserAPI } from "../../../api/UserAPI";
+import { USER_ROLES } from "../../../constants/role_constants.js";
+import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.jsx";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
+import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
+import UserIdNameEmailConnector from "../../connectors/UserIdNameEmailConnector/UserIdNameEmailConnector";
 const Applications = () => {
   const testRequestStates = [
     ...TestRequestActionStateLabels,
@@ -40,6 +45,7 @@ const Applications = () => {
   const [sortFieldName, setSortFieldName] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
   const [userRole, setUserRole] = useState([]);
   const { showLoader, hideLoader } = useLoader();
   const navigate = useNavigate();
@@ -49,12 +55,7 @@ const Applications = () => {
   useEffect(() => {
     dispatch(set_header("Applications"));
     var state = filterState;
-    if (!state || state == "") {
-      state = TestRequestActionStateLabels.map((state) => state.value);
-    }
-    if (state) {
       getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
-    }
   }, [filterState]);
 
   useEffect(() => {
@@ -70,9 +71,6 @@ const Applications = () => {
     sortDirection,
     newPage
   ) => {
-    if (!filterState || filterState == "") {
-      filterState = TestRequestActionStateLabels.map((state) => state.value);
-    }
     showLoader();
     TestRequestAPI.getTestRequestsByState(
       filterState,
@@ -89,6 +87,28 @@ const Applications = () => {
       .catch((err) => {
         hideLoader();
       });
+  };
+  
+  const togglePasswordVisibility = (testUrl) => {
+    if (testUrl.showPass) {
+      testUrl.showPass = !testUrl.showPass;
+    } else {
+      testUrl.showPass = true;
+    }
+    setShowPassword(!showPassword);
+  };
+
+  const toggleRow = (trid) => {
+    setTestRequests((trs) => {
+      return trs.map((tr) => {
+        if (tr.id === trid) {
+          tr.class = tr.class === "show" ? "hide" : "show";
+        } else {
+          tr.class = "hide";
+        }
+        return tr;
+      });
+    });
   };
 
   const handleSort = (sortFieldName) => {
@@ -131,6 +151,68 @@ const Applications = () => {
     navigate(`/application-report/${testRequestId}`);
   };
 
+  const changeState = (testRequestId, updatedState, index, proceedAnyways) => {
+    showLoader();
+    TestRequestAPI.validateChangeState(testRequestId, updatedState)
+    .then((validationResults) => {
+      let warnings = [];
+      let errors = [];
+      for(let validationResult of validationResults) {
+        if(validationResult.level === "WARN") {
+          warnings.push(validationResult.message);
+        } else if(validationResult.level === "ERROR") {
+          errors.push(validationResult.message);
+        } 
+      }
+      if(!!errors.length) {
+        hideLoader();
+        errors.forEach((error, i) => {
+          notification.error({
+            description: error,
+            placement: "bottomRight",
+          });
+        })
+      } else if(!!warnings.length && !proceedAnyways) {
+        hideLoader();
+        Modal.confirm({
+          title: "Test Request Status Update",
+          content: (
+            <div>
+              <p><strong>Please review the following warnings:</strong></p>
+              <ul style={{ paddingLeft: 20 }}>
+                {warnings.map((warning, i) => (
+                  <li key={index}>{warning}</li>
+                ))}
+              </ul>
+            </div>
+          ),
+          okText: "Procced Anyway",
+          cancelText: "Cancel",
+          width: 600,
+          onOk() {
+            changeState(testRequestId, updatedState, index, true);
+          },
+        }); 
+      } else {
+        TestRequestAPI.changeState(testRequestId, updatedState)
+        .then((res) => {
+          notification.success({
+            placement: "bottomRight",
+            message: "Status updated successfully!",
+          });
+          testRequests[index] = res;
+          setTestRequests(testRequests);
+          hideLoader();
+        })
+        .catch((err) => {       
+          hideLoader();
+        }); 
+      }
+    }).catch((err) => {       
+      hideLoader();
+    });
+  };
+
   return (
     <div id="applications">
       <div id="wrapper">
@@ -165,7 +247,7 @@ const Applications = () => {
             <table className=" data-table capitalize-words">
               <thead>
                 <tr>
-                  <th style={{width:"12%"}}>
+                  <th style={{width:"15%"}}>
                     APPLICATION NAME{" "}
                     <span
                       className="ps-1"
@@ -173,16 +255,6 @@ const Applications = () => {
                       onClick={() => handleSort("name")}
                     >
                       {renderSortIcon("name")}
-                    </span>
-                  </th>
-                  <th style={{width:"13%"}}>
-                    COMPANY NAME{" "}
-                    <span
-                      className="ps-1"
-                      href="#"
-                      onClick={() => handleSort("productName")}
-                    >
-                      {renderSortIcon("productName")}
                     </span>
                   </th>
                   <th style={{width:"15%"}}>
@@ -195,6 +267,7 @@ const Applications = () => {
                       {renderSortIcon("createdAt")}
                     </span>
                   </th>
+                  <th className="assessee-column">Assessee</th>
                   <th style={{width:"20%"}}>EMAIL ID</th>
                   <th style={{width:"15%"}}>
                     STATUS
@@ -228,20 +301,21 @@ const Applications = () => {
                     </tr>
                   </>
                 ) : null}
-                {testRequests?.map((testRequest) => (
-                  <tr key={testRequest.id}>
+                {testRequests?.map((testRequest,index) => (
+                  <>
+                  <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
                     <td>{testRequest.name}</td>
-                    <td>
+                    {/* <td>
                       {testRequest.productName !== ""
                         ? testRequest.productName
                         : "-"}
-                    </td>
-                    <td>{formatDate(testRequest.meta.createdAt)}</td>
-                    <td className = "toLowerCase-words">
-                      <UserIdEmailConnector
-                        userId={testRequest.assesseeId}
-                      ></UserIdEmailConnector>
-                    </td>
+                    </td> */}
+                    <td>{formatDate(testRequest.meta.createdAt)}</td>            
+                        <UserIdNameEmailConnector
+                          isLink={true}
+                          userId={testRequest.assesseeId}
+                        />
+                      
                     <td>
                       {testRequest.state !== "test.request.status.finished" ? (
                         <Fragment>
@@ -265,8 +339,40 @@ const Applications = () => {
                         </Fragment>
                       )}
                     </td>
-                    <td>
-                      {testRequest.state !== "test.request.status.finished" ? (
+                    <td className=" no-wrap text-left">
+                    {userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+                        testRequest.state ==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
+                          <>
+                            <span
+                            className="cursor-pointer"
+                              onClick={() => {
+                                changeState(
+                                  testRequest.id,
+                                  TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED,
+                                  index
+                                );
+                              }}
+                            >
+                            <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                              APPROVE{" "}
+                            </span>
+                            <span
+                              className="cursor-pointer ps-3"
+                              onClick={() => {
+                                changeState(
+                                  testRequest.id,
+                                  TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED,
+                                  index
+                                );
+                              }}
+                            >
+                              <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
+                                REJECT{" "}
+                            </span>
+                          </>
+                        ) : null}
+                      {testRequest.state !== TestRequestStateConstantNames["test.request.status.finished"] ? (
                         userRole.includes("role.tester") ||
                         userRole.includes("role.admin") ? (
                           <span 
@@ -295,8 +401,77 @@ const Applications = () => {
                               REPORT{" "}
                         </span>
                       )}
+                      <span
+                          onClick={() => toggleRow(testRequest.id)}
+                          type="button"
+                          className="approval-action-button float-end my-auto display"
+                        >
+                          {testRequest.class === "show" ? (
+                            <i className="bi bi-chevron-double-down"></i>
+                          ) : (
+                            <i className="bi bi-chevron-double-right"></i>
+                          )}
+                        </span>
                     </td>
                   </tr>
+                  <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
+                      <td colSpan="5" className="hiddenRow m-0 field-box">
+                        <div
+                          
+                          id="Accordion"
+                        >
+                          <div className="mx-5 my-3">
+                            <table className="data-table capitialize-words">
+                              <thead>
+                                <tr>
+                                  <th style={{width:'20%'}}>Component</th>
+                                  <th style={{width:'20%'}}>Fhir Api Base Url</th>
+                                  <th style={{width:'20%'}}>Website/UI Base Url</th>
+                                  <th style={{width:'20%'}}>Username</th>
+                                  <th style={{width:'20%'}}>Password</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {testRequest.testRequestUrls.length > 0 &&
+                                  testRequest.testRequestUrls.map(
+                                    (testUrls) => (
+                                      <tr id={testUrls.componentId} key={testUrls.componentId}>
+                                        <td>
+                                          <ComponentIdConnector
+                                            componentId={testUrls.componentId}
+                                          ></ComponentIdConnector>
+                                        </td>
+                                        <td className = "toLowerCase-words">{testUrls.fhirApiBaseUrl }</td>
+                                        <td className = "toLowerCase-words">{testUrls.websiteUIBaseUrl}</td>
+                                        <td className = "toLowerCase-words">{testUrls.username}</td>
+                                        <td className = "toLowerCase-words" key={testRequest.id}>
+                                          {testUrls.showPass
+                                            ? testUrls.password
+                                            : "*********"}
+                                        </td>
+                                        <td>
+                                        <i
+                                            className={`bi ${
+                                              testUrls.showPass
+                                                ? "bi-eye-fill"
+                                                : "bi-eye-slash-fill"
+                                            } padding-icon`}
+                                            key={testUrls.componentId}
+                                            onClick={() =>
+                                              togglePasswordVisibility(testUrls)
+                                            }
+                                          ></i>{" "}
+                                        </td>
+                                      </tr>
+                                    )
+                                  )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    </>
                 ))}
               </tbody>
             </table>
