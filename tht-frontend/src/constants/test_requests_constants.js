@@ -38,6 +38,8 @@ export const StateBadgeClasses = {
 };
 
 export const TestRequestActionStateLabels = [
+    {label: "Pending", value:"test.request.status.pending"},
+    {label:"Rejected", value:"test.request.status.rejected"},
     {label: "Approved", value: "test.request.status.accepted"},
     {label: "In Progress", value: "test.request.status.inprogress"},
     {label: "Finished", value: "test.request.status.finished"},
