@@ -6,6 +6,18 @@ import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { TestResultRelationAPI } from "../../../api/TestResultRelationAPI";
 import { Button, notification } from "antd";
 import { ManualQuestionTypeConstants } from "../../../constants/testcase_constants";
+/* 
+Options Component.
+
+This component displays all the options present for a particular testcase.
+
+Props:-
+	1. testcaseResultInfo:- Details of the concerned parent Testcase question.
+	2. setSelectedOption:- Function responsible for defining the selected option.
+	3. currentQuestion:- Details regarding current question, which defines the question being single/multi select. 
+	4. testcaseOptionId:- The unique identifier for the particular question.
+	5. setIsModified:- The flag which indicates if any changes have been made in an question.
+	*/
 
 export default function Options(props) {
 	const { refId, testcaseResultInfo ,setSelectedOptions, currentQuestion ,testcaseOptionId ,setIsModified} = props;
@@ -15,6 +27,7 @@ export default function Options(props) {
 	const { showLoader, hideLoader } = useLoader();
 	const inputRef = useRef(new Array());
 
+	// This useEffect fetches all the concerned options for a specific testcase.
 	useEffect(() => {
 		showLoader();
 		TestResultRelationAPI.getTestcaseResultRelatedObject(
@@ -36,11 +49,15 @@ export default function Options(props) {
 			hideLoader();
 		});
 	}, []);
+
+	// This useEffect updates the selected option and checks whether there have been any change in the previous 
+	// answers.
 	useEffect(()=>{
 		const selectedOption = testResultRelationInfos.filter(item => item.selected).map(item => item.refId);
 		setIsModified(JSON.stringify(selectedOption) !== JSON.stringify(currentOptions));
 	},[currentOptions]);
 
+	//	
 	useEffect(() => {
 		showLoader();
 		TestResultRelationAPI.getTestcaseResultRelationInfosByTestcaseResultIdAndRefObjUri(

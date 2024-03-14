@@ -21,6 +21,10 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 
+/* AutomatedTesting Component 
+
+This page displays the results of the automated testcaseresults. */
+
 export default function AutomatedTesting() {
   const { testRequestId } = useParams();
   const [testcaseName, setTestCaseName] = useState();
@@ -44,6 +48,7 @@ export default function AutomatedTesting() {
     });
   };
 
+  // Function to resets all tests
   const handleResetButton = () => {
     const params = {
       refObjUri: RefObjUriConstants.TESTREQUEST_REFOBJURI,
@@ -61,11 +66,11 @@ export default function AutomatedTesting() {
           description: "Testing Process has been Reset successully",
           placement: "bottomRight",
         });
-      }).catch((error) => {
-        
-      });
+      })
+      .catch((error) => {});
   };
 
+  // Function handles stopping ongoing testcases and resetting all the testcases.
   const handleInterruptButton = (reset) => {
     if (reset) {
       setStopAndResetLoader(true);
@@ -85,16 +90,17 @@ export default function AutomatedTesting() {
       placement: "bottomRight",
     });
     TestProcessAPI.stopTestProcess(testRequestId, params)
-    .then(() => {
-      notification.success({
-        description: "Process to interrupt has been started successully. Please wait for some time",
-        placement: "bottomRight",
-      });
-    }).catch((error) => {
-        
-    });
+      .then(() => {
+        notification.success({
+          description:
+            "Process to interrupt has been started successully. Please wait for some time",
+          placement: "bottomRight",
+        });
+      })
+      .catch((error) => {});
   };
 
+  // This function starts all the tests once all the testcases have been reset.
   const handleStartTesting = () => {
     const params = {
       testRequestId,
@@ -108,15 +114,20 @@ export default function AutomatedTesting() {
           description: "Testing Process has been started successully",
           placement: "bottomRight",
         });
-      }).catch((error) => {
-        
-      });
+      })
+      .catch((error) => {});
   };
 
+  // This function fetches data from the server and initiates web socket connection and receives real time updates.
+  // The data recieved in grouped on the basis of the type of testcase.
+  // Tracks completed testcases and displays them on the UI.
   const fetchTestCaseResultDataAndStartWebSocket = async () => {
     showLoader();
     try {
-      const response = await TestResultAPI.getMultipleTestcaseResultStatus({testRequestId,automated:true});
+      const response = await TestResultAPI.getMultipleTestcaseResultStatus({
+        testRequestId,
+        automated: true,
+      });
       var testcaseCount = 0;
       const grouped = [];
       for (let item of response) {
@@ -134,7 +145,10 @@ export default function AutomatedTesting() {
           grouped[grouped.length - 1].specifications[
             grouped[grouped.length - 1].specifications.length - 1
           ].testCases.push(item);
-          if(item.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
+          if (
+            item.state ===
+            TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+          ) {
             testcaseCount++;
           }
         } else {
@@ -171,6 +185,7 @@ export default function AutomatedTesting() {
     setData(newData);
   };
 
+  // This function toggles the visibility of a specification row based on its ID.
   const toggleSpecificationRow = (specificationId) => {
     const newData = data.map((component) => ({
       ...component,
@@ -187,6 +202,7 @@ export default function AutomatedTesting() {
     setData(newData);
   };
 
+  // This function toggles the visibility of a component row based on its ID.
   const toggleComponentRow = (componentId) => {
     const newData = data.map((component) => ({
       ...component,
@@ -200,14 +216,16 @@ export default function AutomatedTesting() {
     setData(newData);
   };
 
+  // The below function fetches the testcaseinfo based on test request Id. 
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
         setTestCaseName(res.name);
-      }).catch((error) => {
-       
-      });
+      })
+      .catch((error) => {});
   };
+
+  // Use Effect which fetches testcase info and initiates web WebSocketService. 
   useEffect(() => {
     dispatch(set_header("Automated Testing"));
     fetchTestCaseResultDataAndStartWebSocket();
@@ -218,40 +236,52 @@ export default function AutomatedTesting() {
     };
   }, []);
 
+  // Method to track the number of finishes testcases. 
   let changeState = (newState, oldState) => {
-    if(oldState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS || oldState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {   
-      if(newState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
-        setFinishedTestcaseCount(1)
-      } else if(newState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT) {
-        setFinishedTestcaseCount(0)
+    if (
+      oldState ===
+        TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS ||
+      oldState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+    ) {
+      if (
+        newState ===
+        TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+      ) {
+        setFinishedTestcaseCount(1);
+      } else if (
+        newState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT
+      ) {
+        setFinishedTestcaseCount(0);
       }
     }
-  }
+  };
 
   useEffect(() => {
     // Close the connection once the request is finished
     if (stompClient && stompClient.connected) {
-      const destination = "/testcase-result/automated/" + testcaseRequestResult.id;
+      const destination =
+        "/testcase-result/automated/" + testcaseRequestResult.id;
       stompClient.subscribe(destination, (msg) => {
         const parsedTestcaseResult = JSON.parse(msg.body);
         setTestcaseRequestResult(parsedTestcaseResult);
       });
-      const destination2 = "/testcase-result/attribute/" + testcaseRequestResult.id;
+      const destination2 =
+        "/testcase-result/attribute/" + testcaseRequestResult.id;
       stompClient.subscribe(destination2, (msg) => {
         const parsedTestcaseResult = JSON.parse(msg.body);
         if (!!parsedTestcaseResult.testcaseResultAttributesEntities) {
           var isInterrupted = false;
           var reset = false;
-          for(var attribute of parsedTestcaseResult.testcaseResultAttributesEntities) {
-            if(attribute.key === "is_interrupted") {
+          for (var attribute of parsedTestcaseResult.testcaseResultAttributesEntities) {
+            if (attribute.key === "is_interrupted") {
               isInterrupted = attribute.value === "true";
             }
-            if(attribute.key === "reset") {
+            if (attribute.key === "reset") {
               reset = attribute.value === "true";
             }
           }
           if (isInterrupted) {
-            if(reset) {
+            if (reset) {
               setStopAndResetLoader(true);
               setStopLoader(false);
             } else {
@@ -269,142 +299,158 @@ export default function AutomatedTesting() {
 
   return (
     <div>
-    <div id="wrapper">
-      <div className="container">
-        <div className="col-12">
-          <div className="d-flex justify-content-between">
-            <div className="bcca-breadcrumb">
-              <div className="bcca-breadcrumb-item">Automated Testing</div>
-              <div
-                className="bcca-breadcrumb-item"
-                onClick={() => {
-                  navigate(`/choose-test/${testRequestId}`);
-                }}
-              >
-                {testcaseName}
+      <div id="wrapper">
+        <div className="container">
+          <div className="col-12">
+            <div className="d-flex justify-content-between">
+              <div className="bcca-breadcrumb">
+                <div className="bcca-breadcrumb-item">Automated Testing</div>
+                <div
+                  className="bcca-breadcrumb-item"
+                  onClick={() => {
+                    navigate(`/choose-test/${testRequestId}`);
+                  }}
+                >
+                  {testcaseName}
+                </div>
+                <div
+                  className="bcca-breadcrumb-item"
+                  onClick={() => {
+                    navigate(`/applications`);
+                  }}
+                >
+                  Applications
+                </div>
               </div>
-              <div
-                className="bcca-breadcrumb-item"
-                onClick={() => {
-                  navigate(`/applications`);
-                }}
-              >
-                Applications
-              </div>
-            </div>
-            {(
-              <div className="d-flex gap-2">
-                <>
-                  {" "}
-                  {testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS && ( <>
-                    <div>
+              {
+                <div className="d-flex gap-2">
+                  <>
+                    {" "}
+                    {testcaseRequestResult?.state ===
+                      TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS && (
+                      <>
+                        <div>
+                          <button
+                            className={`btn small btn-sm mt-0 btn-danger px-4 abtn`}
+                            onClick={() => handleInterruptButton(true)}
+                            disabled={stopAndResetLoader || stopLoader}
+                          >
+                            <ReloadOutlined />
+                            <span className="mx-2">Stop and Reset</span>
+
+                            {stopAndResetLoader && <Spin size="small" />}
+                          </button>
+                        </div>
+                        <div>
+                          <button
+                            className="btn small btn-sm mt-0 btn-danger px-2 abtn"
+                            onClick={() => handleInterruptButton(false)}
+                            disabled={stopAndResetLoader || stopLoader}
+                          >
+                            <StopOutlined />
+                            <span className="m-1">Stop</span>
+
+                            {stopLoader && <Spin size="small" />}
+                          </button>
+                        </div>
+                      </>
+                    )}
+                    {(testcaseRequestResult?.state ===
+                      TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED ||
+                      (testcaseRequestResult?.state ===
+                        TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT &&
+                        !!finishedTestcaseCount)) && (
+                      <>
                         <button
-                          className={`btn small btn-sm mt-0 btn-danger px-4 abtn`}
-                          onClick={() => handleInterruptButton(true)}
-                          disabled={stopAndResetLoader || stopLoader}
+                          className={`btn small btn-sm mt-0 btn-primary px-4 abtn`}
+                          onClick={() => handleResetButton()}
                         >
                           <ReloadOutlined />
-                          <span className="mx-2">Stop and Reset</span>
-
-                          {stopAndResetLoader && <Spin size="small" />}
+                          <span className="mx-2">Reset</span>
                         </button>
-                      </div>
-                      <div>
-                        <button
-                          className="btn small btn-sm mt-0 btn-danger px-2 abtn"
-                          onClick={() => handleInterruptButton(false)}
-                          disabled={stopAndResetLoader || stopLoader}
-                        >
-                          <StopOutlined />
-                          <span className="m-1">Stop</span>
-
-                          {stopLoader && <Spin size="small" />}
-                        </button>
-                      </div>
+                      </>
+                    )}
+                    {testcaseRequestResult?.state ===
+                      TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT &&
+                      !!finishedTestcaseCount && (
+                        <>
+                          <button
+                            className={`btn small btn-sm mt-0 btn-success px-4 abtn`}
+                            onClick={handleStartTesting}
+                          >
+                            <PlayCircleOutlined />
+                            <span className="m-1">Resume</span>
+                          </button>
+                        </>
+                      )}
+                    {testcaseRequestResult?.state ===
+                      TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT &&
+                      !finishedTestcaseCount && (
+                        <>
+                          <button
+                            className="btn small btn-sm mt-0 px-2 btn-success abtn"
+                            onClick={handleStartTesting}
+                          >
+                            <PlayCircleOutlined />
+                            <span className="m-1">Start</span>
+                          </button>
+                        </>
+                      )}
                   </>
-                  )}
-                  {(testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED || (testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !!finishedTestcaseCount)) && (<>
-                    <button
-                        className={`btn small btn-sm mt-0 btn-primary px-4 abtn`}
-                        onClick={() => handleResetButton()}
-                      >
-                        <ReloadOutlined />
-                        <span className="mx-2">Reset</span>
-                      </button>
-                  </>)}
-                  {(testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !!finishedTestcaseCount) && (<>
-                      <button
-                        className={`btn small btn-sm mt-0 btn-success px-4 abtn`}
-                        onClick={handleStartTesting}
-                      >
-                        <PlayCircleOutlined />
-                        <span className="m-1">Resume</span>
-                      </button>
-                  </>)}
-                  {testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !finishedTestcaseCount && (<>
-                      <button
-                        className="btn small btn-sm mt-0 px-2 btn-success abtn"
-                        onClick={handleStartTesting}
-                      >
-                        <PlayCircleOutlined />
-                        <span className="m-1">Start</span>
-                      </button>
-                  </>)}
-                </>
-              </div>
-            )}
-          </div>
-          <div className="table-responsive mb-5">
-            <table className="data-table capitalize-words">
-              <thead>
-                <tr>
-                  <th>Component</th>
-                  <th>Specification</th>
-                  <th style={{ width: "40%" }}>Test Cases</th>
-                  <th>Result</th>
-                  <th>Duration</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {!!data &&
-                  data.map((component) => [
-                    <TestcaseResultRow
-                      key={`component-result-${component?.id}`}
-                      testcaseResultType={"component"}
-                      testcaseResultItem={component}
-                      stompClient={stompClient}
-                      toggleClass={component?.class}
-                      toggleFunction={toggleComponentRow}
-                    ></TestcaseResultRow>,
-                    component?.specifications?.map((specification) => [
+                </div>
+              }
+            </div>
+            <div className="table-responsive mb-5">
+              <table className="data-table capitalize-words">
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th>Specification</th>
+                    <th style={{ width: "40%" }}>Test Cases</th>
+                    <th>Result</th>
+                    <th>Duration</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {!!data &&
+                    data.map((component) => [
                       <TestcaseResultRow
-                        key={`specification-result-${specification?.id}`}
-                        testcaseResultType={"specification"}
-                        testcaseResultItem={specification}
+                        key={`component-result-${component?.id}`}
+                        testcaseResultType={"component"}
+                        testcaseResultItem={component}
                         stompClient={stompClient}
-                        toggleClass={specification?.class}
-                        toggleFunction={toggleSpecificationRow}
+                        toggleClass={component?.class}
+                        toggleFunction={toggleComponentRow}
                       ></TestcaseResultRow>,
-                      specification.testCases?.map((testcase) => [
+                      component?.specifications?.map((specification) => [
                         <TestcaseResultRow
-                          key={`testcase-result-${testcase?.id}`}
-                          testcaseResultType={"testcase"}
-                          testcaseResultItem={testcase}
+                          key={`specification-result-${specification?.id}`}
+                          testcaseResultType={"specification"}
+                          testcaseResultItem={specification}
                           stompClient={stompClient}
-                          toggleClass={testcase?.class}
-                          toggleFunction={toggleTestCaseRow}
-                          changeState={changeState}
+                          toggleClass={specification?.class}
+                          toggleFunction={toggleSpecificationRow}
                         ></TestcaseResultRow>,
+                        specification.testCases?.map((testcase) => [
+                          <TestcaseResultRow
+                            key={`testcase-result-${testcase?.id}`}
+                            testcaseResultType={"testcase"}
+                            testcaseResultItem={testcase}
+                            stompClient={stompClient}
+                            toggleClass={testcase?.class}
+                            toggleFunction={toggleTestCaseRow}
+                            changeState={changeState}
+                          ></TestcaseResultRow>,
+                        ]),
                       ]),
-                    ]),
-                  ])}
-              </tbody>
-            </table>
+                    ])}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }

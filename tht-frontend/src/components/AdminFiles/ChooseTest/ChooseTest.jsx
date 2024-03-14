@@ -14,7 +14,11 @@ import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import WebSocketService from "../../../api/WebSocketService";
+/* 
+Choose Test page
 
+The tester can decide on whether to start the manual testing or the automate testcases from here.
+  */
 export default function ChooseTest() {
   const { testRequestId } = useParams();
   const { TESTCASE_REFOBJURI, TESTREQUEST_REFOBJURI } = RefObjUriConstants;
@@ -30,6 +34,13 @@ export default function ChooseTest() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
+
+/* 
+  This useEffect fetches all the testcases, both manual and automated.
+  And based on the data recieved, the progress is tracked.
+  This helps the tester in knowing the number of completed and remaining testcases.
+  Also initiates the web socket connection to keep track of any automated testcases already running.
+  */
 
   useEffect(() => {
     var totalManual = 0;
@@ -112,6 +123,9 @@ export default function ChooseTest() {
     }
   }, [testcaseResults]);
 
+
+  // This function keeps real-time track of the progress for the testcases.
+
   const loadProgress = () => {
     const params = {
       testRequestId: testRequestId,
@@ -125,6 +139,8 @@ export default function ChooseTest() {
 
       });
   };
+
+  // This function initiates testcases for both manual and automates testing. 
 
   const handleStartTesting = (manual, automated) => {
     const params = {
@@ -160,6 +176,7 @@ export default function ChooseTest() {
     }
   };
 
+  // This function fetches details regarding testcase.  
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
@@ -170,6 +187,7 @@ export default function ChooseTest() {
       });
   };
 
+  // This useEffect keeps tracks of testcases being completed behind the scenes, and updates the UI. 
   useEffect(() => {
     if (stompClient && stompClient.connected) {
       testcaseResults.forEach((testcaseResult, index) => {
@@ -197,6 +215,8 @@ export default function ChooseTest() {
     }
   }, [stompClient]);
 
+  // Default useEffect which fetches progress, fetches testcaseInfo. 
+  // Also Disconnects the web-socket connection once the component is unmounted. 
   useEffect(() => {
     loadProgress();
     testCaseInfo();
@@ -206,6 +226,9 @@ export default function ChooseTest() {
     };
   }, []);
 
+  // This function is responsible for finishing a test-request. 
+  // Once this function is called, the choose-page will no longer be available. 
+  // Report is generated only after this function is called. 
   const submitHandler=()=>{
     TestRequestAPI.changeState(testRequestId, "test.request.status.finished")
         .then((res) => {
