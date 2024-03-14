@@ -46,7 +46,7 @@ public class SHRF3TestCase1 implements TestCase {
                     resource(xmlDataForPatient).execute();
 
             // Check if the patient was created successfully
-            if (!outcomeForPatient.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForPatient.getCreated())) {
                 logger.error("Failed to create patient by passing XML data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient by passing XML data");
             }
@@ -70,7 +70,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(xmlDataForPractitioner).execute();
 
             // Check if the practitioner was created successfully
-            if (!outcomeForPractitioner.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForPractitioner.getCreated())) {
                 logger.error("Failed to create practitioner by passing XML data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner by passing XML data");
             }
@@ -96,7 +96,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(jsonDataForOrganization).execute();
 
             // Check if the organization was created successfully
-            if (!outcomeForOrganization.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForOrganization.getCreated())) {
                 logger.error("Failed to create organization by passing JSON data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization by passing JSON data");
             }
@@ -121,7 +121,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(jsonDataForPractitionerRole).execute();
 
             // Check if the practitioner role was created successfully
-            if (!outcomeForPractitionerRole.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForPractitionerRole.getCreated())) {
                 logger.error("Failed to create practitioner role by passing JSON data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner role by passing JSON data");
             }
@@ -144,7 +144,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(encounter).execute();
 
             // Check if the encounter was created successfully
-            if (!outcomeForEncounter.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForEncounter.getCreated())) {
                 logger.error("Failed to create encounter");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create encounter");
             }
@@ -167,7 +167,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(condition).execute();
 
             // Check if the condition was created successfully
-            if (!outcomeForCondition.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForCondition.getCreated())) {
                 logger.error("Failed to create condition");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create condition");
             }
@@ -192,7 +192,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(jsonDataForMedication).execute();
 
             // Check if the medication was created successfully
-            if (!outcomeForMedication.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForMedication.getCreated())) {
                 logger.error("Failed to create Medication by passing JSON data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Medication by passing JSON data");
             }
@@ -215,7 +215,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(xmlDataForMedicationRequest).execute();
 
             // Check if the medication request was created successfully
-            if (!outcomeForMedicationRequest.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForMedicationRequest.getCreated())) {
                 logger.error("Failed to create Medication request by passing XML data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Medication request by passing XML data");
             }
@@ -239,7 +239,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(jsonDataForProcedure).execute();
 
             // Check if the procedure was created successfully
-            if (!outcomeForProcedure.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForProcedure.getCreated())) {
                 logger.error("Failed to create Procedure by passing JSON data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Procedure by passing JSON data");
             }
@@ -264,7 +264,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(xmlDataForObservation).execute();
 
             // Check if the observation was created successfully
-            if (!outcomeForObservation.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForObservation.getCreated())) {
                 logger.error("Failed to create Observation by passing XML data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Observation by passing XML data");
             }
@@ -289,7 +289,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(jsonDataForAllergyIntolerance).execute();
 
             // Check if the Allergy Intolerance was created successfully
-            if (!outcomeForAllergyIntolerance.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForAllergyIntolerance.getCreated())) {
                 logger.error("Failed to create Allergy Intolerance by passing JSON data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Allergy Intolerance by passing JSON data");
             }
@@ -314,7 +314,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(xmlDataForImmunization).execute();
 
             // Check if the immunization was created successfully
-            if (!outcomeForImmunization.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForImmunization.getCreated())) {
                 logger.error("Failed to create Immunization by passing XML data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Immunization by passing XML data");
             }
@@ -339,7 +339,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(jsonDataForDiagnosticReport).execute();
 
             // Check if the Diagnostic Report was created successfully
-            if (!outcomeForDiagnosticReport.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForDiagnosticReport.getCreated())) {
                 logger.error("Failed to create Diagnostic Report by passing JSON data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Diagnostic Report by passing JSON data");
             }
@@ -364,7 +364,7 @@ public class SHRF3TestCase1 implements TestCase {
                     = client.create().resource(jsonDataForMedicationAdministration).execute();
 
             // Check if the Diagnostic Report was created successfully
-            if (!outcomeForDiagnosticReport.getCreated()) {
+            if (Boolean.FALSE.equals(outcomeForDiagnosticReport.getCreated())) {
                 logger.error("Failed to create Diagnostic Report by passing JSON data");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Diagnostic Report by passing JSON data");
             }

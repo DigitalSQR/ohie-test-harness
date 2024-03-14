@@ -42,7 +42,7 @@ public class CRF10TestCase1 implements TestCase {
 
             MethodOutcome outcome = client.create().resource(patient).execute();
             String patientId = outcome.getId().getIdPart();
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient with related person");
             }
             Patient infant = client.read().resource(Patient.class).withId(patientId).execute();

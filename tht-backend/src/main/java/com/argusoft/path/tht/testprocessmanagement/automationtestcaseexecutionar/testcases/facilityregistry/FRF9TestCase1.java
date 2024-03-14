@@ -47,7 +47,7 @@ public class FRF9TestCase1 implements TestCase {
             Organization organization = FHIRUtils.createOrganization(orgName, "Sweden", city, "+41-123-23");
             MethodOutcome outcome = client.create().resource(organization).execute();
             // Check if the organization was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating organization");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization");
             }
@@ -56,7 +56,7 @@ public class FRF9TestCase1 implements TestCase {
             organization = FHIRUtils.createOrganization("Richard Hospital", "Sweden", city, "+41-543-73");
             outcome = client.create().resource(organization).execute();
             // Check if the organization was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating organization");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization");
             }
@@ -93,7 +93,7 @@ public class FRF9TestCase1 implements TestCase {
             Location ambulance = FHIRUtils.createAmbulance("BUMC " + ambulanceName, "Ambulances provided by the Burgers University Medical Center", "108", Location.LocationStatus.ACTIVE);
             outcome = client.create().resource(ambulance).execute();
             // Check if the ambulance was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating ambulance");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create ambulance");
             }
@@ -102,7 +102,7 @@ public class FRF9TestCase1 implements TestCase {
             ambulance = FHIRUtils.createAmbulance("RM " + ambulanceName, "Ambulances provided by the Richard Morris Medical Center", "108", Location.LocationStatus.SUSPENDED);
             outcome = client.create().resource(ambulance).execute();
             // Check if the ambulance was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating ambulance");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create ambulance");
             }

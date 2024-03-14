@@ -419,7 +419,7 @@ public class TestcaseExecutioner {
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
 
-            if (reset || (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) && (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+            if (Boolean.TRUE.equals(reset) || (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) && (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
                 testcaseResultService.changeState(testcaseResult.getId(), newState, contextInfo);
             }
         }

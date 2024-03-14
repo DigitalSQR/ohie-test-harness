@@ -40,7 +40,7 @@ public class SHRF5TestCase2 implements TestCase {
             Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "9414473", "555-555-5555", "john.doe@example.com", client);
             MethodOutcome patientOutcome = client.create().resource(patient).execute();
 
-            if (!patientOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(patientOutcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Patient");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Patient");
             }
@@ -49,7 +49,7 @@ public class SHRF5TestCase2 implements TestCase {
 
             Practitioner practitionerOne = FHIRUtils.createPractitioner("Walter", "male", "12-05-2001", "9414", "555-555-5555");
             MethodOutcome practitionerOneOutcome = client.create().resource(practitionerOne).execute();
-            if (!practitionerOneOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(practitionerOneOutcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Practitioner");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Practitioner");
             }
@@ -59,21 +59,21 @@ public class SHRF5TestCase2 implements TestCase {
 
             Organization organizationOne = FHIRUtils.createOrganization("Good Health Clinic", "India", "Gandhinagar", "111-111-111");
             MethodOutcome organizationOneOutcome = client.create().resource(organizationOne).execute();
-            if (!organizationOneOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(organizationOneOutcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating organization");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization");
             }
 
             Composition admissionNoteOne = FHIRUtils.createAdmissionNote(patientId, organizationOneOutcome.getId().getIdPart(), practitionerOneOutcome.getId().getIdPart(), "Good Health Clinic");
             MethodOutcome admissionOneNoteOutcome = client.create().resource(admissionNoteOne).execute();
-            if (!admissionOneNoteOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(admissionOneNoteOutcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Composition");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Admission Composition");
             }
 
             Composition operativeNoteOne = FHIRUtils.createOperativeNote(patientId, organizationOneOutcome.getId().getIdPart(), practitionerOneOutcome.getId().getIdPart(), "Good Health Clinic");
             MethodOutcome operativeNoteOneOutcome = client.create().resource(operativeNoteOne).execute();
-            if (!operativeNoteOneOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(operativeNoteOneOutcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Composition");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create operative Composition");
             }
@@ -81,14 +81,14 @@ public class SHRF5TestCase2 implements TestCase {
             Composition progressNoteOne = FHIRUtils.createProgressNotes(patientId, organizationOneOutcome.getId().getIdPart(), practitionerOneOutcome.getId().getIdPart(), "Good Health Clinic");
             MethodOutcome progressNoteOneOutcome = client.create().resource(progressNoteOne).execute();
 
-            if (!progressNoteOneOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(progressNoteOneOutcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Composition");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create progress Composition");
             }
 
             Composition dischargeSummaryOne = FHIRUtils.createDischargeSummary(patientId, organizationOneOutcome.getId().getIdPart(), practitionerOneOutcome.getId().getIdPart(), "Good Health Clinic");
             MethodOutcome dischargeSummaryOneOutcome = client.create().resource(dischargeSummaryOne).execute();
-            if (!dischargeSummaryOneOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(dischargeSummaryOneOutcome.getCreated())) {
                 LOGGER.error(testCaseName + "Testcase Failed when creating Composition");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create Discharge Composition");
             }

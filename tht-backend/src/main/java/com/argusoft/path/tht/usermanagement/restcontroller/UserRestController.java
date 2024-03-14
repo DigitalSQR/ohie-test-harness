@@ -115,7 +115,7 @@ public class UserRestController {
             LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserRestController.class.getSimpleName(), e);
             // return false as it is
         }
-        vris.setLevel(isVerified ? ErrorLevel.OK : ErrorLevel.ERROR);
+        vris.setLevel(Boolean.TRUE.equals(isVerified) ? ErrorLevel.OK : ErrorLevel.ERROR);
         return vris;
     }
 

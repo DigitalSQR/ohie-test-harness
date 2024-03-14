@@ -46,7 +46,7 @@ public class FRWF1TestCase1 implements TestCase {
                     .execute();
 
             // Check if the organization was created successfully
-            if (!organizationOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(organizationOutcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization");
             }
 
@@ -70,7 +70,7 @@ public class FRWF1TestCase1 implements TestCase {
                     .execute();
 
             //check for the location created successfully
-            if (!locationOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(locationOutcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create location");
             }
 

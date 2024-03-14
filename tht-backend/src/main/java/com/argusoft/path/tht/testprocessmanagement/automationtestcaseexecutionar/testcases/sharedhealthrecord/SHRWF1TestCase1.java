@@ -46,7 +46,7 @@ public class SHRWF1TestCase1 implements TestCase {
         MethodOutcome outcome = client.create().resource(patient).execute();
 
         //Checking if patient is created
-        if (!(outcome.getCreated())) {
+        if (Boolean.FALSE.equals(outcome.getCreated())) {
             LOGGER.error("Patient Creation Failed");
             return new ValidationResultInfo(ErrorLevel.ERROR, "Patient creation failed");
         }
@@ -62,7 +62,7 @@ public class SHRWF1TestCase1 implements TestCase {
         outcome = client.create().resource(practitioner1).execute();
 
         //Checking if practitioner is created
-        if (!(outcome.getCreated())) {
+        if (Boolean.FALSE.equals(outcome.getCreated())) {
             LOGGER.error("Practitioner 1 Creation Failed");
             return new ValidationResultInfo(ErrorLevel.ERROR, "Practitioner 1 creation failed");
         }
@@ -76,7 +76,7 @@ public class SHRWF1TestCase1 implements TestCase {
         outcome = client.create().resource(practitioner2).execute();
 
         //Checking if practitioner is created
-        if (!(outcome.getCreated())) {
+        if (Boolean.FALSE.equals(outcome.getCreated())) {
             LOGGER.error("Practitioner 2 Creation Failed");
             return new ValidationResultInfo(ErrorLevel.ERROR, "Practitioner 2 creation failed");
         }
@@ -92,7 +92,7 @@ public class SHRWF1TestCase1 implements TestCase {
         outcome = client.create().resource(encounter).execute();
 
         //Check if encounter is created
-        if (!(outcome.getCreated())) {
+        if (Boolean.FALSE.equals(outcome.getCreated())) {
             return new ValidationResultInfo(ErrorLevel.ERROR, "Encounter creation failed");
         }
 

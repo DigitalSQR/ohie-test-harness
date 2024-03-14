@@ -213,17 +213,17 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         for (TestResultRelationEntity testResultRelationEntity : testResultRelationEntities) {
             // Check if the testResultRelationEntity is marked as success or failure
-            boolean isRelationSuccess = isTestResultRelationSuccess(testResultRelationEntity, testcaseOptionEntitiesFromAudit);
+            Boolean isRelationSuccess = isTestResultRelationSuccess(testResultRelationEntity, testcaseOptionEntitiesFromAudit);
 
             if (isSingleSelectQuestion) {
 
-                if (testResultRelationEntity.getSelected() == isRelationSuccess) {
+                if (isRelationSuccess.equals(testResultRelationEntity.getSelected())) {
                     isTestSuccessful = true;
                     break;
                 }
             } else {
 
-                if (testResultRelationEntity.getSelected() != isRelationSuccess) {
+                if (!isRelationSuccess.equals(testResultRelationEntity.getSelected())) {
                     isTestSuccessful = false;
                     break;
                 }

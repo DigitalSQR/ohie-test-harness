@@ -43,7 +43,7 @@ public class HWWF3TestCase1 implements TestCase {
                     .execute();
 
             // Check if the practitioner1 was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 LOGGER.error("Testcase Failed");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner");
             }
@@ -90,7 +90,7 @@ public class HWWF3TestCase1 implements TestCase {
                     .execute();
 
             // Check if the practitioner1 was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 LOGGER.error("Testcase Failed");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create location");
             }
@@ -138,7 +138,7 @@ public class HWWF3TestCase1 implements TestCase {
                     .execute();
 
             // Check if the healthcareService was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 LOGGER.error("Testcase Failed");
                 return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to create healthcareService");
             }
@@ -194,7 +194,7 @@ public class HWWF3TestCase1 implements TestCase {
                     .execute();
 
             // Check if the practitionerRole was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 LOGGER.error("Testcase Failed");
                 return new ValidationResultInfo("testHWWF3Case1", ErrorLevel.ERROR, "Failed to create practitionerRole");
             }

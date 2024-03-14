@@ -604,7 +604,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     private void createTestResultRelationsForManualTestcase(TestcaseEntity testcaseEntity, TestcaseResultEntity testcaseResult, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
 
-        if (testcaseEntity.getManual()) {
+        if (Boolean.TRUE.equals(testcaseEntity.getManual())) {
 
             // create for question
             TestResultRelationEntity testResultRelationEntity = createTestResultRelationEntity(

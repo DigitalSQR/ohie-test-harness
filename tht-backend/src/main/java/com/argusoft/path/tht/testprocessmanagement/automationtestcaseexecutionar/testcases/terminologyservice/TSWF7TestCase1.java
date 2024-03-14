@@ -56,7 +56,7 @@ public class TSWF7TestCase1 implements TestCase {
                     .execute();
 
             // check if codeSystem got created
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 

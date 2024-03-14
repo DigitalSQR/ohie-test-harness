@@ -45,7 +45,7 @@ public class CRWF1TestCase2 implements TestCase {
                     .execute();
 
             // Check if the patient was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
 
@@ -57,7 +57,7 @@ public class CRWF1TestCase2 implements TestCase {
                     .execute();
 
             // Check if the patient was created twice?
-            if (outcome.getCreated()) {
+            if (Boolean.TRUE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             } else {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Was not able to resolve patient conflict via linking patient");

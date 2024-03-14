@@ -37,7 +37,7 @@ public class CRF8TestCase1 implements TestCase {
             String birthDate = "1990-01-01";
             Patient patient = FHIRUtils.createPatient("Doe", "John", "M", birthDate, "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "", "555-555-5555", "john.doe@example.com", client);
             MethodOutcome outcome = client.create().resource(patient).execute();
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
             String patientId = outcome.getId().getIdPart();

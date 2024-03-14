@@ -115,7 +115,7 @@ public class ExceptionController {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         exception.printStackTrace(pw);
-        resultInfo.setStackTrace(isStackTraceEnabled ? sw.toString() : null);
+        resultInfo.setStackTrace(Boolean.TRUE.equals(isStackTraceEnabled) ? sw.toString() : null);
         return resultInfo;
     }
 }

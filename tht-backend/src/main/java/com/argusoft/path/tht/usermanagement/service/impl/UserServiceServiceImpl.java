@@ -132,7 +132,7 @@ public class UserServiceServiceImpl implements UserService {
                 .verifyUserToken(updatePasswordInfo.getBase64TokenId(), updatePasswordInfo.getBase64UserEmail(), true, contextInfo);
 
         // update user with new password
-        if (isTokenVerified) {
+        if (Boolean.TRUE.equals(isTokenVerified)) {
             String userEmail = new String(Base64.decodeBase64(updatePasswordInfo.getBase64UserEmail()));
             UserEntity userByEmail = this.getUserByEmail(userEmail, contextInfo);
             userByEmail.setPassword(updatePasswordInfo.getNewPassword());

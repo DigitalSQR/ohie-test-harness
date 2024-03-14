@@ -38,18 +38,18 @@ public class TSWF6TestCase1 implements TestCase {
 
             LOGGER.info("Creating CodeSystem");
             // Creating codeSystem
-            if (!Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated()) {
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
             LOGGER.info("Creating ValueSet");
             // Creating valueSet
-            if (!Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset", "ExampleValueSet", "Example ValueSet Title", "ACTIVE", "HL7 International / Terminology Infrastructure", "http://example.com/gender", "12345", "Blood Pressure")).getCreated()) {
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset", "ExampleValueSet", "Example ValueSet Title", "ACTIVE", "HL7 International / Terminology Infrastructure", "http://example.com/gender", "12345", "Blood Pressure")).getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
             }
 
             // Creating valueSet
-            if (!Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset2", "ExampleValueSet2", "Example ValueSet Title2", "ACTIVE", "HTHE International", "http://example.com/gender", "12345", "Blood Pressure")).getCreated()) {
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset2", "ExampleValueSet2", "Example ValueSet Title2", "ACTIVE", "HTHE International", "http://example.com/gender", "12345", "Blood Pressure")).getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
             }
 

@@ -38,7 +38,7 @@ public class SHRWF2TestCase1 implements TestCase {
 
             Patient patient = FHIRUtils.createPatient("Doe", "John", "male", "1990-01-01", "urn:oid:1.3.6.1.4.1.21367.13.20.1000", "IHERED-994", true, "9414473", "555-555-5555", "john.doe@example.com", client);
             MethodOutcome patientOutcome = client.create().resource(patient).execute();
-            if (!patientOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(patientOutcome.getCreated())) {
 
                 LOGGER.error("Failed to create a patient");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create a patient");
@@ -49,7 +49,7 @@ public class SHRWF2TestCase1 implements TestCase {
             Practitioner practitionerOne = FHIRUtils.createPractitioner("Walter", "male", "12-05-2001", "9414", "555-555-5555");
             MethodOutcome practitionerOneOutcome = client.create().resource(practitionerOne).execute();
 
-            if (!practitionerOneOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(practitionerOneOutcome.getCreated())) {
 
                 LOGGER.error("Failed to create first practitioner");
 
@@ -60,7 +60,7 @@ public class SHRWF2TestCase1 implements TestCase {
 
             Practitioner practitionerTwo = FHIRUtils.createPractitioner("Mike", "male", "14-05-1999", "8114", "555-555-5555");
             MethodOutcome practitionerTwoOutcome = client.create().resource(practitionerTwo).execute();
-            if (!practitionerTwoOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(practitionerTwoOutcome.getCreated())) {
 
                 LOGGER.error("Failed to create second practitioner");
 
@@ -72,7 +72,7 @@ public class SHRWF2TestCase1 implements TestCase {
 
             DocumentReference documentReferenceOne = FHIRUtils.createDocumentReference("DocumentReference123", patientOutcome.getId().getIdPart(), practitionerOneOutcome.getId().getIdPart(), "\"https://example.com/documents/cda123", "Patient CDA Document First Hospital");
             MethodOutcome documentReferenceOneOutcome = client.create().resource(documentReferenceOne).execute();
-            if (!documentReferenceOneOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(documentReferenceOneOutcome.getCreated())) {
 
                 LOGGER.error("Failed to create first document reference");
 
@@ -84,7 +84,7 @@ public class SHRWF2TestCase1 implements TestCase {
 
             DocumentReference documentReferenceTwo = FHIRUtils.createDocumentReference("DocumentReference124", patientOutcome.getId().getIdPart(), practitionerTwoOutcome.getId().getIdPart(), "\"https://example.com/documents/cda124", "Patient CDA Document Second Hospital");
             MethodOutcome documentReferenceTwoOutcome = client.create().resource(documentReferenceTwo).execute();
-            if (!documentReferenceTwoOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(documentReferenceTwoOutcome.getCreated())) {
 
                 LOGGER.error("Failed to create second document reference");
 

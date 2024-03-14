@@ -35,7 +35,7 @@ public class CRF7TestCase1 implements TestCase {
             MethodOutcome outcome = client.create().resource(operationOutcome).execute();
             String operationOutcomeId = outcome.getId().getIdPart();
 
-            if (outcome.getCreated()) {
+            if (Boolean.TRUE.equals(outcome.getCreated())) {
                 // Retrieving the created OperationOutcome
                 OperationOutcome resultOperationOutcome = client.read().resource(OperationOutcome.class).withId(operationOutcomeId).execute();
 

@@ -46,7 +46,7 @@ public class CRF3TestCase1 implements TestCase {
                     .execute();
 
             // Checking whether patient is created or not
-            if (!patientOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(patientOutcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
 

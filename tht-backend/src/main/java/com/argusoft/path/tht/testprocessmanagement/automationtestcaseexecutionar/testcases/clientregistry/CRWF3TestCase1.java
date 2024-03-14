@@ -49,7 +49,7 @@ public class CRWF3TestCase1 implements TestCase {
                     .execute();
 
             // Check if the patient was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
             patientIds.add(outcome.getResource().getIdElement().getIdPart());
@@ -73,7 +73,7 @@ public class CRWF3TestCase1 implements TestCase {
                     .execute();
 
             // Check if the patient was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
             patientIds.add(outcome.getResource().getIdElement().getIdPart());

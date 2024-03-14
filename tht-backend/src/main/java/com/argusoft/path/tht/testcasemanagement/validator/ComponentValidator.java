@@ -445,7 +445,7 @@ public class ComponentValidator {
             List<TestcaseValidationResultInfo> errors,
             ContextInfo contextInfo
     ) throws InvalidParameterException, OperationFailedException {
-        if (!testcaseEntity.getManual()) {
+        if (Boolean.FALSE.equals(testcaseEntity.getManual())) {
             return;
         }
 

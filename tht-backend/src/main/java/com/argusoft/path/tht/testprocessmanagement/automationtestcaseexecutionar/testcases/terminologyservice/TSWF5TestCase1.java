@@ -37,11 +37,11 @@ public class TSWF5TestCase1 implements TestCase {
 
             LOGGER.info("Creating codeSystems");
             //creating codeSystems
-            if (!Objects.requireNonNull(addCodeSystem(client, "http://example.com/blood-pressure", "1.0.0", "BloodPressure", "Blood Pressure Codes", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "systolic", "Systolic Pressure", "The pressure in the arteries when the heart muscle contracts.")).getCreated()) {
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addCodeSystem(client, "http://example.com/blood-pressure", "1.0.0", "BloodPressure", "Blood Pressure Codes", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "systolic", "Systolic Pressure", "The pressure in the arteries when the heart muscle contracts.")).getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
-            if (!Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated()) {
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 

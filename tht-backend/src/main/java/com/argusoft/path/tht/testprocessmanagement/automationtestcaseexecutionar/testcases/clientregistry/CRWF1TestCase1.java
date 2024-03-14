@@ -47,7 +47,7 @@ public class CRWF1TestCase1 implements TestCase {
                     .execute();
 
             // Check if the patient was created successfully
-            if (outcome.getCreated()) {
+            if (Boolean.TRUE.equals(outcome.getCreated())) {
                 LOGGER.info("Testcase successfully passed!");
                 return new ValidationResultInfo(ErrorLevel.OK, "Passed");
             } else {
