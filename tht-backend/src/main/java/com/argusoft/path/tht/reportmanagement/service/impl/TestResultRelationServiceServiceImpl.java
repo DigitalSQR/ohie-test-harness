@@ -31,14 +31,24 @@ import java.util.Optional;
 @Service
 public class TestResultRelationServiceServiceImpl implements TestResultRelationService {
 
-    @Autowired
     private TestcaseResultService testcaseResultService;
-
-    @Autowired
     private TestResultRelationRepository testResultRelationRepository;
+    private AuditService auditService;
 
     @Autowired
-    private AuditService auditService;
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
+
+    @Autowired
+    public void setTestResultRelationRepository(TestResultRelationRepository testResultRelationRepository) {
+        this.testResultRelationRepository = testResultRelationRepository;
+    }
+
+    @Autowired
+    public void setAuditService(AuditService auditService) {
+        this.auditService = auditService;
+    }
 
     @Override
     public TestResultRelationEntity createTestcaseResult(TestResultRelationEntity testResultRelationEntity, ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, DataValidationErrorException {

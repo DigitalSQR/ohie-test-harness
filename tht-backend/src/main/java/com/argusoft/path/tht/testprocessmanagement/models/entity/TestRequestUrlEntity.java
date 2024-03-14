@@ -46,7 +46,7 @@ public class TestRequestUrlEntity {
 
     public TestRequestUrlEntity(TestRequestUrlEntity testRequestUrlEntity) {
         this.setTestRequestId(testRequestUrlEntity.getTestRequestId());
-        if(testRequestUrlEntity.getComponent()!=null){
+        if (testRequestUrlEntity.getComponent() != null) {
             this.setComponent(new ComponentEntity(testRequestUrlEntity.getComponent().getId()));
         }
         this.setFhirApiBaseUrl(testRequestUrlEntity.getFhirApiBaseUrl());

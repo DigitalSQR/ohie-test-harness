@@ -13,15 +13,12 @@ import java.util.List;
  * @author Dhruv
  */
 public class SpecificationServiceConstants {
-
     public static final String SPECIFICATION_REF_OBJ_URI = SpecificationInfo.class.getName();
-
     //Specification states
     public static final String SPECIFICATION_STATUS_DRAFT = "specification.status.draft";
     public static final String SPECIFICATION_STATUS_ACTIVE = "specification.status.active";
     public static final String SPECIFICATION_STATUS_INACTIVE = "specification.status.inactive";
     public static final String ALLOWED_CHAR_SPECIFICATION = "[[A-Z][a-z][0-9][\\s][.]]*";
-
     public static final Multimap<String, String> SPECIFICATION_STATUS_MAP = ArrayListMultimap.create();
     public static List<String> SPECIFICATION_STATUS = new ArrayList<>();
 
@@ -35,5 +32,8 @@ public class SpecificationServiceConstants {
         SPECIFICATION_STATUS_MAP.put(SPECIFICATION_STATUS_DRAFT, SPECIFICATION_STATUS_ACTIVE);
         SPECIFICATION_STATUS_MAP.put(SPECIFICATION_STATUS_ACTIVE, SPECIFICATION_STATUS_INACTIVE);
         SPECIFICATION_STATUS_MAP.put(SPECIFICATION_STATUS_INACTIVE, SPECIFICATION_STATUS_ACTIVE);
+    }
+
+    private SpecificationServiceConstants() {
     }
 }

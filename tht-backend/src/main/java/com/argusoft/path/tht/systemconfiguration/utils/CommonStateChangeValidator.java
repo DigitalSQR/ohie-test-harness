@@ -4,7 +4,6 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.validator.ComponentValidator;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
@@ -15,6 +14,9 @@ import java.util.List;
 public class CommonStateChangeValidator {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ComponentValidator.class);
+
+    private CommonStateChangeValidator() {
+    }
 
     public static void validateStateChange(List<String> correctStatus, Multimap<String, String> correctStatusMap, String state, String stateKey, List<ValidationResultInfo> errors) throws DataValidationErrorException {
 

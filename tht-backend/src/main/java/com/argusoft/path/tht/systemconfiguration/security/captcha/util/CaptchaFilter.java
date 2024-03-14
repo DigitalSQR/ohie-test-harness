@@ -25,70 +25,71 @@ import java.util.List;
 public class CaptchaFilter implements Filter {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CaptchaFilter.class);
-
-    @Autowired
+    List<String> captchaProtectedUrls = List.of("/api/user/register",
+            "/api/oauth/token");
     private CaptchaService captchaService;
-
     @Value("${captcha}")
     private boolean isCaptchaRequired;
 
-    List<String> captchaProtectedUrls = List.of("/api/user/register",
-                                                "/api/oauth/token");
+    @Autowired
+    public void setCaptchaService(CaptchaService captchaService) {
+        this.captchaService = captchaService;
+    }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
-                                                        FilterChain filterChain) throws IOException, ServletException {
+                         FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String requestUrl = request.getServletContext().getContextPath() + request.getServletPath();
 
-        if(isCaptchaRequired && (captchaProtectedUrls.contains(requestUrl))) {
-                // Captcha validation is required for this URL
-                String captchaCode = request.getHeader("captchaCode");
-                String captcha = request.getHeader("captcha");
+        if (isCaptchaRequired && (captchaProtectedUrls.contains(requestUrl))) {
+            // Captcha validation is required for this URL
+            String captchaCode = request.getHeader("captchaCode");
+            String captcha = request.getHeader("captcha");
 
-                List<ValidationResultInfo> errors = new ArrayList<>();
+            List<ValidationResultInfo> errors = new ArrayList<>();
 
-                if(captchaCode == null && captcha!=null){
-                    ValidationResultInfo error = new ValidationResultInfo();
-                    error.setMessage("Invalid captcha");
-                    error.setLevel(ErrorLevel.ERROR);
-                    error.setElement("captchaCode");
-                    errors.add(error);
-                }
+            if (captchaCode == null && captcha != null) {
+                ValidationResultInfo error = new ValidationResultInfo();
+                error.setMessage("Invalid captcha");
+                error.setLevel(ErrorLevel.ERROR);
+                error.setElement("captchaCode");
+                errors.add(error);
+            }
 
-                if(captcha == null){
-                    ValidationResultInfo error = new ValidationResultInfo();
-                    error.setMessage("Something went wrong while fetching captcha");
-                    error.setLevel(ErrorLevel.ERROR);
-                    error.setElement("captcha");
-                    errors.add(error);
-                }
+            if (captcha == null) {
+                ValidationResultInfo error = new ValidationResultInfo();
+                error.setMessage("Something went wrong while fetching captcha");
+                error.setLevel(ErrorLevel.ERROR);
+                error.setElement("captcha");
+                errors.add(error);
+            }
 
-                if(ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)){
-                    HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-                    httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    httpResponse.setContentType("application/json");
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    httpResponse.getWriter().write(objectMapper.writeValueAsString(errors));
-                    return;
-                }
+            if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+                HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+                httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                httpResponse.setContentType("application/json");
+                ObjectMapper objectMapper = new ObjectMapper();
+                httpResponse.getWriter().write(objectMapper.writeValueAsString(errors));
+                return;
+            }
 
 
-                try {
-                    errors = captchaService.validateCaptcha(captchaCode, captcha, (ContextInfo) request.getAttribute("contextInfo"));
-                } catch (Exception e) {
-                    LOGGER.error("caught exception in CaptchaFilter ",e);
-                    return;
-                }
+            try {
+                errors = captchaService.validateCaptcha(captchaCode, captcha, (ContextInfo) request.getAttribute("contextInfo"));
+            } catch (Exception e) {
+                LOGGER.error("caught exception in CaptchaFilter ", e);
+                return;
+            }
 
-                if(ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)){
-                    HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-                    httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    httpResponse.setContentType("application/json");
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    httpResponse.getWriter().write(objectMapper.writeValueAsString(errors));
-                    return;
-                }
+            if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+                HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+                httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                httpResponse.setContentType("application/json");
+                ObjectMapper objectMapper = new ObjectMapper();
+                httpResponse.getWriter().write(objectMapper.writeValueAsString(errors));
+                return;
+            }
 
         }
         filterChain.doFilter(request, servletResponse);

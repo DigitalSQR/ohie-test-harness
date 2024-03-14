@@ -67,26 +67,16 @@ public final class AuditServiceConstant {
 
         public ModelDtoMapper createMapperObject(EntityType entityType) {
             return switch (entityType) {
-                case USER ->
-                    new UserMapperImpl();
-                case COMPONENT ->
-                    new ComponentMapperImpl();
-                case SPECIFICATION ->
-                    new SpecificationMapperImpl();
-                case TESTCASE ->
-                    new TestcaseMapperImpl();
-                case TESTCASE_OPTION ->
-                    new TestcaseOptionMapperImpl();
-                case TESTCASE_RESULT ->
-                    new TestcaseResultMapperImpl();
-                case TEST_REQUEST ->
-                    new TestRequestMapperImpl();
-                case DOCUMENT ->
-                    new DocumentMapperImpl();
-                case GRADE ->
-                    new GradeMapperImpl();
-                default ->
-                    throw new InvalidParameterException("Unsupported entity type: " + entityType);
+                case USER -> new UserMapperImpl();
+                case COMPONENT -> new ComponentMapperImpl();
+                case SPECIFICATION -> new SpecificationMapperImpl();
+                case TESTCASE -> new TestcaseMapperImpl();
+                case TESTCASE_OPTION -> new TestcaseOptionMapperImpl();
+                case TESTCASE_RESULT -> new TestcaseResultMapperImpl();
+                case TEST_REQUEST -> new TestRequestMapperImpl();
+                case DOCUMENT -> new DocumentMapperImpl();
+                case GRADE -> new GradeMapperImpl();
+                default -> throw new InvalidParameterException("Unsupported entity type: " + entityType);
             };
 
         }

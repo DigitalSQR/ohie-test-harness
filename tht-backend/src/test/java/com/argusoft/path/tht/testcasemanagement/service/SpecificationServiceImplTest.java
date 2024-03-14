@@ -23,22 +23,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
 
+    ContextInfo contextInfo;
     @Autowired
     private SpecificationServiceMockImpl specificationServiceMockImpl;
-
     @Autowired
     private SpecificationService specificationService;
-
     @Autowired
     private ComponentService componentService;
-
     @Autowired
     private TestcaseService testcaseService;
-
     @Autowired
     private TestcaseServiceMockImpl testcaseServiceMock;
-
-    ContextInfo contextInfo;
 
     @BeforeEach
     @Override
@@ -94,7 +89,7 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
         //Test case 4 : specificationEntity is null
         SpecificationEntity specificationEntity4 = null;
 
-        assertThrows(InvalidParameterException.class, ()->{
+        assertThrows(InvalidParameterException.class, () -> {
             specificationService.createSpecification(specificationEntity4, contextInfo);
         });
 
@@ -114,7 +109,7 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
         testcaseSet.add(testcase);
         specificationEntity5.setTestcases(testcaseSet);
 
-        assertThrows(DataValidationErrorException.class, ()->{
+        assertThrows(DataValidationErrorException.class, () -> {
             specificationService.createSpecification(specificationEntity5, contextInfo);
         });
 
@@ -131,7 +126,7 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
         componentEntity.setId("component.test");
         specificationEntity6.setComponent(componentEntity);
 
-        assertThrows(DataValidationErrorException.class, ()->{
+        assertThrows(DataValidationErrorException.class, () -> {
             specificationService.createSpecification(specificationEntity6, contextInfo);
         });
 
@@ -166,7 +161,7 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
         //Test case 3 : specificationEntity is null
         SpecificationEntity specificationEntity3 = null;
 
-        assertThrows(InvalidParameterException.class, ()->{
+        assertThrows(InvalidParameterException.class, () -> {
             specificationService.updateSpecification(specificationEntity3, contextInfo);
         });
 
@@ -377,7 +372,7 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
     @Test
     @Transactional
     public void testCreateSpecificationWithTestcase() throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
-        SpecificationEntity specificationEntity =specificationService.getSpecificationById("specification.01", contextInfo);
+        SpecificationEntity specificationEntity = specificationService.getSpecificationById("specification.01", contextInfo);
 
         //create testcase
         TestcaseEntity testcase = testcaseService.getTestcaseById("testcase.222", contextInfo);

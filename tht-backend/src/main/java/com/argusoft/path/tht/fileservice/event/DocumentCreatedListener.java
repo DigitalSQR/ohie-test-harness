@@ -18,10 +18,23 @@ import java.util.List;
 @Service
 public class DocumentCreatedListener {
 
-    @Autowired
-    private DocumentService documentService;
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DocumentCreatedListener.class);
+    private DocumentService documentService;
+
+    private static DocumentCriteriaSearchFilter getDocumentCriteriaSearchFilterPrepared(DocumentEntity createdDocument) {
+        DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
+        documentCriteriaSearchFilter.setRefId(createdDocument.getRefId());
+        documentCriteriaSearchFilter.setRefObjUri(createdDocument.getRefObjUri());
+        documentCriteriaSearchFilter.setDocumentType(createdDocument.getDocumentType());
+        documentCriteriaSearchFilter.setState(Collections.singletonList(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE));
+        return documentCriteriaSearchFilter;
+    }
+
+    @Autowired
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
+    }
 
     @EventListener
     public void changeStateBasedOnCreatedDocumentType(DocumentCreatedEvent event) throws DataValidationErrorException, OperationFailedException, VersionMismatchException {
@@ -42,7 +55,7 @@ public class DocumentCreatedListener {
                         }
                     }
                     default ->
-                        LOGGER.error("No case handled with the allowedActiveType ->%s".formatted(allowedActiveTypeForDocumentType));
+                            LOGGER.error("No case handled with the allowedActiveType ->%s".formatted(allowedActiveTypeForDocumentType));
                 }
 
             } else {
@@ -53,14 +66,5 @@ public class DocumentCreatedListener {
         } catch (DoesNotExistException e) {
             // ignore it
         }
-    }
-
-    private static DocumentCriteriaSearchFilter getDocumentCriteriaSearchFilterPrepared(DocumentEntity createdDocument) {
-        DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
-        documentCriteriaSearchFilter.setRefId(createdDocument.getRefId());
-        documentCriteriaSearchFilter.setRefObjUri(createdDocument.getRefObjUri());
-        documentCriteriaSearchFilter.setDocumentType(createdDocument.getDocumentType());
-        documentCriteriaSearchFilter.setState(Collections.singletonList(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE));
-        return documentCriteriaSearchFilter;
     }
 }

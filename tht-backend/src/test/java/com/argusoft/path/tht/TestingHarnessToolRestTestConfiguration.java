@@ -17,14 +17,11 @@ import static org.springframework.http.HttpStatus.OK;
 
 public class TestingHarnessToolRestTestConfiguration extends TestingHarnessToolTestConfiguration {
 
+    protected Map tokenMap;
     @Value("${app.authBasicToken}")
     String authBasicToken;
-
     @Autowired
     private RestTemplate restTemplate;
-
-    protected Map tokenMap;
-
     private MockRestServiceServer mockServer;
 
 

@@ -22,21 +22,26 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "REST Endpoints for Build Info", tags = {"Build Info API"})
 public class AppBuildInfoController {
 
-    @Autowired
     private Environment env;
+
+    @Autowired
+    public void setEnvironment(Environment env) {
+        this.env = env;
+    }
 
     /**
      * {@inheritdoc}
-     * @return 
+     *
+     * @return
      */
     @ApiOperation(value = "View current API version", response = String.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200,
-                message = "Current API virsion"),
-        @ApiResponse(code = 401,
-                message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403,
-                message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200,
+                    message = "Current API virsion"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("/build")
     public String apiVersion() {
@@ -49,16 +54,17 @@ public class AppBuildInfoController {
 
     /**
      * {@inheritdoc}
-     * @return 
+     *
+     * @return
      */
     @ApiOperation(value = "View Index for API", response = String.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200,
-                message = "Index API"),
-        @ApiResponse(code = 401,
-                message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403,
-                message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200,
+                    message = "Index API"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("")
     public String apiIndex() {
@@ -72,16 +78,17 @@ public class AppBuildInfoController {
 
     /**
      * {@inheritdoc}
-     * @return 
+     *
+     * @return
      */
     @ApiOperation(value = "View service", response = String.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200,
-                message = "View service"),
-        @ApiResponse(code = 401,
-                message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403,
-                message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200,
+                    message = "View service"),
+            @ApiResponse(code = 401,
+                    message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403,
+                    message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("/service")
     public ResponseEntity<Object> requestCsrf() {

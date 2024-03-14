@@ -25,7 +25,7 @@ public class TSWF3TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-            ContextInfo contextInfo) throws OperationFailedException {
+                                     ContextInfo contextInfo) throws OperationFailedException {
 
         try {
 
@@ -59,7 +59,7 @@ public class TSWF3TestCase1 implements TestCase {
                     .execute();
 
             // check if codeSystem got created
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
@@ -91,7 +91,7 @@ public class TSWF3TestCase1 implements TestCase {
                     .execute();
 
             // check if valueSet got created
-            if (!valueSetOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(valueSetOutcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
             }
 

@@ -4,8 +4,8 @@ import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
-import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
@@ -41,8 +41,12 @@ public class CustomUserDetailService implements UserDetailsService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CustomUserDetailService.class);
 
-    @Autowired
     private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -53,7 +57,7 @@ public class CustomUserDetailService implements UserDetailsService {
             try {
                 UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
                 if (!StringUtils.hasLength(user.getPassword()) || !EncryptDecrypt.checkRawString(password, user.getPassword())) {
-                    LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+                    LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
                     throw new UsernameNotFoundException("Credential are incorrect.");
                 }
 
@@ -61,16 +65,16 @@ public class CustomUserDetailService implements UserDetailsService {
                 if (!Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, user.getState())) {
                     if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
                         userService.resendVerification(user.getEmail(), Constant.SUPER_USER_CONTEXT);
-                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+                        LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("Email verification is pending. A verification email has been dispatched.") {
                         };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, user.getState())) {
-                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+                        LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("Admin approval pending. Confirmation email upon approval or rejection within 7 days.") {
                         };
                     } else {
                         //Only state left is UserServiceConstants.USER_STATUS_INACTIVE.
-                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+                        LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("Account is rejected/disabled. Please contact support for further assistance.") {
                         };
                     }
@@ -78,7 +82,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
                 List<GrantedAuthority> authorities
                         = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getId()))
-                                .collect(Collectors.toList());
+                        .collect(Collectors.toList());
 
                 return new ContextInfo(
                         user.getEmail(),
@@ -96,7 +100,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 };
             }
         }
-        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+        LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
         throw new UsernameNotFoundException("requestAttributes is incorrect") {
         };
     }

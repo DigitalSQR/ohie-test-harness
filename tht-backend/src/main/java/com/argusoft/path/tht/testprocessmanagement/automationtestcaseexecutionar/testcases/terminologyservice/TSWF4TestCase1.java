@@ -37,7 +37,7 @@ public class TSWF4TestCase1 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
-            LOGGER.info("Start testing " + testCaseName);
+            LOGGER.info("Start testing {}", testCaseName);
 
             String uniqueId = UUID.randomUUID().toString();
 
@@ -51,7 +51,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             // check if codeSystem got created
-            if (!outcome1.getCreated()) {
+            if (Boolean.FALSE.equals(outcome1.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
@@ -65,7 +65,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             // check if codeSystem got created
-            if (!outcome2.getCreated()) {
+            if (Boolean.FALSE.equals(outcome2.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
@@ -79,7 +79,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             // check if codeSystem got created
-            if (!outcome3.getCreated()) {
+            if (Boolean.FALSE.equals(outcome3.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
@@ -93,7 +93,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             // check if codeSystem got created
-            if (!outcome4.getCreated()) {
+            if (Boolean.FALSE.equals(outcome4.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
@@ -111,7 +111,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             // check if conceptMap got created
-            if (!outcome5.getCreated()) {
+            if (Boolean.FALSE.equals(outcome5.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create conceptMap");
             }
 
@@ -122,7 +122,7 @@ public class TSWF4TestCase1 implements TestCase {
                     .execute();
 
             // check if conceptMap got created
-            if (!outcome6.getCreated()) {
+            if (Boolean.FALSE.equals(outcome6.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create conceptMap");
             }
 

@@ -205,7 +205,6 @@ public class SpecificationRestControllerTest extends TestingHarnessToolRestTestC
     }
 
 
-
     @Test
     void testGetSpecificationById() throws Exception {
 
@@ -239,7 +238,7 @@ public class SpecificationRestControllerTest extends TestingHarnessToolRestTestC
 
 
     @Test
-    void testGetSpecificationMapping(){
+    void testGetSpecificationMapping() {
 
         List strings = this.webTestClient
                 .get()

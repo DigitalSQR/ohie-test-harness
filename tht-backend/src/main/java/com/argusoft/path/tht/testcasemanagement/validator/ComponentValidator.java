@@ -36,15 +36,18 @@ public class ComponentValidator {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ComponentValidator.class);
 
+    private ComponentValidator() {
+    }
+
     public static void validateCreateUpdateComponent(String validationTypeKey, ComponentService componentService, SpecificationService specificationService, ComponentEntity componentEntity, ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntities
                 = validateComponent(validationTypeKey,
-                        componentEntity,
-                        componentService,
-                        specificationService,
-                        contextInfo);
+                componentEntity,
+                componentService,
+                specificationService,
+                contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + ComponentValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, ComponentValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -61,12 +64,11 @@ public class ComponentValidator {
             OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, ComponentValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        ComponentEntity originalEntity = null;
         trimComponent(componentEntity);
 
         // check Common Required
@@ -76,42 +78,30 @@ public class ComponentValidator {
         validateCommonForeignKey(componentEntity, errors, specificationService, contextInfo);
 
         // check Common Unique
-        validateCommonUnique(componentEntity,
-                validationTypeKey,
-                errors,
-                componentService,
-                contextInfo);
+        validateCommonUnique(componentEntity, validationTypeKey, errors, componentService, contextInfo);
 
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
                 // get the info
                 if (componentEntity.getId() != null) {
                     try {
-                        originalEntity = componentService
-                                .getComponentById(componentEntity.getId(),
-                                        contextInfo);
+                        ComponentEntity originalEntity = componentService.getComponentById(componentEntity.getId(), contextInfo);
+                        validateUpdateComponent(errors, componentEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + ComponentValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR, ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateComponent(errors,
-                        componentEntity,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateComponent(errors, componentEntity, componentService, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, ComponentValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
@@ -131,9 +121,9 @@ public class ComponentValidator {
     }
 
     private static void validateCommonForeignKey(ComponentEntity componentEntity,
-            List<ValidationResultInfo> errors,
-            SpecificationService specificationService,
-            ContextInfo contextInfo) {
+                                                 List<ValidationResultInfo> errors,
+                                                 SpecificationService specificationService,
+                                                 ContextInfo contextInfo) {
         //validate Component foreignKey.
         Set<SpecificationEntity> specificationEntitySet = new HashSet<>();
         componentEntity.getSpecifications().stream().forEach(item -> {
@@ -153,8 +143,8 @@ public class ComponentValidator {
 
     //validate update
     private static void validateUpdateComponent(List<ValidationResultInfo> errors,
-            ComponentEntity componentEntity,
-            ComponentEntity originalEntity) {
+                                                ComponentEntity componentEntity,
+                                                ComponentEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(componentEntity.getId(), "id", errors);
         //check the meta required
@@ -177,8 +167,8 @@ public class ComponentValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-            ComponentEntity componentEntity,
-            ComponentEntity originalEntity) {
+                                             ComponentEntity componentEntity,
+                                             ComponentEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(componentEntity.getState(), originalEntity.getState(), "state", errors);
     }
@@ -208,7 +198,7 @@ public class ComponentValidator {
 
     //Validate Required
     private static void validateCommonRequired(ComponentEntity componentEntity,
-            List<ValidationResultInfo> errors) {
+                                               List<ValidationResultInfo> errors) {
         //check for name
         ValidationUtils
                 .validateRequired(componentEntity.getName(), "name", errors);
@@ -225,10 +215,10 @@ public class ComponentValidator {
 
     //Validate Common Unique
     private static void validateCommonUnique(ComponentEntity componentEntity,
-            String validationTypeKey,
-            List<ValidationResultInfo> errors,
-            ComponentService componentService,
-            ContextInfo contextInfo)
+                                             String validationTypeKey,
+                                             List<ValidationResultInfo> errors,
+                                             ComponentService componentService,
+                                             ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || componentEntity.getId() != null)
@@ -244,7 +234,7 @@ public class ComponentValidator {
             boolean flag
                     = componentEntities.stream().anyMatch(c -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
                     || !c.getId().equals(componentEntity.getId()))
-                    );
+            );
             if (flag) {
                 String fieldName = "name";
                 errors.add(
@@ -257,7 +247,7 @@ public class ComponentValidator {
 
     //Validation For :Id
     private static void validateComponentEntityId(ComponentEntity componentEntity,
-            List<ValidationResultInfo> errors) {
+                                                  List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(componentEntity.getId(),
                 "id",
                 0,
@@ -267,7 +257,7 @@ public class ComponentValidator {
 
     //Validation For :Name
     private static void validateComponentEntityName(ComponentEntity componentEntity,
-            List<ValidationResultInfo> errors) {
+                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(componentEntity.getName(),
                 "name",
                 3,
@@ -277,7 +267,7 @@ public class ComponentValidator {
 
     //Validation For :Order
     private static void validateComponentEntityRank(ComponentEntity componentEntity,
-            List<ValidationResultInfo> errors) {
+                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(componentEntity.getRank(),
                 "rank",
                 1,
@@ -287,7 +277,7 @@ public class ComponentValidator {
 
     //Validation for desc
     private static void validateComponentEntityDesc(ComponentEntity componentEntity,
-            List<ValidationResultInfo> errors) {
+                                                    List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(componentEntity.getDescription(),
                 "description",
                 0,
@@ -340,7 +330,7 @@ public class ComponentValidator {
             } else if (TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(refObjUri)) {
                 try {
                     TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(refId, contextInfo);
-                    validateTestcase(testcaseEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                    validateTestcase(testcaseEntity, testcaseOptionService, errors, contextInfo);
                 } catch (DoesNotExistException e) {
                     errors.add(
                             new TestcaseValidationResultInfo(ErrorLevel.ERROR, TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, "component",
@@ -431,21 +421,18 @@ public class ComponentValidator {
                             null,
                             false));
             for (TestcaseEntity testcaseEntity : specificationEntity.getTestcases()) {
-                validateTestcase(testcaseEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                validateTestcase(testcaseEntity, testcaseOptionService, errors, contextInfo);
             }
         }
     }
 
     private static void validateTestcase(
             TestcaseEntity testcaseEntity,
-            ComponentService componentService,
-            SpecificationService specificationService,
-            TestcaseService testcaseService,
             TestcaseOptionService testcaseOptionService,
             List<TestcaseValidationResultInfo> errors,
             ContextInfo contextInfo
     ) throws InvalidParameterException, OperationFailedException {
-        if (!testcaseEntity.getManual()) {
+        if (Boolean.FALSE.equals(testcaseEntity.getManual())) {
             return;
         }
 

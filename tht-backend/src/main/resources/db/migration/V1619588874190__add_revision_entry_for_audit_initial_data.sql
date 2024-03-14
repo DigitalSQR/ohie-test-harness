@@ -4,14 +4,10 @@
 --@since 2023-09-13
 
 
-INSERT INTO
-    revision(revision_number, revision_timestamp)
-VALUES
-    (
-        1,
+INSERT INTO revision(revision_number, revision_timestamp)
+VALUES (1,
         EXTRACT(
-            EPOCH
-            FROM
+                EPOCH
+                FROM
                 CURRENT_TIMESTAMP
-        ) :: BIGINT * 1000
-    );
+        ) :: BIGINT * 1000);

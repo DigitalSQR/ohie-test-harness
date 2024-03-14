@@ -27,18 +27,25 @@ import java.util.List;
 @Api(value = "REST API for Grade services", tags = {"Test Result Relation API"})
 public class TestResultRelationController {
 
-    @Autowired
     private TestResultRelationService testResultRelationService;
+    private TestResultRelationMapper testResultRelationMapper;
 
     @Autowired
-    private TestResultRelationMapper testResultRelationMapper;
+    public void setTestResultRelationService(TestResultRelationService testResultRelationService) {
+        this.testResultRelationService = testResultRelationService;
+    }
+
+    @Autowired
+    public void setTestResultRelationMapper(TestResultRelationMapper testResultRelationMapper) {
+        this.testResultRelationMapper = testResultRelationMapper;
+    }
 
     @ApiOperation(value = "Get Objects of Test Result Relation", response = List.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully Retrieved TestcaseResultRelationService"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
+            @ApiResponse(code = 200, message = "Successfully Retrieved TestcaseResultRelationService"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
     })
     @GetMapping("/{testcaseResultId}/{refObjUri}")
     public List<Object> getTestcaseResultRelatedObject(
@@ -52,10 +59,10 @@ public class TestResultRelationController {
 
     @ApiOperation(value = "Get Objects of Test Result Relation", response = List.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully Retrieved TestcaseResultRelationService"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
+            @ApiResponse(code = 200, message = "Successfully Retrieved TestcaseResultRelationService"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
     })
     @GetMapping("")
     public Page<TestResultRelationInfo> SearchTestResultRelationInfo(

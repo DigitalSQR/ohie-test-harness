@@ -46,14 +46,6 @@ public class ContextInfo extends User implements Serializable {
 
     private Module module;
 
-    public Module getModule() {
-        return module;
-    }
-
-    public void setModule(Module module) {
-        this.module = module;
-    }
-
     public ContextInfo() {
         super("username", "password", new ArrayList<>());
     }
@@ -78,6 +70,14 @@ public class ContextInfo extends User implements Serializable {
         setIsAssessee();
         setIsAdmin();
         setIsTester();
+    }
+
+    public Module getModule() {
+        return module;
+    }
+
+    public void setModule(Module module) {
+        this.module = module;
     }
 
     public Date getCurrentDate() {

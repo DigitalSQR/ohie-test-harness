@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.fileservice.service.impl;
 
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.constant.DocumentUtil;
 import com.argusoft.path.tht.fileservice.constant.FileType;
@@ -19,6 +18,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,16 +39,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
-    @Autowired
     FileService fileService;
-
-    @Autowired
     UserService userService;
-
-    @Autowired
     DocumentRepository documentRepository;
-
-    @Autowired
     private ApplicationEventPublisher eventPublisher;
 
     private static byte[] getFileContentByFileId(String fileId) throws OperationFailedException {
@@ -62,9 +55,29 @@ public class DocumentServiceImpl implements DocumentService {
         return fileContentByFilePathAndFileName;
     }
 
+    @Autowired
+    public void setFileService(FileService fileService) {
+        this.fileService = fileService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setDocumentRepository(DocumentRepository documentRepository) {
+        this.documentRepository = documentRepository;
+    }
+
+    @Autowired
+    public void setEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.eventPublisher = applicationEventPublisher;
+    }
+
     @Override
     public DocumentEntity createDocument(DocumentEntity documentEntity, MultipartFile file,
-            ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException {
+                                         ContextInfo contextInfo) throws OperationFailedException, DataValidationErrorException, InvalidFileTypeException, DoesNotExistException, InvalidParameterException {
 
         defaultValueCreateDocument(documentEntity, file, contextInfo);
 
@@ -74,18 +87,15 @@ public class DocumentServiceImpl implements DocumentService {
         //get Document Types
         Set<FileType> allowedFileTypesForDocumentType = DocumentUtil.getAllowedFileTypesForDocumentType(documentEntity.getRefObjUri(), documentEntity.getDocumentType());
 
-        //save file
-        FileDetails fileDetails = null;
         try {
-            fileDetails = storeFileAndGetFileDetails(file, allowedFileTypesForDocumentType);
+            FileDetails fileDetails = storeFileAndGetFileDetails(file, allowedFileTypesForDocumentType);
+            //set FileId to DocumentEntity as it is UUID
+            documentEntity.setFileId(fileDetails.getFileId());
+            documentEntity.setName(fileDetails.getFileName());
         } catch (InvalidFileTypeException e) {
             LOGGER.error(ValidateConstant.INVALID_FILE_TYPE_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             DocumentValidator.setErrorMessageForFileType(e);
         }
-
-        //set FileId to DocumentEntity as it is UUID
-        documentEntity.setFileId(fileDetails.getFileId());
-        documentEntity.setName(fileDetails.getFileName());
 
         DocumentEntity document = documentRepository.saveAndFlush(documentEntity);
         eventPublisher.publishEvent(new DocumentCreatedEvent(document, contextInfo));
@@ -143,7 +153,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity changeRank(String documentId, Integer rankId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    public DocumentEntity changeRank(String documentId, Integer rankId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException, InvalidParameterException {
 
         DocumentValidator.validateDocumentRank(rankId);
         DocumentEntity document = this.getDocument(documentId, contextInfo);
@@ -151,13 +161,7 @@ public class DocumentServiceImpl implements DocumentService {
         String refObjUri = document.getRefObjUri();
         String refId = document.getRefId();
 
-        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = null;
-        try {
-            documentsByRefObjectUriAndRefObjectId = getDocumentsByRefObjectUriAndRefObjectId(refObjUri, refId, contextInfo);
-        } catch (InvalidParameterException e) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
-            //TODO add logger
-        }
+        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = getDocumentsByRefObjectUriAndRefObjectId(refObjUri, refId, contextInfo);
 
         TreeMap<Integer, DocumentEntity> documentEntityTreeMap = new TreeMap<>();
         for (int i = 1; i <= documentsByRefObjectUriAndRefObjectId.size(); i++) {

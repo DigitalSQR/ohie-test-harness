@@ -25,60 +25,6 @@ public class TSWF6TestCase1 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TSWF6TestCase1.class);
 
-    @Override
-    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-            ContextInfo contextInfo) throws OperationFailedException {
-        try {
-            LOGGER.info("Start testing TSWF6TestCase1");
-
-            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
-            if (client == null) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
-            }
-
-            LOGGER.info("Creating CodeSystem");
-            // Creating codeSystem
-            if (!Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated()) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
-            }
-
-            LOGGER.info("Creating ValueSet");
-            // Creating valueSet
-            if (!Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset", "ExampleValueSet", "Example ValueSet Title", "ACTIVE", "HL7 International / Terminology Infrastructure", "http://example.com/gender", "12345", "Blood Pressure")).getCreated()) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
-            }
-
-            // Creating valueSet
-            if (!Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset2", "ExampleValueSet2", "Example ValueSet Title2", "ACTIVE", "HTHE International", "http://example.com/gender", "12345", "Blood Pressure")).getCreated()) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
-            }
-
-            // Publisher name to search for
-            String publisherName = "HL7 International / Terminology Infrastructure";
-
-            // Use $search to search for CodeSystem by publisher
-            Bundle searchResults = client
-                    .search()
-                    .forResource(ValueSet.class)
-                    .where(ValueSet.PUBLISHER.matches().value(publisherName))
-                    .returnBundle(Bundle.class)
-                    .execute();
-
-            // checking if it contains codeSystem with particular publisherName
-            if (isValueSetPresent(searchResults, "http://example.com/ValueSet/example-valueset") && !isValueSetPresent(searchResults, "http://example.com/ValueSet/example-valueset2")) {
-                LOGGER.info("testTSWF6Case1 Testcase successfully passed!");
-                return new ValidationResultInfo(ErrorLevel.OK, "Passed");
-            }
-
-            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to perform query code in valueSet");
-
-        } catch (Exception ex) {
-            LOGGER.error(ValidateConstant.EXCEPTION + TSWF6TestCase1.class.getSimpleName(), ex);
-            throw new OperationFailedException(ex.getMessage(), ex);
-        }
-
-    }
-
     public static MethodOutcome addCodeSystem(IGenericClient client, String url, String version, String name, String title, String status, String publisher, String content, String code, String display, String definition) {
 
         // checking if codeSystem exist or not
@@ -147,5 +93,59 @@ public class TSWF6TestCase1 implements TestCase {
         }
 
         return false;
+    }
+
+    @Override
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
+                                     ContextInfo contextInfo) throws OperationFailedException {
+        try {
+            LOGGER.info("Start testing TSWF6TestCase1");
+
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
+            if (client == null) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
+
+            LOGGER.info("Creating CodeSystem");
+            // Creating codeSystem
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated())) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
+            }
+
+            LOGGER.info("Creating ValueSet");
+            // Creating valueSet
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset", "ExampleValueSet", "Example ValueSet Title", "ACTIVE", "HL7 International / Terminology Infrastructure", "http://example.com/gender", "12345", "Blood Pressure")).getCreated())) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
+            }
+
+            // Creating valueSet
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addValueSet(client, "http://example.com/ValueSet/example-valueset2", "ExampleValueSet2", "Example ValueSet Title2", "ACTIVE", "HTHE International", "http://example.com/gender", "12345", "Blood Pressure")).getCreated())) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
+            }
+
+            // Publisher name to search for
+            String publisherName = "HL7 International / Terminology Infrastructure";
+
+            // Use $search to search for CodeSystem by publisher
+            Bundle searchResults = client
+                    .search()
+                    .forResource(ValueSet.class)
+                    .where(ValueSet.PUBLISHER.matches().value(publisherName))
+                    .returnBundle(Bundle.class)
+                    .execute();
+
+            // checking if it contains codeSystem with particular publisherName
+            if (isValueSetPresent(searchResults, "http://example.com/ValueSet/example-valueset") && !isValueSetPresent(searchResults, "http://example.com/ValueSet/example-valueset2")) {
+                LOGGER.info("testTSWF6Case1 Testcase successfully passed!");
+                return new ValidationResultInfo(ErrorLevel.OK, "Passed");
+            }
+
+            return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to perform query code in valueSet");
+
+        } catch (Exception ex) {
+            LOGGER.error(ValidateConstant.EXCEPTION + TSWF6TestCase1.class.getSimpleName(), ex);
+            throw new OperationFailedException(ex.getMessage(), ex);
+        }
+
     }
 }

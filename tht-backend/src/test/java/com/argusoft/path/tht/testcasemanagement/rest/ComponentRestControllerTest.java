@@ -154,7 +154,7 @@ public class ComponentRestControllerTest extends TestingHarnessToolRestTestConfi
                 .returnResult()
                 .getResponseBody();
 
-         // After
+        // After
         assertEquals("Component 21", updatedComponent.getName());
 
     }
@@ -194,7 +194,6 @@ public class ComponentRestControllerTest extends TestingHarnessToolRestTestConfi
     }
 
 
-
     @Test
     void testGetComponentById() throws Exception {
 
@@ -227,7 +226,7 @@ public class ComponentRestControllerTest extends TestingHarnessToolRestTestConfi
     }
 
     @Test
-    void testGetComponentMapping(){
+    void testGetComponentMapping() {
 
         List strings = this.webTestClient
                 .get()

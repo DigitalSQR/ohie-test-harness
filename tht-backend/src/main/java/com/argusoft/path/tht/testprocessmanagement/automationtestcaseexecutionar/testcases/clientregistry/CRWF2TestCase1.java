@@ -29,7 +29,7 @@ public class CRWF2TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-            ContextInfo contextInfo) throws OperationFailedException {
+                                     ContextInfo contextInfo) throws OperationFailedException {
         try {
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_CLIENT_REGISTRY_ID);
             if (client == null) {
@@ -45,7 +45,7 @@ public class CRWF2TestCase1 implements TestCase {
                     .execute();
 
             // Check if the patient was created successfully
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
             }
 

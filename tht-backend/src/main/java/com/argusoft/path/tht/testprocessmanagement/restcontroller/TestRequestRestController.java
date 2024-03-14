@@ -37,11 +37,18 @@ import java.util.Objects;
 @Api(value = "REST API for TestRequest services", tags = {"TestRequest API"})
 public class TestRequestRestController {
 
-    @Autowired
     private TestRequestService testRequestService;
+    private TestRequestMapper testRequestMapper;
 
     @Autowired
-    private TestRequestMapper testRequestMapper;
+    public void setTestRequestService(TestRequestService testRequestService) {
+        this.testRequestService = testRequestService;
+    }
+
+    @Autowired
+    public void setTestRequestMapper(TestRequestMapper testRequestMapper) {
+        this.testRequestMapper = testRequestMapper;
+    }
 
     /**
      * {@inheritdoc}

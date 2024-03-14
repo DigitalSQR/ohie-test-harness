@@ -24,7 +24,7 @@ public class TSWF2TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-            ContextInfo contextInfo) throws OperationFailedException {
+                                     ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing TSWF1TestCase1");
 
@@ -61,7 +61,7 @@ public class TSWF2TestCase1 implements TestCase {
                     .execute();
 
             // check if codeSystem got created
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
@@ -92,7 +92,7 @@ public class TSWF2TestCase1 implements TestCase {
                     .resource(valueSet)
                     .execute();
 
-            if (!outcome1.getCreated()) {
+            if (Boolean.FALSE.equals(outcome1.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create valueSet");
             }
 

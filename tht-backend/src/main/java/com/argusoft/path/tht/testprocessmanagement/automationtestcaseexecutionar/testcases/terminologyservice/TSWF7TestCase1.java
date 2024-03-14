@@ -24,7 +24,7 @@ public class TSWF7TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-            ContextInfo contextInfo) throws OperationFailedException {
+                                     ContextInfo contextInfo) throws OperationFailedException {
         try {
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
@@ -56,7 +56,7 @@ public class TSWF7TestCase1 implements TestCase {
                     .execute();
 
             // check if codeSystem got created
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 

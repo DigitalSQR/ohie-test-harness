@@ -30,14 +30,9 @@ public class DocumentValidator {
 
     private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
 
-    @Autowired
-    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
-        DocumentValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
-    }
-
     public static void validateDocumentEntity(String validationTypeKey,
-            DocumentEntity documentEntity,
-            ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+                                              DocumentEntity documentEntity,
+                                              ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         validateRequired(documentEntity, errors);
@@ -54,12 +49,12 @@ public class DocumentValidator {
                 //TODO define and add validation for update
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + DocumentValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, DocumentValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + DocumentValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, DocumentValidator.class.getSimpleName());
             throw new DataValidationErrorException(ValidateConstant.ERRORS, errors);
         }
     }
@@ -72,7 +67,7 @@ public class DocumentValidator {
             validationResultInfo.setLevel(ErrorLevel.ERROR);
             validationResultInfo.setElement("rankId");
             errors.add(validationResultInfo);
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + DocumentValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, DocumentValidator.class.getSimpleName());
             throw new DataValidationErrorException(ValidateConstant.ERRORS, errors);
         }
     }
@@ -93,7 +88,7 @@ public class DocumentValidator {
         error.setLevel(ErrorLevel.ERROR);
         error.setStackTrace(Arrays.toString(e.getStackTrace()));
         error.setElement("fileType");
-        LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + DocumentValidator.class.getSimpleName());
+        LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, DocumentValidator.class.getSimpleName());
         throw new DataValidationErrorException(e.getMessage(), Collections.singletonList(error));
     }
 
@@ -106,6 +101,11 @@ public class DocumentValidator {
                     ErrorLevel.ERROR,
                     fieldName + " is invalid for the given refObjUri"));
         }
+    }
+
+    @Autowired
+    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
+        DocumentValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
     }
 
 }

@@ -46,14 +46,14 @@ public class TestcaseResultValidator {
     public static List<ValidationResultInfo> validateCreateUpdateTestCaseResult(String validationTypeKey, TestcaseResultService testcaseResultService, UserService userService, TestcaseOptionService testcaseOptionService, TestRequestService testRequestService, TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestCaseResult(validationTypeKey,
-                        testcaseResultEntity,
-                        userService,
-                        testcaseResultService,
-                        testcaseOptionService,
-                        testRequestService,
-                        contextInfo);
+                testcaseResultEntity,
+                userService,
+                testcaseResultService,
+                testcaseOptionService,
+                testRequestService,
+                contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, TestcaseResultValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -62,23 +62,20 @@ public class TestcaseResultValidator {
     }
 
     public static void validateSubmitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds,
-            String validationTypekey, TestcaseResultService testcaseResultService,
-            TestcaseOptionService testcaseOptionService,
-            TestResultRelationService testResultRelationService,
-            AuditService auditService,
-            ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+                                                    String validationTypekey, TestcaseResultService testcaseResultService,
+                                                    TestcaseOptionService testcaseOptionService,
+                                                    TestResultRelationService testResultRelationService,
+                                                    AuditService auditService,
+                                                    ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> validationResultEntitys
                 = validateTestcaseResultSubmit(
-                        testcaseResultId,
-                        selectedTestcaseOptionIds,
-                        validationTypekey,
-                        testcaseResultService,
-                        testcaseOptionService,
-                        testResultRelationService,
-                        auditService,
-                        contextInfo);
+                testcaseResultId,
+                selectedTestcaseOptionIds,
+                testcaseResultService,
+                testResultRelationService,
+                contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, TestcaseResultValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntitys);
@@ -88,19 +85,18 @@ public class TestcaseResultValidator {
     public static List<ValidationResultInfo> validateTestCaseResult(String validationTypeKey, TestcaseResultEntity testcaseResultEntity, UserService userService, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, TestRequestService testRequestService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultValidator.class.getSimpleName());
             throw new InvalidParameterException("validationTypeKey is missing");
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        TestcaseResultEntity originalEntity = null;
         trimTestcaseResult(testcaseResultEntity);
 
         // check Common Required
         validateCommonRequired(testcaseResultEntity, errors);
 
         // check Common ForeignKey
-        validateCommonForeignKey(testcaseResultEntity, userService, testcaseResultService, testcaseOptionService, testRequestService, errors, contextInfo);
+        validateCommonForeignKey(testcaseResultEntity, userService, testcaseResultService, testRequestService, errors, contextInfo);
 
         // check Common Unique
         validateCommonUnique(testcaseResultEntity,
@@ -114,9 +110,8 @@ public class TestcaseResultValidator {
                 // get the info
                 if (testcaseResultEntity.getId() != null) {
                     try {
-                        originalEntity = testcaseResultService
-                                .getTestcaseResultById(testcaseResultEntity.getId(),
-                                        contextInfo);
+                        TestcaseResultEntity originalEntity = testcaseResultService.getTestcaseResultById(testcaseResultEntity.getId(), contextInfo);
+                        validateUpdateTestcaseResult(errors, testcaseResultEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
@@ -124,22 +119,15 @@ public class TestcaseResultValidator {
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                         ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateTestcaseResult(errors,
-                        testcaseResultEntity,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateTestcaseResult(errors, testcaseResultEntity, testcaseResultService, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
@@ -161,23 +149,16 @@ public class TestcaseResultValidator {
         // For :Message
         validateTestcaseResultEntityMessage(testcaseResultEntity,
                 errors);
-        // For :TestcaseOption
-        validateTestcaseResultEntityTestcaseOption(testcaseResultEntity,
-                errors);
-        // For :IsSuccess
-        validateTestcaseResultEntityIsSuccess(testcaseResultEntity,
-                errors);
 
         return errors;
     }
 
     private static void validateCommonForeignKey(TestcaseResultEntity testcaseResultEntity,
-            UserService userService,
-            TestcaseResultService testcaseResultService,
-            TestcaseOptionService testcaseOptionService,
-            TestRequestService testRequestService,
-            List<ValidationResultInfo> errors,
-            ContextInfo contextInfo)
+                                                 UserService userService,
+                                                 TestcaseResultService testcaseResultService,
+                                                 TestRequestService testRequestService,
+                                                 List<ValidationResultInfo> errors,
+                                                 ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException {
         //validate TestcaseResult foreignKey.
@@ -231,8 +212,8 @@ public class TestcaseResultValidator {
 
     //validate update
     private static void validateUpdateTestcaseResult(List<ValidationResultInfo> errors,
-            TestcaseResultEntity testcaseResultEntity,
-            TestcaseResultEntity originalEntity)
+                                                     TestcaseResultEntity testcaseResultEntity,
+                                                     TestcaseResultEntity originalEntity)
             throws OperationFailedException,
             InvalidParameterException {
         // required validation
@@ -257,8 +238,8 @@ public class TestcaseResultValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-            TestcaseResultEntity testcaseResultEntity,
-            TestcaseResultEntity originalEntity) {
+                                             TestcaseResultEntity testcaseResultEntity,
+                                             TestcaseResultEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseResultEntity.getState(), originalEntity.getState(), "state", errors);
         ValidationUtils.validateNotUpdatable(testcaseResultEntity.getParentTestcaseResult(), originalEntity.getParentTestcaseResult(), "parent_test_case_result_id", errors);
@@ -298,7 +279,7 @@ public class TestcaseResultValidator {
 
     //Validate Required
     private static void validateCommonRequired(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
+                                               List<ValidationResultInfo> errors) {
         ValidationUtils
                 .validateRequired(testcaseResultEntity.getName(), "name", errors);
         ValidationUtils
@@ -337,10 +318,10 @@ public class TestcaseResultValidator {
 
     //Validate Common Unique
     private static void validateCommonUnique(TestcaseResultEntity testcaseResultEntity,
-            String validationTypeKey,
-            TestcaseResultService testcaseResultService,
-            List<ValidationResultInfo> errors,
-            ContextInfo contextInfo)
+                                             String validationTypeKey,
+                                             TestcaseResultService testcaseResultService,
+                                             List<ValidationResultInfo> errors,
+                                             ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException {
         // check unique field
         if ((validationTypeKey.equals(Constant.CREATE_VALIDATION) || testcaseResultEntity.getId() != null)) {
@@ -361,7 +342,7 @@ public class TestcaseResultValidator {
             boolean flag
                     = testcaseResultEntities.stream().anyMatch(c -> (validationTypeKey.equals(Constant.CREATE_VALIDATION)
                     || !c.getId().equals(testcaseResultEntity.getId()))
-                    );
+            );
             if (flag) {
                 String fieldName = "testRequestId, refObjUri and refId";
                 errors.add(
@@ -374,7 +355,7 @@ public class TestcaseResultValidator {
 
     //Validation For :Id
     private static void validateTestcaseResultEntityId(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
+                                                       List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseResultEntity.getId(),
                 "id",
                 0,
@@ -384,7 +365,7 @@ public class TestcaseResultValidator {
 
     //Validation For :Name
     private static void validateTestcaseResultEntityName(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
+                                                         List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseResultEntity.getName(),
                 "name",
                 3,
@@ -394,7 +375,7 @@ public class TestcaseResultValidator {
 
     //Validation For :Order
     private static void validateTestcaseResultEntityOrder(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
+                                                          List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(testcaseResultEntity.getRank(),
                 "rank",
                 1,
@@ -404,7 +385,7 @@ public class TestcaseResultValidator {
 
     //Validation For :Description
     private static void validateTestcaseResultEntityDescription(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
+                                                                List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseResultEntity.getDescription(),
                 "description",
                 0,
@@ -414,22 +395,12 @@ public class TestcaseResultValidator {
 
     //Validation For :Message
     private static void validateTestcaseResultEntityMessage(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
+                                                            List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseResultEntity.getMessage(),
                 "message",
                 0,
                 2000,
                 errors);
-    }
-
-    //Validation For :TestcaseOption
-    private static void validateTestcaseResultEntityTestcaseOption(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
-    }
-
-    //Validation For :isSuccess
-    private static void validateTestcaseResultEntityIsSuccess(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseResult field
@@ -457,11 +428,8 @@ public class TestcaseResultValidator {
     private static List<ValidationResultInfo> validateTestcaseResultSubmit(
             String testcaseResultId,
             Set<String> selectedTestcaseOptionIds,
-            String validationTypeKey,
             TestcaseResultService testcaseResultService,
-            TestcaseOptionService testcaseOptionService,
             TestResultRelationService testResultRelationService,
-            AuditService auditService,
             ContextInfo contextInfo) {
         List<ValidationResultInfo> errors = new ArrayList<>();
         TestcaseResultEntity originalEntity;
@@ -492,7 +460,8 @@ public class TestcaseResultValidator {
 
             validateTestResultRelationsForSelectedTestcaseOptionIds(testcaseResultId, selectedTestcaseOptionIds, testResultRelationService, contextInfo, errors);
 
-        } catch (InvalidParameterException | DoesNotExistException | OperationFailedException | DataValidationErrorException ex) {
+        } catch (InvalidParameterException | DoesNotExistException | OperationFailedException |
+                 DataValidationErrorException ex) {
             LOGGER.error(ValidateConstant.EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
             String fieldName = "selectedTestcaseOptionId";
             errors.add(
@@ -511,8 +480,16 @@ public class TestcaseResultValidator {
 
             Optional<TestcaseEntity> testcaseEntity = testResultRelationEntitiesFromAuditMapping.stream().findFirst().map(TestcaseEntity.class::cast);
 
-            testcase = testcaseEntity.get();
-
+            if (testcaseEntity.isPresent()) {
+                testcase = testcaseEntity.get();
+            } else {
+                LOGGER.error("TestcaseEntity not found for testcaseResultId: {}", testcaseResultId);
+                String fieldName = "testcaseResultId";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                "Failed to get testResultRelationEntities for Testcase"));
+            }
         } catch (DoesNotExistException e) {
             LOGGER.error("caught exception in TestcaseResultValidator ", e);
             String fieldName = "testcaseResultId";

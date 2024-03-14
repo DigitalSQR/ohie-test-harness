@@ -15,7 +15,6 @@ import java.util.List;
 public class TestRequestServiceConstants {
 
     public static final String TEST_REQUEST_REF_OBJ_URI = TestRequestInfo.class.getName();
-
     //TestRequest states
     public static final String TEST_REQUEST_STATUS_PENDING = "test.request.status.pending";
     public static final String TEST_REQUEST_STATUS_ACCEPTED = "test.request.status.accepted";
@@ -45,6 +44,9 @@ public class TestRequestServiceConstants {
         TEST_REQUEST_STATUS_MAP.put(TEST_REQUEST_STATUS_INPROGRESS, TEST_REQUEST_STATUS_FINISHED);
         TEST_REQUEST_STATUS_MAP.put(TEST_REQUEST_STATUS_SKIPPED, TEST_REQUEST_STATUS_ACCEPTED);
         TEST_REQUEST_STATUS_MAP.put(TEST_REQUEST_STATUS_FINISHED, TEST_REQUEST_STATUS_ACCEPTED);
+    }
+
+    private TestRequestServiceConstants() {
     }
 
 }

@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
@@ -8,9 +7,10 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonUtil;
+import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
@@ -53,26 +53,48 @@ public class UserServiceServiceImpl implements UserService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserServiceServiceImpl.class);
 
-    @Autowired
     UserRepository userRepository;
-
-    @Autowired
     RoleRepository roleRepository;
-
-    @Autowired
     TokenStore tokenStore;
-
-    @Autowired
     UserService userService;
-
-    @Autowired
     private TokenVerificationService tokenVerificationService;
-
-    @Autowired
     private DefaultTokenServices defaultTokenServices;
+    private EmailService emailService;
 
     @Autowired
-    private EmailService emailService;
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices) {
+        this.defaultTokenServices = defaultTokenServices;
+    }
+
+    @Autowired
+    public void setTokenStore(TokenStore tokenStore) {
+        this.tokenStore = tokenStore;
+    }
+
+    @Autowired
+    public void setTokenVerificationService(TokenVerificationService tokenVerificationService) {
+        this.tokenVerificationService = tokenVerificationService;
+    }
+
+    @Autowired
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
     /**
      * {@inheritdoc}
@@ -86,7 +108,7 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException {
-        if(!StringUtils.hasLength(email)) {
+        if (!StringUtils.hasLength(email)) {
             throw new DoesNotExistException("User does not found with email : " + email);
         }
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
@@ -132,7 +154,7 @@ public class UserServiceServiceImpl implements UserService {
                 .verifyUserToken(updatePasswordInfo.getBase64TokenId(), updatePasswordInfo.getBase64UserEmail(), true, contextInfo);
 
         // update user with new password
-        if (isTokenVerified) {
+        if (Boolean.TRUE.equals(isTokenVerified)) {
             String userEmail = new String(Base64.decodeBase64(updatePasswordInfo.getBase64UserEmail()));
             UserEntity userByEmail = this.getUserByEmail(userEmail, contextInfo);
             userByEmail.setPassword(updatePasswordInfo.getNewPassword());
@@ -221,7 +243,7 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public UserEntity createUser(UserEntity userEntity,
-            ContextInfo contextInfo)
+                                 ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException,
@@ -256,7 +278,7 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public UserEntity updateUser(UserEntity userEntity,
-            ContextInfo contextInfo)
+                                 ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException, InvalidParameterException {
@@ -301,11 +323,11 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public UserEntity getUserById(String userId,
-            ContextInfo contextInfo)
+                                  ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(userId)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + UserServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("userId is missing");
         }
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter(userId);
@@ -376,12 +398,12 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public RoleEntity getRoleById(String roleId,
-            ContextInfo contextInfo)
+                                  ContextInfo contextInfo)
             throws DoesNotExistException,
             OperationFailedException,
             InvalidParameterException {
         if (!StringUtils.hasLength(roleId)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + UserServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("roleId can not be empty");
         }
         RoleSearchCriteriaFilter roleSearchCriteriaFilter = new RoleSearchCriteriaFilter(roleId);
@@ -398,7 +420,7 @@ public class UserServiceServiceImpl implements UserService {
      */
     @Override
     public Page<RoleEntity> getRoles(Pageable pageable,
-            ContextInfo contextInfo) {
+                                     ContextInfo contextInfo) {
         Page<RoleEntity> roles = roleRepository.findRoles(pageable);
         return roles;
     }

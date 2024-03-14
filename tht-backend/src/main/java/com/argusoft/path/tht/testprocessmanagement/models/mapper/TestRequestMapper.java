@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Mapper(componentModel = "spring")
-public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity,TestRequestInfo> {
+public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, TestRequestInfo> {
 
     TestRequestMapper INSTANCE = Mappers.getMapper(TestRequestMapper.class);
 
@@ -44,38 +44,42 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity,Test
     List<TestRequestEntity> dtoToModel(List<TestRequestInfo> testRequestInfos);
 
     default Set<TestRequestUrlInfo> setToTestRequestUrls(TestRequestEntity testRequestEntity) {
-        if(testRequestEntity.getTestRequestUrls()==null){ return null;}
-            return testRequestEntity.getTestRequestUrls().stream()
-                    .map(testRequestUrl -> {
-                        return new TestRequestUrlInfo(testRequestUrl.getComponent().getId(),
-                                testRequestUrl.getFhirApiBaseUrl(),
-                                testRequestUrl.getUsername(),
-                                testRequestUrl.getPassword(),
-                                testRequestUrl.getFhirVersion(),
-                                testRequestUrl.getWebsiteUIBaseUrl());
-                    })
-                    .collect(Collectors.toSet());
+        if (testRequestEntity.getTestRequestUrls() == null) {
+            return null;
+        }
+        return testRequestEntity.getTestRequestUrls().stream()
+                .map(testRequestUrl -> {
+                    return new TestRequestUrlInfo(testRequestUrl.getComponent().getId(),
+                            testRequestUrl.getFhirApiBaseUrl(),
+                            testRequestUrl.getUsername(),
+                            testRequestUrl.getPassword(),
+                            testRequestUrl.getFhirVersion(),
+                            testRequestUrl.getWebsiteUIBaseUrl());
+                })
+                .collect(Collectors.toSet());
     }
 
     default Set<TestRequestUrlEntity> setToTestRequestUrls(TestRequestInfo testRequestInfo) {
-        if(testRequestInfo.getTestRequestUrls()==null){return null;}
-            return testRequestInfo.getTestRequestUrls().stream()
-                    .map(testRequestUrl -> {
-                        TestRequestUrlEntity testRequestUrlEntity = new TestRequestUrlEntity();
-                        testRequestUrlEntity.setTestRequestId(testRequestInfo.getId());
-                        testRequestUrlEntity.setFhirApiBaseUrl(testRequestUrl.getFhirApiBaseUrl());
-                        testRequestUrlEntity.setUsername(testRequestUrl.getUsername());
-                        testRequestUrlEntity.setPassword(testRequestUrl.getPassword());
-                        testRequestUrlEntity.setWebsiteUIBaseUrl(testRequestUrl.getWebsiteUIBaseUrl());
-                        testRequestUrlEntity.setFhirVersion(testRequestUrl.getFhirVersion());
+        if (testRequestInfo.getTestRequestUrls() == null) {
+            return null;
+        }
+        return testRequestInfo.getTestRequestUrls().stream()
+                .map(testRequestUrl -> {
+                    TestRequestUrlEntity testRequestUrlEntity = new TestRequestUrlEntity();
+                    testRequestUrlEntity.setTestRequestId(testRequestInfo.getId());
+                    testRequestUrlEntity.setFhirApiBaseUrl(testRequestUrl.getFhirApiBaseUrl());
+                    testRequestUrlEntity.setUsername(testRequestUrl.getUsername());
+                    testRequestUrlEntity.setPassword(testRequestUrl.getPassword());
+                    testRequestUrlEntity.setWebsiteUIBaseUrl(testRequestUrl.getWebsiteUIBaseUrl());
+                    testRequestUrlEntity.setFhirVersion(testRequestUrl.getFhirVersion());
 
-                        ComponentEntity componentEntity = new ComponentEntity();
-                        componentEntity.setId(testRequestUrl.getComponentId());
-                        testRequestUrlEntity.setComponent(componentEntity);
+                    ComponentEntity componentEntity = new ComponentEntity();
+                    componentEntity.setId(testRequestUrl.getComponentId());
+                    testRequestUrlEntity.setComponent(componentEntity);
 
-                        return testRequestUrlEntity;
-                    })
-                    .collect(Collectors.toSet());
+                    return testRequestUrlEntity;
+                })
+                .collect(Collectors.toSet());
     }
 
     @Named("setToApproverId")

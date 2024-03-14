@@ -20,13 +20,13 @@ public class TestcaseServiceMockImpl {
     @Autowired
     private TestcaseRepository testcaseRepository;
 
-    public void init(){
+    public void init() {
         String userId = "ivasiwala";
         specificationServiceMock.init();
-        createTestcase(1, "testcase.status.active", "testcase.test" ,"testcase.test", "testcase.222", true, "specification.01", userId);
+        createTestcase(1, "testcase.status.active", "testcase.test", "testcase.test", "testcase.222", true, "specification.01", userId);
     }
 
-    public TestcaseEntity createTestcase(int rank, String state, String name, String description, String id, Boolean manual, String specificationId, String userId){
+    public TestcaseEntity createTestcase(int rank, String state, String name, String description, String id, Boolean manual, String specificationId, String userId) {
         TestcaseEntity testcase = new TestcaseEntity();
         testcase.setRank(rank);
         testcase.setState(state);

@@ -13,9 +13,7 @@ import java.util.List;
  * @author Dhruv
  */
 public class TestcaseOptionServiceConstants {
-
     public static final String TESTCASE_OPTION_REF_OBJ_URI = TestcaseOptionInfo.class.getName();
-
     //Testcase states
     public static final String TESTCASE_OPTION_STATUS_DRAFT = "testcase.option.status.draft";
     public static final String TESTCASE_OPTION_STATUS_ACTIVE = "testcase.option.status.active";
@@ -33,5 +31,8 @@ public class TestcaseOptionServiceConstants {
         TESTCASE_OPTION_STATUS_MAP.put(TESTCASE_OPTION_STATUS_DRAFT, TESTCASE_OPTION_STATUS_ACTIVE);
         TESTCASE_OPTION_STATUS_MAP.put(TESTCASE_OPTION_STATUS_ACTIVE, TESTCASE_OPTION_STATUS_INACTIVE);
         TESTCASE_OPTION_STATUS_MAP.put(TESTCASE_OPTION_STATUS_INACTIVE, TESTCASE_OPTION_STATUS_ACTIVE);
+    }
+
+    private TestcaseOptionServiceConstants() {
     }
 }

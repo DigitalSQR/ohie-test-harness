@@ -66,38 +66,82 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestRequestServiceServiceImpl.class);
 
-    @Autowired
     private TestRequestRepository testRequestRepository;
 
-    @Autowired
     private TestcaseResultService testcaseResultService;
 
-    @Autowired
     private ComponentService componentService;
 
-    @Autowired
     private SpecificationService specificationService;
 
-    @Autowired
     private TestcaseService testcaseService;
 
-    @Autowired
     private UserService userService;
 
-    @Autowired
     private TestcaseExecutioner testcaseExecutioner;
 
-    @Autowired
     private TestResultRelationService testResultRelationService;
 
-    @Autowired
     private TestcaseOptionService testcaseOptionService;
 
-    @Autowired
     private DocumentService documentService;
 
-    @Autowired
     private EmailService emailService;
+
+    @Autowired
+    public void setTestRequestRepository(TestRequestRepository testRequestRepository) {
+        this.testRequestRepository = testRequestRepository;
+    }
+
+    @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
+
+    @Autowired
+    public void setComponentService(ComponentService componentService) {
+        this.componentService = componentService;
+    }
+
+    @Autowired
+    public void setSpecificationService(SpecificationService specificationService) {
+        this.specificationService = specificationService;
+    }
+
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService) {
+        this.testcaseService = testcaseService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setTestcaseExecutioner(TestcaseExecutioner testcaseExecutioner) {
+        this.testcaseExecutioner = testcaseExecutioner;
+    }
+
+    @Autowired
+    public void setTestResultRelationService(TestResultRelationService testResultRelationService) {
+        this.testResultRelationService = testResultRelationService;
+    }
+
+    @Autowired
+    public void setTestcaseOptionService(TestcaseOptionService testcaseOptionService) {
+        this.testcaseOptionService = testcaseOptionService;
+    }
+
+    @Autowired
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
+    @Autowired
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
     @Override
     public void stopTestingProcess(
@@ -198,7 +242,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             DataValidationErrorException, DoesNotExistException {
 
         if (testRequestEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
 
@@ -212,10 +256,10 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 contextInfo);
 
         //Fetch all admins
-        List<UserEntity> admins = userService.getUsersByRole("role.admin",contextInfo);
+        List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
 
         //Notify each admin that a test request is created
-        admins.forEach(admin -> emailService.testRequestCreatedMessage(admin.getEmail(), admin.getName(),contextInfo.getEmail()));
+        admins.forEach(admin -> emailService.testRequestCreatedMessage(admin.getEmail(), admin.getName(), contextInfo.getEmail()));
 
         //Create state change API to make this as Accepted or Rejected
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
@@ -235,7 +279,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             DataValidationErrorException {
 
         if (testRequestEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
 
@@ -288,7 +332,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(testRequestId)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestId is missing");
         }
         TestRequestCriteriaSearchFilter testRequestCriteriaSearchFilter = new TestRequestCriteriaSearchFilter(testRequestId);
@@ -309,7 +353,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testRequestEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
         List<ValidationResultInfo> errors = TestRequestValidator.validateTestRequest(validationTypeKey, testRequestEntity, this, userService, componentService, contextInfo);
@@ -352,22 +396,23 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
         UserEntity requestingUser = testRequestEntity.getAssessee();
 
-        sendMailToTheUserOnChangeState(oldState,stateKey,requestingUser,testRequestEntity.getName());
+        sendMailToTheUserOnChangeState(oldState, stateKey, requestingUser, testRequestEntity.getName());
 
 
         changeStateCallback(testRequestEntity, contextInfo);
         return testRequestEntity;
     }
-    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity requestingUser, String testRequestName){
+
+    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity requestingUser, String testRequestName) {
         if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(newState)) {
             //Send Email to assessee if their test request is accepted by admin
-            emailService.testRequestAcceptedMessage(requestingUser.getEmail(), requestingUser.getName(),testRequestName);
+            emailService.testRequestAcceptedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED.equals(newState)) {
             //Send Email to assessee if their test request is rejected
-            emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(),testRequestName);
+            emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(newState)) {
             //Send Email to assessee if their test request is finished
-            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(),testRequestName);
+            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
         }
     }
 
@@ -604,7 +649,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     private void createTestResultRelationsForManualTestcase(TestcaseEntity testcaseEntity, TestcaseResultEntity testcaseResult, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
 
-        if (testcaseEntity.getManual()) {
+        if (Boolean.TRUE.equals(testcaseEntity.getManual())) {
 
             // create for question
             TestResultRelationEntity testResultRelationEntity = createTestResultRelationEntity(

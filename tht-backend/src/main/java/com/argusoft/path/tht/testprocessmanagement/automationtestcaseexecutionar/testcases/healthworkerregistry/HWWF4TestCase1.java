@@ -26,7 +26,7 @@ public class HWWF4TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-            ContextInfo contextInfo) throws OperationFailedException {
+                                     ContextInfo contextInfo) throws OperationFailedException {
         try {
             LOGGER.info("Start testing HWWF4TestCase1");
 
@@ -45,7 +45,7 @@ public class HWWF4TestCase1 implements TestCase {
                     .execute();
 
             // Check if the practitioner was created successfully
-            if (!practitionerOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(practitionerOutcome.getCreated())) {
                 LOGGER.error("Testcase Failed for creating practitioner");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner");
             }
@@ -87,7 +87,7 @@ public class HWWF4TestCase1 implements TestCase {
                     .execute();
 
             //check for the location created successfully
-            if (!locationOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(locationOutcome.getCreated())) {
                 LOGGER.error("Testcase Failed for creating location in HWR");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create location");
             }
@@ -135,7 +135,7 @@ public class HWWF4TestCase1 implements TestCase {
                     .execute();
 
             // Check if the healthcare service was created successfully
-            if (!careServiceOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(careServiceOutcome.getCreated())) {
                 LOGGER.error("Testcase Failed to create HealthCare Service");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create HealthCare Service");
             }
@@ -176,7 +176,7 @@ public class HWWF4TestCase1 implements TestCase {
                     .execute();
 
             // Check if the practitioner role was created successfully
-            if (!practitionerRoleOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(practitionerRoleOutcome.getCreated())) {
                 LOGGER.error("Testcase Failed to create Practitioner Role");
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create practitioner role");
             }

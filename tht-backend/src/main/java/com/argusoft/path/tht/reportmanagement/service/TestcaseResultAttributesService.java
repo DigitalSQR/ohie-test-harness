@@ -20,15 +20,15 @@ public interface TestcaseResultAttributesService {
      * create new attributes
      *
      * @param testcaseResultEntity Attribute related to testcase result
-     * @param Key Attribute key
-     * @param Value Attribute value
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param Key                  Attribute key
+     * @param Value                Attribute value
+     * @param contextInfo          information containing the principalId and locale
+     *                             information about the caller of service operation
      * @return testcase result attribute
      * @throws InvalidParameterException invalid contextInfo
      */
     public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String Key, String Value,
-            ContextInfo contextInfo)
+                                                                                  ContextInfo contextInfo)
             throws
             InvalidParameterException;
 
@@ -36,10 +36,10 @@ public interface TestcaseResultAttributesService {
      * Retrieve test case result attribute
      *
      * @param testcaseResultEntity test case result whose attribute should be
-     * retrieved
-     * @param key key to get value
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     *                             retrieved
+     * @param key                  key to get value
+     * @param contextInfo          information containing the principalId and locale
+     *                             information about the caller of service operation
      * @return test case result attribute
      * @throws InvalidParameterException
      */
@@ -50,9 +50,9 @@ public interface TestcaseResultAttributesService {
      * Delete test case result attribute after test request is finished
      *
      * @param testcaseResultEntity test case result whose attributes should be
-     * deleted
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     *                             deleted
+     * @param contextInfo          information containing the principalId and locale
+     *                             information about the caller of service operation
      * @throws DoesNotExistException testcase result not found
      */
     public void deleteTestcaseResultAttributesEntities(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo)

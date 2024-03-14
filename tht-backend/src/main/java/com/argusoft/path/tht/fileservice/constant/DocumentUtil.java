@@ -8,6 +8,9 @@ import java.util.*;
 
 public class DocumentUtil {
 
+    private DocumentUtil() {
+    }
+
     public static boolean isDocumentTypeValidForEntityRefObjectUri(String documentType, String refObjUri) {
         return getDocumentEntityTypeEnumForDocumentType(refObjUri, documentType).isPresent();
     }

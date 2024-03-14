@@ -30,20 +30,15 @@ public class TestResultRelationValidator {
 
     private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
 
-    @Autowired
-    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
-        TestResultRelationValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
-    }
-
     public static void validateCreateUpdateTestResultRelation(String validationTypeKey, TestResultRelationEntity testResultRelationEntity, TestResultRelationService testResultRelationService, TestcaseResultService testcaseResultService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestResultRelation(validationTypeKey,
-                        testResultRelationService,
-                        testcaseResultService,
-                        testResultRelationEntity,
-                        contextInfo);
+                testResultRelationService,
+                testcaseResultService,
+                testResultRelationEntity,
+                contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, TestResultRelationValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     "Error(s) occurred in the validating",
                     validationResultEntities);
@@ -53,11 +48,11 @@ public class TestResultRelationValidator {
     public static List<ValidationResultInfo> validateTestResultRelation(String validationTypeKey, TestResultRelationService testResultRelationService, TestcaseResultService testcaseResultService, TestResultRelationEntity testResultRelationEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (testResultRelationEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestResultRelationValidator.class.getSimpleName());
             throw new InvalidParameterException("testResultRelationEntity is missing");
         }
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestResultRelationValidator.class.getSimpleName());
             throw new InvalidParameterException("validationTypeKey is missing");
         }
 
@@ -68,39 +63,32 @@ public class TestResultRelationValidator {
 
         validateCommonForeignKey(testResultRelationEntity, testcaseResultService, errors, contextInfo);
 
-        TestResultRelationEntity originalEntity = null;
-
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
                 // get the info
                 if (testResultRelationEntity.getId() != null) {
                     try {
-                        originalEntity = testResultRelationService
+                        TestResultRelationEntity originalEntity = testResultRelationService
                                 .getTestResultRelationById(testResultRelationEntity.getId(),
                                         contextInfo);
+                        validateUpdateTestResultRelation(originalEntity, testResultRelationEntity, errors);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
-                        LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
+                        LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestResultRelationValidator.class.getSimpleName());
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                         "The id supplied to the update does not "
-                                        + "exists"));
+                                                + "exists"));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateTestResultRelation(originalEntity, testResultRelationEntity, errors);
-
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateTestResultRelation(testResultRelationEntity, testResultRelationService, errors, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestResultRelationValidator.class.getSimpleName());
                 throw new InvalidParameterException("Invalid validationTypeKey");
         }
 
@@ -122,7 +110,7 @@ public class TestResultRelationValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.DOES_NOT_EXIST_EXCEPTION, TestResultRelationValidator.class.getSimpleName());
                 // This is ok because created id should be unique
             }
         }
@@ -144,8 +132,8 @@ public class TestResultRelationValidator {
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
                     "someone else has updated the TestResultRelation since you"
-                    + " started updating, you might want to"
-                    + " refresh your copy."));
+                            + " started updating, you might want to"
+                            + " refresh your copy."));
         }
         validateNotUpdatable(originalEntity, testResultRelationEntity, errors);
     }
@@ -163,7 +151,7 @@ public class TestResultRelationValidator {
                         testcaseResultService.getTestcaseResultById(testResultRelationEntity.getTestcaseResultEntity().getId(), contextInfo)
                 );
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.DOES_NOT_EXIST_EXCEPTION, TestResultRelationValidator.class.getSimpleName());
                 String fieldName = "testcaseResult";
                 errors.add(
                         new ValidationResultInfo(fieldName,
@@ -187,6 +175,11 @@ public class TestResultRelationValidator {
         if (testResultRelationEntity.getRefObjUri() != null) {
             testResultRelationEntity.setRefObjUri(testResultRelationEntity.getRefObjUri().trim());
         }
+    }
+
+    @Autowired
+    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
+        TestResultRelationValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
     }
 
 }

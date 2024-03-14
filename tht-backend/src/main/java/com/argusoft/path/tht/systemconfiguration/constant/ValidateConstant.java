@@ -9,17 +9,13 @@ public final class ValidateConstant {
     public static final String DOES_NOT_EXIST = " does not exists";
     public static final String NAME_ALREADY_EXIST = " with same name already exists";
     public static final String MISSING_VALIDATION_TYPE_KEY = "validationTypeKey is missing";
-
     public static final String INVALID_VALIDATION_TYPE_KEY = "Invalid validationTypeKey";
     public static final String DATA_VALIDATION_EXCEPTION = "caught DataValidationErrorException in ";
     public static final String DOES_NOT_EXIST_EXCEPTION = "caught DoesNotExistException in ";
     public static final String OPERATION_FAILED_EXCEPTION = "caught OperationFailedException in ";
     public static final String IO_EXCEPTION = "caught IOException in ";
-
     public static final String EXCEPTION = "caught exception in ";
-
     public static final String INVALID_PARAM_EXCEPTION = "caught InvalidParameterException in ";
-
     public static final String INVALID_FILE_TYPE_EXCEPTION = "caught InvalidFileTypeException in ";
     public static final String NULL_POINTER_EXCEPTION = "caught NullPointerException in ";
     public static final String OBJECT_OPTIMISTIC_LOCKING_FAILURE = "caught ObjectOptimisticLockingFailureException in ";
@@ -30,7 +26,9 @@ public final class ValidateConstant {
     public static final String NUMBER_FORMAT_EXCEPTION = "caught NumberFormatException in ";
     public static final String UNSUPPORTED_EXCEPTION = "caught UnsupportedEncodingException in";
     public static final String SOMEONE_UPDATED = "someone else has updated the";
-
     public static final String REFRESH_COPY = "since you started updating, you might want to refresh your copy.";
+
+    private ValidateConstant() {
+    }
 
 }

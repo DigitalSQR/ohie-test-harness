@@ -46,24 +46,37 @@ public class UserRestController {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserRestController.class);
 
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private TokenVerificationService tokenVerificationService;
-
-    @Autowired
     private UserMapper userMapper;
+    private EmailService emailService;
 
     @Autowired
-    private EmailService emailService;
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setTokenVerificationService(TokenVerificationService tokenVerificationService) {
+        this.tokenVerificationService = tokenVerificationService;
+    }
+
+    @Autowired
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
+    @Autowired
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
     /**
      * {@inheritdoc}
      */
     @ApiOperation(value = "login  user", response = Boolean.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully logout user")
+            @ApiResponse(code = 200, message = "Successfully logout user")
     })
     @PostMapping("/logout")
     @Transactional(rollbackFor = Exception.class)
@@ -79,9 +92,9 @@ public class UserRestController {
      */
     @ApiOperation(value = "Register new user", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully user registered"),
-        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully user registered"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/register")
     @Transactional(rollbackFor = Exception.class)
@@ -100,8 +113,8 @@ public class UserRestController {
     @PostMapping("/verify/{base64UserEmail}/{base64TokenId}")
     @Transactional(rollbackFor = Exception.class)
     public ValidationResultInfo verifyUser(@PathVariable("base64UserEmail") String base64UserEmail,
-            @PathVariable("base64TokenId") String base64TokenId,
-            @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
+                                           @PathVariable("base64TokenId") String base64TokenId,
+                                           @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws DataValidationErrorException,
             OperationFailedException,
             VersionMismatchException,
@@ -115,14 +128,14 @@ public class UserRestController {
             LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserRestController.class.getSimpleName(), e);
             // return false as it is
         }
-        vris.setLevel(isVerified ? ErrorLevel.OK : ErrorLevel.ERROR);
+        vris.setLevel(Boolean.TRUE.equals(isVerified) ? ErrorLevel.OK : ErrorLevel.ERROR);
         return vris;
     }
 
     @PostMapping("/update/password/")
     @Transactional(rollbackFor = Exception.class)
     public ValidationResultInfo updatePassword(@RequestBody UpdatePasswordInfo updatePasswordInfo,
-            @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
+                                               @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException, DoesNotExistException,
             DataValidationErrorException, OperationFailedException,
             VersionMismatchException {
@@ -135,7 +148,7 @@ public class UserRestController {
 
     @GetMapping("/forgot/password")
     public ValidationResultInfo forgotPasswordRequest(@RequestParam("userEmail") String userEmail,
-            @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
+                                                      @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
         userService.createForgotPasswordRequestAndSendEmail(userEmail, contextInfo);
         ValidationResultInfo vris = new ValidationResultInfo();
         vris.setMessage("You will receive email if already registered !");
@@ -144,7 +157,7 @@ public class UserRestController {
 
     @PostMapping("/resend/verification")
     public ValidationResultInfo resendVerification(@RequestParam("userEmail") String userEmail,
-            @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
+                                                   @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
         userService.resendVerification(userEmail, contextInfo);
         ValidationResultInfo vris = new ValidationResultInfo();
         vris.setMessage("You will receive email on you registered email !");
@@ -158,9 +171,9 @@ public class UserRestController {
      */
     @ApiOperation(value = "Create new user", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully created user"),
-        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully created user"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("")
     @Transactional(rollbackFor = Exception.class)
@@ -185,9 +198,9 @@ public class UserRestController {
      */
     @ApiOperation(value = "Update existing user", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully updated user"),
-        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully updated user"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 
     })
     @PutMapping("")
@@ -208,16 +221,16 @@ public class UserRestController {
 
     @ApiOperation(value = "To change state of User", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully updated user"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully updated user"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{userId}/{changeState}")
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public UserInfo updateUserState(@PathVariable("userId") String userId,
-            @PathVariable("changeState") String changeState,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+                                    @PathVariable("changeState") String changeState,
+                                    @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         UserEntity userEntity = userService.changeState(userId, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
@@ -230,10 +243,10 @@ public class UserRestController {
      */
     @ApiOperation(value = "View a page of available filtered users", response = Page.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved page"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
+            @ApiResponse(code = 200, message = "Successfully retrieved page"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
     })
     @GetMapping("")
     public Page<UserInfo> searchUsers(
@@ -253,10 +266,10 @@ public class UserRestController {
      */
     @ApiOperation(value = "View available user with supplied id", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved user"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
+            @ApiResponse(code = 200, message = "Successfully retrieved user"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
     })
     @GetMapping("/{userId}")
     public UserInfo getUserById(
@@ -274,9 +287,9 @@ public class UserRestController {
      */
     @ApiOperation(value = "View a list of validation errors for user", response = List.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved Validation errors"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully retrieved Validation errors"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
     public List<ValidationResultInfo> validateUser(
@@ -298,9 +311,9 @@ public class UserRestController {
      */
     @ApiOperation(value = "View loggedIn user's data", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved loggedIn user"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully retrieved loggedIn user"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @GetMapping("/principal")
     public UserInfo getPrincipalUser(@RequestAttribute("contextInfo") ContextInfo contextInfo)
@@ -323,21 +336,21 @@ public class UserRestController {
      */
     @ApiOperation(value = "Reset password for user", response = UserInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully reset the password"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully reset the password"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/reset/password")
     public UserInfo resetPassword(@RequestBody ResetPasswordInfo resetPasswordInfo,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+                                  @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         return userMapper.modelToDto(userService.resetPassword(resetPasswordInfo, contextInfo));
     }
 
     @ApiOperation(value = "Retrieves all status for user.", response = Multimap.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
     })
     @GetMapping("/status/mapping")
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {

@@ -22,16 +22,16 @@ public interface TestcaseOptionService {
      * Meta information may not be set in the supplied TestcaseOptionInfo.
      *
      * @param testcaseOptionEntity TestcaseOption
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param contextInfo          information containing the principalId and locale
+     *                             information about the caller of service operation
      * @return TestcaseOptionInfo the TestcaseOption just created
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException TestcaseOptionInfo or contextInfo is
-     * not valid
-     * @throws OperationFailedException unable to complete request
+     * @throws InvalidParameterException    TestcaseOptionInfo or contextInfo is
+     *                                      not valid
+     * @throws OperationFailedException     unable to complete request
      */
     public TestcaseOptionEntity createTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
-            ContextInfo contextInfo)
+                                                     ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException;
@@ -40,18 +40,18 @@ public interface TestcaseOptionService {
      * Updates an existing TestcaseOption.
      *
      * @param testcaseOptionEntity the new data for the TestcaseOption
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param contextInfo          information containing the principalId and locale
+     *                             information about the caller of service operation
      * @return TestcaseOptionInfo the details of TestcaseOption just updated
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException TestcaseOptionInfo or contextInfo is
-     * not valid
-     * @throws OperationFailedException unable to complete request
-     * @throws VersionMismatchException optimistic locking failure or the action
-     * was attempted on an out of date version
+     * @throws InvalidParameterException    TestcaseOptionInfo or contextInfo is
+     *                                      not valid
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
      */
     public TestcaseOptionEntity updateTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
-            ContextInfo contextInfo)
+                                                     ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException,
@@ -63,18 +63,18 @@ public interface TestcaseOptionService {
      * set.
      *
      * @param testcaseOptionCriteriaSearchFilter
-     * @param pageable Contains Index number of the Page, Max size of the single
-     * page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param pageable                           Contains Index number of the Page, Max size of the single
+     *                                           page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo                        information containing the principalId and locale
+     *                                           information about the caller of service operation
      * @return a list of TestcaseOption name start with given TestcaseOptionName
      * found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException unable to complete request
+     * @throws OperationFailedException  unable to complete request
      */
     public Page<TestcaseOptionEntity> searchTestcaseOptions(TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
-            Pageable pageable,
-            ContextInfo contextInfo)
+                                                            Pageable pageable,
+                                                            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
 
@@ -84,15 +84,15 @@ public interface TestcaseOptionService {
      * set.
      *
      * @param testcaseOptionCriteriaSearchFilter
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param contextInfo                        information containing the principalId and locale
+     *                                           information about the caller of service operation
      * @return a list of TestcaseOption name start with given TestcaseOptionName
      * found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException unable to complete request
+     * @throws OperationFailedException  unable to complete request
      */
     public List<TestcaseOptionEntity> searchTestcaseOptions(TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter,
-            ContextInfo contextInfo)
+                                                            ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
 
@@ -102,18 +102,18 @@ public interface TestcaseOptionService {
      * directly contained sub-objects or expanded to perform all tests related
      * to this object
      *
-     * @param validationTypeKey the identifier of the extent of validation
+     * @param validationTypeKey    the identifier of the extent of validation
      * @param testcaseOptionEntity the TestcaseOption information to be tested
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param contextInfo          information containing the principalId and locale
+     *                             information about the caller of service operation
      * @return Results TestcaseOption performing the validation
      * @throws InvalidParameterException TestcaseOptionInfo or contextInfo is
-     * not valid
-     * @throws OperationFailedException unable to complete request
+     *                                   not valid
+     * @throws OperationFailedException  unable to complete request
      */
     public List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey,
-            TestcaseOptionEntity testcaseOptionEntity,
-            ContextInfo contextInfo)
+                                                             TestcaseOptionEntity testcaseOptionEntity,
+                                                             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException;
 
@@ -121,16 +121,16 @@ public interface TestcaseOptionService {
      * Retrieves a TestcaseOption corresponding to the given TestcaseOption Id.
      *
      * @param testcaseOptionId TestcaseOptionId of TestcaseOption to be
-     * retrieved
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     *                         retrieved
+     * @param contextInfo      information containing the principalId and locale
+     *                         information about the caller of service operation
      * @return a list of TestcaseOption
-     * @throws DoesNotExistException a TestcaseOptionId in TestcaseOptionIds not
-     * found
+     * @throws DoesNotExistException     a TestcaseOptionId in TestcaseOptionIds not
+     *                                   found
      * @throws InvalidParameterException invalid contextInfo
      */
     public TestcaseOptionEntity getTestcaseOptionById(String testcaseOptionId,
-            ContextInfo contextInfo)
+                                                      ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException;
 
@@ -138,18 +138,18 @@ public interface TestcaseOptionService {
      * Change the state of testcase option
      *
      * @param testcaseOptionId TestcaseOptionId of TestcaseOption to be
-     * retrieved
-     * @param stateKey state type to which test case option state to be changed
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     *                         retrieved
+     * @param stateKey         state type to which test case option state to be changed
+     * @param contextInfo      information containing the principalId and locale
+     *                         information about the caller of service operation
      * @return changed state testcase option
-     * @throws DoesNotExistException a TestcaseOptionId in TestcaseOptionIds not
-     * found
+     * @throws DoesNotExistException        a TestcaseOptionId in TestcaseOptionIds not
+     *                                      found
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException unable to complete request
-     * @throws VersionMismatchException optimistic locking failure or the action
-     * was attempted on an out of date version
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
      */
     public TestcaseOptionEntity changeState(String testcaseOptionId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 

@@ -5,7 +5,6 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import io.swagger.annotations.ApiParam;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -15,7 +14,6 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<ComponentEntity> {
 
     private String id;

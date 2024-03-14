@@ -18,6 +18,6 @@ public interface CaptchaService {
 
     public JSONObject decryptCodeTime(String captcha) throws Exception;
 
-    public List<ValidationResultInfo> validateCaptcha(String captchaCode,String captcha,ContextInfo contextInfo) throws Exception;
+    public List<ValidationResultInfo> validateCaptcha(String captchaCode, String captcha, ContextInfo contextInfo) throws Exception;
 
 }

@@ -19,6 +19,9 @@ public final class FHIRUtils {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(FHIRUtils.class);
 
+    private FHIRUtils() {
+    }
+
     public static <T> List<T> processBundle(Class<T> type, Bundle bundle) {
         List<T> resources = new ArrayList<>();
         for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
@@ -171,7 +174,7 @@ public final class FHIRUtils {
     }
 
     public static Organization createOrganization(String name,
-            String identifierValue, String phone, String email, String city, String state, String country) {
+                                                  String identifierValue, String phone, String email, String city, String state, String country) {
         Organization organization = new Organization();
 
         // Set organization demographics
@@ -228,7 +231,7 @@ public final class FHIRUtils {
     }
 
     public static Location createLocation(String identifierValue, String name, String description, String phone,
-            String email, String city, String postalCode, String country, Organization organization) {
+                                          String email, String city, String postalCode, String country, Organization organization) {
         Location location = new Location();
 
         //set location demographics
@@ -1074,7 +1077,7 @@ public final class FHIRUtils {
     }
 
     public static HealthcareService createHealthcareService(String identifierValue, String name, String comment,
-            String phone, String email, List<String> specialties, Location location) {
+                                                            String phone, String email, List<String> specialties, Location location) {
         HealthcareService healthcareService = new HealthcareService();
         // Set the identifier
         Identifier identifier = new Identifier().setSystem("urn:oid:1.2.3.4.5").setValue(identifierValue);

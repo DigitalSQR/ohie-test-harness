@@ -24,14 +24,24 @@ public class TestcaseResultStateChangedEventListener {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultStateChangedEventListener.class);
 
-    @Autowired
     private TestcaseResultService testcaseResultService;
-
-    @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    private TestcaseResultMapper testcaseResultMapper;
 
     @Autowired
-    private TestcaseResultMapper testcaseResultMapper;
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
+
+    @Autowired
+    public void setSimpMessagingTemplate(SimpMessagingTemplate simpMessagingTemplate) {
+        this.simpMessagingTemplate = simpMessagingTemplate;
+    }
+
+    @Autowired
+    public void setTestcaseResultMapper(TestcaseResultMapper testcaseResultMapper) {
+        this.testcaseResultMapper = testcaseResultMapper;
+    }
 
     @Async
     @Transactional

@@ -22,9 +22,18 @@ public class TSWF1TestCase1 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TSWF1TestCase1.class);
 
+    public static boolean isCodePresent(CodeSystem codeSystem, String code) {
+        for (CodeSystem.ConceptDefinitionComponent concept : codeSystem.getConcept()) {
+            if (code.equals(concept.getCode())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-            ContextInfo contextInfo) throws OperationFailedException {
+                                     ContextInfo contextInfo) throws OperationFailedException {
 
         try {
             LOGGER.info("Start testing TSWF1TestCase1");
@@ -57,7 +66,7 @@ public class TSWF1TestCase1 implements TestCase {
                     .execute();
 
             // check if codeSystem got created
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 return new ValidationResultInfo("testTSWF1Case1", ErrorLevel.ERROR, "Failed to create codeSystem");
             }
 
@@ -94,15 +103,6 @@ public class TSWF1TestCase1 implements TestCase {
             throw new OperationFailedException(ex.getMessage(), ex);
         }
 
-    }
-
-    public static boolean isCodePresent(CodeSystem codeSystem, String code) {
-        for (CodeSystem.ConceptDefinitionComponent concept : codeSystem.getConcept()) {
-            if (code.equals(concept.getCode())) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

@@ -24,53 +24,6 @@ public class TSWF5TestCase1 implements TestCase {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TSWF5TestCase1.class);
 
-    @Override
-    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-            ContextInfo contextInfo) throws OperationFailedException {
-
-        try {
-            LOGGER.info("Start testing TSWF5TestCase1");
-            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
-            if (client == null) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
-            }
-
-            LOGGER.info("Creating codeSystems");
-            //creating codeSystems
-            if (!Objects.requireNonNull(addCodeSystem(client, "http://example.com/blood-pressure", "1.0.0", "BloodPressure", "Blood Pressure Codes", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "systolic", "Systolic Pressure", "The pressure in the arteries when the heart muscle contracts.")).getCreated()) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
-            }
-
-            if (!Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated()) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
-            }
-
-            // Publisher name to search for
-            String publisherName = "HL7 International / Terminology Infrastructure";
-
-            // Use $search to search for CodeSystem by publisher
-            Bundle searchResults = client
-                    .search()
-                    .forResource(CodeSystem.class)
-                    .where(CodeSystem.PUBLISHER.matches().value(publisherName))
-                    .returnBundle(Bundle.class)
-                    .execute();
-
-            // checking if it contains codeSystem with particular publisherName
-            if (!isCodeSystemPresent(searchResults, "http://example.com/blood-pressure", "1.0.0") && !isCodeSystemPresent(searchResults, "http://example.com/gender", "1.0.0")) {
-                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search codeSystem by publisher name");
-            }
-
-            // Pass the test case if all the above conditions are passed
-            LOGGER.info("testTSWF5Case1 Testcase successfully passed!");
-            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
-
-        } catch (Exception ex) {
-            LOGGER.error(ValidateConstant.EXCEPTION + TSWF5TestCase1.class.getSimpleName(), ex);
-            throw new OperationFailedException(ex.getMessage(), ex);
-        }
-    }
-
     public static MethodOutcome addCodeSystem(IGenericClient client, String url, String version, String name, String title, String status, String publisher, String content, String code, String display, String definition) {
 
         // checking if codeSystem exist or not
@@ -109,6 +62,53 @@ public class TSWF5TestCase1 implements TestCase {
             }
         }
         return false;
+    }
+
+    @Override
+    public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
+                                     ContextInfo contextInfo) throws OperationFailedException {
+
+        try {
+            LOGGER.info("Start testing TSWF5TestCase1");
+            IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_TERMINOLOGY_SERVICE_ID);
+            if (client == null) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
+            }
+
+            LOGGER.info("Creating codeSystems");
+            //creating codeSystems
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addCodeSystem(client, "http://example.com/blood-pressure", "1.0.0", "BloodPressure", "Blood Pressure Codes", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "systolic", "Systolic Pressure", "The pressure in the arteries when the heart muscle contracts.")).getCreated())) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
+            }
+
+            if (Boolean.FALSE.equals(Objects.requireNonNull(addCodeSystem(client, "http://example.com/gender", "1.0.0", "Gender", "Codes for gender", "ACTIVE", "HL7 International / Terminology Infrastructure", "COMPLETE", "male", "Male", "HL7-defined gender codes")).getCreated())) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create codeSystem");
+            }
+
+            // Publisher name to search for
+            String publisherName = "HL7 International / Terminology Infrastructure";
+
+            // Use $search to search for CodeSystem by publisher
+            Bundle searchResults = client
+                    .search()
+                    .forResource(CodeSystem.class)
+                    .where(CodeSystem.PUBLISHER.matches().value(publisherName))
+                    .returnBundle(Bundle.class)
+                    .execute();
+
+            // checking if it contains codeSystem with particular publisherName
+            if (!isCodeSystemPresent(searchResults, "http://example.com/blood-pressure", "1.0.0") && !isCodeSystemPresent(searchResults, "http://example.com/gender", "1.0.0")) {
+                return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search codeSystem by publisher name");
+            }
+
+            // Pass the test case if all the above conditions are passed
+            LOGGER.info("testTSWF5Case1 Testcase successfully passed!");
+            return new ValidationResultInfo(ErrorLevel.OK, "Passed");
+
+        } catch (Exception ex) {
+            LOGGER.error(ValidateConstant.EXCEPTION + TSWF5TestCase1.class.getSimpleName(), ex);
+            throw new OperationFailedException(ex.getMessage(), ex);
+        }
     }
 
 }

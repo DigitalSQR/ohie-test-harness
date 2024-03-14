@@ -88,16 +88,16 @@ tht-file:
   location: /srv/tht/files
 
 captcha:
-   false
+  false
 
 frontend:
-    google.success: /google/success
+  google.success: /google/success
 
 mailSender:
   username: "noreplytestharnesstool@gmail.com"
   password: "vdspvxnhjnhdklkp"
-  host : "smtp.gmail.com"
-  port : 587
+  host: "smtp.gmail.com"
+  port: 587
 
 encryption:
-  key : "3a985da74fe225d6c9a29e5a9e4c1b93"
+  key: "3a985da74fe225d6c9a29e5a9e4c1b93"
