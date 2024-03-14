@@ -53,14 +53,29 @@ public class TestcaseExecutioner {
 
     public static Map<String, String> map = new HashMap<>();
 
-    @Autowired
     private ApplicationContext applicationContext;
     @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext){
+        this.applicationContext = applicationContext;
+    }
+
     private ComponentService componentService;
     @Autowired
+    public void setComponentService(ComponentService componentService){
+        this.componentService = componentService;
+    }
+
     private TestcaseService testcaseService;
     @Autowired
+    public void setTestcaseService(TestcaseService testcaseService){
+        this.testcaseService = testcaseService;
+    }
+
     private TestcaseResultService testcaseResultService;
+    @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService){
+        this.testcaseResultService = testcaseResultService;
+    }
     @Autowired
     private TestRequestService testRequestService;
 

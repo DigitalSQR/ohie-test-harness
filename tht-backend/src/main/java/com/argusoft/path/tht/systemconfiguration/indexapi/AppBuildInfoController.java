@@ -22,8 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "REST Endpoints for Build Info", tags = {"Build Info API"})
 public class AppBuildInfoController {
 
-    @Autowired
     private Environment env;
+    @Autowired
+    public void setEnvironment(Environment env){
+        this.env = env;
+    }
 
     /**
      * {@inheritdoc}

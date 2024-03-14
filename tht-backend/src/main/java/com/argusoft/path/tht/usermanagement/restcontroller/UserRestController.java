@@ -46,17 +46,29 @@ public class UserRestController {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserRestController.class);
 
-    @Autowired
     private UserService userService;
-
     @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
+
     private TokenVerificationService tokenVerificationService;
-
     @Autowired
+    public void setTokenVerificationService(TokenVerificationService tokenVerificationService){
+        this.tokenVerificationService = tokenVerificationService;
+    }
+
     private UserMapper userMapper;
-
     @Autowired
+    public void setUserMapper(UserMapper userMapper){
+        this.userMapper = userMapper;
+    }
+
     private EmailService emailService;
+    @Autowired
+    public void setEmailService(EmailService emailService){
+        this.emailService = emailService;
+    }
 
     /**
      * {@inheritdoc}

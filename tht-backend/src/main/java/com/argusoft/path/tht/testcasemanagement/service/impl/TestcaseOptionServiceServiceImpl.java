@@ -37,11 +37,17 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseOptionServiceServiceImpl.class);
 
-    @Autowired
     TestcaseOptionRepository testcaseOptionRepository;
-
     @Autowired
+    public void setTestcaseOptionRepository(TestcaseOptionRepository testcaseOptionRepository){
+        this.testcaseOptionRepository = testcaseOptionRepository;
+    }
+
     TestcaseService testcaseService;
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService){
+        this.testcaseService = testcaseService;
+    }
 
     /**
      * {@inheritdoc}

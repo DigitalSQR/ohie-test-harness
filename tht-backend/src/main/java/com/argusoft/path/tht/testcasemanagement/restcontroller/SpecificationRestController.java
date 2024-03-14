@@ -37,11 +37,17 @@ import java.util.List;
 @Api(value = "REST API for Specification services", tags = {"Specification API"})
 public class SpecificationRestController {
 
-    @Autowired
     private SpecificationService specificationService;
-
     @Autowired
+    public void setSpecificationService(SpecificationService specificationService){
+        this.specificationService = specificationService;
+    }
+
     private SpecificationMapper specificationMapper;
+    @Autowired
+    public void setSpecificationMapper(SpecificationMapper specificationMapper){
+        this.specificationMapper = specificationMapper;
+    }
 
     /**
      * We can expose this API in future if needed. {@inheritdoc}

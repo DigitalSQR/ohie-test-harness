@@ -49,11 +49,17 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     public static final Logger LOGGER = LoggerFactory.getLogger(OnSsoAuthenticationSuccessHandler.class);
 
-    @Autowired
     private DefaultTokenServices defaultTokenServices;
-
     @Autowired
+    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices){
+        this.defaultTokenServices = defaultTokenServices;
+    }
+
     private UserService userService;
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
 
     @Value("${frontend.google.success}")
     private String successCallbackEndUrl;

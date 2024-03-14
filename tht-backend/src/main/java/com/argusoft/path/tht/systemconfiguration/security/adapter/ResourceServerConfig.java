@@ -26,21 +26,47 @@ import org.springframework.security.web.session.SessionManagementFilter;
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-    @Autowired
     CorsFilter corsFilter;
     @Autowired
+    public void setCorsFilter(CorsFilter corsFilter){
+        this.corsFilter = corsFilter;
+    }
+
     private DefaultTokenServices defaultTokenServices;
     @Autowired
+    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices){
+        this.defaultTokenServices = defaultTokenServices;
+    }
+
     private CustomAccessDeniedHandler customAccessDeniedHandler;
     @Autowired
+    public void setCustomAccessDeniedHandler(CustomAccessDeniedHandler customAccessDeniedHandler){
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
+    }
+
     private CustomOauth2UserService oauthUserService;
     @Autowired
+    public void setCustomOauth2UserService(CustomOauth2UserService oauthUserService){
+        this.oauthUserService = oauthUserService;
+    }
+
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Autowired
-    private UserRepository userRepository;
+    public void setCustomAuthenticationEntryPoint(CustomAuthenticationEntryPoint customAuthenticationEntryPoint){
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+    }
 
+    private UserRepository userRepository;
     @Autowired
+    public void setUserRepository(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
     private OnSsoAuthenticationSuccessHandler onSsoAuthenticationSuccessHandler;
+    @Autowired
+    public void setOnSsoAuthenticationSuccessHandler(OnSsoAuthenticationSuccessHandler onSsoAuthenticationSuccessHandler){
+        this.onSsoAuthenticationSuccessHandler = onSsoAuthenticationSuccessHandler;
+    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {

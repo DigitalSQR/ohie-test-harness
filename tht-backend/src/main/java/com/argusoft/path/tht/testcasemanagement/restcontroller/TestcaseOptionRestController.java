@@ -42,11 +42,17 @@ import java.util.List;
 @Api(value = "REST API for TestcaseOption services", tags = {"TestcaseOption API"})
 public class TestcaseOptionRestController {
 
-    @Autowired
     private TestcaseOptionService testcaseOptionService;
-
     @Autowired
+    public void setTestcaseOptionService(TestcaseOptionService testcaseOptionService){
+        this.testcaseOptionService = testcaseOptionService;
+    }
+
     private TestcaseOptionMapper testcaseOptionMapper;
+    @Autowired
+    public void setTestcaseOptionMapper(TestcaseOptionMapper testcaseOptionMapper){
+        this.testcaseOptionMapper = testcaseOptionMapper;
+    }
 
     /**
      * We can expose this API in future if needed. {@inheritdoc}

@@ -40,11 +40,17 @@ public class ComponentServiceServiceImpl implements ComponentService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ComponentServiceServiceImpl.class);
 
-    @Autowired
     ComponentRepository componentRepository;
-
     @Autowired
+    public void setComponentRepository(ComponentRepository componentRepository){
+        this.componentRepository = componentRepository;
+    }
+
     private SpecificationService specificationService;
+    @Autowired
+    public void setSpecificationService(SpecificationService specificationService){
+        this.specificationService = specificationService;
+    }
 
     @Autowired
     private TestcaseService testcaseService;

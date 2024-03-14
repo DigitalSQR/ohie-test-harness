@@ -41,8 +41,11 @@ public class CustomUserDetailService implements UserDetailsService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CustomUserDetailService.class);
 
-    @Autowired
     private UserService userService;
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

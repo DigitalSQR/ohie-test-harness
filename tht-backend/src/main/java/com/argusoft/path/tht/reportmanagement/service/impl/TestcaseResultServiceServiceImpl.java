@@ -61,17 +61,30 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultServiceServiceImpl.class);
 
-    @Autowired
+
     private TestcaseResultRepository testcaseResultRepository;
-
     @Autowired
+    public void setTestcaseResultRepository(TestcaseResultRepository testcaseResultRepository){
+        this.testcaseResultRepository = testcaseResultRepository;
+    }
+
     private TestcaseOptionService testcaseOptionService;
-
     @Autowired
+    public void setTestcaseOptionService(TestcaseOptionService testcaseOptionService){
+        this.testcaseOptionService = testcaseOptionService;
+    }
+
     private TestRequestService testRequestService;
-
     @Autowired
+    public void setTestRequestService(TestRequestService testRequestService){
+        this.testRequestService = testRequestService;
+    }
+
     private UserService userService;
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
 
     @Autowired
     private GradeEvaluator gradeEvaluator;

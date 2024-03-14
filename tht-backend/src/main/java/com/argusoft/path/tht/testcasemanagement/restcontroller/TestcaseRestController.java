@@ -40,11 +40,17 @@ import java.util.List;
 @Api(value = "REST API for Testcase services", tags = {"Testcase API"})
 public class TestcaseRestController {
 
-    @Autowired
     private TestcaseService testcaseService;
-
     @Autowired
+    public void setTestcaseService(TestcaseService testcaseService){
+        this.testcaseService = testcaseService;
+    }
+
     private TestcaseMapper testcaseMapper;
+    @Autowired
+    public void setTestcaseMapper(TestcaseMapper testcaseMapper){
+        this.testcaseMapper = testcaseMapper;
+    }
 
     /**
      * We can expose this API in future if needed. {@inheritdoc}

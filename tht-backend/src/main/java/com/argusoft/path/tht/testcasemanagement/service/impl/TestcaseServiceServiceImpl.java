@@ -37,14 +37,23 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseServiceServiceImpl.class);
 
-    @Autowired
     TestcaseRepository testcaseRepository;
-
     @Autowired
+    public void setTestcaseRepository(TestcaseRepository testcaseRepository){
+        this.testcaseRepository = testcaseRepository;
+    }
+
     private ApplicationContext applicationContext;
-
     @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext){
+        this.applicationContext = applicationContext;
+    }
+
     private SpecificationService specificationService;
+    @Autowired
+    public void setSpecificationService(SpecificationService specificationService){
+        this.specificationService = specificationService;
+    }
 
     /**
      * {@inheritdoc}

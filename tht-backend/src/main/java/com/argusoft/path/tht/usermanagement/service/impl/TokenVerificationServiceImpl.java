@@ -28,14 +28,23 @@ import java.util.*;
 @Service
 public class TokenVerificationServiceImpl implements TokenVerificationService {
 
-    @Autowired
     private TokenVerificationRepository tokenVerificationRepository;
-
     @Autowired
+    public void setTokenVerificationRepository(TokenVerificationRepository tokenVerificationRepository){
+        this.tokenVerificationRepository = tokenVerificationRepository;
+    }
+
     private UserService userService;
-
     @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
+
     private EmailService emailService;
+    @Autowired
+    public void setEmailService(EmailService emailService){
+        this.emailService = emailService;
+    }
 
     private static void checkForValidTokenTypeWithVerifyingInEnum(String tokenType) throws InvalidParameterException {
         boolean validEnum = TokenTypeEnum.isValidKey(tokenType);

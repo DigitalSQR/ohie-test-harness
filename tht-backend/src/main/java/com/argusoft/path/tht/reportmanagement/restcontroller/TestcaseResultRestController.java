@@ -46,11 +46,18 @@ public class TestcaseResultRestController {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultRestController.class);
 
-    @Autowired
     private TestcaseResultService testcaseResultService;
-
     @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService){
+        this.testcaseResultService = testcaseResultService;
+    }
+
+
     private TestcaseResultMapper testcaseResultMapper;
+    @Autowired
+    public void setTestcaseResultMapper(TestcaseResultMapper testcaseResultMapper){
+        this.testcaseResultMapper = testcaseResultMapper;
+    }
 
     /**
      * We can expose this API in future if needed. {@inheritdoc}

@@ -25,8 +25,11 @@ public class EmailService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
-    @Autowired
     private JavaMailSender javaMailSender;
+    @Autowired
+    public void setJavaMailSender(JavaMailSender javaMailSender){
+        this.javaMailSender = javaMailSender;
+    }
 
     @Async
     public void sendMessage(

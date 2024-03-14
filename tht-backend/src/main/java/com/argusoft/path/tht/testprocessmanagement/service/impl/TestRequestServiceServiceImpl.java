@@ -66,20 +66,35 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestRequestServiceServiceImpl.class);
 
-    @Autowired
     private TestRequestRepository testRequestRepository;
-
     @Autowired
+    public void setTestRequestRepository(TestRequestRepository testRequestRepository){
+        this.testRequestRepository = testRequestRepository;
+    }
+
     private TestcaseResultService testcaseResultService;
-
     @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService){
+        this.testcaseResultService = testcaseResultService;
+    }
+
     private ComponentService componentService;
-
     @Autowired
+    public void setComponentService(ComponentService componentService){
+        this.componentService = componentService;
+    }
+
     private SpecificationService specificationService;
-
     @Autowired
+    public void setSpecificationService(SpecificationService specificationService){
+        this.specificationService = specificationService;
+    }
+
     private TestcaseService testcaseService;
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService){
+        this.testcaseService = testcaseService;
+    }
 
     @Autowired
     private UserService userService;

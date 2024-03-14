@@ -31,8 +31,11 @@ public class ExceptionController {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ExceptionController.class);
 
-    @Autowired
     private Environment environment;
+    @Autowired
+    public void setEnvironment(Environment environment){
+        this.environment = environment;
+    }
 
     @Value("${exception.stack-trace.enabled}")
     private Boolean isStackTraceEnabled;

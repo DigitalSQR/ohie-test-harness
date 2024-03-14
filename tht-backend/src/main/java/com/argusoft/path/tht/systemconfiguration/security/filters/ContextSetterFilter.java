@@ -33,8 +33,11 @@ public class ContextSetterFilter extends OncePerRequestFilter {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ContextSetterFilter.class);
 
-    @Autowired
     private DefaultTokenServices defaultTokenServices;
+    @Autowired
+    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices){
+        this.defaultTokenServices = defaultTokenServices;
+    }
 
     /**
      * This method set contextInfo as Attribute in Request.

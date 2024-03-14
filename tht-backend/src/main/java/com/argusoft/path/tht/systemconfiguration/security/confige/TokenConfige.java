@@ -18,8 +18,11 @@ import javax.sql.DataSource;
 @Configuration
 public class TokenConfige {
 
-    @Autowired
     private DataSource dataSource;
+    @Autowired
+    public void setDataSource(DataSource dataSource){
+        this.dataSource = dataSource;
+    }
 
     @Bean
     public TokenStore tokenStore() {

@@ -38,14 +38,23 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SpecificationServiceServiceImpl.class);
 
-    @Autowired
     SpecificationRepository specificationRepository;
-
     @Autowired
+    public void setSpecificationRepository(SpecificationRepository specificationRepository){
+        this.specificationRepository = specificationRepository;
+    }
+
     TestcaseService testcaseService;
-
     @Autowired
+    public void setTestcaseService(TestcaseService testcaseService){
+        this.testcaseService = testcaseService;
+    }
+
     ComponentService componentService;
+    @Autowired
+    public void setComponentService(ComponentService componentService){
+        this.componentService = componentService;
+    }
 
     /**
      * {@inheritdoc}

@@ -53,23 +53,35 @@ public class UserServiceServiceImpl implements UserService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserServiceServiceImpl.class);
 
-    @Autowired
     UserRepository userRepository;
-
     @Autowired
+    public void setUserRepository(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
     RoleRepository roleRepository;
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository){
+        this.roleRepository = roleRepository;
+    }
 
     @Autowired
     TokenStore tokenStore;
 
-    @Autowired
     UserService userService;
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
 
     @Autowired
     private TokenVerificationService tokenVerificationService;
 
-    @Autowired
     private DefaultTokenServices defaultTokenServices;
+    @Autowired
+    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices){
+        this.defaultTokenServices = defaultTokenServices;
+    }
 
     @Autowired
     private EmailService emailService;

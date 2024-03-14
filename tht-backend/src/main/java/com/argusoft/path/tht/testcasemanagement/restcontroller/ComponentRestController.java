@@ -37,11 +37,17 @@ import java.util.List;
 @Api(value = "REST API for Component services", tags = {"Component API"})
 public class ComponentRestController {
 
-    @Autowired
     private ComponentService componentService;
-
     @Autowired
+    public void setComponentService(ComponentService componentService){
+        this.componentService = componentService;
+    }
+
     private ComponentMapper componentMapper;
+    @Autowired
+    public void setComponentMapper(ComponentMapper componentMapper){
+        this.componentMapper = componentMapper;
+    }
 
     /**
      * We can expose this API in future if needed. {@inheritdoc}
