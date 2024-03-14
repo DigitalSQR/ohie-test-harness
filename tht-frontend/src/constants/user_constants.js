@@ -13,9 +13,17 @@ export const userBadgeClasses = {
 };
 
 export const userStatusActionLabels = [
-  { 
-    label: "Active", 
-    value: "user.status.active" 
+  {
+    label: "All",
+    value: [
+      "user.status.active",
+      "user.status.inactive",
+      "user.status.approval.pending",
+    ],
+  },
+  {
+    label: "Active",
+    value: "user.status.active",
   },
   {
     label: "Inactive",
@@ -23,6 +31,6 @@ export const userStatusActionLabels = [
   },
   {
     label: "Pending",
-    value: ["user.status.approval.pending", "user.status.verification.pending"],
+    value: "user.status.approval.pending",
   },
 ];
