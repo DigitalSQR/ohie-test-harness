@@ -59,7 +59,6 @@ public class TestcaseValidator {
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        TestcaseEntity originalEntity = null;
         trimTestcase(testcaseEntity);
 
         // check Common Required
@@ -80,9 +79,8 @@ public class TestcaseValidator {
                 // get the info
                 if (testcaseEntity.getId() != null) {
                     try {
-                        originalEntity = testcaseService
-                                .getTestcaseById(testcaseEntity.getId(),
-                                        contextInfo);
+                        TestcaseEntity originalEntity = testcaseService.getTestcaseById(testcaseEntity.getId(), contextInfo);
+                        validateUpdateTestcase(errors, testcaseEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseValidator.class.getSimpleName());
                         String fieldName = "id";
@@ -90,16 +88,9 @@ public class TestcaseValidator {
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                         ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateTestcase(errors,
-                        testcaseEntity,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateTestcase(errors, testcaseEntity, testcaseService, contextInfo);
@@ -120,12 +111,6 @@ public class TestcaseValidator {
                 errors);
         // For :Order
         validateTestcaseEntityOrder(testcaseEntity,
-                errors);
-        // For :IsManual
-        validateTestcaseEntityIsManual(testcaseEntity,
-                errors);
-        // For :IsRequired
-        validateTestcaseEntityIsRequired(testcaseEntity,
                 errors);
         //For : description
         validateTestcaseEntityDescription(testcaseEntity,
@@ -292,16 +277,6 @@ public class TestcaseValidator {
                 1,
                 null,
                 errors);
-    }
-
-    //Validation For :IsManual
-    private static void validateTestcaseEntityIsManual(TestcaseEntity testcaseEntity,
-            List<ValidationResultInfo> errors) {
-    }
-
-    //Validation For :IsRequired
-    private static void validateTestcaseEntityIsRequired(TestcaseEntity testcaseEntity,
-            List<ValidationResultInfo> errors) {
     }
 
     //trim all Testcase field

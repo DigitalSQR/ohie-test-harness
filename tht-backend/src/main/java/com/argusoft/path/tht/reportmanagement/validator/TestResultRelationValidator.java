@@ -68,16 +68,15 @@ public class TestResultRelationValidator {
 
         validateCommonForeignKey(testResultRelationEntity, testcaseResultService, errors, contextInfo);
 
-        TestResultRelationEntity originalEntity = null;
-
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
                 // get the info
                 if (testResultRelationEntity.getId() != null) {
                     try {
-                        originalEntity = testResultRelationService
+                        TestResultRelationEntity originalEntity = testResultRelationService
                                 .getTestResultRelationById(testResultRelationEntity.getId(),
                                         contextInfo);
+                        validateUpdateTestResultRelation(originalEntity, testResultRelationEntity, errors);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestResultRelationValidator.class.getSimpleName());
                         String fieldName = "id";
@@ -86,15 +85,9 @@ public class TestResultRelationValidator {
                                         ErrorLevel.ERROR,
                                         "The id supplied to the update does not "
                                         + "exists"));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateTestResultRelation(originalEntity, testResultRelationEntity, errors);
-
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateTestResultRelation(testResultRelationEntity, testResultRelationService, errors, contextInfo);

@@ -74,18 +74,15 @@ public class DocumentServiceImpl implements DocumentService {
         //get Document Types
         Set<FileType> allowedFileTypesForDocumentType = DocumentUtil.getAllowedFileTypesForDocumentType(documentEntity.getRefObjUri(), documentEntity.getDocumentType());
 
-        //save file
-        FileDetails fileDetails = null;
         try {
-            fileDetails = storeFileAndGetFileDetails(file, allowedFileTypesForDocumentType);
+            FileDetails fileDetails = storeFileAndGetFileDetails(file, allowedFileTypesForDocumentType);
+            //set FileId to DocumentEntity as it is UUID
+            documentEntity.setFileId(fileDetails.getFileId());
+            documentEntity.setName(fileDetails.getFileName());
         } catch (InvalidFileTypeException e) {
             LOGGER.error(ValidateConstant.INVALID_FILE_TYPE_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
             DocumentValidator.setErrorMessageForFileType(e);
         }
-
-        //set FileId to DocumentEntity as it is UUID
-        documentEntity.setFileId(fileDetails.getFileId());
-        documentEntity.setName(fileDetails.getFileName());
 
         DocumentEntity document = documentRepository.saveAndFlush(documentEntity);
         eventPublisher.publishEvent(new DocumentCreatedEvent(document, contextInfo));
@@ -143,7 +140,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public DocumentEntity changeRank(String documentId, Integer rankId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    public DocumentEntity changeRank(String documentId, Integer rankId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException, InvalidParameterException {
 
         DocumentValidator.validateDocumentRank(rankId);
         DocumentEntity document = this.getDocument(documentId, contextInfo);
@@ -151,13 +148,7 @@ public class DocumentServiceImpl implements DocumentService {
         String refObjUri = document.getRefObjUri();
         String refId = document.getRefId();
 
-        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = null;
-        try {
-            documentsByRefObjectUriAndRefObjectId = getDocumentsByRefObjectUriAndRefObjectId(refObjUri, refId, contextInfo);
-        } catch (InvalidParameterException e) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + DocumentServiceImpl.class.getSimpleName(), e);
-            //TODO add logger
-        }
+        List<DocumentEntity> documentsByRefObjectUriAndRefObjectId = getDocumentsByRefObjectUriAndRefObjectId(refObjUri, refId, contextInfo);
 
         TreeMap<Integer, DocumentEntity> documentEntityTreeMap = new TreeMap<>();
         for (int i = 1; i <= documentsByRefObjectUriAndRefObjectId.size(); i++) {

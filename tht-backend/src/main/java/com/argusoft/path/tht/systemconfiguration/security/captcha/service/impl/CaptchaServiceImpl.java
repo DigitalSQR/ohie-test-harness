@@ -69,7 +69,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     @Override
     public List<ValidationResultInfo> validateCaptcha(String captchaCode,String captcha,ContextInfo contextInfo) throws Exception {
         // checking if input not empty
-        List<ValidationResultInfo> errors = CaptchaValidation.validateCaptchaEmpty(captchaCode,captcha,contextInfo);
+        List<ValidationResultInfo> errors = CaptchaValidation.validateCaptchaEmpty(captchaCode,captcha);
         if(ValidationUtils.containsErrors(errors, ErrorLevel.ERROR))
         {
             return errors;
@@ -85,7 +85,6 @@ public class CaptchaServiceImpl implements CaptchaService {
                 codeTimeObject.get("code").toString(),
                 expiryTime,
                 captchaCode,
-                contextInfo,
                 errors);
         return errors;
     }

@@ -66,7 +66,6 @@ public class ComponentValidator {
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        ComponentEntity originalEntity = null;
         trimComponent(componentEntity);
 
         // check Common Required
@@ -76,36 +75,24 @@ public class ComponentValidator {
         validateCommonForeignKey(componentEntity, errors, specificationService, contextInfo);
 
         // check Common Unique
-        validateCommonUnique(componentEntity,
-                validationTypeKey,
-                errors,
-                componentService,
-                contextInfo);
+        validateCommonUnique(componentEntity, validationTypeKey, errors, componentService, contextInfo);
 
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
                 // get the info
                 if (componentEntity.getId() != null) {
                     try {
-                        originalEntity = componentService
-                                .getComponentById(componentEntity.getId(),
-                                        contextInfo);
+                        ComponentEntity originalEntity = componentService.getComponentById(componentEntity.getId(), contextInfo);
+                        validateUpdateComponent(errors, componentEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + ComponentValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR, ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateComponent(errors,
-                        componentEntity,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateComponent(errors, componentEntity, componentService, contextInfo);
@@ -340,7 +327,7 @@ public class ComponentValidator {
             } else if (TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(refObjUri)) {
                 try {
                     TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(refId, contextInfo);
-                    validateTestcase(testcaseEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                    validateTestcase(testcaseEntity, testcaseOptionService, errors, contextInfo);
                 } catch (DoesNotExistException e) {
                     errors.add(
                             new TestcaseValidationResultInfo(ErrorLevel.ERROR, TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, "component",
@@ -431,16 +418,13 @@ public class ComponentValidator {
                             null,
                             false));
             for (TestcaseEntity testcaseEntity : specificationEntity.getTestcases()) {
-                validateTestcase(testcaseEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                validateTestcase(testcaseEntity, testcaseOptionService, errors, contextInfo);
             }
         }
     }
 
     private static void validateTestcase(
             TestcaseEntity testcaseEntity,
-            ComponentService componentService,
-            SpecificationService specificationService,
-            TestcaseService testcaseService,
             TestcaseOptionService testcaseOptionService,
             List<TestcaseValidationResultInfo> errors,
             ContextInfo contextInfo

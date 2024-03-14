@@ -44,10 +44,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -115,7 +112,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
 
-        defaultValueCreateTestCaseResult(testcaseResultEntity, contextInfo);
+        defaultValueCreateTestCaseResult(testcaseResultEntity);
 
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.CREATE_VALIDATION,
                 this,
@@ -248,7 +245,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     private TestcaseEntity getTestcaseEntityFromAuditMapping(String testcaseResultId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException {
         List<Object> auditTestcaseEntities = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(testcaseResultId, TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, contextInfo);
-        return auditTestcaseEntities.stream().findFirst().map(TestcaseEntity.class::cast).get();
+        return auditTestcaseEntities.stream()
+                .findFirst()
+                .map(TestcaseEntity.class::cast)
+                .orElseThrow(() -> new DoesNotExistException("No TestcaseEntity found for testcaseResultId: " + testcaseResultId));
     }
 
     private boolean isTestResultRelationSuccess(TestResultRelationEntity testResultRelationEntity, List<TestcaseOptionEntity> testcaseOptionEntitiesFromAudit) {
@@ -744,7 +744,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                 }).collect(Collectors.toList());
     }
 
-    private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+    private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
         if (!StringUtils.hasLength(testcaseResultEntity.getId())) {
             testcaseResultEntity.setId(UUID.randomUUID().toString());
         }

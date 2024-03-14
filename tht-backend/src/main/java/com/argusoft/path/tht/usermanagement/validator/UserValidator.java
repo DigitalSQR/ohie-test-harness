@@ -133,7 +133,6 @@ public class UserValidator {
 
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        UserEntity originalEntity = null;
         trimUser(userEntity);
 
         // check Common Required
@@ -158,9 +157,8 @@ public class UserValidator {
                 // get the info
                 if (userEntity.getId() != null) {
                     try {
-                        originalEntity = userService
-                                .getUserById(userEntity.getId(),
-                                        contextInfo);
+                        UserEntity originalEntity = userService.getUserById(userEntity.getId(), contextInfo);
+                        validateUpdateUser(errors, userEntity, originalEntity, contextInfo);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
@@ -168,17 +166,9 @@ public class UserValidator {
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                         ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateUser(errors,
-                        userEntity,
-                        originalEntity,
-                        contextInfo);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateUser(userService, errors, userEntity, contextInfo);
@@ -353,7 +343,7 @@ public class UserValidator {
     }
 
     //validate one admin should active all time
-    public static void oneAdminShouldActiveValidation(UserEntity userEntity, UserService userService, List<ValidationResultInfo> errors, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public static void oneAdminShouldActiveValidation(UserService userService, List<ValidationResultInfo> errors, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
         userSearchCriteriaFilter.setRole(UserServiceConstants.ROLE_ID_ADMIN);
         userSearchCriteriaFilter.setState(Collections.singletonList(UserServiceConstants.USER_STATUS_ACTIVE));
@@ -384,7 +374,7 @@ public class UserValidator {
 
         //validate for one admin should active all time
         if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ADMIN))) {
-            UserValidator.oneAdminShouldActiveValidation(userEntity, userService, errors, contextInfo);
+            UserValidator.oneAdminShouldActiveValidation(userService, errors, contextInfo);
         }
     }
 

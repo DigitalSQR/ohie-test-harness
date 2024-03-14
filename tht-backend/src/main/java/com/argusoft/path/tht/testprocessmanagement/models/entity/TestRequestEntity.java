@@ -81,7 +81,7 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     }
 
     @PrePersist
-    private void changesBeforeSave() {
+    private void performChangesBeforeSave() {
         if (!StringUtils.hasLength(this.getId())) {
             this.setId(UUID.randomUUID().toString());
             this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));

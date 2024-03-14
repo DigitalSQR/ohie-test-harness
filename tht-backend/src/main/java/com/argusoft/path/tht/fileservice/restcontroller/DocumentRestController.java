@@ -122,7 +122,7 @@ public class DocumentRestController {
     @Transactional(rollbackFor = Exception.class)
     public DocumentInfo changeDocumentRank(@PathVariable("documentId") String documentId,
             @PathVariable("rankId") Integer rankId,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException {
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException, InvalidParameterException {
         DocumentEntity updatedDocumentEntity = documentService.changeRank(documentId, rankId, contextInfo);
         return documentMapper.modelToDto(updatedDocumentEntity);
     }

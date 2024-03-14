@@ -58,7 +58,7 @@ public interface DocumentService {
      * @throws DoesNotExistException when document Does not exist for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public DocumentEntity changeRank(String documentId, Integer rankId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException;
+    public DocumentEntity changeRank(String documentId, Integer rankId, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, OperationFailedException, InvalidParameterException;
 
     /**
      * change state of document with id and giving the expected state

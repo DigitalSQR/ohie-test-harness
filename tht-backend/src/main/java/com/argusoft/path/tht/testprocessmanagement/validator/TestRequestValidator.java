@@ -188,7 +188,6 @@ public class TestRequestValidator {
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        TestRequestEntity originalEntity = null;
         trimTestRequest(testRequestEntity);
 
         // check Common Required
@@ -197,20 +196,13 @@ public class TestRequestValidator {
         // check Common ForeignKey
         validateCommonForeignKey(testRequestEntity, errors, userService, componentService, contextInfo);
 
-        // check Common Unique
-        validateCommonUnique(testRequestEntity,
-                validationTypeKey,
-                errors,
-                contextInfo);
-
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
                 // get the info
                 if (testRequestEntity.getId() != null) {
                     try {
-                        originalEntity = testRequestService
-                                .getTestRequestById(testRequestEntity.getId(),
-                                        contextInfo);
+                        TestRequestEntity originalEntity = testRequestService.getTestRequestById(testRequestEntity.getId(), contextInfo);
+                        validateUpdateTestRequest(errors, testRequestEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestRequestValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
@@ -218,16 +210,9 @@ public class TestRequestValidator {
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED+"update"+ ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateTestRequest(errors,
-                        testRequestEntity,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateTestRequest(errors, testRequestEntity, testRequestService, contextInfo);
@@ -403,15 +388,6 @@ public class TestRequestValidator {
        }
     }
 
-    //Validate Common Unique
-    private static void validateCommonUnique(TestRequestEntity testRequestEntity,
-                                             String validationTypeKey,
-                                             List<ValidationResultInfo> errors,
-                                             ContextInfo contextInfo)
-            throws OperationFailedException {
-        // check unique field
-    }
-
     //Validation For :Id
     private static void validateTestRequestEntityId(TestRequestEntity testRequestEntity,
                                                     List<ValidationResultInfo> errors) {
@@ -555,12 +531,12 @@ public class TestRequestValidator {
                         }
                     }
                 }
-                TestRequestValidator.validateBaseFhirUrl(testRequestEntity, errors, contextInfo);
+                TestRequestValidator.validateBaseFhirUrl(testRequestEntity, errors);
             }
         }
     }
 
-    public static void validateBaseFhirUrl(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+    public static void validateBaseFhirUrl(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors) throws InvalidParameterException, DoesNotExistException {
         Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
         for(TestRequestUrlEntity entity : urlEntitySet){
             //check for baseurl

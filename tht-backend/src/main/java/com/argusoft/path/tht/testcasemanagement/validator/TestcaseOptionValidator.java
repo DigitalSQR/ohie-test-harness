@@ -47,7 +47,6 @@ public class TestcaseOptionValidator {
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        TestcaseOptionEntity originalEntity = null;
         trimTestcaseOption(testcaseOptionEntity);
 
         // check Common Required
@@ -56,20 +55,13 @@ public class TestcaseOptionValidator {
         // check Common ForeignKey
         validateCommonForeignKey(testcaseOptionEntity, testcaseService, errors, contextInfo);
 
-        // check Common Unique
-        validateCommonUnique(testcaseOptionEntity,
-                validationTypeKey,
-                errors,
-                contextInfo);
-
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
                 // get the info
                 if (testcaseOptionEntity.getId() != null) {
                     try {
-                        originalEntity = testcaseOptionService
-                                .getTestcaseOptionById(testcaseOptionEntity.getId(),
-                                        contextInfo);
+                        TestcaseOptionEntity originalEntity = testcaseOptionService.getTestcaseOptionById(testcaseOptionEntity.getId(), contextInfo);
+                        validateUpdateTestcaseOption(errors, testcaseOptionEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseOptionValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
@@ -77,16 +69,9 @@ public class TestcaseOptionValidator {
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                         ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateTestcaseOption(errors,
-                        testcaseOptionEntity,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateTestcaseOption(errors, testcaseOptionEntity, testcaseOptionService, contextInfo);
@@ -104,9 +89,6 @@ public class TestcaseOptionValidator {
                 errors);
         // For :Order
         validateTestcaseOptionEntityOrder(testcaseOptionEntity,
-                errors);
-        // For :IsFunctional
-        validateTestcaseOptionEntityIsSuccess(testcaseOptionEntity,
                 errors);
         // For : Description
         validateTestcaseOptionDescription(testcaseOptionEntity,
@@ -214,15 +196,6 @@ public class TestcaseOptionValidator {
                 .validateRequired(testcaseOptionEntity.getRank(), "rank", errors);
     }
 
-    //Validate Common Unique
-    private static void validateCommonUnique(TestcaseOptionEntity testcaseOptionEntity,
-            String validationTypeKey,
-            List<ValidationResultInfo> errors,
-            ContextInfo contextInfo)
-            throws OperationFailedException {
-        // check unique field
-    }
-
     //Validation For :Id
     private static void validateTestcaseOptionEntityId(TestcaseOptionEntity testcaseOptionEntity,
             List<ValidationResultInfo> errors) {
@@ -261,16 +234,6 @@ public class TestcaseOptionValidator {
                 0,
                 1000,
                 errors);
-    }
-
-    //Validation For :IsFunctional
-    private static void validateTestcaseOptionEntityIsSuccess(TestcaseOptionEntity testcaseOptionEntity,
-            List<ValidationResultInfo> errors) {
-    }
-
-    //Validation For :ComponentId
-    private static void validateTestcaseOptionEntityComponentId(TestcaseOptionEntity testcaseOptionEntity,
-            List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseOption field

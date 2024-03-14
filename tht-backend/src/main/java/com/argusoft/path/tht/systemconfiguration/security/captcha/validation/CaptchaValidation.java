@@ -12,29 +12,26 @@ import java.util.List;
 
 public class CaptchaValidation {
 
-    public static List<ValidationResultInfo> validateCaptchaEmpty(String code,String encryptedString,
-                                                      ContextInfo contextInfo) throws InvalidParameterException {
+    public static List<ValidationResultInfo> validateCaptchaEmpty(String code,String encryptedString) throws InvalidParameterException {
 
 
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         //trim
-        trimCaptcha(code);
-        trimCaptcha(encryptedString);
+        code = trimCaptcha(code);
+        encryptedString = trimCaptcha(encryptedString);
 
-        //check required fields;
+        //check required fields
         ValidationUtils.validateNotEmpty(code, "captcha", errors);
         ValidationUtils.validateNotEmpty(encryptedString,"encrypted String",errors);
         return errors;
     }
 
-    public static void trimCaptcha(String code){
-        if (code != null) {
-           code.trim();
-        }
+    public static String trimCaptcha(String code){
+        return code == null ? null : code.trim();
     }
 
-    public static void validateCaptcha(String code, Date expiryTime, String userCode, ContextInfo contextInfo,List<ValidationResultInfo> errors){
+    public static void validateCaptcha(String code, Date expiryTime, String userCode, List<ValidationResultInfo> errors){
         ValidationUtils.validateNotEmpty(code,"actual code",errors);
         ValidationUtils.validateRequired(expiryTime,"expiry time",errors);
         ValidationUtils.validateNotEmpty(userCode,"User code",errors);

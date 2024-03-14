@@ -71,11 +71,8 @@ public class TestcaseResultValidator {
                 = validateTestcaseResultSubmit(
                         testcaseResultId,
                         selectedTestcaseOptionIds,
-                        validationTypekey,
                         testcaseResultService,
-                        testcaseOptionService,
                         testResultRelationService,
-                        auditService,
                         contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
             LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
@@ -93,14 +90,13 @@ public class TestcaseResultValidator {
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        TestcaseResultEntity originalEntity = null;
         trimTestcaseResult(testcaseResultEntity);
 
         // check Common Required
         validateCommonRequired(testcaseResultEntity, errors);
 
         // check Common ForeignKey
-        validateCommonForeignKey(testcaseResultEntity, userService, testcaseResultService, testcaseOptionService, testRequestService, errors, contextInfo);
+        validateCommonForeignKey(testcaseResultEntity, userService, testcaseResultService, testRequestService, errors, contextInfo);
 
         // check Common Unique
         validateCommonUnique(testcaseResultEntity,
@@ -114,9 +110,8 @@ public class TestcaseResultValidator {
                 // get the info
                 if (testcaseResultEntity.getId() != null) {
                     try {
-                        originalEntity = testcaseResultService
-                                .getTestcaseResultById(testcaseResultEntity.getId(),
-                                        contextInfo);
+                        TestcaseResultEntity originalEntity = testcaseResultService.getTestcaseResultById(testcaseResultEntity.getId(), contextInfo);
+                        validateUpdateTestcaseResult(errors, testcaseResultEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
@@ -124,16 +119,9 @@ public class TestcaseResultValidator {
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                         ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateTestcaseResult(errors,
-                        testcaseResultEntity,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateTestcaseResult(errors, testcaseResultEntity, testcaseResultService, contextInfo);
@@ -161,12 +149,6 @@ public class TestcaseResultValidator {
         // For :Message
         validateTestcaseResultEntityMessage(testcaseResultEntity,
                 errors);
-        // For :TestcaseOption
-        validateTestcaseResultEntityTestcaseOption(testcaseResultEntity,
-                errors);
-        // For :IsSuccess
-        validateTestcaseResultEntityIsSuccess(testcaseResultEntity,
-                errors);
 
         return errors;
     }
@@ -174,7 +156,6 @@ public class TestcaseResultValidator {
     private static void validateCommonForeignKey(TestcaseResultEntity testcaseResultEntity,
             UserService userService,
             TestcaseResultService testcaseResultService,
-            TestcaseOptionService testcaseOptionService,
             TestRequestService testRequestService,
             List<ValidationResultInfo> errors,
             ContextInfo contextInfo)
@@ -422,16 +403,6 @@ public class TestcaseResultValidator {
                 errors);
     }
 
-    //Validation For :TestcaseOption
-    private static void validateTestcaseResultEntityTestcaseOption(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
-    }
-
-    //Validation For :isSuccess
-    private static void validateTestcaseResultEntityIsSuccess(TestcaseResultEntity testcaseResultEntity,
-            List<ValidationResultInfo> errors) {
-    }
-
     //trim all TestcaseResult field
     private static void trimTestcaseResult(TestcaseResultEntity testcaseResultEntity) {
         if (testcaseResultEntity.getId() != null) {
@@ -457,11 +428,8 @@ public class TestcaseResultValidator {
     private static List<ValidationResultInfo> validateTestcaseResultSubmit(
             String testcaseResultId,
             Set<String> selectedTestcaseOptionIds,
-            String validationTypeKey,
             TestcaseResultService testcaseResultService,
-            TestcaseOptionService testcaseOptionService,
             TestResultRelationService testResultRelationService,
-            AuditService auditService,
             ContextInfo contextInfo) {
         List<ValidationResultInfo> errors = new ArrayList<>();
         TestcaseResultEntity originalEntity;
@@ -511,8 +479,16 @@ public class TestcaseResultValidator {
 
             Optional<TestcaseEntity> testcaseEntity = testResultRelationEntitiesFromAuditMapping.stream().findFirst().map(TestcaseEntity.class::cast);
 
-            testcase = testcaseEntity.get();
-
+            if (testcaseEntity.isPresent()){
+                testcase = testcaseEntity.get();
+            } else {
+                LOGGER.error("TestcaseEntity not found for testcaseResultId: {}", testcaseResultId);
+                String fieldName = "testcaseResultId";
+                errors.add(
+                        new ValidationResultInfo(fieldName,
+                                ErrorLevel.ERROR,
+                                "Failed to get testResultRelationEntities for Testcase"));
+            }
         } catch (DoesNotExistException e) {
             LOGGER.error("caught exception in TestcaseResultValidator ", e);
             String fieldName = "testcaseResultId";

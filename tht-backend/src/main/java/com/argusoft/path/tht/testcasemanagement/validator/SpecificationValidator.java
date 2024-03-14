@@ -55,7 +55,6 @@ public class SpecificationValidator {
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        SpecificationEntity originalEntity = null;
         trimSpecification(specificationEntity);
 
         // check Common Required
@@ -76,9 +75,8 @@ public class SpecificationValidator {
                 // get the info
                 if (specificationEntity.getId() != null) {
                     try {
-                        originalEntity = specificationService
-                                .getSpecificationById(specificationEntity.getId(),
-                                        contextInfo);
+                        SpecificationEntity originalEntity = specificationService.getSpecificationById(specificationEntity.getId(), contextInfo);
+                        validateUpdateSpecification(errors, specificationEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + SpecificationValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
@@ -86,17 +84,9 @@ public class SpecificationValidator {
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                         ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateSpecification(errors,
-                        specificationEntity,
-                        specificationService,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateSpecification(errors, specificationEntity, specificationService, contextInfo);
@@ -113,9 +103,6 @@ public class SpecificationValidator {
                 errors);
         // For :Order
         validateSpecificationEntityOrder(specificationEntity,
-                errors);
-        // For :IsFunctional
-        validateSpecificationEntityIsFunctional(specificationEntity,
                 errors);
         // For :IsFunctional
         validateSpecificationEntityDesc(specificationEntity,
@@ -162,7 +149,6 @@ public class SpecificationValidator {
     //validate update
     private static void validateUpdateSpecification(List<ValidationResultInfo> errors,
             SpecificationEntity specificationEntity,
-            SpecificationService specificationService,
             SpecificationEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(specificationEntity.getId(), "id", errors);
@@ -181,13 +167,12 @@ public class SpecificationValidator {
                     ValidateConstant.SOMEONE_UPDATED + "Specification" + ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
-        validateNotUpdatable(errors, specificationEntity, specificationService, originalEntity);
+        validateNotUpdatable(errors, specificationEntity, originalEntity);
     }
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
             SpecificationEntity specificationEntity,
-            SpecificationService specificationService,
             SpecificationEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(specificationEntity.getState(), originalEntity.getState(), "state", errors);
@@ -301,17 +286,6 @@ public class SpecificationValidator {
                 1,
                 null,
                 errors);
-    }
-
-    //Validation For :IsFunctional
-    private static void validateSpecificationEntityIsFunctional(SpecificationEntity specificationEntity,
-            List<ValidationResultInfo> errors) {
-    }
-
-    //Validation For :ComponentId
-    private static void validateSpecificationEntityComponentId(SpecificationEntity specificationEntity,
-            List<ValidationResultInfo> errors) {
-
     }
 
     //Validation for desc

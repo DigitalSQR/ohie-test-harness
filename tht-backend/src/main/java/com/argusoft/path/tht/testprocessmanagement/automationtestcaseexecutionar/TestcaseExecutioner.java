@@ -188,9 +188,15 @@ public class TestcaseExecutioner {
 
             Map<String, IGenericClient> iGenericClientMap = new HashMap<>();
             for (ComponentEntity componentEntity : activeComponents) {
-                TestRequestUrlEntity testRequestUrlEntity = testRequestEntity.getTestRequestUrls().stream().filter(testRequestUrl -> testRequestUrl.getComponent().getId().equals(componentEntity.getId())).findFirst().get();
-                IGenericClient client = getClient(testRequestUrlEntity.getFhirVersion(), testRequestUrlEntity.getFhirApiBaseUrl(), testRequestUrlEntity.getUsername(), testRequestUrlEntity.getPassword());
-                iGenericClientMap.put(componentEntity.getId(), client);
+                Optional<TestRequestUrlEntity> testRequestUrlOptional = testRequestEntity.getTestRequestUrls().stream().filter(testRequestUrl -> testRequestUrl.getComponent().getId().equals(componentEntity.getId())).findFirst();
+                if (testRequestUrlOptional.isPresent()) {
+                    TestRequestUrlEntity testRequestUrlEntity = testRequestUrlOptional.get();
+                    IGenericClient client = getClient(testRequestUrlEntity.getFhirVersion(), testRequestUrlEntity.getFhirApiBaseUrl(), testRequestUrlEntity.getUsername(), testRequestUrlEntity.getPassword());
+                    iGenericClientMap.put(componentEntity.getId(), client);
+                } else {
+                    LOGGER.error("Unable to find testRequestUrl for {}",componentEntity.getId());
+                    throw new OperationFailedException("Unable to find testRequestUrl for "+componentEntity.getId());
+                }
             }
             TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = new TestcaseResultEntitiesAndIgenericClient(testcaseResultEntities, iGenericClientMap);
 
