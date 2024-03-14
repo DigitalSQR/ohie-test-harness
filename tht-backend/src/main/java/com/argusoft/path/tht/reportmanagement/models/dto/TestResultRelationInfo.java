@@ -2,6 +2,12 @@ package com.argusoft.path.tht.reportmanagement.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdMetaInfo;
 
+/**
+ * This info is for TestResultRelation DTO that contains all the TestResultRelation model's data.
+ *
+ * @author Hardik
+ */
+
 public class TestResultRelationInfo extends IdMetaInfo {
 
     private String refObjUri;

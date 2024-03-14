@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * This captchaServiceRestController maps end points with standard service.
+ *
+ * @author ishita
+ */
+
 @RestController
 @RequestMapping("/captcha")
 public class CaptchaController {

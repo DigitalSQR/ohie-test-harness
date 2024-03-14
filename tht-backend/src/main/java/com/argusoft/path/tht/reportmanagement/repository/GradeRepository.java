@@ -8,6 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * This repository is for making queries on the Grade model.
+ *
+ * @author Dhruv
+ */
 
 @Repository
 public interface GradeRepository extends JpaRepository<GradeEntity, String> {

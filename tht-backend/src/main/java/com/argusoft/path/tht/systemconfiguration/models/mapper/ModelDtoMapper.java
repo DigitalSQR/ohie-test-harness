@@ -5,6 +5,12 @@ import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
+/**
+ * Mapper to covert DTO <-> Entity .
+ *
+ * @author Bhavi
+ */
+
 public interface ModelDtoMapper<E, D> {
 
     D modelToDto(E entity);

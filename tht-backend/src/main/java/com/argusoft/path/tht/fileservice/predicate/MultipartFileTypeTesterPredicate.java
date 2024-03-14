@@ -11,6 +11,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Set;
 import java.util.function.Predicate;
 
+/**
+ * To validate the uploaded files
+ *
+ * @author Hardik
+ */
+
 public class MultipartFileTypeTesterPredicate implements Predicate<MultipartFile> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MultipartFileTypeTesterPredicate.class);

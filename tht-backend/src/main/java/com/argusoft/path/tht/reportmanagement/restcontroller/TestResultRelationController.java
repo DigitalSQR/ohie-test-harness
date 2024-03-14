@@ -22,6 +22,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * This TestResultRelationServiceRestController maps end points with standard service.
+ *
+ * @author Hardik
+ */
+
 @RestController
 @RequestMapping("/testcase-result-relation")
 @Api(value = "REST API for Grade services", tags = {"Test Result Relation API"})

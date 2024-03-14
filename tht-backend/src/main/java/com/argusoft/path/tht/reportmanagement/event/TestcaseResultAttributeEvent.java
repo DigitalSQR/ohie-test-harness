@@ -3,6 +3,12 @@ package com.argusoft.path.tht.reportmanagement.event;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import org.springframework.context.ApplicationEvent;
 
+/**
+ * TestcaseResultAttributeEvent
+ *
+ * @author Hardik
+ */
+
 public class TestcaseResultAttributeEvent extends ApplicationEvent {
 
     private final ContextInfo contextInfo;

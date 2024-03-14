@@ -6,6 +6,12 @@ import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 
 import java.util.*;
 
+/**
+ * This DocumentUtil provides method for validation.
+ *
+ * @author Hardik
+ */
+
 public class DocumentUtil {
 
     private DocumentUtil() {

@@ -34,6 +34,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * This DocumentServiceServiceImpl contains implementation for Document service.
+ *
+ * @author Hardik
+ */
+
 @Service
 public class DocumentServiceImpl implements DocumentService {
 

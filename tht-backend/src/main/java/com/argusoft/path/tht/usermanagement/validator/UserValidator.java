@@ -24,6 +24,12 @@ import org.springframework.data.domain.Page;
 
 import java.util.*;
 
+/**
+ * validation methods for the user
+ *
+ * @author Aastha
+ */
+
 public class UserValidator {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(UserValidator.class);

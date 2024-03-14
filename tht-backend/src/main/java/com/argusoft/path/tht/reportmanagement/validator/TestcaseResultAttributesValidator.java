@@ -7,6 +7,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+/**
+ * Validation methods for TestcaseResultAttributes
+ *
+ * @author Bhavi
+ */
+
 @Component
 public class TestcaseResultAttributesValidator {
 

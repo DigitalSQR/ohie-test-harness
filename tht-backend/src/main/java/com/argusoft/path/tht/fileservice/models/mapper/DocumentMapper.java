@@ -14,6 +14,12 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * Mapper to covert DTO <-> Entity for the Document.
+ *
+ * @author Hardik
+ */
+
 @Mapper(componentModel = "spring")
 public interface DocumentMapper extends ModelDtoMapper<DocumentEntity, DocumentInfo> {
 

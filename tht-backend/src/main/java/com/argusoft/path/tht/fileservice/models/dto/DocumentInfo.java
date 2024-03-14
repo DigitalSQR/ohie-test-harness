@@ -3,6 +3,12 @@ package com.argusoft.path.tht.fileservice.models.dto;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * This info is for Document DTO that contains all the Document model's data.
+ *
+ * @author Hardik
+ */
+
 public class DocumentInfo extends IdStateNameMetaInfo {
 
     @ApiModelProperty(notes = "The unique rank of the component",

@@ -18,6 +18,11 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Search filter for Documents
+ *
+ * @author Hardik
+ */
 public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<DocumentEntity> {
 
     private String id;

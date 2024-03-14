@@ -23,6 +23,12 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Validation methods for TestResultRelation
+ *
+ * @author Hardik
+ */
+
 @Component
 public class TestResultRelationValidator {
 

@@ -16,6 +16,12 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Criteria Search filter for User
+ *
+ * @author Hardik
+ */
+
 public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserEntity> {
 
     private String id;

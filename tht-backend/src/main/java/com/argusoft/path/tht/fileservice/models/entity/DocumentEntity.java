@@ -6,6 +6,12 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
+/**
+ * This model is mapped to document table in database.
+ *
+ * @author Hardik
+ */
+
 @Entity
 @Audited
 @Table(name = "document")

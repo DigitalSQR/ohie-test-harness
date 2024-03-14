@@ -5,6 +5,12 @@ import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 
+/**
+ * This model is mapped to TestcaseResultAttributes table in database.
+ *
+ * @author Bhavi
+ */
+
 @Entity
 @Audited
 @Table(name = "TestCaseResultAttributes")

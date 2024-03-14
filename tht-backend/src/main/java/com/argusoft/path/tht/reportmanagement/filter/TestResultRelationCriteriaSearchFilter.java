@@ -17,6 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Search filter for TestResultRelation
+ *
+ * @author Hardik
+ */
+
 public class TestResultRelationCriteriaSearchFilter extends AbstractCriteriaSearchFilter<TestResultRelationEntity> {
 
     @ApiParam(

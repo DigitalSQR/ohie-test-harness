@@ -18,6 +18,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Grade Evaluator
+ *
+ * @author Dhruv
+ */
+
 @Component
 public class GradeEvaluator {
 

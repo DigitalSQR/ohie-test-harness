@@ -14,6 +14,12 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.function.BiFunction;
 
+/**
+ * Abstract criteria search filter
+ *
+ * @author Hardik
+ */
+
 public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchFilter<T> {
 
     private SearchType nameSearchType = SearchType.CONTAINING;

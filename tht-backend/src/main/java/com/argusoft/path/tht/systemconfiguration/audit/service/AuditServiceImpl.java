@@ -21,6 +21,12 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+/**
+ * This ServiceImpl contains implementation for audit service.
+ *
+ * @author Bhavi
+ */
+
 @Service
 public class AuditServiceImpl implements AuditService {
 

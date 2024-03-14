@@ -10,6 +10,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * This model is mapped to CustomRevision table in database.
+ *
+ * @author Bhavi
+ */
+
 @Entity(name = "revision")
 @Table(name = "revision")
 @RevisionEntity(CustomRevisionListener.class)

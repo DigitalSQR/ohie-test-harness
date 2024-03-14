@@ -1,5 +1,11 @@
 package com.argusoft.path.tht.usermanagement.models.dto;
 
+/**
+ * This info is for Reset password DTO.
+ *
+ * @author Rohit
+ */
+
 public class ResetPasswordInfo {
 
     private String oldPassword;

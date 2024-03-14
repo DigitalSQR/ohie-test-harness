@@ -23,6 +23,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Validation methods for Documents
+ *
+ * @author Aastha
+ */
+
 @Component
 public class DocumentValidator {
 

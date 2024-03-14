@@ -17,6 +17,12 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Search filter for TestcaseResult
+ *
+ * @author Hardik
+ */
+
 public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFilter<TestcaseResultEntity> {
 
     private String id;

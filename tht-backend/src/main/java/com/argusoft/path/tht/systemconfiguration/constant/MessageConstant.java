@@ -1,6 +1,10 @@
 package com.argusoft.path.tht.systemconfiguration.constant;
 
-
+/**
+ * exception messages
+ *
+ * @author Bhavi
+ */
 public final class MessageConstant {
 
     public static final String APPROVED_IOEXCEPTION_LOG = "Error sending Account Approved Message because of IOException";

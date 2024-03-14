@@ -1,5 +1,11 @@
 package com.argusoft.path.tht.reportmanagement.models.dto;
 
+/**
+ * This info is for TestcaseResultAttributes DTO that contains all the TestcaseResultAttributes model's data.
+ *
+ * @author Bhavi
+ */
+
 public class TestcaseResultAttributesInfo {
 
     private String key;

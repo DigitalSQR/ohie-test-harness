@@ -36,6 +36,12 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
+/**
+ * Validation methods for TestcaseResult
+ *
+ * @author Aastha
+ */
+
 @Component
 public class TestcaseResultValidator {
 

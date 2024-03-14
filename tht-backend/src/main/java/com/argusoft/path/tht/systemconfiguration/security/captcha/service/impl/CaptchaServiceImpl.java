@@ -25,6 +25,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * This ServiceImpl contains implementation for Captcha service.
+ *
+ * @author ishita
+ */
+
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
 

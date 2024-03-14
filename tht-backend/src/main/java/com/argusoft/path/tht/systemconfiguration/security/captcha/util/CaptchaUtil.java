@@ -11,6 +11,11 @@ import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
+/**
+ *
+ * @author ishita
+ */
+
 public class CaptchaUtil {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CaptchaUtil.class);

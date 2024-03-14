@@ -1,5 +1,11 @@
 package com.argusoft.path.tht.usermanagement.models.dto;
 
+/**
+ * This info is for Update password.
+ *
+ * @author Hardik
+ */
+
 public class UpdatePasswordInfo {
 
     private String newPassword;

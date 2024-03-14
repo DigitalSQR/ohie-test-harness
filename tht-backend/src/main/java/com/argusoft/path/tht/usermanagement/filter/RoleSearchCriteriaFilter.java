@@ -13,6 +13,12 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Criteria Search filter for Role
+ *
+ * @author Hardik
+ */
+
 public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleEntity> {
 
     private String id;

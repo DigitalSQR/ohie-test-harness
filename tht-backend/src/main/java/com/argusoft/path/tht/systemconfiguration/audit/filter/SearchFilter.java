@@ -4,6 +4,12 @@ import io.swagger.annotations.ApiParam;
 
 import java.util.List;
 
+/**
+ * Search filter for audit
+ *
+ * @author Bhavi
+ */
+
 public class SearchFilter {
 
     @ApiParam(

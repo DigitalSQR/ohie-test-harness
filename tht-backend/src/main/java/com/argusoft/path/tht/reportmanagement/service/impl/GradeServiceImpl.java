@@ -22,6 +22,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * This serviceImpl contains implementation for Grade service.
+ *
+ * @author Dhruv
+ */
+
 @Service
 public class GradeServiceImpl implements GradeService {
 

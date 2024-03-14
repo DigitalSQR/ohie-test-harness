@@ -11,6 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+/**
+ * validation method for common state change
+ *
+ * @author Dhruv
+ */
+
 public class CommonStateChangeValidator {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ComponentValidator.class);

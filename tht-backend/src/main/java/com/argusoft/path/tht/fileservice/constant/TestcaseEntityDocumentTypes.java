@@ -2,6 +2,11 @@ package com.argusoft.path.tht.fileservice.constant;
 
 import java.util.Set;
 
+/**
+ *
+ * @author Hardik
+ */
+
 public enum TestcaseEntityDocumentTypes implements EntityDocumentTypeEnum {
 
     TESTCASE_REFERENCE_IMAGE("document.type.testcase.question", Set.of(FileType.IMAGE_JPEG, FileType.IMAGE_PNG), DocumentServiceConstants.ALLOWED_ACTIVE_MULTI_RECORD);
