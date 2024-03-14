@@ -26,7 +26,7 @@ public class CorsFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         final HttpServletResponse response = (HttpServletResponse) res;
-        //TODO: Add THT-UI-PROD-URL to prevent other UIs to use our systems API.
+
         response.setHeader("Access-Control-Allow-Origin", "*");
 
         response.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS,HEAD,PATCH,TRACE");

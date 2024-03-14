@@ -65,7 +65,7 @@ public class ProcessReinitializer {
                 stopInprogressTestRequest(testcaseResult, contextInfo);
             } catch (Exception ex) {
                 LOGGER.error(ValidateConstant.EXCEPTION + ProcessReinitializer.class.getSimpleName(), ex);
-                ex.printStackTrace();
+
             }
         }
     }

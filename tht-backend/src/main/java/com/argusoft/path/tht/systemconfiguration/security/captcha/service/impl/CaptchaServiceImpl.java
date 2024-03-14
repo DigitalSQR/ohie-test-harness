@@ -120,7 +120,7 @@ public class CaptchaServiceImpl implements CaptchaService {
             jsonObject.put(CaptchaConstant.EXPIRY_TIME, expiryTime);
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + CaptchaServiceImpl.class.getSimpleName(), e);
-            e.printStackTrace();
+
         }
         return jsonObject;
     }

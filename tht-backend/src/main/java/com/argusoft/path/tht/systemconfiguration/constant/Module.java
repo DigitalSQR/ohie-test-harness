@@ -1,7 +1,6 @@
 package com.argusoft.path.tht.systemconfiguration.constant;
 
 /**
- *
  * @author Dhruv
  */
 

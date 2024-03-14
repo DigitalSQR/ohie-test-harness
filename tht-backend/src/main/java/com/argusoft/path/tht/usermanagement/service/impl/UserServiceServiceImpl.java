@@ -18,7 +18,6 @@ import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.dto.ResetPasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.dto.UpdatePasswordInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
-import com.argusoft.path.tht.usermanagement.models.entity.TokenVerificationEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.models.enums.TokenTypeEnum;
 import com.argusoft.path.tht.usermanagement.repository.RoleRepository;
@@ -132,11 +131,11 @@ public class UserServiceServiceImpl implements UserService {
         UserEntity userByEmail = null;
         try {
             userByEmail = this.getUserByEmail(userEmail, contextInfo);
-            TokenVerificationEntity tokenVerification = tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.FORGOT_PASSWORD.getKey(), contextInfo);
+            tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.FORGOT_PASSWORD.getKey(), contextInfo);
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + UserServiceServiceImpl.class.getSimpleName(), e);
             // ignore it, no need to show that they are not exists in DB
-            //TODO add log
+
         }
     }
 
@@ -210,11 +209,11 @@ public class UserServiceServiceImpl implements UserService {
         UserEntity userByEmail = null;
         try {
             userByEmail = this.getUserByEmail(userEmail, contextInfo);
-            TokenVerificationEntity tokenVerification = tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
+            tokenVerificationService.generateTokenForUserAndSendEmailForType(userByEmail.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + UserServiceServiceImpl.class.getSimpleName(), e);
             // ignore it, no need to show that they are not exists in DB
-            //TODO add log
+
         }
     }
 
