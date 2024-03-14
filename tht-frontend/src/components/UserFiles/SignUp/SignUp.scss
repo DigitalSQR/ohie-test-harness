@@ -1,6 +1,12 @@
-.signup-button{
+#signUp {
+  .signup-button {
     text-align: center !important;
     font-size: 17px !important;
     height: 52px !important;
-    padding-top:6px !important;
+    padding-top: 6px !important;
   }
+
+  .signup-password {
+    border-color: #ccdade;
+  }
+} 
