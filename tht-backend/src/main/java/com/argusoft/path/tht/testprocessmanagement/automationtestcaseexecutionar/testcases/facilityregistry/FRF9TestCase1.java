@@ -29,10 +29,10 @@ public class FRF9TestCase1 implements TestCase {
 
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap,
-            ContextInfo contextInfo) throws OperationFailedException {
+                                     ContextInfo contextInfo) throws OperationFailedException {
         try {
             String testCaseName = this.getClass().getSimpleName();
-            LOGGER.info("Start testing " + testCaseName);
+            LOGGER.info("Start testing {}", testCaseName);
 
             IGenericClient client = iGenericClientMap.get(ComponentServiceConstants.COMPONENT_FACILITY_REGISTRY_ID);
             if (client == null) {
@@ -47,8 +47,8 @@ public class FRF9TestCase1 implements TestCase {
             Organization organization = FHIRUtils.createOrganization(orgName, "Sweden", city, "+41-123-23");
             MethodOutcome outcome = client.create().resource(organization).execute();
             // Check if the organization was created successfully
-            if (!outcome.getCreated()) {
-                LOGGER.error(testCaseName + "Testcase Failed when creating organization");
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
+                LOGGER.error("{} Testcase Failed when creating organization", testCaseName);
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization");
             }
 
@@ -56,8 +56,8 @@ public class FRF9TestCase1 implements TestCase {
             organization = FHIRUtils.createOrganization("Richard Hospital", "Sweden", city, "+41-543-73");
             outcome = client.create().resource(organization).execute();
             // Check if the organization was created successfully
-            if (!outcome.getCreated()) {
-                LOGGER.error(testCaseName + "Testcase Failed when creating organization");
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
+                LOGGER.error("{} Testcase Failed when creating organization", testCaseName);
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create organization");
             }
 
@@ -71,7 +71,7 @@ public class FRF9TestCase1 implements TestCase {
                     .execute();
             List<Organization> organizations = FHIRUtils.processBundle(Organization.class, bundle);
             if (organizations.size() != 2) {
-                LOGGER.error(testCaseName + "Testcase Failed when searching organization by city");
+                LOGGER.error("{} Testcase Failed when searching organization by city", testCaseName);
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search organization by city");
             }
 
@@ -85,7 +85,7 @@ public class FRF9TestCase1 implements TestCase {
                     .execute();
             organizations = FHIRUtils.processBundle(Organization.class, bundle);
             if (organizations.size() != 1) {
-                LOGGER.error(testCaseName + "Testcase Failed when searching organization by name");
+                LOGGER.error("{} Testcase Failed when searching organization by name", testCaseName);
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search organization by name");
             }
 
@@ -93,8 +93,8 @@ public class FRF9TestCase1 implements TestCase {
             Location ambulance = FHIRUtils.createAmbulance("BUMC " + ambulanceName, "Ambulances provided by the Burgers University Medical Center", "108", Location.LocationStatus.ACTIVE);
             outcome = client.create().resource(ambulance).execute();
             // Check if the ambulance was created successfully
-            if (!outcome.getCreated()) {
-                LOGGER.error(testCaseName + "Testcase Failed when creating ambulance");
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
+                LOGGER.error("{} Testcase Failed when creating ambulance", testCaseName);
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create ambulance");
             }
 
@@ -102,8 +102,8 @@ public class FRF9TestCase1 implements TestCase {
             ambulance = FHIRUtils.createAmbulance("RM " + ambulanceName, "Ambulances provided by the Richard Morris Medical Center", "108", Location.LocationStatus.SUSPENDED);
             outcome = client.create().resource(ambulance).execute();
             // Check if the ambulance was created successfully
-            if (!outcome.getCreated()) {
-                LOGGER.error(testCaseName + "Testcase Failed when creating ambulance");
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
+                LOGGER.error("{} Testcase Failed when creating ambulance", testCaseName);
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create ambulance");
             }
 
@@ -118,7 +118,7 @@ public class FRF9TestCase1 implements TestCase {
                     .execute();
             List<Location> ambulances = FHIRUtils.processBundle(Location.class, bundle);
             if (ambulances.size() != 2) {
-                LOGGER.error(testCaseName + "Testcase Failed when searching ambulance by type");
+                LOGGER.error("{} Testcase Failed when searching ambulance by type", testCaseName);
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search ambulance by type");
             }
 
@@ -133,12 +133,12 @@ public class FRF9TestCase1 implements TestCase {
                     .execute();
             ambulances = FHIRUtils.processBundle(Location.class, bundle);
             if (ambulances.size() != 1) {
-                LOGGER.error(testCaseName + "Testcase Failed when searching ambulance by status");
+                LOGGER.error("{} Testcase Failed when searching ambulance by status", testCaseName);
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to search ambulance by status");
             }
 
             // Pass the test case if all the above conditions are passed
-            LOGGER.info(testCaseName + "Testcase successfully passed!");
+            LOGGER.info("{} Testcase successfully passed!", testCaseName);
             return new ValidationResultInfo(testCaseName, ErrorLevel.OK, "Passed");
 
         } catch (Exception ex) {

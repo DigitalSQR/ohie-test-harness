@@ -29,14 +29,17 @@ import javax.sql.DataSource;
 @EnableMethodSecurity
 public class TestingHarnessToolApplication implements CommandLineRunner {
 
-    @Autowired
     DataSource dataSource;
-
     @Value("${spring.flyway.locations}")
     String flywayLocation;
 
     public static void main(String[] args) {
         SpringApplication.run(TestingHarnessToolApplication.class, args);
+    }
+
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override

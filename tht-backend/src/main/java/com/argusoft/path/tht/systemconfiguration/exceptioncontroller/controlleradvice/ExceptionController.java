@@ -31,11 +31,14 @@ public class ExceptionController {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ExceptionController.class);
 
-    @Autowired
     private Environment environment;
-
     @Value("${exception.stack-trace.enabled}")
     private Boolean isStackTraceEnabled;
+
+    @Autowired
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 
     @ExceptionHandler(value = OperationFailedException.class)
     public ResponseEntity<Object> handleException(OperationFailedException exception) {
@@ -115,7 +118,7 @@ public class ExceptionController {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         exception.printStackTrace(pw);
-        resultInfo.setStackTrace(isStackTraceEnabled ? sw.toString() : null);
+        resultInfo.setStackTrace(Boolean.TRUE.equals(isStackTraceEnabled) ? sw.toString() : null);
         return resultInfo;
     }
 }

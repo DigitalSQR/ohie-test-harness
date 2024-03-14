@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.reportmanagement.service.impl;
 
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.event.TestcaseResultStateChangedEvent;
@@ -20,6 +19,7 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdMetaEntity;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
@@ -60,30 +60,84 @@ import java.util.stream.Collectors;
 public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultServiceServiceImpl.class);
-
-    @Autowired
+    ApplicationEventPublisher applicationEventPublisher;
     private TestcaseResultRepository testcaseResultRepository;
-
-    @Autowired
     private TestcaseOptionService testcaseOptionService;
-
-    @Autowired
     private TestRequestService testRequestService;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private GradeEvaluator gradeEvaluator;
-
-    @Autowired
     private AuditService auditService;
-
-    @Autowired
     private TestResultRelationService testResultRelationService;
 
+    private static String getMessage(String x, TestcaseResultEntity testcaseResultEntity, String x1, List<String> failedSpecificationTestcaseResultName) {
+        String message = x + testcaseResultEntity.getName() + x1;
+        for (int i = 0; i < (failedSpecificationTestcaseResultName.size() - 1); i++) {
+            message = message + " <b>" + failedSpecificationTestcaseResultName.get(i) + "<b>,";
+        }
+        if (failedSpecificationTestcaseResultName.size() > 1) {
+            message = message + " and ";
+        }
+
+        message = message + "<b>" + failedSpecificationTestcaseResultName.get(failedSpecificationTestcaseResultName.size() - 1) + "<b>";
+
+        return message;
+    }
+
+    private static List<TestcaseResultEntity> getChildTestcaseResultFromParentTestcaseResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
+        return testcaseResultEntities.stream()
+                .filter(tcre -> {
+                    return tcre.getParentTestcaseResult() != null
+                            && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                }).collect(Collectors.toList());
+    }
+
+    private static List<TestcaseResultEntity> getFilteredChileTestcaseResultsForTestResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
+        return testcaseResultEntities.stream()
+                .filter(tcre -> {
+                    return tcre.getParentTestcaseResult() != null
+                            && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                }).collect(Collectors.toList());
+    }
+
     @Autowired
-    ApplicationEventPublisher applicationEventPublisher;
+    public void setTestcaseResultRepository(TestcaseResultRepository testcaseResultRepository) {
+        this.testcaseResultRepository = testcaseResultRepository;
+    }
+
+    @Autowired
+    public void setTestcaseOptionService(TestcaseOptionService testcaseOptionService) {
+        this.testcaseOptionService = testcaseOptionService;
+    }
+
+    @Autowired
+    public void setTestRequestService(TestRequestService testRequestService) {
+        this.testRequestService = testRequestService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setGradeEvaluator(GradeEvaluator gradeEvaluator) {
+        this.gradeEvaluator = gradeEvaluator;
+    }
+
+    @Autowired
+    public void setAuditService(AuditService auditService) {
+        this.auditService = auditService;
+    }
+
+    @Autowired
+    public void setTestResultRelationService(TestResultRelationService testResultRelationService) {
+        this.testResultRelationService = testResultRelationService;
+    }
+
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     /**
      * {@inheritdoc}
@@ -92,17 +146,17 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      */
     @Override
     public TestcaseResultEntity createTestcaseResult(TestcaseResultEntity testcaseResultEntity,
-            ContextInfo contextInfo)
+                                                     ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException, DoesNotExistException {
 
         if (testcaseResultEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
 
-        defaultValueCreateTestCaseResult(testcaseResultEntity, contextInfo);
+        defaultValueCreateTestCaseResult(testcaseResultEntity);
 
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.CREATE_VALIDATION,
                 this,
@@ -127,13 +181,13 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      */
     @Override
     public TestcaseResultEntity updateTestcaseResult(TestcaseResultEntity testcaseResultEntity,
-            ContextInfo contextInfo)
+                                                     ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
         if (testcaseResultEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
 
@@ -176,9 +230,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         List<TestcaseOptionEntity> testcaseOptionEntitiesFromAudit
                 = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(resultRelationIds, contextInfo)
-                        .stream()
-                        .map(TestcaseOptionEntity.class::cast)
-                        .toList();
+                .stream()
+                .map(TestcaseOptionEntity.class::cast)
+                .toList();
 
         for (TestResultRelationEntity testResultRelationEntity : testResultRelationEntities) {
             testResultRelationEntity.setSelected(selectedTestcaseOptionIds.contains(testResultRelationEntity.getRefId()));
@@ -213,17 +267,17 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         for (TestResultRelationEntity testResultRelationEntity : testResultRelationEntities) {
             // Check if the testResultRelationEntity is marked as success or failure
-            boolean isRelationSuccess = isTestResultRelationSuccess(testResultRelationEntity, testcaseOptionEntitiesFromAudit);
+            Boolean isRelationSuccess = isTestResultRelationSuccess(testResultRelationEntity, testcaseOptionEntitiesFromAudit);
 
             if (isSingleSelectQuestion) {
 
-                if (testResultRelationEntity.getSelected() == isRelationSuccess) {
+                if (isRelationSuccess.equals(testResultRelationEntity.getSelected())) {
                     isTestSuccessful = true;
                     break;
                 }
             } else {
 
-                if (testResultRelationEntity.getSelected() != isRelationSuccess) {
+                if (!isRelationSuccess.equals(testResultRelationEntity.getSelected())) {
                     isTestSuccessful = false;
                     break;
                 }
@@ -235,7 +289,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     private TestcaseEntity getTestcaseEntityFromAuditMapping(String testcaseResultId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException {
         List<Object> auditTestcaseEntities = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(testcaseResultId, TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, contextInfo);
-        return auditTestcaseEntities.stream().findFirst().map(TestcaseEntity.class::cast).get();
+        return auditTestcaseEntities.stream()
+                .findFirst()
+                .map(TestcaseEntity.class::cast)
+                .orElseThrow(() -> new DoesNotExistException("No TestcaseEntity found for testcaseResultId: " + testcaseResultId));
     }
 
     private boolean isTestResultRelationSuccess(TestResultRelationEntity testResultRelationEntity, List<TestcaseOptionEntity> testcaseOptionEntitiesFromAudit) {
@@ -276,7 +333,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      */
     @Override
     public TestcaseResultEntity getTestcaseResultById(String testcaseResultId,
-            ContextInfo contextInfo)
+                                                      ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(testcaseResultId)) {
@@ -300,7 +357,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testcaseResultEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
         List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, testRequestService, contextInfo);
@@ -422,7 +479,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             }
         } else if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
-                || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+                        || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
                 updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
@@ -564,11 +621,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return recursiveTestcaseResults;
     }
 
-    private record RecursiveTestcaseResults(List<TestcaseResultEntity> testcaseResultEntities,
-            TestcaseResultEntity testcaseResultEntity) {
-
-    }
-
     private List<TestcaseResultEntity> recalculateTestcaseResultEntity(TestcaseResultEntity testcaseResultEntity, Boolean isRecommended, List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo) throws OperationFailedException {
         List<TestcaseResultEntity> filteredTestcaseResults;
         if (testcaseResultEntity.getRefObjUri().equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
@@ -680,7 +732,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP);
         } else if (filteredTestcaseResults.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
-                || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+                        || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
             if (Boolean.TRUE.equals(isRecommended)) {
                 testcaseResultEntity.setGrade(gradeEvaluator.evaluate(filteredTestcaseResults, contextInfo));
@@ -701,41 +753,16 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return testcaseResultEntities;
     }
 
-    private static String getMessage(String x, TestcaseResultEntity testcaseResultEntity, String x1, List<String> failedSpecificationTestcaseResultName) {
-        String message = x + testcaseResultEntity.getName() + x1;
-        for (int i = 0; i < (failedSpecificationTestcaseResultName.size() - 1); i++) {
-            message = message + " <b>" + failedSpecificationTestcaseResultName.get(i) + "<b>,";
-        }
-        if (failedSpecificationTestcaseResultName.size() > 1) {
-            message = message + " and ";
-        }
-
-        message = message + "<b>" + failedSpecificationTestcaseResultName.get(failedSpecificationTestcaseResultName.size() - 1) + "<b>";
-
-        return message;
-    }
-
-    private static List<TestcaseResultEntity> getChildTestcaseResultFromParentTestcaseResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
-        return testcaseResultEntities.stream()
-                .filter(tcre -> {
-                    return tcre.getParentTestcaseResult() != null
-                            && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                }).collect(Collectors.toList());
-    }
-
-    private static List<TestcaseResultEntity> getFilteredChileTestcaseResultsForTestResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
-        return testcaseResultEntities.stream()
-                .filter(tcre -> {
-                    return tcre.getParentTestcaseResult() != null
-                            && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                }).collect(Collectors.toList());
-    }
-
-    private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+    private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
         if (!StringUtils.hasLength(testcaseResultEntity.getId())) {
             testcaseResultEntity.setId(UUID.randomUUID().toString());
         }
         testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT);
         testcaseResultEntity.setDuration(null);
+    }
+
+    private record RecursiveTestcaseResults(List<TestcaseResultEntity> testcaseResultEntities,
+                                            TestcaseResultEntity testcaseResultEntity) {
+
     }
 }

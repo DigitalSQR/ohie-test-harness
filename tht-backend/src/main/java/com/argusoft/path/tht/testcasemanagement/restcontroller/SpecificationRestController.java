@@ -37,11 +37,18 @@ import java.util.List;
 @Api(value = "REST API for Specification services", tags = {"Specification API"})
 public class SpecificationRestController {
 
-    @Autowired
     private SpecificationService specificationService;
+    private SpecificationMapper specificationMapper;
 
     @Autowired
-    private SpecificationMapper specificationMapper;
+    public void setSpecificationService(SpecificationService specificationService) {
+        this.specificationService = specificationService;
+    }
+
+    @Autowired
+    public void setSpecificationMapper(SpecificationMapper specificationMapper) {
+        this.specificationMapper = specificationMapper;
+    }
 
     /**
      * We can expose this API in future if needed. {@inheritdoc}
@@ -50,9 +57,9 @@ public class SpecificationRestController {
      */
     @ApiOperation(value = "Create new Specification", response = SpecificationInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully created Specification"),
-        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully created Specification"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("")
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
@@ -76,9 +83,9 @@ public class SpecificationRestController {
      */
     @ApiOperation(value = "Update existing Specification", response = SpecificationInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully updated Specification"),
-        @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully updated Specification"),
+            @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 
     })
     @PutMapping("")
@@ -103,10 +110,10 @@ public class SpecificationRestController {
      */
     @ApiOperation(value = "View a page of available filtered Specifications", response = Page.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved page"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            @ApiResponse(code = 200, message = "Successfully retrieved page"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("")
     public Page<SpecificationInfo> searchSpecifications(
@@ -126,10 +133,10 @@ public class SpecificationRestController {
      */
     @ApiOperation(value = "View available Specification with supplied id", response = SpecificationInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved Specification"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            @ApiResponse(code = 200, message = "Successfully retrieved Specification"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{specificationId}")
     public SpecificationInfo getSpecificationById(
@@ -147,9 +154,9 @@ public class SpecificationRestController {
      */
     @ApiOperation(value = "View a list of validation errors for Specification", response = List.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved Validation errors"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully retrieved Validation errors"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PostMapping("/validate")
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
@@ -167,16 +174,16 @@ public class SpecificationRestController {
 
     @ApiOperation(value = "To change status of Specification", response = DocumentInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully updated Specification"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+            @ApiResponse(code = 200, message = "Successfully updated Specification"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{specificationId}/{changeState}")
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public SpecificationInfo updateSpecificationState(@PathVariable("specificationId") String specificationId,
-            @PathVariable("changeState") String changeState,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+                                                      @PathVariable("changeState") String changeState,
+                                                      @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         SpecificationEntity specificationEntity = specificationService.changeState(specificationId, changeState, contextInfo);
         return specificationMapper.modelToDto(specificationEntity);
@@ -184,9 +191,9 @@ public class SpecificationRestController {
 
     @ApiOperation(value = "Retrieves all status of specification.", response = Multimap.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/status/mapping")
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {

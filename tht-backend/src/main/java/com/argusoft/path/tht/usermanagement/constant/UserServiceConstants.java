@@ -15,7 +15,6 @@ import java.util.List;
 public class UserServiceConstants {
 
     public static final String USER_REF_OBJ_URI = UserInfo.class.getName();
-
     //User status
     public static final String USER_STATUS_VERIFICATION_PENDING = "user.status.verification.pending";
     public static final String USER_STATUS_APPROVAL_PENDING = "user.status.approval.pending";
@@ -30,7 +29,6 @@ public class UserServiceConstants {
             = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
     public static final List<String> USER_STATUS = new ArrayList<>();
     public static final Multimap<String, String> USER_STATUS_MAP = ArrayListMultimap.create();
-
     public static final String CLIENT_ID = "tht";
 
     static {
@@ -47,5 +45,8 @@ public class UserServiceConstants {
         USER_STATUS_MAP.put(USER_STATUS_ACTIVE, USER_STATUS_INACTIVE);
         USER_STATUS_MAP.put(USER_STATUS_INACTIVE, USER_STATUS_ACTIVE);
 
+    }
+
+    private UserServiceConstants() {
     }
 }

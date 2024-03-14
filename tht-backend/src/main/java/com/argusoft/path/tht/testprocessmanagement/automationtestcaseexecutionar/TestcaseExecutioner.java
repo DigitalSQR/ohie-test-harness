@@ -53,22 +53,54 @@ public class TestcaseExecutioner {
 
     public static Map<String, String> map = new HashMap<>();
 
-    @Autowired
     private ApplicationContext applicationContext;
-    @Autowired
+
     private ComponentService componentService;
-    @Autowired
+
     private TestcaseService testcaseService;
-    @Autowired
+
     private TestcaseResultService testcaseResultService;
-    @Autowired
+
     private TestRequestService testRequestService;
 
-    @Autowired
     private TestcaseResultAttributesService testcaseResultAttributesService;
 
-    @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    @Autowired
+    public void setComponentService(ComponentService componentService) {
+        this.componentService = componentService;
+    }
+
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService) {
+        this.testcaseService = testcaseService;
+    }
+
+    @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
+
+    @Autowired
+    public void setTestRequestService(TestRequestService testRequestService) {
+        this.testRequestService = testRequestService;
+    }
+
+    @Autowired
+    public void setTestcaseResultAttributesService(TestcaseResultAttributesService testcaseResultAttributesService) {
+        this.testcaseResultAttributesService = testcaseResultAttributesService;
+    }
+
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public void executeTestingProcess(
@@ -114,14 +146,14 @@ public class TestcaseExecutioner {
     public void ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(String testRequestId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException {
         try {
             if (testRequestId.isEmpty()) {
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseExecutioner.class.getSimpleName());
                 throw new InvalidParameterException("TestRequest Id is not present");
             }
             TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
             testcaseResultCriteriaSearchFilter.setRefId(testRequestId);
             List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
             if (testcaseResultEntity.isEmpty()) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.DOES_NOT_EXIST_EXCEPTION, TestcaseExecutioner.class.getSimpleName());
                 throw new DoesNotExistException("testcaseResultEntity list is empty");
             }
             testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResultEntity.get(0), "is_Interrupted", "false", contextInfo);
@@ -145,16 +177,16 @@ public class TestcaseExecutioner {
         try {
             List<TestcaseResultEntity> testcaseResultEntities
                     = fetchTestcaseResultsByInputs(
-                            testRequestId,
-                            refObjUri,
-                            refId,
-                            isManual,
-                            isAutomated,
-                            isRequired,
-                            isRecommended,
-                            isWorkflow,
-                            isFunctional,
-                            contextInfo);
+                    testRequestId,
+                    refObjUri,
+                    refId,
+                    isManual,
+                    isAutomated,
+                    isRequired,
+                    isRecommended,
+                    isWorkflow,
+                    isFunctional,
+                    contextInfo);
 
             changeTestcaseResultsState(
                     testcaseResultEntities,
@@ -173,9 +205,15 @@ public class TestcaseExecutioner {
 
             Map<String, IGenericClient> iGenericClientMap = new HashMap<>();
             for (ComponentEntity componentEntity : activeComponents) {
-                TestRequestUrlEntity testRequestUrlEntity = testRequestEntity.getTestRequestUrls().stream().filter(testRequestUrl -> testRequestUrl.getComponent().getId().equals(componentEntity.getId())).findFirst().get();
-                IGenericClient client = getClient(testRequestUrlEntity.getFhirVersion(), testRequestUrlEntity.getFhirApiBaseUrl(), testRequestUrlEntity.getUsername(), testRequestUrlEntity.getPassword());
-                iGenericClientMap.put(componentEntity.getId(), client);
+                Optional<TestRequestUrlEntity> testRequestUrlOptional = testRequestEntity.getTestRequestUrls().stream().filter(testRequestUrl -> testRequestUrl.getComponent().getId().equals(componentEntity.getId())).findFirst();
+                if (testRequestUrlOptional.isPresent()) {
+                    TestRequestUrlEntity testRequestUrlEntity = testRequestUrlOptional.get();
+                    IGenericClient client = getClient(testRequestUrlEntity.getFhirVersion(), testRequestUrlEntity.getFhirApiBaseUrl(), testRequestUrlEntity.getUsername(), testRequestUrlEntity.getPassword());
+                    iGenericClientMap.put(componentEntity.getId(), client);
+                } else {
+                    LOGGER.error("Unable to find testRequestUrl for {}", componentEntity.getId());
+                    throw new OperationFailedException("Unable to find testRequestUrl for " + componentEntity.getId());
+                }
             }
             TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = new TestcaseResultEntitiesAndIgenericClient(testcaseResultEntities, iGenericClientMap);
 
@@ -186,7 +224,7 @@ public class TestcaseExecutioner {
             LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseExecutioner.class.getSimpleName(), e);
             throw new OperationFailedException(e);
         } catch (InvalidParameterException | OperationFailedException | VersionMismatchException
-                | DoesNotExistException e) {
+                 | DoesNotExistException e) {
             LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseExecutioner.class.getSimpleName(), e);
             throw new OperationFailedException(e.getMessage(), e);
         }
@@ -239,16 +277,16 @@ public class TestcaseExecutioner {
             if (!threadGroupFlag) {
                 List<TestcaseResultEntity> testcaseResultEntities
                         = fetchTestcaseResultsByInputsForReinitialize(
-                                testRequestId,
-                                refObjUri,
-                                refId,
-                                isManual,
-                                isAutomated,
-                                isRequired,
-                                isRecommended,
-                                isWorkflow,
-                                isFunctional,
-                                contextInfo);
+                        testRequestId,
+                        refObjUri,
+                        refId,
+                        isManual,
+                        isAutomated,
+                        isRequired,
+                        isRecommended,
+                        isWorkflow,
+                        isFunctional,
+                        contextInfo);
                 changeTestcaseResultsState(
                         testcaseResultEntities,
                         TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT,
@@ -256,7 +294,7 @@ public class TestcaseExecutioner {
                         contextInfo);
             }
         } catch (DoesNotExistException | InvalidParameterException | OperationFailedException
-                | VersionMismatchException ex) {
+                 | VersionMismatchException ex) {
             LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseExecutioner.class.getSimpleName(), ex);
             throw new OperationFailedException("Operation failed while updating testcaseResults", ex);
         } catch (DataValidationErrorException ex) {
@@ -291,7 +329,7 @@ public class TestcaseExecutioner {
                     }
                     updateTestCaseResultForSystemError(testcaseResult, startDateForTestCase, errorMessage, contextInfo);
                 } catch (InvalidParameterException | DataValidationErrorException | OperationFailedException
-                        | VersionMismatchException | DoesNotExistException ex) {
+                         | VersionMismatchException | DoesNotExistException ex) {
                     LOGGER.error(ValidateConstant.EXCEPTION + TestcaseExecutioner.class.getSimpleName(), e);
                     ex.printStackTrace();
                 }
@@ -419,7 +457,7 @@ public class TestcaseExecutioner {
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
         for (TestcaseResultEntity testcaseResult : testcaseResultEntities) {
 
-            if (reset || (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) && (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
+            if (Boolean.TRUE.equals(reset) || (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) && (!testcaseResult.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
                 testcaseResultService.changeState(testcaseResult.getId(), newState, contextInfo);
             }
         }
@@ -454,7 +492,7 @@ public class TestcaseExecutioner {
         }).findFirst();
 
         if (!optionalTestcaseResultEntity.isPresent()) {
-            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.OPERATION_FAILED_EXCEPTION, TestcaseExecutioner.class.getSimpleName());
             throw new OperationFailedException("No TestRequest doesn't have testcases for selected inputs.");
         }
 
@@ -464,10 +502,10 @@ public class TestcaseExecutioner {
         } else if (refObjUri.equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
-                            .filter(tcre -> {
-                                return tcre.getParentTestcaseResult() != null
-                                        && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                            }).collect(Collectors.toList());
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                    }).collect(Collectors.toList());
         } else if (refObjUri.equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
             List<String> specificationTestcaseResultIds = testcaseResultEntities.stream()
                     .filter(tcre -> {
@@ -476,17 +514,17 @@ public class TestcaseExecutioner {
                     }).map(tcre -> tcre.getId()).collect(Collectors.toList());
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
-                            .filter(tcre -> {
-                                return tcre.getParentTestcaseResult() != null
-                                        && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
-                            }).collect(Collectors.toList());
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
+                    }).collect(Collectors.toList());
         } else {
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
-                            .filter(tcre -> {
-                                return tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
-                            })
-                            .collect(Collectors.toList());
+                    .filter(tcre -> {
+                        return tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
+                    })
+                    .collect(Collectors.toList());
         }
 
         return filteredTestcaseResults;
@@ -521,7 +559,7 @@ public class TestcaseExecutioner {
         }).findFirst();
 
         if (!optionalTestcaseResultEntity.isPresent()) {
-            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.OPERATION_FAILED_EXCEPTION, TestcaseExecutioner.class.getSimpleName());
             throw new OperationFailedException("No TestRequest doesn't have testcases for selected inputs.");
         }
 
@@ -531,10 +569,10 @@ public class TestcaseExecutioner {
         } else if (refObjUri.equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
-                            .filter(tcre -> {
-                                return tcre.getParentTestcaseResult() != null
-                                        && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                            }).collect(Collectors.toList());
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                    }).collect(Collectors.toList());
         } else if (refObjUri.equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
             List<String> specificationTestcaseResultIds = testcaseResultEntities.stream()
                     .filter(tcre -> {
@@ -543,17 +581,17 @@ public class TestcaseExecutioner {
                     }).map(tcre -> tcre.getId()).collect(Collectors.toList());
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
-                            .filter(tcre -> {
-                                return tcre.getParentTestcaseResult() != null
-                                        && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
-                            }).collect(Collectors.toList());
+                    .filter(tcre -> {
+                        return tcre.getParentTestcaseResult() != null
+                                && specificationTestcaseResultIds.contains(tcre.getParentTestcaseResult().getId());
+                    }).collect(Collectors.toList());
         } else {
             filteredTestcaseResults
                     = testcaseResultEntities.stream()
-                            .filter(tcre -> {
-                                return tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
-                            })
-                            .collect(Collectors.toList());
+                    .filter(tcre -> {
+                        return tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
+                    })
+                    .collect(Collectors.toList());
         }
 
         return filteredTestcaseResults.stream()
@@ -570,7 +608,7 @@ public class TestcaseExecutioner {
     }
 
     private record TestcaseResultEntitiesAndIgenericClient(List<TestcaseResultEntity> testcaseResultEntities,
-            Map<String, IGenericClient> iGenericClientMap) {
+                                                           Map<String, IGenericClient> iGenericClientMap) {
 
     }
 

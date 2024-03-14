@@ -30,6 +30,7 @@ public class EmailConfig {
         this.host = host;
         this.port = port;
     }
+
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();

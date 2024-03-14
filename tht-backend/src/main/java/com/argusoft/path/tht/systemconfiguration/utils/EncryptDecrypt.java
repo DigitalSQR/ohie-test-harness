@@ -7,11 +7,14 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
 public class EncryptDecrypt {
-    private static final String AES_ALGORITHM = "AES";
-    private static final String AES_TRANSFORMATION = "AES/ECB/PKCS5Padding";
-    private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public static String encryptJson(String json, String encryptionKey) throws Exception{
+    private static final String AES_ALGORITHM = "AES";
+    private static final String AES_TRANSFORMATION = "AES/GCM/NoPadding";
+    private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private EncryptDecrypt() {
+    }
+
+    public static String encryptJson(String json, String encryptionKey) throws Exception {
         // Decode the Base64-encoded encryption key
         byte[] decodedKey = Base64.getDecoder().decode(encryptionKey);
         SecretKeySpec key = new SecretKeySpec(decodedKey, AES_ALGORITHM);

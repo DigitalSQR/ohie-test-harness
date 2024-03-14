@@ -33,6 +33,8 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "specification", cascade = {})
     private Set<TestcaseEntity> testcases;
+    @Column(name = "is_required")
+    private Boolean isRequired;
 
     public SpecificationEntity() {
     }
@@ -68,9 +70,6 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     public void setRequired(Boolean required) {
         isRequired = required;
     }
-
-    @Column(name = "is_required")
-    private Boolean isRequired;
 
     public Integer getRank() {
         return rank;

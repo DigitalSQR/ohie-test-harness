@@ -18,21 +18,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class TestcaseOptionValidator {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseOptionValidator.class);
 
+    private TestcaseOptionValidator() {
+    }
+
     public static void validateCreateUpdateTestcaseOption(String validationTypeKey, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, TestcaseOptionEntity testcaseOptionEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestcaseOption(validationTypeKey,
-                        testcaseOptionEntity,
-                        testcaseOptionService,
-                        testcaseService,
-                        contextInfo);
+                testcaseOptionEntity,
+                testcaseOptionService,
+                testcaseService,
+                contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseOptionValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, TestcaseOptionValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -42,12 +48,11 @@ public class TestcaseOptionValidator {
 
     public static List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey, TestcaseOptionEntity testcaseOptionEntity, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        TestcaseOptionEntity originalEntity = null;
         trimTestcaseOption(testcaseOptionEntity);
 
         // check Common Required
@@ -56,20 +61,13 @@ public class TestcaseOptionValidator {
         // check Common ForeignKey
         validateCommonForeignKey(testcaseOptionEntity, testcaseService, errors, contextInfo);
 
-        // check Common Unique
-        validateCommonUnique(testcaseOptionEntity,
-                validationTypeKey,
-                errors,
-                contextInfo);
-
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
                 // get the info
                 if (testcaseOptionEntity.getId() != null) {
                     try {
-                        originalEntity = testcaseOptionService
-                                .getTestcaseOptionById(testcaseOptionEntity.getId(),
-                                        contextInfo);
+                        TestcaseOptionEntity originalEntity = testcaseOptionService.getTestcaseOptionById(testcaseOptionEntity.getId(), contextInfo);
+                        validateUpdateTestcaseOption(errors, testcaseOptionEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseOptionValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
@@ -77,22 +75,15 @@ public class TestcaseOptionValidator {
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
                                         ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateTestcaseOption(errors,
-                        testcaseOptionEntity,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateTestcaseOption(errors, testcaseOptionEntity, testcaseOptionService, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
@@ -105,9 +96,6 @@ public class TestcaseOptionValidator {
         // For :Order
         validateTestcaseOptionEntityOrder(testcaseOptionEntity,
                 errors);
-        // For :IsFunctional
-        validateTestcaseOptionEntityIsSuccess(testcaseOptionEntity,
-                errors);
         // For : Description
         validateTestcaseOptionDescription(testcaseOptionEntity,
                 errors);
@@ -116,9 +104,9 @@ public class TestcaseOptionValidator {
     }
 
     private static void validateCommonForeignKey(TestcaseOptionEntity testcaseOptionEntity,
-             TestcaseService testcaseService,
-            List<ValidationResultInfo> errors,
-            ContextInfo contextInfo) {
+                                                 TestcaseService testcaseService,
+                                                 List<ValidationResultInfo> errors,
+                                                 ContextInfo contextInfo) {
         Set<TestcaseEntity> testcaseEntitySet = new HashSet<>();
 
         if (testcaseOptionEntity.getTestcase() != null) {
@@ -139,8 +127,8 @@ public class TestcaseOptionValidator {
 
     //validate update
     private static void validateUpdateTestcaseOption(List<ValidationResultInfo> errors,
-            TestcaseOptionEntity testcaseOptionEntity,
-            TestcaseOptionEntity originalEntity)
+                                                     TestcaseOptionEntity testcaseOptionEntity,
+                                                     TestcaseOptionEntity originalEntity)
             throws OperationFailedException,
             InvalidParameterException {
         // required validation
@@ -165,8 +153,8 @@ public class TestcaseOptionValidator {
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
-            TestcaseOptionEntity testcaseOptionEntity,
-            TestcaseOptionEntity originalEntity) {
+                                             TestcaseOptionEntity testcaseOptionEntity,
+                                             TestcaseOptionEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseOptionEntity.getState(), originalEntity.getState(), "state", errors);
     }
@@ -196,7 +184,7 @@ public class TestcaseOptionValidator {
 
     //Validate Required
     private static void validateCommonRequired(TestcaseOptionEntity testcaseOptionEntity,
-            List<ValidationResultInfo> errors) {
+                                               List<ValidationResultInfo> errors) {
         //check for name
         ValidationUtils
                 .validateRequired(testcaseOptionEntity.getName(), "name", errors);
@@ -214,18 +202,9 @@ public class TestcaseOptionValidator {
                 .validateRequired(testcaseOptionEntity.getRank(), "rank", errors);
     }
 
-    //Validate Common Unique
-    private static void validateCommonUnique(TestcaseOptionEntity testcaseOptionEntity,
-            String validationTypeKey,
-            List<ValidationResultInfo> errors,
-            ContextInfo contextInfo)
-            throws OperationFailedException {
-        // check unique field
-    }
-
     //Validation For :Id
     private static void validateTestcaseOptionEntityId(TestcaseOptionEntity testcaseOptionEntity,
-            List<ValidationResultInfo> errors) {
+                                                       List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseOptionEntity.getId(),
                 "id",
                 0,
@@ -235,7 +214,7 @@ public class TestcaseOptionValidator {
 
     //Validation For :Name
     private static void validateTestcaseOptionEntityName(TestcaseOptionEntity testcaseOptionEntity,
-            List<ValidationResultInfo> errors) {
+                                                         List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseOptionEntity.getName(),
                 "name",
                 3,
@@ -245,7 +224,7 @@ public class TestcaseOptionValidator {
 
     //Validation For :Order
     private static void validateTestcaseOptionEntityOrder(TestcaseOptionEntity testcaseOptionEntity,
-            List<ValidationResultInfo> errors) {
+                                                          List<ValidationResultInfo> errors) {
         ValidationUtils.validateIntegerRange(testcaseOptionEntity.getRank(),
                 "rank",
                 1,
@@ -255,22 +234,12 @@ public class TestcaseOptionValidator {
 
     //Validation For:Description
     private static void validateTestcaseOptionDescription(TestcaseOptionEntity testcaseOption,
-            List<ValidationResultInfo> errors) {
+                                                          List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testcaseOption.getDescription(),
                 "description",
                 0,
                 1000,
                 errors);
-    }
-
-    //Validation For :IsFunctional
-    private static void validateTestcaseOptionEntityIsSuccess(TestcaseOptionEntity testcaseOptionEntity,
-            List<ValidationResultInfo> errors) {
-    }
-
-    //Validation For :ComponentId
-    private static void validateTestcaseOptionEntityComponentId(TestcaseOptionEntity testcaseOptionEntity,
-            List<ValidationResultInfo> errors) {
     }
 
     //trim all TestcaseOption field

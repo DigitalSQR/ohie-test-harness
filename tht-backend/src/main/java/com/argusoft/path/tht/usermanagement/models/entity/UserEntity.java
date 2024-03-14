@@ -77,6 +77,10 @@ public class UserEntity extends IdStateMetaEntity {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "UserEntity{"
@@ -85,10 +89,6 @@ public class UserEntity extends IdStateMetaEntity {
                 + ", password='" + password + '\''
                 + ", roles=" + roles
                 + '}';
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getCompanyName() {

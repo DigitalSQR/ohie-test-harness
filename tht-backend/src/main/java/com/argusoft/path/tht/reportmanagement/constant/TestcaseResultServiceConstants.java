@@ -15,7 +15,6 @@ import java.util.List;
 public class TestcaseResultServiceConstants {
 
     public static final String TESTCASE_RESULT_REF_OBJ_URI = TestcaseResultInfo.class.getName();
-
     //Testcase Result states
     public static final String TESTCASE_RESULT_STATUS_SKIP = "testcase.result.status.skip";
     public static final String TESTCASE_RESULT_STATUS_DRAFT = "testcase.result.status.draft";
@@ -53,5 +52,8 @@ public class TestcaseResultServiceConstants {
         TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_FINISHED, TESTCASE_RESULT_STATUS_PENDING);
         TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_FINISHED, TESTCASE_RESULT_STATUS_SKIP);
         TESTCASE_RESULT_STATUS_MAP.put(TESTCASE_RESULT_STATUS_FINISHED, TESTCASE_RESULT_STATUS_FINISHED);
+    }
+
+    private TestcaseResultServiceConstants() {
     }
 }

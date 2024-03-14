@@ -32,7 +32,7 @@ public class CRF10TestCase2 implements TestCase {
 
         MethodOutcome outcome = client.create().resource(patient).execute();
         String patientId = outcome.getId().getIdPart();
-        if (!outcome.getCreated()) {
+        if (Boolean.FALSE.equals(outcome.getCreated())) {
             return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to create patient");
         }
         Patient infant = client.read().resource(Patient.class).withId(patientId).execute();

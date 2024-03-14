@@ -56,7 +56,7 @@ public class TestRequestValidator {
                 componentService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestRequestValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, TestRequestValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -94,7 +94,7 @@ public class TestRequestValidator {
                 testcaseResultService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestRequestValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, TestRequestValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -119,7 +119,7 @@ public class TestRequestValidator {
                 || StringUtils.isEmpty(refObjUri)
                 || StringUtils.isEmpty(refId)
                 || StringUtils.isEmpty(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestValidator.class.getSimpleName());
             throw new InvalidParameterException("inputData is missing");
         }
         List<ValidationResultInfo> errors = new ArrayList<>();
@@ -167,9 +167,9 @@ public class TestRequestValidator {
                                 ErrorLevel.ERROR,
                                 "Process for the requested input doesn't have active testcaseResults."));
             }
-        } else if(validationTypeKey.equals(Constant.STOP_PROCESS_VALIDATION)) {
+        } else if (validationTypeKey.equals(Constant.STOP_PROCESS_VALIDATION)) {
 
-        } else if(validationTypeKey.equals(Constant.RESET_PROCESS_VALIDATION)) {
+        } else if (validationTypeKey.equals(Constant.RESET_PROCESS_VALIDATION)) {
 
         }
         return errors;
@@ -183,12 +183,11 @@ public class TestRequestValidator {
                                                                  ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE
         List<ValidationResultInfo> errors = new ArrayList<>();
-        TestRequestEntity originalEntity = null;
         trimTestRequest(testRequestEntity);
 
         // check Common Required
@@ -197,43 +196,29 @@ public class TestRequestValidator {
         // check Common ForeignKey
         validateCommonForeignKey(testRequestEntity, errors, userService, componentService, contextInfo);
 
-        // check Common Unique
-        validateCommonUnique(testRequestEntity,
-                validationTypeKey,
-                errors,
-                contextInfo);
-
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
                 // get the info
                 if (testRequestEntity.getId() != null) {
                     try {
-                        originalEntity = testRequestService
-                                .getTestRequestById(testRequestEntity.getId(),
-                                        contextInfo);
+                        TestRequestEntity originalEntity = testRequestService.getTestRequestById(testRequestEntity.getId(), contextInfo);
+                        validateUpdateTestRequest(errors, testRequestEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestRequestValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+"update"+ ValidateConstant.DOES_NOT_EXIST));
+                                        ValidateConstant.ID_SUPPLIED + "update" + ValidateConstant.DOES_NOT_EXIST));
+                        return errors;
                     }
                 }
-
-                if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-                    return errors;
-                }
-
-                validateUpdateTestRequest(errors,
-                        testRequestEntity,
-                        originalEntity);
                 break;
             case Constant.CREATE_VALIDATION:
                 validateCreateTestRequest(errors, testRequestEntity, testRequestService, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 
@@ -271,7 +256,7 @@ public class TestRequestValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
+                                ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         }
         if (testRequestEntity.getAssessee() != null) {
@@ -279,10 +264,9 @@ public class TestRequestValidator {
             try {
                 UserEntity userEntity = userService.getUserById(testRequestEntity.getAssessee().getId(), contextInfo);
                 if (userEntity.getRoles().stream().anyMatch(roleEntity -> UserServiceConstants.ROLE_ID_ASSESSEE.equals(roleEntity.getId()))) {
-                    if(userEntity.getState().equals("user.status.active")) {
+                    if (userEntity.getState().equals("user.status.active")) {
                         testRequestEntity.setAssessee(userEntity);
-                    }
-                    else {
+                    } else {
                         errors.add(
                                 new ValidationResultInfo(fieldName,
                                         ErrorLevel.ERROR,
@@ -299,7 +283,7 @@ public class TestRequestValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
+                                ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
             }
         }
         if (!testRequestEntity.getTestRequestUrls().isEmpty()) {
@@ -314,7 +298,7 @@ public class TestRequestValidator {
                     errors.add(
                             new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
-                                    ValidateConstant.ID_SUPPLIED+ fieldName + ValidateConstant.DOES_NOT_EXIST));
+                                    ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
                 }
             }
         }
@@ -341,7 +325,7 @@ public class TestRequestValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    ValidateConstant.SOMEONE_UPDATED+ "TestRequest" + ValidateConstant.REFRESH_COPY));
+                    ValidateConstant.SOMEONE_UPDATED + "TestRequest" + ValidateConstant.REFRESH_COPY));
         }
         // check not updatable fields
         validateNotUpdatable(errors, testRequestEntity, originalEntity);
@@ -370,7 +354,7 @@ public class TestRequestValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                ValidateConstant.ID_SUPPLIED+ "create" + ValidateConstant.ALREADY_EXIST));
+                                ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
                 LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestRequestValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
@@ -393,23 +377,14 @@ public class TestRequestValidator {
         ValidationUtils.validateRequired(urlEntitySet, "test request url", errors);
 
         //loop to check email and password not null in testrequest url
-       for(TestRequestUrlEntity entity : urlEntitySet){
-           //check for username
-           ValidationUtils.validateRequired(entity.getUsername(), "username", errors);
-           //check for password
-           ValidationUtils.validateRequired(entity.getPassword(), "password", errors);
-           //check for baseurl
-           ValidationUtils.validateRequired(entity.getFhirApiBaseUrl(), "fhirApiBaseUrl", errors);
-       }
-    }
-
-    //Validate Common Unique
-    private static void validateCommonUnique(TestRequestEntity testRequestEntity,
-                                             String validationTypeKey,
-                                             List<ValidationResultInfo> errors,
-                                             ContextInfo contextInfo)
-            throws OperationFailedException {
-        // check unique field
+        for (TestRequestUrlEntity entity : urlEntitySet) {
+            //check for username
+            ValidationUtils.validateRequired(entity.getUsername(), "username", errors);
+            //check for password
+            ValidationUtils.validateRequired(entity.getPassword(), "password", errors);
+            //check for baseurl
+            ValidationUtils.validateRequired(entity.getFhirApiBaseUrl(), "fhirApiBaseUrl", errors);
+        }
     }
 
     //Validation For :Id
@@ -434,7 +409,7 @@ public class TestRequestValidator {
 
     //Validation For :Desc
     private static void validateTestRequestEntityDescription(TestRequestEntity testRequestEntity,
-                                                      List<ValidationResultInfo> errors) {
+                                                             List<ValidationResultInfo> errors) {
         ValidationUtils.validateLength(testRequestEntity.getDescription(),
                 "description",
                 0,
@@ -445,10 +420,10 @@ public class TestRequestValidator {
 
     //Validation For :TestRequestUrl
     private static void validateTestRequestEntityTestRequestUrl(TestRequestEntity testRequestEntity,
-                                                             List<ValidationResultInfo> errors) {
+                                                                List<ValidationResultInfo> errors) {
         Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
         //loop to check length of email , password, baseUrl in testrequest url
-        for(TestRequestUrlEntity entity : urlEntitySet){
+        for (TestRequestUrlEntity entity : urlEntitySet) {
             //check for username
             ValidationUtils
                     .validateLength(entity.getUsername(),
@@ -512,12 +487,6 @@ public class TestRequestValidator {
         });
     }
 
-    @Autowired
-    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
-        TestRequestValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
-    }
-
-
     public static void validateChangeState(TestRequestEntity testRequestEntity,
                                            String nextStateKey,
                                            ComponentService componentService,
@@ -526,14 +495,14 @@ public class TestRequestValidator {
                                            TestcaseOptionService testcaseOptionService,
                                            List<ValidationResultInfo> errors,
                                            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
-        if(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextStateKey)) {
+        if (TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextStateKey)) {
 
             Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();
 
             if (testRequestUrls.isEmpty()) {
-                errors.add(new ValidationResultInfo("component", ErrorLevel.ERROR,"Components not found to test"));
+                errors.add(new ValidationResultInfo("component", ErrorLevel.ERROR, "Components not found to test"));
             } else {
-                for(TestRequestUrlEntity testRequestUrlEntity: testRequestUrls) {
+                for (TestRequestUrlEntity testRequestUrlEntity : testRequestUrls) {
                     if (!ComponentServiceConstants.COMPONENT_STATUS_ACTIVE.equals(testRequestUrlEntity.getComponent().getState())) {
                         errors.add(new ValidationResultInfo("component", ErrorLevel.WARN, "Component " + testRequestUrlEntity.getComponent().getName() + " will be skipped as it is inactive in Testcase Configuration. To activate this component, please contact administrator."));
                     } else {
@@ -555,14 +524,14 @@ public class TestRequestValidator {
                         }
                     }
                 }
-                TestRequestValidator.validateBaseFhirUrl(testRequestEntity, errors, contextInfo);
+                TestRequestValidator.validateBaseFhirUrl(testRequestEntity, errors);
             }
         }
     }
 
-    public static void validateBaseFhirUrl(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+    public static void validateBaseFhirUrl(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors) throws InvalidParameterException, DoesNotExistException {
         Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
-        for(TestRequestUrlEntity entity : urlEntitySet){
+        for (TestRequestUrlEntity entity : urlEntitySet) {
             //check for baseurl
             ValidationUtils.validateNotEmpty(entity.getFhirApiBaseUrl(), "fhirApiBaseUrl", errors);
         }
@@ -589,5 +558,10 @@ public class TestRequestValidator {
                         && ValidationResultInfo.isSurpassingThreshold(validationResult.getLevel(),
                         threshold))
         );
+    }
+
+    @Autowired
+    public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
+        TestRequestValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
     }
 }

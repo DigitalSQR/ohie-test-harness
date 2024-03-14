@@ -23,22 +23,9 @@ public class GradeEvaluator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GradeEvaluator.class);
 
-    @Autowired
+
     private GradeService gradeService;
-
-    @Autowired
     private TestcaseResultService testcaseResultService;
-
-    public String evaluate(List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo) throws OperationFailedException {
-        int totalElements = testcaseResultEntities.size();
-        int successElements = testcaseResultEntities.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
-        if (totalElements != 0) {
-            int percentage = getPercentage(successElements, totalElements);
-            return getGradeBasedOnPercentage(percentage, contextInfo);
-        }
-
-        return null;
-    }
 
     private static TestcaseResultCriteriaSearchFilter getTestcaseResultCriteriaSearchFilter(TestcaseResultEntity testcaseResultEntity) {
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
@@ -50,6 +37,27 @@ public class GradeEvaluator {
             testcaseResultCriteriaSearchFilter.setParentTestcaseResultId(testcaseResultEntity.getId());
         }
         return testcaseResultCriteriaSearchFilter;
+    }
+
+    @Autowired
+    public void setGradeService(GradeService gradeService) {
+        this.gradeService = gradeService;
+    }
+
+    @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
+
+    public String evaluate(List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo) throws OperationFailedException {
+        int totalElements = testcaseResultEntities.size();
+        int successElements = testcaseResultEntities.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
+        if (totalElements != 0) {
+            int percentage = getPercentage(successElements, totalElements);
+            return getGradeBasedOnPercentage(percentage, contextInfo);
+        }
+
+        return null;
     }
 
     private int getPercentage(int successElements, int totalElements) {

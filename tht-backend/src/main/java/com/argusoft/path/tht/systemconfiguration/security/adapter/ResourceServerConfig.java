@@ -26,21 +26,48 @@ import org.springframework.security.web.session.SessionManagementFilter;
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-    @Autowired
     CorsFilter corsFilter;
-    @Autowired
     private DefaultTokenServices defaultTokenServices;
-    @Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
-    @Autowired
     private CustomOauth2UserService oauthUserService;
-    @Autowired
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    @Autowired
     private UserRepository userRepository;
+    private OnSsoAuthenticationSuccessHandler onSsoAuthenticationSuccessHandler;
 
     @Autowired
-    private OnSsoAuthenticationSuccessHandler onSsoAuthenticationSuccessHandler;
+    public void setCorsFilter(CorsFilter corsFilter) {
+        this.corsFilter = corsFilter;
+    }
+
+    @Autowired
+    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices) {
+        this.defaultTokenServices = defaultTokenServices;
+    }
+
+    @Autowired
+    public void setCustomAccessDeniedHandler(CustomAccessDeniedHandler customAccessDeniedHandler) {
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
+    }
+
+    @Autowired
+    public void setCustomOauth2UserService(CustomOauth2UserService oauthUserService) {
+        this.oauthUserService = oauthUserService;
+    }
+
+    @Autowired
+    public void setCustomAuthenticationEntryPoint(CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setOnSsoAuthenticationSuccessHandler(OnSsoAuthenticationSuccessHandler onSsoAuthenticationSuccessHandler) {
+        this.onSsoAuthenticationSuccessHandler = onSsoAuthenticationSuccessHandler;
+    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {

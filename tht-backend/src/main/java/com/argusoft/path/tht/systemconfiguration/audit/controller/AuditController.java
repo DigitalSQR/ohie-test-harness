@@ -19,8 +19,12 @@ import java.util.List;
 @Api(value = "REST API for audit services", tags = {"Audit API"})
 public class AuditController {
 
-    @Autowired
     AuditService auditService;
+
+    @Autowired
+    public void setAuditService(AuditService auditService) {
+        this.auditService = auditService;
+    }
 
     @GetMapping("")
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")

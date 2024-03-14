@@ -28,11 +28,19 @@ public class ProcessReinitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ProcessReinitializer.class);
 
-    @Autowired
     private TestcaseResultService testcaseResultService;
 
-    @Autowired
     private TestcaseExecutioner testcaseExecutioner;
+
+    @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
+
+    @Autowired
+    public void setTestcaseExecutioner(TestcaseExecutioner testcaseExecutioner) {
+        this.testcaseExecutioner = testcaseExecutioner;
+    }
 
     @PostConstruct
     public void init() {

@@ -15,8 +15,11 @@ public class CaptchaUtil {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CaptchaUtil.class);
 
+    private CaptchaUtil() {
+    }
+
     //create captcha object
-    public static Captcha createCaptcha(int width, int height){
+    public static Captcha createCaptcha(int width, int height) {
         Color startColor = new Color(173, 216, 230); // Light Blue color
         Color endColor = new Color(240, 248, 255);   // Another shade of Light Blue color
         return new Captcha.Builder(width, height)
@@ -27,7 +30,7 @@ public class CaptchaUtil {
     }
 
     //convert to binary string
-    public static String encodeBase64(Captcha captcha){
+    public static String encodeBase64(Captcha captcha) {
         String imageData = null;
 
         try {
@@ -37,7 +40,7 @@ public class CaptchaUtil {
             byte[] array = Base64.getEncoder().encode(outputStream.toByteArray());
             imageData = new String(array);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + CaptchaUtil.class.getSimpleName(), e);
             e.printStackTrace();
         }

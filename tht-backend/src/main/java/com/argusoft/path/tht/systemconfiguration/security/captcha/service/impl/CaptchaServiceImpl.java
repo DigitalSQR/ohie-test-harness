@@ -8,9 +8,9 @@ import com.argusoft.path.tht.systemconfiguration.security.captcha.constant.Captc
 import com.argusoft.path.tht.systemconfiguration.security.captcha.models.CaptchaInfo;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.service.CaptchaService;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.util.CaptchaUtil;
-import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.security.captcha.validation.CaptchaValidation;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,36 +42,35 @@ public class CaptchaServiceImpl implements CaptchaService {
 
     @Override
     public void setupCaptcha(CaptchaInfo captchaInfo) throws Exception {
-        Captcha captcha = CaptchaUtil.createCaptcha(300,80);
+        Captcha captcha = CaptchaUtil.createCaptcha(300, 80);
         captchaInfo.setImage(CaptchaUtil.encodeBase64(captcha));
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, 2);
-        String code=encryptCodeAndExpiryTime(captcha.getAnswer(), calendar.getTime());
+        String code = encryptCodeAndExpiryTime(captcha.getAnswer(), calendar.getTime());
         captchaInfo.setCaptcha(code);
     }
 
     @Override
     public String encryptCodeAndExpiryTime(String code, Date expiryTime) throws Exception {
         //converting them into string
-        String codeAndExpiryTime =jsonToString(code,expiryTime);
+        String codeAndExpiryTime = jsonToString(code, expiryTime);
         // encrypt
-        return EncryptDecrypt.encryptJson(codeAndExpiryTime,key);
+        return EncryptDecrypt.encryptJson(codeAndExpiryTime, key);
     }
 
     @Override
     public JSONObject decryptCodeTime(String captcha) throws Exception {
         // decrypt
-        String codeAndExpiryTime = EncryptDecrypt.decryptJson(captcha,key);
+        String codeAndExpiryTime = EncryptDecrypt.decryptJson(captcha, key);
         //Convert string into Json
         return stringToJson(codeAndExpiryTime);
     }
 
     @Override
-    public List<ValidationResultInfo> validateCaptcha(String captchaCode,String captcha,ContextInfo contextInfo) throws Exception {
+    public List<ValidationResultInfo> validateCaptcha(String captchaCode, String captcha, ContextInfo contextInfo) throws Exception {
         // checking if input not empty
-        List<ValidationResultInfo> errors = CaptchaValidation.validateCaptchaEmpty(captchaCode,captcha,contextInfo);
-        if(ValidationUtils.containsErrors(errors, ErrorLevel.ERROR))
-        {
+        List<ValidationResultInfo> errors = CaptchaValidation.validateCaptchaEmpty(captchaCode, captcha);
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
             return errors;
         }
         JSONObject codeTimeObject = decryptCodeTime(captcha);
@@ -80,26 +79,25 @@ public class CaptchaServiceImpl implements CaptchaService {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
         // Parse the expiry time string into a Date object
 
-        Date expiryTime = dateFormat.parse(codeTimeObject.get(CaptchaConstant.expiry_Time).toString());
+        Date expiryTime = dateFormat.parse(codeTimeObject.get(CaptchaConstant.EXPIRY_TIME).toString());
         CaptchaValidation.validateCaptcha(
                 codeTimeObject.get("code").toString(),
                 expiryTime,
                 captchaCode,
-                contextInfo,
                 errors);
         return errors;
     }
 
-    public String jsonToString(String code, Date expiryTime){
+    public String jsonToString(String code, Date expiryTime) {
         // Create a JSON object
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code", code);
-        jsonObject.put(CaptchaConstant.expiry_Time, expiryTime);
+        jsonObject.put(CaptchaConstant.EXPIRY_TIME, expiryTime);
         // Convert JSON object to string
         return jsonObject.toString();
     }
 
-    public JSONObject stringToJson(String codeAndTime){
+    public JSONObject stringToJson(String codeAndTime) {
 
         // Create an ObjectMapper
         ObjectMapper objectMapper = new ObjectMapper();
@@ -110,10 +108,10 @@ public class CaptchaServiceImpl implements CaptchaService {
             JsonNode jsonNode = objectMapper.readTree(codeAndTime);
             // Access fields in the JsonNode
             String code = jsonNode.get("code").asText();
-            String expiryTime = jsonNode.get(CaptchaConstant.expiry_Time).asText();
+            String expiryTime = jsonNode.get(CaptchaConstant.EXPIRY_TIME).asText();
 
-            jsonObject.put("code",code);
-            jsonObject.put(CaptchaConstant.expiry_Time, expiryTime);
+            jsonObject.put("code", code);
+            jsonObject.put(CaptchaConstant.EXPIRY_TIME, expiryTime);
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + CaptchaServiceImpl.class.getSimpleName(), e);
             e.printStackTrace();

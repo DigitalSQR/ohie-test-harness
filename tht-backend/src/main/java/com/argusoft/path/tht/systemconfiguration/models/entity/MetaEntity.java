@@ -22,35 +22,20 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 public class MetaEntity {
 
-    @Override
-    public String toString() {
-        return "MetaEntity{"
-                + "createdAt=" + createdAt
-                + ", updatedAt=" + updatedAt
-                + ", createdBy='" + createdBy + '\''
-                + ", updatedBy='" + updatedBy + '\''
-                + ", version=" + version
-                + '}';
-    }
-
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-
     @LastModifiedDate
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
-
     @CreatedBy
     @Column(name = "created_by", updatable = false)
     private String createdBy;
-
     @LastModifiedBy
     @Column(name = "updated_by")
     private String updatedBy;
-
     @Version
     @Column(name = "version")
     private Long version;
@@ -64,6 +49,17 @@ public class MetaEntity {
         this.setCreatedBy(metaEntity.getCreatedBy());
         this.setUpdatedBy(metaEntity.getUpdatedBy());
         this.setVersion(metaEntity.getVersion());
+    }
+
+    @Override
+    public String toString() {
+        return "MetaEntity{"
+                + "createdAt=" + createdAt
+                + ", updatedAt=" + updatedAt
+                + ", createdBy='" + createdBy + '\''
+                + ", updatedBy='" + updatedBy + '\''
+                + ", version=" + version
+                + '}';
     }
 
     public Date getCreatedAt() {

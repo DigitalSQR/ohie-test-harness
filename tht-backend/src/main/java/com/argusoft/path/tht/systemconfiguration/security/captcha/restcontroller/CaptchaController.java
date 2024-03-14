@@ -13,8 +13,12 @@ import java.util.List;
 @RequestMapping("/captcha")
 public class CaptchaController {
 
-    @Autowired
     private CaptchaService captchaService;
+
+    @Autowired
+    public void setCaptchaService(CaptchaService captchaService) {
+        this.captchaService = captchaService;
+    }
 
     @GetMapping("")
     public CaptchaInfo getCaptcha(@RequestAttribute("contextInfo") ContextInfo contextInfo) throws Exception {
@@ -23,9 +27,9 @@ public class CaptchaController {
 
     @PostMapping("/validate")
     public List<ValidationResultInfo> validateCaptcha(@RequestHeader("captchaCode") String captchaCode,
-                                                       @RequestHeader("captcha") String captcha,
-                                                       @RequestAttribute("contextInfo") ContextInfo contextInfo) throws Exception {
-       return captchaService.validateCaptcha(captchaCode,captcha,contextInfo);
+                                                      @RequestHeader("captcha") String captcha,
+                                                      @RequestAttribute("contextInfo") ContextInfo contextInfo) throws Exception {
+        return captchaService.validateCaptcha(captchaCode, captcha, contextInfo);
     }
 
 }

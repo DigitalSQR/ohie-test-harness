@@ -10,17 +10,13 @@ import java.util.List;
 public class DocumentServiceConstants {
 
     public static final String DOCUMENT_REF_OBJ_URI = DocumentInfo.class.getName();
-
     //DOCUMENT states
     public static final String DOCUMENT_STATUS_ACTIVE = "document.status.active";
     public static final String DOCUMENT_STATUS_INACTIVE = "document.status.inactive";
     public static final Multimap<String, String> DOCUMENT_STATUS_MAP = ArrayListMultimap.create();
-
     // Allowed Active Types
     public static final String ALLOWED_ACTIVE_SINGLE_RECORD = "document.allowed.active.single.record";
-
     public static final String ALLOWED_ACTIVE_MULTI_RECORD = "document.allowed.active.multi.record";
-
     public static List<String> DOCUMENT_STATUS = new ArrayList<>();
 
     static {
@@ -31,6 +27,9 @@ public class DocumentServiceConstants {
     static {
         DOCUMENT_STATUS_MAP.put(DOCUMENT_STATUS_ACTIVE, DOCUMENT_STATUS_INACTIVE);
         DOCUMENT_STATUS_MAP.put(DOCUMENT_STATUS_INACTIVE, DOCUMENT_STATUS_ACTIVE);
+    }
+
+    private DocumentServiceConstants() {
     }
 
 }

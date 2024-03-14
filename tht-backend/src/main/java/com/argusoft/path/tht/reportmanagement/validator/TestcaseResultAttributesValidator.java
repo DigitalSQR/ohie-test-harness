@@ -10,8 +10,12 @@ import java.util.Optional;
 @Component
 public class TestcaseResultAttributesValidator {
 
-    @Autowired
     TestcaseResultAttributesRepository testcaseResultAttributesRepository;
+
+    @Autowired
+    public void setTestcaseResultAttributesRepository(TestcaseResultAttributesRepository testcaseResultAttributesRepository) {
+        this.testcaseResultAttributesRepository = testcaseResultAttributesRepository;
+    }
 
     public TestcaseResultAttributesEntity checkKeyPresence(TestcaseResultAttributesEntity testcaseResultAttributesEntity) {
         Optional<TestcaseResultAttributesEntity> testcaseResultAttributes = testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultAttributesEntity.getTestcaseResultEntity(), testcaseResultAttributesEntity.getKey());

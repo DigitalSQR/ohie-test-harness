@@ -49,12 +49,8 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     public static final Logger LOGGER = LoggerFactory.getLogger(OnSsoAuthenticationSuccessHandler.class);
 
-    @Autowired
     private DefaultTokenServices defaultTokenServices;
-
-    @Autowired
     private UserService userService;
-
     @Value("${frontend.google.success}")
     private String successCallbackEndUrl;
 
@@ -69,6 +65,34 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                 .append("=")
                 .append(encodedBase64);
         return urlBuilder.toString();
+    }
+
+    private static OAuth2Authentication getAuth2Authentication(List<GrantedAuthority> authorities, ContextInfo newContextInfo) {
+        OAuth2Request oauth2Request = new OAuth2Request(
+                new HashMap<>(),
+                "tht",
+                authorities,
+                true,
+                new HashSet<>(List.of("write")),
+                new HashSet<>(List.of("resource_id")),
+                null,
+                new HashSet<>(List.of("code")),
+                new HashMap<>());
+
+        UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(newContextInfo, "N/A", authorities);
+
+        return new OAuth2Authentication(oauth2Request, authenticationToken);
+    }
+
+    @Autowired
+    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices) {
+        this.defaultTokenServices = defaultTokenServices;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -87,7 +111,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
 
                 List<GrantedAuthority> authorities
                         = loggedInUser.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getId()))
-                                .collect(Collectors.toList());
+                        .collect(Collectors.toList());
 
                 ContextInfo newContextInfo = new ContextInfo(
                         oauth2User.<String>getAttribute("email"),
@@ -143,24 +167,6 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
             LOGGER.error(ValidateConstant.EXCEPTION + OnSsoAuthenticationSuccessHandler.class.getSimpleName(), e);
             response.setStatus(500);
         }
-    }
-
-    private static OAuth2Authentication getAuth2Authentication(List<GrantedAuthority> authorities, ContextInfo newContextInfo) {
-        OAuth2Request oauth2Request = new OAuth2Request(
-                new HashMap<>(),
-                "tht",
-                authorities,
-                true,
-                new HashSet<>(List.of("write")),
-                new HashSet<>(List.of("resource_id")),
-                null,
-                new HashSet<>(List.of("code")),
-                new HashMap<>());
-
-        UsernamePasswordAuthenticationToken authenticationToken
-                = new UsernamePasswordAuthenticationToken(newContextInfo, "N/A", authorities);
-
-        return new OAuth2Authentication(oauth2Request, authenticationToken);
     }
 
     private UserCreatedIfExist createUserIfNotExists(OAuth2User oauth2User, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException, DataValidationErrorException, MessagingException, IOException {

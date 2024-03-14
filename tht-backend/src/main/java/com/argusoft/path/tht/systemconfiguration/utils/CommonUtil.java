@@ -6,6 +6,9 @@ import org.springframework.data.domain.Sort;
 
 public class CommonUtil {
 
+    private CommonUtil() {
+    }
+
     public static Pageable getPageable(Pageable pageable) {
         Sort.Order order = pageable.getSort().getOrderFor("default");
         if (order == null) {

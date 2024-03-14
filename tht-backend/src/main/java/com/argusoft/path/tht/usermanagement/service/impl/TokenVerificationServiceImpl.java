@@ -28,13 +28,8 @@ import java.util.*;
 @Service
 public class TokenVerificationServiceImpl implements TokenVerificationService {
 
-    @Autowired
     private TokenVerificationRepository tokenVerificationRepository;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private EmailService emailService;
 
     private static void checkForValidTokenTypeWithVerifyingInEnum(String tokenType) throws InvalidParameterException {
@@ -42,6 +37,21 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         if (!validEnum) {
             throw new InvalidParameterException("token type outside of the provided support => " + tokenType);
         }
+    }
+
+    @Autowired
+    public void setTokenVerificationRepository(TokenVerificationRepository tokenVerificationRepository) {
+        this.tokenVerificationRepository = tokenVerificationRepository;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 
     @Override
@@ -68,7 +78,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
 
     @Override
     public Boolean verifyUserToken(String base64TokenId, String base64EmailId,
-            Boolean verifyForgotPasswordTokenOnly, ContextInfo contextInfo)
+                                   Boolean verifyForgotPasswordTokenOnly, ContextInfo contextInfo)
             throws DoesNotExistException,
             DataValidationErrorException,
             OperationFailedException,
@@ -125,8 +135,8 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
 
     @Override
     public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId,
-            String tokenType,
-            ContextInfo contextInfo) throws DoesNotExistException,
+                                                                           String tokenType,
+                                                                           ContextInfo contextInfo) throws DoesNotExistException,
             InvalidParameterException,
             OperationFailedException, MessagingException, IOException {
 

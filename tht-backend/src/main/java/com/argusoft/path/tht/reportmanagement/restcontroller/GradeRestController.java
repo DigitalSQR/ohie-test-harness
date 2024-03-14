@@ -21,18 +21,25 @@ import java.util.List;
 @Api(value = "REST API for Grade services", tags = {"Grade API"})
 public class GradeRestController {
 
-    @Autowired
     private GradeService gradeService;
+    private GradeMapper gradeMapper;
 
     @Autowired
-    private GradeMapper gradeMapper;
+    public void setGradeService(GradeService gradeService) {
+        this.gradeService = gradeService;
+    }
+
+    @Autowired
+    public void setGradeMapper(GradeMapper gradeMapper) {
+        this.gradeMapper = gradeMapper;
+    }
 
     @ApiOperation(value = "View a list of available grade")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved list"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            @ApiResponse(code = 200, message = "Successfully retrieved list"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/all")
     public List<GradeInfo> getGrades(
@@ -43,14 +50,14 @@ public class GradeRestController {
 
     @ApiOperation(value = "View available grade with supplied id", response = GradeInfo.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved grade"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+            @ApiResponse(code = 200, message = "Successfully retrieved grade"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/{gradeId}")
     public GradeInfo getGrade(@PathVariable("gradeId") String gradeId,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
+                              @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
         GradeEntity gradeById = gradeService.getGradeById(gradeId, contextInfo);
         return gradeMapper.modelToDto(gradeById);
     }

@@ -76,7 +76,7 @@ public class TSWF8TestCase1 implements TestCase {
                     .execute();
 
             //Check if first code system is being created
-            if (!outcome.getCreated()) {
+            if (Boolean.FALSE.equals(outcome.getCreated())) {
                 LOGGER.error("Failed to create first code system");
                 return new ValidationResultInfo(tableName, ErrorLevel.ERROR, "Failed to create first code system");
             }
@@ -125,7 +125,7 @@ public class TSWF8TestCase1 implements TestCase {
                     .execute();
 
             //Check if first code system is being created
-            if (!outcome2.getCreated()) {
+            if (Boolean.FALSE.equals(outcome2.getCreated())) {
                 LOGGER.error("Failed to create second code system");
                 return new ValidationResultInfo(tableName, ErrorLevel.ERROR, "Failed to create second code system");
             }
@@ -171,7 +171,7 @@ public class TSWF8TestCase1 implements TestCase {
                     .execute();
 
             //Check if first code system is being created
-            if (!conceptMapOutcome.getCreated()) {
+            if (Boolean.FALSE.equals(conceptMapOutcome.getCreated())) {
                 LOGGER.error("Failed to create concept map");
                 return new ValidationResultInfo(tableName, ErrorLevel.ERROR, "Failed to create concept map");
             }

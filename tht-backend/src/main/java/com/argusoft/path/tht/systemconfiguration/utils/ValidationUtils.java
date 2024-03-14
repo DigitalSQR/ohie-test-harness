@@ -30,7 +30,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Not Empty.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param errors
      */
@@ -49,7 +49,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Required field.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param error
      */
@@ -67,9 +67,9 @@ public final class ValidationUtils {
     /**
      * Validation method for not updatable field.
      *
-     * @param field contains field values
+     * @param field         contains field values
      * @param originalField contains original fields values
-     * @param fieldName name of the field
+     * @param fieldName     name of the field
      * @param errors
      */
     public static void validateNotUpdatable(
@@ -91,7 +91,7 @@ public final class ValidationUtils {
     /**
      * Validation method for list size.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param minValue
      * @param maxValue
@@ -112,20 +112,20 @@ public final class ValidationUtils {
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 fieldName + " must contain "
-                                + minValue + " item"));
+                                        + minValue + " item"));
             } else {
                 if (minValue != null && field.size() < minValue) {
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     fieldName + " must contain more than "
-                                    + minValue + " items"));
+                                            + minValue + " items"));
                 } else if (maxValue != null && field.size() > maxValue) {
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
                                     fieldName + " must contain less than "
-                                    + maxValue + " items"));
+                                            + maxValue + " items"));
                 }
             }
         }
@@ -134,7 +134,7 @@ public final class ValidationUtils {
     /**
      * Validation method for Integer.
      *
-     * @param field contains field values
+     * @param field     contains field values
      * @param fieldName name of the field
      * @param minValue
      * @param maxValue
@@ -164,17 +164,17 @@ public final class ValidationUtils {
     /**
      * Validation method for pattern match.
      *
-     * @param fieldValue contains field values
-     * @param fieldName name of the field
+     * @param fieldValue    contains field values
+     * @param fieldName     name of the field
      * @param patternString pattern for the field
      * @param errorMassage
      * @param errors
      */
     public static void validatePattern(String fieldValue,
-            String fieldName,
-            String patternString,
-            String errorMassage,
-            List<ValidationResultInfo> errors) {
+                                       String fieldName,
+                                       String patternString,
+                                       String errorMassage,
+                                       List<ValidationResultInfo> errors) {
         Pattern pattern = Pattern.compile(patternString);
         if (fieldValue != null && !pattern.matcher(fieldValue).matches()) {
             errors
@@ -188,29 +188,29 @@ public final class ValidationUtils {
      * Validation method for Length.
      *
      * @param fieldValue contains field values
-     * @param fieldName name of the field
-     * @param minLength minimum required length for field
-     * @param maxLength maximum required length for field
+     * @param fieldName  name of the field
+     * @param minLength  minimum required length for field
+     * @param maxLength  maximum required length for field
      * @param errors
      */
     public static void validateLength(String fieldValue,
-            String fieldName,
-            int minLength,
-            int maxLength,
-            List<ValidationResultInfo> errors) {
+                                      String fieldName,
+                                      int minLength,
+                                      int maxLength,
+                                      List<ValidationResultInfo> errors) {
         if (fieldValue != null) {
             int fieldLength = fieldValue.length();
             if (minLength > fieldLength) {
                 errors.add(new ValidationResultInfo(fieldName,
                         ErrorLevel.ERROR,
                         fieldName + " must have more than "
-                        + minLength + " characters"));
+                                + minLength + " characters"));
             } else if (fieldLength > maxLength) {
                 errors
                         .add(new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 fieldName + " must have less than "
-                                + maxLength + " characters"));
+                                        + maxLength + " characters"));
             }
         }
     }
@@ -219,7 +219,7 @@ public final class ValidationUtils {
             List<ValidationResultInfo> validationResultInfos
     ) throws DataValidationErrorException {
         if (ValidationUtils.containsErrors(validationResultInfos, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + ValidationUtils.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, ValidationUtils.class.getSimpleName());
             throw new DataValidationErrorException("Error(s) occurred validating", validationResultInfos);
         }
     }
@@ -227,7 +227,7 @@ public final class ValidationUtils {
     /**
      * Check if errors contains WARN thresh hold Error.
      *
-     * @param errors list of errors
+     * @param errors     list of errors
      * @param errorLevel
      * @return true if it contains WARN thresh hold Error.
      */
@@ -248,8 +248,8 @@ public final class ValidationUtils {
         return validationResults.stream().anyMatch(validationResult
                 -> //Ignore any fields that are in the list
                 ((ignoreFields == null
-                || (!ignoreFields.contains(validationResult.getElement())))
-                && ValidationResultInfo.isSurpassingThreshold(validationResult.getLevel(),
+                        || (!ignoreFields.contains(validationResult.getElement())))
+                        && ValidationResultInfo.isSurpassingThreshold(validationResult.getLevel(),
                         threshold))
         );
     }

@@ -1,11 +1,11 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
@@ -40,17 +40,30 @@ public class ComponentServiceServiceImpl implements ComponentService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ComponentServiceServiceImpl.class);
 
-    @Autowired
     ComponentRepository componentRepository;
-
-    @Autowired
     private SpecificationService specificationService;
-
-    @Autowired
     private TestcaseService testcaseService;
+    private TestcaseOptionService testcaseOptionService;
 
     @Autowired
-    private TestcaseOptionService testcaseOptionService;
+    public void setComponentRepository(ComponentRepository componentRepository) {
+        this.componentRepository = componentRepository;
+    }
+
+    @Autowired
+    public void setSpecificationService(SpecificationService specificationService) {
+        this.specificationService = specificationService;
+    }
+
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService) {
+        this.testcaseService = testcaseService;
+    }
+
+    @Autowired
+    public void setTestcaseOptionService(TestcaseOptionService testcaseOptionService) {
+        this.testcaseOptionService = testcaseOptionService;
+    }
 
     /**
      * {@inheritdoc}
@@ -59,13 +72,13 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     public ComponentEntity createComponent(ComponentEntity componentEntity,
-            ContextInfo contextInfo)
+                                           ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
         if (componentEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, ComponentServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("componentEntity is missing");
         }
 
@@ -88,13 +101,13 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     public ComponentEntity updateComponent(ComponentEntity componentEntity,
-            ContextInfo contextInfo)
+                                           ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
         if (componentEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, ComponentServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("componentEntity is missing");
         }
 
@@ -139,7 +152,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
      */
     @Override
     public ComponentEntity getComponentById(String componentId,
-            ContextInfo contextInfo)
+                                            ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(componentId)) {
@@ -164,7 +177,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             OperationFailedException {
 
         if (componentEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, ComponentServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("componentEntity is missing");
         }
 

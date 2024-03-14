@@ -41,25 +41,58 @@ public class RefObjectUriAndRefIdValidator {
             TestcaseResultServiceConstants.TESTCASE_RESULT_REF_OBJ_URI,
             UserServiceConstants.USER_REF_OBJ_URI
     );
-    @Autowired
+
     private ComponentService componentService;
-    @Autowired
     private SpecificationService specificationService;
-    @Autowired
     private TestcaseService testcaseService;
-    @Autowired
     private TestcaseOptionService testcaseOptionService;
-    @Autowired
     private TestcaseResultService testcaseResultService;
-    @Autowired
     private DocumentService documentService;
-    @Autowired
     private TestRequestService testRequestService;
-    @Autowired
     private UserService userService;
 
+    @Autowired
+    public void setComponentService(ComponentService componentService) {
+        this.componentService = componentService;
+    }
+
+    @Autowired
+    public void setSpecificationService(SpecificationService specificationService) {
+        this.specificationService = specificationService;
+    }
+
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService) {
+        this.testcaseService = testcaseService;
+    }
+
+    @Autowired
+    public void setTestcaseOptionService(TestcaseOptionService testcaseOptionService) {
+        this.testcaseOptionService = testcaseOptionService;
+    }
+
+    @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
+
+    @Autowired
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
+    @Autowired
+    public void setTestRequestService(TestRequestService testRequestService) {
+        this.testRequestService = testRequestService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
     public void refObjectUriAndRefIdValidation(String refObjUri, String refId,
-            ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, OperationFailedException {
+                                               ContextInfo contextInfo, List<ValidationResultInfo> errors) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(refObjUri)) {
             String fieldName = "refObjUri";

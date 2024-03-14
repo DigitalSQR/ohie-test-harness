@@ -53,6 +53,9 @@ public class TestResultRelationCriteriaSearchFilter extends AbstractCriteriaSear
 
     private Join<TestResultRelationEntity, TestcaseResultEntity> testResultRelationEntityTestcaseResultEntityJoin;
 
+    public TestResultRelationCriteriaSearchFilter() {
+    }
+
     @Override
     protected List<Predicate> buildPredicates(Root<TestResultRelationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         this.setTestResultRelationEntityRoot(root);
@@ -92,16 +95,13 @@ public class TestResultRelationCriteriaSearchFilter extends AbstractCriteriaSear
 
     }
 
-    public TestResultRelationCriteriaSearchFilter() {
+    public Root<TestResultRelationEntity> getTestResultRelationEntityRoot() {
+        return testResultRelationEntityRoot;
     }
 
     private void setTestResultRelationEntityRoot(Root<TestResultRelationEntity> testResultRelationEntityRoot) {
         this.testResultRelationEntityRoot = testResultRelationEntityRoot;
         testResultRelationEntityTestcaseResultEntityJoin = null;
-    }
-
-    public Root<TestResultRelationEntity> getTestResultRelationEntityRoot() {
-        return testResultRelationEntityRoot;
     }
 
     public Join<TestResultRelationEntity, TestcaseResultEntity> getTestResultRelationEntityTestcaseResultEntityJoin() {

@@ -23,16 +23,16 @@ public interface ComponentService {
      * information may not be set in the supplied ComponentInfo.
      *
      * @param componentEntity Component
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param contextInfo     information containing the principalId and locale
+     *                        information about the caller of service operation
      * @return ComponentInfo the Component just created
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException ComponentInfo or contextInfo is not
-     * valid
-     * @throws OperationFailedException unable to complete request
+     * @throws InvalidParameterException    ComponentInfo or contextInfo is not
+     *                                      valid
+     * @throws OperationFailedException     unable to complete request
      */
     public ComponentEntity createComponent(ComponentEntity componentEntity,
-            ContextInfo contextInfo)
+                                           ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException;
@@ -41,18 +41,18 @@ public interface ComponentService {
      * Updates an existing Component.
      *
      * @param componentEntity the new data for the Component
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param contextInfo     information containing the principalId and locale
+     *                        information about the caller of service operation
      * @return ComponentInfo the details of Component just updated
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException ComponentInfo or contextInfo is not
-     * valid
-     * @throws OperationFailedException unable to complete request
-     * @throws VersionMismatchException optimistic locking failure or the action
-     * was attempted on an out of date version
+     * @throws InvalidParameterException    ComponentInfo or contextInfo is not
+     *                                      valid
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
      */
     public ComponentEntity updateComponent(ComponentEntity componentEntity,
-            ContextInfo contextInfo)
+                                           ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException,
@@ -63,17 +63,17 @@ public interface ComponentService {
      * Name.The returned list may be in any order with unique set.
      *
      * @param componentCriteriaSearchFilter
-     * @param pageable Contains Index number of the Page, Max size of the single
-     * page,Name of the field for sorting and sortDirection sorting direction
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param pageable                      Contains Index number of the Page, Max size of the single
+     *                                      page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo                   information containing the principalId and locale
+     *                                      information about the caller of service operation
      * @return a list of Component name start with given ComponentName found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException unable to complete request
+     * @throws OperationFailedException  unable to complete request
      */
     public Page<ComponentEntity> searchComponents(ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
-            Pageable pageable,
-            ContextInfo contextInfo)
+                                                  Pageable pageable,
+                                                  ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
 
@@ -82,14 +82,14 @@ public interface ComponentService {
      * Name.The returned list may be in any order with unique set.
      *
      * @param componentCriteriaSearchFilter
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param contextInfo                   information containing the principalId and locale
+     *                                      information about the caller of service operation
      * @return a list of Component name start with given ComponentName found
      * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException unable to complete request
+     * @throws OperationFailedException  unable to complete request
      */
     public List<ComponentEntity> searchComponents(ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
-            ContextInfo contextInfo)
+                                                  ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException;
 
@@ -100,17 +100,17 @@ public interface ComponentService {
      * to this object
      *
      * @param validationTypeKey the identifier of the extent of validation
-     * @param componentEntity the Component information to be tested
-     * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     * @param componentEntity   the Component information to be tested
+     * @param contextInfo       information containing the principalId and locale
+     *                          information about the caller of service operation
      * @return Results Component performing the validation
      * @throws InvalidParameterException ComponentInfo or contextInfo is not
-     * valid
-     * @throws OperationFailedException unable to complete request
+     *                                   valid
+     * @throws OperationFailedException  unable to complete request
      */
     public List<ValidationResultInfo> validateComponent(String validationTypeKey,
-            ComponentEntity componentEntity,
-            ContextInfo contextInfo)
+                                                        ComponentEntity componentEntity,
+                                                        ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException;
 
@@ -119,13 +119,13 @@ public interface ComponentService {
      *
      * @param componentId ComponentId of Component to be retrieved
      * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     *                    information about the caller of service operation
      * @return a component
-     * @throws DoesNotExistException a ComponentId in ComponentIds not found
+     * @throws DoesNotExistException     a ComponentId in ComponentIds not found
      * @throws InvalidParameterException invalid contextInfo
      */
     public ComponentEntity getComponentById(String componentId,
-            ContextInfo contextInfo)
+                                            ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException;
 
@@ -133,30 +133,29 @@ public interface ComponentService {
      * Change the state of component
      *
      * @param componentId ComponentId of Component to be retrieved
-     * @param stateKey state type to which component state to be changed
+     * @param stateKey    state type to which component state to be changed
      * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
+     *                    information about the caller of service operation
      * @return changed state component
-     * @throws DoesNotExistException a ComponentId in ComponentIds not found
+     * @throws DoesNotExistException        a ComponentId in ComponentIds not found
      * @throws DataValidationErrorException supplied data is invalid
-     * @throws InvalidParameterException invalid contextInfo
-     * @throws OperationFailedException unable to complete request
-     * @throws VersionMismatchException optimistic locking failure or the action
-     * was attempted on an out of date version
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
      */
     public ComponentEntity changeState(String componentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
     /**
      * validates testcase configurations.
      *
-     * @param refObjUri regObjUri
-     * @param refId refId
+     * @param refObjUri   regObjUri
+     * @param refId       refId
      * @param contextInfo information containing the principalId and locale
-     * information about the caller of service operation
-     *
+     *                    information about the caller of service operation
      * @return a list of validation Results
      * @throws InvalidParameterException invalid parameters
-     * @throws OperationFailedException operation failed
+     * @throws OperationFailedException  operation failed
      */
     public List<TestcaseValidationResultInfo> validateTestCaseConfiguration(
             String refObjUri,

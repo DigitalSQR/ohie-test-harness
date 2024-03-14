@@ -4,7 +4,10 @@ import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEn
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;

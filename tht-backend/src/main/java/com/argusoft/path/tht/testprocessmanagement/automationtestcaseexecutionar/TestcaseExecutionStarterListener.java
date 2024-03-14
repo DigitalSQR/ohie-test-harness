@@ -26,16 +26,25 @@ import java.util.Optional;
 @Service
 public class TestcaseExecutionStarterListener {
 
-    @Autowired
+    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseExecutionStarterListener.class);
     private TestcaseExecutioner testcaseExecutioner;
-
-    @Autowired
     private TestcaseResultAttributesService testcaseResultAttributesService;
-
-    @Autowired
     private TestcaseResultService testcaseResultService;
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseExecutionStarterListener.class);
+    @Autowired
+    public void setTestcaseExecutioner(TestcaseExecutioner testcaseExecutioner) {
+        this.testcaseExecutioner = testcaseExecutioner;
+    }
+
+    @Autowired
+    public void setTestcaseResultAttributesService(TestcaseResultAttributesService testcaseResultAttributesService) {
+        this.testcaseResultAttributesService = testcaseResultAttributesService;
+    }
+
+    @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
 
     @Async
     @Transactional(rollbackFor = Exception.class)

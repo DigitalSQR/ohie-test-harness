@@ -25,8 +25,12 @@ import java.util.List;
 public class AuditServiceImpl implements AuditService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(AuditServiceImpl.class);
-    @Autowired
     EntityManager entityManager;
+
+    @Autowired
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Override
     public List<Object> searchAudit(SearchFilter searchFilter, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException {
@@ -36,7 +40,7 @@ public class AuditServiceImpl implements AuditService {
             String tableName = searchFilter.getName();
             tableName = tableName.toUpperCase();
             if (AuditServiceConstant.EntityType.valueOf(tableName).getEntityClass() == null) {
-                LOGGER.error(ValidateConstant.EXCEPTION + AuditServiceImpl.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.EXCEPTION, AuditServiceImpl.class.getSimpleName());
                 throw new DoesNotExistException("No Audit available for " + tableName);
             }
 
@@ -50,7 +54,7 @@ public class AuditServiceImpl implements AuditService {
                     true, true);
 
             if (searchFilter.getName() == null) {
-                LOGGER.error(ValidateConstant.EXCEPTION + AuditServiceImpl.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.EXCEPTION, AuditServiceImpl.class.getSimpleName());
                 throw new InvalidParameterException("Table name not provided");
             }
             if (ids != null && !ids.isEmpty()) {
@@ -67,7 +71,7 @@ public class AuditServiceImpl implements AuditService {
             return obj;
 
         } catch (Exception ex) {
-            LOGGER.error(ValidateConstant.EXCEPTION + AuditServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.EXCEPTION, AuditServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Invalid parameter value provided");
         }
     }

@@ -3,12 +3,10 @@ package com.argusoft.path.tht.testprocessmanagement.models.entity;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.hibernate.envers.Audited;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -38,13 +36,13 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
 
     public TestRequestEntity(TestRequestEntity testRequestEntity) {
         super(testRequestEntity);
-        if(testRequestEntity.getAssessee()!=null){
+        if (testRequestEntity.getAssessee() != null) {
             this.setAssessee(new UserEntity(testRequestEntity.getAssessee().getId()));
         }
-        if(testRequestEntity.getApprover()!=null){
+        if (testRequestEntity.getApprover() != null) {
             this.setApprover(new UserEntity(testRequestEntity.getApprover().getId()));
         }
-        if(testRequestEntity.getTestRequestUrls()!=null){
+        if (testRequestEntity.getTestRequestUrls() != null) {
             this.setTestRequestUrls(testRequestEntity.getTestRequestUrls().stream().map(TestRequestUrlEntity::new).collect(Collectors.toSet()));
         }
     }
@@ -81,10 +79,7 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     }
 
     @PrePersist
-    private void changesBeforeSave() {
-        if (!StringUtils.hasLength(this.getId())) {
-            this.setId(UUID.randomUUID().toString());
-            this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));
-        }
+    private void changesBeforeSaveTestRequest() {
+        this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));
     }
 }

@@ -13,12 +13,11 @@ import java.util.Date;
 public class ComponentServiceMockImpl {
 
     @Autowired
+    ComponentMapper componentMapper;
+    @Autowired
     private ComponentRepository componentRepository;
 
-    @Autowired
-    ComponentMapper componentMapper;
-
-    public void init(){
+    public void init() {
         createComponent("component.02", "Component 2", "Component 2", 1, "component.status.active");
         createComponent("component.04", "Component 4", "Component 4", 1, "component.status.active");
         createComponent("component.05", "Compo-Test 5", "Compo-Test 5", 1, "component.status.active");
@@ -26,7 +25,7 @@ public class ComponentServiceMockImpl {
         createComponent("component.07", "Component 7", "Component 7", 1, "component.status.draft");
     }
 
-    public ComponentInfo createComponent(String id, String name, String description, int rank, String state){
+    public ComponentInfo createComponent(String id, String name, String description, int rank, String state) {
         ComponentEntity componentEntity = new ComponentEntity();
         componentEntity.setId(id);
         componentEntity.setName(name);

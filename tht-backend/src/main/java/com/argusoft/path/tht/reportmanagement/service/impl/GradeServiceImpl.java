@@ -27,8 +27,12 @@ public class GradeServiceImpl implements GradeService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(GradeServiceImpl.class);
 
-    @Autowired
     private GradeRepository gradeRepository;
+
+    @Autowired
+    public void setGradeRepository(GradeRepository gradeRepository) {
+        this.gradeRepository = gradeRepository;
+    }
 
     @Override
     public List<GradeEntity> getAllGrades(ContextInfo contextInfo) {
@@ -54,7 +58,7 @@ public class GradeServiceImpl implements GradeService {
             validationResultInfo.setElement("Percentage");
             validationResultInfo.setLevel(ErrorLevel.ERROR);
             validationResultInfo.setMessage("Percentage is not in range of 0 and 100");
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + GradeServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, GradeServiceImpl.class.getSimpleName());
             throw new DataValidationErrorException("Invalid percentage data while updating grade entity", Collections.singletonList(validationResultInfo));
         }
         return null;

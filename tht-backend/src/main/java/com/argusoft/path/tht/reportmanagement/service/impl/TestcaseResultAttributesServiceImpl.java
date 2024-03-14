@@ -24,23 +24,36 @@ import java.util.Optional;
 public class TestcaseResultAttributesServiceImpl implements TestcaseResultAttributesService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultAttributesServiceImpl.class);
-    @Autowired
+    TestcaseResultService testcaseResultService;
+    ApplicationEventPublisher applicationEventPublisher;
     private TestcaseResultAttributesRepository testcaseResultAttributesRepository;
-
-    @Autowired
     private TestcaseResultAttributesValidator testcaseResultAttributesValidator;
 
     @Autowired
-    TestcaseResultService testcaseResultService;
+    public void setTestcaseResultAttributesRepository(TestcaseResultAttributesRepository testcaseResultAttributesRepository) {
+        this.testcaseResultAttributesRepository = testcaseResultAttributesRepository;
+    }
 
     @Autowired
-    ApplicationEventPublisher applicationEventPublisher;
+    public void setTestcaseResultAttributesValidator(TestcaseResultAttributesValidator testcaseResultAttributesValidator) {
+        this.testcaseResultAttributesValidator = testcaseResultAttributesValidator;
+    }
+
+    @Autowired
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
+
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     @Override
     public Optional<TestcaseResultAttributesEntity> getTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String key, ContextInfo contextInfo)
             throws InvalidParameterException {
         if (key.isEmpty()) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultAttributesServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultAttributesServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Key is empty");
         }
         return testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity, key);
@@ -48,11 +61,11 @@ public class TestcaseResultAttributesServiceImpl implements TestcaseResultAttrib
 
     @Override
     public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String Key, String Value,
-            ContextInfo contextInfo)
+                                                                                  ContextInfo contextInfo)
             throws
             InvalidParameterException {
         if (Key.isEmpty() || Value.isEmpty()) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultAttributesServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultAttributesServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Key or Value is empty");
         }
         Optional<TestcaseResultAttributesEntity> testcaseResultAttributesEntity = testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity, Key.toLowerCase());
@@ -82,7 +95,7 @@ public class TestcaseResultAttributesServiceImpl implements TestcaseResultAttrib
             testcaseResultAttributesRepository.flush();
             applicationEventPublisher.publishEvent(new TestcaseResultAttributeEvent(testcaseResultId, contextInfo));
         } catch (Exception e) {
-            LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultAttributesServiceImpl.class.getSimpleName(), e);
+            LOGGER.error("{}{}", ValidateConstant.DOES_NOT_EXIST_EXCEPTION, TestcaseResultAttributesServiceImpl.class.getSimpleName(), e);
             throw new DoesNotExistException(e.getMessage());
         }
     }

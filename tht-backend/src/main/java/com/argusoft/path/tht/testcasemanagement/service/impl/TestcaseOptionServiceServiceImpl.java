@@ -1,11 +1,11 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
@@ -37,11 +37,18 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseOptionServiceServiceImpl.class);
 
-    @Autowired
     TestcaseOptionRepository testcaseOptionRepository;
+    TestcaseService testcaseService;
 
     @Autowired
-    TestcaseService testcaseService;
+    public void setTestcaseOptionRepository(TestcaseOptionRepository testcaseOptionRepository) {
+        this.testcaseOptionRepository = testcaseOptionRepository;
+    }
+
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService) {
+        this.testcaseService = testcaseService;
+    }
 
     /**
      * {@inheritdoc}
@@ -50,13 +57,13 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     public TestcaseOptionEntity createTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
-            ContextInfo contextInfo)
+                                                     ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
         if (testcaseOptionEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
 
@@ -80,13 +87,13 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     public TestcaseOptionEntity updateTestcaseOption(TestcaseOptionEntity testcaseOptionEntity,
-            ContextInfo contextInfo)
+                                                     ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
         if (testcaseOptionEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
 
@@ -131,7 +138,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
      */
     @Override
     public TestcaseOptionEntity getTestcaseOptionById(String testcaseOptionId,
-            ContextInfo contextInfo)
+                                                      ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(testcaseOptionId)) {
@@ -155,7 +162,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testcaseOptionEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
         List<ValidationResultInfo> errors = TestcaseOptionValidator.validateTestcaseOption(validationTypeKey, testcaseOptionEntity, this, testcaseService, contextInfo);

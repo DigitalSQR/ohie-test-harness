@@ -5,7 +5,6 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
-import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +49,9 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     @Override
     protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<TestRequestEntity> root, CriteriaQuery<?> query, Pageable pageable) {
         Sort.Order order = pageable.getSort().getOrderFor("default");
-        if(order == null) { return; }
+        if (order == null) {
+            return;
+        }
 
         Expression<Object> stateWiseDefaultOrder = criteriaBuilder.selectCase()
                 .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING), 0)
@@ -60,7 +61,7 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
                 .when(criteriaBuilder.equal(root.get("state"), TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED), 4)
                 .otherwise(5);
 
-        if(order.isAscending()) {
+        if (order.isAscending()) {
             query.orderBy(criteriaBuilder.asc(stateWiseDefaultOrder));
         } else {
             query.orderBy(criteriaBuilder.desc(stateWiseDefaultOrder));
@@ -78,7 +79,7 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
         }
 
         if (StringUtils.hasLength(getName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityRoot().get("name")),getNameBasedOnSearchType(getName()) ));
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityRoot().get("name")), getNameBasedOnSearchType(getName())));
         }
 
         if (!CollectionUtils.isEmpty(getState())) {

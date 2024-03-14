@@ -138,6 +138,7 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
             dataType = "String",
             required = false)
     private String grade;
+    private Set<TestcaseResultAttributesInfo> testcaseResultAttributesEntities;
 
     public Set<TestcaseResultAttributesInfo> getTestcaseResultAttributesEntities() {
         return testcaseResultAttributesEntities;
@@ -146,8 +147,6 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
     public void setTestcaseResultAttributesEntities(Set<TestcaseResultAttributesInfo> testcaseResultAttributesEntities) {
         this.testcaseResultAttributesEntities = testcaseResultAttributesEntities;
     }
-
-    private Set<TestcaseResultAttributesInfo> testcaseResultAttributesEntities;
 
     public String getParentTestcaseResultId() {
         return parentTestcaseResultId;

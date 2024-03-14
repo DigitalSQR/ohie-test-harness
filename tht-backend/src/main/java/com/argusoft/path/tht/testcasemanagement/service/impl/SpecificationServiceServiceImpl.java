@@ -1,11 +1,11 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
@@ -38,14 +38,24 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SpecificationServiceServiceImpl.class);
 
-    @Autowired
     SpecificationRepository specificationRepository;
-
-    @Autowired
     TestcaseService testcaseService;
+    ComponentService componentService;
 
     @Autowired
-    ComponentService componentService;
+    public void setSpecificationRepository(SpecificationRepository specificationRepository) {
+        this.specificationRepository = specificationRepository;
+    }
+
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService) {
+        this.testcaseService = testcaseService;
+    }
+
+    @Autowired
+    public void setComponentService(ComponentService componentService) {
+        this.componentService = componentService;
+    }
 
     /**
      * {@inheritdoc}
@@ -54,13 +64,13 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     public SpecificationEntity createSpecification(SpecificationEntity specificationEntity,
-            ContextInfo contextInfo)
+                                                   ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
         if (specificationEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
 
@@ -84,13 +94,13 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     public SpecificationEntity updateSpecification(SpecificationEntity specificationEntity,
-            ContextInfo contextInfo)
+                                                   ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException {
 
         if (specificationEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
 
@@ -138,7 +148,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
      */
     @Override
     public SpecificationEntity getSpecificationById(String specificationId,
-            ContextInfo contextInfo)
+                                                    ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(specificationId)) {
@@ -162,7 +172,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             throws InvalidParameterException,
             OperationFailedException {
         if (specificationEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
         List<ValidationResultInfo> errors = SpecificationValidator.validateSpecification(validationTypeKey, specificationEntity, this, testcaseService, componentService, contextInfo);

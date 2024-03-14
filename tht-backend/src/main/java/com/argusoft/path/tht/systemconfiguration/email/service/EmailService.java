@@ -25,8 +25,12 @@ public class EmailService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
-    @Autowired
     private JavaMailSender javaMailSender;
+
+    @Autowired
+    public void setJavaMailSender(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
     @Async
     public void sendMessage(
@@ -50,9 +54,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, link);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.Approved_IOException_log, e);
+            LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
+            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -65,9 +69,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, link);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
+            LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
+            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -80,9 +84,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, null);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.Approved_IOException_log, e);
+            LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
+            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
 
     }
@@ -96,9 +100,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, null);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.Approved_IOException_log, e);
+            LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
+            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
 
     }
@@ -112,9 +116,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, null);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.Approved_IOException_log, e);
+            LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.Approved_MessagingException_log, e);
+            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
 
     }
@@ -129,9 +133,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.testRequest_Create_IOException_log, e);
+            LOGGER.error(MessageConstant.TEST_REQUEST_CREATE_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.testRequest_Create_MessagingException_log, e);
+            LOGGER.error(MessageConstant.TEST_REQUEST_CREATE_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -162,9 +166,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
+            LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.Waiting_MessagingException_log, e);
+            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -178,9 +182,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${name}", testRequestName);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
+            LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.Waiting_MessagingException_log, e);
+            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -194,9 +198,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${name}", testRequestName);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
+            LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.Waiting_MessagingException_log, e);
+            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -210,9 +214,9 @@ public class EmailService {
             htmlContent = htmlContent.replace("${name}", testRequestName);
             sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
-            LOGGER.error(MessageConstant.Waiting_IOException_log, e);
+            LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
         } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.Waiting_MessagingException_log, e);
+            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 

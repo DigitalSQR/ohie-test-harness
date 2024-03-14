@@ -19,14 +19,24 @@ public class TestcaseResultAttributeEventListener {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseResultAttributeEventListener.class);
 
-    @Autowired
     private TestcaseResultService testcaseResultService;
-
-    @Autowired
     private SimpMessagingTemplate messagingTemplate;
+    private TestcaseResultMapper testcaseResultMapper;
 
     @Autowired
-    private TestcaseResultMapper testcaseResultMapper;
+    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+        this.testcaseResultService = testcaseResultService;
+    }
+
+    @Autowired
+    public void setMessagingTemplate(SimpMessagingTemplate simpMessagingTemplate) {
+        this.messagingTemplate = simpMessagingTemplate;
+    }
+
+    @Autowired
+    public void setTestcaseResultMapper(TestcaseResultMapper testcaseResultMapper) {
+        this.testcaseResultMapper = testcaseResultMapper;
+    }
 
     @Async
     @TransactionalEventListener

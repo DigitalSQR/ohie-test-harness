@@ -39,16 +39,16 @@ public class IdStateMetaEntity extends MetaEntity {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "IdStateMetaEntity{"
                 + "id='" + id + '\''
                 + ", state='" + state + '\''
                 + '}';
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getState() {
