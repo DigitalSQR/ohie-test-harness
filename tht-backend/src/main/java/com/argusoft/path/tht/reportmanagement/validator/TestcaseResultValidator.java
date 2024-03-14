@@ -53,7 +53,7 @@ public class TestcaseResultValidator {
                         testRequestService,
                         contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION,TestcaseResultValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -75,7 +75,7 @@ public class TestcaseResultValidator {
                         testResultRelationService,
                         contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
+            LOGGER.error("{}{}",ValidateConstant.DATA_VALIDATION_EXCEPTION, TestcaseResultValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntitys);
@@ -85,7 +85,7 @@ public class TestcaseResultValidator {
     public static List<ValidationResultInfo> validateTestCaseResult(String validationTypeKey, TestcaseResultEntity testcaseResultEntity, UserService userService, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, TestRequestService testRequestService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultValidator.class.getSimpleName());
             throw new InvalidParameterException("validationTypeKey is missing");
         }
         // VALIDATE
@@ -127,7 +127,7 @@ public class TestcaseResultValidator {
                 validateCreateTestcaseResult(errors, testcaseResultEntity, testcaseResultService, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultValidator.class.getSimpleName());
+                LOGGER.error("{}{}",ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 

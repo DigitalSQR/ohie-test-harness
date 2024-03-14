@@ -40,7 +40,7 @@ public class TestcaseResultAttributesServiceImpl implements TestcaseResultAttrib
     public Optional<TestcaseResultAttributesEntity> getTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String key, ContextInfo contextInfo)
             throws InvalidParameterException {
         if (key.isEmpty()) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultAttributesServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION,TestcaseResultAttributesServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Key is empty");
         }
         return testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity, key);
@@ -52,7 +52,7 @@ public class TestcaseResultAttributesServiceImpl implements TestcaseResultAttrib
             throws
             InvalidParameterException {
         if (Key.isEmpty() || Value.isEmpty()) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultAttributesServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultAttributesServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Key or Value is empty");
         }
         Optional<TestcaseResultAttributesEntity> testcaseResultAttributesEntity = testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity, Key.toLowerCase());
@@ -82,7 +82,7 @@ public class TestcaseResultAttributesServiceImpl implements TestcaseResultAttrib
             testcaseResultAttributesRepository.flush();
             applicationEventPublisher.publishEvent(new TestcaseResultAttributeEvent(testcaseResultId, contextInfo));
         } catch (Exception e) {
-            LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultAttributesServiceImpl.class.getSimpleName(), e);
+            LOGGER.error("{}{}", ValidateConstant.DOES_NOT_EXIST_EXCEPTION,TestcaseResultAttributesServiceImpl.class.getSimpleName(), e);
             throw new DoesNotExistException(e.getMessage());
         }
     }

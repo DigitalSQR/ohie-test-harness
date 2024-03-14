@@ -108,7 +108,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             DataValidationErrorException, DoesNotExistException {
 
         if (testcaseResultEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}",ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
 
@@ -143,7 +143,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             DataValidationErrorException {
 
         if (testcaseResultEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
 
@@ -313,7 +313,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testcaseResultEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseResultServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
         List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, testRequestService, contextInfo);

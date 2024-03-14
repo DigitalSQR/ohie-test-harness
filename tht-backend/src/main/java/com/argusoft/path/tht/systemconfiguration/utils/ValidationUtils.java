@@ -219,7 +219,7 @@ public final class ValidationUtils {
             List<ValidationResultInfo> validationResultInfos
     ) throws DataValidationErrorException {
         if (ValidationUtils.containsErrors(validationResultInfos, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + ValidationUtils.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, ValidationUtils.class.getSimpleName());
             throw new DataValidationErrorException("Error(s) occurred validating", validationResultInfos);
         }
     }

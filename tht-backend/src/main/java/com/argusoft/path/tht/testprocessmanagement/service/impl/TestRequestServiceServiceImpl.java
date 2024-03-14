@@ -213,7 +213,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             DataValidationErrorException, DoesNotExistException {
 
         if (testRequestEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
 
@@ -250,7 +250,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             DataValidationErrorException {
 
         if (testRequestEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
 
@@ -303,7 +303,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(testRequestId)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestId is missing");
         }
         TestRequestCriteriaSearchFilter testRequestCriteriaSearchFilter = new TestRequestCriteriaSearchFilter(testRequestId);
@@ -324,7 +324,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testRequestEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}",ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
         List<ValidationResultInfo> errors = TestRequestValidator.validateTestRequest(validationTypeKey, testRequestEntity, this, userService, componentService, contextInfo);

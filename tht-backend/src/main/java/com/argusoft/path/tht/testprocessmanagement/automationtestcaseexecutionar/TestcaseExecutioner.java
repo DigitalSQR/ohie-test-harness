@@ -129,14 +129,14 @@ public class TestcaseExecutioner {
     public void ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(String testRequestId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException {
         try {
             if (testRequestId.isEmpty()) {
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseExecutioner.class.getSimpleName());
                 throw new InvalidParameterException("TestRequest Id is not present");
             }
             TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
             testcaseResultCriteriaSearchFilter.setRefId(testRequestId);
             List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
             if (testcaseResultEntity.isEmpty()) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.DOES_NOT_EXIST_EXCEPTION,TestcaseExecutioner.class.getSimpleName());
                 throw new DoesNotExistException("testcaseResultEntity list is empty");
             }
             testcaseResultAttributesService.createAndChangeTestcaseResultAttributes(testcaseResultEntity.get(0), "is_Interrupted", "false", contextInfo);
@@ -475,7 +475,7 @@ public class TestcaseExecutioner {
         }).findFirst();
 
         if (!optionalTestcaseResultEntity.isPresent()) {
-            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.OPERATION_FAILED_EXCEPTION, TestcaseExecutioner.class.getSimpleName());
             throw new OperationFailedException("No TestRequest doesn't have testcases for selected inputs.");
         }
 
@@ -542,7 +542,7 @@ public class TestcaseExecutioner {
         }).findFirst();
 
         if (!optionalTestcaseResultEntity.isPresent()) {
-            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseExecutioner.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.OPERATION_FAILED_EXCEPTION,TestcaseExecutioner.class.getSimpleName());
             throw new OperationFailedException("No TestRequest doesn't have testcases for selected inputs.");
         }
 

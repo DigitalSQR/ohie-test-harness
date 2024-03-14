@@ -62,7 +62,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             DataValidationErrorException {
 
         if (testcaseOptionEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}",ValidateConstant.INVALID_PARAM_EXCEPTION,  TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
 
@@ -92,7 +92,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             DataValidationErrorException {
 
         if (testcaseOptionEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
 
@@ -161,7 +161,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             throws InvalidParameterException,
             OperationFailedException {
         if (testcaseOptionEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
         List<ValidationResultInfo> errors = TestcaseOptionValidator.validateTestcaseOption(validationTypeKey, testcaseOptionEntity, this, testcaseService, contextInfo);

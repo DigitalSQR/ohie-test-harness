@@ -30,7 +30,7 @@ public class CustomRevisionListener implements RevisionListener {
         try {
             customRevisionEntity.setRevisionNumber(getNextRevisionNumber());
         } catch (OperationFailedException e) {
-            LOGGER.error("Caught Exception in newRevision" + e);
+            LOGGER.error("Caught Exception in newRevision {}", e.toString());
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -42,7 +42,7 @@ public class CustomRevisionListener implements RevisionListener {
             Integer maxRevision = (Integer) query.getSingleResult();
             return (maxRevision != null) ? maxRevision + 1 : 1;
         } catch (Exception ex) {
-            LOGGER.error("Caught Exception in newRevision" + ex);
+            LOGGER.error("Caught Exception in newRevision {}", ex.toString());
             throw new OperationFailedException(ex.getMessage());
         }
     }

@@ -71,7 +71,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             DataValidationErrorException {
 
         if (componentEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, ComponentServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("componentEntity is missing");
         }
 
@@ -100,7 +100,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             DataValidationErrorException {
 
         if (componentEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, ComponentServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("componentEntity is missing");
         }
 
@@ -170,7 +170,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             OperationFailedException {
 
         if (componentEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + ComponentServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}",ValidateConstant.INVALID_PARAM_EXCEPTION, ComponentServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("componentEntity is missing");
         }
 

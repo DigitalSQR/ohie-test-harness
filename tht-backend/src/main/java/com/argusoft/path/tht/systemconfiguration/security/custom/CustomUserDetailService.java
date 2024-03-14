@@ -56,7 +56,7 @@ public class CustomUserDetailService implements UserDetailsService {
             try {
                 UserEntity user = userService.getUserByEmail(username, Constant.SUPER_USER_CONTEXT);
                 if (!StringUtils.hasLength(user.getPassword()) || !EncryptDecrypt.checkRawString(password, user.getPassword())) {
-                    LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+                    LOGGER.error("{}{}",ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
                     throw new UsernameNotFoundException("Credential are incorrect.");
                 }
 
@@ -64,16 +64,16 @@ public class CustomUserDetailService implements UserDetailsService {
                 if (!Objects.equals(UserServiceConstants.USER_STATUS_ACTIVE, user.getState())) {
                     if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
                         userService.resendVerification(user.getEmail(), Constant.SUPER_USER_CONTEXT);
-                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+                        LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("Email verification is pending. A verification email has been dispatched.") {
                         };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, user.getState())) {
-                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+                        LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("Admin approval pending. Confirmation email upon approval or rejection within 7 days.") {
                         };
                     } else {
                         //Only state left is UserServiceConstants.USER_STATUS_INACTIVE.
-                        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+                        LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
                         throw new UsernameNotFoundException("Account is rejected/disabled. Please contact support for further assistance.") {
                         };
                     }
@@ -99,7 +99,7 @@ public class CustomUserDetailService implements UserDetailsService {
                 };
             }
         }
-        LOGGER.error(ValidateConstant.USER_NOT_FOUND_EXCEPTION + CustomUserDetailService.class.getSimpleName());
+        LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
         throw new UsernameNotFoundException("requestAttributes is incorrect") {
         };
     }
