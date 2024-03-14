@@ -17,6 +17,14 @@ import {
   StateClasses,
 } from "../../../constants/testcaseResult_constants";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
+
+/**
+ * ApplicationReport Component:
+ * This component displays the report of a specific test application,
+ * including test case results, user details, and grade information.
+ * It fetches data from APIs and renders the report along with an option to generate a PDF.
+ */
+
 const ApplicationReport = () => {
   const { testRequestId } = useParams();
   const navigate = useNavigate();
@@ -39,16 +47,20 @@ const ApplicationReport = () => {
   const [rangedGradeData, setRangedGradeData] = useState();
   const [columns, setColumns] = useState([]);
 
+  //UseEffect to call fetchTestCaseResultData, fetchTestCaseRequestData and fetchAllGrades functions when the component initially loads
   useEffect(() => {
     fetchTestCaseResultData();
     fetchTestCaseRequestData();
     fetchAllGrades();
   }, []);
 
+  //Function to fetch the user details corresponding to the userId passed as a parameter  
   const fetchUserDetails = async (userId) => {
     const response = await UserAPI.getUserById(userId);
     setUser({ name: response.name, email: response.email });
   };
+
+  //Function used to generate the PDF of the report
   const generatePDF = () => {
     const element = document.getElementById("reportprint");
 
@@ -66,6 +78,7 @@ const ApplicationReport = () => {
     });
   };
 
+  //Function to fetch all grades
   const fetchAllGrades = () => {
     GradeAPI.getAllGrades()
       .then((res) => {
@@ -90,12 +103,14 @@ const ApplicationReport = () => {
       .catch((err) => {});
   };
 
+  //Function to fetch the testcase request data for a given test request ID
   const fetchTestCaseRequestData = async () => {
     const response = await TestRequestAPI.getTestRequestsById(testRequestId);
     fetchUserDetails(response.assesseeId);
     setTestRequest(response);
   };
 
+  //Function to handle navigation on hitting the "back" button
   const goBackOrRedirect = () => {
     if (navigate.length > 3) {
       navigate(-1);
@@ -104,15 +119,20 @@ const ApplicationReport = () => {
     }
   };
 
+  //Function to fetch test case result data
   const fetchTestCaseResultData = async () => {
     try {
+      // Fetch required and recommended test case results concurrently
       const [requiredResponse, recommendedResponse] = await Promise.all([
         TestResultAPI.getMultipleTestcaseResultStatus({ testRequestId, required: true }),
         TestResultAPI.getMultipleTestcaseResultStatus({ testRequestId, recommended: true })
       ]);
+       // Initialize arrays to store required and recommended test case results
       const requiredTestcaseResults = [];
       const recommendedTestcaseResults = [];
+       // Initialize a set to store unique component names
       const compNames = new Set();
+       // Initialize an array to store passed required component names
       const passedRequiredComponentNames = [];
       for (let testcaseResult of requiredResponse) {
         if (testcaseResult.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI) {

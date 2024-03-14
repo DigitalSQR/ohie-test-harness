@@ -18,6 +18,14 @@ import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import { store } from "../../../store/store";
+
+/**
+ * Assessee Component:
+ * This component displays a table of assessee users along with their details like name, email, requested date, company, and status.
+ * It allows an admin user to approve, reject, or disable users, depending on their current status.
+ * The table supports sorting by various fields such as name, email, requested date, company, and status.
+ */
+
 const Assessee = () => {
   const [availableUsers, setAvailableUsers] = useState([]);
   const initialState = userStatusActionLabels.find(
@@ -81,6 +89,7 @@ const Assessee = () => {
     action: "0%",
   };
 
+  //useEffect that is used to set the user role and change with column width to certain values if the user role is admin
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserRoles(userInfo.roleIds);
@@ -95,6 +104,7 @@ const Assessee = () => {
     }
   }, []);
 
+    //Function to handle the sorting functionality based upon a certain field name
   const handleSort = (newSortFieldName) => {
     setSortFieldName(newSortFieldName);
     const newSortDirection = { ...obj };
@@ -109,6 +119,7 @@ const Assessee = () => {
     );
   };
 
+    //Function to toggle between the sort icons depending upon whether the current sort direction is ascending or descending
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
@@ -128,6 +139,7 @@ const Assessee = () => {
     );
   };
 
+  //Function to change the state of the assessee from active to inactive and vice verca
   const changeState = (userId, state, newState, index) => {
     showLoader();
     UserAPI.changeState(userId, state)
@@ -145,6 +157,7 @@ const Assessee = () => {
       });
   };
 
+    //Function to handle the page change in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
     fetchUserByState(
@@ -155,6 +168,7 @@ const Assessee = () => {
     );
   };
 
+  //useEffect to fetch the users by state when the component initially loads or when we want to fetch the users based upon a certain state
   useEffect(() => {
     fetchUserByState(
       sortFieldName,

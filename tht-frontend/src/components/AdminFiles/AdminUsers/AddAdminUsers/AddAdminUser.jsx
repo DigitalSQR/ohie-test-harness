@@ -11,6 +11,8 @@ import {
   ROLE_ID_ADMIN,
   ROLE_ID_TESTER,
 } from "../../../../constants/role_constants";
+
+//Component that provides the functionality to add a new user along with the provision to  assign certain roles from "tester" and "admin"
 const AddAdminUser = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -53,6 +55,7 @@ const AddAdminUser = () => {
     ),
   });
 
+  //Function to submit the details of the new users
   const handleSubmit = async (values, { setSubmitting }) => {
     showLoader();
     const { confirmPassword, ...body } = values;
