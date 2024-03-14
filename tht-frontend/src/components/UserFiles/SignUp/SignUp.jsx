@@ -5,6 +5,7 @@ import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 import { notification } from "antd";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 import Captcha from "../../CommonFiles/Captcha/Captcha";
 import { useLoader } from "../../loader/LoaderContext";
 import "./SignUp.scss"
@@ -19,47 +20,31 @@ export default function SignUp() {
     code: "",
     captcha: ""
   });
-  const validate = (values) => {
-    const errors = {};
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    if (values.email.length == 0) {
-      errors.email = "Please enter email.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
-      errors.email = "Please enter a valid email address";
-    }else if(values.email.length > 255){
-      errors.email = "Email must have less than 255 characters."
-    }
-
-    if (values.password.length == 0) {
-      errors.password = "Please enter password.";
-    }else if(values.password.length < 6) {
-      errors.password = "Password must be of minimum 6 characters"
-    }else if(values.password.length > 255) {
-      errors.password = "Password must have less than 255 characters."
-    }
-
-    if (values.confirmPassword.length == 0) {
-      errors.confirmPassword = "Please enter Confirm password.";
-    }else if(values.confirmPassword.length < 6) {
-      errors.confirmPassword = "Confirm Password must be of minimum 6 characters"
-    }else if(values.confirmPassword.length > 255) {
-      errors.confirmPassword = "Confirm must have less than 255 characters."
-    }
-
-    if (values.name.length == 0) {
-      errors.name = "Please enter name.";
-    } else if(values.name.length > 1000) {
-      errors.name = "Name must have less than 1000 characters."
-    }
-
-    if (values.companyName.length == 0) {
-      errors.companyName = "Please enter your company's name.";
-    }else if(values.companyName.length > 255) {
-      errors.companyName = "Company name must have less than 255 characters."
-    }
-
-    return errors;
-  };
+  const validationSchema = Yup.object({
+    name: Yup.string()
+      .required("Name is required")
+      .max(1000, "Name must have less than 1000 characters"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required")
+      .max(255, "Email must have less than 255 characters"),
+    password: Yup.string()
+      .required("Password is required")
+      .min(6, "Password must be at least 6 characters")
+      .max(255, "Password must have less than 255 characters"),
+    confirmPassword: Yup.string()
+    .required("Confirm password is required")
+    .oneOf(
+        [Yup.ref("password"), null],
+        "Confirm password does not match with the password."
+      ),
+    companyName: Yup.string()
+      .required("Please enter your company's name.")
+      .max(255, "Company name must have less than 255 characters"),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -69,7 +54,7 @@ export default function SignUp() {
       confirmPassword: "",
       companyName: "",
     },
-    validate: validate,
+    validationSchema: validationSchema,
     onSubmit: () => {
       if (formik.values.password != formik.values.confirmPassword) {
         notification.error({
@@ -114,7 +99,7 @@ export default function SignUp() {
 
   return (
     <Fragment>
-      <div className="container-fluid ps-0">
+      <div id="signUp" className="container-fluid ps-0">
         <div className="row">
           <div className="col-md-6 col-12 col-sm-12 p-0">
             <div
@@ -139,9 +124,10 @@ export default function SignUp() {
               </div>
               <h4 className="my-4">Sign Up</h4>
               <div>
+                <form onSubmit={formik.handleSubmit}>
                 <div className="custom-input mb-3">
                   <label
-                    htmlFor="exampleFormControlInput1"
+                    htmlFor="name"
                     className="form-label"
                   >
                     Name<span style={{ color: "red" }}>*</span>
@@ -154,7 +140,11 @@ export default function SignUp() {
                       name="name"
                       value={formik.values.name}
                       type="text"
-                      className="form-control border-start-0 ps-0"
+                      className={`form-control ${
+                        formik.touched.name && formik.errors.name
+                          ? "is-invalid"
+                          : ""
+                      }`}
                       placeholder="Full name"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -171,7 +161,7 @@ export default function SignUp() {
                 </div>
                 <div className="custom-input mb-3">
                   <label
-                    htmlFor="exampleFormControlInput1"
+                    htmlFor="email"
                     className="form-label"
                   >
                     Email<span style={{ color: "red" }}>*</span>
@@ -183,8 +173,12 @@ export default function SignUp() {
                     <input
                       name="email"
                       value={formik.values.email}
-                      type="text"
-                      className="form-control border-start-0 ps-0"
+                      type="email"
+                      className={`form-control ${
+                        formik.touched.email && formik.errors.email
+                          ? "is-invalid"
+                          : ""
+                      }`}
                       placeholder="Email"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -202,7 +196,7 @@ export default function SignUp() {
                 </div>
                 <div className="custom-input mb-3">
                   <label
-                    htmlFor="exampleFormControlInput1"
+                    htmlFor="companyName"
                     className="form-label"
                   >
                     Company<span style={{ color: "red" }}>*</span>
@@ -215,7 +209,12 @@ export default function SignUp() {
                       name="companyName"
                       value={formik.values.companyName}
                       type="text"
-                      className="form-control border-start-0 ps-0"
+                      className={`
+                      form-control ${
+                        formik.touched.companyName && formik.errors.companyName
+                          ? "is-invalid"
+                          : ""
+                      }`}
                       placeholder="Company name"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -233,7 +232,7 @@ export default function SignUp() {
                 </div>
                 <div className="custom-input mb-3">
                   <label
-                    htmlFor="exampleFormControlInput1"
+                    htmlFor="password"
                     className="form-label"
                   >
                     Password<span style={{ color: "red" }}>*</span>
@@ -245,8 +244,12 @@ export default function SignUp() {
                     <input
                       name="password"
                       value={formik.values.password}
-                      type="password"
-                      className="form-control border-start-0 ps-0"
+                      type={showPassword ? "text" : "password"}
+                      className={`form-control ${
+                        formik.touched.password && formik.errors.password
+                          ? "is-invalid"
+                          : ""
+                      }`}
                       placeholder="Password"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -255,14 +258,25 @@ export default function SignUp() {
                       autoComplete="off"
                       onKeyDown={handleKeyPress}
                     />
-                  </div>
+                    <button
+                      className="btn btn-outline-secondary signup-password"
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      <i
+                        className={`bi ${
+                          showPassword ? "bi-eye-slash" : "bi-eye"
+                        }`}
+                      ></i>
+                    </button>
+                    </div>
                   {formik.touched.password && formik.errors.password && (
                     <div className="text-danger">{formik.errors.password}</div>
                   )}
                 </div>
                 <div className="custom-input mb-3">
                   <label
-                    htmlFor="exampleFormControlInput1"
+                    htmlFor="confirmPassword"
                     className="form-label"
                   >
                     Confirm Password<span style={{ color: "red" }}>*</span>
@@ -273,8 +287,13 @@ export default function SignUp() {
                     </span>
                     <input
                       name="confirmPassword"
-                      type="password"
-                      className="form-control border-start-0 ps-0"
+                      type={showConfirmPassword ? "text" : "password"}
+                      className={`form-control ${
+                        formik.touched.confirmPassword &&
+                        formik.errors.confirmPassword
+                          ? "is-invalid"
+                          : ""
+                      }`}
                       placeholder="Confirm Password"
                       aria-label="Username"
                       aria-describedby="basic-addon1"
@@ -284,22 +303,36 @@ export default function SignUp() {
                       autoComplete="off"
                       onKeyDown={handleKeyPress}
                     />
-                  </div>
-                  {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                    <div className="text-danger">{formik.errors.confirmPassword}</div>
-                   )} 
+                    <button
+                      className="btn btn-outline-secondary signup-password"
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                    >
+                      <i
+                        className={`bi ${
+                          showConfirmPassword ? "bi-eye-slash" : "bi-eye"
+                        }`}
+                      ></i>
+                    </button>
+                    </div>
+                    {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                      <div className="text-danger">
+                        {formik.errors.confirmPassword}
+                      </div>
+                    )}
                 </div>
                 <Captcha getCaptcha={getCaptcha} />
                 <div className="my-3">
                   <button
                     disabled={!(formik.isValid && formik.dirty)}
                     className="btn btn-primary btn-blue w-100 mt-2 signup-button"
-                    onClick={formik.handleSubmit}
                   >
                     Sign Up
                   </button>
                 </div>
-
+                </form>
                 <div className="text-center mb-5">
                   Already have an account?{" "}
                   <a
