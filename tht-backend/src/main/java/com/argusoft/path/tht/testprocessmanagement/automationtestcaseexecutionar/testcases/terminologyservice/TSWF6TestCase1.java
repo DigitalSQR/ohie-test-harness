@@ -20,6 +20,12 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Testcase For TSWF6TestCase1
+ *
+ * @author ishita
+ */
+
 @Component
 public class TSWF6TestCase1 implements TestCase {
 

@@ -23,6 +23,12 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Process Reinitializer
+ *
+ * @author Bhavi
+ */
+
 @Component
 public class ProcessReinitializer {
 

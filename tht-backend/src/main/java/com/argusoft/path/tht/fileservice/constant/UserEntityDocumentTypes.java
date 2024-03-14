@@ -2,6 +2,11 @@ package com.argusoft.path.tht.fileservice.constant;
 
 import java.util.Set;
 
+/**
+ *
+ * @author Hardik
+ */
+
 public enum UserEntityDocumentTypes implements EntityDocumentTypeEnum {
     USER_PROFILE_PICTURE("document.type.user.profilePicture", Set.of(FileType.IMAGE_JPEG, FileType.IMAGE_PNG), DocumentServiceConstants.ALLOWED_ACTIVE_SINGLE_RECORD);
 

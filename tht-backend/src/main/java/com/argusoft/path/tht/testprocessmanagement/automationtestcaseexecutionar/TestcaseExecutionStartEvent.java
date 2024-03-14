@@ -7,6 +7,12 @@ import org.springframework.context.ApplicationEvent;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * TestcaseExecutionerStartEvent
+ *
+ * @author Hardik
+ */
+
 public class TestcaseExecutionStartEvent extends ApplicationEvent {
 
     private final List<String> testcaseResultEntityIds;

@@ -16,6 +16,12 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Criteria search filter for test request
+ *
+ * @author Hardik
+ */
+
 public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilter<TestRequestEntity> {
 
     Root<TestRequestEntity> testRequestEntityRoot;

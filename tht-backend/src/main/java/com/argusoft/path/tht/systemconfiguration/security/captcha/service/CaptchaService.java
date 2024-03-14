@@ -8,6 +8,12 @@ import com.nimbusds.jose.shaded.json.JSONObject;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * This interface provides contract for captcha API.
+ *
+ * @author ishita
+ */
+
 public interface CaptchaService {
 
     public CaptchaInfo createCaptcha(ContextInfo contextInfo) throws Exception;

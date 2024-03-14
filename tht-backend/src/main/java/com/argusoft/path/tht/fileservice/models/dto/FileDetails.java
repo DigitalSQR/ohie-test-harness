@@ -1,5 +1,11 @@
 package com.argusoft.path.tht.fileservice.models.dto;
 
+/**
+ * This info is for files.
+ *
+ * @author Hardik
+ */
+
 public class FileDetails {
 
     private final String location;

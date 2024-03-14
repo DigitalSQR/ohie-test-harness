@@ -1,5 +1,11 @@
 package com.argusoft.path.tht.systemconfiguration.constant;
 
+/**
+ * Constant for validations
+ *
+ * @author Aastha
+ */
+
 public final class ValidateConstant {
 
     public static final String MUST_PROVIDED = " must be provided";

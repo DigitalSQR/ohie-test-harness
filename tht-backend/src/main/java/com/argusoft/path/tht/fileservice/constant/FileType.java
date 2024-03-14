@@ -1,5 +1,11 @@
 package com.argusoft.path.tht.fileservice.constant;
 
+/**
+ * This enum provides contract for fileType
+ *
+ * @author Hardik
+ */
+
 public enum FileType {
 
     //pdf file

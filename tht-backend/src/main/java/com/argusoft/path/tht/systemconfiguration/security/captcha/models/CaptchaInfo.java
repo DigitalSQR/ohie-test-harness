@@ -1,5 +1,11 @@
 package com.argusoft.path.tht.systemconfiguration.security.captcha.models;
 
+/**
+ * This info is for Captcha DTO
+ *
+ * @author Ishita
+ */
+
 public class CaptchaInfo {
 
     private String image;

@@ -23,6 +23,12 @@ import com.argusoft.path.tht.usermanagement.models.mapper.UserMapperImpl;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 
+/**
+ * Constants for Audit Service
+ *
+ * @author Hardik
+ */
+
 public final class AuditServiceConstant {
 
     public enum EntityType {

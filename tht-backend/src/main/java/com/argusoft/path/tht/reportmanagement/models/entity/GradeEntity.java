@@ -7,6 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * This model is mapped to Grade table in database.
+ *
+ * @author Dhruv
+ */
+
 @Entity
 @Table(name = "grade")
 @Audited

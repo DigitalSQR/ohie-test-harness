@@ -28,6 +28,12 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * validate ref obj uri and refId
+ *
+ * @author Rohit
+ */
+
 @Component
 public class RefObjectUriAndRefIdValidator {
 

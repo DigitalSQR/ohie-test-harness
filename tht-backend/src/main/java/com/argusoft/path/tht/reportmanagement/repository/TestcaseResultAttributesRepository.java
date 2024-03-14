@@ -11,6 +11,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * This repository is for making queries on the TestcaseResultAttributes model.
+ *
+ * @author Bhavi
+ */
+
 @Repository
 public interface TestcaseResultAttributesRepository extends JpaRepository<TestcaseResultAttributesEntity, String>, JpaSpecificationExecutor<TestcaseResultAttributesEntity> {
 

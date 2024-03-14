@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * validation methods for captcha
+ *
+ * @author ishita
+ */
+
 public class CaptchaValidation {
 
     private CaptchaValidation() {

@@ -9,6 +9,12 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
+/**
+ * Mapper to covert DTO <-> Entity for the Grade.
+ *
+ * @author Dhruv
+ */
+
 @Mapper(componentModel = "spring")
 public interface GradeMapper extends ModelDtoMapper<GradeEntity, GradeInfo> {
 

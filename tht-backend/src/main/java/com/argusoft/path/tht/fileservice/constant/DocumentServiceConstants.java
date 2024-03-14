@@ -7,6 +7,12 @@ import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Constant for DocumentService.
+ *
+ * @author Hardik
+ */
+
 public class DocumentServiceConstants {
 
     public static final String DOCUMENT_REF_OBJ_URI = DocumentInfo.class.getName();

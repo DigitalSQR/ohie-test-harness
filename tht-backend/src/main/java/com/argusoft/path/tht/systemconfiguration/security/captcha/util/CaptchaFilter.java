@@ -20,6 +20,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * filter class
+ *
+ * @author ishita
+ */
 
 @Component
 public class CaptchaFilter implements Filter {

@@ -11,6 +11,12 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
+/**
+ * Mapper to covert DTO <-> Entity for the TestResultRelation.
+ *
+ * @author Hardik
+ */
+
 @Mapper(componentModel = "spring")
 public interface TestResultRelationMapper extends ModelDtoMapper<TestResultRelationEntity, TestResultRelationInfo> {
 

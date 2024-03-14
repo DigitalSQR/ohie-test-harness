@@ -8,6 +8,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Constant for DocumentType.
+ *
+ * @author Dhruv
+ */
+
 public class DocumentTypeConstants {
 
     public static final String DOCUMENT_TYPE_PROFILE_PICTURE = "document.type.user.profilePicture";

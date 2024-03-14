@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * This auditServiceRestController maps end points with standard service.
+ *
+ * @author Bhavi
+ */
+
 @RestController
 @RequestMapping("/audit")
 @Api(value = "REST API for audit services", tags = {"Audit API"})

@@ -14,6 +14,11 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Criteria Search filter for component
+ *
+ * @author Hardik
+ */
 public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<ComponentEntity> {
 
     private String id;

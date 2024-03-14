@@ -12,6 +12,12 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+/**
+ * Custom Revision Listener
+ *
+ * @author Bhavi
+ */
+
 @Component
 public class CustomRevisionListener implements RevisionListener {
 

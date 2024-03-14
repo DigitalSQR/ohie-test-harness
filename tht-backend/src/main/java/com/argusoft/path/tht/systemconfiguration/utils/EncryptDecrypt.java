@@ -6,6 +6,12 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+/**
+ * Encrypting decryption for Captcha codes
+ *
+ * @author ishita
+ */
+
 public class EncryptDecrypt {
 
     private static final String AES_ALGORITHM = "AES";

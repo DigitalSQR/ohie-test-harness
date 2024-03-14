@@ -16,6 +16,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * This GradeServiceRestController maps end points with standard service.
+ *
+ * @author Dhruv
+ */
+
 @RestController
 @RequestMapping("/grade")
 @Api(value = "REST API for Grade services", tags = {"Grade API"})
