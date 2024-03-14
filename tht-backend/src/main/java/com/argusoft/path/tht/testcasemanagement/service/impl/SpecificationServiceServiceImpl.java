@@ -69,7 +69,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             DataValidationErrorException {
 
         if (specificationEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}",ValidateConstant.INVALID_PARAM_EXCEPTION, SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
 
@@ -99,7 +99,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             DataValidationErrorException {
 
         if (specificationEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
 
@@ -171,7 +171,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             throws InvalidParameterException,
             OperationFailedException {
         if (specificationEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
         List<ValidationResultInfo> errors = SpecificationValidator.validateSpecification(validationTypeKey, specificationEntity, this, testcaseService, componentService, contextInfo);

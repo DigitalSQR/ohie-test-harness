@@ -19,7 +19,7 @@ public class MultipartFileTypeTesterPredicate implements Predicate<MultipartFile
 
     public MultipartFileTypeTesterPredicate(Set<FileType> allowedTypes) throws OperationFailedException {
         if (allowedTypes.isEmpty()) {
-            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + MultipartFileTypeTesterPredicate.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.OPERATION_FAILED_EXCEPTION, MultipartFileTypeTesterPredicate.class.getSimpleName());
             throw new OperationFailedException("ValidationAgainstTypes should not be null or empty to validate file type ");
         }
         this.allowedTypes = allowedTypes;
@@ -30,7 +30,7 @@ public class MultipartFileTypeTesterPredicate implements Predicate<MultipartFile
         try {
             return FileService.validateFileTypeWithAllowedTypes(multipartFile, allowedTypes);
         } catch (OperationFailedException e) {
-            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + MultipartFileTypeTesterPredicate.class.getSimpleName(), e);
+            LOGGER.error("{}{}", ValidateConstant.OPERATION_FAILED_EXCEPTION, MultipartFileTypeTesterPredicate.class.getSimpleName(),e);
             throw new RuntimeException("File validation failed due to OperationFailedException : " + e.getMessage(), e);
         }
     }

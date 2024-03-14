@@ -39,7 +39,7 @@ public class SpecificationValidator {
                         componentService,
                         contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + SpecificationValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION,  SpecificationValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -50,7 +50,7 @@ public class SpecificationValidator {
     public static List<ValidationResultInfo> validateSpecification(String validationTypeKey, SpecificationEntity specificationEntity, SpecificationService specificationService, TestcaseService testcaseService, ComponentService componentService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + SpecificationValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, SpecificationValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE

@@ -32,7 +32,7 @@ public class TestcaseOptionValidator {
                         testcaseService,
                         contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseOptionValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, TestcaseOptionValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -42,7 +42,7 @@ public class TestcaseOptionValidator {
 
     public static List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey, TestcaseOptionEntity testcaseOptionEntity, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE
@@ -77,7 +77,7 @@ public class TestcaseOptionValidator {
                 validateCreateTestcaseOption(errors, testcaseOptionEntity, testcaseOptionService, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseOptionValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 

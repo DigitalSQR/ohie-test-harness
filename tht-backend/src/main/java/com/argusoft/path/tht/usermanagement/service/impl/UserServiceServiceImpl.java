@@ -317,7 +317,7 @@ public class UserServiceServiceImpl implements UserService {
             throws DoesNotExistException,
             InvalidParameterException {
         if (!StringUtils.hasLength(userId)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + UserServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("userId is missing");
         }
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter(userId);
@@ -393,7 +393,7 @@ public class UserServiceServiceImpl implements UserService {
             OperationFailedException,
             InvalidParameterException {
         if (!StringUtils.hasLength(roleId)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + UserServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("roleId can not be empty");
         }
         RoleSearchCriteriaFilter roleSearchCriteriaFilter = new RoleSearchCriteriaFilter(roleId);

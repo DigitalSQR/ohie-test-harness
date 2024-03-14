@@ -38,7 +38,7 @@ public class TestcaseValidator {
                         applicationContext,
                         contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestcaseValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION,  TestcaseValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -54,7 +54,7 @@ public class TestcaseValidator {
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE
@@ -82,7 +82,7 @@ public class TestcaseValidator {
                         TestcaseEntity originalEntity = testcaseService.getTestcaseById(testcaseEntity.getId(), contextInfo);
                         validateUpdateTestcase(errors, testcaseEntity, originalEntity);
                     } catch (DoesNotExistException | InvalidParameterException ex) {
-                        LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseValidator.class.getSimpleName());
+                        LOGGER.error("{}{}",ValidateConstant.DOES_NOT_EXIST_EXCEPTION, TestcaseValidator.class.getSimpleName());
                         String fieldName = "id";
                         errors.add(
                                 new ValidationResultInfo(fieldName,
@@ -96,7 +96,7 @@ public class TestcaseValidator {
                 validateCreateTestcase(errors, testcaseEntity, testcaseService, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 

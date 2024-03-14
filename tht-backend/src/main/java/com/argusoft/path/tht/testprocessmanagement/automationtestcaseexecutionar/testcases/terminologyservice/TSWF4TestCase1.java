@@ -37,7 +37,7 @@ public class TSWF4TestCase1 implements TestCase {
                 return new ValidationResultInfo(ErrorLevel.ERROR, "Failed to get IGenericClient");
             }
 
-            LOGGER.info("Start testing " + testCaseName);
+            LOGGER.info("Start testing {}", testCaseName);
 
             String uniqueId = UUID.randomUUID().toString();
 

@@ -56,7 +56,7 @@ public class TestRequestValidator {
                 componentService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestRequestValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, TestRequestValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -94,7 +94,7 @@ public class TestRequestValidator {
                 testcaseResultService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + TestRequestValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION, TestRequestValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntities);
@@ -119,7 +119,7 @@ public class TestRequestValidator {
                 || StringUtils.isEmpty(refObjUri)
                 || StringUtils.isEmpty(refId)
                 || StringUtils.isEmpty(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestValidator.class.getSimpleName());
             throw new InvalidParameterException("inputData is missing");
         }
         List<ValidationResultInfo> errors = new ArrayList<>();
@@ -183,7 +183,7 @@ public class TestRequestValidator {
                                                                  ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION,TestRequestValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
         // VALIDATE
@@ -218,7 +218,7 @@ public class TestRequestValidator {
                 validateCreateTestRequest(errors, testRequestEntity, testRequestService, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestRequestValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 

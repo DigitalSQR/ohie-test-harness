@@ -35,7 +35,7 @@ public class UserValidator {
         ValidationUtils.validateRequired(updatePasswordInfo.getNewPassword(), "newPassword", errors);
 
         if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + UserValidator.class.getSimpleName());
+            LOGGER.error("{}{}",ValidateConstant.DATA_VALIDATION_EXCEPTION,  UserValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     errors);
@@ -50,7 +50,7 @@ public class UserValidator {
                         userEntity,
                         contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntitys, ErrorLevel.ERROR)) {
-            LOGGER.error(ValidateConstant.DATA_VALIDATION_EXCEPTION + UserValidator.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.DATA_VALIDATION_EXCEPTION , UserValidator.class.getSimpleName());
             throw new DataValidationErrorException(
                     ValidateConstant.ERRORS,
                     validationResultEntitys);
@@ -174,7 +174,7 @@ public class UserValidator {
                 validateCreateUser(userService, errors, userEntity, contextInfo);
                 break;
             default:
-                LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + UserValidator.class.getSimpleName());
+                LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserValidator.class.getSimpleName());
                 throw new InvalidParameterException(ValidateConstant.INVALID_VALIDATION_TYPE_KEY);
         }
 

@@ -68,7 +68,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             DataValidationErrorException {
 
         if (testcaseEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseEntity is missing");
         }
 
@@ -98,7 +98,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             DataValidationErrorException {
 
         if (testcaseEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseEntity is missing");
         }
 
@@ -169,7 +169,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             OperationFailedException {
 
         if (testcaseEntity == null) {
-            LOGGER.error(ValidateConstant.INVALID_PARAM_EXCEPTION + TestcaseServiceServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}",ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseEntity is missing");
         }
 
