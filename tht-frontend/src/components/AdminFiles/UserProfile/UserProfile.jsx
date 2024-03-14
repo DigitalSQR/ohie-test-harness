@@ -111,14 +111,14 @@ export default function UserProfile () {
   // Function to validate form input values.
   const validate = (values) => {
     const errors = {};
-    if (values.name.length === 0) {
+    if (values?.name?.length === 0) {
       errors.name = "Please enter your name.";
-    } else if (values.name.length > 1000) {
+    } else if (values?.name?.length > 1000) {
       errors.password = "Password must have less than 1000 characters.";
     }
-    if (values.companyName.length == 0) {
+    if (values?.companyName?.length == 0) {
       errors.companyName = "Please enter your company's name.";
-    } else if (values.companyName.length > 255) {
+    } else if (values?.companyName?.length > 255) {
       errors.companyName = "Company name must have less than 255 characters.";
     }
     return errors;

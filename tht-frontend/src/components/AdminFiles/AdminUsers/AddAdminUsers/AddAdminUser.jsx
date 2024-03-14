@@ -46,7 +46,8 @@ const AddAdminUser = () => {
       .min(6, "Password must be of minimum 6 characters")
       .max(15, "Password must have less than 15 characters"),
     roleIds: Yup.array().min(1, "Role is required"),
-    confirmPassword: Yup.string().oneOf(
+    confirmPassword: Yup.string()
+      .required("Confirm password is required").oneOf(
       [Yup.ref("password"), null],
       "Confirm password does not match with the password."
     ),
