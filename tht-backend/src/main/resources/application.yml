@@ -101,3 +101,11 @@ mailSender:
 
 encryption:
   key: "3a985da74fe225d6c9a29e5a9e4c1b93"
+
+tokenService:
+  refresh-token-validity : 2592000 #30 Days
+  access-token-validity : 36000 #10 Hours
+
+oauth2:
+  tht:
+    clientId: "tht"
