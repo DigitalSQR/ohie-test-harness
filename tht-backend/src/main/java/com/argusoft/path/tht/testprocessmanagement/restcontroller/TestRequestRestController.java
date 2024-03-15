@@ -211,6 +211,7 @@ public class TestRequestRestController {
     })
     @PutMapping("/stop-testing-process/{testRequestId}")
     @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
+    @Transactional(rollbackFor = Exception.class)
     public void stopTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
             @RequestParam(value = "refObjUri", required = true) String refObjUri,
