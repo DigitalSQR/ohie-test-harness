@@ -173,7 +173,7 @@ const routesConfig = [
       },
       {
         path: "assessee",
-        name: "Assessee",
+        name: "Assessees",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
