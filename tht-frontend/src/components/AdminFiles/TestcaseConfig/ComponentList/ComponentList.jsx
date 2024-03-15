@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./componentList.scss";
 import { EditFilled, EyeOutlined } from "@ant-design/icons";
 import { ComponentAPI } from "../../../../api/ComponentAPI";
-import { Switch, Modal } from "antd";
+import { Switch, Modal, Empty } from "antd";
 import { useLoader } from "../../../loader/LoaderContext";
 import ComponentUpsertModal from "./ComponentUpsertModal/ComponentUpsertModal";
 import { ComponentsActionStateLabels } from "../../../../constants/components_constants";
@@ -15,22 +15,23 @@ import unsorted from "../../../../styles/images/unsorted.png";
 import sortedUp from "../../../../styles/images/sort-up.png";
 import sortedDown from "../../../../styles/images/sort-down.png";
 import ValidateConfigFacts from "../ValidateConfigFacts/ValidateConfigFacts.jsx";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 export default function ComponentList() {
   const navigate = useNavigate();
   const [sortDirection, setSortDirection] = useState({
-    name: "asc",
+    rank: "asc",
   });
-  const [sortFieldName, setSortFieldName] = useState("name");
+  const [sortFieldName, setSortFieldName] = useState("rank");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [components, setComponents] = useState();
+  const [components, setComponents] = useState([]);
   const { showLoader, hideLoader } = useLoader();
   const [filterState, setFilterState] = useState("");
   const [componentId, setComponentId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
-  const pageSize = 10;
 
   const handleSort = (newSortFieldName) => {
     setSortFieldName(newSortFieldName);
@@ -52,7 +53,7 @@ export default function ComponentList() {
       return (
         <img
           className="cursor-pointer"
-          style={{width:"8px"}}
+          style={{ width: "8px" }}
           src={
             sortDirection[fieldName] === "asc"
               ? sortedUp
@@ -61,7 +62,7 @@ export default function ComponentList() {
         ></img>
       );
     }
-    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
+    return <img className="cursor-pointer" style={{ width: "10px" }} src={unsorted} />;
   };
 
   const handleChangePage = (event, newPage) => {
@@ -156,6 +157,31 @@ export default function ComponentList() {
     }
   };
 
+  const onDragEnd = (result) => {
+      const { destination, source, draggableId } = result;
+      let { droppableId } = destination;
+      droppableId = JSON.parse(droppableId);
+      if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
+        return;
+      }
+  
+      const reorderedItems = [...components];
+      const [reorderedItem] = reorderedItems.splice(source.index, 1);
+      reorderedItems.splice(destination.index, 0, reorderedItem);
+  
+      const newRank =  droppableId[destination.index].rank;
+      setComponents(reorderedItems);
+  
+      ComponentAPI.changeRank(draggableId, newRank)
+        .then((res) => {
+          hideLoader();
+          refreshAllComponents();
+        })
+        .catch((err) => {
+          hideLoader();
+        });  
+  };
+
   return (
     <div id="componentList">
       <div id="wrapper">
@@ -184,11 +210,11 @@ export default function ComponentList() {
               </div>
             </div>
             <div className="d-flex align-items-baseline justify-content-end">
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-secondary me-2"
-              onClick={() =>  navigate("/validate-config")}
-            ><FileSearchOutlined className="me-1" />Validate Configuration</button>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary me-2"
+                onClick={() => navigate("/validate-config")}
+              ><FileSearchOutlined className="me-1" />Validate Configuration</button>
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
@@ -200,79 +226,92 @@ export default function ComponentList() {
             </div>
           </div>
           <div className="table-responsive">
-            <table className="data-table capitalize-words">
-              <thead>
-                <tr>
-                  <th className="col-4">
-                    Component Name{" "}
-                    <span
-                      className="ps-1"
-                      href="#"
-                      onClick={() => handleSort("name")}
-                    >
-                      {renderSortIcon("name")}
-                    </span>{" "}
-                  </th>
-                  <th className="col-3">Status</th>
-                  <th className="col-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {components?.length === 0 ? (
-                  <tr>
-                    <td className="text-center" colSpan={4}>
-                      There are no components registered.
-                    </td>
-                  </tr>
-                ) : (
-                  components?.map((component) => (
-                    <tr key={component?.id}>
-                      <td>
-                        {component?.name}
-                      </td>
-                      <td>
-                        <Switch
-                          checked={
-                            component?.state === "component.status.active"
-                          }
-                          onChange={() =>
-                            changeComponentState(
-                              component?.id,
-                              component?.state
-                            )
-                          }
-                          checkedChildren="ACTIVE"
-                          unCheckedChildren="INACTIVE"
-                        />
-                      </td>
-                      <td>
-                        <span
-                          className="cursor-pointer"
-                          onClick={() => {
-                            setComponentId(component?.id);
-                            setIsModalOpen(true);
-                          }}
-                        >
-                          <i className="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
-                          EDIT
-                        </span>&nbsp;
-                        <span
-                          className="cursor-pointer ps-2"
-                          onClick={() =>
-                            navigate(
-                              `/testcase-config/component-specification/${component?.id}`
-                            )
-                          }
-                        >
-                          <i className="bi bi-eye font-size-16 text-blue-50"></i>{" "}
-                          SPECIFICATIONS
-                        </span>
-                      </td>
-                    </tr>
-                  ))
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId={JSON.stringify(components)}>
+                {(provided) => (
+                  <table className="data-table capitalize-words" {...provided.droppableProps} ref={provided.innerRef}>
+                    <thead>
+                      <tr>
+                        <th className="col-1"></th>
+                        <th className="col-4">
+                          Component Name{" "}
+                          <span className="ps-1" onClick={() => handleSort("name")}>
+                            {renderSortIcon("name")}
+                          </span>{" "}
+                        </th>
+                        <th className="col-2">Status</th>
+                        <th className="col-2">
+                          Rank{" "}
+                          <span className="ps-1" onClick={() => handleSort("rank")}>
+                            {renderSortIcon("rank")}
+                          </span>{" "}
+                        </th>
+                        <th className="col-4">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {components && components.length > 0 ? (
+                      components.map((component, index) => (
+                        <Draggable key={component.id} draggableId={component.id} index={index} isDragDisabled={(sortFieldName == 'rank')? false: true}>
+                          {(provided) => (
+                            <tr 
+                              {...provided.draggableProps}
+                              ref={provided.innerRef}
+                              key={component.name}
+                            >
+                              <td {...provided.dragHandleProps}>
+                                <i className="bi bi-list" style={(sortFieldName == 'rank')? {} : {cursor: 'not-allowed'}} title={(sortFieldName == 'rank')? "" : "Sort by rank to enable drag and drop rank modification."}>
+                                </i>                              
+                              </td>
+                              <td>{component.name}</td>
+                              <td>
+                                <Switch
+                                  checked={component.state === "component.status.active"}
+                                  onChange={() => changeComponentState(component.id, component.state)}
+                                  checkedChildren="ACTIVE"
+                                  unCheckedChildren="INACTIVE"
+                                />
+                              </td>
+                              <td>{component.rank}</td>
+                              <td>
+                                <span
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    setComponentId(component.id);
+                                    setIsModalOpen(true);
+                                  }}
+                                >
+                                  <i className="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
+                                  EDIT
+                                </span>
+                                &nbsp;
+                                <span
+                                  className="cursor-pointer ps-2"
+                                  onClick={() =>
+                                    navigate(`/testcase-config/component-specification/${component.id}`)
+                                  }
+                                >
+                                  <i className="bi bi-eye font-size-16 text-blue-50"></i>{" "}
+                                  SPECIFICATIONS
+                                </span>
+                              </td>
+                            </tr>
+                          )}
+                        </Draggable>
+                      ))) : (
+                        <tr>
+                          <td colSpan={6}>
+                            <Empty description="No Record Found." />
+                          </td>
+                        </tr>
+                      )}
+                      {provided.placeholder}
+                    </tbody>
+                  </table>
                 )}
-              </tbody>
-            </table>
+              </Droppable>
+            </DragDropContext>
+
           </div>
         </div>
         <div>
@@ -294,6 +333,22 @@ export default function ComponentList() {
             shape="rounded"
           />
         )}
+         <div className="page-size-selector mt-4">
+            <select
+              className="form-select custom-select custom-select-sm"
+              aria-label="Default select example"
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+            <option value="10" key="10">10</option>
+            <option value="20" key="20">20</option> 
+            <option value="30" key="30">30</option> 
+            <option value="" key="all">All</option> 
+            </select>
+          </div>
       </div>
     </div>
   );

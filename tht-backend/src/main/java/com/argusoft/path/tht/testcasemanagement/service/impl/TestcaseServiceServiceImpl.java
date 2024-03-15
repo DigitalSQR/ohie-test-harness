@@ -1,11 +1,13 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
@@ -191,6 +193,48 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
 
         return testcaseEntity;
     }
+
+
+    @Override
+    public TestcaseEntity changeRank(String testcaseId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, DataValidationErrorException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        TestcaseEntity testcaseEntity = this.getTestcaseById(testcaseId, contextInfo);
+        Integer oldRank = testcaseEntity.getRank();
+
+        testcaseEntity.setRank(rank);
+        TestcaseValidator.validateTestcaseEntityOrder(testcaseEntity,errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    ValidateConstant.ERRORS,
+                    errors);
+        }
+        testcaseRepository.saveAndFlush(testcaseEntity);
+
+        TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter = new TestcaseCriteriaSearchFilter();
+        testcaseCriteriaSearchFilter.setSpecificationId(testcaseEntity.getSpecification().getId());
+        testcaseCriteriaSearchFilter.setMinRank(Integer.min(oldRank, rank));
+        testcaseCriteriaSearchFilter.setMaxRank(Integer.max(oldRank, rank));
+        List<TestcaseEntity> testcases = this.searchTestcases(testcaseCriteriaSearchFilter, contextInfo);
+
+        for(TestcaseEntity currentTestcase : testcases){
+            int testcaseRank = currentTestcase.getRank();
+            if(!currentTestcase.getId().equals(testcaseEntity.getId())){
+                if(oldRank > testcaseRank && testcaseRank >= rank){
+                    currentTestcase.setRank(testcaseRank + 1);
+                }
+                else {
+                    if (rank >= testcaseRank && testcaseRank > oldRank) {
+                        currentTestcase.setRank(testcaseRank - 1);
+                    }
+                }
+            }
+            testcaseRepository.saveAndFlush(currentTestcase);
+        }
+        return testcaseEntity;
+    }
+
 
     private void defaultValueCreateTestCase(TestcaseEntity testcaseEntity, ContextInfo contextInfo) throws InvalidParameterException {
         if (!StringUtils.hasLength(testcaseEntity.getId())) {

@@ -1,11 +1,13 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
@@ -114,6 +116,48 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
         specificationEntity = specificationRepository.saveAndFlush(specificationEntity);
         return specificationEntity;
     }
+
+
+    @Override
+    public SpecificationEntity changeRank(String specificationId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, DataValidationErrorException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        SpecificationEntity specificationEntity = this.getSpecificationById(specificationId, contextInfo);
+        Integer oldRank = specificationEntity.getRank();
+
+        specificationEntity.setRank(rank);
+        SpecificationValidator.validateSpecificationEntityOrder(specificationEntity,errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    ValidateConstant.ERRORS,
+                    errors);
+        }
+
+        specificationRepository.saveAndFlush(specificationEntity);
+
+        SpecificationCriteriaSearchFilter specificationCriteriaSearchFilter = new SpecificationCriteriaSearchFilter();
+        specificationCriteriaSearchFilter.setComponentId(specificationEntity.getComponent().getId());
+        specificationCriteriaSearchFilter.setMinRank(Integer.min(oldRank, rank));
+        specificationCriteriaSearchFilter.setMaxRank(Integer.max(oldRank, rank));
+        List<SpecificationEntity> specifications = this.searchSpecifications(specificationCriteriaSearchFilter, contextInfo);
+
+        for(SpecificationEntity currentSpecification : specifications){
+            int specificationRank = currentSpecification.getRank();
+            if(!currentSpecification.getId().equals(specificationEntity.getId())) {
+                if (oldRank > specificationRank && specificationRank >= rank) {
+                    currentSpecification.setRank(specificationRank + 1);
+                } else {
+                    if (rank >= specificationRank && specificationRank > oldRank) {
+                        currentSpecification.setRank(specificationRank - 1);
+                    }
+                }
+                specificationRepository.saveAndFlush(currentSpecification);
+            }
+        }
+        return specificationEntity;
+    }
+
 
     /**
      * {@inheritdoc}

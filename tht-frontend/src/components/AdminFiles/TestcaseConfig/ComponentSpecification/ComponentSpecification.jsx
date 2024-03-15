@@ -14,22 +14,24 @@ import unsorted from "../../../../styles/images/unsorted.png";
 import sortedUp from "../../../../styles/images/sort-up.png";
 import sortedDown from "../../../../styles/images/sort-down.png";
 import { ComponentAPI } from "../../../../api/ComponentAPI";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
 export default function ComponentSpecification() {
   const navigate = useNavigate();
   const [specifications, setSpecifications] = useState();
   const { showLoader, hideLoader } = useLoader();
   const [sortDirection, setSortDirection] = useState({
-    name: "asc",
+    rank: "asc",
     isRequired: "desc",
     isFunctional: "desc",
   });
-  const [sortFieldName, setSortFieldName] = useState("name");
+  const [sortFieldName, setSortFieldName] = useState("rank");
   const [componentDetails, setComponentDetails] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [specificationId, setSpecificationId] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10);
   const { componentId } = useParams();
   const dispatch = useDispatch();
 
@@ -107,7 +109,6 @@ export default function ComponentSpecification() {
       setSpecifications(resp.content);
       setTotalPages(resp.totalPages);
     } catch (error) {
-      console.error("Error fetching specifications:", error);
       setSpecifications(undefined);
     } finally {
       hideLoader();
@@ -158,6 +159,44 @@ export default function ComponentSpecification() {
     }
   };
 
+
+  const onDragEnd = (result) => {
+
+    const { destination, source, draggableId } = result;
+    let { droppableId } = destination;
+    droppableId = JSON.parse(droppableId);
+    if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
+      return;
+    }
+  
+    const reorderedItems = [...specifications];
+    const [reorderedItem] = reorderedItems.splice(source.index, 1);
+    reorderedItems.splice(destination.index, 0, reorderedItem);
+
+    const newRank =  droppableId[destination.index].rank;
+    setSpecifications(reorderedItems);
+
+    SpecificationAPI.changeRank(draggableId, newRank)
+      .then((res) => {
+        hideLoader();
+        refreshAllSpecifications();
+      })
+      .catch((err) => {
+        hideLoader();
+      });
+
+  };
+
+  useEffect(() => {
+    fetchData(
+      sortFieldName,
+      sortDirection[sortFieldName],
+      currentPage,
+      pageSize
+    );
+  }, [pageSize]);
+
+
   return (
     <div id="componentSpecification">
       <div id="wrapper" className="component-specification-page">
@@ -190,10 +229,14 @@ export default function ComponentSpecification() {
         </div>
         <div>
             <div className="table-responsive">
-              <table className="data-table capitalize-words">
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId={JSON.stringify(specifications)}>
+                {(provided) => (
+              <table className="data-table capitalize-words" {...provided.droppableProps} ref={provided.innerRef}>
                 <thead>
                   <tr>
-                    <th style={{width:'20%'}}>
+                    <th style={{width:'5%'}}></th>
+                    <th style={{width:'15%'}}>
                       Specifications{" "}
                       <a
                         className="ps-1"
@@ -223,14 +266,32 @@ export default function ComponentSpecification() {
                         {renderSortIcon("isRequired")}
                       </a>{" "}
                     </th>
-                    <th style={{width: "20%"}}>Status</th>
-                    <th style={{width:'20%'}}>Actions</th>
+                    <th style={{width: "12%"}}>Status</th>
+                    <th style={{width: "10%"}}>Rank{" "}
+                      <a
+                        className="ps-1"
+                        href="#"
+                        onClick={() => handleSort("rank")}
+                      >
+                        {renderSortIcon("rank")}
+                      </a>{" "}
+                    </th>
+                    <th style={{width:'45%'}}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                 {specifications && specifications.length > 0 ? (
-                  specifications.map((specification) => (
-                    <tr key={specification.name}>
+                  specifications.map((specification, index) => (
+                    <Draggable key={specification.id} draggableId={specification.id} index={index} isDragDisabled={(sortFieldName == 'rank')? false: true}>
+                    {(provided) => (
+                      <tr
+                        {...provided.draggableProps}
+                        ref={provided.innerRef}
+                        key={specification.name}
+                      >
+                        <td {...provided.dragHandleProps}>
+                          <i className="bi bi-list" style={(sortFieldName == 'rank')? {} : {cursor: 'not-allowed'}} title={(sortFieldName == 'rank')? "" : "Sort by rank to enable drag and drop rank modification."}></i>
+                        </td>
                       <td>{specification.name}</td>
                       <td>
                         {specification.functional === true
@@ -258,6 +319,9 @@ export default function ComponentSpecification() {
                           unCheckedChildren="INACTIVE"
                         />
                       </td>
+                      <td>
+                        {specification?.rank}
+                      </td>
                       <td className="action-icons-container">
                         <div className="d-flex">
                         <span
@@ -283,18 +347,22 @@ export default function ComponentSpecification() {
                         </span>
                         </div>
                       </td>
-
-
                     </tr>
+                    )}
+                    </Draggable>
                   )) ) : (
                   <tr>
-                    <td colSpan={5}>
+                    <td colSpan={7}>
                       <Empty description="No Record Found." />
                     </td>
                   </tr>
                 )}
+                {provided.placeholder}
               </tbody>
             </table>
+            )}
+            </Droppable>
+          </DragDropContext>
           </div>
         </div>
         <ComponentSpecificationUpsertModal
@@ -306,15 +374,33 @@ export default function ComponentSpecification() {
           refreshAllSpecifications={refreshAllSpecifications}
         />
         {totalPages > 1 && (
-          <Pagination
-            className="pagination-ui"
-            count={totalPages}
-            page={currentPage}
-            onChange={handleChangePage}
-            variant="outlined"
-            shape="rounded"
-          />
+              <Pagination
+              className="pagination-ui"
+              count={totalPages}
+              page={currentPage}
+              onChange={handleChangePage}
+              variant="outlined"
+              shape="rounded"
+            />
         )}
+
+          <div className="page-size-selector mt-4">
+            <select
+              className="form-select custom-select custom-select-sm"
+              aria-label="Default select example"
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+            <option value="10" key="10">10</option>
+            <option value="20" key="20">20</option> 
+            <option value="30" key="30">30</option>
+            <option value="" key="all">All</option> 
+            </select>
+          </div>
+        
       </div>
     </div>
   );

@@ -282,8 +282,9 @@ public class SpecificationValidator {
     }
 
     //Validation For :Order
-    private static void validateSpecificationEntityOrder(SpecificationEntity specificationEntity,
-                                                         List<ValidationResultInfo> errors) {
+    public static void validateSpecificationEntityOrder(SpecificationEntity specificationEntity,
+                                                        List<ValidationResultInfo> errors) {
+        ValidationUtils.validateRequired(specificationEntity.getRank(), "rank", errors);
         ValidationUtils.validateIntegerRange(specificationEntity.getRank(),
                 "rank",
                 1,

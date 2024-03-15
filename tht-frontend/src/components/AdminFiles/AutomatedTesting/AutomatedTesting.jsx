@@ -268,7 +268,7 @@ export default function AutomatedTesting() {
   }, [stompClient]);
 
   return (
-    <div>
+    <div id="automatedTesting">
     <div id="wrapper">
       <div className="container">
         <div className="col-12">

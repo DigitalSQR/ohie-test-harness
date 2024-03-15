@@ -196,6 +196,25 @@ public class TestcaseRestController {
         return testcaseMapper.modelToDto(testcaseEntity);
     }
 
+    @ApiOperation(value = "To change rank of test case", response = TestcaseInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated Test case"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/rank/{testcaseId}/{rank}")
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
+    public TestcaseInfo updateTestcaseRank(@PathVariable("testcaseId") String testcaseId,
+                                                     @PathVariable("rank") Integer rank,
+                                                     @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        TestcaseEntity testcaseEntity = testcaseService.changeRank(testcaseId, rank, contextInfo);
+        return testcaseMapper.modelToDto(testcaseEntity);
+    }
+
+
+
     @ApiOperation(value = "To apply patch to the Testcase", response = TestcaseInfo.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated Testcase"),

@@ -1,11 +1,13 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
+import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
@@ -197,6 +199,47 @@ public class ComponentServiceServiceImpl implements ComponentService {
         componentEntity.setState(stateKey);
         componentEntity = componentRepository.saveAndFlush(componentEntity);
 
+        return componentEntity;
+    }
+
+    @Override
+    public ComponentEntity changeRank(String componentId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, DataValidationErrorException {
+        List<ValidationResultInfo> errors = new ArrayList<>();
+
+        ComponentEntity componentEntity = this.getComponentById(componentId, contextInfo);
+        Integer oldRank = componentEntity.getRank();
+
+        componentEntity.setRank(rank);
+        ComponentValidator.validateComponentEntityRank(componentEntity,errors);
+
+        if (ValidationUtils.containsErrors(errors, ErrorLevel.ERROR)) {
+            throw new DataValidationErrorException(
+                    ValidateConstant.ERRORS,
+                    errors);
+        }
+
+        componentRepository.saveAndFlush(componentEntity);
+
+        ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+        componentCriteriaSearchFilter.setMinRank(Integer.min(oldRank, rank));
+        componentCriteriaSearchFilter.setMaxRank(Integer.max(oldRank, rank));
+        List<ComponentEntity> components = this.searchComponents(componentCriteriaSearchFilter, contextInfo);
+
+
+        for(ComponentEntity currentComponent : components){
+            int componentRank = currentComponent.getRank();
+            if(!currentComponent.getId().equals(componentEntity.getId())){
+                if(oldRank > componentRank && componentRank >= rank){
+                    currentComponent.setRank(componentRank + 1);
+                }
+                else {
+                    if (rank >= componentRank && componentRank > oldRank) {
+                        currentComponent.setRank(componentRank - 1);
+                    }
+                }
+                componentRepository.saveAndFlush(currentComponent);
+            }
+        }
         return componentEntity;
     }
 
