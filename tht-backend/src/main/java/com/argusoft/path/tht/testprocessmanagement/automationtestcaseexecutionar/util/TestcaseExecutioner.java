@@ -371,7 +371,7 @@ public class TestcaseExecutioner {
         testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
     }
 
-    private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) throws OperationFailedException {
+    private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) {
         FhirContext context;
         if (contextType == null) {
             contextType = "R4";
@@ -475,7 +475,7 @@ public class TestcaseExecutioner {
             Boolean isRecommended,
             Boolean isWorkflow,
             Boolean isFunctional,
-            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
@@ -542,7 +542,7 @@ public class TestcaseExecutioner {
             Boolean isRecommended,
             Boolean isWorkflow,
             Boolean isFunctional,
-            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();

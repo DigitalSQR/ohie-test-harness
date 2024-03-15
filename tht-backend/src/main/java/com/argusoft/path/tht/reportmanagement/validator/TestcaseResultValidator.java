@@ -72,7 +72,7 @@ public class TestcaseResultValidator {
                                                     TestcaseOptionService testcaseOptionService,
                                                     TestResultRelationService testResultRelationService,
                                                     AuditService auditService,
-                                                    ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
+                                                    ContextInfo contextInfo) throws DataValidationErrorException{
         List<ValidationResultInfo> validationResultEntitys
                 = validateTestcaseResultSubmit(
                 testcaseResultId,
@@ -165,7 +165,7 @@ public class TestcaseResultValidator {
                                                  TestRequestService testRequestService,
                                                  List<ValidationResultInfo> errors,
                                                  ContextInfo contextInfo)
-            throws OperationFailedException,
+            throws
             InvalidParameterException {
         //validate TestcaseResult foreignKey.
         if (testcaseResultEntity.getTester() != null) {
@@ -219,9 +219,7 @@ public class TestcaseResultValidator {
     //validate update
     private static void validateUpdateTestcaseResult(List<ValidationResultInfo> errors,
                                                      TestcaseResultEntity testcaseResultEntity,
-                                                     TestcaseResultEntity originalEntity)
-            throws OperationFailedException,
-            InvalidParameterException {
+                                                     TestcaseResultEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(testcaseResultEntity.getId(), "id", errors);
         //check the meta required

@@ -55,7 +55,7 @@ public class GradeEvaluator {
         this.testcaseResultService = testcaseResultService;
     }
 
-    public String evaluate(List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo) throws OperationFailedException {
+    public String evaluate(List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo){
         int totalElements = testcaseResultEntities.size();
         int successElements = testcaseResultEntities.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
         if (totalElements != 0) {

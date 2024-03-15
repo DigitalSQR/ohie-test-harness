@@ -240,7 +240,7 @@ public class TestcaseOptionRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/status/mapping")
-    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
         Collection<String> strings = TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
     }

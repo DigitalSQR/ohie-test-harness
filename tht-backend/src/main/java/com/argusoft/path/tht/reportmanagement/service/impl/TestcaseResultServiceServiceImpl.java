@@ -748,7 +748,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return testcaseResultEntities;
     }
 
-    private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+    private void defaultValueCreateTestCaseResult(TestcaseResultEntity testcaseResultEntity) {
         if (!StringUtils.hasLength(testcaseResultEntity.getId())) {
             testcaseResultEntity.setId(UUID.randomUUID().toString());
         }
