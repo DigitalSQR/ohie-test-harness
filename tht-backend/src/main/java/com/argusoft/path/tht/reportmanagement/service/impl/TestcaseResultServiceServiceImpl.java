@@ -70,17 +70,17 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     private TestResultRelationService testResultRelationService;
 
     private static String getMessage(String x, TestcaseResultEntity testcaseResultEntity, String x1, List<String> failedSpecificationTestcaseResultName) {
-        String message = x + testcaseResultEntity.getName() + x1;
+        StringBuilder message = new StringBuilder(x + testcaseResultEntity.getName() + x1);
         for (int i = 0; i < (failedSpecificationTestcaseResultName.size() - 1); i++) {
-            message = message + " <b>" + failedSpecificationTestcaseResultName.get(i) + "<b>,";
+            message.append(" <b>").append(failedSpecificationTestcaseResultName.get(i)).append("<b>,");
         }
         if (failedSpecificationTestcaseResultName.size() > 1) {
-            message = message + " and ";
+            message.append(" and ");
         }
 
-        message = message + "<b>" + failedSpecificationTestcaseResultName.get(failedSpecificationTestcaseResultName.size() - 1) + "<b>";
+        message.append("<b>").append(failedSpecificationTestcaseResultName.get(failedSpecificationTestcaseResultName.size() - 1)).append("<b>");
 
-        return message;
+        return message.toString();
     }
 
     private static List<TestcaseResultEntity> getChildTestcaseResultFromParentTestcaseResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
