@@ -49,6 +49,7 @@ public class ProcessReinitializer {
     }
 
     @PostConstruct
+    @Transactional(rollbackFor = Exception.class)
     public void init() {
         ContextInfo contextInfo = Constant.SUPER_USER_CONTEXT;
         contextInfo.setModule(Module.SYSTEM);
@@ -70,7 +71,7 @@ public class ProcessReinitializer {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+
     public List<TestcaseResultEntity> searchInProgressAndPendingTestcaseResults(String refObjUri, ContextInfo contextInfo) {
         try {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
