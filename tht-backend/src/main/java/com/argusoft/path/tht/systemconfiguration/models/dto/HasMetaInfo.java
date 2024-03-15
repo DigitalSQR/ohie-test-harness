@@ -22,7 +22,7 @@ public class HasMetaInfo implements Serializable {
                     + "}",
             dataType = "MetaInfo",
             required = false,
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private MetaInfo meta;
 
     public MetaInfo getMeta() {

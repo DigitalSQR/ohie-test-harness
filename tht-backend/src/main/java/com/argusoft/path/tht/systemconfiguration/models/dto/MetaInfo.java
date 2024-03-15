@@ -18,7 +18,7 @@ public class MetaInfo implements Serializable {
             example = "2014-02-28",
             dataType = "Date",
             required = false,
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private Date createdAt;
 
     @ApiModelProperty(notes = "The id of the creator",
@@ -26,7 +26,7 @@ public class MetaInfo implements Serializable {
             example = "1",
             dataType = "String/Integer",
             required = false,
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private String createdBy;
 
     @ApiModelProperty(notes = "The last updation time of the model data",
@@ -34,7 +34,7 @@ public class MetaInfo implements Serializable {
             example = "2014-02-28",
             dataType = "Date",
             required = false,
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private Date updatedAt;
 
     @ApiModelProperty(notes = "The id of the updator",
@@ -42,7 +42,7 @@ public class MetaInfo implements Serializable {
             example = "1",
             dataType = "String/Integer",
             required = false,
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private String updatedBy;
 
     @ApiModelProperty(notes = "The version of the model data",
@@ -50,7 +50,7 @@ public class MetaInfo implements Serializable {
             example = "1",
             dataType = "Long",
             required = true,
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private Long version;
 
     public MetaInfo() {

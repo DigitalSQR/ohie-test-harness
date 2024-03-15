@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,10 +121,10 @@ public class TestRequestValidator {
             TestcaseResultService testcaseResultService,
             ContextInfo contextInfo)
             throws OperationFailedException, InvalidParameterException {
-        if (!StringUtils.hasLength(testRequestId)
-                || StringUtils.isEmpty(refObjUri)
-                || StringUtils.isEmpty(refId)
-                || StringUtils.isEmpty(validationTypeKey)) {
+        if (StringUtils.isBlank(testRequestId)
+                || StringUtils.isBlank(refObjUri)
+                || StringUtils.isBlank(refId)
+                || StringUtils.isBlank(validationTypeKey)){
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestValidator.class.getSimpleName());
             throw new InvalidParameterException("inputData is missing");
         }
@@ -188,7 +188,7 @@ public class TestRequestValidator {
                                                                  ComponentService componentService,
                                                                  ContextInfo contextInfo) throws InvalidParameterException {
 
-        if (!StringUtils.hasLength(validationTypeKey)) {
+        if (StringUtils.isBlank(validationTypeKey)) {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
         }
