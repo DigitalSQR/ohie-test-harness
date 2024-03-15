@@ -460,8 +460,8 @@ const Applications = () => {
                                             componentId={testUrls.componentId}
                                           ></ComponentIdConnector>
                                         </td>
-                                        <td>{testUrls.fhirApiBaseUrl }</td>
-                                        <td>{testUrls.websiteUIBaseUrl}</td>
+                                        <td className="no-capitalization">{testUrls.fhirApiBaseUrl }</td>
+                                        <td className="no-capitalization">{testUrls.websiteUIBaseUrl}</td>
                                         <td className = "toLowerCase-words">{testUrls.username}</td>
                                         <td className = "toLowerCase-words" key={testRequest.id}>
                                           {testUrls.showPass
