@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.systemconfiguration.security.confige;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -25,6 +26,15 @@ public class TokenConfige {
         this.dataSource = dataSource;
     }
 
+    private final int refreshTokenValidity;
+    private final int accessTokenValidity;
+
+    public TokenConfige(@Value("${tokenService.refresh-token-validity}") int refreshTokenValidity,
+                       @Value("${tokenService.access-token-validity}") int accessTokenValidity) {
+        this.refreshTokenValidity = refreshTokenValidity;
+        this.accessTokenValidity = accessTokenValidity;
+    }
+
     @Bean
     public TokenStore tokenStore() {
         return new JdbcTokenStore(dataSource);
@@ -36,8 +46,8 @@ public class TokenConfige {
         DefaultTokenServices tokenServices = new DefaultTokenServices();
         tokenServices.setSupportRefreshToken(true);
         tokenServices.setReuseRefreshToken(true);
-        tokenServices.setRefreshTokenValiditySeconds(2592000); // 30 days
-        tokenServices.setAccessTokenValiditySeconds(36000); //10 hours
+        tokenServices.setRefreshTokenValiditySeconds(refreshTokenValidity);
+        tokenServices.setAccessTokenValiditySeconds(accessTokenValidity);
         tokenServices.setTokenStore(this.tokenStore());
         return tokenServices;
     }

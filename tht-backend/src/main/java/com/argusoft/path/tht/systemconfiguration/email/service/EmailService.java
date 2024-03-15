@@ -4,6 +4,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.MessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -27,9 +28,16 @@ public class EmailService {
 
     private JavaMailSender javaMailSender;
 
+
+    private final String emailSender;
+
     @Autowired
     public void setJavaMailSender(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
+    }
+
+    public EmailService( @Value("${mailSender.username}") String emailSender) {
+        this.emailSender = emailSender;
     }
 
     @Async
@@ -37,7 +45,7 @@ public class EmailService {
             String to, String subject, String htmlContent) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-        helper.setFrom("noreply@baeldung.com");
+        helper.setFrom(emailSender);
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlContent, true); // Set the second parameter to true for HTML content
