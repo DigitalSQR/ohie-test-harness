@@ -48,6 +48,16 @@ const Assessee = () => {
   const [sortFieldName, setSortFieldName] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+   //This is the default table header width according to tester/role.
+  const [thPercentage, setThPercentage] = useState({
+    name: "19%",
+    email: "25%",
+    requestedDate: "20%",
+    company: "19%",
+    status: "17%",
+    action: "0%",
+  });
   const role = ROLE_ID_ASSESSEE;
   const { showLoader, hideLoader } = useLoader();
   const pageSize = 10;
@@ -56,7 +66,7 @@ const Assessee = () => {
     sortDirection,
     currentPage,
     pageSize,
-    state
+    
   ) => {
     showLoader();
 
@@ -78,29 +88,23 @@ const Assessee = () => {
       });
   };
 
-  const thPercentage = { 
-    //this is the width for the table header which will vary according to the role.
-    //this is the default header width set according to the tester/assessee role
-    name: "15%",
-    email: "20%",
-    requestedDate: "20%",
-    company: "15%",
-    status: "15%",
-    action: "0%",
-  };
 
   //useEffect that is used to set the user role and change with column width to certain values if the user role is admin
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserRoles(userInfo.roleIds);
 
-    if(userInfo.roleIds.includes(ROLE_ID_ADMIN)){
-      thPercentage.name= "15%";
-      thPercentage.email= "20%";
-      thPercentage.requestedDate= "10%";
-      thPercentage.company= "15%";
-      thPercentage.status= "15%";
-      thPercentage.action= "25%";
+    //table header width values for admin role
+    if (userInfo.roleIds.includes(ROLE_ID_ADMIN)) { 
+      setThPercentage((prevState) => ({
+        ...prevState,
+        name: "15%",
+        email: "20%",
+        requestedDate: "10%",
+        company: "15%",
+        status: "15%",
+        action: "25%",
+      }));
     }
   }, []);
 
