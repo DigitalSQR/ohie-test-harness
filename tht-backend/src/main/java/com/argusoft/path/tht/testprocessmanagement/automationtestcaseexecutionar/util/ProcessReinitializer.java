@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.util;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
@@ -49,6 +48,7 @@ public class ProcessReinitializer {
     }
 
     @PostConstruct
+    @Transactional(rollbackFor = Exception.class)
     public void init() {
         ContextInfo contextInfo = Constant.SUPER_USER_CONTEXT;
         contextInfo.setModule(Module.SYSTEM);
@@ -70,7 +70,7 @@ public class ProcessReinitializer {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+
     public List<TestcaseResultEntity> searchInProgressAndPendingTestcaseResults(String refObjUri, ContextInfo contextInfo) {
         try {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();

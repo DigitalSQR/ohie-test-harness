@@ -128,9 +128,7 @@ public class TestcaseOptionValidator {
     //validate update
     private static void validateUpdateTestcaseOption(List<ValidationResultInfo> errors,
                                                      TestcaseOptionEntity testcaseOptionEntity,
-                                                     TestcaseOptionEntity originalEntity)
-            throws OperationFailedException,
-            InvalidParameterException {
+                                                     TestcaseOptionEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(testcaseOptionEntity.getId(), "id", errors);
         //check the meta required

@@ -11,11 +11,6 @@ import { useLoader } from "../../loader/LoaderContext";
 import "./SignUp.scss"
 export default function SignUp() {
   const navigate = useNavigate();
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      formik.handleSubmit();
-    }
-  };
   const [captchaInfo, setCaptchaInfo] = useState({
     code: "",
     captcha: ""
@@ -152,7 +147,6 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       autoComplete="off"
                       autoFocus={true}
-                      onKeyDown={handleKeyPress}
                     />
                   </div>
                   {formik.touched.name && formik.errors.name && (
@@ -186,7 +180,6 @@ export default function SignUp() {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       autoComplete="off"
-                      onKeyDown={handleKeyPress}
 
                     />
                   </div>
@@ -221,7 +214,6 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
                       autoComplete="off"
-                      onKeyDown={handleKeyPress}
                     />
                   </div>
                   {formik.touched.companyName && formik.errors.companyName && (
@@ -256,7 +248,6 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
                       autoComplete="off"
-                      onKeyDown={handleKeyPress}
                     />
                     <button
                       className="btn btn-outline-secondary signup-password"
@@ -301,7 +292,6 @@ export default function SignUp() {
                       onChange={formik.handleChange}
                       value={formik.values.confirmPassword}    
                       autoComplete="off"
-                      onKeyDown={handleKeyPress}
                     />
                     <button
                       className="btn btn-outline-secondary signup-password"

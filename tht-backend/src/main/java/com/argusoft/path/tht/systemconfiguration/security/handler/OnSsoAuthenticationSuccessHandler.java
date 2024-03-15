@@ -51,6 +51,15 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     private DefaultTokenServices defaultTokenServices;
     private UserService userService;
+
+
+    private static String thtClientId;
+
+    @Value("${oauth2.tht.clientId}")
+    public void setThtClientId(String thtClientId) {
+        OnSsoAuthenticationSuccessHandler.thtClientId = thtClientId;
+    }
+
     @Value("${frontend.google.success}")
     private String successCallbackEndUrl;
 
@@ -70,7 +79,7 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
     private static OAuth2Authentication getAuth2Authentication(List<GrantedAuthority> authorities, ContextInfo newContextInfo) {
         OAuth2Request oauth2Request = new OAuth2Request(
                 new HashMap<>(),
-                "tht",
+                thtClientId,
                 authorities,
                 true,
                 new HashSet<>(List.of("write")),

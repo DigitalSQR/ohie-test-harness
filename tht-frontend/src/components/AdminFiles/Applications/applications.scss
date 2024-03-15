@@ -17,6 +17,10 @@
     text-transform: capitalize;
   }
 
+  .no-capitalization {
+    text-transform: none;
+  }
+
   .toLowerCase-words{
     text-transform: lowercase;
   }

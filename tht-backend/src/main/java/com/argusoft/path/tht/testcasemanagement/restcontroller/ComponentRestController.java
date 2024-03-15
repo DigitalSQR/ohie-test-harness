@@ -200,7 +200,7 @@ public class ComponentRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/status/mapping")
-    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
         Collection<String> strings = ComponentServiceConstants.COMPONENT_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
     }
