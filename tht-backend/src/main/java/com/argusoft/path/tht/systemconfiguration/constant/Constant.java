@@ -45,7 +45,7 @@ public final class Constant {
             = DateTimeFormatter.ofPattern(DATE_FORMATE_STRING);
     public static final DateTimeFormatter LOCAL_DATE_YYYYMMDD
             = DateTimeFormatter.ofPattern("yyyyMMdd");
-    public final static ContextInfo SUPER_USER_CONTEXT = new ContextInfo(
+    public static final ContextInfo SUPER_USER_CONTEXT = new ContextInfo(
             "noreplytestharnesstool@gmail.com",
             DEFAULT_SYSTEM_USER_ID,
             "password",
