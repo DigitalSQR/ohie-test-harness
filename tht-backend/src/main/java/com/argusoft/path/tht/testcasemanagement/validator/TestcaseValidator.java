@@ -129,9 +129,7 @@ public class TestcaseValidator {
     //validate update
     private static void validateUpdateTestcase(List<ValidationResultInfo> errors,
                                                TestcaseEntity testcaseEntity,
-                                               TestcaseEntity originalEntity)
-            throws OperationFailedException,
-            InvalidParameterException {
+                                               TestcaseEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(testcaseEntity.getId(), "id", errors);
         //check the meta required
@@ -302,8 +300,7 @@ public class TestcaseValidator {
                                                  List<ValidationResultInfo> errors,
                                                  SpecificationService specificationService,
                                                  ContextInfo contextInfo)
-            throws OperationFailedException,
-            InvalidParameterException {
+            throws InvalidParameterException {
         if (testcaseEntity.getSpecification() != null) {
             try {
                 testcaseEntity.setSpecification(

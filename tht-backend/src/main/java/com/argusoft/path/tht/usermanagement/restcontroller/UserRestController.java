@@ -353,7 +353,7 @@ public class UserRestController {
             @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
     })
     @GetMapping("/status/mapping")
-    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
         Collection<String> strings = UserServiceConstants.USER_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
     }

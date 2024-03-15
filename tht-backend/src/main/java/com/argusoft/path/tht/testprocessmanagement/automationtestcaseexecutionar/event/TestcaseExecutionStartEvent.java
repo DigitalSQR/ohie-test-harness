@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.event;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;

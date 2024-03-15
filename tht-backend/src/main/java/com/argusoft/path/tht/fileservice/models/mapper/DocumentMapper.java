@@ -35,6 +35,7 @@ public interface DocumentMapper extends ModelDtoMapper<DocumentEntity, DocumentI
 
     List<DocumentInfo> modelToDto(List<DocumentEntity> documentEntities);
 
+    @Override
     default Page<DocumentInfo> pageEntityToDto(Page<DocumentEntity> page) {
         List<DocumentEntity> documentEntities = page.getContent();
         List<DocumentInfo> documentInfoList = this.modelToDto(documentEntities);

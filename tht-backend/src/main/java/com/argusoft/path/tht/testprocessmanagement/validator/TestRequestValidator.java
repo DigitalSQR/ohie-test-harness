@@ -248,8 +248,7 @@ public class TestRequestValidator {
                                                  UserService userService,
                                                  ComponentService componentService,
                                                  ContextInfo contextInfo)
-            throws OperationFailedException,
-            InvalidParameterException {
+            throws InvalidParameterException {
         //validate TestRequest foreignKey.
         if (testRequestEntity.getApprover() != null) {
             try {
@@ -313,9 +312,7 @@ public class TestRequestValidator {
     //validate update
     private static void validateUpdateTestRequest(List<ValidationResultInfo> errors,
                                                   TestRequestEntity testRequestEntity,
-                                                  TestRequestEntity originalEntity)
-            throws OperationFailedException,
-            InvalidParameterException {
+                                                  TestRequestEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(testRequestEntity.getId(), "id", errors);
         //check the meta required
@@ -535,7 +532,7 @@ public class TestRequestValidator {
         }
     }
 
-    public static void validateBaseFhirUrl(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors) throws InvalidParameterException, DoesNotExistException {
+    public static void validateBaseFhirUrl(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors) {
         Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
         for (TestRequestUrlEntity entity : urlEntitySet) {
             //check for baseurl

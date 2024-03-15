@@ -20,7 +20,7 @@ public class CaptchaValidation {
     private CaptchaValidation() {
     }
 
-    public static List<ValidationResultInfo> validateCaptchaEmpty(String code, String encryptedString) throws InvalidParameterException {
+    public static List<ValidationResultInfo> validateCaptchaEmpty(String code, String encryptedString) {
 
 
         List<ValidationResultInfo> errors = new ArrayList<>();

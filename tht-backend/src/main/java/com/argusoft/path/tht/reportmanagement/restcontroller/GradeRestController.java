@@ -63,7 +63,7 @@ public class GradeRestController {
     })
     @GetMapping("/{gradeId}")
     public GradeInfo getGrade(@PathVariable("gradeId") String gradeId,
-                              @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
+                              @RequestAttribute("contextInfo") ContextInfo contextInfo) throws DoesNotExistException{
         GradeEntity gradeById = gradeService.getGradeById(gradeId, contextInfo);
         return gradeMapper.modelToDto(gradeById);
     }

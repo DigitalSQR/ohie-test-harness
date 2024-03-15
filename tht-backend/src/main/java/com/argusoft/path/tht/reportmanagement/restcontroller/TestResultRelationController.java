@@ -74,7 +74,7 @@ public class TestResultRelationController {
     public Page<TestResultRelationInfo> SearchTestResultRelationInfo(
             TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter,
             Pageable pageable,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         Page<TestResultRelationEntity> testResultRelationEntities = testResultRelationService.searchTestResultRelation(testResultRelationCriteriaSearchFilter, pageable, contextInfo);
         return testResultRelationMapper.pageEntityToDto(testResultRelationEntities);
     }
