@@ -217,7 +217,7 @@ public class UserServiceServiceImpl implements UserService {
         }
     }
 
-    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws MessagingException, IOException, InvalidParameterException, DoesNotExistException {
+    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
         if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
             //message assessee if their account is approved by admin
             emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
