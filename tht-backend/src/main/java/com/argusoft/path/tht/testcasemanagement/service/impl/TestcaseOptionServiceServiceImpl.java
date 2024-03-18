@@ -165,8 +165,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("testcaseOptionEntity is missing");
         }
-        List<ValidationResultInfo> errors = TestcaseOptionValidator.validateTestcaseOption(validationTypeKey, testcaseOptionEntity, this, testcaseService, contextInfo);
-        return errors;
+        return TestcaseOptionValidator.validateTestcaseOption(validationTypeKey, testcaseOptionEntity, this, testcaseService, contextInfo);
     }
 
     @Override

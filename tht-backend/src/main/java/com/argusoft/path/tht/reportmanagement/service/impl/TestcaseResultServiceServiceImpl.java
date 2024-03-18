@@ -347,8 +347,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
-        List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testRequestService, contextInfo);
-        return errors;
+        return TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testRequestService, contextInfo);
     }
 
     @Override
@@ -599,8 +598,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         List<TestcaseResultEntity> recalculatedChilds = recalculateTestcaseResultEntity(testcaseResultEntity, isRecommended, testcaseResultEntities, contextInfo);
         recalculatedChilds.set(0, testcaseResultEntity);
-        RecursiveTestcaseResults recursiveTestcaseResults = new RecursiveTestcaseResults(recalculatedChilds, testcaseResultEntity);
-        return recursiveTestcaseResults;
+        return new RecursiveTestcaseResults(recalculatedChilds, testcaseResultEntity);
     }
 
     private List<TestcaseResultEntity> recalculateTestcaseResultEntity(TestcaseResultEntity testcaseResultEntity, Boolean isRecommended, List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo) throws OperationFailedException {

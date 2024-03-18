@@ -51,11 +51,10 @@ public class TSWF6TestCase1 implements TestCase {
         }
 
         CodeSystem codeSystem = FHIRUtils.createCodeSystem(url, version, name, title, status, publisher, content, code, display, definition);
-        MethodOutcome outcome = client.create()
+        return client.create()
                 .resource(codeSystem)
                 .execute();
 
-        return outcome;
     }
 
     public static MethodOutcome addValueSet(IGenericClient client, String valueSetUrl, String name, String title, String status, String publisherName, String codeSystemUrl, String code, String display) {
@@ -81,11 +80,10 @@ public class TSWF6TestCase1 implements TestCase {
         //adding concept in valueSet
         FHIRUtils.addConceptValueSet(valueSet, codeSystemUrl, code, display);
 
-        MethodOutcome outcome = client.create()
+        return client.create()
                 .resource(valueSet)
                 .execute();
 
-        return outcome;
     }
 
     public static boolean isValueSetPresent(Bundle searchResults, String url) {
