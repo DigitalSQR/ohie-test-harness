@@ -159,11 +159,12 @@ export default function ComponentList() {
 
   const onDragEnd = (result) => {
       const { destination, source, draggableId } = result;
-      let { droppableId } = destination;
-      droppableId = JSON.parse(droppableId);
+      
       if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
         return;
       }
+      let { droppableId } = destination;
+      droppableId = JSON.parse(droppableId);
   
       const reorderedItems = [...components];
       const [reorderedItem] = reorderedItems.splice(source.index, 1);

@@ -4,7 +4,6 @@ import passImg from "../../../../styles/images/success.svg";
 import failImg from "../../../../styles/images/failure.svg";
 import skipImg from "../../../../styles/images/skip.svg";
 import stopImg from "../../../../styles/images/stop.svg";
-import "./TestcaseResultRow.scss";
 import { TestcaseResultStateConstants } from "../../../../constants/testcaseResult_constants";
 
 export default function TestcaseResultRow({ testcaseResultItem, stompClient, toggleFunction, toggleClass, testcaseResultType, changeState }) {

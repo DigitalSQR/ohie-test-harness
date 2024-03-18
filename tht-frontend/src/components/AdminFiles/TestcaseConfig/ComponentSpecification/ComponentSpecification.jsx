@@ -163,11 +163,12 @@ export default function ComponentSpecification() {
   const onDragEnd = (result) => {
 
     const { destination, source, draggableId } = result;
-    let { droppableId } = destination;
-    droppableId = JSON.parse(droppableId);
-    if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
+    if (!destination || destination.droppableId === source.droppableId && destination.index === source.index) {
       return;
     }
+
+    let { droppableId } = destination;
+    droppableId = JSON.parse(droppableId);
   
     const reorderedItems = [...specifications];
     const [reorderedItem] = reorderedItems.splice(source.index, 1);
@@ -331,7 +332,7 @@ export default function ComponentSpecification() {
                             setIsModalOpen(true);
                           }}
                         >
-                          <i class="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
+                          <i className="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
                           EDIT
                         </span>&nbsp;
                         <span
@@ -342,7 +343,7 @@ export default function ComponentSpecification() {
                             )
                           }
                         >
-                          <i class="bi bi-eye font-size-16 text-blue-50"></i>{" "}
+                          <i className="bi bi-eye font-size-16 text-blue-50"></i>{" "}
                           TESTCASES
                         </span>
                         </div>
