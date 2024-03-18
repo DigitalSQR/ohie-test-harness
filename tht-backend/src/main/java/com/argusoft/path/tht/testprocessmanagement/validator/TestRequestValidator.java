@@ -17,6 +17,7 @@ import com.argusoft.path.tht.systemconfiguration.utils.RefObjectUriAndRefIdValid
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
@@ -458,8 +459,7 @@ public class TestRequestValidator {
                             errors);
         }
     }
-
-
+    
     //trim all TestRequest field
     private static void trimTestRequest(TestRequestEntity testRequestEntity) {
         if (testRequestEntity.getId() != null) {
@@ -505,6 +505,14 @@ public class TestRequestValidator {
             if (testRequestUrls.isEmpty()) {
                 errors.add(new ValidationResultInfo("component", ErrorLevel.ERROR, "Components not found to test"));
             } else {
+                if(!(testRequestUrls.stream().anyMatch(testRequestUrlEntity -> testRequestUrlEntity.getComponent().getState().equals(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE)
+                        &&
+                        testRequestUrlEntity.getComponent().getSpecifications().stream().anyMatch(specificationEntity ->
+                                specificationEntity.getState().equals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE)
+                                        && specificationEntity.getTestcases().stream().anyMatch(testcaseEntity -> testcaseEntity.getState().equals(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE))
+                        )))){
+                    errors.add(new ValidationResultInfo(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, ErrorLevel.ERROR,"Configuration must have at least one component, one specification, one test case active."));
+                }
                 for (TestRequestUrlEntity testRequestUrlEntity : testRequestUrls) {
                     if (!ComponentServiceConstants.COMPONENT_STATUS_ACTIVE.equals(testRequestUrlEntity.getComponent().getState())) {
                         errors.add(new ValidationResultInfo("component", ErrorLevel.WARN, "Component " + testRequestUrlEntity.getComponent().getName() + " will be skipped as it is inactive in Testcase Configuration. To activate this component, please contact administrator."));
