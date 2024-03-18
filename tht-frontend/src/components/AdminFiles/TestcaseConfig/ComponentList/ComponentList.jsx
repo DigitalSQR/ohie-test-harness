@@ -233,7 +233,7 @@ export default function ComponentList() {
                   <table className="data-table capitalize-words" {...provided.droppableProps} ref={provided.innerRef}>
                     <thead>
                       <tr>
-                        <th className="col-1"></th>
+                        {/* <th className="col-1"></th> */}
                         <th className="col-4">
                           Component Name{" "}
                           <span className="ps-1" onClick={() => handleSort("name")}>
@@ -253,17 +253,17 @@ export default function ComponentList() {
                     <tbody>
                     {components && components.length > 0 ? (
                       components.map((component, index) => (
-                        <Draggable key={component.id} draggableId={component.id} index={index} isDragDisabled={(sortFieldName == 'rank')? false: true}>
+                        <Draggable key={component.id} draggableId={component.id} index={index} isDragDisabled={true}>
                           {(provided) => (
                             <tr 
                               {...provided.draggableProps}
                               ref={provided.innerRef}
                               key={component.name}
                             >
-                              <td {...provided.dragHandleProps}>
+                              {/* <td {...provided.dragHandleProps}>
                                 <i className="bi bi-list" style={(sortFieldName == 'rank')? {} : {cursor: 'not-allowed'}} title={(sortFieldName == 'rank')? "" : "Sort by rank to enable drag and drop rank modification."}>
                                 </i>                              
-                              </td>
+                              </td> */}
                               <td>{component.name}</td>
                               <td>
                                 <Switch
