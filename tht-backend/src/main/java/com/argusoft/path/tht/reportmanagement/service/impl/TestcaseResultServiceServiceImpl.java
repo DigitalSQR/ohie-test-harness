@@ -724,7 +724,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             if (Boolean.TRUE.equals(isRecommended)) {
                 if (testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)) {
                     testcaseResultEntity.setGrade(gradeEvaluator.evaluate(
-                            testcaseResultEntities.stream().filter(tcre -> tcre.getRefObjUri().equals(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI))
+                            testcaseResultEntities.stream().filter(tcre -> tcre.getRefObjUri().equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI))
                                     .collect(Collectors.toList()),
                             contextInfo)
                     );
