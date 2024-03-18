@@ -186,10 +186,10 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   >
                     <i
                       aria-label="Testing Requests"
-                      title="Testing Requests"
+                      title="Verification Requests"
                       className="bi bi-file-earmark-plus menu-left-icon"
                     ></i>
-                    <span> Testing Requests </span>
+                    <span> Verification Requests </span>
                   </a>
                 </li>
               </Fragment>

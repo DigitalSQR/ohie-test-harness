@@ -56,10 +56,10 @@ export default function Dashboard() {
               <h4 className="mt-2">Testing Harness Tool</h4>
               <div className="font-size-16 mt-4">
                 {role === "ADMIN" &&
-                  "Manage the testing process by configuring test cases, evaluating registration requests, and monitoring progress to ensure alignment with OpenHIE Architecture and WHO SMART Guidelines."}
+                  "Manage the verification process by configuring test cases, evaluating registration requests, and monitoring progress to ensure alignment with OpenHIE Architecture and WHO SMART Guidelines."}
                 {role === "TESTER" &&
-                  "Oversee testing requests and execute manual/automatic tests. Responsibilities include reviewing and approving testing requests, conducting various tests to determine alignment with OpenHEI Architecture specification and health and data content, as specified by WHO SMART Guidelines."}
-                {role === "ASSESSEE" && "Register your application to the open-source testing harness and complete test framework that will facilitate testing how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines. "}
+                  "Oversee verification requests and execute manual/automatic tests. Responsibilities include reviewing and approving verification requests, conducting various tests to determine alignment with OpenHEI Architecture specification and health and data content, as specified by WHO SMART Guidelines."}
+                {role === "ASSESSEE" && "Register your application to the open-source verification harness and complete test framework that will facilitate verifying how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines. "}
               </div>
               <p className="my-4">
                 <a
