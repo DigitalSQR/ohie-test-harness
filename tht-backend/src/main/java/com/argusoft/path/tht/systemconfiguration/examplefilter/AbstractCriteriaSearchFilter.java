@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -65,7 +66,9 @@ public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchF
 
     protected abstract List<Predicate> buildPredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo);
 
-    protected abstract List<Predicate> buildAuthorizationPredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo);
+    protected  List<Predicate> buildAuthorizationPredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo){
+        return new ArrayList<>();
+    }
 
     protected void validateSearchFilter() throws InvalidParameterException{
 

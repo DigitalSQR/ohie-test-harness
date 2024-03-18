@@ -89,11 +89,6 @@ public class TestResultRelationCriteriaSearchFilter extends AbstractCriteriaSear
         return predicates;
     }
 
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<TestResultRelationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return Collections.emptyList();
-    }
-
     public Root<TestResultRelationEntity> getTestResultRelationEntityRoot() {
         return testResultRelationEntityRoot;
     }

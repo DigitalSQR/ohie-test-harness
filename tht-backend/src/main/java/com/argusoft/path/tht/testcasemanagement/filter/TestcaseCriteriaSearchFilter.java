@@ -95,11 +95,6 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
         return predicates;
     }
 
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<TestcaseEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return null;
-    }
-
     public String getName() {
         return name;
     }
