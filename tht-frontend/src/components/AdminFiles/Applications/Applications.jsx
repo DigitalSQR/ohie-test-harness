@@ -286,7 +286,7 @@ const Applications = () => {
                       {renderSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th className="assessee-column">Assessee</th>
+                  <th style={{width:"15%"}}>Assessee</th>
                   <th style={{width:"20%"}}>EMAIL ID</th>
                   <th style={{width:"15%"}}>
                     STATUS
