@@ -391,7 +391,7 @@ const Applications = () => {
                             </span>
                           </>
                         ) : null}
-                      {testRequest.state !== TestRequestStateConstantNames["test.request.status.finished"] ? (
+                      {testRequest.state !== TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
                         userRole.includes("role.tester") ||
                         userRole.includes("role.admin") ? (
                           <span 
