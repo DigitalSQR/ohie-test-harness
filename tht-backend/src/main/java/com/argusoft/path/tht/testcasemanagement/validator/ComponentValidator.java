@@ -286,15 +286,15 @@ public class ComponentValidator {
     }
 
     //trim all Component field
-    private static void trimComponent(ComponentEntity ComponentEntity) {
-        if (ComponentEntity.getId() != null) {
-            ComponentEntity.setId(ComponentEntity.getId().trim());
+    private static void trimComponent(ComponentEntity componentEntity) {
+        if (componentEntity.getId() != null) {
+            componentEntity.setId(componentEntity.getId().trim());
         }
-        if (ComponentEntity.getName() != null) {
-            ComponentEntity.setName(ComponentEntity.getName().trim());
+        if (componentEntity.getName() != null) {
+            componentEntity.setName(componentEntity.getName().trim());
         }
-        if (ComponentEntity.getDescription() != null) {
-            ComponentEntity.setDescription(ComponentEntity.getDescription().trim());
+        if (componentEntity.getDescription() != null) {
+            componentEntity.setDescription(componentEntity.getDescription().trim());
         }
     }
 
