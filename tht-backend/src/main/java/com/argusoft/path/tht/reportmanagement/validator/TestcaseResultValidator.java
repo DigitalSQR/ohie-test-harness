@@ -516,10 +516,7 @@ public class TestcaseResultValidator {
         List<String> resultRelationIds = testResultRelationEntities.stream().map(IdMetaEntity::getId).toList();
 
         try {
-            testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(resultRelationIds, contextInfo)
-                    .stream()
-                    .map(TestcaseOptionEntity.class::cast)
-                    .toList();
+            testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(resultRelationIds, contextInfo);
         } catch (DoesNotExistException | InvalidParameterException e) {
             String fieldName = "selectedTestcaseOptionId";
             errors.add(
