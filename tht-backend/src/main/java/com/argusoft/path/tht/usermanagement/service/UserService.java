@@ -34,6 +34,20 @@ public interface UserService {
     public Boolean logout(ContextInfo contextInfo)
             throws OperationFailedException;
 
+
+    /**
+     * send mail to appropriate user on change of state of a user
+     *
+     * @param oldState state before change
+     * @param newState state after change
+     * @param userEntity user of which state was changed
+     * @param contextInfo information containing the principalId and locale
+     *      *                    information about the caller of service operation
+     * @throws InvalidParameterException getUsersByRole is not valid
+     * @throws DoesNotExistException getUsersByRole is not valid
+     */
+    public void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException;
+
     /**
      * Creates a new User.In the user Id, Description, and Meta information may
      * not be set in the supplied userInfo.
