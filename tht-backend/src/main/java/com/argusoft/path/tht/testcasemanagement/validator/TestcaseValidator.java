@@ -280,18 +280,18 @@ public class TestcaseValidator {
     }
 
     //trim all Testcase field
-    private static void trimTestcase(TestcaseEntity TestcaseEntity) {
-        if (TestcaseEntity.getId() != null) {
-            TestcaseEntity.setId(TestcaseEntity.getId().trim());
+    private static void trimTestcase(TestcaseEntity testcaseEntity) {
+        if (testcaseEntity.getId() != null) {
+            testcaseEntity.setId(testcaseEntity.getId().trim());
         }
-        if (TestcaseEntity.getName() != null) {
-            TestcaseEntity.setName(TestcaseEntity.getName().trim());
+        if (testcaseEntity.getName() != null) {
+            testcaseEntity.setName(testcaseEntity.getName().trim());
         }
-        if (TestcaseEntity.getDescription() != null) {
-            TestcaseEntity.setDescription(TestcaseEntity.getDescription().trim());
+        if (testcaseEntity.getDescription() != null) {
+            testcaseEntity.setDescription(testcaseEntity.getDescription().trim());
         }
-        if (TestcaseEntity.getBeanName() != null) {
-            TestcaseEntity.setBeanName(TestcaseEntity.getBeanName().trim());
+        if (testcaseEntity.getBeanName() != null) {
+            testcaseEntity.setBeanName(testcaseEntity.getBeanName().trim());
         }
     }
 

@@ -240,15 +240,15 @@ public class TestcaseOptionValidator {
     }
 
     //trim all TestcaseOption field
-    private static void trimTestcaseOption(TestcaseOptionEntity TestcaseOptionEntity) {
-        if (TestcaseOptionEntity.getId() != null) {
-            TestcaseOptionEntity.setId(TestcaseOptionEntity.getId().trim());
+    private static void trimTestcaseOption(TestcaseOptionEntity testcaseOptionEntity) {
+        if (testcaseOptionEntity.getId() != null) {
+            testcaseOptionEntity.setId(testcaseOptionEntity.getId().trim());
         }
-        if (TestcaseOptionEntity.getName() != null) {
-            TestcaseOptionEntity.setName(TestcaseOptionEntity.getName().trim());
+        if (testcaseOptionEntity.getName() != null) {
+            testcaseOptionEntity.setName(testcaseOptionEntity.getName().trim());
         }
-        if (TestcaseOptionEntity.getDescription() != null) {
-            TestcaseOptionEntity.setDescription(TestcaseOptionEntity.getDescription().trim());
+        if (testcaseOptionEntity.getDescription() != null) {
+            testcaseOptionEntity.setDescription(testcaseOptionEntity.getDescription().trim());
         }
     }
 

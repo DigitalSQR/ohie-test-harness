@@ -65,26 +65,26 @@ public class TestcaseResultAttributesServiceImpl implements TestcaseResultAttrib
     }
 
     @Override
-    public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String Key, String Value,
+    public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String key, String value,
                                                                                   ContextInfo contextInfo)
             throws
             InvalidParameterException {
-        if (Key.isEmpty() || Value.isEmpty()) {
+        if (key.isEmpty() || value.isEmpty()) {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultAttributesServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("Key or Value is empty");
         }
-        Optional<TestcaseResultAttributesEntity> testcaseResultAttributesEntity = testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity, Key.toLowerCase());
+        Optional<TestcaseResultAttributesEntity> testcaseResultAttributesEntity = testcaseResultAttributesRepository.findByTestcaseResultEntityAndKey(testcaseResultEntity, key.toLowerCase());
 
         TestcaseResultAttributesEntity testcaseResultAttributesEntity1;
 
         if (testcaseResultAttributesEntity.isEmpty()) {
             TestcaseResultAttributesEntity newTestcaseResultAttributesEntity = new TestcaseResultAttributesEntity();
             newTestcaseResultAttributesEntity.setTestcaseResultEntity(testcaseResultEntity);
-            newTestcaseResultAttributesEntity.setKey(Key.toLowerCase());
-            newTestcaseResultAttributesEntity.setValue(Value.toLowerCase());
+            newTestcaseResultAttributesEntity.setKey(key.toLowerCase());
+            newTestcaseResultAttributesEntity.setValue(value.toLowerCase());
             testcaseResultAttributesEntity1 = testcaseResultAttributesRepository.saveAndFlush(newTestcaseResultAttributesEntity);
         } else {
-            testcaseResultAttributesEntity.get().setValue(Value.toLowerCase());
+            testcaseResultAttributesEntity.get().setValue(value.toLowerCase());
             testcaseResultAttributesEntity1 = testcaseResultAttributesRepository.saveAndFlush(testcaseResultAttributesEntity.get());
         }
         applicationEventPublisher.publishEvent(new TestcaseResultAttributeEvent(testcaseResultEntity.getId(), contextInfo));
