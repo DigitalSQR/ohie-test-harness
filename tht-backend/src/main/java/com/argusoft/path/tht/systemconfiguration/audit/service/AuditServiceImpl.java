@@ -73,8 +73,7 @@ public class AuditServiceImpl implements AuditService {
                 auditQuery.add(AuditEntity.revisionType().eq(RevisionType.fromRepresentation(searchFilter.getRevType())));
             }
 
-            List<Object> obj = auditQuery.addOrder(AuditEntity.revisionType().desc()).getResultList();
-            return obj;
+            return auditQuery.addOrder(AuditEntity.revisionType().desc()).getResultList();
 
         } catch (Exception ex) {
             LOGGER.error("{}{}", ValidateConstant.EXCEPTION, AuditServiceImpl.class.getSimpleName());

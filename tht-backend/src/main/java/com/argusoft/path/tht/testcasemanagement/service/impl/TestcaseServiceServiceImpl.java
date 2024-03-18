@@ -174,8 +174,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             throw new InvalidParameterException("testcaseEntity is missing");
         }
 
-        List<ValidationResultInfo> errors = TestcaseValidator.validateTestCase(validationTypeKey, testcaseEntity, this, specificationService, applicationContext, contextInfo);
-        return errors;
+        return TestcaseValidator.validateTestCase(validationTypeKey, testcaseEntity, this, specificationService, applicationContext, contextInfo);
     }
 
     @Override

@@ -181,9 +181,7 @@ public class ComponentServiceServiceImpl implements ComponentService {
             throw new InvalidParameterException("componentEntity is missing");
         }
 
-        List<ValidationResultInfo> errors = ComponentValidator.validateComponent(validationTypeKey, componentEntity, this, specificationService, contextInfo);
-
-        return errors;
+        return ComponentValidator.validateComponent(validationTypeKey, componentEntity, this, specificationService, contextInfo);
     }
 
     @Override

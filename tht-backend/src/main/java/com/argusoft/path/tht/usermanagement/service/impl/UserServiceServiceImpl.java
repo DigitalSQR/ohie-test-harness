@@ -420,8 +420,7 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public Page<RoleEntity> getRoles(Pageable pageable,
                                      ContextInfo contextInfo) {
-        Page<RoleEntity> roles = roleRepository.findRoles(pageable);
-        return roles;
+        return roleRepository.findRoles(pageable);
     }
 
     private void defaultValueRegisterAssessee(UserEntity userEntity) {

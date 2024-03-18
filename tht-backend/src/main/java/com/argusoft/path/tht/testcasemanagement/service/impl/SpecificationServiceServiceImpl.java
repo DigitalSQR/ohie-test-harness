@@ -175,8 +175,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, SpecificationServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("specificationEntity is missing");
         }
-        List<ValidationResultInfo> errors = SpecificationValidator.validateSpecification(validationTypeKey, specificationEntity, this, testcaseService, componentService, contextInfo);
-        return errors;
+        return SpecificationValidator.validateSpecification(validationTypeKey, specificationEntity, this, testcaseService, componentService, contextInfo);
     }
 
     @Override
