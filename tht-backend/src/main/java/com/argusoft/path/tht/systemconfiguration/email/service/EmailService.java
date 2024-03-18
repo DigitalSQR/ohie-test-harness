@@ -106,6 +106,20 @@ public class EmailService {
         }
 
     }
+    public void accountActiveMessage(String to, String username) {
+        String subject = "Account Re-activated";
+        String templateFileName = "templates/account-active-email.html";
+        String htmlContent = null;
+        try {
+            htmlContent = readHtmlFile(templateFileName, username, null);
+            messageService.sendMessage(to, subject, htmlContent);
+        } catch (IOException e) {
+            LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
+        } catch (MessagingException e) {
+            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
+        }
+
+    }
 
     public void testRequestCreatedMessage(String to, String username, String currentEmail) {
         String subject = "Test Request Created";
