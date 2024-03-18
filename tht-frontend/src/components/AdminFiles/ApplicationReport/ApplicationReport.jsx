@@ -116,7 +116,6 @@ const ApplicationReport = () => {
 
   //Function to handle navigation on hitting the "back" button
   const goBackOrRedirect = () => {
-    console.log(navigate) 
     if (navigate.length > 3) {
       navigate(-1);
     } else {
