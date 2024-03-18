@@ -79,7 +79,9 @@ export default function EditQuestion() {
           setEditedTestcaseOptions(res.content);
         } else {
           notification.warning({
-            message: "Options for this question are not available. Please add some.",
+            className:"notificationWarning",
+						message:"Warning",
+            description: "Options for this question are not available. Please add some.",
             placement: "bottomRight",
           });
         }

@@ -19,14 +19,31 @@ body {
   margin-left: 30px !important;
 }
 
+//styles for notifications.
 .notificationSuccess {
   border-width: 1px;
-  border-color: lightgreen;
+  border-color: #b7eb8f;
   border-style: solid;
+  background-color: #f6ffed !important
 }
 
-.notificationError{
+.notificationError {
   border-width: 1px;
-  border-color: red;
+  border-color: #ffccc7;
   border-style: solid;
+  background-color: #fff2f0 !important;
+}
+
+.notificationInfo {
+  border-width: 1px;
+  border-color: #91caff;
+  border-style: solid;
+  background-color: #e6f4ff !important;
+}
+
+.notificationWarning {
+  border-width: 1px;
+  border-color: #ffe58f;
+  border-style: solid;
+  background-color: #fffbe6 !important;
 }

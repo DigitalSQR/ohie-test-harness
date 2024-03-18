@@ -39,6 +39,8 @@ export default function AutomatedTesting() {
   const dispatch = useDispatch();
   const clickHandler = () => {
     notification.info({
+      className:"notificationInfo",
+      message:"Info",
       placement: "bottom-right",
       description: "No actions yet",
     });
@@ -52,6 +54,8 @@ export default function AutomatedTesting() {
       reset: true,
     };
     notification.info({
+      className:"notificationInfo",
+      message:"Info",
       description: "Reset Process has been initiated",
       placement: "bottomRight",
     });
@@ -80,6 +84,8 @@ export default function AutomatedTesting() {
       reset,
     };
     notification.info({
+      className:"notificationInfo",
+      message:"Info",
       description: reset
         ? "Stop and Reset process has been initiated. Please wait for some time"
         : "Stop process has been reinitiated. Please wait for some time",

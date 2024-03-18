@@ -156,7 +156,9 @@ export default function TestCase(props) {
 			} else {
 				if (showNotification) {
 					notification.warning({
-						message: "No Changes detected to save in note!",
+						className:"notificationWarning",
+						message:"Warning",
+						description: "No Changes detected to save in note!",
 						placement: "bottomRight",
 					});
 				}
