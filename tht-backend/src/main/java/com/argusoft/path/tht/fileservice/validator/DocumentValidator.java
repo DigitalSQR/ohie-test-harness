@@ -35,8 +35,7 @@ public class DocumentValidator {
 
     private static RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidator;
 
-    public static void validateDocumentEntity(String validationTypeKey,
-                                              DocumentEntity documentEntity,
+    public static void validateDocumentEntity(DocumentEntity documentEntity,
                                               ContextInfo contextInfo) throws DataValidationErrorException, InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 

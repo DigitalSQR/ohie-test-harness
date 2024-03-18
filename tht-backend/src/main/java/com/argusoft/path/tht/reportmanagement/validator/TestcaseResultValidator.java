@@ -55,7 +55,6 @@ public class TestcaseResultValidator {
                 testcaseResultEntity,
                 userService,
                 testcaseResultService,
-                testcaseOptionService,
                 testRequestService,
                 contextInfo);
         if (ValidationUtils.containsErrors(validationResultEntities, ErrorLevel.ERROR)) {
@@ -67,11 +66,8 @@ public class TestcaseResultValidator {
         return validationResultEntities;
     }
 
-    public static void validateSubmitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds,
-                                                    String validationTypekey, TestcaseResultService testcaseResultService,
-                                                    TestcaseOptionService testcaseOptionService,
+    public static void validateSubmitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds, TestcaseResultService testcaseResultService,
                                                     TestResultRelationService testResultRelationService,
-                                                    AuditService auditService,
                                                     ContextInfo contextInfo) throws DataValidationErrorException{
         List<ValidationResultInfo> validationResultEntitys
                 = validateTestcaseResultSubmit(
@@ -88,7 +84,7 @@ public class TestcaseResultValidator {
         }
     }
 
-    public static List<ValidationResultInfo> validateTestCaseResult(String validationTypeKey, TestcaseResultEntity testcaseResultEntity, UserService userService, TestcaseResultService testcaseResultService, TestcaseOptionService testcaseOptionService, TestRequestService testRequestService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public static List<ValidationResultInfo> validateTestCaseResult(String validationTypeKey, TestcaseResultEntity testcaseResultEntity, UserService userService, TestcaseResultService testcaseResultService, TestRequestService testRequestService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultValidator.class.getSimpleName());

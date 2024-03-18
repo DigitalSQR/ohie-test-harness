@@ -46,7 +46,7 @@ public class TestcaseOptionValidator {
 
     }
 
-    public static List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey, TestcaseOptionEntity testcaseOptionEntity, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public static List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey, TestcaseOptionEntity testcaseOptionEntity, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, ContextInfo contextInfo) throws InvalidParameterException {
         if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
