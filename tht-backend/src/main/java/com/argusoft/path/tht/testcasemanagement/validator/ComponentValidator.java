@@ -321,7 +321,7 @@ public class ComponentValidator {
             } else if (SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI.equals(refObjUri)) {
                 try {
                     SpecificationEntity specificationEntity = specificationService.getSpecificationById(refId, contextInfo);
-                    validateSpecification(specificationEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                    validateSpecification(specificationEntity, testcaseOptionService, errors, contextInfo);
                 } catch (DoesNotExistException e) {
                     errors.add(
                             new TestcaseValidationResultInfo(ErrorLevel.ERROR, SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI, "component",
@@ -382,16 +382,13 @@ public class ComponentValidator {
                             null,
                             false));
             for (SpecificationEntity specificationEntity : componentEntity.getSpecifications()) {
-                validateSpecification(specificationEntity, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
+                validateSpecification(specificationEntity, testcaseOptionService, errors, contextInfo);
             }
         }
     }
 
     private static void validateSpecification(
             SpecificationEntity specificationEntity,
-            ComponentService componentService,
-            SpecificationService specificationService,
-            TestcaseService testcaseService,
             TestcaseOptionService testcaseOptionService,
             List<TestcaseValidationResultInfo> errors,
             ContextInfo contextInfo

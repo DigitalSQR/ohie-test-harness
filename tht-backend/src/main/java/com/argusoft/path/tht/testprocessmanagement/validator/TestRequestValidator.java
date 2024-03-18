@@ -186,7 +186,7 @@ public class TestRequestValidator {
                                                                  TestRequestService testRequestService,
                                                                  UserService userService,
                                                                  ComponentService componentService,
-                                                                 ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+                                                                 ContextInfo contextInfo) throws InvalidParameterException {
 
         if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestValidator.class.getSimpleName());
@@ -497,7 +497,7 @@ public class TestRequestValidator {
                                            TestcaseService testcaseService,
                                            TestcaseOptionService testcaseOptionService,
                                            List<ValidationResultInfo> errors,
-                                           ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
+                                           ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         if (TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextStateKey)) {
 
             Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();

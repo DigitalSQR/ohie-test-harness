@@ -88,7 +88,7 @@ public class DocumentServiceImpl implements DocumentService {
         defaultValueCreateDocument(documentEntity, file, contextInfo);
 
         //validate documentEntity
-        DocumentValidator.validateDocumentEntity(Constant.CREATE_VALIDATION, documentEntity, contextInfo);
+        DocumentValidator.validateDocumentEntity(documentEntity, contextInfo);
 
         //get Document Types
         Set<FileType> allowedFileTypesForDocumentType = DocumentUtil.getAllowedFileTypesForDocumentType(documentEntity.getRefObjUri(), documentEntity.getDocumentType());

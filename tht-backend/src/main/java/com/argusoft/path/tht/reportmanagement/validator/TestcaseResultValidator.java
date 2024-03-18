@@ -66,11 +66,8 @@ public class TestcaseResultValidator {
         return validationResultEntities;
     }
 
-    public static void validateSubmitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds,
-                                                    String validationTypekey, TestcaseResultService testcaseResultService,
-                                                    TestcaseOptionService testcaseOptionService,
+    public static void validateSubmitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds, TestcaseResultService testcaseResultService,
                                                     TestResultRelationService testResultRelationService,
-                                                    AuditService auditService,
                                                     ContextInfo contextInfo) throws DataValidationErrorException{
         List<ValidationResultInfo> validationResultEntitys
                 = validateTestcaseResultSubmit(

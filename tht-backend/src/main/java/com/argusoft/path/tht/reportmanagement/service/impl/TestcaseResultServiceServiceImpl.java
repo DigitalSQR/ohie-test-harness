@@ -211,11 +211,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         TestcaseResultValidator.validateSubmitTestcaseResult(
                 testcaseResultId,
                 selectedTestcaseOptionIds,
-                Constant.SUBMIT_VALIDATION,
                 this,
-                testcaseOptionService,
                 testResultRelationService,
-                auditService,
                 contextInfo);
 
         TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter();
