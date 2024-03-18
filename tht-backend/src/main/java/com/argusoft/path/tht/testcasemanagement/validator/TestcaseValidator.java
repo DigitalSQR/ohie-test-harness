@@ -15,7 +15,6 @@ import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFil
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -260,7 +259,7 @@ public class TestcaseValidator {
                 255,
                 errors);
         try {
-            TestCase cRTestCases = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
+            applicationContext.getBean(testcaseEntity.getBeanName());
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + TestcaseValidator.class.getSimpleName(), e);
             errors

@@ -36,7 +36,6 @@ public class SHRWF1TestCase1 implements TestCase {
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
 
-        String testCaseName = this.getClass().getSimpleName();
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.COLLECTION);
 

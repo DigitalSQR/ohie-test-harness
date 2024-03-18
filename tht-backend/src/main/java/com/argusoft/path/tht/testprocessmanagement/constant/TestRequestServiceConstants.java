@@ -23,16 +23,14 @@ public class TestRequestServiceConstants {
     public static final String TEST_REQUEST_STATUS_FINISHED = "test.request.status.finished";
     public static final String TEST_REQUEST_STATUS_SKIPPED = "test.request.status.skipped";
     public static final Multimap<String, String> TEST_REQUEST_STATUS_MAP = ArrayListMultimap.create();
-    public static final List<String> TEST_REQUEST_STATUS = new ArrayList<>();
-
-    static {
-        TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_PENDING);
-        TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_ACCEPTED);
-        TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_REJECTED);
-        TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_INPROGRESS);
-        TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_FINISHED);
-        TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_SKIPPED);
-    }
+    public static final List<String> TEST_REQUEST_STATUS = List.of(
+            TEST_REQUEST_STATUS_PENDING,
+            TEST_REQUEST_STATUS_ACCEPTED,
+            TEST_REQUEST_STATUS_REJECTED,
+            TEST_REQUEST_STATUS_INPROGRESS,
+            TEST_REQUEST_STATUS_FINISHED,
+            TEST_REQUEST_STATUS_SKIPPED
+    );
 
     static {
         TEST_REQUEST_STATUS_MAP.put(TEST_REQUEST_STATUS_PENDING, TEST_REQUEST_STATUS_ACCEPTED);

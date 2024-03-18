@@ -110,41 +110,6 @@ public class ContextInfo extends User implements Serializable {
         this.accessToken = accessToken;
     }
 
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return super.isEnabled();
-    }
-
-    @Override
-    public String getUsername() {
-        return super.getUsername();
-    }
-
-    @Override
-    public String getPassword() {
-        return super.getPassword();
-    }
-
-    @Override
-    public Collection<GrantedAuthority> getAuthorities() {
-        return super.getAuthorities();
-    }
-
     private void setIsAssessee() {
         this.isAssessee = this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().contains(UserServiceConstants.ROLE_ID_ASSESSEE));
     }

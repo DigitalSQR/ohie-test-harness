@@ -27,13 +27,11 @@ public class ComponentServiceConstants {
     public static final String COMPONENT_HEALTH_WORKER_REGISTRY_ID = "component.health.worker.registry";
     public static final String ALLOWED_CHAR_COMPONENT = "[[A-Z][a-z][0-9][\\s][.]]*";
     public static final Multimap<String, String> COMPONENT_STATUS_MAP = ArrayListMultimap.create();
-    public static final List<String> COMPONENT_STATUS = new ArrayList<>();
-
-    static {
-        COMPONENT_STATUS.add(COMPONENT_STATUS_INACTIVE);
-        COMPONENT_STATUS.add(COMPONENT_STATUS_ACTIVE);
-        COMPONENT_STATUS.add(COMPONENT_STATUS_DRAFT);
-    }
+    public static final List<String> COMPONENT_STATUS = List.of(
+            COMPONENT_STATUS_INACTIVE,
+            COMPONENT_STATUS_ACTIVE,
+            COMPONENT_STATUS_DRAFT
+    );
 
     static {
         COMPONENT_STATUS_MAP.put(COMPONENT_STATUS_DRAFT, COMPONENT_STATUS_ACTIVE);
