@@ -23,7 +23,7 @@ public class TestRequestServiceConstants {
     public static final String TEST_REQUEST_STATUS_FINISHED = "test.request.status.finished";
     public static final String TEST_REQUEST_STATUS_SKIPPED = "test.request.status.skipped";
     public static final Multimap<String, String> TEST_REQUEST_STATUS_MAP = ArrayListMultimap.create();
-    public static List<String> TEST_REQUEST_STATUS = new ArrayList<>();
+    public static final List<String> TEST_REQUEST_STATUS = new ArrayList<>();
 
     static {
         TEST_REQUEST_STATUS.add(TEST_REQUEST_STATUS_PENDING);

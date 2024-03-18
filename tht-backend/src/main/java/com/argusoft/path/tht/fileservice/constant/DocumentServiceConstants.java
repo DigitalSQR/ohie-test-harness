@@ -5,6 +5,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,12 +24,10 @@ public class DocumentServiceConstants {
     // Allowed Active Types
     public static final String ALLOWED_ACTIVE_SINGLE_RECORD = "document.allowed.active.single.record";
     public static final String ALLOWED_ACTIVE_MULTI_RECORD = "document.allowed.active.multi.record";
-    public static List<String> DOCUMENT_STATUS = new ArrayList<>();
-
-    static {
-        DOCUMENT_STATUS.add(DOCUMENT_STATUS_ACTIVE);
-        DOCUMENT_STATUS.add(DOCUMENT_STATUS_INACTIVE);
-    }
+    public static final List<String> DOCUMENT_STATUS = List.of(
+            DOCUMENT_STATUS_ACTIVE,
+            DOCUMENT_STATUS_INACTIVE
+    );
 
     static {
         DOCUMENT_STATUS_MAP.put(DOCUMENT_STATUS_ACTIVE, DOCUMENT_STATUS_INACTIVE);

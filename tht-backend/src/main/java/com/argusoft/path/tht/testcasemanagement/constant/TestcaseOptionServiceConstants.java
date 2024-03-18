@@ -19,7 +19,7 @@ public class TestcaseOptionServiceConstants {
     public static final String TESTCASE_OPTION_STATUS_ACTIVE = "testcase.option.status.active";
     public static final String TESTCASE_OPTION_STATUS_INACTIVE = "testcase.option.status.inactive";
     public static final Multimap<String, String> TESTCASE_OPTION_STATUS_MAP = ArrayListMultimap.create();
-    public static List<String> TESTCASE_OPTION_STATUS = new ArrayList<>();
+    public static final List<String> TESTCASE_OPTION_STATUS = new ArrayList<>();
 
     static {
         TESTCASE_OPTION_STATUS.add(TESTCASE_OPTION_STATUS_DRAFT);

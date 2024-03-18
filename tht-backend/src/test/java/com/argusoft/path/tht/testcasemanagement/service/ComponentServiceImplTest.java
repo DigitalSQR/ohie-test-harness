@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
+class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     @Autowired
     private ComponentService componentService;
@@ -46,7 +46,7 @@ public class ComponentServiceImplTest extends TestingHarnessToolTestConfiguratio
     }
 
     @Test
-    public void testCreateComponent() throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
+    void testCreateComponent() throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
 
 
         // Test 1 :  With correct data
@@ -78,7 +78,7 @@ public class ComponentServiceImplTest extends TestingHarnessToolTestConfiguratio
 
     @Test
     @Transactional
-    public void testUpdateComponent() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+    void testUpdateComponent() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
         //  Test case 1 : Update the component data
         ComponentEntity component2 = componentService.getComponentById("component.02", contextInfo);
@@ -111,7 +111,7 @@ public class ComponentServiceImplTest extends TestingHarnessToolTestConfiguratio
 
     @Test
     @Transactional
-    public void testUpdateComponentState() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+    void testUpdateComponentState() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
         // Test case 1 : Update the component state
 
@@ -141,7 +141,7 @@ public class ComponentServiceImplTest extends TestingHarnessToolTestConfiguratio
 
 
     @Test
-    public void testGetComponentById() throws InvalidParameterException, DoesNotExistException {
+    void testGetComponentById() throws InvalidParameterException, DoesNotExistException {
 
         // Test case 1: Passing component id as null
         assertThrows(InvalidParameterException.class, () -> {
@@ -159,25 +159,8 @@ public class ComponentServiceImplTest extends TestingHarnessToolTestConfiguratio
 
     }
 
-//    @Test
-//    public void testGetComponents() throws InvalidParameterException, DoesNotExistException {
-//
-//        // Test case 1: Passing pageable as null
-//        assertThrows(InvalidParameterException.class, () -> {
-//            componentService.getComponents(null, contextInfo);
-//        });
-//
-//        // Test case 2: Passing pageable
-//        Pageable pageable = PageRequest.of(0, 3);
-//
-//        Page<ComponentEntity> components = componentService.getComponents(pageable, contextInfo);
-//        assertEquals(2, components.getTotalPages());
-//        assertEquals(3, components.getNumberOfElements());
-//        assertEquals(5, components.getTotalElements());
-//    }
-
     @Test
-    public void testSearchComponent() throws InvalidParameterException, OperationFailedException {
+    void testSearchComponent() throws InvalidParameterException, OperationFailedException {
 
         // Test case 1: Search component by name and state.
 
