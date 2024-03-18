@@ -225,8 +225,10 @@ export default function ChooseTest() {
         })
         .catch((err) => {       
           notification.error({
+            className:"notificationError",
+            message:"Error",            
             placement: "bottomRight",
-            message: "Something went wrong!",
+            description: "Something went wrong!",
           });
         }); 
   }

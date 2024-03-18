@@ -139,8 +139,10 @@ const RegisterApplication = () => {
           } else {
             res.forEach((err) => {
               notification.error({
+                className:"notificationError",
+                message:"Error",
                 placement: "bottomRight",
-                message: err.message,
+                description: err.message,
               });
             });
             hideLoader();

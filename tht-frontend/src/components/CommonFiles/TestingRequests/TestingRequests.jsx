@@ -125,6 +125,8 @@ const TestingRequests = () => {
         hideLoader();
         errors.forEach((error, i) => {
           notification.error({
+            className:"notificationError",
+            message:"Error",
             description: error,
             placement: "bottomRight",
           });

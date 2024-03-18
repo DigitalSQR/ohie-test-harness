@@ -64,7 +64,9 @@ export default function EditQuestion() {
       })
       .catch((error) => {
         notification.error({
-          message: "Error Loading question!",
+          className:"notificationError",
+          message:"Error",
+          description: "Error Loading question!",
           placement: "bottomRight",
         });
       });
@@ -84,7 +86,9 @@ export default function EditQuestion() {
       })
       .catch((error) => {
         notification.error({
-          message: "Error Loading options!",
+          className:"notificationError",
+          message:"Error",
+          description: "Error Loading options!",
           placement: "bottomRight",
         });
       });
@@ -125,7 +129,9 @@ export default function EditQuestion() {
       .catch((err) => {
         console.log(err);
         notification.error({
-          message: "Error Loading Files!",
+          className:"notificationError",
+          message:"Error",
+          description: "Error Loading Files!",
           placement: "bottomRight",
         });
       });
@@ -184,7 +190,9 @@ export default function EditQuestion() {
       .catch((err) => {
         let msg = err.response.data?.message || err.response.data[0].message;
         notification.error({
-          message: `${msg}`,
+          className:"notificationError",
+          message:"Error",
+          description: `${msg}`,
           placement: "bottomRight",
         });
       });
@@ -216,7 +224,9 @@ export default function EditQuestion() {
 
       if (!isImage) {
         notification.error({
-          message: "Only JPEG and PNG Files are allowed.",
+          className:"notificationError",
+          message:"Error",
+          description: "Only JPEG and PNG Files are allowed.",
           placement: "bottomRight",
         });
         return false;
@@ -300,8 +310,10 @@ export default function EditQuestion() {
         .catch((error) => {
           console.error("Error saving question:", error);
           notification.error({
+            className:"notificationError",
+            message:"Error",
             placement: "bottomRight",
-            message: "Failed to save question",
+            description: "Failed to save question",
           });
         });
     } finally {

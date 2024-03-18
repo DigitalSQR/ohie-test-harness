@@ -53,12 +53,16 @@ export default function SignUp() {
     onSubmit: () => {
       if (formik.values.password != formik.values.confirmPassword) {
         notification.error({
+          className:"notificationError",
+          message:"Error",
           placement: "bottomRight",
           description: "Confirm password does not match with the password.",
         });
       } else {
         if (!captchaInfo.code && captchaInfo.captcha) {
           notification.error({
+            className:"notificationError",
+            message:"Error",
             placement: "bottomRight",
             description: "Invalid captcha",
           });

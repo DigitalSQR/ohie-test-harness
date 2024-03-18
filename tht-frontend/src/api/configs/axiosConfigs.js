@@ -93,12 +93,16 @@ api.interceptors.response.use(
       });
     }else if(response.status > 500){
       notification.error({
+        className:"notificationError",
+        message:"Error",
         description: "Oops! Something went wrong",
         placement: "bottomRight",
       });
     }else if(response.status == 404){
       console.log(response);
       notification.error({
+        className:"notificationError",
+        message:"Error",        
         description: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
         placement: "bottomRight",
       });
@@ -106,12 +110,16 @@ api.interceptors.response.use(
       if(response.data.length && response.data.length > 0){
         response.data.forEach((error, index) => {
           notification.error({
+            className:"notificationError",
+            message:"Error",
             description: error.message ,
             placement: "bottomRight",
           });
         })        
       }else {
         notification.error({
+          className:"notificationError",
+          message:"Error",
           description: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
           placement: "bottomRight",
         });

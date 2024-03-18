@@ -80,6 +80,8 @@ export default function TestCase(props) {
 	const handleSaveandNext = () => {
 		if (!selectedOptions || selectedOptions.length == 0) {
 			notification.error({
+				className:"notificationError",
+				message:"Error",
 				description: "No answers selected",
 				placement: "bottomRight",
 			});
@@ -203,7 +205,9 @@ export default function TestCase(props) {
 					setCurrentQuestion(res[0]);
 				} else {
 					notification.error({
-						message: "Oops! something wrong ,No question found!",
+						className:"notificationError",
+						message:"Error",
+						description: "Oops! something wrong ,No question found!",
 						placement: "bottomRight",
 					});
 				}

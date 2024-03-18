@@ -186,7 +186,9 @@ export default function ManualTestCases() {
           .catch((err) => {
             console.log(err);
             notification.error({
-              message: "Error Loading Files!",
+              className:"notificationError",
+              message:"Error",
+              description: "Error Loading Files!",
               placement: "bottomRight",
             });
           })

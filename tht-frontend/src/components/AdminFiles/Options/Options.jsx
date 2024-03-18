@@ -28,7 +28,9 @@ export default function Options(props) {
 			} else {
 				hideLoader();
 				notification.error({
-					message: "Oops! something went wrong ,No answer found!",
+					className:"notificationError",
+					message:"Error",
+					description: "Oops! something went wrong ,No answer found!",
 					placement: "bottomRight",
 				});
 			}
@@ -53,7 +55,9 @@ export default function Options(props) {
 			} else {
 				hideLoader();
 				notification.error({
-					message: "Oops! something went wrong ,No Result Related Data found!",
+					className:"notificationError",
+					message:"Error",
+					description: "Oops! something went wrong ,No Result Related Data found!",
 					placement: "bottomRight",
 				});
 			}
@@ -93,7 +97,9 @@ export default function Options(props) {
 			return testResultRelationInfo[0].selected;
 		}else{
 			notification.error({
-				message: "There is something wrong in filtering result relation info for testOptionId",
+				className:"notificationError",
+				message:"Error",
+				description: "There is something wrong in filtering result relation info for testOptionId",
 				placement: "bottomRight",
 			});
 		}

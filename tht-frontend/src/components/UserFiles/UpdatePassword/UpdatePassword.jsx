@@ -50,6 +50,8 @@ export default function UpdatePassword() {
       } else {
         clearPasswords();
         notification.error({
+          className:"notificationError",
+          message:"Error",
           placement: "bottomRight",
           description: `Confirm password does not match with the password.`,
         });

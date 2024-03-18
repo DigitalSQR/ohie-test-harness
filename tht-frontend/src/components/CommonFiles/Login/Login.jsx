@@ -103,6 +103,8 @@ export default function Login() {
     onSubmit: async () => {
       if (!captchaInfo.code && captchaInfo.captcha) {
         notification.error({
+          className:"notificationError",
+          message:"Error",
           placement: "bottomRight",
           description: "Invalid captcha",
         });
