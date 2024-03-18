@@ -33,7 +33,11 @@ public class FileService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
 
-    static String RESOURCE_FOLDER;
+    static String resourceFolder;
+
+    private FileService(){
+
+    }
 
     public static FileDetails storeFile(MultipartFile multipartFile,
                                         MultipartFileTypeTesterPredicate multipartFilePredicateToValidateFile)
@@ -48,7 +52,7 @@ public class FileService {
         String fileName = multipartFile.getOriginalFilename();
 
         // Construct the path to the resources folder
-        Path resourcesPath = Paths.get(RESOURCE_FOLDER);
+        Path resourcesPath = Paths.get(resourceFolder);
 
         // Create the resources folder if it doesn't exist
         if (!Files.exists(resourcesPath)) {
@@ -71,7 +75,7 @@ public class FileService {
     }
 
     public static boolean deleteFile(String fileName) {
-        Path filePath = Paths.get(RESOURCE_FOLDER, fileName);
+        Path filePath = Paths.get(resourceFolder, fileName);
         try {
             return Files.deleteIfExists(filePath);
         } catch (IOException e) {
@@ -83,7 +87,7 @@ public class FileService {
 
     public static byte[] getFileContentByFilePathAndFileName(String filePath, String fileName) throws IOException {
         if (filePath == null) {
-            filePath = RESOURCE_FOLDER;
+            filePath = resourceFolder;
         }
         Path path = Paths.get(filePath);
         path = path.resolve(fileName);
@@ -126,8 +130,8 @@ public class FileService {
     }
 
     @Value("${tht-file.location}")
-    public void setResourceFolder(String value) {
-        RESOURCE_FOLDER = value;
+    public static void setResourceFolder(String value) {
+        resourceFolder = value;
     }
 
 }

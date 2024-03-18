@@ -14,6 +14,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -59,9 +60,6 @@ public class TestResultRelationCriteriaSearchFilter extends AbstractCriteriaSear
 
     private Join<TestResultRelationEntity, TestcaseResultEntity> testResultRelationEntityTestcaseResultEntityJoin;
 
-    public TestResultRelationCriteriaSearchFilter() {
-    }
-
     @Override
     protected List<Predicate> buildPredicates(Root<TestResultRelationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         this.setTestResultRelationEntityRoot(root);
@@ -89,16 +87,6 @@ public class TestResultRelationCriteriaSearchFilter extends AbstractCriteriaSear
         }
 
         return predicates;
-    }
-
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<TestResultRelationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return null;
-    }
-
-    @Override
-    protected void validateSearchFilter() throws InvalidParameterException {
-
     }
 
     public Root<TestResultRelationEntity> getTestResultRelationEntityRoot() {

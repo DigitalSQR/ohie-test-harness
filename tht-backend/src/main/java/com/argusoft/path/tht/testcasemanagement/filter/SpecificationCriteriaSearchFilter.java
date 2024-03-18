@@ -56,11 +56,6 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     }
 
     @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
-    @Override
     protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<SpecificationEntity> root, CriteriaQuery<?> query) {
         if (getManual() != null) {
             query.distinct(true);
@@ -95,11 +90,6 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
         }
 
         return predicates;
-    }
-
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return null;
     }
 
     public String getName() {

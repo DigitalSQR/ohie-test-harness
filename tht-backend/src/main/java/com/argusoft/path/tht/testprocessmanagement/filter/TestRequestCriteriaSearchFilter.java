@@ -48,11 +48,6 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     }
 
     @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
-    @Override
     protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<TestRequestEntity> root, CriteriaQuery<?> query, Pageable pageable) {
         Sort.Order order = pageable.getSort().getOrderFor("default");
         if (order == null) {

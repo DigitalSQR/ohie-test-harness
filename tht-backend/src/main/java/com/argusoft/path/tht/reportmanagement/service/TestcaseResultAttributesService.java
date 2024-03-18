@@ -20,14 +20,14 @@ public interface TestcaseResultAttributesService {
      * create new attributes
      *
      * @param testcaseResultEntity Attribute related to testcase result
-     * @param Key                  Attribute key
-     * @param Value                Attribute value
+     * @param key                  Attribute key
+     * @param value                Attribute value
      * @param contextInfo          information containing the principalId and locale
      *                             information about the caller of service operation
      * @return testcase result attribute
      * @throws InvalidParameterException invalid contextInfo
      */
-    public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String Key, String Value,
+    public TestcaseResultAttributesEntity createAndChangeTestcaseResultAttributes(TestcaseResultEntity testcaseResultEntity, String key, String value,
                                                                                   ContextInfo contextInfo)
             throws
             InvalidParameterException;

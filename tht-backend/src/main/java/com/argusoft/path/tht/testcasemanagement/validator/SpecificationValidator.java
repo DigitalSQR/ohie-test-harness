@@ -302,15 +302,15 @@ public class SpecificationValidator {
     }
 
     //trim all Specification field
-    private static void trimSpecification(SpecificationEntity SpecificationEntity) {
-        if (SpecificationEntity.getId() != null) {
-            SpecificationEntity.setId(SpecificationEntity.getId().trim());
+    private static void trimSpecification(SpecificationEntity specificationEntity) {
+        if (specificationEntity.getId() != null) {
+            specificationEntity.setId(specificationEntity.getId().trim());
         }
-        if (SpecificationEntity.getName() != null) {
-            SpecificationEntity.setName(SpecificationEntity.getName().trim());
+        if (specificationEntity.getName() != null) {
+            specificationEntity.setName(specificationEntity.getName().trim());
         }
-        if (SpecificationEntity.getDescription() != null) {
-            SpecificationEntity.setDescription(SpecificationEntity.getDescription().trim());
+        if (specificationEntity.getDescription() != null) {
+            specificationEntity.setDescription(specificationEntity.getDescription().trim());
         }
     }
 

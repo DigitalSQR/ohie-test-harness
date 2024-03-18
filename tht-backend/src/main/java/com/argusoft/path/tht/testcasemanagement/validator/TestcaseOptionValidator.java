@@ -46,7 +46,7 @@ public class TestcaseOptionValidator {
 
     }
 
-    public static List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey, TestcaseOptionEntity testcaseOptionEntity, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public static List<ValidationResultInfo> validateTestcaseOption(String validationTypeKey, TestcaseOptionEntity testcaseOptionEntity, TestcaseOptionService testcaseOptionService, TestcaseService testcaseService, ContextInfo contextInfo) throws InvalidParameterException {
         if (!StringUtils.hasLength(validationTypeKey)) {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseOptionValidator.class.getSimpleName());
             throw new InvalidParameterException(ValidateConstant.MISSING_VALIDATION_TYPE_KEY);
@@ -107,7 +107,6 @@ public class TestcaseOptionValidator {
                                                  TestcaseService testcaseService,
                                                  List<ValidationResultInfo> errors,
                                                  ContextInfo contextInfo) {
-        Set<TestcaseEntity> testcaseEntitySet = new HashSet<>();
 
         if (testcaseOptionEntity.getTestcase() != null) {
             try {
@@ -241,15 +240,15 @@ public class TestcaseOptionValidator {
     }
 
     //trim all TestcaseOption field
-    private static void trimTestcaseOption(TestcaseOptionEntity TestcaseOptionEntity) {
-        if (TestcaseOptionEntity.getId() != null) {
-            TestcaseOptionEntity.setId(TestcaseOptionEntity.getId().trim());
+    private static void trimTestcaseOption(TestcaseOptionEntity testcaseOptionEntity) {
+        if (testcaseOptionEntity.getId() != null) {
+            testcaseOptionEntity.setId(testcaseOptionEntity.getId().trim());
         }
-        if (TestcaseOptionEntity.getName() != null) {
-            TestcaseOptionEntity.setName(TestcaseOptionEntity.getName().trim());
+        if (testcaseOptionEntity.getName() != null) {
+            testcaseOptionEntity.setName(testcaseOptionEntity.getName().trim());
         }
-        if (TestcaseOptionEntity.getDescription() != null) {
-            TestcaseOptionEntity.setDescription(TestcaseOptionEntity.getDescription().trim());
+        if (testcaseOptionEntity.getDescription() != null) {
+            testcaseOptionEntity.setDescription(testcaseOptionEntity.getDescription().trim());
         }
     }
 

@@ -157,7 +157,7 @@ public class UserServiceServiceImpl implements UserService {
             String userEmail = new String(Base64.decodeBase64(updatePasswordInfo.getBase64UserEmail()));
             UserEntity userByEmail = this.getUserByEmail(userEmail, contextInfo);
             userByEmail.setPassword(updatePasswordInfo.getNewPassword());
-            UserEntity userEntity = this.updateUser(userByEmail, contextInfo);
+            this.updateUser(userByEmail, contextInfo);
         }
     }
 

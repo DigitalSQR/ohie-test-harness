@@ -58,11 +58,6 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     }
 
     @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
-    @Override
     protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<UserEntity> root, CriteriaQuery<?> query, Pageable pageable) {
         Sort.Order order = pageable.getSort().getOrderFor("default");
         if (order == null) {
@@ -108,11 +103,6 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         }
 
         return predicates;
-    }
-
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return null;
     }
 
     public String getName() {
