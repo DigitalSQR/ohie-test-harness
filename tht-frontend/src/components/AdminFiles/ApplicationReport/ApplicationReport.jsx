@@ -233,7 +233,7 @@ const ApplicationReport = () => {
                         </p>
                       </div>
                       <div className="col-12">
-                        <p>Components applied for testing:</p>
+                        <p>Components applied for verification:</p>
                         <div>
                           {componentNames?.map((item) => (
                             <span key={item} className="comp-badge">

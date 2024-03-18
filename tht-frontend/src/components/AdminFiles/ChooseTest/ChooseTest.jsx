@@ -143,7 +143,7 @@ export default function ChooseTest() {
         if (!!manual) {
           navigate(`/manual-testing/${testRequestId}`);
           notification.success({
-            description: "Testing Process has been Started Successfully",
+            description: "Verification Process has been Started Successfully",
             placement: "bottomRight",
           });
         }
@@ -153,7 +153,7 @@ export default function ChooseTest() {
       });
     if (!!automated) {
       notification.success({
-        description: "Testing Process has been Started Successfully",
+        description: "Verification Process has been Started Successfully",
         placement: "bottomRight",
       });
       navigate(`/automated-testing/${testRequestId}`);
@@ -211,7 +211,7 @@ export default function ChooseTest() {
         .then((res) => {
           notification.success({
             placement: "bottomRight",
-            message: "Testing submitted successfully!",
+            message: "Verification submitted successfully!",
           });
           const newTab = window.open(`/application-report/${testRequestId}`, '_blank');
           newTab.focus();      
@@ -239,9 +239,9 @@ export default function ChooseTest() {
               Applications
             </div>
           </div>
-          <h5>Choose Testing Type</h5>
+          <h5>Choose Verification Type</h5>
           <p className="text-gray">
-            Select the type to start testing application with OpenHIE.{" "}
+            Select the type to start verifying application with OpenHIE.{" "}
           </p>
           <div className="d-flex flex-wrap">
             <div className="testing-grid">
@@ -249,7 +249,7 @@ export default function ChooseTest() {
                 <img src={functional_logo} />
               </div>
               <div className="text-box">
-                <h6 className="">Manual Testing</h6>
+                <h6 className="">Manual Verification</h6>
                 <p className="mb-0">
                   If you need more info, please check out{" "}
                   <a className="text-blue" href="#">
@@ -263,7 +263,7 @@ export default function ChooseTest() {
                       handleStartTesting(true, null);
                     }}
                   >
-                    Start Testing
+                    Start Verification
                   </button>
                 )}
                 {totalManualTestcaseResults != 0 && (
@@ -322,7 +322,7 @@ export default function ChooseTest() {
                 <img src={workflow_logo} />
               </div>
               <div className="text-box">
-                <h6 className="">Automated Testing</h6>
+                <h6 className="">Automated Verification</h6>
                 <p className="mb-0">
                   If you need more info, please check out{" "}
                   <a className="text-blue" href="#">
@@ -336,7 +336,7 @@ export default function ChooseTest() {
                       handleStartTesting(null, true);
                     }}
                   >
-                    Start Testing
+                    Start Verification
                   </button>
                 )}
 
@@ -423,7 +423,7 @@ export default function ChooseTest() {
         </div>
           {totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
           <div className="message-grid">
-            <p>Testing has been successfully completed. Please click the button below to submit the results.</p>
+            <p>Verification has been successfully completed. Please click the button below to submit the results.</p>
             <button className="submit-btn cst-btn-group btn" onClick={submitHandler}>Submit</button>
           </div>  
           :

@@ -82,7 +82,7 @@ export default function ManualTesting() {
 	};
 
 	useEffect(() => {
-    dispatch(set_header("Manual Testing"));
+    dispatch(set_header("Manual Verification"));
 		showLoader();
 		fetchTestCaseResultDataAndStartWebSocket();
 		testCaseInfo();
@@ -302,7 +302,7 @@ export default function ManualTesting() {
     <div id="manualQuestions">
 		<div id="wrapper" className="stepper-wrapper">
 			<div className="bcca-breadcrumb">
-				<div className="bcca-breadcrumb-item">Manual Testing</div>
+				<div className="bcca-breadcrumb-item">Manual Verification</div>
 				<div className="bcca-breadcrumb-item" onClick={()=>{navigate(`/choose-test/${testRequestId}`)}}>{testcaseName}</div>
 				<div className="bcca-breadcrumb-item" onClick={()=>{navigate(`/applications`)}}>Applications</div>
 			</div>
@@ -345,7 +345,7 @@ export default function ManualTesting() {
       <div className="offcanvas offcanvas-end" tabIndex="-1" id="manualTesting" aria-labelledby="manualTestingLabel">
             <div className="offcanvas-header">
               <div className="offcanvas-title">
-                <h5 id="manualTestingLabel">Manual Testing </h5>
+                <h5 id="manualTestingLabel">Manual Verification </h5>
                 <div className="answeredQuest">
                   <h6> {finishedTestCasesCount}/{totalTestCasesCount} </h6>
                 </div>

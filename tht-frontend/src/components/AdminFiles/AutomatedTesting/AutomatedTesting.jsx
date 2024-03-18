@@ -58,7 +58,7 @@ export default function AutomatedTesting() {
     TestProcessAPI.stopTestProcess(testRequestId, params)
       .then(() => {
         notification.success({
-          description: "Testing Process has been Reset successully",
+          description: "Verification Process has been Reset successully",
           placement: "bottomRight",
         });
       }).catch((error) => {
@@ -105,7 +105,7 @@ export default function AutomatedTesting() {
     TestResultAPI.startTests(params)
       .then(() => {
         notification.success({
-          description: "Testing Process has been started successully",
+          description: "Verification Process has been started successully",
           placement: "bottomRight",
         });
       }).catch((error) => {
@@ -209,7 +209,7 @@ export default function AutomatedTesting() {
       });
   };
   useEffect(() => {
-    dispatch(set_header("Automated Testing"));
+    dispatch(set_header("Automated Verification"));
     fetchTestCaseResultDataAndStartWebSocket();
     testCaseInfo();
     return () => {
@@ -274,7 +274,7 @@ export default function AutomatedTesting() {
         <div className="col-12">
           <div className="d-flex justify-content-between">
             <div className="bcca-breadcrumb">
-              <div className="bcca-breadcrumb-item">Automated Testing</div>
+              <div className="bcca-breadcrumb-item">Automated Verification</div>
               <div
                 className="bcca-breadcrumb-item"
                 onClick={() => {

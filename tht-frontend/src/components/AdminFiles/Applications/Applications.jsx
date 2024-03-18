@@ -31,7 +31,7 @@ import UserIdNameEmailConnector from "../../connectors/UserIdNameEmailConnector/
  * Applications Component:
  * This component displays a table of applications with options to filter, sort, and update their statuses.
  * It fetches application data from an API and renders them in a tabular format.
- * Gives admin the access to approve or reject a testing application
+ * Gives admin the access to approve or reject a verification request.
  */
 
 const Applications = () => {
