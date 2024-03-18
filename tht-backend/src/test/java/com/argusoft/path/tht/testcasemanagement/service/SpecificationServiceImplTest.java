@@ -134,7 +134,7 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     @Test
     @Transactional
-    void testUpdateSpecification() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+    public void testUpdateSpecification() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
         // Test case 1 : Update the specification data
         SpecificationEntity specificationEntity = specificationService.getSpecificationById("specification.01", contextInfo);
@@ -183,7 +183,7 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     @Test
     @Transactional
-    void testUpdateSpecificationState() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+    public void testUpdateSpecificationState() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
         // Test case 1 : Update the specification state
 
@@ -338,7 +338,7 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     @Test
     @Transactional
-    void testValidateSpecification() throws InvalidParameterException, DoesNotExistException, OperationFailedException {
+    public void testValidateSpecification() throws InvalidParameterException, DoesNotExistException, OperationFailedException {
         SpecificationEntity specificationEntity = specificationService.getSpecificationById("specification.01", contextInfo);
         String validationTypeKey = "update.validation.test";
         assertThrows(InvalidParameterException.class, () -> {
@@ -353,7 +353,7 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     @Test
     @Transactional
-    void testCreateSpecificationWithTestcase() throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+    public void testCreateSpecificationWithTestcase() throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         SpecificationEntity specificationEntity = specificationService.getSpecificationById("specification.01", contextInfo);
 
         //create testcase

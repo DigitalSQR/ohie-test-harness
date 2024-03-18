@@ -78,7 +78,7 @@ class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     @Test
     @Transactional
-    void testUpdateComponent() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+    public void testUpdateComponent() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
         //  Test case 1 : Update the component data
         ComponentEntity component2 = componentService.getComponentById("component.02", contextInfo);
@@ -111,7 +111,7 @@ class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     @Test
     @Transactional
-    void testUpdateComponentState() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+    public void testUpdateComponentState() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
         // Test case 1 : Update the component state
 
