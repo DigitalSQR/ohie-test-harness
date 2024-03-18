@@ -92,11 +92,6 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
         return predicates;
     }
 
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return null;
-    }
-
     public String getName() {
         return name;
     }

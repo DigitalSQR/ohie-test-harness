@@ -105,11 +105,6 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         return predicates;
     }
 
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return null;
-    }
-
     public String getName() {
         return name;
     }
