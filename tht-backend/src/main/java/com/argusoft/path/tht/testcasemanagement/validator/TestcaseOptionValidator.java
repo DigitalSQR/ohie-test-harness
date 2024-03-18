@@ -107,7 +107,6 @@ public class TestcaseOptionValidator {
                                                  TestcaseService testcaseService,
                                                  List<ValidationResultInfo> errors,
                                                  ContextInfo contextInfo) {
-        Set<TestcaseEntity> testcaseEntitySet = new HashSet<>();
 
         if (testcaseOptionEntity.getTestcase() != null) {
             try {

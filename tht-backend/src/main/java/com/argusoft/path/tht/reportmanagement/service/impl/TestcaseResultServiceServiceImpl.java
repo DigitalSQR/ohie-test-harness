@@ -161,7 +161,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.CREATE_VALIDATION,
                 this,
                 userService,
-                testcaseOptionService,
                 testRequestService,
                 testcaseResultEntity,
                 contextInfo);
@@ -194,7 +193,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.UPDATE_VALIDATION,
                 this,
                 userService,
-                testcaseOptionService,
                 testRequestService,
                 testcaseResultEntity,
                 contextInfo);
@@ -360,7 +358,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
-        List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, testRequestService, contextInfo);
+        List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testRequestService, contextInfo);
         return errors;
     }
 

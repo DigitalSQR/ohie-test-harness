@@ -125,7 +125,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
                     } else {
                         userByEmail.setState(UserServiceConstants.USER_STATUS_ACTIVE);
                     }
-                    userByEmail = userService.updateUser(userByEmail, contextInfo);
+                    userService.updateUser(userByEmail, contextInfo);
 
             }
         }

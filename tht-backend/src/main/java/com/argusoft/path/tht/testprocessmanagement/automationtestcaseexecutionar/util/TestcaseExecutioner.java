@@ -53,7 +53,7 @@ public class TestcaseExecutioner {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseExecutioner.class);
 
-    public static Map<String, String> map = new HashMap<>();
+    public static final Map<String, String> map = new HashMap<>();
 
     private ApplicationContext applicationContext;
 

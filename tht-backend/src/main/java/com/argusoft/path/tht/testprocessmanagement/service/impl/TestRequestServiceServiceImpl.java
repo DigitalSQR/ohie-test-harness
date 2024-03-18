@@ -659,7 +659,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     testcaseResult
             );
 
-            testResultRelationEntity = testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+            testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
 
 
             // create for options
@@ -677,7 +677,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         testcaseResult
                 );
 
-                testResultRelationEntity = testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+                testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
             }
 
             // create for documents related to question
@@ -696,7 +696,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         testcaseResult
                 );
 
-                testResultRelationEntity = testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+                testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
             }
         }
     }

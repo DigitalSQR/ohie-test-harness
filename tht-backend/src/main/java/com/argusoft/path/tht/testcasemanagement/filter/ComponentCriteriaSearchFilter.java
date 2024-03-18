@@ -43,11 +43,6 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
     }
 
     @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
-    @Override
     protected List<Predicate> buildPredicates(Root<ComponentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         setComponentEntityRoot(root);
         List<Predicate> predicates = new ArrayList<>();

@@ -67,7 +67,9 @@ public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchF
 
     protected abstract List<Predicate> buildAuthorizationPredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo);
 
-    protected abstract void validateSearchFilter() throws InvalidParameterException;
+    protected void validateSearchFilter() throws InvalidParameterException{
+
+    }
 
     public SearchType getNameSearchType() {
         return nameSearchType;

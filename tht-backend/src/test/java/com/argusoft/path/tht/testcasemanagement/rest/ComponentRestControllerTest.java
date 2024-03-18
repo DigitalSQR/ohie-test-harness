@@ -25,7 +25,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-public class ComponentRestControllerTest extends TestingHarnessToolRestTestConfiguration {
+class ComponentRestControllerTest extends TestingHarnessToolRestTestConfiguration {
 
     @Autowired
     ComponentServiceMockImpl componentServiceMockImpl;

@@ -630,7 +630,6 @@ public final class FHIRUtils {
 
     public static Observation createObservation(String patientId, String practitionerId, String code, double value) {
         // Create Patient reference
-        Reference patientReference = new Reference("Patient/" + patientId);
         Reference practitionerReference = new Reference("Practitioner/" + practitionerId);
 
         // Create Observation

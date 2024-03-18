@@ -71,7 +71,7 @@ public class CRF3TestCase1 implements TestCase {
             }
 
             // Reading Patient
-            Patient retrievedPatient = client.read()
+            client.read()
                     .resource(Patient.class)
                     .withId(PatientId)
                     .execute();
