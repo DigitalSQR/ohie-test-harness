@@ -34,7 +34,7 @@ public final class Constant {
     public static final Pageable SINGLE_PAGE_SORT_BY_RANK = PageRequest.of(0, 1, Sort.by("rank").descending());
     public static final Pageable TWO_VALUE_PAGE = PageRequest.of(0, 2);
     public static final String ALLOWED_CHARS_IN_NAMES = "[[A-Z][a-z][0-9][/][\\s][_][@][#][(][)][.][,]['][-][*][`][/][&]]*";
-    public final static ContextInfo SUPER_USER_CONTEXT = new ContextInfo(
+    public static final ContextInfo SUPER_USER_CONTEXT = new ContextInfo(
             "",
             DEFAULT_SYSTEM_USER_ID,
             "",
