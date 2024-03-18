@@ -9,7 +9,10 @@ import { useLocation } from "react-router-dom";
 import { useLoader } from "../../../loader/LoaderContext";
 
 import CustomSelect from "../CustomSelect";
-import { ROLE_ID_ADMIN, ROLE_ID_TESTER } from "../../../../constants/role_constants";
+import {
+  ROLE_ID_ADMIN,
+  ROLE_ID_TESTER,
+} from "../../../../constants/role_constants";
 
 //Component that provides the functionality to update the user details
 const UpdateAdminUser = () => {
@@ -24,8 +27,8 @@ const UpdateAdminUser = () => {
     },
     {
       label: "Tester",
-      value: ROLE_ID_TESTER
-    }
+      value: ROLE_ID_TESTER,
+    },
   ];
   const { showLoader, hideLoader } = useLoader();
   const [state, setState] = useState();
@@ -42,9 +45,10 @@ const UpdateAdminUser = () => {
     password: formData.password,
     roleIds: formData.roleIds,
   };
-  
+
   const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required")
+    name: Yup.string()
+      .required("Name is required")
       .max(1000, "Name must have less than 1000 characters"),
     email: Yup.string()
       .email("Invalid email address")
@@ -66,9 +70,8 @@ const UpdateAdminUser = () => {
             roleIds: userData.roleIds,
           });
           setMeta(userData.meta);
-        }).catch((response) => {
-          
-        });
+        })
+        .catch((response) => {});
     }
   }, [userId]);
 
@@ -87,13 +90,15 @@ const UpdateAdminUser = () => {
       .then((response) => {
         hideLoader();
         notification.success({
-          placement: "bottomRight",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Success",
           description: `User Updated Successfully`,
         });
         navigate("/user-management");
       })
       .catch((response) => {
-        hideLoader();       
+        hideLoader();
       });
   };
 

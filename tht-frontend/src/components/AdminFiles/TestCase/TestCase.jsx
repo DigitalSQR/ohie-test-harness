@@ -142,8 +142,10 @@ export default function TestCase(props) {
 						setInitialNoteMessage(res.message);
 						setEditMode(false);
 						notification.success({
-							message: `Note Updated Successfully!`,
-							placement: "bottomRight",
+							className:"notificationSuccess",
+							placement: "top",
+							message:"Success",
+							description: `Note Updated Successfully!`,
 						});
 						resolve(); // Resolve the promise when the operation is successful
 					})
@@ -320,8 +322,10 @@ export default function TestCase(props) {
 				newFiles.splice(index, 1);
 				setFiles(newFiles);
 				notification.success({
-					message: `Document Uploaded!`,
-					placement: "bottomRight",
+					className:"notificationSuccess",
+					placement: "top",
+					message:"Success",
+					description: `Document Uploaded!`,
 				});
 			}).catch((error) => {
 
@@ -335,8 +339,10 @@ export default function TestCase(props) {
 				DocumentAPI.changeDocumentState(file.id, DOCUMENT_STATE_INACTIVE)
 					.then((res) => {
 						notification.success({
-							message: "Document Removed",
-							placement: "bottomRight",
+							className:"notificationSuccess",
+							placement: "top",
+							message:"Success",
+							description: "Document Removed",
 						});
 						setUploadedFiles((prev) => {
 							return prev.filter((doc) => doc.id !== file.id);

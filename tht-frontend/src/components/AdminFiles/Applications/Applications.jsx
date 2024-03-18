@@ -64,7 +64,7 @@ const Applications = () => {
   useEffect(() => {
     dispatch(set_header("Applications"));
     var state = filterState;
-      getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
+    getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
   }, [filterState]);
 
   //useEffect to set the user role
@@ -74,7 +74,7 @@ const Applications = () => {
         setUserRole(res.roleIds);
       })
       .catch((error) => {});
-  },[]);
+  }, []);
 
   //Function to get all the test requests varying with the different state we want to fetch
   const getAllTestRequests = (
@@ -100,7 +100,7 @@ const Applications = () => {
         hideLoader();
       });
   };
-  
+
   //Function to toggle between the visibility of the password i.e. to either show or hide the password
   const togglePasswordVisibility = (testUrl) => {
     if (testUrl.showPass) {
@@ -130,7 +130,7 @@ const Applications = () => {
     setSortFieldName(sortFieldName);
     const newSortDirection = { ...obj };
     newSortDirection[sortFieldName] =
-    sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
+      sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
     getAllTestRequests(
       filterState,
@@ -146,18 +146,20 @@ const Applications = () => {
       return (
         <img
           className="cursor-pointer"
-          style={{width:"8px"}}
-          src={
-            sortDirection[fieldName] === "asc"
-              ? sortedUp
-              : sortedDown
-          }
+          style={{ width: "8px" }}
+          src={sortDirection[fieldName] === "asc" ? sortedUp : sortedDown}
         ></img>
       );
     }
-    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
+    return (
+      <img
+        className="cursor-pointer"
+        style={{ width: "10px" }}
+        src={unsorted}
+      />
+    );
   };
-  
+
   //Function to handle the page change in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -173,63 +175,68 @@ const Applications = () => {
   const changeState = (testRequestId, updatedState, index, proceedAnyways) => {
     showLoader();
     TestRequestAPI.validateChangeState(testRequestId, updatedState)
-    .then((validationResults) => {
-      let warnings = [];
-      let errors = [];
-      for(let validationResult of validationResults) {
-        if(validationResult.level === "WARN") {
-          warnings.push(validationResult.message);
-        } else if(validationResult.level === "ERROR") {
-          errors.push(validationResult.message);
-        } 
-      }
-      if(!!errors.length) {
-        hideLoader();
-        errors.forEach((error, i) => {
-          notification.error({
-            description: error,
-            placement: "bottomRight",
-          });
-        })
-      } else if(!!warnings.length && !proceedAnyways) {
-        hideLoader();
-        Modal.confirm({
-          title: "Test Request Status Update",
-          content: (
-            <div>
-              <p><strong>Please review the following warnings:</strong></p>
-              <ul style={{ paddingLeft: 20 }}>
-                {warnings.map((warning, i) => (
-                  <li key={index}>{warning}</li>
-                ))}
-              </ul>
-            </div>
-          ),
-          okText: "Procced Anyway",
-          cancelText: "Cancel",
-          width: 600,
-          onOk() {
-            changeState(testRequestId, updatedState, index, true);
-          },
-        }); 
-      } else {
-        TestRequestAPI.changeState(testRequestId, updatedState)
-        .then((res) => {
-          notification.success({
-            placement: "bottomRight",
-            message: "Status updated successfully!",
-          });
-          testRequests[index] = res;
-          setTestRequests(testRequests);
+      .then((validationResults) => {
+        let warnings = [];
+        let errors = [];
+        for (let validationResult of validationResults) {
+          if (validationResult.level === "WARN") {
+            warnings.push(validationResult.message);
+          } else if (validationResult.level === "ERROR") {
+            errors.push(validationResult.message);
+          }
+        }
+        if (!!errors.length) {
           hideLoader();
-        })
-        .catch((err) => {       
+          errors.forEach((error, i) => {
+            notification.error({
+              description: error,
+              placement: "bottomRight",
+            });
+          });
+        } else if (!!warnings.length && !proceedAnyways) {
           hideLoader();
-        }); 
-      }
-    }).catch((err) => {       
-      hideLoader();
-    });
+          Modal.confirm({
+            title: "Test Request Status Update",
+            content: (
+              <div>
+                <p>
+                  <strong>Please review the following warnings:</strong>
+                </p>
+                <ul style={{ paddingLeft: 20 }}>
+                  {warnings.map((warning, i) => (
+                    <li key={index}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
+            ),
+            okText: "Procced Anyway",
+            cancelText: "Cancel",
+            width: 600,
+            onOk() {
+              changeState(testRequestId, updatedState, index, true);
+            },
+          });
+        } else {
+          TestRequestAPI.changeState(testRequestId, updatedState)
+            .then((res) => {
+              notification.success({
+                className: "notificationSuccess",
+                placement: "top",
+                message: "Success",
+                description: "Status updated successfully!",
+              });
+              testRequests[index] = res;
+              setTestRequests(testRequests);
+              hideLoader();
+            })
+            .catch((err) => {
+              hideLoader();
+            });
+        }
+      })
+      .catch((err) => {
+        hideLoader();
+      });
   };
 
   return (
@@ -266,7 +273,7 @@ const Applications = () => {
             <table className=" data-table capitalize-words">
               <thead>
                 <tr>
-                  <th style={{width:"15%"}}>
+                  <th style={{ width: "15%" }}>
                     APPLICATION NAME{" "}
                     <span
                       className="ps-1"
@@ -276,7 +283,7 @@ const Applications = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
-                  <th style={{width:"15%"}}>
+                  <th style={{ width: "15%" }}>
                     DATE OF APPLICATION
                     <span
                       className="ps-1"
@@ -287,8 +294,8 @@ const Applications = () => {
                     </span>
                   </th>
                   <th className="assessee-column">Assessee</th>
-                  <th style={{width:"20%"}}>EMAIL ID</th>
-                  <th style={{width:"15%"}}>
+                  <th style={{ width: "20%" }}>EMAIL ID</th>
+                  <th style={{ width: "15%" }}>
                     STATUS
                     <span
                       className="ps-1"
@@ -298,7 +305,7 @@ const Applications = () => {
                       {renderSortIcon("state")}
                     </span>
                   </th>
-                  <th style={{width:"20%"}}>
+                  <th style={{ width: "20%" }}>
                     ACTIONS
                     <span
                       className="ps-1"
@@ -320,51 +327,55 @@ const Applications = () => {
                     </tr>
                   </>
                 ) : null}
-                {testRequests?.map((testRequest,index) => (
+                {testRequests?.map((testRequest, index) => (
                   <>
-                  <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
-                    <td>{testRequest.name}</td>
-                    {/* <td>
+                    <tr
+                      className={index % 2 == 0 ? "even" : "odd"}
+                      key={testRequest.id}
+                    >
+                      <td>{testRequest.name}</td>
+                      {/* <td>
                       {testRequest.productName !== ""
                         ? testRequest.productName
                         : "-"}
                     </td> */}
-                    <td>{formatDate(testRequest.meta.createdAt)}</td>            
-                        <UserIdNameEmailConnector
-                          isLink={true}
-                          userId={testRequest.assesseeId}
-                        />
-                      
-                    <td>
-                      {testRequest.state !== "test.request.status.finished" ? (
-                        <Fragment>
-                          <span
-                            className={`status badge ${
-                              StateBadgeClasses[testRequest.state]
-                            }`}
-                          >
-                            {TestRequestStateConstantNames[testRequest.state]}
-                          </span>
-                        </Fragment>
-                      ) : (
-                        <Fragment>
-                          <span
-                            className={`status badge ${
-                              StateBadgeClasses[testRequest.state]
-                            }`}
-                          >
-                            {TestRequestStateConstantNames[testRequest.state]}
-                          </span>
-                        </Fragment>
-                      )}
-                    </td>
-                    <td className=" no-wrap text-left">
-                    {userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+                      <td>{formatDate(testRequest.meta.createdAt)}</td>
+                      <UserIdNameEmailConnector
+                        isLink={true}
+                        userId={testRequest.assesseeId}
+                      />
+
+                      <td>
+                        {testRequest.state !==
+                        "test.request.status.finished" ? (
+                          <Fragment>
+                            <span
+                              className={`status badge ${
+                                StateBadgeClasses[testRequest.state]
+                              }`}
+                            >
+                              {TestRequestStateConstantNames[testRequest.state]}
+                            </span>
+                          </Fragment>
+                        ) : (
+                          <Fragment>
+                            <span
+                              className={`status badge ${
+                                StateBadgeClasses[testRequest.state]
+                              }`}
+                            >
+                              {TestRequestStateConstantNames[testRequest.state]}
+                            </span>
+                          </Fragment>
+                        )}
+                      </td>
+                      <td className=" no-wrap text-left">
+                        {userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
                         testRequest.state ==
                           TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
                           <>
                             <span
-                            className="cursor-pointer"
+                              className="cursor-pointer"
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
@@ -373,7 +384,7 @@ const Applications = () => {
                                 );
                               }}
                             >
-                            <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                              <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
                               APPROVE{" "}
                             </span>
                             <span
@@ -387,40 +398,45 @@ const Applications = () => {
                               }}
                             >
                               <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                                REJECT{" "}
+                              REJECT{" "}
                             </span>
                           </>
                         ) : null}
-                      {testRequest.state !== TestRequestStateConstantNames["test.request.status.finished"] ? (
-                        userRole.includes("role.tester") ||
-                        userRole.includes("role.admin") ? (
-                          <span 
-                            className="cursor-pointer"
-                            onClick={() => {
-                              navigate(`/choose-test/${testRequest.id}`);
-                            }}
-                          >
-                            {" "}
-                            <i
-                              className={
-                                StateClasses[testRequest.state]?.iconClass
-                              }
-                            ></i>{" "}
-                            {StateClasses[testRequest.state]?.btnText?.toUpperCase()}
-                          </span>
+                        {testRequest.state !==
+                        TestRequestStateConstantNames[
+                          "test.request.status.finished"
+                        ] ? (
+                          userRole.includes("role.tester") ||
+                          userRole.includes("role.admin") ? (
+                            <span
+                              className="cursor-pointer"
+                              onClick={() => {
+                                navigate(`/choose-test/${testRequest.id}`);
+                              }}
+                            >
+                              {" "}
+                              <i
+                                className={
+                                  StateClasses[testRequest.state]?.iconClass
+                                }
+                              ></i>{" "}
+                              {StateClasses[
+                                testRequest.state
+                              ]?.btnText?.toUpperCase()}
+                            </span>
+                          ) : (
+                            <></>
+                          )
                         ) : (
-                          <></>
-                        )
-                      ) : (
+                          <span
+                            className="cursor-pointer"
+                            onClick={() => viewReport(testRequest.id)}
+                          >
+                            <i className="bi bi-file-text text-green-50 font-size-16"></i>{" "}
+                            REPORT{" "}
+                          </span>
+                        )}
                         <span
-                        className="cursor-pointer"
-                          onClick={() => viewReport(testRequest.id)}
-                        >
-                          <i className="bi bi-file-text text-green-50 font-size-16"></i>{" "}
-                              REPORT{" "}
-                        </span>
-                      )}
-                      <span
                           onClick={() => toggleRow(testRequest.id)}
                           type="button"
                           className="approval-action-button float-end my-auto display"
@@ -431,30 +447,37 @@ const Applications = () => {
                             <i className="bi bi-chevron-double-right"></i>
                           )}
                         </span>
-                    </td>
-                  </tr>
-                  <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
+                      </td>
+                    </tr>
+                    <tr
+                      className={"collapse " + testRequest.class}
+                      key={"collapseable--" + testRequest.id}
+                    >
                       <td colSpan="5" className="hiddenRow m-0 field-box">
-                        <div
-                          
-                          id="Accordion"
-                        >
+                        <div id="Accordion">
                           <div className="mx-5 my-3">
                             <table className="data-table capitialize-words">
                               <thead>
                                 <tr>
-                                  <th style={{width:'20%'}}>Component</th>
-                                  <th style={{width:'20%'}}>Fhir Api Base Url</th>
-                                  <th style={{width:'20%'}}>Website/UI Base Url</th>
-                                  <th style={{width:'20%'}}>Username</th>
-                                  <th style={{width:'20%'}}>Password</th>
+                                  <th style={{ width: "20%" }}>Component</th>
+                                  <th style={{ width: "20%" }}>
+                                    Fhir Api Base Url
+                                  </th>
+                                  <th style={{ width: "20%" }}>
+                                    Website/UI Base Url
+                                  </th>
+                                  <th style={{ width: "20%" }}>Username</th>
+                                  <th style={{ width: "20%" }}>Password</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {testRequest.testRequestUrls.length > 0 &&
                                   testRequest.testRequestUrls.map(
                                     (testUrls) => (
-                                      <tr id={testUrls.componentId} key={testUrls.componentId}>
+                                      <tr
+                                        id={testUrls.componentId}
+                                        key={testUrls.componentId}
+                                      >
                                         <td>
                                           <ComponentIdConnector
                                             componentId={testUrls.componentId}
@@ -469,7 +492,7 @@ const Applications = () => {
                                             : "*********"}
                                         </td>
                                         <td>
-                                        <i
+                                          <i
                                             className={`bi ${
                                               testUrls.showPass
                                                 ? "bi-eye-fill"
@@ -490,7 +513,7 @@ const Applications = () => {
                         </div>
                       </td>
                     </tr>
-                    </>
+                  </>
                 ))}
               </tbody>
             </table>

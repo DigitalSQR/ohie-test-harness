@@ -210,7 +210,9 @@ export default function UserProfile () {
       UserAPI.UpdateExistingUser(body)
         .then((response) => {
           notification.success({
-            placement: "bottomRight",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
             description: `User Updated Successfully`,
           });
           dispatch(userinfo_success(body));

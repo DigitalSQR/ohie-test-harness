@@ -171,8 +171,10 @@ export default function EditQuestion() {
     DocumentAPI.changeDocumentState(file.documentId, DOCUMENT_STATE_INACTIVE)
       .then((res) => {
         notification.success({
-          message: "Document Removed",
-          placement: "bottomRight",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Success",
+          description: "Document Removed",
         });
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
@@ -289,8 +291,10 @@ export default function EditQuestion() {
           setInitialQuestionType(res.questionType);
           setChangesMade(false);
           notification.success({
-            placement: "bottomRight",
-            message: "Question updated successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "Question updated successfully",
           });
         })
         .catch((error) => {
@@ -353,8 +357,10 @@ export default function EditQuestion() {
         setInitialTestcaseOptions(updatedOptions);
         setEditedTestcaseOptions(updatedOptions);
         notification.success({
-          placement: "bottomRight",
-          message: "Option saved successfully",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Success",
+          description: "Option saved successfully",
         });
       })
       .catch((error) => {});
@@ -386,8 +392,10 @@ export default function EditQuestion() {
           setInitialTestcaseOptions(updatedOptions);
           setEditedTestcaseOptions(updatedOptions);
           notification.success({
-            placement: "bottomRight",
-            message: "State Changed successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "State Changed successfully",
           });
         })
         .catch((error) => {});
