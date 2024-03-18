@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { notification } from "antd";
 import "./automatedtesting.scss";
+import "././TestcaseResultRow/TestcaseResultRow.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import { useLoader } from "../../loader/LoaderContext";
 import { useNavigate, useParams } from "react-router-dom";
@@ -268,7 +269,7 @@ export default function AutomatedTesting() {
   }, [stompClient]);
 
   return (
-    <div>
+    <div id="automatedTesting">
     <div id="wrapper">
       <div className="container">
         <div className="col-12">
@@ -366,7 +367,7 @@ export default function AutomatedTesting() {
                   <th></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody id="testcaseResultRow">
                 {!!data &&
                   data.map((component) => [
                     <TestcaseResultRow

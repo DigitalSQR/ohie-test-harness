@@ -150,5 +150,29 @@
     font-size: 16px;
   }
 
+  .custom-select {
+    height: 50px;
+    border-radius: 5px;
+    border: 1px solid $color-light;
+    font-size: 14px;
+    font-weight: 400;
+    color: $color-black-50;
+    &:focus {
+      box-shadow: none;
+      border: 1px solid $color-light;
+    }
+  }
+
+  .custom-select-sm {
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .page-size-selector{
+    width: 100px;
+    margin-left: 960px;
+  }
+
+
 }
 

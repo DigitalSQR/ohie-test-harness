@@ -43,6 +43,18 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     )
     private Boolean isManual;
 
+
+    @ApiParam(
+            value = "min rank of the specification"
+    )
+    private Integer minRank;
+
+    @ApiParam(
+            value = "max rank of the specification"
+    )
+    private Integer maxRank;
+
+
     private Root<SpecificationEntity> specificationEntityRoot;
     private Join<SpecificationEntity, ComponentEntity> specificationEntityComponentEntityJoin;
 
@@ -89,6 +101,14 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
             predicates.add(criteriaBuilder.equal(this.getSpecificationEntityTestcaseEntityJoin().get("isManual"), getManual()));
         }
 
+        if (getMinRank() != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(this.getSpecificationEntityRoot().get("rank"), getMinRank()));
+        }
+
+        if (getMaxRank() != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(this.getSpecificationEntityRoot().get("rank"), getMaxRank()));
+        }
+
         return predicates;
     }
 
@@ -127,6 +147,23 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     public void setManual(Boolean manual) {
         isManual = manual;
     }
+
+    public Integer getMinRank() {
+        return minRank;
+    }
+
+    public void setMinRank(Integer minRank) {
+        this.minRank = minRank;
+    }
+
+    public Integer getMaxRank() {
+        return maxRank;
+    }
+
+    public void setMaxRank(Integer maxRank) {
+        this.maxRank = maxRank;
+    }
+
 
     private Root<SpecificationEntity> getSpecificationEntityRoot() {
         return specificationEntityRoot;
