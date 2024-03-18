@@ -387,7 +387,7 @@ export default function ManualTestCases() {
                                 </span>
                                 
                                 <button onClick={() => handleUpdate(question)} type="button" className="cursor-pointer btn btn-outline-success rounded-0">
-                                <i class="bi bi-pencil-square"></i>&nbsp;
+                                <i className="bi bi-pencil-square"></i>&nbsp;
                                   Edit Question
                                 </button>
                               </div>

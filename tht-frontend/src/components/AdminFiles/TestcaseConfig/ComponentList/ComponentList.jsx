@@ -228,7 +228,7 @@ export default function ComponentList() {
           </div>
           <div className="table-responsive">
             <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId={JSON.stringify(components)}>
+              <Droppable droppableId={components?JSON.stringify(components):""}>
                 {(provided) => (
                   <table className="data-table capitalize-words" {...provided.droppableProps} ref={provided.innerRef}>
                     <thead>

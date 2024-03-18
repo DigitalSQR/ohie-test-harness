@@ -18,7 +18,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 export default function ComponentSpecification() {
   const navigate = useNavigate();
-  const [specifications, setSpecifications] = useState();
+  const [specifications, setSpecifications] = useState([]);
   const { showLoader, hideLoader } = useLoader();
   const [sortDirection, setSortDirection] = useState({
     rank: "asc",
@@ -231,7 +231,7 @@ export default function ComponentSpecification() {
         <div>
             <div className="table-responsive">
             <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId={JSON.stringify(specifications)}>
+              <Droppable droppableId={specifications?JSON.stringify(specifications):""}>
                 {(provided) => (
               <table className="data-table capitalize-words" {...provided.droppableProps} ref={provided.innerRef}>
                 <thead>
