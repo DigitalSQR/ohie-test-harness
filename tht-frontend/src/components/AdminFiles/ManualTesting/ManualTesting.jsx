@@ -22,6 +22,13 @@ import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
 import { set_header } from "../../../reducers/homeReducer";
 
+/* 
+  Manual Testing Page. 
+
+  This page enables the tester to initiate manual testing for a test-request. 
+  Tester can start answering questions, attach files for evidence/proof for any inadequacy she/he 
+  encounters. 
+*/
 export default function ManualTesting() {
 	const { testRequestId } = useParams();
 	const [currentComponentIndex, setCurrentComponentIndex] = useState();
@@ -41,6 +48,10 @@ export default function ManualTesting() {
 	const [testcaseName, setTestCaseName] = useState();
 	const navigate = useNavigate();
   const openComponentIndex = -1;
+
+  // This function fetches data for the test-request, sorts data according to the hierarchy, i.e. component,
+  // specification  and it's respective testcases.
+  // Also updates already finished testcases if any, for a smooth test-case experience. 
 
 	const fetchTestCaseResultDataAndStartWebSocket = async () => {
 		try {
@@ -81,6 +92,8 @@ export default function ManualTesting() {
 		}
 	};
 
+  // UseEffect which is fired on the initial component render, fetches testcase data and disconnects to 
+  // web-socket if the component is unmounted.
 	useEffect(() => {
     dispatch(set_header("Manual Verification"));
 		showLoader();
@@ -92,6 +105,9 @@ export default function ManualTesting() {
 		};
 	}, []);
 
+  // This UseEffect is responsible for keeping track of components, specifications and testcases that are
+  //  finished. As soon as they are finished, the UI is updated dynamically, which helps the tester, keep track
+  //  of his/her progress
   useEffect(() => {
     if (stompClient && stompClient.connected && !!testcaseResults) {
       // Close the connection once the request is finished
@@ -153,6 +169,8 @@ export default function ManualTesting() {
     }
   }, [stompClient]);
 
+  // The below useEffect ensures that the tester is not brought to a already finished component tests, rather
+  // he/she will be routed to the component which is yet to be tested.
   useEffect(() => {
     if (!!testcaseResults && !currentComponentIndex) {
       let componentIndex;
@@ -176,6 +194,9 @@ export default function ManualTesting() {
 			});
 	};
 
+  // This function is used to navigate between components in the select dropdown. The first unfinished component
+  // is displayed to the tester. This saves time and testing becomes efficient. This function also 
+  // calls the function responsible for the selection of specification.
   const selectComponent = (componentIndex) => {
     componentIndex = parseInt(componentIndex);
     setCurrentComponent(testcaseResults[componentIndex]);
@@ -193,6 +214,8 @@ export default function ManualTesting() {
     selectSpecification(specificationIndex, componentIndex);
   };
 
+  // This function determines when to change the specification tab. Tester is automatically routed to the next 
+  // specification as soon as he/she finishes answering all the testcases in that particular specification.
   const isLastQuestion = () => {
     return (
       currentComponentIndex === testcaseResults.length - 1 &&
@@ -206,6 +229,8 @@ export default function ManualTesting() {
     );
   };
 
+  // This function is responsible for selecting the specification tab. The Tester is displayed the first unfinished 
+  // specification which saves time and makes the process of testing efficient. 
   const selectSpecification = (specificationIndex, componentIndex) => {
     specificationIndex = parseInt(specificationIndex);
     if (componentIndex === undefined) {
@@ -229,6 +254,8 @@ export default function ManualTesting() {
     selectTestcase(testcaseIndex, specificationIndex, componentIndex);
   };
 
+  // Each specifications tab has it's own testcases. The below function is responsible for selecting the testcase.
+  // Tester will be taken to the first unfinished testcase. 
   const selectTestcase = (
     testcaseIndex,
     specificationIndex,
@@ -248,12 +275,15 @@ export default function ManualTesting() {
     setCurrentTestcaseIndex(testcaseIndex);
   };
 
+  // This function is used to dynamically navigate to the desired testcase in the accordion which is made for easy 
+  // navigation through all the testcases.
   const selectParticularTestCase = (componentIndex, specificationIndex, testcaseIndex) => {
     selectComponent(componentIndex);
     selectSpecification(specificationIndex, componentIndex);
     selectTestcase(testcaseIndex, specificationIndex, componentIndex);
   }
 
+  // This function navigates the tester to the next succeeding testcase, once a testcase has been answered.
   const selectNextTestcase = () => {
     if (
       currentTestcaseIndex ===
@@ -272,6 +302,8 @@ export default function ManualTesting() {
     }
   };
 
+  // This function navigates the tester to the next succeeding specification, once a testcase finished testcases for a 
+  // specification. 
   const selectNextSpecification = () => {
     if (
       currentSpecificationIndex ===
@@ -283,6 +315,8 @@ export default function ManualTesting() {
     }
   };
 
+  // This function navigates the tester to the next component, once  all the specifications have been finished
+  // in a component.
   const selectNextComponent = () => {
     if (currentComponentIndex === testcaseResults.length - 1) {
       navigate(`/choose-test/${testRequestId}`);
@@ -291,6 +325,7 @@ export default function ManualTesting() {
     }
   };
 
+  // This function is used for fetching the latest state of a testcase.
   const refreshCurrentTestcase = (testcase) => {
     testcaseResults[currentComponentIndex].childTestcaseResults[
       currentSpecificationIndex

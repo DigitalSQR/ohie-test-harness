@@ -6,9 +6,31 @@ import skipImg from "../../../../styles/images/skip.svg";
 import stopImg from "../../../../styles/images/stop.svg";
 import { TestcaseResultStateConstants } from "../../../../constants/testcaseResult_constants";
 
+/*
+    TestcaseResultRow Component: Child component of AutomatedTesting Component.
+
+    The results of automated testcases are rendered in this component.
+
+    Props received from parent(AutomatedTesting):-
+        1. testcaseResultItem :- The individual items in the result array. Contains the data to be displayed in the rows. 
+        2. stompClient :- it is an instance of Simple Text Oriented Messaging Protocol, used here for real-time communication regarding results and status of automated testcases.
+        3. toggleFunction :- This function is used to toggle the dropdown rows.
+        4. toggleClass :- This const is used to store the current state of the dropdown.
+        5. TestCaseResultType:- Defines the types of the result i.e. component/specification/testcase.
+*/
+
+/* 
+    Usage Example:
+    <TestcaseResultRow testcaseResultItem={{message:"Component",status:"active"}} 
+    stompClient={{url:"production/api",heartbeatdelay:3000}}
+    toggleFunction={()=>{setToggle(false)}} 
+    toggleClass={open}
+    testcaseResultType={"specification0"}/> 
+*/
 export default function TestcaseResultRow({ testcaseResultItem, stompClient, toggleFunction, toggleClass, testcaseResultType, changeState }) {
     const [testcaseResult, setTestcaseResult] = useState(testcaseResultItem);
 
+    //   Function to determine the dropdown toggle classes visibility and its icon
     const getButtonDisplay = () => {
         return (
             <div>
@@ -32,6 +54,7 @@ export default function TestcaseResultRow({ testcaseResultItem, stompClient, tog
         );
     };
 
+    //   This function is used to fetch the error message and display it properly. It replaces the script tag with an empty string.
     const getErrorDisplay = () => {
         const messageSanitize = testcaseResult?.message?.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
         return (
@@ -48,6 +71,8 @@ export default function TestcaseResultRow({ testcaseResultItem, stompClient, tog
         );
     };
 
+
+    //   This function defines the structure of the table data, depending upon the type of the result. 
     const displayTestName = () => {
         switch (testcaseResultType) {
             case "component":
@@ -61,6 +86,7 @@ export default function TestcaseResultRow({ testcaseResultItem, stompClient, tog
         }      
     };
 
+    //   This function determines the result icon of the testcases.
     const getResultDisplay = (testcaseResult) => {
         const state = testcaseResult?.state;
         const success = testcaseResult?.success;
@@ -84,6 +110,7 @@ export default function TestcaseResultRow({ testcaseResultItem, stompClient, tog
         }
     };
 
+    // Effect to subscribe to updates on the testcaseResult via WebSocket using the stompClient.
     useEffect(() => {
         let oldTestcaseResultState = testcaseResult.state;
         if (stompClient && stompClient.connected) {
