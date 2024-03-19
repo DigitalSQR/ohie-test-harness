@@ -22,6 +22,11 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 
+/*
+  AutomatedTesting Component 
+
+  This page displays the results of the automated testcaseresults. 
+*/
 export default function AutomatedTesting() {
   const { testRequestId } = useParams();
   const [testcaseName, setTestCaseName] = useState();
@@ -45,6 +50,7 @@ export default function AutomatedTesting() {
     });
   };
 
+  // Function to resets all tests
   const handleResetButton = () => {
     const params = {
       refObjUri: RefObjUriConstants.TESTREQUEST_REFOBJURI,
@@ -67,6 +73,7 @@ export default function AutomatedTesting() {
       });
   };
 
+  // Function handles stopping ongoing testcases and resetting all the testcases.
   const handleInterruptButton = (reset) => {
     if (reset) {
       setStopAndResetLoader(true);
@@ -96,6 +103,7 @@ export default function AutomatedTesting() {
     });
   };
 
+  // This function starts all the tests once all the testcases have been reset.
   const handleStartTesting = () => {
     const params = {
       testRequestId,
@@ -114,6 +122,9 @@ export default function AutomatedTesting() {
       });
   };
 
+  // This function fetches data from the server and initiates web socket connection and receives real time updates.
+  // The data recieved in grouped on the basis of the type of testcase.
+  // Tracks completed testcases and displays them on the UI.
   const fetchTestCaseResultDataAndStartWebSocket = async () => {
     showLoader();
     try {
@@ -172,6 +183,7 @@ export default function AutomatedTesting() {
     setData(newData);
   };
 
+  // This function toggles the visibility of a specification row based on its ID.
   const toggleSpecificationRow = (specificationId) => {
     const newData = data.map((component) => ({
       ...component,
@@ -188,6 +200,7 @@ export default function AutomatedTesting() {
     setData(newData);
   };
 
+  // This function toggles the visibility of a component row based on its ID.
   const toggleComponentRow = (componentId) => {
     const newData = data.map((component) => ({
       ...component,
@@ -201,6 +214,7 @@ export default function AutomatedTesting() {
     setData(newData);
   };
 
+  // The below function fetches the testcaseinfo based on test request Id.
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
@@ -209,6 +223,8 @@ export default function AutomatedTesting() {
        
       });
   };
+
+  // Use Effect which fetches testcase info and initiates web WebSocketService.
   useEffect(() => {
     dispatch(set_header("Automated Verification"));
     fetchTestCaseResultDataAndStartWebSocket();
@@ -219,6 +235,7 @@ export default function AutomatedTesting() {
     };
   }, []);
 
+  // Method to track the number of finishes testcases.
   let changeState = (newState, oldState) => {
     if(oldState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS || oldState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {   
       if(newState === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
