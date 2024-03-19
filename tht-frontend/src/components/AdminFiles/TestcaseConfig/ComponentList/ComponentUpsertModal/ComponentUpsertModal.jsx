@@ -35,8 +35,10 @@ const UpsertModal = ({
       ComponentAPI.createComponent(values)
         .then(() => {
           notification.success({
-            placement: "bottomRight",
-            message: "Component Created Successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "Component Created Successfully",
           });
 
           refreshAllComponents();
@@ -55,8 +57,10 @@ const UpsertModal = ({
       ComponentAPI.updateComponent(data)
         .then(() => {
           notification.success({
-            placement: "bottomRight",
-            message: "Component Updated Successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "Component Updated Successfully",
           });
           refreshAllComponents();
           setIsModalOpen(false);

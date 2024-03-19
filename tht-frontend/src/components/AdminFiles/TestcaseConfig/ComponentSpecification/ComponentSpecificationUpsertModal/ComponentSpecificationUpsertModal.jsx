@@ -39,8 +39,10 @@ const UpsertModal = ({
       })
         .then(() => {
           notification.success({
-            placement: "bottomRight",
-            message: "Specification Created Successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "Specification Created Successfully",
           });
 
           refreshAllSpecifications();
@@ -59,8 +61,10 @@ const UpsertModal = ({
       SpecificationAPI.updateSpecification(data)
         .then(() => {
           notification.success({
-            placement: "bottomRight",
-            message: "Specification Updated Successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "Specification Updated Successfully",
           });
           refreshAllSpecifications();
           setIsModalOpen(false);

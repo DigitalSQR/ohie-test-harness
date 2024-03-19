@@ -125,6 +125,8 @@ const TestingRequests = () => {
         hideLoader();
         errors.forEach((error, i) => {
           notification.error({
+            className:"notificationError",
+            message:"Error",
             description: error,
             placement: "bottomRight",
           });
@@ -154,8 +156,10 @@ const TestingRequests = () => {
         TestRequestAPI.changeState(testRequestId, updatedState)
         .then((res) => {
           notification.success({
-            placement: "bottomRight",
-            message: "Status updated successfully!",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "Status updated successfully!",
           });
           testRequests[index] = res;
           setTestRequests(testRequests);
