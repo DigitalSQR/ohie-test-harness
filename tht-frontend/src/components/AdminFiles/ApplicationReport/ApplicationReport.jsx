@@ -10,6 +10,8 @@ import { GradeAPI } from "../../../api/GradeAPI";
 import { UserAPI } from "../../../api/UserAPI";
 import { formatDate } from "../../../utils/utils.js";
 import { useLoader } from "../../loader/LoaderContext";
+import { USER_ROLES } from "../../../constants/role_constants";
+import { store } from "../../../store/store";
 
 import { Table, Tooltip } from "antd";
 import {
@@ -46,9 +48,11 @@ const ApplicationReport = () => {
   const [user, setUser] = useState();
   const [rangedGradeData, setRangedGradeData] = useState();
   const [columns, setColumns] = useState([]);
+  const [loggedInUser, setLoggedInUser]=useState();
 
   //UseEffect to call fetchTestCaseResultData, fetchTestCaseRequestData and fetchAllGrades functions when the component initially loads
   useEffect(() => {
+    setLoggedInUser(store.getState().userInfoSlice);
     fetchTestCaseResultData();
     fetchTestCaseRequestData();
     fetchAllGrades();
@@ -115,7 +119,12 @@ const ApplicationReport = () => {
     if (navigate.length > 3) {
       navigate(-1);
     } else {
-      navigate("/testing-requests");
+      if(loggedInUser?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+      loggedInUser?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)){
+        navigate("/applications");
+      }else{
+        navigate("/testing-requests");
+      }
     }
   };
 
@@ -233,7 +242,7 @@ const ApplicationReport = () => {
                         </p>
                       </div>
                       <div className="col-12">
-                        <p>Components applied for testing:</p>
+                        <p>Components applied for verification:</p>
                         <div>
                           {componentNames?.map((item) => (
                             <span key={item} className="comp-badge">

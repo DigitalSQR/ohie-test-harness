@@ -36,7 +36,6 @@ public class SHRWF1TestCase1 implements TestCase {
     @Override
     public ValidationResultInfo test(Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
 
-        String testCaseName = this.getClass().getSimpleName();
         Bundle bundle = new Bundle();
         bundle.setType(Bundle.BundleType.COLLECTION);
 
@@ -114,7 +113,6 @@ public class SHRWF1TestCase1 implements TestCase {
         //Make a pattern for extracting the patient ID from the references
         LOGGER.info("Extracting patient and practitioner(s) IDs from encounter references");
         String input = fetchEncounter.getSubject().getReference();
-        ;
 
         Pattern pattern = Pattern.compile("\\d+");
 

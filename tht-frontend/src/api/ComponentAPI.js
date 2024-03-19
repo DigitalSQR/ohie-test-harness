@@ -50,6 +50,15 @@ export const ComponentAPI = {
     return response;
     
   },
+  changeRank: async function (componentId, changeRank) {
+   
+    const response = await api.request({
+      url: `/component/rank/${componentId}/${changeRank}`,
+      method: "PATCH",
+    });
+    return response;
+    
+  },
   validateConfiguration: function(refObjectUri, refId){
     return api.request({
       url: `/component/configuration/validate`,

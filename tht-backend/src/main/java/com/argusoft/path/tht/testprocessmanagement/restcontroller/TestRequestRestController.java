@@ -22,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -191,7 +190,7 @@ public class TestRequestRestController {
             @RequestParam(value = "recommended", required = false) Boolean isRecommended,
             @RequestParam(value = "workflow", required = false) Boolean isWorkflow,
             @RequestParam(value = "functional", required = false) Boolean isFunctional,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
         testRequestService.startTestingProcess(
                 testRequestId,
                 refObjUri,
@@ -211,6 +210,7 @@ public class TestRequestRestController {
     })
     @PutMapping("/stop-testing-process/{testRequestId}")
     @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
+    @Transactional(rollbackFor = Exception.class)
     public void stopTestingProcess(
             @PathVariable("testRequestId") String testRequestId,
             @RequestParam(value = "refObjUri", required = true) String refObjUri,
@@ -281,7 +281,7 @@ public class TestRequestRestController {
     })
 
     @GetMapping("status/mapping")
-    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
         Collection<String> strings = TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
     }

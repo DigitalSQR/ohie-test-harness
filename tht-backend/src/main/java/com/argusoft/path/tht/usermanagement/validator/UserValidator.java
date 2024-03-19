@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.D
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.models.entity.IdEntity;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * validation methods for the user
@@ -169,6 +171,11 @@ public class UserValidator {
                     try {
                         UserEntity originalEntity = userService.getUserById(userEntity.getId(), contextInfo);
                         validateUpdateUser(errors, userEntity, originalEntity, contextInfo);
+                        // For Admin role
+                        if(originalEntity.getRoles().stream().map(IdEntity::getId).collect(Collectors.toSet()).contains(UserServiceConstants.ROLE_ID_ADMIN)
+                                && !userEntity.getRoles().stream().map(IdEntity::getId).collect(Collectors.toSet()).contains(UserServiceConstants.ROLE_ID_ADMIN)) {
+                            oneAdminShouldActiveValidation(userService, errors, contextInfo);
+                        }
                     } catch (DoesNotExistException | InvalidParameterException ex) {
                         LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserValidator.class.getSimpleName(), ex);
                         String fieldName = "id";
@@ -362,8 +369,8 @@ public class UserValidator {
         if (userList.size() == 1) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("One of the admin must be active");
-            validationResultInfo.setElement("state");
+            validationResultInfo.setMessage("Can't remove/disable admin if there are no other admin available.");
+            validationResultInfo.setElement("state/role");
             errors.add(validationResultInfo);
         }
     }

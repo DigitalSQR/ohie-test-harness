@@ -147,6 +147,23 @@ public interface ComponentService {
     public ComponentEntity changeState(String componentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
     /**
+     * Change the rank of component
+     *
+     * @param componentId ComponentId of Component to be retrieved
+     * @param rank    rank to which component rank to be changed
+     * @param contextInfo information containing the principalId and locale
+     *                    information about the caller of service operation
+     * @return changed state component
+     * @throws DoesNotExistException        a ComponentId in ComponentIds not found
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
+     */
+    public ComponentEntity changeRank(String componentId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
+    /**
      * validates testcase configurations.
      *
      * @param refObjUri   regObjUri

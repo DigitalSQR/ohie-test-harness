@@ -26,7 +26,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -196,6 +195,25 @@ public class TestcaseRestController {
         return testcaseMapper.modelToDto(testcaseEntity);
     }
 
+    @ApiOperation(value = "To change rank of test case", response = TestcaseInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated Test case"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/rank/{testcaseId}/{rank}")
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
+    public TestcaseInfo updateTestcaseRank(@PathVariable("testcaseId") String testcaseId,
+                                                     @PathVariable("rank") Integer rank,
+                                                     @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        TestcaseEntity testcaseEntity = testcaseService.changeRank(testcaseId, rank, contextInfo);
+        return testcaseMapper.modelToDto(testcaseEntity);
+    }
+
+
+
     @ApiOperation(value = "To apply patch to the Testcase", response = TestcaseInfo.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated Testcase"),
@@ -238,7 +256,7 @@ public class TestcaseRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping("/status/mapping")
-    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) throws IOException {
+    public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
         Collection<String> strings = TestcaseServiceConstants.TESTCASE_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
     }

@@ -15,7 +15,6 @@ import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFil
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -129,9 +128,7 @@ public class TestcaseValidator {
     //validate update
     private static void validateUpdateTestcase(List<ValidationResultInfo> errors,
                                                TestcaseEntity testcaseEntity,
-                                               TestcaseEntity originalEntity)
-            throws OperationFailedException,
-            InvalidParameterException {
+                                               TestcaseEntity originalEntity) {
         // required validation
         ValidationUtils.validateRequired(testcaseEntity.getId(), "id", errors);
         //check the meta required
@@ -262,7 +259,7 @@ public class TestcaseValidator {
                 255,
                 errors);
         try {
-            TestCase cRTestCases = (TestCase) applicationContext.getBean(testcaseEntity.getBeanName());
+            applicationContext.getBean(testcaseEntity.getBeanName());
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + TestcaseValidator.class.getSimpleName(), e);
             errors
@@ -273,8 +270,9 @@ public class TestcaseValidator {
     }
 
     //Validation For :Order
-    private static void validateTestcaseEntityOrder(TestcaseEntity testcaseEntity,
-                                                    List<ValidationResultInfo> errors) {
+    public static void validateTestcaseEntityOrder(TestcaseEntity testcaseEntity,
+                                                   List<ValidationResultInfo> errors) {
+        ValidationUtils.validateRequired(testcaseEntity.getRank(), "rank", errors);
         ValidationUtils.validateIntegerRange(testcaseEntity.getRank(),
                 "rank",
                 1,
@@ -283,18 +281,18 @@ public class TestcaseValidator {
     }
 
     //trim all Testcase field
-    private static void trimTestcase(TestcaseEntity TestcaseEntity) {
-        if (TestcaseEntity.getId() != null) {
-            TestcaseEntity.setId(TestcaseEntity.getId().trim());
+    private static void trimTestcase(TestcaseEntity testcaseEntity) {
+        if (testcaseEntity.getId() != null) {
+            testcaseEntity.setId(testcaseEntity.getId().trim());
         }
-        if (TestcaseEntity.getName() != null) {
-            TestcaseEntity.setName(TestcaseEntity.getName().trim());
+        if (testcaseEntity.getName() != null) {
+            testcaseEntity.setName(testcaseEntity.getName().trim());
         }
-        if (TestcaseEntity.getDescription() != null) {
-            TestcaseEntity.setDescription(TestcaseEntity.getDescription().trim());
+        if (testcaseEntity.getDescription() != null) {
+            testcaseEntity.setDescription(testcaseEntity.getDescription().trim());
         }
-        if (TestcaseEntity.getBeanName() != null) {
-            TestcaseEntity.setBeanName(TestcaseEntity.getBeanName().trim());
+        if (testcaseEntity.getBeanName() != null) {
+            testcaseEntity.setBeanName(testcaseEntity.getBeanName().trim());
         }
     }
 
@@ -302,8 +300,7 @@ public class TestcaseValidator {
                                                  List<ValidationResultInfo> errors,
                                                  SpecificationService specificationService,
                                                  ContextInfo contextInfo)
-            throws OperationFailedException,
-            InvalidParameterException {
+            throws InvalidParameterException {
         if (testcaseEntity.getSpecification() != null) {
             try {
                 testcaseEntity.setSpecification(

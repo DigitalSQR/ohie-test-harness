@@ -44,4 +44,14 @@ export const SpecificationAPI = {
     });
     return response;
   },
+
+  changeRank: async function (specificationId, changeRank) {
+   
+    const response = await api.request({
+      url: `/specification/rank/${specificationId}/${changeRank}`,
+      method: "PATCH",
+    });
+    return response;
+    
+  },
 };

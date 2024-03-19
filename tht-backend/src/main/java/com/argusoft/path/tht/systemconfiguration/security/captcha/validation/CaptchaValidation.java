@@ -1,7 +1,6 @@
 package com.argusoft.path.tht.systemconfiguration.security.captcha.validation;
 
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 
@@ -20,7 +19,7 @@ public class CaptchaValidation {
     private CaptchaValidation() {
     }
 
-    public static List<ValidationResultInfo> validateCaptchaEmpty(String code, String encryptedString) throws InvalidParameterException {
+    public static List<ValidationResultInfo> validateCaptchaEmpty(String code, String encryptedString) {
 
 
         List<ValidationResultInfo> errors = new ArrayList<>();

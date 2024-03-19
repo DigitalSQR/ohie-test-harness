@@ -1,4 +1,4 @@
-package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar;
+package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.util;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -25,6 +25,8 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.event.TestcaseExecutionStartEvent;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
@@ -51,7 +53,7 @@ public class TestcaseExecutioner {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseExecutioner.class);
 
-    public static Map<String, String> map = new HashMap<>();
+    protected static final Map<String, String> map = new HashMap<>();
 
     private ApplicationContext applicationContext;
 
@@ -369,7 +371,7 @@ public class TestcaseExecutioner {
         testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
     }
 
-    private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) throws OperationFailedException {
+    private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) {
         FhirContext context;
         if (contextType == null) {
             contextType = "R4";
@@ -473,7 +475,7 @@ public class TestcaseExecutioner {
             Boolean isRecommended,
             Boolean isWorkflow,
             Boolean isFunctional,
-            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
@@ -540,7 +542,7 @@ public class TestcaseExecutioner {
             Boolean isRecommended,
             Boolean isWorkflow,
             Boolean isFunctional,
-            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         List<TestcaseResultEntity> filteredTestcaseResults;
 
         TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();

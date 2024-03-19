@@ -11,11 +11,6 @@ import { useLoader } from "../../loader/LoaderContext";
 import "./SignUp.scss"
 export default function SignUp() {
   const navigate = useNavigate();
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      formik.handleSubmit();
-    }
-  };
   const [captchaInfo, setCaptchaInfo] = useState({
     code: "",
     captcha: ""
@@ -109,7 +104,7 @@ export default function SignUp() {
               <div className="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
                 <h1>Testing Harness Test Automation</h1>
                 <p className="font-size-16 mt-3">
-                  Experience streamlined OpenHIE standards compliance testing
+                  Experience streamlined OpenHIE standards compliance verification
                   for healthcare websites. Our tool ensures precision,
                   simplifies complexities, and empowers your projects.
                 </p>
@@ -152,7 +147,6 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       autoComplete="off"
                       autoFocus={true}
-                      onKeyDown={handleKeyPress}
                     />
                   </div>
                   {formik.touched.name && formik.errors.name && (
@@ -186,7 +180,6 @@ export default function SignUp() {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       autoComplete="off"
-                      onKeyDown={handleKeyPress}
 
                     />
                   </div>
@@ -221,7 +214,6 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
                       autoComplete="off"
-                      onKeyDown={handleKeyPress}
                     />
                   </div>
                   {formik.touched.companyName && formik.errors.companyName && (
@@ -256,7 +248,6 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
                       autoComplete="off"
-                      onKeyDown={handleKeyPress}
                     />
                     <button
                       className="btn btn-outline-secondary signup-password"
@@ -301,7 +292,6 @@ export default function SignUp() {
                       onChange={formik.handleChange}
                       value={formik.values.confirmPassword}    
                       autoComplete="off"
-                      onKeyDown={handleKeyPress}
                     />
                     <button
                       className="btn btn-outline-secondary signup-password"

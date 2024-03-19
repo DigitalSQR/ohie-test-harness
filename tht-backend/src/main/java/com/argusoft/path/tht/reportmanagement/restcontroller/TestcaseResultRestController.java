@@ -73,15 +73,15 @@ public class TestcaseResultRestController {
 //    @PostMapping("")
     @Transactional(rollbackFor = Exception.class)
     public TestcaseResultInfo createTestcaseResult(
-            @RequestBody TestcaseResultInfo TestcaseResultInfo,
+            @RequestBody TestcaseResultInfo testcaseResultInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
             DataValidationErrorException, DoesNotExistException, VersionMismatchException {
 
-        TestcaseResultEntity TestcaseResultEntity = testcaseResultMapper.dtoToModel(TestcaseResultInfo);
-        TestcaseResultEntity = testcaseResultService.createTestcaseResult(TestcaseResultEntity, contextInfo);
-        return testcaseResultMapper.modelToDto(TestcaseResultEntity);
+        TestcaseResultEntity testcaseResultEntity = testcaseResultMapper.dtoToModel(testcaseResultInfo);
+        testcaseResultEntity = testcaseResultService.createTestcaseResult(testcaseResultEntity, contextInfo);
+        return testcaseResultMapper.modelToDto(testcaseResultEntity);
 
     }
 
@@ -100,7 +100,7 @@ public class TestcaseResultRestController {
 //    @PutMapping("")
     @Transactional(rollbackFor = Exception.class)
     public TestcaseResultInfo updateTestcaseResult(
-            @RequestBody TestcaseResultInfo TestcaseResultInfo,
+            @RequestBody TestcaseResultInfo testcaseResultInfo,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             OperationFailedException,
@@ -108,9 +108,9 @@ public class TestcaseResultRestController {
             VersionMismatchException,
             DataValidationErrorException {
 
-        TestcaseResultEntity TestcaseResultEntity = testcaseResultMapper.dtoToModel(TestcaseResultInfo);
-        TestcaseResultEntity = testcaseResultService.updateTestcaseResult(TestcaseResultEntity, contextInfo);
-        return testcaseResultMapper.modelToDto(TestcaseResultEntity);
+        TestcaseResultEntity testcaseResultEntity = testcaseResultMapper.dtoToModel(testcaseResultInfo);
+        testcaseResultEntity = testcaseResultService.updateTestcaseResult(testcaseResultEntity, contextInfo);
+        return testcaseResultMapper.modelToDto(testcaseResultEntity);
     }
 
     /**
@@ -235,13 +235,13 @@ public class TestcaseResultRestController {
     public List<ValidationResultInfo> validateTestcaseResult(
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,
-            @RequestBody(required = true) TestcaseResultInfo TestcaseResultInfo,
+            @RequestBody(required = true) TestcaseResultInfo testcaseResultInfo,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException, DataValidationErrorException {
-        TestcaseResultEntity TestcaseResultEntity = testcaseResultMapper.dtoToModel(TestcaseResultInfo);
+        TestcaseResultEntity testcaseResultEntity = testcaseResultMapper.dtoToModel(testcaseResultInfo);
         return testcaseResultService
-                .validateTestcaseResult(validationTypeKey, TestcaseResultEntity, contextInfo);
+                .validateTestcaseResult(validationTypeKey, testcaseResultEntity, contextInfo);
     }
 
     //    @ApiOperation(value = "To change status of TestcaseResult", response = DocumentInfo.class)

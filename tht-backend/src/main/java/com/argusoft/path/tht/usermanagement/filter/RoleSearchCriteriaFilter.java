@@ -38,11 +38,6 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
     }
 
     @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
-    @Override
     protected List<Predicate> buildPredicates(Root<RoleEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         setRoleEntityRoot(root);
         List<Predicate> predicates = new ArrayList<>();
@@ -57,11 +52,6 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
         }
 
         return predicates;
-    }
-
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<RoleEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return null;
     }
 
     public String getName() {

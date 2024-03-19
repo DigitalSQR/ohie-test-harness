@@ -119,15 +119,16 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
             if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
                 // nothing as of now
 
-            } else if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
-                if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(userByEmail.getState())) {
+            } else if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType()) && (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(userByEmail.getState()))) {
                     if (userByEmail.getRoles().stream().anyMatch(roleEntity -> roleEntity.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))) {
                         userByEmail.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
+                        userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userByEmail, contextInfo);
                     } else {
                         userByEmail.setState(UserServiceConstants.USER_STATUS_ACTIVE);
+                        userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_ACTIVE, userByEmail, contextInfo);
                     }
-                    userByEmail = userService.updateUser(userByEmail, contextInfo);
-                }
+                    userService.updateUser(userByEmail, contextInfo);
+
             }
         }
         return activeTokenByIdAndUserId.isPresent();
