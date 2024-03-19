@@ -45,6 +45,8 @@ export default function AutomatedTesting() {
   const dispatch = useDispatch();
   const clickHandler = () => {
     notification.info({
+      className:"notificationInfo",
+      message:"Info",
       placement: "bottom-right",
       description: "No actions yet",
     });
@@ -59,14 +61,18 @@ export default function AutomatedTesting() {
       reset: true,
     };
     notification.info({
+      className:"notificationInfo",
+      message:"Info",
       description: "Reset Process has been initiated",
       placement: "bottomRight",
     });
     TestProcessAPI.stopTestProcess(testRequestId, params)
       .then(() => {
         notification.success({
-          description: "Verification Process has been Reset successully",
-          placement: "bottomRight",
+        className: "notificationSuccess",
+        placement: "top",
+        message: "Success",
+        description: "Verification Process has been Reset successully",
         });
       }).catch((error) => {
         
@@ -87,6 +93,8 @@ export default function AutomatedTesting() {
       reset,
     };
     notification.info({
+      className:"notificationInfo",
+      message:"Info",
       description: reset
         ? "Stop and Reset process has been initiated. Please wait for some time"
         : "Stop process has been reinitiated. Please wait for some time",
@@ -95,8 +103,10 @@ export default function AutomatedTesting() {
     TestProcessAPI.stopTestProcess(testRequestId, params)
     .then(() => {
       notification.success({
+        className: "notificationSuccess",
+        placement: "top",
+        message: "Success",
         description: "Process to interrupt has been started successully. Please wait for some time",
-        placement: "bottomRight",
       });
     }).catch((error) => {
         
@@ -114,8 +124,10 @@ export default function AutomatedTesting() {
     TestResultAPI.startTests(params)
       .then(() => {
         notification.success({
-          description: "Verification Process has been started successully",
-          placement: "bottomRight",
+        className: "notificationSuccess",
+        placement: "top",
+        message: "Success",
+        description: "Verification Process has been started successully",
         });
       }).catch((error) => {
         

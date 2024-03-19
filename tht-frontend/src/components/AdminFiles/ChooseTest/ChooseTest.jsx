@@ -156,8 +156,10 @@ export default function ChooseTest() {
         if (!!manual) {
           navigate(`/manual-testing/${testRequestId}`);
           notification.success({
+            className: "notificationSuccess",
+            placement: "top",
+            message: "Success",
             description: "Verification Process has been Started Successfully",
-            placement: "bottomRight",
           });
         }
         loadProgress();
@@ -166,8 +168,10 @@ export default function ChooseTest() {
       });
     if (!!automated) {
       notification.success({
+        className: "notificationSuccess",
+        placement: "top",
+        message: "Success",
         description: "Verification Process has been Started Successfully",
-        placement: "bottomRight",
       });
       navigate(`/automated-testing/${testRequestId}`);
     }
@@ -230,18 +234,16 @@ export default function ChooseTest() {
     TestRequestAPI.changeState(testRequestId, "test.request.status.finished")
         .then((res) => {
           notification.success({
-            placement: "bottomRight",
-            message: "Verification submitted successfully!",
+            className: "notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "Verification submitted successfully!",
           });
           const newTab = window.open(`/application-report/${testRequestId}`, '_blank');
           newTab.focus();      
           navigate(`/applications`);
         })
         .catch((err) => {       
-          notification.error({
-            placement: "bottomRight",
-            message: "Something went wrong!",
-          });
         }); 
   }
   return (

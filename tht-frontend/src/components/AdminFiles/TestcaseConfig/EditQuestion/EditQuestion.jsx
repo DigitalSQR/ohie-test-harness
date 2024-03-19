@@ -63,10 +63,6 @@ export default function EditQuestion() {
         setInitialQuestionType(res.questionType);
       })
       .catch((error) => {
-        notification.error({
-          message: "Error Loading question!",
-          placement: "bottomRight",
-        });
       });
 
     TestCaseOptionsAPI.getTestCaseOptionsByTestcaseId(testcaseId)
@@ -77,16 +73,14 @@ export default function EditQuestion() {
           setEditedTestcaseOptions(res.content);
         } else {
           notification.warning({
-            message: "Options for this question are not available. Please add some.",
+            className:"notificationWarning",
+						message:"Warning",
+            description: "Options for this question are not available. Please add some.",
             placement: "bottomRight",
           });
         }
       })
       .catch((error) => {
-        notification.error({
-          message: "Error Loading options!",
-          placement: "bottomRight",
-        });
       });
 
     DocumentAPI.getDocumentsByRefObjUriAndRefId(
@@ -123,11 +117,6 @@ export default function EditQuestion() {
         setFileList(updatedFiles);
       })
       .catch((err) => {
-        console.log(err);
-        notification.error({
-          message: "Error Loading Files!",
-          placement: "bottomRight",
-        });
       });
   };
 
@@ -171,8 +160,10 @@ export default function EditQuestion() {
     DocumentAPI.changeDocumentState(file.documentId, DOCUMENT_STATE_INACTIVE)
       .then((res) => {
         notification.success({
-          message: "Document Removed",
-          placement: "bottomRight",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Success",
+          description: "Document Removed",
         });
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
@@ -180,11 +171,6 @@ export default function EditQuestion() {
         setFileList(newFileList);
       })
       .catch((err) => {
-        let msg = err.response.data?.message || err.response.data[0].message;
-        notification.error({
-          message: `${msg}`,
-          placement: "bottomRight",
-        });
       });
   };
 
@@ -214,7 +200,9 @@ export default function EditQuestion() {
 
       if (!isImage) {
         notification.error({
-          message: "Only JPEG and PNG Files are allowed.",
+          className:"notificationError",
+          message:"Error",
+          description: "Only JPEG and PNG Files are allowed.",
           placement: "bottomRight",
         });
         return false;
@@ -289,16 +277,13 @@ export default function EditQuestion() {
           setInitialQuestionType(res.questionType);
           setChangesMade(false);
           notification.success({
-            placement: "bottomRight",
-            message: "Question updated successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "Question updated successfully",
           });
         })
         .catch((error) => {
-          console.error("Error saving question:", error);
-          notification.error({
-            placement: "bottomRight",
-            message: "Failed to save question",
-          });
         });
     } finally {
       hideLoader();
@@ -353,8 +338,10 @@ export default function EditQuestion() {
         setInitialTestcaseOptions(updatedOptions);
         setEditedTestcaseOptions(updatedOptions);
         notification.success({
-          placement: "bottomRight",
-          message: "Option saved successfully",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Success",
+          description: "Option saved successfully",
         });
       })
       .catch((error) => {});
@@ -386,8 +373,10 @@ export default function EditQuestion() {
           setInitialTestcaseOptions(updatedOptions);
           setEditedTestcaseOptions(updatedOptions);
           notification.success({
-            placement: "bottomRight",
-            message: "State Changed successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
+            description: "State Changed successfully",
           });
         })
         .catch((error) => {});

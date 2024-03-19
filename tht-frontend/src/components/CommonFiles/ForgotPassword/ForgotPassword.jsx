@@ -34,7 +34,9 @@ export default function ForgotPassword() {
       .then((response) => {
         var data = response.data;
         notification.success({
-          placement: "bottomRight",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Success",
           description: `${data?.message}`,
         });
         hideLoader();

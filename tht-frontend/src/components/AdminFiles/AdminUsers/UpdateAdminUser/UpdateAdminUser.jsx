@@ -87,7 +87,9 @@ const UpdateAdminUser = () => {
       .then((response) => {
         hideLoader();
         notification.success({
-          placement: "bottomRight",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Success",
           description: `User Updated Successfully`,
         });
         navigate("/user-management");

@@ -184,11 +184,6 @@ export default function ManualTestCases() {
           setQuestionAndDocument(updatedQuestions);
           })
           .catch((err) => {
-            console.log(err);
-            notification.error({
-              message: "Error Loading Files!",
-              placement: "bottomRight",
-            });
           })
           .finally(()=> {
             setQuestionFetched(true);

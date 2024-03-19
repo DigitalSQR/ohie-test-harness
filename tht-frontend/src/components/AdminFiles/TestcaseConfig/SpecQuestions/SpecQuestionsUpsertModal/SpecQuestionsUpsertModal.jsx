@@ -35,8 +35,10 @@ const UpsertModal = ({
     TestCaseAPI.createTestCase(data)
       .then((resp) => {
         notification.success({
-          placement: "bottomRight",
-          message: "Testcase Created Successfully",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Success",
+          description: "Testcase Created Successfully",
         });
 
         fetchData();

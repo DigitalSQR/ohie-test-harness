@@ -150,8 +150,10 @@ const Assessee = () => {
       .then((res) => {
         hideLoader();
         notification.success({
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Success",
           description: `Request has been ${newState}`,
-          placement: "bottom-left",
         });
         availableUsers[index] = res.data;
         setAvailableUsers(availableUsers);

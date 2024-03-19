@@ -22,15 +22,15 @@ const RegisterApplication = () => {
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserId(userInfo.id);
-    const params={};
-    params.state="component.status.active"
-    params.sort="rank,asc"
+    const params = {};
+    params.state = "component.status.active";
+    params.sort = "rank,asc";
     ComponentAPI.getComponents(params)
       .then((res) => {
         setComponents(res.content);
         hideLoader();
       })
-      .catch((err) => {       
+      .catch((err) => {
         hideLoader();
       });
   }, []);
@@ -46,16 +46,17 @@ const RegisterApplication = () => {
 
     if (values.name === "") {
       errors.name = "Application Name is required";
-    }else if(values.name.length < 3){
-      errors.name = "Application name must be of minimum 3 characters"
-    }else if (values.name.length > 1000) {
+    } else if (values.name.length < 3) {
+      errors.name = "Application name must be of minimum 3 characters";
+    } else if (values.name.length > 1000) {
       errors.name = "Application name must have less than 1000 characters.";
     }
 
     if (values.description === "") {
       errors.description = "Application Description is required";
-    }else if (values.description.length > 1000) {
-      errors.description = "Application description must have less than 1000 characters.";
+    } else if (values.description.length > 1000) {
+      errors.description =
+        "Application description must have less than 1000 characters.";
     }
 
     values.testRequestUrls.forEach((url, index) => {
@@ -63,8 +64,7 @@ const RegisterApplication = () => {
         errors[
           `testRequestUrls[${modifiedComponentId(url.componentId)}].username`
         ] = "Username is required";
-      }
-      else if (url.username.length > 255) {
+      } else if (url.username.length > 255) {
         errors[
           `testRequestUrls[${modifiedComponentId(url.componentId)}].username`
         ] = "Username must have less than 255 characters";
@@ -73,29 +73,32 @@ const RegisterApplication = () => {
         errors[
           `testRequestUrls[${modifiedComponentId(url.componentId)}].password`
         ] = "Password is required";
-      }
-      else if (url.password.length > 255) {
+      } else if (url.password.length > 255) {
         errors[
           `testRequestUrls[${modifiedComponentId(url.componentId)}].password`
         ] = "Password must have less than 255 characters";
       }
       if (url.fhirApiBaseUrl === "") {
         errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].fhirApiBaseUrl`
+          `testRequestUrls[${modifiedComponentId(
+            url.componentId
+          )}].fhirApiBaseUrl`
         ] = "fhirApiBaseUrl is required";
-      }
-      else if (url.fhirApiBaseUrl.length > 255) {
+      } else if (url.fhirApiBaseUrl.length > 255) {
         errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].fhirApiBaseUrl`
+          `testRequestUrls[${modifiedComponentId(
+            url.componentId
+          )}].fhirApiBaseUrl`
         ] = "fhirApiBaseUrl must have less than 255 characters";
       }
-       if (url.websiteUIBaseUrl.length > 255) {
+      if (url.websiteUIBaseUrl.length > 255) {
         errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].websiteUIBaseUrl`
+          `testRequestUrls[${modifiedComponentId(
+            url.componentId
+          )}].websiteUIBaseUrl`
         ] = "websiteUIBaseUrl must have less than 255 characters";
       }
     });
-
 
     return errors;
   };
@@ -115,33 +118,37 @@ const RegisterApplication = () => {
     validate,
     onSubmit: (values) => {
       showLoader();
-            formik.values.assesseeId = userId;
-      TestRequestAPI.validateTestRequest(CREATE_VALIDATION, values).then(
-        (res) => {
+      formik.values.assesseeId = userId;
+      TestRequestAPI.validateTestRequest(CREATE_VALIDATION, values)
+        .then((res) => {
           if (res.length == 0) {
-            TestRequestAPI.createTestRequest(values).then((res) => {
-              notification.success({
-                placement: "bottomRight",
-                message: `Successfully Created! Waiting for Approval`,
+            TestRequestAPI.createTestRequest(values)
+              .then((res) => {
+                notification.success({
+                  className: "notificationSuccess",
+                  placement: "top",
+                  message: "Success",
+                  description: `Successfully Created! Waiting for Approval`,
+                });
+                hideLoader();
+                navigate("/testing-requests");
+              })
+              .catch((error) => {
+                hideLoader();
               });
-              hideLoader();
-              navigate("/testing-requests");
-            }).catch((error) => {
-              hideLoader();
-            });
           } else {
             res.forEach((err) => {
               notification.error({
+                className:"notificationError",
+                message:"Error",
                 placement: "bottomRight",
-                message: err.message,
+                description: err.message,
               });
             });
             hideLoader();
           }
-        }
-      ).catch((error) => {
-       
-      });
+        })
+        .catch((error) => {});
     },
   });
 
@@ -156,7 +163,7 @@ const RegisterApplication = () => {
           username: false,
           password: false,
           fhirApiBaseUrl: false,
-          websiteUIBaseUrl: false
+          websiteUIBaseUrl: false,
         },
       });
 
@@ -229,9 +236,9 @@ const RegisterApplication = () => {
                     required
                   />
                   {formik.touched.name && formik.errors.name && (
-                  <div className="error-message">{formik.errors.name}</div>
-                )}
-                </div>             
+                    <div className="error-message">{formik.errors.name}</div>
+                  )}
+                </div>
               </div>
             </div>
             <div className="row">
@@ -258,8 +265,10 @@ const RegisterApplication = () => {
                     required
                   ></textarea>
                   {formik.touched.description && formik.errors.description && (
-                  <div className="error-message">{formik.errors.description}</div>
-                )}
+                    <div className="error-message">
+                      {formik.errors.description}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -341,27 +350,27 @@ const RegisterApplication = () => {
                                     }
                                     autoComplete="off"
                                   />
-                                  {touched?.[modifiedComponentId(url.componentId)]
-                                  ?.username &&
-                                  formik.errors[
-                                    "testRequestUrls[" +
-                                      modifiedComponentId(url.componentId) +
-                                      "].username"
-                                  ] && (
-                                    <div className="error-message">
-                                      {
-                                        formik.errors[
-                                          "testRequestUrls[" +
-                                            modifiedComponentId(
-                                              url.componentId
-                                            ) +
-                                            "].username"
-                                        ]
-                                      }
-                                    </div>
-                                  )}
+                                  {touched?.[
+                                    modifiedComponentId(url.componentId)
+                                  ]?.username &&
+                                    formik.errors[
+                                      "testRequestUrls[" +
+                                        modifiedComponentId(url.componentId) +
+                                        "].username"
+                                    ] && (
+                                      <div className="error-message">
+                                        {
+                                          formik.errors[
+                                            "testRequestUrls[" +
+                                              modifiedComponentId(
+                                                url.componentId
+                                              ) +
+                                              "].username"
+                                          ]
+                                        }
+                                      </div>
+                                    )}
                                 </div>
-                                
                               </div>
                               <div className=" custom-input col-sm-6 col-12">
                                 <div className=" input-group position-relative">
@@ -422,8 +431,8 @@ const RegisterApplication = () => {
                                       ></i>
                                     </button>
                                   )}
-                                  </div>
-                                  <div>
+                                </div>
+                                <div>
                                   {touched?.[
                                     modifiedComponentId(url.componentId)
                                   ]?.password &&
@@ -462,10 +471,14 @@ const RegisterApplication = () => {
                                   </label>
                                   <input
                                     id={
-                                      "testRequestUrls[" + index + "].fhirApiBaseUrl"
+                                      "testRequestUrls[" +
+                                      index +
+                                      "].fhirApiBaseUrl"
                                     }
                                     name={
-                                      "testRequestUrls[" + index + "].fhirApiBaseUrl"
+                                      "testRequestUrls[" +
+                                      index +
+                                      "].fhirApiBaseUrl"
                                     }
                                     type="text"
                                     className={`form-control ${
@@ -483,11 +496,14 @@ const RegisterApplication = () => {
                                     placeholder="../base-url/"
                                     value={
                                       formik.values.testRequestUrls[index]
-                                        .fhirApiBaseUrl 
+                                        .fhirApiBaseUrl
                                     }
                                     onChange={formik.handleChange}
                                     onBlur={() =>
-                                      handleBlur("fhirApiBaseUrl", url.componentId)
+                                      handleBlur(
+                                        "fhirApiBaseUrl",
+                                        url.componentId
+                                      )
                                     }
                                     autoComplete="off"
                                   />
@@ -522,10 +538,14 @@ const RegisterApplication = () => {
                                   </label>
                                   <input
                                     id={
-                                      "testRequestUrls[" + index + "].websiteUIBaseUrl"
+                                      "testRequestUrls[" +
+                                      index +
+                                      "].websiteUIBaseUrl"
                                     }
                                     name={
-                                      "testRequestUrls[" + index + "].websiteUIBaseUrl"
+                                      "testRequestUrls[" +
+                                      index +
+                                      "].websiteUIBaseUrl"
                                     }
                                     type="text"
                                     className={`form-control ${
@@ -543,11 +563,14 @@ const RegisterApplication = () => {
                                     placeholder="../website-ui-base-url/"
                                     value={
                                       formik.values.testRequestUrls[index]
-                                        .websiteUIBaseUrl 
+                                        .websiteUIBaseUrl
                                     }
                                     onChange={formik.handleChange}
                                     onBlur={() =>
-                                      handleBlur("websiteUIBaseUrl", url.componentId)
+                                      handleBlur(
+                                        "websiteUIBaseUrl",
+                                        url.componentId
+                                      )
                                     }
                                     autoComplete="off"
                                   />
@@ -582,7 +605,9 @@ const RegisterApplication = () => {
               );
             })}
             {formik.errors.testRequestUrls ? (
-              <div className="error-message">{formik.errors.testRequestUrls}</div>
+              <div className="error-message">
+                {formik.errors.testRequestUrls}
+              </div>
             ) : null}
           </div>
 

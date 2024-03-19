@@ -36,8 +36,10 @@ export default function ResetPassword() {
       UserAPI.resetPassword(reqBody)
         .then((response) => {
           notification.success({
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Success",
             description: "Password changed successfully",
-            placement: "bottomRight",
           });
           navigate("/dashboard");
         })
