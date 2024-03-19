@@ -143,7 +143,7 @@ export default function Login() {
               <div className="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
                 <h1>Testing Harness Test Automation</h1>
                 <p className="font-size-16 mt-3">
-                  Experience streamlined OpenHIE standards compliance testing
+                  Experience streamlined OpenHIE standards compliance verification
                   for healthcare websites. Our tool ensures precision,
                   simplifies complexities, and empowers your projects.
                 </p>

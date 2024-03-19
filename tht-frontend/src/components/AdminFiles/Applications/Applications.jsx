@@ -31,7 +31,7 @@ import UserIdNameEmailConnector from "../../connectors/UserIdNameEmailConnector/
  * Applications Component:
  * This component displays a table of applications with options to filter, sort, and update their statuses.
  * It fetches application data from an API and renders them in a tabular format.
- * Gives admin the access to approve or reject a testing application
+ * Gives admin the access to approve or reject a verification request.
  */
 
 const Applications = () => {
@@ -286,7 +286,7 @@ const Applications = () => {
                       {renderSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th className="assessee-column">Assessee</th>
+                  <th style={{width:"15%"}}>Assessee</th>
                   <th style={{width:"20%"}}>EMAIL ID</th>
                   <th style={{width:"15%"}}>
                     STATUS
@@ -391,7 +391,7 @@ const Applications = () => {
                             </span>
                           </>
                         ) : null}
-                      {testRequest.state !== TestRequestStateConstantNames["test.request.status.finished"] ? (
+                      {testRequest.state !== TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
                         userRole.includes("role.tester") ||
                         userRole.includes("role.admin") ? (
                           <span 

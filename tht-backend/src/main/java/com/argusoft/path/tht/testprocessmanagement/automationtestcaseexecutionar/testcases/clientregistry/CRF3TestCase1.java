@@ -57,11 +57,11 @@ public class CRF3TestCase1 implements TestCase {
             }
 
             // Retrieving the Patient's ID
-            String PatientId = patientOutcome.getResource().getIdElement().getIdPart();
+            String patientId = patientOutcome.getResource().getIdElement().getIdPart();
 
             // Searching for AuditEvent related to the created Patient
             Bundle auditEventBundle = (Bundle) client.search().forResource(AuditEvent.class)
-                    .where(new ReferenceClientParam("patient").hasId(PatientId))
+                    .where(new ReferenceClientParam("patient").hasId(patientId))
                     .where(new TokenClientParam("action").exactly().code("C"))
                     .prettyPrint()
                     .execute();
@@ -71,13 +71,13 @@ public class CRF3TestCase1 implements TestCase {
             }
 
             // Reading Patient
-            Patient retrievedPatient = client.read()
+            client.read()
                     .resource(Patient.class)
-                    .withId(PatientId)
+                    .withId(patientId)
                     .execute();
             // Searching for specific AuditEvent related to the Read Patient
             Bundle specificAuditEventBundle = (Bundle) client.search().forResource(AuditEvent.class)
-                    .where(new ReferenceClientParam("patient").hasId(PatientId))
+                    .where(new ReferenceClientParam("patient").hasId(patientId))
                     .where(new TokenClientParam("action").exactly().code("R"))
                     .prettyPrint().execute();
 

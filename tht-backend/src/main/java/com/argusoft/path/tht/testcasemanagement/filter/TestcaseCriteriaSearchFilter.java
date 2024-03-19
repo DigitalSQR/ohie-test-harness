@@ -52,6 +52,17 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
     )
     private String questionType;
 
+
+    @ApiParam(
+            value = "min rank of the test case"
+    )
+    private Integer minRank;
+
+    @ApiParam(
+            value = "max rank of the test case"
+    )
+    private Integer maxRank;
+
     private Root<TestcaseEntity> testcaseEntityRoot;
 
     private Join<TestcaseEntity, SpecificationEntity> testcaseEntitySpecificationEntityJoin;
@@ -61,11 +72,6 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
     }
 
     public TestcaseCriteriaSearchFilter() {
-    }
-
-    @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
     }
 
     @Override
@@ -97,12 +103,16 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
             predicates.add(criteriaBuilder.equal(getTestcaseEntityRoot().get("questionType"), getQuestionType()));
         }
 
-        return predicates;
-    }
+        if (getMinRank() != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(getTestcaseEntityRoot().get("rank"), getMinRank()));
+        }
 
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<TestcaseEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return null;
+        if (getMaxRank() != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(getTestcaseEntityRoot().get("rank"), getMaxRank()));
+        }
+
+
+        return predicates;
     }
 
     public String getName() {
@@ -143,6 +153,23 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
     public String getQuestionType() {
         return questionType;
+    }
+
+
+    public Integer getMinRank() {
+        return minRank;
+    }
+
+    public void setMinRank(Integer minRank) {
+        this.minRank = minRank;
+    }
+
+    public Integer getMaxRank() {
+        return maxRank;
+    }
+
+    public void setMaxRank(Integer maxRank) {
+        this.maxRank = maxRank;
     }
 
     public void setQuestionType(String questionType) {

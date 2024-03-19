@@ -110,11 +110,6 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     }
 
     @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
-    }
-
-    @Override
     protected List<Predicate> buildPredicates(Root<TestcaseResultEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         this.setTestcaseResultEntityRoot(root);
 

@@ -51,10 +51,9 @@ public class TSWF5TestCase1 implements TestCase {
 
         // creating a codeSystem
         CodeSystem codeSystem = FHIRUtils.createCodeSystem(url, version, name, title, status, publisher, content, code, display, definition);
-        MethodOutcome outcome = client.create()
+        return client.create()
                 .resource(codeSystem)
                 .execute();
-        return outcome;
 
     }
 

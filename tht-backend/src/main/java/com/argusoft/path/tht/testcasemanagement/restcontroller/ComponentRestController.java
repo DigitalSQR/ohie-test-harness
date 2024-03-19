@@ -23,7 +23,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -176,7 +175,8 @@ public class ComponentRestController {
                 .validateComponent(validationTypeKey, componentEntity, contextInfo);
     }
 
-    @ApiOperation(value = "To change status of Component", response = DocumentInfo.class)
+
+    @ApiOperation(value = "To change status of Component", response = ComponentInfo.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully updated Component"),
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
@@ -190,6 +190,24 @@ public class ComponentRestController {
                                               @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         ComponentEntity componentEntity = componentService.changeState(componentId, changeState, contextInfo);
+        return componentMapper.modelToDto(componentEntity);
+    }
+
+
+    @ApiOperation(value = "To change rank of Component", response = ComponentInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated Component"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/rank/{componentId}/{rank}")
+    @Transactional(rollbackFor = Exception.class)
+    @PreAuthorize(value = "hasAnyAuthority('role.admin')")
+    public ComponentInfo updateComponentRank(@PathVariable("componentId") String componentId,
+                                              @PathVariable("rank") Integer rank,
+                                              @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        ComponentEntity componentEntity = componentService.changeRank(componentId, rank, contextInfo);
         return componentMapper.modelToDto(componentEntity);
     }
 

@@ -33,6 +33,16 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
     )
     private List<String> state;
 
+    @ApiParam(
+            value = "min rank of the component"
+    )
+    private Integer minRank;
+
+    @ApiParam(
+            value = "max rank of the component"
+    )
+    private Integer maxRank;
+
     private Root<ComponentEntity> componentEntityRoot;
 
     public ComponentCriteriaSearchFilter(String id) {
@@ -40,11 +50,6 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
     }
 
     public ComponentCriteriaSearchFilter() {
-    }
-
-    @Override
-    public void validateSearchFilter() throws InvalidParameterException {
-
     }
 
     @Override
@@ -64,12 +69,15 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
             predicates.add(criteriaBuilder.in(getComponentEntityRoot().get("state")).value(getState()));
         }
 
-        return predicates;
-    }
+        if (getMinRank() != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(getComponentEntityRoot().get("rank"), getMinRank()));
+        }
 
-    @Override
-    protected List<Predicate> buildAuthorizationPredicates(Root<ComponentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
-        return null;
+        if (getMaxRank() != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(getComponentEntityRoot().get("rank"), getMaxRank()));
+        }
+
+        return predicates;
     }
 
     public String getName() {
@@ -90,6 +98,22 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
 
     public String getPrimaryId() {
         return id;
+    }
+
+    public Integer getMinRank() {
+        return minRank;
+    }
+
+    public void setMinRank(Integer minRank) {
+        this.minRank = minRank;
+    }
+
+    public Integer getMaxRank() {
+        return maxRank;
+    }
+
+    public void setMaxRank(Integer maxRank) {
+        this.maxRank = maxRank;
     }
 
     private Root<ComponentEntity> getComponentEntityRoot() {

@@ -16,22 +16,22 @@ public class ValidationResultInfo implements Serializable {
 
     @ApiModelProperty(notes = "The name of the element that has error",
             example = "elementName",
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private String element;
 
     @ApiModelProperty(notes = "Level of the error",
             example = "ERROR/WARN/OK",
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private ErrorLevel level;
 
     @ApiModelProperty(notes = "Error message for the error",
             example = "message",
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private String message;
 
     @ApiModelProperty(notes = "stackTrace for the error",
             example = "exception path",
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private String stackTrace;
 
     public ValidationResultInfo() {

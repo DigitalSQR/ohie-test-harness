@@ -4,7 +4,6 @@ import passImg from "../../../../styles/images/success.svg";
 import failImg from "../../../../styles/images/failure.svg";
 import skipImg from "../../../../styles/images/skip.svg";
 import stopImg from "../../../../styles/images/stop.svg";
-import "./TestcaseResultRow.scss";
 import { TestcaseResultStateConstants } from "../../../../constants/testcaseResult_constants";
 
 export default function TestcaseResultRow({ testcaseResultItem, stompClient, toggleFunction, toggleClass, testcaseResultType, changeState }) {
@@ -36,7 +35,7 @@ export default function TestcaseResultRow({ testcaseResultItem, stompClient, tog
     const getErrorDisplay = () => {
         const messageSanitize = testcaseResult?.message?.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
         return (
-            <div className={"collapse " + toggleClass + " expanded-row"}>
+            <div className={" expanded-row"}>
                 {testcaseResult?.hasSystemError ? (
                     <p>
                         <b>Failed due to System Error</b>
@@ -104,13 +103,13 @@ export default function TestcaseResultRow({ testcaseResultItem, stompClient, tog
         testcaseResult && <Fragment>
             <tr key={`testcase-result-${testcaseResult?.id}`} className="testcase-result-row">
                 {displayTestName()}
-                <td>{getResultDisplay(testcaseResult)}</td>
+                <td className="padding-x-12">{getResultDisplay(testcaseResult)}</td>
                 <td>{!!testcaseResult?.duration ? testcaseResult?.duration + ' ms' : '-'}</td>
                 <td>{getButtonDisplay()}
                 </td>
             </tr>
-            <tr>
-                <td colSpan={6} className="text-center hiddenRow m-0 field-box">
+            <tr className={`collapse ${toggleClass}`}>
+                <td colSpan={6} className="text-center hiddenRow m-0 field-box padding-x-12">
                     {getErrorDisplay()}
                 </td>
             </tr>

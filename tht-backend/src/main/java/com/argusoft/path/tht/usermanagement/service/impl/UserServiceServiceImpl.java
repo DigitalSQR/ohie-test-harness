@@ -157,7 +157,7 @@ public class UserServiceServiceImpl implements UserService {
             String userEmail = new String(Base64.decodeBase64(updatePasswordInfo.getBase64UserEmail()));
             UserEntity userByEmail = this.getUserByEmail(userEmail, contextInfo);
             userByEmail.setPassword(updatePasswordInfo.getNewPassword());
-            UserEntity userEntity = this.updateUser(userByEmail, contextInfo);
+            this.updateUser(userByEmail, contextInfo);
         }
     }
 
@@ -216,8 +216,8 @@ public class UserServiceServiceImpl implements UserService {
 
         }
     }
-
-    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+    @Override
+    public void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
         if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
             //message assessee if their account is approved by admin
             emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
@@ -232,7 +232,11 @@ public class UserServiceServiceImpl implements UserService {
             admins.forEach(admin -> emailService.verifiedAndWaitingForAdminApproval(admin.getEmail(), admin.getName(), userEntity.getEmail()));
         } else if (UserServiceConstants.USER_STATUS_ACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
             emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName());
-        }
+        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
+            emailService.welcomeToTestingHarnessTool(userEntity.getEmail(), userEntity.getName());
+        } else if (UserServiceConstants.USER_STATUS_INACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
+        emailService.accountActiveMessage(userEntity.getEmail(), userEntity.getName());
+    }
     }
 
     /**
@@ -266,6 +270,10 @@ public class UserServiceServiceImpl implements UserService {
         //On verification pending state, send mail for the email verification
         if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
             tokenVerificationService.generateTokenForUserAndSendEmailForType(userEntity.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
+        } else if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_APPROVAL_PENDING)) {
+            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userEntity, contextInfo);
+        } else if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_ACTIVE)) {
+            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_ACTIVE, userEntity, contextInfo);
         }
         return userEntity;
     }
@@ -420,8 +428,7 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public Page<RoleEntity> getRoles(Pageable pageable,
                                      ContextInfo contextInfo) {
-        Page<RoleEntity> roles = roleRepository.findRoles(pageable);
-        return roles;
+        return roleRepository.findRoles(pageable);
     }
 
     private void defaultValueRegisterAssessee(UserEntity userEntity) {

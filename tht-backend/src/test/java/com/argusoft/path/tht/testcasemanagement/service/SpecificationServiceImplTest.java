@@ -21,7 +21,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
+class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     ContextInfo contextInfo;
     @Autowired
@@ -51,7 +51,7 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
     }
 
     @Test
-    public void testCreateSpecification() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException {
+    void testCreateSpecification() throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException {
 
         // Test case 1 : Create a new specification
         SpecificationEntity specificationEntity = new SpecificationEntity();
@@ -212,7 +212,7 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
     }
 
     @Test
-    public void testGetSpecification() throws InvalidParameterException, DoesNotExistException {
+    void testGetSpecification() throws InvalidParameterException, DoesNotExistException {
 
         // Test case 1: Passing specification id as null
         assertThrows(InvalidParameterException.class, () -> {
@@ -230,26 +230,8 @@ public class SpecificationServiceImplTest extends TestingHarnessToolTestConfigur
 
     }
 
-//    @Test
-//    public void testGetSpecifications() throws InvalidParameterException, DoesNotExistException {
-//
-//        // Test case 1: Passing pageable as null
-//        assertThrows(InvalidParameterException.class, () -> {
-//            specificationService.getSpecifications(null, contextInfo);
-//        });
-//
-//        // Test case 2: Passing pageable
-//        Pageable pageable = PageRequest.of(0, 3);
-//
-//        Page<SpecificationEntity> specifications = specificationService.getSpecifications(pageable, contextInfo);
-//        assertEquals(3, specifications.getTotalPages());
-//        // per page
-//        assertEquals(3, specifications.getNumberOfElements());
-//        assertEquals(7, specifications.getTotalElements());
-//    }
-
     @Test
-    public void testSearchSpecification() throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
+    void testSearchSpecification() throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
 
         // Test case 1: Search specification by name, state, and component.
 

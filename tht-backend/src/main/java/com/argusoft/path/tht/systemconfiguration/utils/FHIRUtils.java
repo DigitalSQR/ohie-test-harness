@@ -630,7 +630,6 @@ public final class FHIRUtils {
 
     public static Observation createObservation(String patientId, String practitionerId, String code, double value) {
         // Create Patient reference
-        Reference patientReference = new Reference("Patient/" + patientId);
         Reference practitionerReference = new Reference("Practitioner/" + practitionerId);
 
         // Create Observation
@@ -829,7 +828,7 @@ public final class FHIRUtils {
         return diagnosticReport;
     }
 
-    public static Composition createComposition(String title, String patientId, String organizationId, String OrganizationName) {
+    public static Composition createComposition(String title, String patientId, String organizationId, String organizationName) {
 
         Composition composition = new Composition();
 
@@ -846,7 +845,7 @@ public final class FHIRUtils {
         composition.setSubject(new Reference("Patient/" + patientId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
-        custodian.setDisplay(OrganizationName);
+        custodian.setDisplay(organizationName);
         composition.setCustodian(custodian);
 
         // Section - History of present illness
@@ -876,7 +875,7 @@ public final class FHIRUtils {
 
     }
 
-    public static Composition createAdmissionNote(String patientId, String organizationId, String practitionerId, String OrganizationName) {
+    public static Composition createAdmissionNote(String patientId, String organizationId, String practitionerId, String organizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -899,7 +898,7 @@ public final class FHIRUtils {
         composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
-        custodian.setDisplay(OrganizationName);
+        custodian.setDisplay(organizationName);
         composition.setCustodian(custodian);
 
         // Add sections (example: presenting complaints, medical history, initial assessments, treatment plans)
@@ -915,7 +914,7 @@ public final class FHIRUtils {
     }
 
     // Method to create Operative Note Composition
-    public static Composition createOperativeNote(String patientId, String organizationId, String practitionerId, String OrganizationName) {
+    public static Composition createOperativeNote(String patientId, String organizationId, String practitionerId, String organizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -938,7 +937,7 @@ public final class FHIRUtils {
         composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
-        custodian.setDisplay(OrganizationName);
+        custodian.setDisplay(organizationName);
         composition.setCustodian(custodian);
 
         Composition.SectionComponent section = new Composition.SectionComponent();
@@ -953,7 +952,7 @@ public final class FHIRUtils {
     }
 
     // Method to create Progress Notes Composition
-    public static Composition createProgressNotes(String patientId, String organizationId, String practitionerId, String OrganizationName) {
+    public static Composition createProgressNotes(String patientId, String organizationId, String practitionerId, String organizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -976,7 +975,7 @@ public final class FHIRUtils {
         composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
-        custodian.setDisplay(OrganizationName);
+        custodian.setDisplay(organizationName);
         composition.setCustodian(custodian);
 
         Composition.SectionComponent section = new Composition.SectionComponent();
@@ -991,7 +990,7 @@ public final class FHIRUtils {
     }
 
     // Method to create Consultation Reports Composition
-    public static Composition createConsultationReports(String patientId, String organizationId, String practitionerId, String OrganizationName) {
+    public static Composition createConsultationReports(String patientId, String organizationId, String practitionerId, String organizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -1014,7 +1013,7 @@ public final class FHIRUtils {
         composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
-        custodian.setDisplay(OrganizationName);
+        custodian.setDisplay(organizationName);
         composition.setCustodian(custodian);
 
         Composition.SectionComponent section = new Composition.SectionComponent();
@@ -1102,7 +1101,7 @@ public final class FHIRUtils {
     }
 
     // Method to create Discharge Summary Composition
-    public static Composition createDischargeSummary(String patientId, String organizationId, String practitionerId, String OrganizationName) {
+    public static Composition createDischargeSummary(String patientId, String organizationId, String practitionerId, String organizationName) {
         Composition composition = new Composition();
 
         // Set type
@@ -1125,7 +1124,7 @@ public final class FHIRUtils {
         composition.addAuthor(new Reference("Practitioner/" + practitionerId));
 
         Reference custodian = new Reference("Organization/" + organizationId);
-        custodian.setDisplay(OrganizationName);
+        custodian.setDisplay(organizationName);
         composition.setCustodian(custodian);
 
         Composition.SectionComponent section = new Composition.SectionComponent();

@@ -356,8 +356,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException("TestRequestEntity is missing");
         }
-        List<ValidationResultInfo> errors = TestRequestValidator.validateTestRequest(validationTypeKey, testRequestEntity, this, userService, componentService, contextInfo);
-        return errors;
+        return TestRequestValidator.validateTestRequest(validationTypeKey, testRequestEntity, this, userService, componentService, contextInfo);
     }
 
     @Override
@@ -659,7 +658,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     testcaseResult
             );
 
-            testResultRelationEntity = testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+            testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
 
 
             // create for options
@@ -677,7 +676,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         testcaseResult
                 );
 
-                testResultRelationEntity = testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+                testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
             }
 
             // create for documents related to question
@@ -696,7 +695,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         testcaseResult
                 );
 
-                testResultRelationEntity = testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+                testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
             }
         }
     }

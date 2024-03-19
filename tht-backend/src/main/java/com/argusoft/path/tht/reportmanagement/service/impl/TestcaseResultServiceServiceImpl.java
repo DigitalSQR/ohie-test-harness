@@ -83,14 +83,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return message.toString();
     }
 
-    private static List<TestcaseResultEntity> getChildTestcaseResultFromParentTestcaseResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
-        return testcaseResultEntities.stream()
-                .filter(tcre -> {
-                    return tcre.getParentTestcaseResult() != null
-                            && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
-                }).collect(Collectors.toList());
-    }
-
     private static List<TestcaseResultEntity> getFilteredChileTestcaseResultsForTestResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
         return testcaseResultEntities.stream()
                 .filter(tcre -> {
@@ -161,7 +153,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.CREATE_VALIDATION,
                 this,
                 userService,
-                testcaseOptionService,
                 testRequestService,
                 testcaseResultEntity,
                 contextInfo);
@@ -194,7 +185,6 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         TestcaseResultValidator.validateCreateUpdateTestCaseResult(Constant.UPDATE_VALIDATION,
                 this,
                 userService,
-                testcaseOptionService,
                 testRequestService,
                 testcaseResultEntity,
                 contextInfo);
@@ -213,11 +203,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         TestcaseResultValidator.validateSubmitTestcaseResult(
                 testcaseResultId,
                 selectedTestcaseOptionIds,
-                Constant.SUBMIT_VALIDATION,
                 this,
-                testcaseOptionService,
                 testResultRelationService,
-                auditService,
                 contextInfo);
 
         TestResultRelationCriteriaSearchFilter testResultRelationCriteriaSearchFilter = new TestResultRelationCriteriaSearchFilter();
@@ -360,8 +347,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseResultServiceServiceImpl.class.getSimpleName());
             throw new InvalidParameterException(TestcaseResultServiceConstants.TESTCASE_RESULT_MISSING);
         }
-        List<ValidationResultInfo> errors = TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testcaseOptionService, testRequestService, contextInfo);
-        return errors;
+        return TestcaseResultValidator.validateTestCaseResult(validationTypeKey, testcaseResultEntity, userService, this, testRequestService, contextInfo);
     }
 
     @Override
@@ -612,8 +598,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         List<TestcaseResultEntity> recalculatedChilds = recalculateTestcaseResultEntity(testcaseResultEntity, isRecommended, testcaseResultEntities, contextInfo);
         recalculatedChilds.set(0, testcaseResultEntity);
-        RecursiveTestcaseResults recursiveTestcaseResults = new RecursiveTestcaseResults(recalculatedChilds, testcaseResultEntity);
-        return recursiveTestcaseResults;
+        return new RecursiveTestcaseResults(recalculatedChilds, testcaseResultEntity);
     }
 
     private List<TestcaseResultEntity> recalculateTestcaseResultEntity(TestcaseResultEntity testcaseResultEntity, Boolean isRecommended, List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo) throws OperationFailedException {
@@ -730,7 +715,15 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             testcaseResultEntity.setState(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
             if (Boolean.TRUE.equals(isRecommended)) {
-                testcaseResultEntity.setGrade(gradeEvaluator.evaluate(filteredTestcaseResults, contextInfo));
+                if (testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)) {
+                    testcaseResultEntity.setGrade(gradeEvaluator.evaluate(
+                            testcaseResultEntities.stream().filter(tcre -> tcre.getRefObjUri().equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI))
+                                    .collect(Collectors.toList()),
+                            contextInfo)
+                    );
+                } else {
+                    testcaseResultEntity.setGrade(gradeEvaluator.evaluate(filteredTestcaseResults, contextInfo));
+                }
             }
         } else if (filteredTestcaseResults.stream()
                 .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {

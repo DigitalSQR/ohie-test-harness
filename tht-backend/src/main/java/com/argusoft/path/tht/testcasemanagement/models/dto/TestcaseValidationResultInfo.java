@@ -14,12 +14,12 @@ public class TestcaseValidationResultInfo extends ValidationResultInfo {
 
     @ApiModelProperty(notes = "The refObjUri of the message",
             example = "refObjUri",
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private String refObjUri;
 
     @ApiModelProperty(notes = "isAutomated for the testcase",
             example = "isAutomated",
-            readOnly = true)
+            accessMode = ApiModelProperty.AccessMode.READ_ONLY)
     private Boolean isAutomated;
 
     public TestcaseValidationResultInfo() {
