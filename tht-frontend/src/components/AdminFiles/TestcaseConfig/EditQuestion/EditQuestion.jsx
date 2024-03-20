@@ -392,8 +392,8 @@ export default function EditQuestion() {
   };
 
   return (
-    <div id="editQuestion">
-      currentTestcase && (
+    currentTestcase && (
+      <div id="editQuestion">
       <div id="wrapper">
         <div className="bcca-breadcrumb">
           <div className="bcca-breadcrumb-item">Question</div>
@@ -640,7 +640,7 @@ export default function EditQuestion() {
           fetchData={fetchData}
         />
       </div>
+      </div>
     )
-    </div>
   );
 }

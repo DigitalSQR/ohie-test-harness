@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { AdminUserAPI } from "../../../api/AdminUserAPI";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import "./admin-user.scss";
-import "./_table.scss";
 import { useNavigate } from "react-router-dom";
 import { Pagination } from "@mui/material";
 import { Button, Modal } from "antd";
