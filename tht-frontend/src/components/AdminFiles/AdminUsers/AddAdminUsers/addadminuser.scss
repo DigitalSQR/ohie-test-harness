@@ -73,34 +73,7 @@
           }
       }
   }
-  .custom-input input:focus {
-    box-shadow: none;
-    border: 1px solid #ccdade;
-  }
-  .custom-input label {
-    font-weight: 500;
-    color: #51516d;
-  }
-  .custom-input .input-group-text {
-    background: #fff;
-    border: 1px solid #ccdade;
-    border-right: 0px;
-    padding: 0px;
-    height: 50px;
-    width: 46px;
-    padding-left: 15px;
-    color: #ccdade;
-    font-size: 18px;
-  }
-  .custom-input ::-ms-input-placeholder {
-    /* Edge 12-18 */
-    color: #ccdade;
-    font-weight: 400;
-  }
-  .custom-input ::placeholder {
-    color: #ccdade;
-    font-weight: 400;
-  }
+
 
   .text-end{
     margin-bottom: 0px !important;

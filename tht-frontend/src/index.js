@@ -3,7 +3,7 @@ import 'popper.js/dist/umd/popper.min.js';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import "./scss/style.scss";
+import "./styles/scss/style.scss";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { persistor, store } from './store/store';

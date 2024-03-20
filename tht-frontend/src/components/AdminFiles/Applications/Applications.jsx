@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from "react";
-import "./_table.scss";
 import "./applications.scss";
 import sortIcon from "../../../styles/images/sort-icon.png";
 import { useNavigate } from "react-router-dom";

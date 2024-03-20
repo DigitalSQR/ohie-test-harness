@@ -1,5 +1,12 @@
 
   #automatedTesting {
+    #wrapper {
+      margin-left: 230px;
+      min-height: calc(100vh - 64px);
+      padding: 90px 30px;
+      position: relative;
+      transition: .5s;
+  }
     /*** breadcrumb container ***/
   .bcca-breadcrumb {
     display: flex;

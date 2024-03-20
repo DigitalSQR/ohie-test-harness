@@ -1,5 +1,12 @@
 
 #SpecQuestions{
+  #wrapper {
+    margin-left: 230px;
+    min-height: calc(100vh - 64px);
+    padding: 90px 30px;
+    position: relative;
+    transition: .5s;
+}
 .question-container {
   margin-bottom: 20px;
   padding: 10px;

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./testingRequest.scss";
-import "./_table.scss";
 import {
   TestRequestStateLabels,
   TestRequestStateConstants,
