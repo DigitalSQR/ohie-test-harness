@@ -392,7 +392,8 @@ export default function EditQuestion() {
   };
 
   return (
-    currentTestcase && (
+    <div id="editQuestion">
+      currentTestcase && (
       <div id="wrapper">
         <div className="bcca-breadcrumb">
           <div className="bcca-breadcrumb-item">Question</div>
@@ -640,5 +641,6 @@ export default function EditQuestion() {
         />
       </div>
     )
+    </div>
   );
 }
