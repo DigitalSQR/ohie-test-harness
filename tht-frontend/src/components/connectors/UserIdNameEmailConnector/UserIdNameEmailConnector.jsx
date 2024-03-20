@@ -4,38 +4,42 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import "./UserIdNameEmailConnector.scss";
 const UserIdNameEmailConnector = ({ userId, isLink }) => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    UserAPI.getUserById(userId).then((user) => {
-      setUser(user);
-    });
-  }, []);
+    UserAPI.getUserById(userId)
+      .then((userData) => {
+        setUser(userData);
+      })
+      .finally(() => setLoading(false));
+  }, [userId]);
+
   return (
-    <React.Fragment id="nameEmailConnector">
-      <td className="d-flex align-items-center">
+    <Fragment>
+      <td className="d-flex align-items-center" id="nameId">
         <span>
-          {user?.name ? (
-            <p className="user-name">{user?.name}</p>
+          {loading ? (
+            <td>
+              <Spin indicator={<LoadingOutlined className="loading-indicator" />} />
+            </td>
           ) : (
-            <Spin
-              indicator={<LoadingOutlined className="loading-indicator" />}
-            />
+            <p className="user-name">{user?.name}</p>
           )}
         </span>
-        <td />
       </td>
       <td className="toLowerCase-words">
         <span>
-          {user?.email ? (
-            user?.email
+          {loading ? (
+            <td>
+              <Spin indicator={<LoadingOutlined className="loading-indicator" />} />
+            </td>
           ) : (
-            <Spin
-              indicator={<LoadingOutlined className="loading-indicator" />}
-            />
+            user?.email
           )}
         </span>
       </td>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

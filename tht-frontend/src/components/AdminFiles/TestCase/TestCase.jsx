@@ -473,7 +473,7 @@ export default function TestCase(props) {
 									))}
 								</div>
 								{showNote && <div className="text-end m-3 position-relative" id="note-textarea">
-									<textarea className="form-control note-text-area" rows="3" disabled={!editMode} value={noteMessage} onChange={handleOnChangeForNote}></textarea>
+									<textarea className="form-control note-text-area" rows="3" disabled={!editMode} value={noteMessage || ""} onChange={handleOnChangeForNote}></textarea>
 									<div className="note-text-area-button-group">
 										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Cancel" onClick={handleCancelNoteButtonClick}><i className="bi bi-x-lg"></i></span>}
 										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Save Note" onClick={handleSaveNote}><i className="bi bi-floppy"></i></span>}

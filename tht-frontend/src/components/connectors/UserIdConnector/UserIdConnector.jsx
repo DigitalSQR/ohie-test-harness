@@ -11,7 +11,7 @@ const UserIdConnector = ({ userId, isLink }) => {
     });
   }, []);
   return (
-    <span>
+    <span id="userIdConnector">
       {user?.name ? (
         <p className="user-name">{user?.name}</p>
       ) : (
