@@ -373,7 +373,7 @@ public class ComponentValidator {
                             ErrorLevel.ERROR,
                             ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
                             componentEntity.getName(),
-                            "There are no active components for this specification.",
+                            "There are no active specification for this component.",
                             false));
         } else {
             errors.add(

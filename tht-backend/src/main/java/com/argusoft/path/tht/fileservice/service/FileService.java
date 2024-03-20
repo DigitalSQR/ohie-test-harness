@@ -33,7 +33,7 @@ public class FileService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
 
-    static String resourceFolder;
+    private static String resourceFolder;
 
     private FileService(){
 
@@ -130,7 +130,7 @@ public class FileService {
     }
 
     @Value("${tht-file.location}")
-    public static void setResourceFolder(String value) {
+    public void setResourceFolder(String value) {
         resourceFolder = value;
     }
 
