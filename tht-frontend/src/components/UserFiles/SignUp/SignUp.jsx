@@ -21,7 +21,7 @@ export default function SignUp() {
   const validationSchema = Yup.object({
     name: Yup.string()
       .required("Name is required")
-      .max(1000, "Name must have less than 1000 characters"),
+      .max(255, "Name must have less than 1000 characters"),
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required")

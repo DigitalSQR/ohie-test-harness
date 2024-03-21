@@ -71,7 +71,7 @@ export default function Login() {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.username.trim())) {
       errors.username = "Please enter a valid email address";
     }else if(values.username.length > 255){
-      errors.email = "Username must have less than 255 characters."
+      errors.username = "Email must have less than 255 characters."
     }
 
     if (values.password.length == 0) {
