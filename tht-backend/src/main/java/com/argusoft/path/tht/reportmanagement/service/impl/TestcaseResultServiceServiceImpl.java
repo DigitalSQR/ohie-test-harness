@@ -533,7 +533,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             Boolean isFunctional,
             ContextInfo contextInfo)
             throws
-            InvalidParameterException, OperationFailedException {
+            InvalidParameterException, OperationFailedException, DoesNotExistException {
         if (!StringUtils.hasLength(testRequestId)) {
             throw new InvalidParameterException("TestcaseRequestId is missing");
         }
@@ -571,7 +571,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             Boolean isWorkflow,
             Boolean isFunctional,
             TestcaseResultEntity testcaseResultEntity,
-            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
 
         if (StringUtils.hasLength(testcaseResultEntity.getId())) {
             testcaseResultEntity = new TestcaseResultEntity(testcaseResultEntity);
@@ -591,6 +591,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         testcaseResultCriteriaSearchFilter.setWorkflow(isWorkflow);
 
         List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent().stream().map(testcaseResultEntity1 -> new TestcaseResultEntity(testcaseResultEntity1)).collect(Collectors.toList());
+        if(testcaseResultEntities.isEmpty()){
+            throw new DoesNotExistException("No Test case results found for given input.");
+        }
 
         if (!StringUtils.hasLength(testcaseResultEntity.getId())) {
             testcaseResultEntity = new TestcaseResultEntity(testcaseResultEntities.get(0));

@@ -172,7 +172,7 @@ public class TestRequestValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "Process for the requested input doesn't have active testcaseResults."));
+                                "Process for the requested input doesn't have any or active testcaseResults."));
             }
         } else if (validationTypeKey.equals(Constant.STOP_PROCESS_VALIDATION)) {
 
