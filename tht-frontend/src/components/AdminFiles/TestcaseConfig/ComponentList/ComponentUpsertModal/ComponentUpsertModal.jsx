@@ -140,7 +140,6 @@ const UpsertModal = ({
                   <div className="custom-input mb-3">
                     <label htmlFor="email" className="form-label">
                       Description
-                      <span className="text-danger">*</span>
                     </label>
                     <Field
                       as="textarea"
