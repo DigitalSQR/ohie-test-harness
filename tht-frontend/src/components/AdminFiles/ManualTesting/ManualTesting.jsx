@@ -382,13 +382,13 @@ export default function ManualTesting() {
               <div className="offcanvas-title">
                 <h5 id="manualTestingLabel">Manual Verification </h5>
                 <div className="answeredQuest">
-                  <h6> {finishedTestCasesCount}/{totalTestCasesCount} </h6>
+                  <h6>Status:{finishedTestCasesCount}/{totalTestCasesCount} </h6>
                 </div>
               </div>
 
               <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-            <div className="offcanvas-body">
+            <div className="offcanvas-body manual-testing-sidemenu">
               <CAccordion activeItemKey={openComponentIndex}>
 
                 {testcaseResults.map((component, outerIndex) => (
@@ -405,7 +405,7 @@ export default function ManualTesting() {
                       <CAccordionBody>
                         <div>
                           {component.childTestcaseResults.map((specification, innerIndex) => (
-                            <div key={innerIndex}>
+                            <div key={innerIndex} className="question-item">
                               <div className="specification-header"> {specification.name}</div>
                               {specification.childTestcaseResults.map((testcase, index) => (
                                 <span key={index}>

@@ -407,7 +407,7 @@ export default function TestCase(props) {
 	return (
 		<div id="testCase">
 			<div className="col-12 non-fuctional-requirement">
-				<div className="container">
+				<div className="container-fluid">
 					<div className="row heading">
 						<div className="col-md-9 col-12 p-0">
 							<h2>Question</h2>

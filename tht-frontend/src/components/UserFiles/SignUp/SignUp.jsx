@@ -116,7 +116,7 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div className="col-md-6 col-12 col-sm-12">
+          <div className="col-md-6 col-12 col-sm-12 d-flex align-items-center">
             <div className="login-form-bg pt-5">
               <div className="text-center">
                 <img src={openhie_logo} />

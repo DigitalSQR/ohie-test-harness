@@ -123,6 +123,7 @@
   width: 20px;
   border-radius: 2px;
   border:1px solid $color-light;
+  background: #fff;
 }
 
 
@@ -181,5 +182,23 @@
     font-size: 17px !important;
     height: 52px !important;
     padding-top:6px !important;
+  }
+
+  .password input{
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+  .login-google{
+    display: block;
+    padding: 5px 50px;
+    background: #fff;
+    border-radius: 5px;
+    border: 1px solid #ced4d5;
+    text-decoration: none;
+    font-size: 14px;
+    color:#444;
+    &:hover{
+      background: #e1edef;
+    }
   }
 }
