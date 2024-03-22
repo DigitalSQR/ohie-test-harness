@@ -153,7 +153,7 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="col-md-6 col-12 col-sm-12">
+          <div className="col-md-6 col-12 col-sm-12 d-flex align-items-center">
             <div className="login-form-bg pt-5">
               <div className="text-center">
                 <img src={openhie_logo} />
@@ -251,11 +251,12 @@ export default function Login() {
                   </label>
                   <a
                     href=""
+                    className="text-blue"
                     onClick={() => {
                       navigate("/forgotpassword");
                     }}
                   >
-                    Forgot Password
+                    Forgot Password?
                   </a>
                 </div>
 
@@ -270,9 +271,12 @@ export default function Login() {
                   </button>
                   <h6 className="m-2 align">OR</h6>
                   <h4 className="align">
-                    <a href="/api/oauth2/authorization/google">
+                    <a
+                      href="/api/oauth2/authorization/google"
+                      className="login-google"
+                    >
                       <img src={GoogleLoginIcon} />
-                      {/* Login with Google */}
+                      Login with Google
                     </a>
                   </h4>
                 </div>
@@ -280,7 +284,7 @@ export default function Login() {
                   <a
                     href=""
                     onClick={redirectToSignUp}
-                    className="font-weight-500 ps-2 text-blue"
+                    className="font-weight-500 ps-2 pt-4 d-block text-blue"
                   >
                     Click Here to Register{" "}
                   </a>

@@ -405,8 +405,9 @@
     background-color: white;
     text-align: center;
     color: black;
-    margin: 9px;
-    border: 1px solid black;
+    margin: 2px 4px 8px;
+    border: 1px solid #d9e3e7;
+    background: #edf4f7;
     cursor: pointer;
   }
 
@@ -438,12 +439,12 @@
   .specification-header {
     font-weight: bold;
     margin-left: 7px;
-    margin-top: 10px;
+    margin-top: 5px;
   }
 
   .answeredQuest {
     margin-top: 10px;
-    margin-left: 3px;
+    //margin-left: 3px;
     color: #009fc8;
     margin-bottom: -20px;
   }
@@ -454,5 +455,27 @@
       width: 140px !important;
       color: white !important;
   }
+
+  .offcanvas-header{
+    align-items: flex-start;
+    }
+    .manual-testing-sidemenu{
+      padding: 0px;
+      .accordion-item {
+        border-radius: 0px;
+        
+      .accordion-button{
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        padding: 8px 16px;
+      }
+    }
+    .accordion-body{
+      padding: 0px 8px;
+    }
+    }
+    .question-item{
+       border-bottom: 1px solid #f2f2f2;
+    }
 
 }

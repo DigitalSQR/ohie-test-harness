@@ -99,7 +99,7 @@ export default function CongratulationsPage() {
                   </>
                 )}
                 <button
-                  className="btn btn-primary btn-blue w-100 my-4"
+                  className="btn btn-primary btn-blue w-100 my-4 py-3"
                   onClick={() => navigate("/login")}
                 >
                   LOGIN
