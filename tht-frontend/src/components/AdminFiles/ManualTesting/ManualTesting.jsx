@@ -431,6 +431,7 @@ export default function ManualTesting() {
           </div>
 			{!!currentSpecification && (
 				<Tabs
+        destroyInactiveTabPane={true}
 					activeKey={currentSpecificationIndex.toString()}
 					onChange={(val) => {
 						selectSpecification(val, currentComponentIndex);
