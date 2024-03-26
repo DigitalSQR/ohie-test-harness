@@ -375,13 +375,15 @@ export default function AutomatedTesting() {
                         <span className="m-1">Resume</span>
                       </button>
                   </>)}
-                  {!!resultFlag &&  testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !finishedTestcaseCount && (<>
+                  {testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !finishedTestcaseCount && (<>
                       <button
                         className="btn small btn-sm mt-0 px-2 btn-success abtn"
                         onClick={handleStartTesting}
+                        disabled={!resultFlag}
                       >
                         <PlayCircleOutlined />
                         <span className="m-1">Start</span>
+                        {!resultFlag && <Spin size="small" />}
                       </button>
                   </>)}
                 </>
