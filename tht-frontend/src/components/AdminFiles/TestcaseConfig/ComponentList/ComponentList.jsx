@@ -30,6 +30,7 @@ export default function ComponentList() {
   const [filterState, setFilterState] = useState("");
   const [componentId, setComponentId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [totalElements, setTotalElements] = useState();
   const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
 
@@ -98,6 +99,7 @@ export default function ComponentList() {
       .then((res) => {
         hideLoader();
         setComponents(res.content);
+        setTotalElements(res.totalElements);
         setTotalPages(res.totalPages);
       })
       .catch((err) => {
@@ -334,7 +336,9 @@ export default function ComponentList() {
             shape="rounded"
           />
         )}
-         <div className="page-size-selector mt-4">
+        <div className="d-flex justify-content-end">
+        {totalElements > 10 && (
+          <div className="page-size-selector mt-4">
             <select
               className="form-select custom-select custom-select-sm"
               aria-label="Default select example"
@@ -342,14 +346,31 @@ export default function ComponentList() {
               onChange={(e) => {
                 setPageSize(e.target.value);
                 setCurrentPage(1);
+                getAllComponents(
+                  sortFieldName,
+                  sortDirection[sortFieldName],
+                  1,
+                  e.target.value,
+                  filterState
+                );
               }}
             >
-            <option value="10" key="10">10</option>
-            <option value="20" key="20">20</option> 
-            <option value="30" key="30">30</option> 
-            <option value="" key="all">All</option> 
+              <option value="10" key="10">
+                10
+              </option>
+              <option value="20" key="20">
+                20
+              </option>
+              <option value="30" key="30">
+                30
+              </option>
+              <option value="" key="all">
+                All
+              </option>
             </select>
           </div>
+        )}
+        </div>
       </div>
     </div>
   );

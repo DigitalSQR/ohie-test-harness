@@ -30,6 +30,7 @@ export default function ComponentSpecification() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [specificationId, setSpecificationId] = useState();
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalElements, setTotalElements]=useState();
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const { componentId } = useParams();
@@ -106,6 +107,7 @@ export default function ComponentSpecification() {
       const resp = await SpecificationAPI.getSpecificationsByComponentId(
         params
       );
+      setTotalElements(resp.totalElements);
       setSpecifications(resp.content);
       setTotalPages(resp.totalPages);
     } catch (error) {
@@ -385,6 +387,8 @@ export default function ComponentSpecification() {
             />
         )}
 
+        <div className="d-flex justify-content-end">
+        {totalElements > 10 && (
           <div className="page-size-selector mt-4">
             <select
               className="form-select custom-select custom-select-sm"
@@ -393,14 +397,25 @@ export default function ComponentSpecification() {
               onChange={(e) => {
                 setPageSize(e.target.value);
                 setCurrentPage(1);
+                fetchData(sortFieldName, sortDirection[sortFieldName], 1, e.target.value);
               }}
             >
-            <option value="10" key="10">10</option>
-            <option value="20" key="20">20</option> 
-            <option value="30" key="30">30</option>
-            <option value="" key="all">All</option> 
+              <option value="10" key="10">
+                10
+              </option>
+              <option value="20" key="20">
+                20
+              </option>
+              <option value="30" key="30">
+                30
+              </option>
+              <option value="" key="all">
+                All
+              </option>
             </select>
           </div>
+        )}
+        </div>
         
       </div>
     </div>
