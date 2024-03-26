@@ -37,6 +37,7 @@ export default function AutomatedTesting() {
   const [stopLoader, setStopLoader] = useState(false);
   const [stopAndResetLoader, setStopAndResetLoader] = useState(false);
   const [finishedTestcaseCount, setFinishedTestcaseCount] = useState(0);
+  const [resultFlag, setResultFlag]=useState(false);
 
   const [data, setData] = useState([]);
   const navigate = useNavigate();
@@ -264,7 +265,10 @@ export default function AutomatedTesting() {
       const destination = "/testcase-result/automated/" + testcaseRequestResult.id;
       stompClient.subscribe(destination, (msg) => {
         const parsedTestcaseResult = JSON.parse(msg.body);
-        setTestcaseRequestResult(parsedTestcaseResult);
+        if(!!parsedTestcaseResult){
+          setResultFlag(true);
+          setTestcaseRequestResult(parsedTestcaseResult);
+        }
       });
       const destination2 = "/testcase-result/attribute/" + testcaseRequestResult.id;
       stompClient.subscribe(destination2, (msg) => {
@@ -371,7 +375,7 @@ export default function AutomatedTesting() {
                         <span className="m-1">Resume</span>
                       </button>
                   </>)}
-                  {testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !finishedTestcaseCount && (<>
+                  {!!resultFlag &&  testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !finishedTestcaseCount && (<>
                       <button
                         className="btn small btn-sm mt-0 px-2 btn-success abtn"
                         onClick={handleStartTesting}
