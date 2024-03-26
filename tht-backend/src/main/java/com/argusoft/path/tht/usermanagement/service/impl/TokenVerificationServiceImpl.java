@@ -13,6 +13,7 @@ import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -31,6 +32,9 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     private TokenVerificationRepository tokenVerificationRepository;
     private UserService userService;
     private EmailService emailService;
+
+    @Value("${base-url}")
+    private String baseUrl;
 
     private static void checkForValidTokenTypeWithVerifyingInEnum(String tokenType) throws InvalidParameterException {
         boolean validEnum = TokenTypeEnum.isValidKey(tokenType);
@@ -166,9 +170,9 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         String emailIdBase64 = new String(Base64.encodeBase64(userById.getEmail().getBytes()));
 
         if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
-            emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+            emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), baseUrl+"/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         } else if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
-            emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/reset/cred/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+            emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), baseUrl+"/reset/cred/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         }
         return tokenVerification;
     }
