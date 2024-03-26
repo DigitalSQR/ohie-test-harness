@@ -64,7 +64,7 @@ export default function TestCase(props) {
 
 	useEffect(() => {
 		getCurrentTestcaseResultById(currentTestcase.id);
-	}, []);
+	}, [currentTestcase.id]);
 
 	const submitOptions = () => {
 		TestResultAPI.saveOptions(testcaseResult.id, selectedOptions)
