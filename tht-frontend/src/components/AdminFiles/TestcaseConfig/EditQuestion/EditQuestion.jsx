@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Switch, notification, Modal } from "antd";
+import { Switch, notification, Modal, Breadcrumb } from "antd";
 import "./EditQuestion.scss";
 import { TestCaseOptionsAPI } from "../../../../api/TestCaseOptionsAPI";
 import { useLoader } from "../../../loader/LoaderContext";
@@ -395,32 +395,12 @@ export default function EditQuestion() {
     currentTestcase && (
       <div id="editQuestion">
       <div id="wrapper">
-        <div className="bcca-breadcrumb">
-          <div className="bcca-breadcrumb-item">Question</div>
-          <div
-            className="bcca-breadcrumb-item"
-            onClick={() => navigate(`/testcase-config/manual-testcases/${specification?.id}`)}
-          >
-            {specification?.name} - Testcase Configuration
-          </div>
-          <div
-            className="bcca-breadcrumb-item"
-            onClick={() =>
-              navigate(`/testcase-config/component-specification/${component?.id}`)
-            }
-          >
-            {" "}
-            {component?.name}{" "}
-          </div>
-          <div
-            className="bcca-breadcrumb-item"
-            onClick={() => {
-              navigate("/testcase-config");
-            }}
-          >
-            Components
-          </div>
-        </div>
+        <Breadcrumb className="custom-breadcrumb">
+          <Breadcrumb.Item className="breadcrumb-item" onClick={() => navigate("/testcase-config")} href="">Components</Breadcrumb.Item>
+          <Breadcrumb.Item className="breadcrumb-item" onClick={() => navigate(`/testcase-config/component-specification/${component?.id}`)} href="">{component?.name}</Breadcrumb.Item>
+          <Breadcrumb.Item onClick={() => navigate(`/testcase-config/manual-testcases/${specification?.id}`)} className="breadcrumb-item" href="">{specification?.name} - Testcase Configuration</Breadcrumb.Item>
+          <Breadcrumb.Item className="breadcrumb-item">Question</Breadcrumb.Item>
+        </Breadcrumb>
         <div className="col-12 my-4">
           <div className="card">
             <div className="card-header">Manage Question</div>

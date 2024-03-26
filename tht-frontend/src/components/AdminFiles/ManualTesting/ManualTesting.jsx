@@ -8,7 +8,7 @@ import pdf_logo from "../../../styles/images/pdf.png";
 import img_logo from "../../../styles/images/img.png";
 import question_img_logo from "../../../styles/images/question-img.png";
 import "./manual-testing.scss";
-import { Tabs, notification } from "antd";
+import { Breadcrumb, Tabs, notification } from "antd";
 import { Select } from "antd";
 import { Option } from "antd/es/mentions";
 import TestCase from "../TestCase/TestCase";
@@ -336,11 +336,15 @@ export default function ManualTesting() {
 	return !!testcaseResults && !!currentComponent && (
     <div id="manualQuestions">
 		<div id="wrapper" className="stepper-wrapper">
-			<div className="bcca-breadcrumb">
-				<div className="bcca-breadcrumb-item">Manual Verification</div>
-				<div className="bcca-breadcrumb-item" onClick={()=>{navigate(`/choose-test/${testRequestId}`)}}>{testcaseName}</div>
-				<div className="bcca-breadcrumb-item" onClick={()=>{navigate(`/applications`)}}>Applications</div>
-			</div>
+    <Breadcrumb className="mb-3 custom-breadcrumb">
+      <Breadcrumb.Item href="" onClick={() => navigate(`/applications`)} className="breadcrumb-item">
+        Applications
+      </Breadcrumb.Item>
+      <Breadcrumb.Item href="" onClick={() => navigate(`/choose-test/${testRequestId}`)} className="breadcrumb-item">
+        {testcaseName}
+      </Breadcrumb.Item>
+      <Breadcrumb.Item className="breadcrumb-item">Manual Verification</Breadcrumb.Item>
+    </Breadcrumb>
 			<span>
 				<b>Component  </b>
 			</span>

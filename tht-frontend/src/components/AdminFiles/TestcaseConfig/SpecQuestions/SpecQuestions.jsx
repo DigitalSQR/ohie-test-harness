@@ -4,7 +4,7 @@ import { TestCaseAPI } from "../../../../api/TestCaseAPI";
 import { SpecificationAPI } from "../../../../api/SpecificationAPI";
 import { ComponentAPI } from "../../../../api/ComponentAPI";
 import { useLoader } from "../../../loader/LoaderContext";
-import { Empty } from "antd";
+import { Breadcrumb, Empty } from "antd";
 import {
   EditFilled,
   LeftOutlined,
@@ -38,7 +38,7 @@ export default function ManualTestCases() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [questionAndDocument, setQuestionAndDocument] = useState([]);
   const [questionFetched, setQuestionFetched] = useState(true);
-  const [componetDetails, setComponentDetails] = useState();
+  const [componentDetails, setComponentDetails] = useState();
   const [specificationDetails, setSpecificationDetails] = useState();
   const [activeTab, setActiveTab] = useState("1");
   const items = [
@@ -241,30 +241,11 @@ export default function ManualTestCases() {
   return (
     <div id="SpecQuestions">
       <div id="wrapper">
-        <div className="bcca-breadcrumb">
-          <div className="bcca-breadcrumb-item">
-            {specificationDetails?.name} - Testcase Configuration
-          </div>
-          <div
-            className="bcca-breadcrumb-item"
-            onClick={() =>
-              handleClick(
-                `/testcase-config/component-specification/${componetDetails?.id}`
-              )
-            }
-          >
-            {" "}
-            {componetDetails?.name}{" "}
-          </div>
-          <div
-            className="bcca-breadcrumb-item"
-            onClick={() => {
-              navigate("/testcase-config");
-            }}
-          >
-            Components
-          </div>
-        </div>
+      <Breadcrumb className="custom-breadcrumb">
+        <Breadcrumb.Item onClick={() => handleClick("/testcase-config")} className="breadcrumb-item" href="">Components</Breadcrumb.Item>
+        <Breadcrumb.Item onClick={() => handleClick(`/testcase-config/component-specification/${componentDetails?.id}`)} className="breadcrumb-item" href="">{componentDetails?.name}</Breadcrumb.Item>
+        <Breadcrumb.Item className="breadcrumb-item">Testcase Configuration</Breadcrumb.Item>
+      </Breadcrumb>
 
         <div className="d-flex justify-content-between align-items-center">
           <Tabs

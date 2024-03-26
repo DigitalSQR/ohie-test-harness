@@ -5,7 +5,7 @@ import "./choose-test.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import { Fragment, useEffect, useState } from "react";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
-import { notification, Progress, Button } from "antd";
+import { notification, Progress, Button, Breadcrumb } from "antd";
 import { CheckCircleFilled, SyncOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
@@ -252,18 +252,13 @@ export default function ChooseTest() {
     <div id="chooseTest">
       <div id="wrapper">
         <div className="col-12 pt-3">
-          <div className="bcca-breadcrumb">
-            <div className="bcca-breadcrumb-item">{testcaseName}</div>
-            <div
-              className="bcca-breadcrumb-item"
-              onClick={() => {
-                navigate(`/applications`);
-              }}
-            >
+          <Breadcrumb className="custom-breadcrumb">
+            <Breadcrumb.Item href="" onClick={() => navigate(`/applications`)} className="breadcrumb-item">
               Applications
-            </div>
-          </div>
-          <h5>Choose Verification Type</h5>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item className="breadcrumb-item">{testcaseName}</Breadcrumb.Item>
+          </Breadcrumb>
+          <h5 className="mt-3">Choose Verification Type</h5>
           <p className="text-gray">
             Select the type to start verifying application with OpenHIE.{" "}
           </p>
