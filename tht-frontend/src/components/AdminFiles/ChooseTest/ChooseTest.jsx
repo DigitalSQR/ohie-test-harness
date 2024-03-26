@@ -7,7 +7,7 @@ import { Fragment, useEffect, useState } from "react";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { notification, Progress, Button } from "antd";
 import { CheckCircleFilled, SyncOutlined } from "@ant-design/icons";
-
+import { Spin } from "antd";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
 import { handleErrorResponse } from "../../../utils/utils";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
@@ -32,6 +32,7 @@ export default function ChooseTest() {
   const [totalAllAutomated, setTotalAllAutomated] = useState(0);
   const [totalInprogressAutomated, setTotalInprogressAutomated] = useState(0);
   const [testcaseResults, setTestCaseResults] = useState([]);
+  const [resultFlag, setResultFlag]=useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
@@ -132,6 +133,7 @@ export default function ChooseTest() {
     TestResultAPI.fetchCasesForProgressBar(params)
       .then((res) => {
         setTestCaseResults(res.data.content);
+        setResultFlag(true);
       })
       .catch((error) => {
 
@@ -357,8 +359,10 @@ export default function ChooseTest() {
                     onClick={() => {
                       handleStartTesting(null, true);
                     }}
+                    disabled={!resultFlag}
                   >
                     Start Verification
+                    {!resultFlag && <Spin size="small" />}
                   </button>
                 )}
 
