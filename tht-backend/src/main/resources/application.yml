@@ -1,7 +1,7 @@
 # ===============================
 # ALL PROFILES
 # ===============================
-
+base-url: https://tht.argusoft.com
 spring:
   cache:
     caches:
@@ -55,7 +55,7 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: https://tht.argusoft.com/api/login/oauth2/code/google
+            redirect-uri: ${base-url}/api/login/oauth2/code/google
   servlet:
     multipart:
       max-file-size: 2MB
