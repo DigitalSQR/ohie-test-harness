@@ -79,6 +79,7 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+  config: classpath:logback.xml
 
 exception:
   stack-trace:
