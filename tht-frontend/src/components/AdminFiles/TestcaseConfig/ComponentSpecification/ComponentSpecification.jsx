@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { EditFilled, EyeOutlined } from "@ant-design/icons";
 import { useLoader } from "../../../loader/LoaderContext";
 import { SpecificationAPI } from "../../../../api/SpecificationAPI";
-import { Switch, Modal, Empty } from "antd";
+import { Switch, Modal, Empty, Breadcrumb } from "antd";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../../reducers/homeReducer";
 import { useParams } from "react-router-dom";
@@ -205,19 +205,10 @@ export default function ComponentSpecification() {
       <div id="wrapper" className="component-specification-page">
         <div className="mb-3">
           <div className="d-flex justify-content-between align-items-center">
-            <div className="bcca-breadcrumb">
-              <div className="bcca-breadcrumb-item">
-                {componentDetails?.name}
-              </div>
-              <div
-                className="bcca-breadcrumb-item"
-                onClick={() => {
-                  navigate("/testcase-config");
-                }}
-              >
-                Components
-              </div>
-            </div>
+          <Breadcrumb className="custom-breadcrumb">
+            <Breadcrumb.Item onClick={() => navigate(`/testcase-config`)} className="breadcrumb-item" href="">Components</Breadcrumb.Item>
+            <Breadcrumb.Item className="breadcrumb-item">{componentDetails?.name}</Breadcrumb.Item>
+          </Breadcrumb>
             <div>
               <button
                 type="button"

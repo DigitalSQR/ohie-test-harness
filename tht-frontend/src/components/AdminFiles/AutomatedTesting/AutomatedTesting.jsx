@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { notification } from "antd";
+import { Breadcrumb, notification } from "antd";
 import "./automatedtesting.scss";
 import "././TestcaseResultRow/TestcaseResultRow.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
@@ -307,25 +307,11 @@ export default function AutomatedTesting() {
       <div className="container">
         <div className="col-12">
           <div className="d-flex justify-content-between">
-            <div className="bcca-breadcrumb">
-              <div className="bcca-breadcrumb-item">Automated Verification</div>
-              <div
-                className="bcca-breadcrumb-item"
-                onClick={() => {
-                  navigate(`/choose-test/${testRequestId}`);
-                }}
-              >
-                {testcaseName}
-              </div>
-              <div
-                className="bcca-breadcrumb-item"
-                onClick={() => {
-                  navigate(`/applications`);
-                }}
-              >
-                Applications
-              </div>
-            </div>
+            <Breadcrumb className="custom-breadcrumb">
+              <Breadcrumb.Item href="" onClick={() => { navigate(`/applications`); }} className="breadcrumb-item">Applications</Breadcrumb.Item>
+              <Breadcrumb.Item href="" onClick={() => { navigate(`/choose-test/${testRequestId}`); }} className="breadcrumb-item">{testcaseName}</Breadcrumb.Item>
+              <Breadcrumb.Item className="breadcrumb-item">Automated Verification</Breadcrumb.Item>
+            </Breadcrumb>
             {(
               <div className="d-flex gap-2">
                 <>
