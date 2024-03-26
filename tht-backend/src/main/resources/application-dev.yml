@@ -11,3 +11,10 @@ spring:
             redirect-uri: ${base-url}/api/login/oauth2/code/google
   datasource:
     url: jdbc:postgresql://localhost:5432/testing_harness_tool_dev
+
+
+logging:
+  config: classpath:logback-dev.xml
+
+tht-file:
+  location: /srv/tht/files-dev
