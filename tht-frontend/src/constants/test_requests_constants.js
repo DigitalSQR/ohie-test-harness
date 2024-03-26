@@ -24,7 +24,7 @@ export const TestRequestStateConstantNames = {
     "test.request.status.accepted": "Approved",
     "test.request.status.rejected": "REJECTED",
     "test.request.status.inprogress": "IN PROGRESS",
-    "test.request.status.finished": "FINISHED",
+    "test.request.status.finished": "COMPLETED",
     "test.request.status.skipped": "SKIPPED",
   };
 
@@ -42,7 +42,7 @@ export const TestRequestActionStateLabels = [
     {label:"Rejected", value:"test.request.status.rejected"},
     {label: "Approved", value: "test.request.status.accepted"},
     {label: "In Progress", value: "test.request.status.inprogress"},
-    {label: "Finished", value: "test.request.status.finished"},
+    {label: "Completed", value: "test.request.status.finished"},
 ];
 
 export const StateClasses = {
