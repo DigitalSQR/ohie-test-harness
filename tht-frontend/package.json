@@ -48,7 +48,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "set PORT=3000 & serve -s build"
+    "deploy": "set PORT=3000 & serve -s build",
+    "devdeploy": "set PORT=3001 & serve -s build"
   },
   "eslintConfig": {
     "extends": [
