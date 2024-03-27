@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.reportmanagement.service;
 
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultAnswerInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -73,8 +74,7 @@ public interface TestcaseResultService {
      * @throws VersionMismatchException     optimistic locking failure or the action
      *                                      was attempted on an out of date version
      */
-    public TestcaseResultEntity submitTestcaseResult(String testcaseResultId,
-                                                     Set<String> selectedTestcaseOptionIds,
+    public List<TestcaseResultEntity> submitTestcaseResult(List<TestcaseResultAnswerInfo> testcaseResultAnswerInfos,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
