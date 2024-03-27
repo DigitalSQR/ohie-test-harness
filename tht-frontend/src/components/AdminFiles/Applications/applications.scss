@@ -306,7 +306,9 @@
       background: #F0F6FB !important; /* Background for even rows */
 }
   .status{
-    width:68% !important;
+    // width:68% !important;
+    padding: 0px 16px;
+    font-weight: 500;
   }
 
   .pagination-ui {
@@ -330,5 +332,11 @@
   }
   .font-size-16 {
     font-size: 16px;
+  }
+ 
+  .approval-action-button{
+    .bi-arrow-down-circle-fill,.bi-arrow-up-circle-fill{
+      color: #6c8091;
+    }
   }
 }

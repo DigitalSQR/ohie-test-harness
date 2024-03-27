@@ -15,6 +15,7 @@ body {
   font-weight: 400;
   color: $color-black-50;
 }
+
 .expand {
   margin-left: 30px !important;
 }
@@ -46,4 +47,17 @@ body {
   border-color: #ffe58f;
   border-style: solid;
   background-color: #fffbe6 !important;
+}
+
+
+.ant-switch.ant-switch-checked:hover:not(.ant-switch-disabled) {
+  background: #009fc8;
+}
+
+.bg-success {
+  background: #24a96b;
+}
+
+.text-success {
+  color: #24a96b !important;
 }

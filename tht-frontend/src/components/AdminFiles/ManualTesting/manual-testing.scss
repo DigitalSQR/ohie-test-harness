@@ -1,14 +1,17 @@
 #manualQuestions {
+ 
   #wrapper {
     transition: 0.5s;
     margin-left: 230px;
     padding: 90px 30px;
     position: relative;
     min-height: calc(100vh - 64px);
+
     @media (max-width: 767.98px) {
       margin-left: 40px;
     }
   }
+
   /*** breadcrumb container ***/
   .bcca-breadcrumb {
     display: flex;
@@ -119,7 +122,7 @@
 
   .non-fuctional-requirement .question-box {
     background: #fff;
-    border: 1px solid #c0cfdd;
+    // border: 1px solid #c0cfdd;
     margin-bottom: 35px;
   }
 
@@ -131,7 +134,8 @@
     font-weight: 500;
     line-height: 24px;
     margin-bottom: 0;
-    border-bottom: 1px solid #c0cfdd;
+    // border-bottom: 1px solid #d7dde3;
+    
   }
 
   @media (max-width: 767.98px) {
@@ -168,7 +172,7 @@
   }
 
   .non-fuctional-requirement .question {
-    border-right: 1px solid #e1ebf1;
+    // border-right: 1px solid #e1ebf1;
   }
 
   .text-blue {
@@ -206,9 +210,10 @@
     line-height: 24px;
     display: flex;
     align-items: center;
-    width: 150px;
+    // width: 150px;
     white-space: nowrap;
     justify-content: center;
+    padding: 4px 16px;
   }
 
   .cst-btn-group .cst-btn-default:focus {
@@ -264,12 +269,12 @@
     display: none;
   }
 
-  .field-checkbox input[type="checkbox"] + label {
+  .field-checkbox input[type="checkbox"]+label {
     line-height: 13px;
     display: inline-block;
   }
 
-  .field-checkbox input[type="checkbox"] + label:before {
+  .field-checkbox input[type="checkbox"]+label:before {
     content: " ";
     display: inline-block;
     width: 20px;
@@ -289,7 +294,7 @@
     background: #d1edff;
   }
 
-  .field-checkbox input[type="checkbox"]:checked + label:before {
+  .field-checkbox input[type="checkbox"]:checked+label:before {
     background: #fff;
     color: #009fc8;
     content: "\F272";
@@ -448,39 +453,112 @@
     color: #009fc8;
     margin-bottom: -20px;
   }
-  
+
   .save-and-next {
     margin-top: 7px !important;
-      margin-bottom: 12px !important;
-      width: 140px !important;
-      color: white !important;
+    margin-bottom: 12px !important;
+    width: 140px !important;
+    color: white !important;
   }
 
-  .offcanvas-header{
+  .offcanvas-header {
     align-items: flex-start;
-    }
-    .manual-testing-sidemenu{
-      padding: 0px;
-      .accordion-item {
-        border-radius: 0px;
-        
-      .accordion-button{
+  }
+
+  .manual-testing-sidemenu {
+    padding: 0px;
+
+    .accordion-item {
+      border-radius: 0px;
+
+      .accordion-button {
         border-top-left-radius: 0px;
         border-top-right-radius: 0px;
         padding: 8px 16px;
       }
     }
-    .accordion-body{
+
+    .accordion-body {
       padding: 0px 8px;
     }
-    }
-    .question-item{
-       border-bottom: 1px solid #f2f2f2;
-    }
-/* Custom CSS for Breadcrumb */
-    .custom-breadcrumb .breadcrumb-item {
-  // font-size: 16px;
-      text-decoration: none;
-    } 
+  }
+
+  .question-item {
+    border-bottom: 1px solid #f2f2f2;
+  }
+
+  .question-header {
+    border: 1px solid #c0cfdd;
+    background: #ebf4f9;
+    margin-bottom: 10px;
+    width: auto;
+    margin-top: 0px;
+    border-radius: 8px;
+  }
+
+  .question-header h2 {
+    color: #334753;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    margin-bottom: 0;
+    padding: 12px 18px;
+   
+  }
+
+  .question-header h2.border-left {
+    border-left: 1px solid #e1ebf1;
+  }
+
+  .question-box {
+    background: #fff;
+    border: 1px solid #d7dde3 !important;
+    margin-bottom: 30px !important;
+    border-radius: 6px;
+  }
 
 }
+
+.vertical-tab-list {
+
+
+  .ant-tabs-nav {
+    padding-right: 1px;
+  }
+
+  .ant-tabs-tab {
+    background: #fff;
+    margin-top: 1px !important;
+    font-weight: 400;
+    padding: 14px 24px !important;
+    color: #425058;
+    &:first-of-type{
+     border-top-left-radius: 10px;
+    }
+ &:hover{
+  background: #ebf4f9;
+  color: #000;
+ }
+ 
+  }
+
+  .ant-tabs-tab-active {
+    // border-right: 5px solid red;
+    background: #009fc8;
+    font-weight: bold;
+
+    .ant-tabs-tab-btn {
+      color: #fff !important;
+      text-shadow: none;
+    }
+    &:hover{
+      background: #009fc8;
+    }
+  }
+  
+}
+
+
+.ant-tabs-nav-list .ant-tabs-tab:nth-child(8){
+  border-bottom-left-radius: 16px;
+ }
