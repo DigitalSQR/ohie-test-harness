@@ -228,7 +228,7 @@ const Assessee = () => {
                   <th style={{ width: thPercentage.name }}>
                     NAME
                     <span
-                      className="ps-1"
+                      className="ps-1 "
                       href="#"
                       onClick={() => handleSort("name")}
                     >
@@ -292,7 +292,7 @@ const Assessee = () => {
               <tbody>
                 {availableUsers.length === 0 ? (
                   <tr>
-                    <td className="text-center" colSpan="6">
+                    <td className="text-center " colSpan="6">
                       <Empty description="No Record Found." />
                     </td>
                   </tr>
@@ -309,11 +309,11 @@ const Assessee = () => {
                   return (
                     <Fragment key={user.id}>
                       <tr>
-                        <td>{user.name}</td>
+                        <td className="fw-bold">{user.name}</td>
                         <td className="toLowerCase-words">{user.email}</td>
                         <td>{formattedDate}</td>
                         {user.companyName ? (
-                          <td>{user.companyName}</td>
+                          <td className="fw-bold">{user.companyName}</td>
                         ) : (
                           <td>&ndash;</td>
                         )}
@@ -322,7 +322,7 @@ const Assessee = () => {
                           <span
                             className={"status " + userBadgeClasses[user.state]}
                           >
-                            {currentStatus.toUpperCase()}
+                            {currentStatus.toLowerCase()}
                           </span>
                         </td>
                         {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && (
@@ -331,7 +331,7 @@ const Assessee = () => {
                             {user.state === "user.status.active" && (
                               <Fragment>
                                 <span
-                                  className="cursor-pointer"
+                                  className="cursor-pointer text-warning font-size-12 fw-bold"
                                   onClick={() => {
                                     changeState(
                                       user.id,
@@ -341,7 +341,7 @@ const Assessee = () => {
                                     );
                                   }}
                                 >
-                                  <i className="bi bi-ban-fill text-red font-size-16"></i>{" "}
+                                  <i className="bi bi-ban text-warning font-size-16"></i>{" "}
                                   DISABLE
                                 </span>
                               </Fragment>
@@ -349,7 +349,7 @@ const Assessee = () => {
                             {user.state === "user.status.approval.pending" && (
                               <Fragment>
                                 <span
-                                  className="cursor-pointer"
+                                  className="cursor-pointer text-success font-size-12 fw-bold"
                                   onClick={() => {
                                     changeState(
                                       user.id,
@@ -360,13 +360,13 @@ const Assessee = () => {
                                   }}
                                 >
                                   <span>
-                                    <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                                    <i className="bi bi-check-circle-fill  font-size-16"></i>{" "}
                                     APPROVE{" "}
                                   </span>
                                 </span>
                                 &nbsp;
                                 <span
-                                  className="ps-3 cursor-pointer"
+                                  className="ps-3 cursor-pointer text-danger font-size-12 fw-bold"
                                   onClick={() => {
                                     changeState(
                                       user.id,
@@ -376,14 +376,14 @@ const Assessee = () => {
                                     );
                                   }}
                                 >
-                                  <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
+                                  <i className="bi bi-x-circle-fill  font-size-16"></i>{" "}
                                   REJECT{" "}
                                 </span>
                               </Fragment>
                             )}
                             {user.state === "user.status.inactive" && (
                               <span
-                                className="cursor-pointer"
+                                className="cursor-pointer text-success font-size-12 fw-bold"
                                 onClick={() => {
                                   changeState(
                                     user.id,
@@ -394,7 +394,7 @@ const Assessee = () => {
                                 }}
                               >
                                 <span>
-                                  <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                                  <i className="bi bi-check-circle-fill text-success font-size-16"></i>{" "}
                                   ENABLE
                                 </span>
                               </span>

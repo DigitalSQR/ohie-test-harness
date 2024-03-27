@@ -286,7 +286,7 @@ export default function ComponentSpecification() {
                         {/* <td {...provided.dragHandleProps}>
                           <i className="bi bi-list" style={(sortFieldName == 'rank')? {} : {cursor: 'not-allowed'}} title={(sortFieldName == 'rank')? "" : "Sort by rank to enable drag and drop rank modification."}></i>
                         </td> */}
-                      <td>{specification.name}</td>
+                      <td className="fw-bold">{specification.name}</td>
                       <td>
                         {specification.functional === true
                           ? "Functional"
@@ -319,24 +319,24 @@ export default function ComponentSpecification() {
                       <td className="action-icons-container">
                         <div className="d-flex">
                         <span
-                          className="cursor-pointer"
+                          className="cursor-pointer text-blue font-size-12 fw-bold"
                           onClick={() => {
                             setSpecificationId(specification?.id);
                             setIsModalOpen(true);
                           }}
                         >
-                          <i className="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
+                          <i className="bi bi-pencil-square font-size-16 "></i>{" "}
                           EDIT
                         </span>&nbsp;
                         <span
-                          className="cursor-pointer ps-2"
+                          className="cursor-pointer ps-2 text-blue font-size-12 fw-bold"
                           onClick={() =>
                             navigate(
                               `/testcase-config/manual-testcases/${specification?.id}`
                             )
                           }
                         >
-                          <i className="bi bi-eye font-size-16 text-blue-50"></i>{" "}
+                          <i className="bi bi-eye font-size-16 "></i>{" "}
                           TESTCASES
                         </span>
                         </div>

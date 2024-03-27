@@ -326,14 +326,14 @@ const Applications = () => {
                 {testRequests?.map((testRequest,index) => (
                   <>
                   <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
-                    <td>{testRequest.name}</td>
+                    <td className="fw-bold">{testRequest.name}</td>
                     {/* <td>
                       {testRequest.productName !== ""
                         ? testRequest.productName
                         : "-"}
                     </td> */}
-                    <td>{formatDate(testRequest.meta.createdAt)}</td>            
-                        <UserIdNameEmailConnector
+                    <td >{formatDate(testRequest.meta.createdAt)}</td>            
+                        <UserIdNameEmailConnector className="fw-bold"
                           isLink={true}
                           userId={testRequest.assesseeId}
                         />
@@ -346,7 +346,7 @@ const Applications = () => {
                               StateBadgeClasses[testRequest.state]
                             }`}
                           >
-                            {TestRequestStateConstantNames[testRequest.state]}
+                            {TestRequestStateConstantNames[testRequest.state].toLowerCase()}
                           </span>
                         </Fragment>
                       ) : (
@@ -356,7 +356,7 @@ const Applications = () => {
                               StateBadgeClasses[testRequest.state]
                             }`}
                           >
-                            {TestRequestStateConstantNames[testRequest.state]}
+                            {TestRequestStateConstantNames[testRequest.state].toLowerCase()}
                           </span>
                         </Fragment>
                       )}
@@ -429,9 +429,9 @@ const Applications = () => {
                           className="approval-action-button float-end my-auto display"
                         >
                           {testRequest.class === "show" ? (
-                            <i className="bi bi-chevron-double-down"></i>
+                            <i className="bi bi-arrow-up-circle-fill fs-5"></i>
                           ) : (
-                            <i className="bi bi-chevron-double-right"></i>
+                            <i className="bi bi-arrow-down-circle-fill fs-5"></i>
                           )}
                         </span>
                     </td>

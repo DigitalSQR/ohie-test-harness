@@ -141,7 +141,7 @@ export default function Options(props) {
 		<div id="options">
 		<div className="custom-multiselect field-checkbox">
 			{options && options.map((option, index) => (
-				<div className="field-box" key={option.id}>
+				<div className={currentOptions.includes(option.id) ? "field-box option-selected" : "field-box"} key={option.id}>
 					<div className="option-item">
 						<input
 							key={option.id}

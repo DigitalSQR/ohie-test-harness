@@ -266,7 +266,7 @@ export default function ComponentList() {
                                 <i className="bi bi-list" style={(sortFieldName == 'rank')? {} : {cursor: 'not-allowed'}} title={(sortFieldName == 'rank')? "" : "Sort by rank to enable drag and drop rank modification."}>
                                 </i>                              
                               </td> */}
-                              <td>{component.name}</td>
+                              <td className="fw-bold">{component.name}</td>
                               <td>
                                 <Switch
                                   checked={component.state === "component.status.active"}
@@ -278,23 +278,23 @@ export default function ComponentList() {
                               <td>{component.rank}</td>
                               <td>
                                 <span
-                                  className="cursor-pointer"
+                                  className="cursor-pointer font-size-12 text-blue fw-bold"
                                   onClick={() => {
                                     setComponentId(component.id);
                                     setIsModalOpen(true);
                                   }}
                                 >
-                                  <i className="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
+                                  <i className="bi bi-pencil-square font-size-16 "></i>{" "}
                                   EDIT
                                 </span>
                                 &nbsp;
                                 <span
-                                  className="cursor-pointer ps-2"
+                                  className="cursor-pointer ps-2 font-size-12 text-blue fw-bold"
                                   onClick={() =>
                                     navigate(`/testcase-config/component-specification/${component.id}`)
                                   }
                                 >
-                                  <i className="bi bi-eye font-size-16 text-blue-50"></i>{" "}
+                                  <i className="bi bi-eye font-size-16  "></i>{" "}
                                   SPECIFICATIONS
                                 </span>
                               </td>

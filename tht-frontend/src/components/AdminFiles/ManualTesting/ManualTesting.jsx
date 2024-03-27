@@ -12,11 +12,12 @@ import { Breadcrumb, Tabs, notification } from "antd";
 import { Select } from "antd";
 import { Option } from "antd/es/mentions";
 import TestCase from "../TestCase/TestCase";
+import TestcaseVertical from "../TestcaseVertical/TestcaseVertical";
 import WebSocketService from "../../../api/WebSocketService";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useLoader } from "../../loader/LoaderContext";
 
-import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody} from '@coreui/react';
+import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@coreui/react';
 
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
@@ -30,80 +31,82 @@ import { set_header } from "../../../reducers/homeReducer";
   encounters. 
 */
 export default function ManualTesting() {
-	const { testRequestId } = useParams();
-	const [currentComponentIndex, setCurrentComponentIndex] = useState();
-	const [currentSpecificationIndex, setCurrentSpecificationIndex] = useState();
-	const [currentTestcaseIndex, setCurrentTestcaseIndex] = useState();
-	const [currentComponent, setCurrentComponent] = useState();
-	const [currentSpecification, setCurrentSpecification] = useState();
-	const [currentTestcase, setCurrentTestcase] = useState();
-	const [testcaseResults, setTestcaseResults] = useState();
-	const [testcaseRequestResult, setTestcaseRequestResult] = useState();
+  const { testRequestId } = useParams();
+  const [currentComponentIndex, setCurrentComponentIndex] = useState();
+  const [currentSpecificationIndex, setCurrentSpecificationIndex] = useState();
+  const [currentTestcaseIndex, setCurrentTestcaseIndex] = useState();
+  const [currentComponent, setCurrentComponent] = useState();
+  const [currentSpecification, setCurrentSpecification] = useState();
+  const [currentTestcase, setCurrentTestcase] = useState();
+  const [testcaseResults, setTestcaseResults] = useState();
+  const [testcaseRequestResult, setTestcaseRequestResult] = useState();
   const [finishedTestCasesCount, setFinishedTestCasesCount] = useState(0);
   const [totalTestCasesCount, setTotalTestCasesCount] = useState(0);
-	var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
-	const { showLoader, hideLoader } = useLoader();
+  const [isTop, setIsTop] = useState(true);
+  const [isHorizontal, setIsHorizontal] = useState(true);
+  var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
+  const { showLoader, hideLoader } = useLoader();
   const dispatch = useDispatch();
-	const { Item } = Tabs;
-	const [testcaseName, setTestCaseName] = useState();
-	const navigate = useNavigate();
+  const { Item } = Tabs;
+  const [testcaseName, setTestCaseName] = useState();
+  const navigate = useNavigate();
   const openComponentIndex = -1;
 
   // This function fetches data for the test-request, sorts data according to the hierarchy, i.e. component,
   // specification  and it's respective testcases.
   // Also updates already finished testcases if any, for a smooth test-case experience. 
 
-	const fetchTestCaseResultDataAndStartWebSocket = async () => {
-		try {
-			const res = await TestResultAPI.getMultipleTestcaseResultStatus({manual:true,testRequestId});
-			const testcaseResults = [];
-			let testcaseRequestResult;
-			let finishedTestcases = 0;
-			let totalTestcases = 0;
-			for (let testcaseResult of res) {
-				if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
-					testcaseResult.childTestcaseResults = [];
-					testcaseResults.push(testcaseResult);
-				} else if (testcaseResult.refObjUri === RefObjUriConstants.SPECIFICATION_REFOBJURI) {
-					testcaseResult.childTestcaseResults = [];
-					testcaseResults[testcaseResults.length - 1].childTestcaseResults.push(testcaseResult);
-				} else if (testcaseResult.refObjUri === RefObjUriConstants.TESTCASE_REFOBJURI) {
-					totalTestcases++;
-					if (testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
-						finishedTestcases++;
-					}
-					testcaseResults[testcaseResults.length - 1]
-						.childTestcaseResults[testcaseResults[testcaseResults.length - 1].childTestcaseResults.length - 1]
-						.childTestcaseResults
-						.push(testcaseResult);
-				} else if (testcaseResult.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI) {
-					setTestcaseRequestResult(testcaseResult);
-					testcaseRequestResult = testcaseResult;
-				}
-			}
-			setTestcaseResults(testcaseResults);
-			setTotalTestCasesCount(totalTestcases);
-			setFinishedTestCasesCount(finishedTestcases);
-			if (testcaseRequestResult?.state !== "testcase.result.status.finished") {
-				webSocketConnect();
-			}
-		} catch (error) {
-			console.log(error);
-		}
-	};
+  const fetchTestCaseResultDataAndStartWebSocket = async () => {
+    try {
+      const res = await TestResultAPI.getMultipleTestcaseResultStatus({ manual: true, testRequestId });
+      const testcaseResults = [];
+      let testcaseRequestResult;
+      let finishedTestcases = 0;
+      let totalTestcases = 0;
+      for (let testcaseResult of res) {
+        if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
+          testcaseResult.childTestcaseResults = [];
+          testcaseResults.push(testcaseResult);
+        } else if (testcaseResult.refObjUri === RefObjUriConstants.SPECIFICATION_REFOBJURI) {
+          testcaseResult.childTestcaseResults = [];
+          testcaseResults[testcaseResults.length - 1].childTestcaseResults.push(testcaseResult);
+        } else if (testcaseResult.refObjUri === RefObjUriConstants.TESTCASE_REFOBJURI) {
+          totalTestcases++;
+          if (testcaseResult.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED) {
+            finishedTestcases++;
+          }
+          testcaseResults[testcaseResults.length - 1]
+            .childTestcaseResults[testcaseResults[testcaseResults.length - 1].childTestcaseResults.length - 1]
+            .childTestcaseResults
+            .push(testcaseResult);
+        } else if (testcaseResult.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI) {
+          setTestcaseRequestResult(testcaseResult);
+          testcaseRequestResult = testcaseResult;
+        }
+      }
+      setTestcaseResults(testcaseResults);
+      setTotalTestCasesCount(totalTestcases);
+      setFinishedTestCasesCount(finishedTestcases);
+      if (testcaseRequestResult?.state !== "testcase.result.status.finished") {
+        webSocketConnect();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // UseEffect which is fired on the initial component render, fetches testcase data and disconnects to 
   // web-socket if the component is unmounted.
-	useEffect(() => {
+  useEffect(() => {
     dispatch(set_header("Manual Verification"));
-		showLoader();
-		fetchTestCaseResultDataAndStartWebSocket();
-		testCaseInfo();
-		return () => {
-			// Disconnect WebSocket when component unmounts
-			webSocketDisconnect();
-		};
-	}, []);
+    showLoader();
+    fetchTestCaseResultDataAndStartWebSocket();
+    testCaseInfo();
+    return () => {
+      // Disconnect WebSocket when component unmounts
+      webSocketDisconnect();
+    };
+  }, []);
 
   // This UseEffect is responsible for keeping track of components, specifications and testcases that are
   //  finished. As soon as they are finished, the UI is updated dynamically, which helps the tester, keep track
@@ -185,14 +188,14 @@ export default function ManualTesting() {
     }
   }, [testcaseResults]);
 
-	const testCaseInfo = () => {
-		TestRequestAPI.getTestRequestsById(testRequestId)
-			.then((res) => {
-				setTestCaseName(res.name);
-			}).catch(() => {
-				
-			});
-	};
+  const testCaseInfo = () => {
+    TestRequestAPI.getTestRequestsById(testRequestId)
+      .then((res) => {
+        setTestCaseName(res.name);
+      }).catch(() => {
+
+      });
+  };
 
   // This function is used to navigate between components in the select dropdown. The first unfinished component
   // is displayed to the tester. This saves time and testing becomes efficient. This function also 
@@ -292,7 +295,7 @@ export default function ManualTesting() {
       ].childTestcaseResults.length -
       1
     ) {
-        selectNextSpecification();
+      selectNextSpecification();
     } else {
       selectTestcase(
         currentTestcaseIndex + 1,
@@ -332,11 +335,22 @@ export default function ManualTesting() {
     ].childTestcaseResults[currentTestcaseIndex] = testcase;
   };
 
+  // Function to handle click on horizontal button
+  const handleHorizontalClick = () => {
+    setIsHorizontal(true);
+    setIsTop(true)
+  };
 
-	return !!testcaseResults && !!currentComponent && (
+  // Function to handle click on vertical button
+  const handleVerticalClick = () => {
+    setIsHorizontal(false);
+    setIsTop(false)
+  };
+
+  return !!testcaseResults && !!currentComponent && (
     <div id="manualQuestions">
-		<div id="wrapper" className="stepper-wrapper">
-    <Breadcrumb className="mb-3 custom-breadcrumb">
+      <div id="wrapper" className="stepper-wrapper">
+      <Breadcrumb className="mb-3 custom-breadcrumb">
       <Breadcrumb.Item href="" onClick={() => navigate(`/applications`)} className="breadcrumb-item">
         Applications
       </Breadcrumb.Item>
@@ -345,135 +359,218 @@ export default function ManualTesting() {
       </Breadcrumb.Item>
       <Breadcrumb.Item className="breadcrumb-item">Manual Verification</Breadcrumb.Item>
     </Breadcrumb>
-			<span>
-				<b>Component  </b>
-			</span>
-			<Select
-				onChange={selectComponent}
-				className="select"
-				value={{ label: (
-					<span>
-						{currentComponent.name}
-						{currentComponent?.state === "testcase.result.status.finished" && (
-							<>&nbsp;<i style={{ color: "green" }} className="bi bi-check-circle-fill"></i></>
-						)}
-					</span>
-				) }}
-				style={{ width: '200px' }}
-			>
-				{testcaseResults
-					.map((components, index) => {
-						return (
-							<Select.Option
-								key={components.id}
-								value={index}
-							>
-								{
-									<span>
-										{components.name}
-										{components?.state === "testcase.result.status.finished" && (
-											<>&nbsp;<i style={{ color: "green" }} className="bi bi-check-circle-fill"></i></>
-										)}
-									</span>
-								}
-							</Select.Option>
-						);
-					})}
-			</Select>
-
-      <div className="offcanvas offcanvas-end" tabIndex="-1" id="manualTesting" aria-labelledby="manualTestingLabel">
-            <div className="offcanvas-header">
-              <div className="offcanvas-title">
-                <h5 id="manualTestingLabel">Manual Verification </h5>
-                <div className="answeredQuest">
-                  <h6>Status:{finishedTestCasesCount}/{totalTestCasesCount} </h6>
-                </div>
-              </div>
-
-              <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div className="offcanvas-body manual-testing-sidemenu">
-              <CAccordion activeItemKey={openComponentIndex}>
-
-                {testcaseResults.map((component, outerIndex) => (
-                  <div key={outerIndex}>
-                    <CAccordionItem itemKey={outerIndex} key={outerIndex}>
-                      <CAccordionHeader className="component-header">
-                        {component.name}
-                        {component.state === "testcase.result.status.finished" && (
-                          <>&nbsp;<i style={{ color: "green" }} className="bi bi-check-circle-fill"></i></>
-                        )
-                        }
-
-                      </CAccordionHeader>
-                      <CAccordionBody>
-                        <div>
-                          {component.childTestcaseResults.map((specification, innerIndex) => (
-                            <div key={innerIndex} className="question-item">
-                              <div className="specification-header"> {specification.name}</div>
-                              {specification.childTestcaseResults.map((testcase, index) => (
-                                <span key={index}>
-                                  <button
-                                    onClick={() => selectParticularTestCase(outerIndex, innerIndex, index)}
-                                    className={`round-span ${testcase.state === "testcase.result.status.finished" ? "round-span-success" : ""}`}
-                                  >
-                                    {index + 1}
-                                  </button>
-                                </span>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
-                      </CAccordionBody>
-                    </CAccordionItem>
-
-                  </div>
+        <div className="component-container mb-3">
+          <div className="row">
+            <div className="col-md-6">
+              <span className="me-2">
+                <b>Component</b>
+              </span>
+              <Select
+                onChange={selectComponent}
+                className="select"
+                value={{
+                  label: (
+                    <span>
+                      {currentComponent.name}
+                      {currentComponent?.state === "testcase.result.status.finished" && (
+                        <>
+                          &nbsp;
+                          <i style={{ color: "green" }} className="bi bi-check-circle-fill"></i>
+                        </>
+                      )}
+                    </span>
+                  )
+                }}
+                style={{ width: '200px' }}
+              >
+                {testcaseResults.map((components, index) => (
+                  <Select.Option key={components.id} value={index}>
+                    <span>
+                      {components.name}
+                      {components?.state === "testcase.result.status.finished" && (
+                        <>
+                          &nbsp;
+                          <i style={{ color: "green" }} className="bi bi-check-circle-fill"></i>
+                        </>
+                      )}
+                    </span>
+                  </Select.Option>
                 ))}
-
-              </CAccordion>
+              </Select>
+            </div>
+            <div className="col-md-6 text-end">
+              <div className="layout-buttons">
+                {/* Horizontal Button */}
+                <button className={`${isHorizontal ? 'btn btn-outline-secondary   ' : 'btn btn-outline-secondary  '}`} onClick={handleHorizontalClick}>
+                  Horizontal
+                </button>
+                {/* Vertical Button */}
+                <button className={`${isHorizontal ? 'btn btn-outline-secondary ' : 'btn btn-outline-secondary    '}`} onClick={handleVerticalClick}>
+                  Vertical
+                </button>
+              </div>
             </div>
           </div>
-			{!!currentSpecification && (
-				<Tabs
-        destroyInactiveTabPane={true}
-					activeKey={currentSpecificationIndex.toString()}
-					onChange={(val) => {
-						selectSpecification(val, currentComponentIndex);
-					}}
-				>
-					{testcaseResults[currentComponentIndex].childTestcaseResults.map((specification, index) => (
-						<Item
-							key={index}
-							value={specification.id}
-							tab={
-								<span>
-									{specification.name}
-									{specification?.state === "testcase.result.status.finished" && (
-										<>&nbsp;<i style={{ color: "green" }} className="bi bi-check-circle-fill"></i></>
-									)}
-								</span>
-							}
-						>
-							<TestCase
-								currentTestcaseIndex={currentTestcaseIndex}
-								currentTestcase={currentTestcase}
-								currentSpecification={currentSpecification}
-								selectTestcase={selectTestcase}
-								selectNextTestcase={selectNextTestcase}
-								refreshCurrentTestcase={refreshCurrentTestcase}
-								isLastQuestion={isLastQuestion}
-							></TestCase>
-						</Item>
-					))}
-				</Tabs>
-			)}
-		</div>
-    
-    <div className="fixed-button">
-      <button data-bs-toggle="offcanvas" href="#manualTesting" aria-controls="manualTesting">{finishedTestCasesCount}/{totalTestCasesCount}</button>
-    </div>
+
+
+
+        </div>
+
+        <div className="offcanvas offcanvas-end" tabIndex="-1" id="manualTesting" aria-labelledby="manualTestingLabel">
+          <div className="offcanvas-header">
+            <div className="offcanvas-title">
+              <h5 id="manualTestingLabel">Manual Verification </h5>
+              <div className="answeredQuest">
+                <h6>Status:{finishedTestCasesCount}/{totalTestCasesCount} </h6>
+              </div>
+            </div>
+
+            <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div className="offcanvas-body manual-testing-sidemenu">
+            <CAccordion activeItemKey={openComponentIndex}>
+
+              {testcaseResults.map((component, outerIndex) => (
+                <div key={outerIndex}>
+                  <CAccordionItem itemKey={outerIndex} key={outerIndex}>
+                    <CAccordionHeader className="component-header">
+                      {component.name}
+                      {component.state === "testcase.result.status.finished" && (
+                        <>&nbsp;<i style={{ color: "green" }} className="bi bi-check-circle-fill"></i></>
+                      )
+                      }
+
+                    </CAccordionHeader>
+                    <CAccordionBody>
+                      <div>
+                        {component.childTestcaseResults.map((specification, innerIndex) => (
+                          <div key={innerIndex} className="question-item">
+                            <div className="specification-header"> {specification.name}</div>
+                            {specification.childTestcaseResults.map((testcase, index) => (
+                              <span key={index}>
+                                <button
+                                  onClick={() => selectParticularTestCase(outerIndex, innerIndex, index)}
+                                  className={`round-span ${testcase.state === "testcase.result.status.finished" ? "round-span-success" : ""}`}
+                                >
+                                  {index + 1}
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </CAccordionBody>
+                  </CAccordionItem>
+
+                </div>
+              ))}
+
+            </CAccordion>
+          </div>
+        </div>
+        <div className="vertical-tab-list">
+          {!!currentSpecification && (
+            <Tabs
+              destroyInactiveTabPane={true}
+              tabPosition={isTop ? 'top' : 'left'}
+              activeKey={currentSpecificationIndex.toString()}
+              onChange={(val) => {
+                selectSpecification(val, currentComponentIndex);
+              }}
+            >
+              {testcaseResults[currentComponentIndex].childTestcaseResults.map((specification, index) => (
+                <Item
+                  key={index}
+                  value={specification.id}
+                  tab={
+                    <span>
+                      {specification.name}
+                      {specification?.state === "testcase.result.status.finished" && (
+                        <>&nbsp;<i style={{ color: "green" }} className="bi bi-check-circle-fill"></i></>
+                      )}
+                    </span>
+                  }
+                >
+                  {isHorizontal ? (
+                    <TestCase
+                      currentTestcaseIndex={currentTestcaseIndex}
+                      currentTestcase={currentTestcase}
+                      currentSpecification={currentSpecification}
+                      selectTestcase={selectTestcase}
+                      selectNextTestcase={selectNextTestcase}
+                      refreshCurrentTestcase={refreshCurrentTestcase}
+                      isLastQuestion={isLastQuestion}
+                    ></TestCase>
+                  ) :
+                    <div className="vertical-layout">
+                      <div className="row question-header">
+                        <div className="col-md-9 col-12 p-0">
+                          <h2>Question</h2>
+                        </div>
+
+                        <div className="col-md-3 col-12 d-md-flex d-none p-0">
+                          <h2 className="border-left">Reference</h2>
+                        </div>
+                      </div>
+                      <TestcaseVertical
+                        currentTestcaseIndex={currentTestcaseIndex}
+                        currentTestcase={currentTestcase}
+                        currentSpecification={currentSpecification}
+                        selectTestcase={selectTestcase}
+                        selectNextTestcase={selectNextTestcase}
+                        refreshCurrentTestcase={refreshCurrentTestcase}
+                        isLastQuestion={isLastQuestion}
+                      ></TestcaseVertical>
+                      <TestcaseVertical
+                        currentTestcaseIndex={currentTestcaseIndex}
+                        currentTestcase={currentTestcase}
+                        currentSpecification={currentSpecification}
+                        selectTestcase={selectTestcase}
+                        selectNextTestcase={selectNextTestcase}
+                        refreshCurrentTestcase={refreshCurrentTestcase}
+                        isLastQuestion={isLastQuestion}
+                      ></TestcaseVertical>
+                      <TestcaseVertical
+                        currentTestcaseIndex={currentTestcaseIndex}
+                        currentTestcase={currentTestcase}
+                        currentSpecification={currentSpecification}
+                        selectTestcase={selectTestcase}
+                        selectNextTestcase={selectNextTestcase}
+                        refreshCurrentTestcase={refreshCurrentTestcase}
+                        isLastQuestion={isLastQuestion}
+                      ></TestcaseVertical>
+                      <TestcaseVertical
+                        currentTestcaseIndex={currentTestcaseIndex}
+                        currentTestcase={currentTestcase}
+                        currentSpecification={currentSpecification}
+                        selectTestcase={selectTestcase}
+                        selectNextTestcase={selectNextTestcase}
+                        refreshCurrentTestcase={refreshCurrentTestcase}
+                        isLastQuestion={isLastQuestion}
+                      ></TestcaseVertical>
+                    </div>
+                  }
+                </Item>
+              ))}
+            </Tabs>
+          )}
+        </div>
+        {!isHorizontal &&
+        <div className="row">
+        <div className="col-12 pe-0 text-end">
+          <button className="btn btn-primary ">Save & Next</button>
+        </div>
+      </div>
+}
+      </div>
+
+      {isTop ? (
+        <div className="fixed-button">
+          <button data-bs-toggle="offcanvas" href="#manualTesting" aria-controls="manualTesting">{finishedTestCasesCount}/{totalTestCasesCount}</button>
+        </div>
+      ) : (<></>)}
     </div>
 
-	);
+  );
 }
 
