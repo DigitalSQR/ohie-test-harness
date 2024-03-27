@@ -22,6 +22,7 @@ import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@c
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
 import { set_header } from "../../../reducers/homeReducer";
+import TestCaseVerticalView from "../TestCaseVerticalView/TestCaseVerticalView";
 
 /* 
   Manual Testing Page. 
@@ -398,18 +399,17 @@ export default function ManualTesting() {
                 ))}
               </Select>
             </div>
-            <div className="col-md-6 text-end">
+            {/* Below is the button code which is currently commented out */}
+            {/* <div className="col-md-6 text-end">
               <div className="layout-buttons">
-                {/* Horizontal Button */}
                 <button className={`${isHorizontal ? 'btn btn-outline-secondary   ' : 'btn btn-outline-secondary  '}`} onClick={handleHorizontalClick}>
                   Horizontal
                 </button>
-                {/* Vertical Button */}
                 <button className={`${isHorizontal ? 'btn btn-outline-secondary ' : 'btn btn-outline-secondary    '}`} onClick={handleVerticalClick}>
                   Vertical
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
 
@@ -502,53 +502,14 @@ export default function ManualTesting() {
                       isLastQuestion={isLastQuestion}
                     ></TestCase>
                   ) :
-                    <div className="vertical-layout">
-                      <div className="row question-header">
-                        <div className="col-md-9 col-12 p-0">
-                          <h2>Question</h2>
-                        </div>
-
-                        <div className="col-md-3 col-12 d-md-flex d-none p-0">
-                          <h2 className="border-left">Reference</h2>
-                        </div>
-                      </div>
-                      <TestcaseVertical
-                        currentTestcaseIndex={currentTestcaseIndex}
-                        currentTestcase={currentTestcase}
-                        currentSpecification={currentSpecification}
-                        selectTestcase={selectTestcase}
-                        selectNextTestcase={selectNextTestcase}
-                        refreshCurrentTestcase={refreshCurrentTestcase}
-                        isLastQuestion={isLastQuestion}
-                      ></TestcaseVertical>
-                      <TestcaseVertical
-                        currentTestcaseIndex={currentTestcaseIndex}
-                        currentTestcase={currentTestcase}
-                        currentSpecification={currentSpecification}
-                        selectTestcase={selectTestcase}
-                        selectNextTestcase={selectNextTestcase}
-                        refreshCurrentTestcase={refreshCurrentTestcase}
-                        isLastQuestion={isLastQuestion}
-                      ></TestcaseVertical>
-                      <TestcaseVertical
-                        currentTestcaseIndex={currentTestcaseIndex}
-                        currentTestcase={currentTestcase}
-                        currentSpecification={currentSpecification}
-                        selectTestcase={selectTestcase}
-                        selectNextTestcase={selectNextTestcase}
-                        refreshCurrentTestcase={refreshCurrentTestcase}
-                        isLastQuestion={isLastQuestion}
-                      ></TestcaseVertical>
-                      <TestcaseVertical
-                        currentTestcaseIndex={currentTestcaseIndex}
-                        currentTestcase={currentTestcase}
-                        currentSpecification={currentSpecification}
-                        selectTestcase={selectTestcase}
-                        selectNextTestcase={selectNextTestcase}
-                        refreshCurrentTestcase={refreshCurrentTestcase}
-                        isLastQuestion={isLastQuestion}
-                      ></TestcaseVertical>
-                    </div>
+                    <TestCaseVerticalView 
+                    currentTestcaseIndex={currentTestcaseIndex}
+                    currentTestcase={currentTestcase}
+                    currentSpecification={currentSpecification}
+                    selectTestcase={selectTestcase}
+                    selectNextTestcase={selectNextTestcase}
+                    refreshCurrentTestcase={refreshCurrentTestcase}
+                    isLastQuestion={isLastQuestion}></TestCaseVerticalView>
                   }
                 </Item>
               ))}
