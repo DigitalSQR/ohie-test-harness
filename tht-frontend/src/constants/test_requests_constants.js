@@ -30,11 +30,11 @@ export const TestRequestStateConstantNames = {
 
 export const StateBadgeClasses = {
     "test.request.status.draft": "badges-orange",
-    "test.request.status.pending": "badges-orange",
-    "test.request.status.accepted": "badges-green-dark",
-    "test.request.status.rejected": "badges-orange",
-    "test.request.status.inprogress": "badges-blue",
-    "test.request.status.finished": "badges-green-dark",
+    "test.request.status.pending": "badges-orange bg-warning",
+    "test.request.status.accepted": "badges-green-dark bg-success",
+    "test.request.status.rejected": "badges-orange bg-danger",
+    "test.request.status.inprogress": "badges-blue bg-info",
+    "test.request.status.finished": "badges-green-dark bg-success",
 };
 
 export const TestRequestActionStateLabels = [
@@ -48,12 +48,12 @@ export const TestRequestActionStateLabels = [
 export const StateClasses = {
     "test.request.status.accepted": {
         btnClass: "btn btn-sm w-75 btn-outline-success",
-        iconClass: "bi bi-play-fill text-blue-50 font-size-16",
+        iconClass: "bi bi-play-fill  font-size-16",
         btnText: "Start"
     },
     "test.request.status.inprogress": {
         btnClass: "btn btn-sm w-75 btn-outline-success",
-        iconClass: "bi bi-play-fill text-blue-50 font-size-16",
+        iconClass: "bi bi-play-fill  font-size-16",
         btnText: "Resume"
     },
     "test.request.status.finished": {

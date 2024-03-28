@@ -92,6 +92,7 @@ const Applications = () => {
     )
       .then((res) => {
         hideLoader();
+
         setTestRequests(res.content);
         setTotalPages(res.totalPages);
       })
@@ -367,7 +368,7 @@ const Applications = () => {
                           TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
                           <>
                             <span
-                            className="cursor-pointer"
+                            className="cursor-pointer text-success"
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
@@ -376,11 +377,11 @@ const Applications = () => {
                                 );
                               }}
                             >
-                            <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                            <i className="bi bi-check-circle-fill text-success font-size-16"></i>{" "}
                               APPROVE{" "}
                             </span>
                             <span
-                              className="cursor-pointer ps-3"
+                              className="cursor-pointer ps-3 text-danger"
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
@@ -397,8 +398,9 @@ const Applications = () => {
                       {testRequest.state !== TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
                         userRole.includes("role.tester") ||
                         userRole.includes("role.admin") ? (
-                          <span 
-                            className="cursor-pointer"
+                        
+                          <button
+                            className="cursor-pointer glossy-button glossy-button--green"
                             onClick={() => {
                               navigate(`/choose-test/${testRequest.id}`);
                             }}
@@ -410,18 +412,19 @@ const Applications = () => {
                               }
                             ></i>{" "}
                             {StateClasses[testRequest.state]?.btnText?.toUpperCase()}
-                          </span>
+                          </button>
                         ) : (
                           <></>
                         )
                       ) : (
-                        <span
-                        className="cursor-pointer"
+                       
+                        <button
+                        className="cursor-pointer glossy-button glossy-button--gold"
                           onClick={() => viewReport(testRequest.id)}
                         >
-                          <i className="bi bi-file-text text-green-50 font-size-16"></i>{" "}
+                          <i className="bi bi-file-text  font-size-16"></i>{" "}
                               REPORT{" "}
-                        </span>
+                        </button>
                       )}
                       <span
                           onClick={() => toggleRow(testRequest.id)}
@@ -434,6 +437,7 @@ const Applications = () => {
                             <i className="bi bi-arrow-down-circle-fill fs-5"></i>
                           )}
                         </span>
+                        
                     </td>
                   </tr>
                   <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
