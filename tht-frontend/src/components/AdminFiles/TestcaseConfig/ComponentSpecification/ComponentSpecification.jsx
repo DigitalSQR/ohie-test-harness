@@ -209,6 +209,7 @@ export default function ComponentSpecification() {
             <Breadcrumb.Item onClick={() => navigate(`/testcase-config`)} className="breadcrumb-item" href="">Components</Breadcrumb.Item>
             <Breadcrumb.Item className="breadcrumb-item">{componentDetails?.name}</Breadcrumb.Item>
           </Breadcrumb>
+          
             <div>
               <button
                 type="button"
@@ -220,6 +221,7 @@ export default function ComponentSpecification() {
               </button>
             </div>
           </div>
+          <hr className="hr-light"/>
         </div>
         <div>
             <div className="table-responsive">

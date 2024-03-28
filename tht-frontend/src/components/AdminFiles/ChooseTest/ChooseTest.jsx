@@ -258,6 +258,7 @@ export default function ChooseTest() {
             </Breadcrumb.Item>
             <Breadcrumb.Item className="breadcrumb-item">{testcaseName}</Breadcrumb.Item>
           </Breadcrumb>
+          <hr className="hr-light"/>
           <h5 className="mt-3">Choose Verification Type</h5>
           <p className="text-gray">
             Select the type to start verifying application with OpenHIE.{" "}

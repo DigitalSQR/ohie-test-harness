@@ -87,9 +87,51 @@ export default function Dashboard() {
   return (
     <div id="dashboard">
       <div id="wrapper">
-        <div className="pt-3">
+        <div className="row">
+          <div className="col-xxl-10 mx-auto">
+            <div class="alert alert-success p-2 mb-4" role="alert">
+              <div className="row align-items-center">
+                <div className="col-md-3 align-items-center text-center mt-3">
+                  <img src={tool_icon} alt="Tool Icon"  style={{ maxHeight: "42px" }} className="me-2"/>
+                  <h5 className="mt-2">Testing Harness Tool</h5>
+                </div>
+               <div className="col">
+                <div className="font-size-16 mt-4">
+                {role === "ADMIN" &&
+                  "Manage the verification process by configuring test cases, evaluating registration requests, and monitoring progress to ensure alignment with OpenHIE Architecture and WHO SMART Guidelines."}
+                {role === "TESTER" &&
+                  "Oversee verification requests and execute manual/automatic tests. Responsibilities include reviewing and approving verification requests, conducting various tests to determine alignment with OpenHEI Architecture specification and health and data content, as specified by  WHO SMART Guidelines."}
+                {role === "ASSESSEE" && "Register your application to the open-source verification harness and complete test framework that will facilitate verifying how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines. "}
+              </div>
+              <div className="col">
+              <p className="mt-2" >
+                <a
+                  className="text-blue font-weight-500"
+                  target="_blank"
+                  href="https://guides.ohie.org/arch-spec/openhie-component-specifications-1"
+                >
+                  View OpenHIE Component Specifications
+                </a>
+              </p>
+              {userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
+                <div className="my-4">
+                  <button
+                    className="btn btn-primary mt-2 theme-blue-color"
+                    onClick={() => navigate("/register-application")}
+                  >
+                    <i className="bi bi-pencil-square"></i> Register Test Request
+                  </button>
+                </div>
+              )}
+              </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="pt-0">
           <div className="text-center row">
-            <div className="col-6 offset-3 text-center">
+            {/* <div className="col-6 offset-3 text-center">
               <img src={tool_icon} alt="Tool Icon" />
               <h4 className="mt-2">Testing Harness Tool</h4>
               <div className="font-size-16 mt-4">
@@ -118,15 +160,51 @@ export default function Dashboard() {
                   </button>
                 </div>
               )}
-            </div>
+            </div> */}
 
-            <div className="d-flex my-5">
+            <div className="d-flex mb-3">
               {Object.keys(statistics).map((key) => (
                 <Statistics key={key} parameter={key} value={statistics[key]} />
               ))}
             </div>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="card p-3">
+                  <StackedBarGraph
+                    series={ApplicationRequestsByMonth}
+                    title="Application Requests by Month"
+                    categories={[
+                      "Jan",
+                      "Feb",
+                      "Mar",
+                      "Apr",
+                      "May",
+                      "June",
+                      "July",
+                    ]}
+                  />
+                </div>
+              </div>
 
-            <div className="d-flex justify-content-between px-5 my-5">
+              <div className="col-md-6">
+                <div className="card p-3">
+                  <StackedBarGraph
+                    series={TopCompliantApplications}
+                    title="Top 5 Compiant Applications"
+                    categories={[
+                      "Medplat",
+                      "app1",
+                      "app2",
+                      "app3",
+                      "app4",
+                      "app5",
+                    ]}
+                    yAxisSymbol="%"
+                  />
+                </div>
+              </div>
+            </div>
+            {/* <div className="d-flex justify-content-between px-5 my-5">
               <div style={{ minWidth: "40%" }}>
                 <StackedBarGraph
                   series={ApplicationRequestsByMonth}
@@ -158,9 +236,9 @@ export default function Dashboard() {
                   yAxisSymbol="%"
                 />
               </div>
-            </div>
+            </div> */}
 
-            <div className="my-5 d-flex justify-content-between align-items-center">
+            {/* <div className="my-5 d-flex justify-content-between align-items-center">
               <div className="d-flex justify-content-center">
                 <PieChart
                   series={[50, 30, 20]}
@@ -180,9 +258,23 @@ export default function Dashboard() {
                   compliancePercentage="50"
                 />
               </div>
-            </div>
-
-            <div className="d-flex justify-content-center my-5">
+            </div> */}
+            { <div className="row mt-3">
+              <div className="col-12 mx-auto">
+                <div className="card p-3">
+                  <BarGraph
+                    series={[
+                      {
+                        data: [80, 60],
+                      },
+                    ]}
+                    title="Percentage of Compliant Requests By Component"
+                    categories={["Client Registry", "Facility Registry"]}
+                  />
+                </div>
+              </div>
+            </div> }
+            {/* <div className="d-flex justify-content-center my-5">
               <div style={{ width: "70%" }}>
                 <BarGraph
                   series={[
@@ -194,7 +286,7 @@ export default function Dashboard() {
                   categories={["Client Registry", "Facility Registry"]}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

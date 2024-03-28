@@ -203,7 +203,7 @@ const AdminUsers = () => {
               <tbody>
                 {currentPageUsers?.map((user) => (
                   <tr key={user.id}>
-                    <td>{user.name}</td>
+                    <td className="fw-bold">{user.name}</td>
                     <td className = "toLowerCase-words">{user.email}</td>
                     <td>
                       {user?.roleIds.map((roleId) => (
