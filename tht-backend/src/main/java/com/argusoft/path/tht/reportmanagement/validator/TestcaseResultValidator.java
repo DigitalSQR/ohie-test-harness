@@ -432,6 +432,15 @@ public class TestcaseResultValidator {
             TestResultRelationService testResultRelationService,
             ContextInfo contextInfo) {
         List<ValidationResultInfo> errors = new ArrayList<>();
+
+        if(selectedTestcaseOptionIds == null || selectedTestcaseOptionIds.isEmpty() ){
+            String fieldName = "selectedTestcaseOptionIds";
+            errors.add(
+                    new ValidationResultInfo(fieldName,
+                            ErrorLevel.ERROR,
+                            "The selectedTestcaseOptionIds is required."));
+            return errors;
+        }
         try {
             testcaseResultService
                     .getTestcaseResultById(testcaseResultId,

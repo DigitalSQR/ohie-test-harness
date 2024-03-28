@@ -5,6 +5,7 @@ import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.event.TestcaseResultStateChangedEvent;
 import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultAnswerInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
@@ -198,8 +199,15 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
     @Override
-    public TestcaseResultEntity submitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
+    public List<TestcaseResultEntity> submitTestcaseResult(List<TestcaseResultAnswerInfo> testcaseResultAnswerInfos, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
+        List<TestcaseResultEntity> resultEntities = new ArrayList<>();
+        for(TestcaseResultAnswerInfo testcaseResultAnswerInfo : testcaseResultAnswerInfos){
+            resultEntities.add(submitTestcaseResult(testcaseResultAnswerInfo.getTestcaseResultId(), testcaseResultAnswerInfo.getSelectedTestcaseOptionIds(), contextInfo));
+        }
+        return  resultEntities;
+    }
 
+    private TestcaseResultEntity submitTestcaseResult (String testcaseResultId, Set<String> selectedTestcaseOptionIds, ContextInfo contextInfo ) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException {
         TestcaseResultValidator.validateSubmitTestcaseResult(
                 testcaseResultId,
                 selectedTestcaseOptionIds,
