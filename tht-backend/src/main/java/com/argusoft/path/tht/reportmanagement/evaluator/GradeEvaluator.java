@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.reportmanagement.evaluator;
 
+import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.GradeEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
@@ -57,7 +58,7 @@ public class GradeEvaluator {
 
     public String evaluate(List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo){
         int totalElements = testcaseResultEntities.size();
-        int successElements = testcaseResultEntities.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
+        int successElements = testcaseResultEntities.stream().filter(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP) || Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
         if (totalElements != 0) {
             int percentage = getPercentage(successElements, totalElements);
             return getGradeBasedOnPercentage(percentage, contextInfo);
@@ -73,5 +74,26 @@ public class GradeEvaluator {
     private String getGradeBasedOnPercentage(int percentage, ContextInfo contextInfo) {
         Optional<GradeEntity> gradeBasedOnPercentageRange = gradeService.getGradeBasedOnPercentageRange(percentage, contextInfo);
         return gradeBasedOnPercentageRange.map(GradeEntity::getGrade).orElse(null);
+    }
+
+    public static int getComplianceForSpecification(List<TestcaseResultEntity> testcaseResultEntities){
+        return testcaseResultEntities.stream().filter(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP) || Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
+    }
+
+    public static int getCompliance(List<TestcaseResultEntity> testcaseResultEntities){
+        int compliance = 0;
+        for(TestcaseResultEntity childTestcaseResult : testcaseResultEntities){
+            compliance = compliance + childTestcaseResult.getCompliant();
+        }
+        return compliance;
+
+    }
+    public static int getNonCompliance(List<TestcaseResultEntity> testcaseResultEntities){
+        int nonCompliant = 0;
+        for(TestcaseResultEntity childTestcaseResult : testcaseResultEntities){
+            nonCompliant = nonCompliant + childTestcaseResult.getNonCompliant();
+        }
+        return nonCompliant;
+
     }
 }

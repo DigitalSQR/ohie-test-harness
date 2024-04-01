@@ -4,6 +4,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.GraphInfo;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestViewInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -197,4 +199,17 @@ public interface TestRequestService {
     public List<ValidationResultInfo> validateChangeState(String testRequestId, String stateKey, ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException;
+
+
+    public List<TestRequestViewInfo> getApplicationsStats(ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, RuntimeException;
+
+    /**
+     *
+     * @param contextInfo   information containing the principalId and locale
+     *      *               information about the caller of service operation
+     * @return DTO containing dashboard data
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException unable to complete request
+     */
+    public GraphInfo getDashboard(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException;
 }

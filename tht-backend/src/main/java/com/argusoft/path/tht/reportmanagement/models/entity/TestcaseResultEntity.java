@@ -72,8 +72,13 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "duration")
     private Long duration;
 
-    @Transient
+    @Column(name = "grade")
     private String grade;
+
+    @Column(name = "compliant")
+    private int compliant;
+    @Column(name = "non_compliant")
+    private int nonCompliant;
 
     public TestcaseResultEntity() {
     }
@@ -94,6 +99,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         this.setRecommended(testcaseResultEntity.getRecommended());
         this.setWorkflow(testcaseResultEntity.getWorkflow());
         this.setFunctional(testcaseResultEntity.getFunctional());
+        this.setGrade(testcaseResultEntity.getGrade());
+        this.setCompliant(testcaseResultEntity.getCompliant());
+        this.setNonCompliant(testcaseResultEntity.getNonCompliant());
 
         if (testcaseResultEntity.getTester() != null) {
             this.setTester(new UserEntity(testcaseResultEntity.getTester().getId()));
@@ -254,6 +262,22 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         this.testcaseResultAttributesEntities = testcaseResultAttributesEntities;
     }
 
+    public int getCompliant() {
+        return compliant;
+    }
+
+    public void setCompliant(int compliant) {
+        this.compliant = compliant;
+    }
+
+    public int getNonCompliant() {
+        return nonCompliant;
+    }
+
+    public void setNonCompliant(int nonCompliant) {
+        this.nonCompliant = nonCompliant;
+    }
+
     @Override
     public String toString() {
         return "TestcaseResultEntity{"
@@ -271,7 +295,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
                 + ", isFunctional=" + isFunctional
                 + ", isSuccess=" + isSuccess
                 + ", duration=" + duration
-                + ", grade='" + grade + '\''
+                + ", grade='" + grade
+                + ", compliant='" + compliant
+                + ", nonCompliant='" + nonCompliant + '\''
                 + '}';
     }
 
