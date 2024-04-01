@@ -259,4 +259,9 @@ public class ComponentServiceServiceImpl implements ComponentService {
             componentEntity.setRank(components.get(0).getRank() + 1);
         }
     }
+
+    @Override
+    public List<ComponentEntity> findAll(){
+        return componentRepository.findAll();
+    }
 }

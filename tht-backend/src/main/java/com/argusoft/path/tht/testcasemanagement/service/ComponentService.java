@@ -6,6 +6,7 @@ import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.Component;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -178,4 +179,7 @@ public interface ComponentService {
             String refObjUri,
             String refId,
             ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException;
+
+
+    public List<ComponentEntity> findAll();
 }

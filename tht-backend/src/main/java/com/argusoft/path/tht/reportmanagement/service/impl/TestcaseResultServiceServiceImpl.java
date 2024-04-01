@@ -25,6 +25,7 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
@@ -40,15 +41,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -462,17 +462,13 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) {
-                testcaseResultEntity.setSuccess(Boolean.TRUE);
-                updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP, contextInfo);
             }
         } else if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
-                updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
-                updateTestcaseResult(testcaseResultEntity, contextInfo);
             }
         } else if (testcaseResultEntities.stream()
                 .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
@@ -484,10 +480,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING)) {
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING, contextInfo);
             }
-        } else {
-            if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT)) {
-                changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
-            }
+        } else if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT)) {
+            changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
         }
     }
 
@@ -643,6 +637,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                     message = getMessage("Specification <b>", testcaseResultEntity, "</b> has been failed due to failing following testcase failure: ", failedTestcaseResultName);
                 }
                 testcaseResultEntity.setMessage(message);
+
             }
 
         } else if (testcaseResultEntity.getRefObjUri().equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
@@ -715,6 +710,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                     message = getMessage("TestRequest <b>", testcaseResultEntity, "</b> has been failed due to failing following component failure: ", failedComponentTestcaseResultName);
                 }
                 testcaseResultEntity.setMessage(message);
+
             }
         }
 
@@ -732,8 +728,15 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                     .collect(Collectors.toList()),
                             contextInfo)
                     );
-                } else {
+                    testcaseResultEntity.setCompliant(GradeEvaluator.getCompliance(filteredTestcaseResults));
+                    testcaseResultEntity.setNonCompliant(GradeEvaluator.getNonCompliance(filteredTestcaseResults));
+                } else if (testcaseResultEntity.getRefObjUri().equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
                     testcaseResultEntity.setGrade(gradeEvaluator.evaluate(filteredTestcaseResults, contextInfo));
+                }
+            } else {
+                if (testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)){
+                    testcaseResultEntity.setCompliant(GradeEvaluator.getCompliance(filteredTestcaseResults));
+                    testcaseResultEntity.setNonCompliant(GradeEvaluator.getNonCompliance(filteredTestcaseResults));
                 }
             }
         } else if (filteredTestcaseResults.stream()
@@ -762,6 +765,49 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
     private record RecursiveTestcaseResults(List<TestcaseResultEntity> testcaseResultEntities,
                                             TestcaseResultEntity testcaseResultEntity) {
+
+    }
+
+    @Override
+    public List<TestcaseResultEntity> findTopFiveTestRequestsResult(){
+        // Create a Pageable object with a page size of 5
+        Pageable pageable = PageRequest.of(0, 5);
+
+        // Call the repository method
+        Page<TestcaseResultEntity> resultPage = testcaseResultRepository.findTopFiveTestRequestsResult(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, pageable);
+
+        // Extract the content (list of entities) from the result page
+        return resultPage.getContent();
+    }
+
+    @Override
+    public List<TestcaseResultEntity> findBestOfEachComponent(List<ComponentEntity> allComponents){
+
+        List<TestcaseResultEntity> bestOfEachComponent = new ArrayList<>();
+        for(ComponentEntity component : allComponents){
+            List<TestcaseResultEntity> bestOfComponent = testcaseResultRepository.findBestOfEachComponent(component.getId());
+            TestcaseResultEntity bestCase = bestOfComponent.stream()
+                    .filter(testcaseResultEntity -> (testcaseResultEntity.getCompliant()+testcaseResultEntity.getNonCompliant())>0)
+                    .max(Comparator.comparing(testcaseResultEntity-> (testcaseResultEntity.getCompliant()/(testcaseResultEntity.getCompliant() + testcaseResultEntity.getNonCompliant()))))
+                    .orElse(new TestcaseResultEntity());
+
+            if(bestCase.getId() == null){
+                bestCase.setName(component.getName());
+                bestCase.setCompliant(0);
+                bestCase.setNonCompliant(0);
+            }
+
+            bestOfEachComponent.add(bestCase);
+        }
+        bestOfEachComponent.sort(Comparator.comparing(testcaseResultEntity -> {
+            if ((testcaseResultEntity.getCompliant() + testcaseResultEntity.getNonCompliant()) > 0) {
+                return testcaseResultEntity.getCompliant() / (testcaseResultEntity.getCompliant() + testcaseResultEntity.getNonCompliant());
+            } else {
+                return testcaseResultEntity.getCompliant();
+            }
+        }));
+
+        return bestOfEachComponent;
 
     }
 }
