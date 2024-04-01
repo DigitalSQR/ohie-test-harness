@@ -395,38 +395,47 @@ const Applications = () => {
                             </span>
                           </>
                         ) : null}
-                      {testRequest.state !== TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
-                        userRole.includes("role.tester") ||
-                        userRole.includes("role.admin") ? (
-                        
-                          <button
-                            className="cursor-pointer glossy-button glossy-button--green"
-                            onClick={() => {
-                              navigate(`/choose-test/${testRequest.id}`);
-                            }}
-                          >
-                            {" "}
-                            <i
-                              className={
-                                StateClasses[testRequest.state]?.iconClass
-                              }
-                            ></i>{" "}
-                            {StateClasses[testRequest.state]?.btnText?.toUpperCase()}
-                          </button>
+                        {testRequest.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING &&
+                        testRequest.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED &&
+                        testRequest.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
+                          userRole.includes("role.tester") ||
+                          userRole.includes("role.admin") ? (
+                            <button
+                              className="cursor-pointer glossy-button glossy-button--green"
+                              onClick={() => {
+                                navigate(`/choose-test/${testRequest.id}`);
+                              }}
+                            >
+                              {" "}
+                              <i
+                                className={
+                                  StateClasses[testRequest.state]?.iconClass
+                                }
+                              ></i>{" "}
+                              {StateClasses[
+                                testRequest.state
+                              ]?.btnText?.toUpperCase()}
+                            </button>
+                          ) : (
+                            <></>
+                          )
                         ) : (
-                          <></>
-                        )
-                      ) : (
-                       
-                        <button
-                        className="cursor-pointer glossy-button glossy-button--gold"
-                          onClick={() => viewReport(testRequest.id)}
-                        >
-                          <i className="bi bi-file-text  font-size-16"></i>{" "}
+                          testRequest.state ===
+                            TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED && (
+                            <button
+                              className="cursor-pointer glossy-button glossy-button--gold"
+                              onClick={() => viewReport(testRequest.id)}
+                            >
+                              <i className="bi bi-file-text font-size-16"></i>{" "}
                               REPORT{" "}
-                        </button>
-                      )}
-                      <span
+                            </button>
+                          )
+                        )}
+
+                        <span
                           onClick={() => toggleRow(testRequest.id)}
                           type="button"
                           className="approval-action-button float-end my-auto display"
