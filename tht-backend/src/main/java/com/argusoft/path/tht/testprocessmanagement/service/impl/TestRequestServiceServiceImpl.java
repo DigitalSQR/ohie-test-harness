@@ -4,6 +4,8 @@ import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
+import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
+import com.argusoft.path.tht.notificationmanagement.service.NotificationService;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
@@ -37,7 +39,6 @@ import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
-import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.testprocessmanagement.validator.TestRequestValidator;
@@ -47,6 +48,7 @@ import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -87,6 +89,32 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     private DocumentService documentService;
 
     private EmailService emailService;
+
+    private NotificationService notificationService;
+
+    @Value("${message-configuration.test-request.create.mail}")
+    private boolean testRequestCreateMail;
+
+    @Value("${message-configuration.test-request.create.notification}")
+    private boolean testRequestCreateNotification;
+
+    @Value("${message-configuration.test-request.accept.mail}")
+    private boolean testRequestAcceptMail;
+
+    @Value("${message-configuration.test-request.accept.notification}")
+    private boolean testRequestAcceptNotification;
+
+    @Value("${message-configuration.test-request.reject.mail}")
+    private boolean testRequestRejectMail;
+
+    @Value("${message-configuration.test-request.reject.notification}")
+    private boolean testRequestRejectNotification;
+
+    @Value("${message-configuration.test-request.finish.mail}")
+    private boolean testRequestFinishMail;
+
+    @Value("${message-configuration.test-request.finish.notification}")
+    private boolean testRequestFinishNotification;
 
     @Autowired
     public void setTestRequestRepository(TestRequestRepository testRequestRepository) {
@@ -142,6 +170,9 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
     }
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) { this.notificationService = notificationService; }
 
     @Override
     public void stopTestingProcess(
@@ -255,11 +286,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 componentService,
                 contextInfo);
 
-        //Fetch all admins
-        List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
-
-        //Notify each admin that a test request is created
-        admins.forEach(admin -> emailService.testRequestCreatedMessage(admin.getEmail(), admin.getName(), contextInfo.getEmail()));
+        messageAdminsIfTestRequestCreated(contextInfo);
 
         //Create state change API to make this as Accepted or Rejected
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
@@ -395,63 +422,20 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
         UserEntity requestingUser = testRequestEntity.getAssessee();
 
-        sendMailToTheUserOnChangeState(oldState, stateKey, requestingUser, testRequestEntity.getName());
-
+        sendMailToTheUserOnChangeState(oldState, stateKey, requestingUser, testRequestEntity.getName(), contextInfo);
 
         changeStateCallback(testRequestEntity, contextInfo);
         return testRequestEntity;
     }
 
-    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity requestingUser, String testRequestName) {
+    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
         if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(newState)) {
-            //Send Email to assessee if their test request is accepted by admin
-            emailService.testRequestAcceptedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+            messageAssesseeIfTestRequestAccepted(requestingUser, testRequestName, contextInfo);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED.equals(newState)) {
-            //Send Email to assessee if their test request is rejected
-            emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+            messageAssesseeIfTestRequestRejected(requestingUser, testRequestName, contextInfo);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(newState)) {
-            //Send Email to assessee if their test request is finished
-            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+            messageAssesseeIfTestRequestFinished(requestingUser, testRequestName, contextInfo);
         }
-    }
-
-    private void validateChangeStateForAccepted(TestRequestEntity testRequestEntity, String nextState) throws DataValidationErrorException {
-        if (TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextState)) {
-
-            Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();
-
-            if (testRequestUrls.isEmpty()) {
-                throwValidationException("Components not found to test", "component");
-            }
-
-            List<ComponentEntity> componentListToTest = testRequestUrls.stream()
-                    .map(TestRequestUrlEntity::getComponent)
-                    .toList();
-
-            if (componentListToTest.stream().noneMatch(componentEntity -> ComponentServiceConstants.COMPONENT_STATUS_ACTIVE.equals(componentEntity.getState()))) {
-                throwValidationException("No active component(s) found to start testing", "component");
-            }
-
-            for (ComponentEntity componentEntity : componentListToTest) {
-                if (componentEntity.getSpecifications().stream().noneMatch(specificationEntity -> SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE.equals(specificationEntity.getState()))) {
-                    throwValidationException("No active specifications found for component named " + componentEntity.getName() + ", can't start testing for this request.", "specification");
-                }
-
-                for (SpecificationEntity specification : componentEntity.getSpecifications()) {
-                    if (specification.getTestcases().stream().noneMatch(testcaseEntity -> TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE.equals(testcaseEntity.getState()))) {
-                        throwValidationException("No active testcases found for specification named " + specification.getName() + ", can't start testing for this request.", "specification");
-                    }
-                }
-            }
-        }
-    }
-
-    private void throwValidationException(String message, String element) throws DataValidationErrorException {
-        ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-        validationResultInfo.setMessage(message);
-        validationResultInfo.setLevel(ErrorLevel.ERROR);
-        validationResultInfo.setElement(element);
-        throw new DataValidationErrorException(message, Collections.singletonList(validationResultInfo));
     }
 
     private void changeStateCallback(TestRequestEntity testRequestEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
@@ -785,6 +769,50 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     private void defaultValueChangeState(TestRequestEntity testRequestEntity, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
         if (stateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED) || stateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)) {
             testRequestEntity.setApprover(userService.getPrincipalUser(contextInfo));
+        }
+    }
+
+    private void messageAdminsIfTestRequestCreated(ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        //Notify each admin that a test request is created
+        List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
+        for (UserEntity admin : admins) {
+            if (testRequestCreateMail) {
+                emailService.testRequestCreatedMessage(admin.getEmail(), admin.getName(), contextInfo.getEmail());
+            }
+            if (testRequestCreateNotification) {
+                NotificationEntity notificationEntity = new NotificationEntity("A new Test Request has been created by "+contextInfo.getEmail(), admin);
+                notificationService.createNotification(notificationEntity, contextInfo);
+            }
+        }
+    }
+
+    private void messageAssesseeIfTestRequestAccepted(UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if(testRequestAcceptMail) {
+            emailService.testRequestAcceptedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+        }
+        if(testRequestAcceptNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been accepted.",requestingUser);
+            notificationService.createNotification(notificationEntity, contextInfo);
+        }
+    }
+
+    private void messageAssesseeIfTestRequestRejected(UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if(testRequestRejectMail) {
+            emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+        }
+        if(testRequestRejectNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been rejected.",requestingUser);
+            notificationService.createNotification(notificationEntity, contextInfo);
+        }
+    }
+
+    private void messageAssesseeIfTestRequestFinished(UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if(testRequestFinishMail) {
+            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+        }
+        if(testRequestFinishNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been finished.",requestingUser);
+            notificationService.createNotification(notificationEntity, contextInfo);
         }
     }
 }

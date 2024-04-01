@@ -110,3 +110,40 @@ tokenService:
 oauth2:
   tht:
     clientId: "tht"
+
+message-configuration:
+  account:
+    verify-email:
+      mail: true
+      notification: false
+    forgot-password:
+      mail: true
+      notification: true
+    approve:
+      mail: true
+      notification: true
+    reject:
+      mail: true
+      notification: true
+    deactivate:
+      mail: true
+      notification: true
+    approval-pending:
+      mail: true
+      notification: true
+    reactivate:
+      mail: true
+      notification: true
+  test-request:
+    create:
+      mail: true
+      notification: true
+    accept:
+      mail: true
+      notification: true
+    reject:
+      mail: true
+      notification: true
+    finish:
+      mail: true
+      notification: true

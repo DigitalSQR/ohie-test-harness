@@ -1,9 +1,9 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
-import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
+import com.argusoft.path.tht.notificationmanagement.service.NotificationService;
+import com.argusoft.path.tht.systemconfiguration.constant.*;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
-import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -29,6 +29,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -59,6 +60,38 @@ public class UserServiceServiceImpl implements UserService {
     private TokenVerificationService tokenVerificationService;
     private DefaultTokenServices defaultTokenServices;
     private EmailService emailService;
+
+    private NotificationService notificationService;
+
+    @Value("${message-configuration.account.approve.mail}")
+    private boolean accountApproveMail;
+
+    @Value("${message-configuration.account.approve.notification}")
+    private boolean accountApproveNotification;
+
+    @Value("${message-configuration.account.reject.mail}")
+    private boolean accountRejectMail;
+
+    @Value("${message-configuration.account.reject.notification}")
+    private boolean accountRejectNotification;
+
+    @Value("${message-configuration.account.deactivate.mail}")
+    private boolean accountDeactivateMail;
+
+    @Value("${message-configuration.account.deactivate.notification}")
+    private boolean accountDeactivateNotification;
+
+    @Value("${message-configuration.account.approval-pending.mail}")
+    private boolean accountApprovalPendingMail;
+
+    @Value("${message-configuration.account.approval-pending.notification}")
+    private boolean accountApprovalPendingNotification;
+
+    @Value("${message-configuration.account.reactivate.mail}")
+    private boolean accountReactivateMail;
+
+    @Value("${message-configuration.account.reactivate.notification}")
+    private boolean accountReactivateNotification;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -93,6 +126,11 @@ public class UserServiceServiceImpl implements UserService {
     @Autowired
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
+    }
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
     }
 
     /**
@@ -216,27 +254,20 @@ public class UserServiceServiceImpl implements UserService {
 
         }
     }
-    @Override
-    public void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
-        if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
-            //message assessee if their account is approved by admin
-            emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
-        } else if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
-            //message assessee if their account is rejected by admin
-            emailService.accountRejectedMessage(userEntity.getEmail(), userEntity.getName());
-        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(newState)) {
-            //Fetch all admins
-            List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
 
-            //Message all admins stating approval pending
-            admins.forEach(admin -> emailService.verifiedAndWaitingForAdminApproval(admin.getEmail(), admin.getName(), userEntity.getEmail()));
+    @Override
+    public void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
+            messageAssesseeIfAccountApproved(userEntity, contextInfo);
+        } else if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
+            messageAssesseeIfAccountRejected(userEntity, contextInfo);
+        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(newState)) {
+            messageAdminsIfApprovalPending(userEntity, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_ACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
-            emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName());
-        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
-            emailService.welcomeToTestingHarnessTool(userEntity.getEmail(), userEntity.getName());
+            messageAssesseeIfAccountInactive(userEntity, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_INACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
-        emailService.accountActiveMessage(userEntity.getEmail(), userEntity.getName());
-    }
+            messageAssesseeIfAccountReactivated(userEntity, contextInfo);
+        }
     }
 
     /**
@@ -454,6 +485,60 @@ public class UserServiceServiceImpl implements UserService {
         return Optional.ofNullable(userEntities)
                 .filter(list -> !list.isEmpty())
                 .orElseThrow(() -> new DoesNotExistException("No user found with role : " + role));
+    }
+
+    private void messageAssesseeIfAccountApproved(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if (accountApproveMail) {
+            emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
+        }
+        if (accountApproveNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your account has been approved, you can start testing.", userEntity);
+            notificationService.createNotification(notificationEntity, contextInfo);
+        }
+    }
+
+    private void messageAssesseeIfAccountRejected(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if (accountRejectMail) {
+            emailService.accountRejectedMessage(userEntity.getEmail(), userEntity.getName());
+        }
+        if (accountRejectNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your account has been rejected", userEntity);
+            notificationService.createNotification(notificationEntity, contextInfo);
+        }
+    }
+
+    private void messageAssesseeIfAccountInactive(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if (accountDeactivateMail) {
+            emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName());
+        }
+        if (accountDeactivateNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your account has been deactivated!", userEntity);
+            notificationService.createNotification(notificationEntity, contextInfo);
+        }
+    }
+
+    private void messageAdminsIfApprovalPending(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        //Message all admins stating approval pending
+        List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
+        for (UserEntity admin : admins) {
+            if (accountApprovalPendingMail) {
+                emailService.verifiedAndWaitingForAdminApproval(admin.getEmail(), admin.getName(), userEntity.getEmail());
+            }
+            if (accountApprovalPendingNotification) {
+                NotificationEntity notificationEntity = new NotificationEntity("New Account has been created by "+userEntity.getEmail()+", Awaiting approval", admin);
+                notificationService.createNotification(notificationEntity, contextInfo);
+            }
+        }
+    }
+
+    private void messageAssesseeIfAccountReactivated(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if (accountReactivateMail) {
+            emailService.accountActiveMessage(userEntity.getEmail(), userEntity.getName());
+        }
+        if (accountReactivateNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Account has been Re-Activated", userEntity);
+            notificationService.createNotification(notificationEntity, contextInfo);
+        }
     }
 
 }

@@ -3,15 +3,9 @@ package com.argusoft.path.tht.systemconfiguration.email.service;
 import com.argusoft.path.tht.systemconfiguration.constant.MessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -213,17 +207,4 @@ public class EmailService {
         }
     }
 
-    public void welcomeToTestingHarnessTool(String to, String username){
-        String subject = "Welcome Message";
-        String templateFileName = "templates/welcome-message.html";
-        String htmlContent = null;
-        try {
-            htmlContent = readHtmlFile(templateFileName, username, null);
-            messageService.sendMessage(to, subject, htmlContent);
-        } catch (IOException e) {
-            LOGGER.error(MessageConstant.WELCOME_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WELCOME_MESSAGING_EXCEPTION_LOG, e);
-        }
-    }
 }
