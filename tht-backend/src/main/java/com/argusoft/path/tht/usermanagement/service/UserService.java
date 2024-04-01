@@ -46,7 +46,7 @@ public interface UserService {
      * @throws InvalidParameterException getUsersByRole is not valid
      * @throws DoesNotExistException getUsersByRole is not valid
      */
-    public void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException;
+    public void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException;
 
     /**
      * Creates a new User.In the user Id, Description, and Meta information may

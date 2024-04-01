@@ -1,5 +1,7 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
+import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
+import com.argusoft.path.tht.notificationmanagement.service.NotificationService;
 import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
@@ -32,6 +34,19 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     private TokenVerificationRepository tokenVerificationRepository;
     private UserService userService;
     private EmailService emailService;
+    private NotificationService notificationService;
+
+    @Value("${message-configuration.account.verify-email.mail}")
+    private boolean accountVerifyEmailMail;
+
+    @Value("${message-configuration.account.verify-email.notification}")
+    private boolean accountVerifyEmailNotification;
+
+    @Value("${message-configuration.account.forgot-password.mail}")
+    private boolean accountForgotPasswordMail;
+
+    @Value("${message-configuration.account.forgot-password.notification}")
+    private boolean accountForgotPasswordNotification;
 
     @Value("${base-url}")
     private String baseUrl;
@@ -56,6 +71,11 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     @Autowired
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
+    }
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -143,7 +163,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
                                                                            String tokenType,
                                                                            ContextInfo contextInfo) throws DoesNotExistException,
             InvalidParameterException,
-            OperationFailedException, MessagingException, IOException {
+            OperationFailedException, DataValidationErrorException {
 
         checkForValidTokenTypeWithVerifyingInEnum(tokenType);
         UserEntity userById = getUserByIdAndVerifyForEmailExistense(userId, contextInfo);
@@ -170,11 +190,31 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         String emailIdBase64 = new String(Base64.encodeBase64(userById.getEmail().getBytes()));
 
         if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
-            emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), baseUrl+"/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+            messageVerifyEmail(userById, contextInfo, baseUrl+"/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         } else if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
-            emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), baseUrl+"/reset/cred/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+            messageIfForgotPassword(userById, contextInfo, baseUrl+"/reset/cred/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         }
         return tokenVerification;
+    }
+
+    private void messageVerifyEmail(UserEntity userById, ContextInfo contextInfo, String link) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if (accountVerifyEmailMail) {
+            emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), link);
+        }
+        if (accountVerifyEmailNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Please verify your account by clicking on link sent on your mailId", userById);
+            notificationService.createNotification(notificationEntity, contextInfo);
+        }
+    }
+
+    private void messageIfForgotPassword(UserEntity userById, ContextInfo contextInfo, String link) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if (accountForgotPasswordMail) {
+            emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), link);
+        }
+        if (accountForgotPasswordNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("A password rest link has been sent on your email id", userById);
+            notificationService.createNotification(notificationEntity, contextInfo);
+        }
     }
 
     private UserEntity getUserByIdAndVerifyForEmailExistense(String userId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException, InvalidParameterException {
