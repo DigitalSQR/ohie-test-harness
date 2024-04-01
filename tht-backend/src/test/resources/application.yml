@@ -65,4 +65,23 @@ captcha:
   false
 
 app:
-  authBasicToken: dGh0OjZhYzJjN2Y2LTkwMzItNGQzNi04MzFmLTJjYzNhN2ZhOTEwYw==
+  authBasicToken: dGh0OnRodC1wYXRo
+
+encryption:
+  key: "3a985da74fe225d6c9a29e5a9e4c1b93"
+
+tokenService:
+  refresh-token-validity : 2592000 #30 Days
+  access-token-validity : 36000 #10 Hours
+
+oauth2:
+  tht:
+    clientId: "tht"
+
+mailSender:
+  username: "noreplytestharnesstool@gmail.com"
+  password: "vdspvxnhjnhdklkp"
+  host: "smtp.gmail.com"
+  port: 587
+
+base-url: https://tht.argusoft.com

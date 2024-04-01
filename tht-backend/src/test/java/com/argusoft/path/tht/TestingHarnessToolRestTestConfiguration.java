@@ -4,6 +4,7 @@ package com.argusoft.path.tht;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.LinkedMultiValueMap;
@@ -36,10 +37,12 @@ public class TestingHarnessToolRestTestConfiguration extends TestingHarnessToolT
             WebTestClient webTestClient
     ) {
 
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("username", username);
-        formData.add("password", password);
-        formData.add("grant_type", "password");
+//        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+//        formData.add("username", username);
+//        formData.add("password", password);
+//        formData.add("grant_type", "password");
+
+        String formData = "username=" + username + "&password=" + password + "&grant_type=password";
 
         this.tokenMap = webTestClient
                 .post()
@@ -47,8 +50,9 @@ public class TestingHarnessToolRestTestConfiguration extends TestingHarnessToolT
                         -> uriBuilder
                         .path("/oauth/token")
                         .build())
-                .bodyValue(formData)
+                .bodyValue("username=noreplytestharnesstool%40gmail.com&password=password&grant_type=password")
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + authBasicToken)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .exchange()
                 .expectStatus()
                 .isEqualTo(OK)

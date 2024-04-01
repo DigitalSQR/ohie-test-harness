@@ -3,9 +3,11 @@ package com.argusoft.path.tht.testcasemanagement.rest;
 import com.argusoft.path.tht.TestingHarnessToolRestTestConfiguration;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.mock.ComponentServiceMockImpl;
 import com.argusoft.path.tht.testcasemanagement.mock.SpecificationServiceMockImpl;
+import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
 import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
@@ -62,7 +64,7 @@ class SpecificationRestControllerTest extends TestingHarnessToolRestTestConfigur
         specificationServiceMockImpl.clear();
     }
 
-    /*@Test
+    @Test
     void testCreateSpecification(){
         SpecificationInfo specificationInfo = new SpecificationInfo();
         specificationInfo.setId("specification.601");
@@ -91,7 +93,7 @@ class SpecificationRestControllerTest extends TestingHarnessToolRestTestConfigur
 
         assertEquals("specification 601", createSpecification.getName());
         assertEquals("component.02", createSpecification.getComponentId());
-    }*/
+    }
 
 
     @Test
@@ -128,7 +130,7 @@ class SpecificationRestControllerTest extends TestingHarnessToolRestTestConfigur
                 .getResponseBody();
 
         assertEquals(errors.size(), 1);
-        assertEquals("The id supplied to the create already exists", errors.get(0).getMessage());
+        assertEquals("The id supplied for the id already exists", errors.get(0).getMessage());
     }
 
     @Test
@@ -252,5 +254,38 @@ class SpecificationRestControllerTest extends TestingHarnessToolRestTestConfigur
                 .getResponseBody();
 
         assertEquals("specification.status.inactive", strings.get(0));
+    }
+
+    @Test
+    void updateSpecificationRank() throws Exception {
+        SpecificationInfo specificationInfo = this.webTestClient
+                .get()
+                .uri("/specification/{specificationId}", "specification.01")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + super.tokenMap.get("access_token")).exchange()
+                .expectStatus()
+                .isEqualTo(OK)
+                .expectBody(SpecificationInfo.class)
+                .returnResult()
+                .getResponseBody();
+
+        // Before
+        assertEquals(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE, specificationInfo.getState());
+
+        SpecificationInfo updatedSpecification = this.webTestClient
+                .patch()
+                .uri("/specification/rank/{specificationId}/{rank}", "specification.01", 8)
+                .body(BodyInserters.fromValue(specificationInfo))
+                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .header(ACCEPT, APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + super.tokenMap.get("access_token"))
+                .exchange()
+                .expectStatus()
+                .isEqualTo(OK)
+                .expectBody(SpecificationInfo.class)
+                .returnResult()
+                .getResponseBody();
+
+        // After
+        assertEquals(8, updatedSpecification.getRank());
     }
 }

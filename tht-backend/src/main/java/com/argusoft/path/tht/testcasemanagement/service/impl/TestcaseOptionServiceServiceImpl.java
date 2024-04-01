@@ -148,7 +148,7 @@ public class TestcaseOptionServiceServiceImpl implements TestcaseOptionService {
         List<TestcaseOptionEntity> testcaseOptionEntities = this.searchTestcaseOptions(testcaseOptionCriteriaSearchFilter, contextInfo);
         return testcaseOptionEntities.stream()
                 .findFirst()
-                .orElseThrow(() -> new DoesNotExistException("Testcase does not found with id : " + testcaseOptionId));
+                .orElseThrow(() -> new DoesNotExistException("TestcaseOption does not found with id : " + testcaseOptionId));
     }
 
     /**
