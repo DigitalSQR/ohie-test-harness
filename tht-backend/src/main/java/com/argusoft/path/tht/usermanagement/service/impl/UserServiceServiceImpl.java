@@ -159,6 +159,12 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
             throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException, MessagingException, IOException {
+
+        if (userEntity == null) {
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
+            throw new InvalidParameterException("userEntity is missing");
+        }
+
         defaultValueRegisterAssessee(userEntity);
         userEntity = this.createUser(userEntity, contextInfo);
         return userEntity;
@@ -283,6 +289,11 @@ public class UserServiceServiceImpl implements UserService {
             DataValidationErrorException,
             DoesNotExistException, MessagingException, IOException {
 
+        if (userEntity == null) {
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
+            throw new InvalidParameterException("userEntity is missing");
+        }
+
         if (contextInfo.getModule() == Module.OAUTH2) {
             //If method get called on google Oauth2 login then verification of email is not needed.
             userEntity.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
@@ -320,6 +331,12 @@ public class UserServiceServiceImpl implements UserService {
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException, InvalidParameterException {
+
+        if (userEntity == null) {
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
+            throw new InvalidParameterException("userEntity is missing");
+        }
+
         UserValidator.validateCreateUpdateUser(this, Constant.UPDATE_VALIDATION, userEntity, contextInfo);
         if (contextInfo.getModule() == Module.RESET_PASSWORD || contextInfo.getModule() == Module.FORGOT_PASSWORD) {
             userEntity.setPassword(EncryptDecrypt.hashString(userEntity.getPassword()));
@@ -385,6 +402,11 @@ public class UserServiceServiceImpl implements UserService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
+
+        if (userEntity == null) {
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
+            throw new InvalidParameterException("userEntity is missing");
+        }
 
         return UserValidator.validateUser(this,
                 validationTypeKey,

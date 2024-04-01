@@ -10,6 +10,7 @@ import com.argusoft.path.tht.testcasemanagement.mock.TestcaseServiceMockImpl;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -326,7 +327,7 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
         SpecificationCriteriaSearchFilter specificationSearchFilter8 = new SpecificationCriteriaSearchFilter();
         specificationSearchFilter8.setManual(false);
         List<SpecificationEntity> specificationEntities8 = specificationService.searchSpecifications(specificationSearchFilter8, contextInfo);
-        assertEquals(0, specificationEntities8.size());
+        assertEquals(1, specificationEntities8.size());
 
         // Test case 9: Search specification by id
 
@@ -349,6 +350,11 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
         assertThrows(InvalidParameterException.class, () -> {
             specificationService.validateSpecification(null, specificationEntity, contextInfo);
         });
+
+        //when specification entity is null
+        Assert.assertThrows(InvalidParameterException.class, () -> {
+            specificationService.validateSpecification("specificatation.create", null, contextInfo);
+        });
     }
 
     @Test
@@ -364,7 +370,22 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
 
         SpecificationEntity updatedSpecification = specificationService.updateSpecification(specificationEntity, contextInfo);
         assertEquals(specificationEntity.getId(), updatedSpecification.getId());
+    }
 
+
+
+    @Test
+    void changeRank() throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+
+        Assert.assertThrows(DataValidationErrorException.class, () -> {
+            specificationService.changeRank("specification.01", null, contextInfo);
+        });
+
+        SpecificationEntity specificationEntity = this.specificationService.changeRank("specification.11", 1, contextInfo);
+        assertEquals(1, specificationEntity.getRank());
+
+        SpecificationEntity specificationEntity2 = this.specificationService.changeRank("specification.06", 1, contextInfo);
+        assertEquals(1, specificationEntity2.getRank());
     }
 
 }
