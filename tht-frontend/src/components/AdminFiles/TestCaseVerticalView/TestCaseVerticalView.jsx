@@ -9,7 +9,9 @@ export default function TestCaseVerticalView(props) {
     selectNextTestcase,
     refreshCurrentTestcase,
     isLastQuestion,
+    selectNextSpecification
   } = props;
+  console.log(currentSpecification);
   return (
     <div className="vertical-layout">
       <div className="row question-header">
@@ -29,33 +31,8 @@ export default function TestCaseVerticalView(props) {
         selectNextTestcase={selectNextTestcase}
         refreshCurrentTestcase={refreshCurrentTestcase}
         isLastQuestion={isLastQuestion}
-      ></TestcaseVertical>
-      <TestcaseVertical
-        currentTestcaseIndex={currentTestcaseIndex}
-        currentTestcase={currentTestcase}
-        currentSpecification={currentSpecification}
-        selectTestcase={selectTestcase}
-        selectNextTestcase={selectNextTestcase}
-        refreshCurrentTestcase={refreshCurrentTestcase}
-        isLastQuestion={isLastQuestion}
-      ></TestcaseVertical>
-      <TestcaseVertical
-        currentTestcaseIndex={currentTestcaseIndex}
-        currentTestcase={currentTestcase}
-        currentSpecification={currentSpecification}
-        selectTestcase={selectTestcase}
-        selectNextTestcase={selectNextTestcase}
-        refreshCurrentTestcase={refreshCurrentTestcase}
-        isLastQuestion={isLastQuestion}
-      ></TestcaseVertical>
-      <TestcaseVertical
-        currentTestcaseIndex={currentTestcaseIndex}
-        currentTestcase={currentTestcase}
-        currentSpecification={currentSpecification}
-        selectTestcase={selectTestcase}
-        selectNextTestcase={selectNextTestcase}
-        refreshCurrentTestcase={refreshCurrentTestcase}
-        isLastQuestion={isLastQuestion}
+        selectNextSpecification={selectNextSpecification}
+
       ></TestcaseVertical>
     </div>
   );
