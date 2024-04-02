@@ -1161,119 +1161,106 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
 
 
-        // Get all Testcase Results completed in the last seven months
-        List<TestcaseResultEntity> testcaseResultEntitiesByMonth = this.findTestcaseResultsUpdatedLastSevenMonths();
+        Optional<Date> maxDate = testRequestResults.stream().max(Comparator.comparing(TestcaseResultEntity::getUpdatedAt)).map(TestcaseResultEntity::getUpdatedAt);
 
-        // Get all Test Request Results generated in the last seven months
-        List<TestcaseResultEntity> testRequestResultEntitiesByMonth = testcaseResultEntitiesByMonth.stream().filter(testcaseResultEntity -> testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI) && testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)).toList();
+        Optional<Date> minDate = testRequestResults.stream().min(Comparator.comparing(TestcaseResultEntity::getUpdatedAt)).map(TestcaseResultEntity::getUpdatedAt);
 
-        // Initialize list to store application requests per month map data
-        List<ApplicationRequests> applicationRequestsByMonth = new ArrayList<>();
+        int max;
+        int min;
 
-        Calendar calendar = Calendar.getInstance();
-
-        int lastMonth= -1, compliantByMonth = 0, nonCompliantByMonth = 0;
-
-        ApplicationRequests applicationRequestByMonth = new ApplicationRequests();
-
-        for(TestcaseResultEntity testcaseResultEntity : testRequestResultEntitiesByMonth){
-
-            // Get the month of the testcaseResultEntity's updatedAt field
-            calendar.setTime(testcaseResultEntity.getUpdatedAt());
-            int month = calendar.get(Calendar.MONTH);
-
-            if(month!=lastMonth){
-
-                if(lastMonth!=-1){
-                    applicationRequestByMonth.setCompliant(compliantByMonth);
-                    applicationRequestByMonth.setNonCompliant(nonCompliantByMonth);
-
-                    applicationRequestsByMonth.add(applicationRequestByMonth);
-                }
-                applicationRequestByMonth = new ApplicationRequests();
-
-                applicationRequestByMonth.setYear(calendar.get(Calendar.YEAR));
-                applicationRequestByMonth.setMonth(calendar.get(Calendar.MONTH)+1);
-
-                compliantByMonth = 0;
-                nonCompliantByMonth = 0;
-
-                lastMonth = month;
-
-            }
-
-            compliantByMonth = compliantByMonth + (Boolean.TRUE.equals(testcaseResultEntity.getSuccess())?1:0);
-            nonCompliantByMonth = nonCompliantByMonth + (Boolean.FALSE.equals(testcaseResultEntity.getSuccess())?1:0);
-
-
+        if(minDate.isPresent() && maxDate.isPresent()){
+            min = minDate.get().getYear();
+            max = maxDate.get().getYear();
+        } else {
+            throw new OperationFailedException("Date not found");
         }
-        applicationRequestByMonth.setCompliant(compliantByMonth);
-        applicationRequestByMonth.setNonCompliant(nonCompliantByMonth);
 
-        applicationRequestsByMonth.add(applicationRequestByMonth);
+        List<ApplicationRequests> applicationRequests = new ArrayList<>();
+        for(int year = min; year <= max; year++){
+            int finalYear = year;
+            List<TestcaseResultEntity> yearlyTestRequestResults = testRequestResults.stream().filter(testcaseResultEntity -> testcaseResultEntity.getUpdatedAt().getYear() == finalYear).toList();
 
-        // Add Application Requests By Month map data to return Graph Info variable
-        graphInfo.setApplicationRequestsByMonth(applicationRequestsByMonth);
+            List<ApplicationRequestDataByMonth> applicationRequestDataByMonthList = new ArrayList<>();
 
+            for(int month = 1 ; month <= 12 ; month++){
+                int finalMonth = month;
+                List<TestcaseResultEntity> monthlyTestRequestResults = yearlyTestRequestResults.stream().filter(testcaseResultEntity -> testcaseResultEntity.getUpdatedAt().getMonth() == finalMonth).toList();
 
+                ApplicationRequestDataByMonth applicationRequestDataByMonth = new ApplicationRequestDataByMonth();
 
+                applicationRequestDataByMonth.setMonth(month);
+                int compliant = monthlyTestRequestResults.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
+                applicationRequestDataByMonth.setCompliant(compliant);
+                applicationRequestDataByMonth.setNonCompliant(monthlyTestRequestResults.size() - compliant);
 
-        // Set ApplicationRequestsByYear
-
-
-
-        // Find Testcase Results Updated in the last seven years
-        List<TestcaseResultEntity> testcaseResultEntitiesByYear = this.findTestcaseResultsUpdatedLastSevenYears();
-
-        // Store test request results for last seven years
-        List<TestcaseResultEntity> testRequestResultEntitiesByYear = testcaseResultEntitiesByYear.stream().filter(testcaseResultEntity -> testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)).filter(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)).toList();
-
-        // Store calculated returnable data
-        List<ApplicationRequests> applicationRequestsByYear = new ArrayList<>();
-
-        calendar = Calendar.getInstance();
-
-        int lastYear = -1, complianceByYear = 0 , nonComplianceByYear = 0;
-
-        ApplicationRequests applicationRequestByYear = new ApplicationRequests();
-
-        for(TestcaseResultEntity testcaseResultEntity : testRequestResultEntitiesByYear) {
-
-            calendar.setTime(testcaseResultEntity.getUpdatedAt());
-            int year = calendar.get(Calendar.YEAR);
-
-            if(lastYear != year){
-                if(lastYear != -1){
-                    applicationRequestByYear.setCompliant(complianceByYear);
-                    applicationRequestByYear.setNonCompliant(nonComplianceByYear);
-
-                    applicationRequestsByYear.add(applicationRequestByYear);
-                }
-
-                applicationRequestByYear = new ApplicationRequests();
-
-                applicationRequestByYear.setYear(calendar.get(Calendar.YEAR));
-                applicationRequestByYear.setMonth(-1);
-
-                complianceByYear = 0;
-                nonComplianceByYear = 0;
-
-                lastYear = year;
-
+                applicationRequestDataByMonthList.add(applicationRequestDataByMonth);
             }
+            ApplicationRequests applicationRequest = new ApplicationRequests();
+            applicationRequest.setYear(year+1900);
 
-            complianceByYear = complianceByYear + (Boolean.TRUE.equals(testcaseResultEntity.getSuccess())?1:0);
-            nonComplianceByYear = nonComplianceByYear + (Boolean.FALSE.equals(testcaseResultEntity.getSuccess())?1:0);
+            applicationRequest.setApplicationRequestDataByMonthList(applicationRequestDataByMonthList);
+
+            applicationRequests.add(applicationRequest);
 
         }
 
-        applicationRequestByYear.setCompliant(complianceByYear);
-        applicationRequestByYear.setNonCompliant(nonComplianceByYear);
+        graphInfo.setApplicationRequestsByMonth(applicationRequests);
 
-        applicationRequestsByYear.add(applicationRequestByYear);
 
-        // Add data in return GraphInfo variable
-        graphInfo.setApplicationRequestsByYear(applicationRequestsByYear);
+//        // Get all Testcase Results completed in the last seven months
+//        List<TestcaseResultEntity> testcaseResultEntitiesByMonth = this.findTestcaseResultsUpdatedLastSevenMonths();
+//
+//        // Get all Test Request Results generated in the last seven months
+//        List<TestcaseResultEntity> testRequestResultEntitiesByMonth = testcaseResultEntitiesByMonth.stream().filter(testcaseResultEntity -> testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI) && testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)).toList();
+//
+//        // Initialize list to store application requests per month map data
+//        List<ApplicationRequests> applicationRequestsByMonth = new ArrayList<>();
+//
+//        Calendar calendar = Calendar.getInstance();
+//
+//        int lastMonth= -1, compliantByMonth = 0, nonCompliantByMonth = 0;
+//
+//        ApplicationRequests applicationRequestByMonth = new ApplicationRequests();
+//
+//        for(TestcaseResultEntity testcaseResultEntity : testRequestResultEntitiesByMonth){
+//
+//            // Get the month of the testcaseResultEntity's updatedAt field
+//            calendar.setTime(testcaseResultEntity.getUpdatedAt());
+//            int month = calendar.get(Calendar.MONTH);
+//
+//            if(month!=lastMonth){
+//
+//                if(lastMonth!=-1){
+//                    applicationRequestByMonth.setCompliant(compliantByMonth);
+//                    applicationRequestByMonth.setNonCompliant(nonCompliantByMonth);
+//
+//                    applicationRequestsByMonth.add(applicationRequestByMonth);
+//                }
+//                applicationRequestByMonth = new ApplicationRequests();
+//
+//                applicationRequestByMonth.setYear(calendar.get(Calendar.YEAR));
+//                applicationRequestByMonth.setMonth(calendar.get(Calendar.MONTH)+1);
+//
+//                compliantByMonth = 0;
+//                nonCompliantByMonth = 0;
+//
+//                lastMonth = month;
+//
+//            }
+//
+//            compliantByMonth = compliantByMonth + (Boolean.TRUE.equals(testcaseResultEntity.getSuccess())?1:0);
+//            nonCompliantByMonth = nonCompliantByMonth + (Boolean.FALSE.equals(testcaseResultEntity.getSuccess())?1:0);
+//
+//
+//        }
+//        applicationRequestByMonth.setCompliant(compliantByMonth);
+//        applicationRequestByMonth.setNonCompliant(nonCompliantByMonth);
+//
+//        applicationRequestsByMonth.add(applicationRequestByMonth);
+//
+//        // Add Application Requests By Month map data to return Graph Info variable
+//        graphInfo.setApplicationRequestsByMonth(applicationRequestsByMonth);
+
 
 
 
@@ -1356,37 +1343,117 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         List<AwardGraph> awardGraphs = new ArrayList<>();
 
 
-        // Set max size of the repository call request
-        Pageable pageable = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "compliant"));
-
         List<ComponentEntity> allComponents = componentService.findAll();
 
-        // Call the repository method
-        List<TestcaseResultEntity> bestOfEachComponent = testcaseResultService.findBestOfEachComponent(allComponents);
+        for(ComponentEntity componentEntity : allComponents){
 
-        // Set data in awardGraph variable
-        for( TestcaseResultEntity  testcaseResultEntity : bestOfEachComponent){
+            List<Object[]> bestFiveTestcaseResultPerComponent = this.findBestFiveTestcaseResultPerComponent(componentEntity.getId());
+
+            List<AwardApplication> awardApplicationList = new ArrayList<>();
 
             AwardGraph awardGraph = new AwardGraph();
 
-            awardGraph.setComponentName(testcaseResultEntity.getName());
-            awardGraph.setPassedTestcases(testcaseResultEntity.getCompliant());
-            awardGraph.setTotalTestcases(testcaseResultEntity.getCompliant() + testcaseResultEntity.getNonCompliant());
+            awardGraph.setComponentName(componentEntity.getName());
 
-            awardGraph.setComponentRank(bestOfEachComponent.indexOf(testcaseResultEntity)+1);
-            if(testcaseResultEntity.getTestRequest()!=null){
-                awardGraph.setAppName(testcaseResultEntity.getTestRequest().getName());
+            if(bestFiveTestcaseResultPerComponent.isEmpty()){
+
+
+                awardGraph.setAwardApplicationList(new ArrayList<AwardApplication>());
+
+
+            } else {
+
+
+                for(Object[] testcaseResultPerComponent : bestFiveTestcaseResultPerComponent){
+                    AwardApplication awardApplication = new AwardApplication();
+
+                    awardApplication.setPassedTestcases((int)testcaseResultPerComponent[0]);
+                    awardApplication.setTotalTestcases((int) testcaseResultPerComponent[0] + (int) testcaseResultPerComponent[1]);
+                    awardApplication.setAppName(((TestRequestEntity)testcaseResultPerComponent[2]).getName());
+
+                    awardApplicationList.add(awardApplication);
+                }
+                Comparator<AwardApplication> comparator = Comparator.comparing(
+                        awardApplication -> {
+                            if(awardApplication.getTotalTestcases()!=0){
+                                return (awardApplication.getPassedTestcases() / awardApplication.getTotalTestcases());
+                            } else {
+                                return awardApplication.getPassedTestcases();
+                            }
+                        });
+
+                awardApplicationList.sort(comparator.reversed());
+
+                awardGraph.setAwardApplicationList(awardApplicationList);
+
+
             }
-
 
 
             awardGraphs.add(awardGraph);
 
         }
 
-        // Set awardGraph values in the returnable Graph Info variable
+        Comparator<AwardGraph> comparator = Comparator.comparing(
+                awardGraph -> {
+                    if(Boolean.FALSE.equals(awardGraph.getAwardApplicationList().isEmpty())){
+                        if(awardGraph.getAwardApplicationList().get(0).getTotalTestcases()!=0){
+                            return (awardGraph.getAwardApplicationList().get(0).getPassedTestcases()/awardGraph.getAwardApplicationList().get(0).getTotalTestcases());
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        return 0;
+                    }
+
+                });
+
+        awardGraphs.sort(comparator.reversed());
+
+        for(AwardGraph awardGraph : awardGraphs){
+
+            awardGraph.setComponentRank(awardGraphs.indexOf(awardGraph)+1);
+        }
+
         graphInfo.setAwardGraph(awardGraphs);
 
+
+
+
+
+
+
+//        // Set max size of the repository call request
+//        Pageable pageable = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "compliant"));
+//
+//        List<ComponentEntity> allComponents = componentService.findAll();
+//
+//        // Call the repository method
+//        List<TestcaseResultEntity> bestOfEachComponent = testcaseResultService.findBestOfEachComponent(allComponents);
+//
+//        // Set data in awardGraph variable
+//        for( TestcaseResultEntity  testcaseResultEntity : bestOfEachComponent){
+//
+//            AwardGraph awardGraph = new AwardGraph();
+//
+//            awardGraph.setComponentName(testcaseResultEntity.getName());
+//            awardGraph.setPassedTestcases(testcaseResultEntity.getCompliant());
+//            awardGraph.setTotalTestcases(testcaseResultEntity.getCompliant() + testcaseResultEntity.getNonCompliant());
+//
+//            awardGraph.setComponentRank(bestOfEachComponent.indexOf(testcaseResultEntity)+1);
+//            if(testcaseResultEntity.getTestRequest()!=null){
+//                awardGraph.setAppName(testcaseResultEntity.getTestRequest().getName());
+//            }
+//
+//
+//
+//            awardGraphs.add(awardGraph);
+//
+//        }
+//
+//        // Set awardGraph values in the returnable Graph Info variable
+//        graphInfo.setAwardGraph(awardGraphs);
+//
 
 
 
@@ -1477,6 +1544,10 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         return testcaseResultRepository.findRecordsUpdatedLastSevenMonths(sevenYearsAgo);
 
     }
+    private List<Object[]> findBestFiveTestcaseResultPerComponent(String componentId){
+        return testcaseResultService.findBestFiveTestcaseResultPerComponent(componentId);
+    }
+
 
 
 }

@@ -810,4 +810,16 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return bestOfEachComponent;
 
     }
+
+    @Override
+    public List<Object[]> findBestFiveTestcaseResultPerComponent(String componentId){
+
+        Pageable pageable = PageRequest.of(0, 5);
+
+        // Call the repository method
+        Page<Object[]> resultPage = testcaseResultRepository.findBestFiveTestcaseResultPerComponent(pageable,componentId,TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
+
+
+        return resultPage.getContent();
+    }
 }
