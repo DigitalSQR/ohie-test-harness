@@ -48,4 +48,7 @@ public interface TestcaseResultRepository
     @Query("SELECT SUM(e.compliant), SUM(e.nonCompliant), e.name, e.refId FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri AND e.state = :state GROUP BY e.refId, e.name")
     List<Object[]> nameComplianceAndNonCompliance(String refObjUri, String state);
 
+    @Query("SELECT e.compliant, e.nonCompliant, e.testRequest FROM TestcaseResultEntity e WHERE e.refId = :componentId AND e.state = :state ORDER BY CASE WHEN e.nonCompliant = 0 THEN e.compliant ELSE (e.compliant/e.nonCompliant) END DESC")
+    Page<Object[]> findBestFiveTestcaseResultPerComponent(Pageable pageable, String componentId, String state);
+
 }

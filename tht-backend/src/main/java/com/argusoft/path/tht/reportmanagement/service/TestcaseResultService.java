@@ -243,4 +243,6 @@ public interface TestcaseResultService {
     public List<TestcaseResultEntity> findTopFiveTestRequestsResult();
 
     public List<TestcaseResultEntity> findBestOfEachComponent(List<ComponentEntity> allComponents);
+
+    public List<Object[]> findBestFiveTestcaseResultPerComponent(String componentId);
 }

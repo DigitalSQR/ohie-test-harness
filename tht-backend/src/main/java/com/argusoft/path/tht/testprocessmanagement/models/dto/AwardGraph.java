@@ -1,21 +1,20 @@
 package com.argusoft.path.tht.testprocessmanagement.models.dto;
 
+import java.util.List;
+
 public class AwardGraph {
     private String componentName;
     private int componentRank;
-    private int passedTestcases;
-    private int totalTestcases;
-    private String appName;
+
+    private List<AwardApplication> awardApplicationList;
 
     public AwardGraph() {
     }
 
-    public AwardGraph(String componentName, int componentRank, int passedTestcases, int totalTestcases, String appName) {
+    public AwardGraph(String componentName, int componentRank, List<AwardApplication> awardApplicationList) {
         this.componentName = componentName;
         this.componentRank = componentRank;
-        this.passedTestcases = passedTestcases;
-        this.totalTestcases = totalTestcases;
-        this.appName = appName;
+        this.awardApplicationList = awardApplicationList;
     }
 
     public String getComponentName() {
@@ -34,28 +33,12 @@ public class AwardGraph {
         this.componentRank = componentRank;
     }
 
-    public int getPassedTestcases() {
-        return passedTestcases;
+    public List<AwardApplication> getAwardApplicationList() {
+        return awardApplicationList;
     }
 
-    public void setPassedTestcases(int passedTestcases) {
-        this.passedTestcases = passedTestcases;
-    }
-
-    public int getTotalTestcases() {
-        return totalTestcases;
-    }
-
-    public void setTotalTestcases(int totalTestcases) {
-        this.totalTestcases = totalTestcases;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public void setAwardApplicationList(List<AwardApplication> awardApplicationList) {
+        this.awardApplicationList = awardApplicationList;
     }
 
     @Override
@@ -63,9 +46,7 @@ public class AwardGraph {
         return "AwardGraph{" +
                 "componentName='" + componentName + '\'' +
                 ", componentRank=" + componentRank +
-                ", passedTestcases=" + passedTestcases +
-                ", totalTestcases=" + totalTestcases +
-                ", appName='" + appName + '\'' +
+                ", awardApplicationList=" + awardApplicationList +
                 '}';
     }
 }

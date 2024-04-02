@@ -10,7 +10,6 @@ public class GraphInfo {
     private float complianceRate;
     private float testingRate;
     private List<ApplicationRequests> applicationRequestsByMonth;
-    private List<ApplicationRequests> applicationRequestsByYear;
     private List<CompliantApplication> compliantApplications;
     private Map<String,Integer> pieChart;
     private List<AwardGraph> awardGraph;
@@ -19,13 +18,12 @@ public class GraphInfo {
     public GraphInfo() {
     }
 
-    public GraphInfo(int totalApplications, int assesseeRegistered, float complianceRate, float testingRate, List<ApplicationRequests> applicationRequestsByMonth, List<ApplicationRequests> applicationRequestsByYear, List<CompliantApplication> compliantApplications, Map<String, Integer> pieChart, List<AwardGraph> awardGraph, List<PercentageCumulativeGraph> percentageCumulativeGraph) {
+    public GraphInfo(int totalApplications, int assesseeRegistered, float complianceRate, float testingRate, List<ApplicationRequests> applicationRequestsByMonth, List<CompliantApplication> compliantApplications, Map<String, Integer> pieChart, List<AwardGraph> awardGraph, List<PercentageCumulativeGraph> percentageCumulativeGraph) {
         this.totalApplications = totalApplications;
         this.assesseeRegistered = assesseeRegistered;
         this.complianceRate = complianceRate;
         this.testingRate = testingRate;
         this.applicationRequestsByMonth = applicationRequestsByMonth;
-        this.applicationRequestsByYear = applicationRequestsByYear;
         this.compliantApplications = compliantApplications;
         this.pieChart = pieChart;
         this.awardGraph = awardGraph;
@@ -80,14 +78,6 @@ public class GraphInfo {
         this.applicationRequestsByMonth = applicationRequestsByMonth;
     }
 
-    public List<ApplicationRequests> getApplicationRequestsByYear() {
-        return applicationRequestsByYear;
-    }
-
-    public void setApplicationRequestsByYear(List<ApplicationRequests> applicationRequestsByYear) {
-        this.applicationRequestsByYear = applicationRequestsByYear;
-    }
-
     public Map<String, Integer> getPieChart() {
         return pieChart;
     }
@@ -120,7 +110,6 @@ public class GraphInfo {
                 ", complianceRate=" + complianceRate +
                 ", testingRate=" + testingRate +
                 ", applicationRequestsByMonth=" + applicationRequestsByMonth +
-                ", applicationRequestsByYear=" + applicationRequestsByYear +
                 ", compliantApplications=" + compliantApplications +
                 ", pieChart=" + pieChart +
                 ", awardGraph=" + awardGraph +

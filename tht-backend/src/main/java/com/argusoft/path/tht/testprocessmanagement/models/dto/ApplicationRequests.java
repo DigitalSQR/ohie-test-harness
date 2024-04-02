@@ -1,27 +1,16 @@
 package com.argusoft.path.tht.testprocessmanagement.models.dto;
 
-public class ApplicationRequests {
-    private int month;
-    private int year;
-    private int compliant;
-    private int nonCompliant;
+import java.util.List;
 
+public class ApplicationRequests {
+    private int year;
+    private List<ApplicationRequestDataByMonth> applicationRequestDataByMonthList;
     public ApplicationRequests() {
     }
 
-    public ApplicationRequests(int month, int year, int compliant, int nonCompliant) {
-        this.month = month;
+    public ApplicationRequests(int year, List<ApplicationRequestDataByMonth> applicationRequestDataByMonthList) {
         this.year = year;
-        this.compliant = compliant;
-        this.nonCompliant = nonCompliant;
-    }
-
-    public int getMonth() {
-        return month;
-    }
-
-    public void setMonth(int month) {
-        this.month = month;
+        this.applicationRequestDataByMonthList = applicationRequestDataByMonthList;
     }
 
     public int getYear() {
@@ -32,29 +21,19 @@ public class ApplicationRequests {
         this.year = year;
     }
 
-    public int getCompliant() {
-        return compliant;
+    public List<ApplicationRequestDataByMonth> getApplicationRequestDataByMonthList() {
+        return applicationRequestDataByMonthList;
     }
 
-    public void setCompliant(int compliant) {
-        this.compliant = compliant;
-    }
-
-    public int getNonCompliant() {
-        return nonCompliant;
-    }
-
-    public void setNonCompliant(int nonCompliant) {
-        this.nonCompliant = nonCompliant;
+    public void setApplicationRequestDataByMonthList(List<ApplicationRequestDataByMonth> applicationRequestDataByMonthList) {
+        this.applicationRequestDataByMonthList = applicationRequestDataByMonthList;
     }
 
     @Override
     public String toString() {
         return "ApplicationRequests{" +
-                "month='" + month + '\'' +
-                ", year='" + year + '\'' +
-                ", compliant=" + compliant +
-                ", nonCompliant=" + nonCompliant +
+                "year=" + year +
+                ", applicationRequestDataByMonthList=" + applicationRequestDataByMonthList +
                 '}';
     }
 }
