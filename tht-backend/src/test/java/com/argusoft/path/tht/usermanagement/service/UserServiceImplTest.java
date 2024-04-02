@@ -39,7 +39,6 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
     @Autowired
     UserService userService;
 
-
     @BeforeEach
     @Override
     public void init() {
@@ -237,7 +236,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
-    void testSendMailToUserOnChangeState() throws InvalidParameterException, DoesNotExistException {
+    void testSendMailToUserOnChangeState() throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
         UserEntity userEntity = this.userService.getUserById("user.01", contextInfo);
         //from approval pending to active
         this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, UserServiceConstants.USER_STATUS_ACTIVE, userEntity,contextInfo);

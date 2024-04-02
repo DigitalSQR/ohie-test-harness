@@ -85,3 +85,40 @@ mailSender:
   port: 587
 
 base-url: https://tht.argusoft.com
+
+message-configuration:
+  account:
+    verify-email:
+      mail: true
+      notification: false
+    forgot-password:
+      mail: true
+      notification: false
+    approve:
+      mail: true
+      notification: false
+    reject:
+      mail: true
+      notification: false
+    deactivate:
+      mail: true
+      notification: false
+    approval-pending:
+      mail: true
+      notification: false
+    reactivate:
+      mail: true
+      notification: false
+  test-request:
+    create:
+      mail: true
+      notification: false
+    accept:
+      mail: true
+      notification: false
+    reject:
+      mail: true
+      notification: false
+    finish:
+      mail: true
+      notification: false

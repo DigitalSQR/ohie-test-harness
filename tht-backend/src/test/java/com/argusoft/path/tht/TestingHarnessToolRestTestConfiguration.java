@@ -37,11 +37,6 @@ public class TestingHarnessToolRestTestConfiguration extends TestingHarnessToolT
             WebTestClient webTestClient
     ) {
 
-//        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-//        formData.add("username", username);
-//        formData.add("password", password);
-//        formData.add("grant_type", "password");
-
         String formData = "username=" + username + "&password=" + password + "&grant_type=password";
 
         this.tokenMap = webTestClient
@@ -50,7 +45,7 @@ public class TestingHarnessToolRestTestConfiguration extends TestingHarnessToolT
                         -> uriBuilder
                         .path("/oauth/token")
                         .build())
-                .bodyValue("username=noreplytestharnesstool%40gmail.com&password=password&grant_type=password")
+                .bodyValue(formData)
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + authBasicToken)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .exchange()

@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.usermanagement.rest;
 
 import com.argusoft.path.tht.TestingHarnessToolRestTestConfiguration;
+import com.argusoft.path.tht.notification.mock.NotificationServiceMockImpl;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -43,13 +44,11 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
     @Autowired
     UserService userService;
 
-
     @BeforeEach
     @Override
     public void init() {
-//        super.init();
+        super.init();
         userServiceMock.init();
-
         super.login("noreplytestharnesstool@gmail.com",
                 "password",
                 webTestClient);
@@ -357,7 +356,7 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
                 .expectStatus()
                 .isEqualTo(OK)
                 .expectBody()
-                .jsonPath("$.content.length()").isEqualTo("9");
+                .jsonPath("$.content.length()").isEqualTo("6");
     }
 
 
