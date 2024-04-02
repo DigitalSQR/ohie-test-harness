@@ -46,6 +46,7 @@ export default function TestCase(props) {
   const [showNote, setShowNote] = useState(false);
   const [isModified, setIsModified] = useState(true);
   const handlePageChange = (event, page) => {
+	console.log(currentSpecification);
     let isSame = isMessageSame();
     // Ask for confirmation
     if (
@@ -72,9 +73,10 @@ export default function TestCase(props) {
   }, [currentTestcase.id]);
 
   const submitOptions = () => {
-    TestResultAPI.saveOptions(testcaseResult.id, selectedOptions)
+	const data=[{testcaseResultId:testcaseResult.id,selectedTestcaseOptionIds:selectedOptions}]
+    TestResultAPI.saveOptions(data)
       .then((res) => {
-        refreshCurrentTestcase(res);
+        refreshCurrentTestcase(res[0]);
         selectNextTestcase();
       })
       .catch((error) => {});
@@ -319,6 +321,7 @@ export default function TestCase(props) {
   };
 
   const addFiles = (event, question, index) => {
+	console.log(question);
     event.preventDefault();
     setFiles([...event.target.files]);
     setUploadedQuestion({

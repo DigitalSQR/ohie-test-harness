@@ -400,7 +400,7 @@ export default function ManualTesting() {
               </Select>
             </div>
             {/* Below is the button code which is currently commented out */}
-            {/* <div className="col-md-6 text-end">
+            <div className="col-md-6 text-end">
               <div className="layout-buttons">
                 <button className={`${isHorizontal ? 'btn btn-outline-secondary   ' : 'btn btn-outline-secondary  '}`} onClick={handleHorizontalClick}>
                   Horizontal
@@ -409,7 +409,7 @@ export default function ManualTesting() {
                   Vertical
                 </button>
               </div>
-            </div> */}
+            </div>
           </div>
 
 
@@ -509,20 +509,18 @@ export default function ManualTesting() {
                     selectTestcase={selectTestcase}
                     selectNextTestcase={selectNextTestcase}
                     refreshCurrentTestcase={refreshCurrentTestcase}
-                    isLastQuestion={isLastQuestion}></TestCaseVerticalView>
+                    isLastQuestion={isLastQuestion}
+                    selectNextSpecification={selectNextSpecification}
+                    ></TestCaseVerticalView>
                   }
                 </Item>
               ))}
             </Tabs>
           )}
         </div>
-        {!isHorizontal &&
-        <div className="row">
-        <div className="col-12 pe-0 text-end">
-          <button className="btn btn-primary ">Save & Next</button>
-        </div>
-      </div>
-}
+        {/* {!isHorizontal &&
+
+} */}
       </div>
 
       {isTop ? (
