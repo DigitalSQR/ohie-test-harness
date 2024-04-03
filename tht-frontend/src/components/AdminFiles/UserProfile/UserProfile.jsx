@@ -213,7 +213,7 @@ export default function UserProfile () {
             className:"notificationSuccess",
             placement: "top",
             message:"Success",
-            description: `User Updated Successfully`,
+            description: `Profile has been updated successfully!`,
           });
           dispatch(userinfo_success(body));
           handleUpload();

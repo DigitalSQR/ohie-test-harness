@@ -61,19 +61,13 @@ export default function AutomatedTesting() {
       automated: true,
       reset: true,
     };
-    notification.info({
-      className:"notificationInfo",
-      message:"Info",
-      description: "Reset Process has been initiated",
-      placement: "bottomRight",
-    });
     TestProcessAPI.stopTestProcess(testRequestId, params)
       .then(() => {
         notification.success({
         className: "notificationSuccess",
         placement: "top",
         message: "Success",
-        description: "Verification Process has been Reset successully",
+        description: "Test results have been reset successfully!",
         });
       }).catch((error) => {
         
@@ -93,21 +87,13 @@ export default function AutomatedTesting() {
       automated: true,
       reset,
     };
-    notification.info({
-      className:"notificationInfo",
-      message:"Info",
-      description: reset
-        ? "Stop and Reset process has been initiated. Please wait for some time"
-        : "Stop process has been reinitiated. Please wait for some time",
-      placement: "bottomRight",
-    });
     TestProcessAPI.stopTestProcess(testRequestId, params)
     .then(() => {
       notification.success({
         className: "notificationSuccess",
         placement: "top",
         message: "Success",
-        description: "Process to interrupt has been started successully. Please wait for some time",
+        description: `Testing has been stopped ${reset ? 'and reset' : ''} successfully! Please allow some time for processing.`,
       });
     }).catch((error) => {
         
@@ -115,7 +101,7 @@ export default function AutomatedTesting() {
   };
 
   // This function starts all the tests once all the testcases have been reset.
-  const handleStartTesting = () => {
+  const handleStartTesting = (isResume = false) => {
     const params = {
       testRequestId,
       refObjUri: TESTREQUEST_REFOBJURI,
@@ -124,11 +110,12 @@ export default function AutomatedTesting() {
     };
     TestResultAPI.startTests(params)
       .then(() => {
+        const message = `Testing has been ${isResume ? 'resumed' : 'started'} successfully!`;
         notification.success({
         className: "notificationSuccess",
         placement: "top",
         message: "Success",
-        description: "Verification Process has been started successully",
+        description: message,
         });
       }).catch((error) => {
         
@@ -355,7 +342,7 @@ export default function AutomatedTesting() {
                   {(testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !!finishedTestcaseCount) && (<>
                       <button
                         className={`btn small btn-sm mt-0 btn-success px-4 abtn`}
-                        onClick={handleStartTesting}
+                        onClick={() => handleStartTesting(true)}
                       >
                         <PlayCircleOutlined />
                         <span className="m-1">Resume</span>
@@ -364,7 +351,7 @@ export default function AutomatedTesting() {
                   {testcaseRequestResult?.state === TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_DRAFT && !finishedTestcaseCount && (<>
                       <button
                         className="btn small btn-sm mt-0 px-2 btn-success abtn"
-                        onClick={handleStartTesting}
+                        onClick={() => handleStartTesting()}
                         disabled={!resultFlag}
                       >
                         <PlayCircleOutlined />

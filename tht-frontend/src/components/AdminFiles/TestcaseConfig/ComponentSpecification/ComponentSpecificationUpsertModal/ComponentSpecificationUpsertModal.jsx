@@ -42,7 +42,7 @@ const UpsertModal = ({
             className:"notificationSuccess",
             placement: "top",
             message:"Success",
-            description: "Specification Created Successfully",
+            description: "Specification created successfully!",
           });
 
           refreshAllSpecifications();
@@ -64,7 +64,7 @@ const UpsertModal = ({
             className:"notificationSuccess",
             placement: "top",
             message:"Success",
-            description: "Specification Updated Successfully",
+            description: "Specification updated successfully!",
           });
           refreshAllSpecifications();
           setIsModalOpen(false);

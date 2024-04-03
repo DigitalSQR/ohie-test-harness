@@ -128,7 +128,7 @@ const RegisterApplication = () => {
                   className: "notificationSuccess",
                   placement: "top",
                   message: "Success",
-                  description: `Successfully Created! Waiting for Approval`,
+                  description: `Your application testing request has been successfully created and sent to admin for approval.`,
                 });
                 hideLoader();
                 navigate("/testing-requests");
