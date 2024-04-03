@@ -75,7 +75,7 @@ export default function EditQuestion() {
           notification.warning({
             className:"notificationWarning",
 						message:"Warning",
-            description: "Options for this question are not available. Please add some.",
+            description: "There are currently no options available for a question. Please add some options.",
             placement: "bottomRight",
           });
         }
@@ -163,7 +163,7 @@ export default function EditQuestion() {
           className:"notificationSuccess",
           placement: "top",
           message:"Success",
-          description: "Document Removed",
+          description: "Document removed successfully!",
         });
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
@@ -280,7 +280,7 @@ export default function EditQuestion() {
             className:"notificationSuccess",
             placement: "top",
             message:"Success",
-            description: "Question updated successfully",
+            description: "Testcase question updated successfully!",
           });
         })
         .catch((error) => {
@@ -341,7 +341,7 @@ export default function EditQuestion() {
           className:"notificationSuccess",
           placement: "top",
           message:"Success",
-          description: "Option saved successfully",
+          description: "Testcase option updated successfully!",
         });
       })
       .catch((error) => {});
@@ -376,7 +376,7 @@ export default function EditQuestion() {
             className:"notificationSuccess",
             placement: "top",
             message:"Success",
-            description: "State Changed successfully",
+            description: `Option has been marked as ${newState==='testcase.option.status.active' ? 'active' : 'inactive'} successfully!`,
           });
         })
         .catch((error) => {});

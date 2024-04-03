@@ -67,7 +67,7 @@ const AddAdminUser = () => {
           className:"notificationSuccess",
           placement: "top",
           message: "Success",
-          description: `User Added Successfully`,
+          description: `User added successfully!`,
         });
         navigate("/user-management");
       })

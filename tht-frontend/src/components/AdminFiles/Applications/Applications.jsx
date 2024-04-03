@@ -221,7 +221,7 @@ const Applications = () => {
             className: "notificationSuccess",
             placement: "top",
             message: "Success",
-            description: "Status updated successfully!",
+            description: `Application testing request has been ${updatedState === 'test.request.status.rejected' ? 'rejected' : 'accepted'} successfully!`
           });
           testRequests[index] = res;
           setTestRequests(testRequests);

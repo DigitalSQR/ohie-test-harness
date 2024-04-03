@@ -156,7 +156,7 @@ export default function TestcaseVertical(props) {
               className: "notificationSuccess",
               placement: "top",
               message: "Success",
-              description: `Note Updated Successfully!`,
+              description: `Notes saved successfully!`,
             });
             resolve(); // Resolve the promise when the operation is successful
           })
@@ -166,7 +166,7 @@ export default function TestcaseVertical(props) {
           notification.warning({
             className: "notificationWarning",
             message: "Warning",
-            description: "No Changes detected to save in note!",
+            description: "No changes detected in notes. Click the close button if you don't wish to make any changes.",
             placement: "bottomRight",
           });
         }
@@ -355,7 +355,7 @@ export default function TestcaseVertical(props) {
           className: "notificationSuccess",
           placement: "top",
           message: "Success",
-          description: `Document Uploaded!`,
+          description: `Attachment added successfully!`,
         });
       })
       .catch((error) => {});
@@ -371,7 +371,7 @@ export default function TestcaseVertical(props) {
               className: "notificationSuccess",
               placement: "top",
               message: "Success",
-              description: "Document Removed",
+              description: "Attachment removed successfully!",
             });
             setUploadedFiles((prev) => {
               return prev.filter((doc) => doc.id !== file.id);

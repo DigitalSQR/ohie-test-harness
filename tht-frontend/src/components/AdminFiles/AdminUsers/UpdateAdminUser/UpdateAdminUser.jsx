@@ -90,7 +90,7 @@ const UpdateAdminUser = () => {
           className:"notificationSuccess",
           placement: "top",
           message:"Success",
-          description: `User Updated Successfully`,
+          description: `Profile has been updated successfully!`,
         });
         navigate("/user-management");
       })

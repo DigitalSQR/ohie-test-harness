@@ -155,28 +155,22 @@ export default function ChooseTest() {
     }
     TestResultAPI.startTests(params)
       .then((response) => {
+        notification.success({
+          className: "notificationSuccess",
+          placement: "top",
+          message: "Success",
+          description: "Testing has been started successfully!",
+        });
         if (!!manual) {
           navigate(`/manual-testing/${testRequestId}`);
-          notification.success({
-            className: "notificationSuccess",
-            placement: "top",
-            message: "Success",
-            description: "Verification Process has been Started Successfully",
-          });
+        }
+        if (!!automated) {
+          navigate(`/automated-testing/${testRequestId}`);
         }
         loadProgress();
       }).catch((error) => {
 
       });
-    if (!!automated) {
-      notification.success({
-        className: "notificationSuccess",
-        placement: "top",
-        message: "Success",
-        description: "Verification Process has been Started Successfully",
-      });
-      navigate(`/automated-testing/${testRequestId}`);
-    }
   };
 
   // This function fetches details regarding testcase.

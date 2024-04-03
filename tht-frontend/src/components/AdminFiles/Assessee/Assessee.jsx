@@ -153,7 +153,13 @@ const Assessee = () => {
           className:"notificationSuccess",
           placement: "top",
           message:"Success",
-          description: `Request has been ${newState}`,
+          description: `Assessee ${newState === 'active' || newState === 'inactive' ? '' : 'request '}has been ${
+            newState === 'active' ? 'marked as active' :
+            newState === 'inactive' ? 'marked as inactive' :
+            newState === 'approve' ? 'accepted' :
+            newState === 'reject' ? 'rejected' :
+            ''
+          } successfully!`
         });
         availableUsers[index] = res.data;
         setAvailableUsers(availableUsers);
@@ -336,7 +342,7 @@ const Assessee = () => {
                                     changeState(
                                       user.id,
                                       "user.status.inactive",
-                                      "DISABLE",
+                                      "inactive",
                                       index
                                     );
                                   }}
@@ -354,7 +360,7 @@ const Assessee = () => {
                                     changeState(
                                       user.id,
                                       "user.status.active",
-                                      "APPROVE",
+                                      "approve",
                                       index
                                     );
                                   }}
@@ -371,7 +377,7 @@ const Assessee = () => {
                                     changeState(
                                       user.id,
                                       "user.status.inactive",
-                                      "REJECT",
+                                      "reject",
                                       index
                                     );
                                   }}
@@ -388,7 +394,7 @@ const Assessee = () => {
                                   changeState(
                                     user.id,
                                     "user.status.active",
-                                    "Active",
+                                    "active",
                                     index
                                   );
                                 }}
