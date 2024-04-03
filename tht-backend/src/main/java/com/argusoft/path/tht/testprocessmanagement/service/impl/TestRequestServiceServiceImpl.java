@@ -1176,7 +1176,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
 
         List<ApplicationRequests> applicationRequests = new ArrayList<>();
-        for(int year = min; year <= max; year++){
+        for(int year = max; year >=min; year--){
             int finalYear = year;
             List<TestcaseResultEntity> yearlyTestRequestResults = testRequestResults.stream().filter(testcaseResultEntity -> testcaseResultEntity.getUpdatedAt().getYear() == finalYear).toList();
 
@@ -1184,7 +1184,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
             for(int month = 1 ; month <= 12 ; month++){
                 int finalMonth = month;
-                List<TestcaseResultEntity> monthlyTestRequestResults = yearlyTestRequestResults.stream().filter(testcaseResultEntity -> testcaseResultEntity.getUpdatedAt().getMonth() == finalMonth).toList();
+                List<TestcaseResultEntity> monthlyTestRequestResults = yearlyTestRequestResults.stream().filter(testcaseResultEntity -> (testcaseResultEntity.getUpdatedAt().getMonth()+1) == finalMonth).toList();
 
                 ApplicationRequestDataByMonth applicationRequestDataByMonth = new ApplicationRequestDataByMonth();
 
@@ -1207,62 +1207,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         graphInfo.setApplicationRequestsByMonth(applicationRequests);
 
 
-//        // Get all Testcase Results completed in the last seven months
-//        List<TestcaseResultEntity> testcaseResultEntitiesByMonth = this.findTestcaseResultsUpdatedLastSevenMonths();
-//
-//        // Get all Test Request Results generated in the last seven months
-//        List<TestcaseResultEntity> testRequestResultEntitiesByMonth = testcaseResultEntitiesByMonth.stream().filter(testcaseResultEntity -> testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI) && testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)).toList();
-//
-//        // Initialize list to store application requests per month map data
-//        List<ApplicationRequests> applicationRequestsByMonth = new ArrayList<>();
-//
-//        Calendar calendar = Calendar.getInstance();
-//
-//        int lastMonth= -1, compliantByMonth = 0, nonCompliantByMonth = 0;
-//
-//        ApplicationRequests applicationRequestByMonth = new ApplicationRequests();
-//
-//        for(TestcaseResultEntity testcaseResultEntity : testRequestResultEntitiesByMonth){
-//
-//            // Get the month of the testcaseResultEntity's updatedAt field
-//            calendar.setTime(testcaseResultEntity.getUpdatedAt());
-//            int month = calendar.get(Calendar.MONTH);
-//
-//            if(month!=lastMonth){
-//
-//                if(lastMonth!=-1){
-//                    applicationRequestByMonth.setCompliant(compliantByMonth);
-//                    applicationRequestByMonth.setNonCompliant(nonCompliantByMonth);
-//
-//                    applicationRequestsByMonth.add(applicationRequestByMonth);
-//                }
-//                applicationRequestByMonth = new ApplicationRequests();
-//
-//                applicationRequestByMonth.setYear(calendar.get(Calendar.YEAR));
-//                applicationRequestByMonth.setMonth(calendar.get(Calendar.MONTH)+1);
-//
-//                compliantByMonth = 0;
-//                nonCompliantByMonth = 0;
-//
-//                lastMonth = month;
-//
-//            }
-//
-//            compliantByMonth = compliantByMonth + (Boolean.TRUE.equals(testcaseResultEntity.getSuccess())?1:0);
-//            nonCompliantByMonth = nonCompliantByMonth + (Boolean.FALSE.equals(testcaseResultEntity.getSuccess())?1:0);
-//
-//
-//        }
-//        applicationRequestByMonth.setCompliant(compliantByMonth);
-//        applicationRequestByMonth.setNonCompliant(nonCompliantByMonth);
-//
-//        applicationRequestsByMonth.add(applicationRequestByMonth);
-//
-//        // Add Application Requests By Month map data to return Graph Info variable
-//        graphInfo.setApplicationRequestsByMonth(applicationRequestsByMonth);
-
-
-
 
         // Compliant Application
 
@@ -1279,7 +1223,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         List<ComponentEntity> allComponentEntities = componentService.findAll();
 
         // Calculate and set compliant applications in compliant applications list
-        for(int i = 0 ; i < 5 ; i++){
+        for(int i = 0 ; i < topFiveTestRequestsResult.size() ; i++){
 
             CompliantApplication compliantApplication = new CompliantApplication();
 

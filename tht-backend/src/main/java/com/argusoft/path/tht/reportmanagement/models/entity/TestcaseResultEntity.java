@@ -75,9 +75,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "grade")
     private String grade;
 
-    @Column(name = "compliant")
+    @Column(name = "compliant", nullable = true, columnDefinition = "INT DEFAULT 0")
     private int compliant;
-    @Column(name = "non_compliant")
+    @Column(name = "non_compliant", nullable = true, columnDefinition = "INT DEFAULT 0")
     private int nonCompliant;
 
     public TestcaseResultEntity() {
