@@ -9,4 +9,23 @@
           margin-left: 40px;
         }
       }
+
+      .dropdown-container {
+        position: relative;
+      }
+      
+      .dropdown-container select {
+        position: absolute;
+        right: 0; /* Align to the right */
+        z-index: 1; /* Ensure the dropdown appears above the graph */
+        width: auto; /* Set width to auto to fit content */
+        padding: 5px; /* Add padding for better appearance */
+        border: 1px solid #ccc; /* Add border for better appearance */
+        border-radius: 4px; /* Add border radius for better appearance */
+        background-color: white; /* Add background color for better appearance */
+        cursor: pointer; /* Change cursor to pointer when hovering over the dropdown */
+      }
+      
+      
+      
 }
