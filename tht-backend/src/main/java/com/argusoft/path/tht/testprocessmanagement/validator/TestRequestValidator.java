@@ -333,6 +333,8 @@ public class TestRequestValidator {
         }
         // check not updatable fields
         validateNotUpdatable(errors, testRequestEntity, originalEntity);
+        // check original state it can be only pending/rejected
+        validateState(errors,originalEntity);
     }
 
     //validate not update
@@ -341,6 +343,19 @@ public class TestRequestValidator {
                                              TestRequestEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testRequestEntity.getState(), originalEntity.getState(), "state", errors);
+    }
+    private static void validateState(List<ValidationResultInfo> errors,
+                                      TestRequestEntity originalEntity)
+    {
+        if(!originalEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING)&&
+                !originalEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)
+                )
+        {
+            String fieldName = originalEntity.getState();
+            errors.add(new ValidationResultInfo(fieldName,
+                    ErrorLevel.ERROR,
+                    "TestRequest is not updatable"));
+        }
     }
 
     //validate create
