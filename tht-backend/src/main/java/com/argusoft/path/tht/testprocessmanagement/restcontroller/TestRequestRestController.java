@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -268,9 +269,11 @@ public class TestRequestRestController {
     @Transactional(rollbackFor = Exception.class)
     public TestRequestInfo updateTestRequestState(@PathVariable("testRequestId") String testRequestId,
                                                   @PathVariable("changeState") String changeState,
+                                                  @RequestBody Map<String, String> requestMap,
                                                   @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
-        TestRequestEntity testRequestEntity = testRequestService.changeState(testRequestId, changeState, contextInfo);
+        String message = requestMap.get("message");
+        TestRequestEntity testRequestEntity = testRequestService.changeState(testRequestId,message, changeState, contextInfo);
         return testRequestMapper.modelToDto(testRequestEntity);
     }
 

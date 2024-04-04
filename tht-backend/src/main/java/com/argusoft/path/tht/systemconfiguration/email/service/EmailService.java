@@ -71,12 +71,13 @@ public class EmailService {
 
     }
 
-    public void accountRejectedMessage(String to, String username) {
+    public void accountRejectedMessage(String to, String username, String message) {
         String subject = "Account Rejection";
         String templateFileName = "templates/account-rejection-email.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
+            htmlContent = htmlContent.replace("${message}", message);
             messageService.sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
@@ -177,13 +178,14 @@ public class EmailService {
         }
     }
 
-    public void testRequestRejectedMessage(String to, String username, String testRequestName) {
+    public void testRequestRejectedMessage(String to, String username, String testRequestName, String message) {
         String subject = "Test Request Rejected";
         String templateFileName = "templates/test-request-rejected.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${name}", testRequestName);
+            htmlContent = htmlContent.replace("${message}", message);
             messageService.sendMessage(to, subject, htmlContent);
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);

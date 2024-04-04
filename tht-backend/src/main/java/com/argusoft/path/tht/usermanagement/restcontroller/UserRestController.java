@@ -33,6 +33,7 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This userServiceRestController maps end points with standard service.
@@ -225,14 +226,16 @@ public class UserRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PatchMapping("/state/{userId}/{changeState}")
+    @PatchMapping(value = "/state/{userId}/{changeState}",consumes = "application/json")
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public UserInfo updateUserState(@PathVariable("userId") String userId,
                                     @PathVariable("changeState") String changeState,
+                                    @RequestBody Map<String, String> requestMap,
                                     @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
-        UserEntity userEntity = userService.changeState(userId, changeState, contextInfo);
+        String message = requestMap.get("message");
+        UserEntity userEntity = userService.changeState(userId, message, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
     }
 

@@ -538,11 +538,18 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Override
-    public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+    public TestRequestEntity changeState(String testRequestId, String message, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
+
+
+        if(stateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)){
+            testRequestEntity.setMessage(message);
+        } else {
+            testRequestEntity.setMessage(null);
+        }
 
         defaultValueChangeState(testRequestEntity, stateKey, contextInfo);
 
@@ -553,21 +560,22 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         String oldState = testRequestEntity.getState();
 
         testRequestEntity.setState(stateKey);
+
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
 
         UserEntity requestingUser = testRequestEntity.getAssessee();
 
-        sendMailToTheUserOnChangeState(oldState, stateKey, requestingUser, testRequestEntity.getName(), contextInfo);
+        sendMailToTheUserOnChangeState(oldState,  message, stateKey, requestingUser, testRequestEntity.getName(), contextInfo);
 
         changeStateCallback(testRequestEntity, contextInfo);
         return testRequestEntity;
     }
 
-    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void sendMailToTheUserOnChangeState(String oldState, String message, String newState, UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
         if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(newState)) {
             messageAssesseeIfTestRequestAccepted(requestingUser, testRequestName, contextInfo);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED.equals(newState)) {
-            messageAssesseeIfTestRequestRejected(requestingUser, testRequestName, contextInfo);
+            messageAssesseeIfTestRequestRejected(requestingUser, message, testRequestName, contextInfo);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(newState)) {
             messageAssesseeIfTestRequestFinished(requestingUser, testRequestName, contextInfo);
         }
@@ -1069,12 +1077,12 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
     }
 
-    private void messageAssesseeIfTestRequestRejected(UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAssesseeIfTestRequestRejected(UserEntity requestingUser, String message, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
         if(testRequestRejectMail) {
-            emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+            emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName, message);
         }
         if(testRequestRejectNotification) {
-            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been rejected.",requestingUser);
+            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been rejected.\nRejection Message : "+message,requestingUser);
             notificationService.createNotification(notificationEntity, contextInfo);
         }
     }
