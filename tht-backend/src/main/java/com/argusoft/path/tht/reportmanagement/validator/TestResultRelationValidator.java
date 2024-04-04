@@ -130,7 +130,7 @@ public class TestResultRelationValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    fieldName + " must be provided"));
+                    fieldName + " is required."));
         } // check meta version id
         else if (!testResultRelationEntity.getVersion()
                 .equals(originalEntity.getVersion())) {

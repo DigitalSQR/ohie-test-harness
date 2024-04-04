@@ -56,7 +56,7 @@ public class CaptchaFilter implements Filter {
 
             if (captchaCode == null && captcha != null) {
                 ValidationResultInfo error = new ValidationResultInfo();
-                error.setMessage("Invalid captcha");
+                error.setMessage("Invalid CAPTCHA.");
                 error.setLevel(ErrorLevel.ERROR);
                 error.setElement("captchaCode");
                 errors.add(error);
@@ -64,7 +64,7 @@ public class CaptchaFilter implements Filter {
 
             if (captcha == null) {
                 ValidationResultInfo error = new ValidationResultInfo();
-                error.setMessage("Something went wrong while fetching captcha");
+                error.setMessage("Encountered issue while fetching the CAPTCHA.");
                 error.setLevel(ErrorLevel.ERROR);
                 error.setElement("captcha");
                 errors.add(error);

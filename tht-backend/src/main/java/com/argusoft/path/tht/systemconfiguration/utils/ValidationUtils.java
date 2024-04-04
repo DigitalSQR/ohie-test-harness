@@ -84,7 +84,7 @@ public final class ValidationUtils {
             errors
                     .add(new ValidationResultInfo(fieldName,
                             ErrorLevel.ERROR,
-                            fieldName + " field is not updatable"));
+                            fieldName + " field is not editable."));
         }
     }
 

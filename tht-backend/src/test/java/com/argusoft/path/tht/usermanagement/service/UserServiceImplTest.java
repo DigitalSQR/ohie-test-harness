@@ -263,7 +263,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
         //validate if user already present
         UserEntity userEntity = this.userService.getUserById("user.01", contextInfo);
         List<ValidationResultInfo> vris = this.userService.validateUser(Constant.CREATE_VALIDATION, userEntity, contextInfo);
-        assertEquals("Given User with same Email already exists.", vris.get(0).getMessage());
+        assertEquals("An account with this email already exists. Please use a different email address.", vris.get(0).getMessage());
 
         //validate when different validation type key
         UserEntity userEntity2 = this.userService.getUserById("user.01", contextInfo);

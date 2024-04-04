@@ -66,7 +66,7 @@ public class CustomUserDetailService implements UserDetailsService {
                     if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, user.getState())) {
                         userService.resendVerification(user.getEmail(), Constant.SUPER_USER_CONTEXT);
                         LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
-                        throw new UsernameNotFoundException("Email verification is pending. A verification email has been dispatched.") {
+                        throw new UsernameNotFoundException("Your email address has not been verified yet. Please verify your email before logging in.") {
                         };
                     } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, user.getState())) {
                         LOGGER.error("{}{}", ValidateConstant.USER_NOT_FOUND_EXCEPTION, CustomUserDetailService.class.getSimpleName());
@@ -96,7 +96,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
             } catch (NumberFormatException | DoesNotExistException | InvalidParameterException e) {
                 LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + CustomUserDetailService.class.getSimpleName(), e);
-                throw new UsernameNotFoundException("Credential are incorrect.") {
+                throw new UsernameNotFoundException("Credentials are incorrect.") {
                 };
             }
         }
