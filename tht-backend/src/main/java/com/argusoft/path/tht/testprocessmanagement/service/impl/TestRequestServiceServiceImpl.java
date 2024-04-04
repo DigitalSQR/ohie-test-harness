@@ -1173,14 +1173,12 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
         Optional<Date> minDate = testRequestResults.stream().min(Comparator.comparing(TestcaseResultEntity::getUpdatedAt)).map(TestcaseResultEntity::getUpdatedAt);
 
-        int max;
-        int min;
+        int max=-1;
+        int min=0;
 
         if(minDate.isPresent() && maxDate.isPresent()){
             min = minDate.get().getYear();
             max = maxDate.get().getYear();
-        } else {
-            throw new OperationFailedException("Date not found");
         }
 
         List<ApplicationRequests> applicationRequests = new ArrayList<>();
