@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AdminUserAPI } from "../../../api/AdminUserAPI";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import "./admin-user.scss";
-import { useNavigate } from "react-router-dom";
-import { Pagination } from "@mui/material";
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import { useLoader } from "../../loader/LoaderContext";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
@@ -12,20 +9,24 @@ import { store } from "../../../store/store";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
-import { Switch, notification } from "antd";
+import { Switch } from "antd";
 import {
   ROLE_ID_ADMIN,
   ROLE_ID_TESTER,
 } from "../../../constants/role_constants";
+import AddAdminUser from "./AddAdminUsers/AddAdminUser";
+import UpdateAdminUser from "./UpdateAdminUser/UpdateAdminUser";
 /**
  * Admin Users Component:
  * This component handles the users that have either the role of a tester or admin.
  * It provides functionality to update or add a new user and assign certain roles to them.
  */
 const AdminUsers = () => {
-  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
+  const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
+  const [userId, setUserId] = useState();
   const [deleteUserId, setDeleteUserId] = useState();
   const [userInfo, setUserInfo] = useState();
   const dispatch = useDispatch();
@@ -35,11 +36,7 @@ const AdminUsers = () => {
   };
   const [sortDirection, setSortDirection] = useState(obj);
   const [sortFieldName, setSortFieldName] = useState("name");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPageUsers, setCurrentPageUsers] = useState([]);
   const { showLoader, hideLoader } = useLoader();
-  const pageSize = 10;
 
   //Function to handle the state change from active to inactive and vice verca
   const handleOk = (userState) => {
@@ -89,19 +86,24 @@ const AdminUsers = () => {
           user?.roleIds.includes(ROLE_ID_ADMIN) ||
           user?.roleIds.includes(ROLE_ID_TESTER)
       );
-      setTotalPages(Math.ceil(activeUsers.length / pageSize));
-
       setUsers(activeUsers);
-      const startIndex = (currentPage - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
-      const activeUsersSlice = activeUsers.slice(startIndex, endIndex);
-      setCurrentPageUsers(activeUsersSlice);
     });
   };
 
-  //Function that navigates to the update user component
-  const handleEdit = (userId) => {
-    navigate(`/user-management/update-admin-user?userId=${userId}`);
+  
+  //Function to handle adding admin user modal
+  const handleCreateUser = () => {
+    setIsCreateUserModalOpen(true);
+  };
+
+  //Function to handle updating admin user modal
+  const handleEditUser = () => {
+    setIsEditUserModalOpen(true);
+  };
+  
+  //Function to refresh all components on editing and submitting of Admin user modal
+  const refreshAllComponents = () => {
+    getAllUsers(sortFieldName, sortDirection);
   };
 
   //Function to toggle between the user state
@@ -110,7 +112,7 @@ const AdminUsers = () => {
   };
 
   useEffect(() => {
-    let user = currentPageUsers.filter(user => user.id == deleteUserId)[0];
+    let user = users.filter(user => user.id == deleteUserId)[0];
     if (user?.state == "user.status.active") {
       setIsModalOpen(true);
     } else if (user?.state) {
@@ -146,11 +148,6 @@ const AdminUsers = () => {
     return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
   };
 
-  //Function to handle the change page in pagination
-  const handleChangePage = (event, newPage) => {
-    setCurrentPage(newPage);
-  };
-
   return (
     <div id="adminUsers">
       <div id="wrapper">
@@ -159,9 +156,7 @@ const AdminUsers = () => {
             <div className="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12"></div>
             <div className="col-auto ml-auto">
               <button
-                onClick={() => {
-                  navigate("/user-management/create-user");
-                }}
+                onClick={handleCreateUser}
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
               >
@@ -201,7 +196,7 @@ const AdminUsers = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentPageUsers?.map((user) => (
+                {users?.map((user) => (
                   <tr key={user.id}>
                     <td className="fw-bold">{user.name}</td>
                     <td className = "toLowerCase-words">{user.email}</td>
@@ -229,7 +224,10 @@ const AdminUsers = () => {
                     </td>
                     <td className="action-icons-container">
                       <span className="cursor-pointer font-size-12 text-blue fw-bold"
-                        onClick={() => handleEdit(user.id)}
+                        onClick={() => {
+                          handleEditUser()
+                          setUserId(user.id);
+                        }}
                       >
                         <i className="bi bi-pencil-square  font-size-16"></i>{" "}
                         EDIT
@@ -249,16 +247,18 @@ const AdminUsers = () => {
         >
           <p>Are you sure you want to inactive the user?</p>
         </Modal>
-        {totalPages > 1 && (
-          <Pagination
-            className="pagination-ui"
-            count={totalPages}
-            page={currentPage}
-            onChange={handleChangePage}
-            variant="outlined"
-            shape="rounded"
-          />
-        )}
+        <AddAdminUser  
+        isModalOpen={isCreateUserModalOpen}
+        setIsModalOpen={setIsCreateUserModalOpen}
+        refreshAllComponents={refreshAllComponents}
+        />
+        <UpdateAdminUser  
+        isModalOpen={isEditUserModalOpen}
+        setIsModalOpen={setIsEditUserModalOpen}
+        userId={userId}
+        setUserId={setUserId}
+        refreshAllComponents={refreshAllComponents}
+        />
       </div>
     </div>
   );
