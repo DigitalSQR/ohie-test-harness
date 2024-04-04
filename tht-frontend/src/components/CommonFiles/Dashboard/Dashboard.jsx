@@ -5,61 +5,47 @@ import { UserAPI } from "../../../api/UserAPI";
 import "./dashboard.scss";
 import { USER_ROLES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
-import { TestRequestAPI } from "../../../api/TestRequestAPI";
+import { Empty } from "antd";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import { getHighestPriorityRole } from "../../../utils/utils";
 import ComplianceByComponent from "./Graphs/ComplianceByComponent";
-
 import StackedBarGraph from "./Graphs/StackedBarGraph";
 import BarGraph from "./Graphs/BarGraph";
 import PieChart from "./Graphs/PieChart";
 import Statistics from "./Graphs/Statistics";
+import { DashboardAPI } from "../../../api/DashboardAPI";
+import { TestRequestStateConstantNames } from "../../../constants/test_requests_constants";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [userChartData, setUserChartData] = useState([]);
-  const [testRequestChartData, setTestRequestChartData] = useState([]);
   const dispatch = useDispatch();
   const [userInfo, setUserInfo] = useState();
   const [role, setRole] = useState();
 
-  const statistics = {
-    Applications: 89,
-    "Assessees Registered": 43,
-    "Compliance Rate": 40,
-    "Testing Rate": 70,
+  //use States for graph
+  const [statistics, setStatistics] = useState({});
+  const [piechartData, setPiechartData] = useState({ series: [], labels: [] });
+  const [percentageCumulativeBarGraph, setPercentageCumulativeBarGraph] =
+    useState({ series: [], categories: [] });
+  const [topCompliantApplications, setTopCompliantApplications] = useState({
+    componentsData: [],
+    categories: [],
+  });
+  const [componentComplianceData, setComponentComplianceData] = useState([]);
+
+  //use state and handleYearChange function for "Application Requests By year" bar graph
+  const [year, setYear] = useState();
+  const handleYearChange = (event) => {
+    setYear(event.target.value);
   };
-
-  const ApplicationRequestsByMonth = [
-    {
-      name: "Non-Compliant",
-      data: [44, 55, 41, 37, 22, 43, 21],
-    },
-    {
-      name: "Compliant",
-      data: [53, 32, 33, 52, 13, 43, 32],
-    },
-  ];
-
-  const TopCompliantApplications = [
-    {
-      name: "Health Registry",
-      data: [30, 40, 12, 49, 120, 49],
-    },
-    {
-      name: "Facility Registry",
-      data: [23, 53, 12, 53, 10],
-    },
-    {
-      name: "Health Worker Registry",
-      data: [30],
-    },
-  ];
+  const [applicationRequestsByMonth, setApplicationRequestsByMonth] = useState(
+    {}
+  );
 
   useEffect(() => {
     dispatch(set_header(""));
     const userInfo = store.getState().userInfoSlice;
-    console.log(userInfo);
     setUserInfo(userInfo);
     setRole(getHighestPriorityRole(userInfo));
     if (
@@ -74,14 +60,166 @@ export default function Dashboard() {
     }
   }, []);
 
-  // const userContext = createContext(userInfo);
+  //For statistics
+  const statsGraph = (
+    totalApplications,
+    assesseeRegistered,
+    complianceRate,
+    testingRate
+  ) => {
+    setStatistics({
+      Applications: totalApplications,
+      "Assessees Registered": assesseeRegistered,
+      "Compliance Rate": complianceRate,
+      "Testing Rate": testingRate,
+    });
+  };
+
+  //Function to display the Pie Chart for the test requests
+  const pieChart = (data) => {
+    const pieChartObj = { labels: [], series: [] };
+    Object.keys(data).forEach((key) => {
+      if (data[key] !== 0) {
+        pieChartObj.labels.push(TestRequestStateConstantNames[key]);
+        pieChartObj.series.push(data[key]);
+      }
+    });
+    setPiechartData(pieChartObj);
+  };
+
+  //Function to handle the Percentage of Compliant Requests By Component using a horizontal bar graph
+  const percentageOfCompliantRequestsByComponent = (data) => {
+    const percentageCumulativeObj = { series: [], categories: [] };
+    data.forEach((value) => {
+      if (value.compliantTestRequests == 0) {
+        return;
+      }
+      percentageCumulativeObj.series.push(
+        ((value.compliantTestRequests / value.totalTestRequests) * 100).toFixed(
+          2
+        )
+      );
+      percentageCumulativeObj.categories.push(value.componentName);
+    });
+    setPercentageCumulativeBarGraph(percentageCumulativeObj);
+  };
+
+  //Function to display the top 5 compliant Applications using a stacked bar graph
+  const topFiveCompliantApplications = (data) => {
+    // {
+    //   applicationName: "test4",
+    //   rank: 1,
+    //   testcasesPassed: 7,
+    //   totalTestcases: 22,
+    //   components: [
+    //     {
+    //       componentName: "Facility Registry (FR)",
+    //       componentRank: 2,
+    //       testcasesPassed: 7,
+    //       totalTestcases: 22,
+    //     },
+    //   ],
+    // },
+
+    const topCompliantAppsObj = { componentsData: [], categories: [] };
+    data.forEach((value, index) => {
+      topCompliantAppsObj.categories.push(value.applicationName);
+      value.components.forEach((component) => {
+        const idx = topCompliantAppsObj.componentsData.findIndex(
+          (item) => item.name == component.componentName
+        );
+        const compliantPercentage = (
+          (component.testcasesPassed / component.totalTestcases) *
+          100
+        ).toFixed(2);
+        if (idx < 0) {
+          topCompliantAppsObj.componentsData.push({
+            name: component.componentName,
+            data: Array(5).fill(0).map((value, i)=>(i===index ? compliantPercentage :value)),
+          });
+          
+        } else {
+          topCompliantAppsObj.componentsData[idx].data[index] =
+            compliantPercentage;
+        }
+      });
+    });
+    setTopCompliantApplications(topCompliantAppsObj);
+  };
+
+  //Function to display the Application Requests By Year using a stacked bar graph
+  const appRequestsByYear = (data) => {
+    const applicationRequestsObj = {};
+    data.forEach((yearValues) => {
+      const dataArray = [
+        { name: "Non-Compliant", data: [] },
+        { name: "Compliant", data: [] },
+      ];
+      yearValues.applicationRequestDataByMonthList.forEach((monthValues) => {
+        dataArray
+          .find((item) => item.name == "Non-Compliant")
+          .data.push(monthValues.nonCompliant);
+        dataArray
+          .find((item) => item.name == "Compliant")
+          .data.push(monthValues.compliant);
+      });
+      applicationRequestsObj[yearValues.year] = { dataArray };
+      setApplicationRequestsByMonth(applicationRequestsObj);
+      setYear(Object.keys(applicationRequestsObj)[0]);
+    });
+  };
+
+  //Function to display the top compliance by component
+  const topComplianceByComponent = (data) => {
+    const topComplianceArray = [];
+    data.forEach((value) => {
+      const topComplianceObj = {
+        component: "",
+        data: { appName: [], compliancePercentage: [] },
+      };
+      topComplianceObj.component = value.componentName;
+      value.awardApplicationList.forEach((x) => {
+        if (x.totalTestcases == 0) return;
+        topComplianceObj.data.appName.push(x.appName);
+        topComplianceObj.data.compliancePercentage.push(
+          ((x.passedTestcases / x.totalTestcases) * 100).toFixed(2)
+        );
+      });
+      if (topComplianceObj.data.appName.length > 0)
+        topComplianceArray.push(topComplianceObj);
+      setComponentComplianceData(topComplianceArray);
+    });
+  };
 
   useEffect(() => {
-    const fetchTestRequestData = async () => {
-      const response = await TestRequestAPI.getTestRequestsByState("");
-      setTestRequestChartData(response.content);
-    };
-    fetchTestRequestData();
+    DashboardAPI.getDashBoard()
+      .then((responseData) => {
+        //Function being called to display the statistics
+        statsGraph(
+          responseData.totalApplications,
+          responseData.assesseeRegistered,
+          responseData.complianceRate,
+          responseData.testingRate
+        );
+
+        //Function being called to display the pieChart
+        pieChart(responseData.pieChart);
+
+        //Function being called to display the horizontal bar graph to show the percentage of Compliant Requests By Component
+        percentageOfCompliantRequestsByComponent(
+          responseData.percentageCumulativeGraph
+        );
+
+        //Function being called to display the stacked bar graph to show the top five compliant applications
+        topFiveCompliantApplications(responseData.compliantApplications);
+
+        //Application requests by year
+        appRequestsByYear(responseData.applicationRequestsByMonth);
+
+        //Function being called to display the top compliance by component
+        topComplianceByComponent(responseData.awardGraph);
+      })
+      .catch((error) => {});
   }, []);
 
   return (
@@ -92,203 +230,185 @@ export default function Dashboard() {
             <div class="alert alert-success p-2 mb-4" role="alert">
               <div className="row align-items-center">
                 <div className="col-md-3 align-items-center text-center mt-3">
-                  <img src={tool_icon} alt="Tool Icon"  style={{ maxHeight: "42px" }} className="me-2"/>
+                  <img
+                    src={tool_icon}
+                    alt="Tool Icon"
+                    style={{ maxHeight: "42px" }}
+                    className="me-2"
+                  />
                   <h5 className="mt-2">Testing Harness Tool</h5>
                 </div>
-               <div className="col">
-                <div className="font-size-16 mt-4">
-                {role === "ADMIN" &&
-                  "Manage the verification process by configuring test cases, evaluating registration requests, and monitoring progress to ensure alignment with OpenHIE Architecture and WHO SMART Guidelines."}
-                {role === "TESTER" &&
-                  "Oversee verification requests and execute manual/automatic tests. Responsibilities include reviewing and approving verification requests, conducting various tests to determine alignment with OpenHEI Architecture specification and health and data content, as specified by  WHO SMART Guidelines."}
-                {role === "ASSESSEE" && "Register your application to the open-source verification harness and complete test framework that will facilitate verifying how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines. "}
-              </div>
-              <div className="col">
-              <p className="mt-2" >
-                <a
-                  className="text-blue font-weight-500"
-                  target="_blank"
-                  href="https://guides.ohie.org/arch-spec/openhie-component-specifications-1"
-                >
-                  View OpenHIE Component Specifications
-                </a>
-              </p>
-              {userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
-                <div className="my-4">
-                  <button
-                    className="btn btn-primary mt-2 theme-blue-color"
-                    onClick={() => navigate("/register-application")}
-                  >
-                    <i className="bi bi-pencil-square"></i> Register Test Request
-                  </button>
-                </div>
-              )}
-              </div>
+                <div className="col">
+                  <div className="font-size-16 mt-4">
+                    {role === "ADMIN" &&
+                      "Manage the verification process by configuring test cases, evaluating registration requests, and monitoring progress to ensure alignment with OpenHIE Architecture and WHO SMART Guidelines."}
+                    {role === "TESTER" &&
+                      "Oversee verification requests and execute manual/automatic tests. Responsibilities include reviewing and approving verification requests, conducting various tests to determine alignment with OpenHEI Architecture specification and health and data content, as specified by  WHO SMART Guidelines."}
+                    {role === "ASSESSEE" &&
+                      "Register your application to the open-source verification harness and complete test framework that will facilitate verifying how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines. "}
+                  </div>
+                  <div className="col">
+                    <p className="mt-2">
+                      <a
+                        className="text-blue font-weight-500"
+                        target="_blank"
+                        href="https://guides.ohie.org/arch-spec/openhie-component-specifications-1"
+                      >
+                        View OpenHIE Component Specifications
+                      </a>
+                    </p>
+                    {userInfo?.roleIds?.includes(
+                      USER_ROLES.ROLE_ID_ASSESSEE
+                    ) && (
+                      <div className="my-4">
+                        <button
+                          className="btn btn-primary mt-2 theme-blue-color"
+                          onClick={() => navigate("/register-application")}
+                        >
+                          <i className="bi bi-pencil-square"></i> Register Test
+                          Request
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="pt-0">
-          <div className="text-center row">
-            {/* <div className="col-6 offset-3 text-center">
-              <img src={tool_icon} alt="Tool Icon" />
-              <h4 className="mt-2">Testing Harness Tool</h4>
-              <div className="font-size-16 mt-4">
-                {role === "ADMIN" &&
-                  "Manage the verification process by configuring test cases, evaluating registration requests, and monitoring progress to ensure alignment with OpenHIE Architecture and WHO SMART Guidelines."}
-                {role === "TESTER" &&
-                  "Oversee verification requests and execute manual/automatic tests. Responsibilities include reviewing and approving verification requests, conducting various tests to determine alignment with OpenHEI Architecture specification and health and data content, as specified by WHO SMART Guidelines."}
-                {role === "ASSESSEE" && "Register your application to the open-source verification harness and complete test framework that will facilitate verifying how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines. "}
-              </div>
-              <p className="my-4">
-                <a
-                  className="text-blue font-weight-500"
-                  target="_blank"
-                  href="https://guides.ohie.org/arch-spec/openhie-component-specifications-1"
-                >
-                  View OpenHIE Component Specifications
-                </a>
-              </p>
-              {userInfo?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
-                <div className="my-4">
-                  <button
-                    className="btn btn-primary mt-2 theme-blue-color"
-                    onClick={() => navigate("/register-application")}
-                  >
-                    <i className="bi bi-pencil-square"></i> Register Test Request
-                  </button>
-                </div>
-              )}
-            </div> */}
 
-            <div className="d-flex mb-3">
-              {Object.keys(statistics).map((key) => (
-                <Statistics key={key} parameter={key} value={statistics[key]} />
-              ))}
+        {(role === "ADMIN" || role === "TESTER") && (
+          <div className="pt-0">
+            <div className="text-center row">
+              <div className="d-flex mb-3">
+                {Object.keys(statistics).map((key) => (
+                  <Statistics
+                    key={key}
+                    parameter={key}
+                    value={statistics[key]}
+                  />
+                ))}
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="card p-3" style={{ height: "100%" }}>
+                    {applicationRequestsByMonth[year]?.dataArray.length > 0 ? (
+                      <div className="dropdown-container">
+                        <select
+                          value={year}
+                          onChange={handleYearChange}
+                          className="form-select"
+                          style={{ appearance: "none", paddingRight: "40px" }}
+                        >
+                          {Object.keys(applicationRequestsByMonth).map(
+                            (key) => (
+                              <option key={key} value={key}>
+                                {key}
+                              </option>
+                            )
+                          )}
+                        </select>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+
+                    <StackedBarGraph
+                      dropdown={true}
+                      series={applicationRequestsByMonth[year]?.dataArray || []}
+                      title="Application Requests by Year"
+                      categories={[
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ]}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <div className="card p-3" style={{ height: "100%" }}>
+                    <StackedBarGraph
+                      series={topCompliantApplications?.componentsData}
+                      title="Top 5 Compliant Applications"
+                      categories={topCompliantApplications?.categories}
+                      yAxisSymbol="%"
+                    />
+                  </div>
+                </div>
+              </div>
+              {
+                <div className="row mt-3">
+                  <div className="col-12 mx-auto">
+                    <div className="card p-3">
+                      <BarGraph
+                        series={[
+                          {
+                            data: percentageCumulativeBarGraph
+                              ? percentageCumulativeBarGraph.series
+                              : [],
+                          },
+                        ]}
+                        title="Percentage of Compliant Requests By Component"
+                        categories={percentageCumulativeBarGraph?.categories}
+                      />
+                    </div>
+                  </div>
+                </div>
+              }
+              <div className="row mt-3">
+                <div className="col-md-6 ">
+                  <div className="card p-3">
+                    <PieChart
+                      title={"Application Requests By Status"}
+                      series={piechartData?.series}
+                      labels={piechartData?.labels}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="card p-3" style={{ height: "100%" }}>
+                    <div
+                      className="d-flex justify-content-left"
+                      style={{ fontWeight: 600, fontSize: "13px" }}
+                    >
+                      {" "}
+                      <p>Top Compliance By Component</p>
+                    </div>
+                    {componentComplianceData?.length > 0 ? (
+                      componentComplianceData?.map((x, index) => (
+                        <div key={index} className="p-3">
+                          <ComplianceByComponent
+                            component={x?.component}
+                            data={x?.data}
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        <Empty
+                          description="No Record Found."
+                          imageStyle={{
+                            height: 200,
+                          }}
+                        />
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="row">
-              <div className="col-md-6">
-                <div className="card p-3">
-                  <StackedBarGraph
-                    series={ApplicationRequestsByMonth}
-                    title="Application Requests by Month"
-                    categories={[
-                      "Jan",
-                      "Feb",
-                      "Mar",
-                      "Apr",
-                      "May",
-                      "June",
-                      "July",
-                    ]}
-                  />
-                </div>
-              </div>
-
-              <div className="col-md-6">
-                <div className="card p-3">
-                  <StackedBarGraph
-                    series={TopCompliantApplications}
-                    title="Top 5 Compiant Applications"
-                    categories={[
-                      "Medplat",
-                      "app1",
-                      "app2",
-                      "app3",
-                      "app4",
-                      "app5",
-                    ]}
-                    yAxisSymbol="%"
-                  />
-                </div>
-              </div>
-            </div>
-            {/* <div className="d-flex justify-content-between px-5 my-5">
-              <div style={{ minWidth: "40%" }}>
-                <StackedBarGraph
-                  series={ApplicationRequestsByMonth}
-                  title="Application Requests by Month"
-                  categories={[
-                    "Jan",
-                    "Feb",
-                    "Mar",
-                    "Apr",
-                    "May",
-                    "June",
-                    "July",
-                  ]}
-                />
-              </div>
-
-              <div style={{ minWidth: "40%" }}>
-                <StackedBarGraph
-                  series={TopCompliantApplications}
-                  title="Top 5 Compiant Applications"
-                  categories={[
-                    "Medplat",
-                    "app1",
-                    "app2",
-                    "app3",
-                    "app4",
-                    "app5",
-                  ]}
-                  yAxisSymbol="%"
-                />
-              </div>
-            </div> */}
-
-            {/* <div className="my-5 d-flex justify-content-between align-items-center">
-              <div className="d-flex justify-content-center">
-                <PieChart
-                  series={[50, 30, 20]}
-                  labels={["In-progress", "Pending", "Completed"]}
-                />
-              </div>
-              <div className="d-flex justify-content-center align-items-center flex-column">
-                <ComplianceByComponent
-                  component="Client Registry"
-                  appName="MedPlat"
-                  compliancePercentage="80"
-                />
-
-                <ComplianceByComponent
-                  component="Facility Registry"
-                  appName="Health App"
-                  compliancePercentage="50"
-                />
-              </div>
-            </div> */}
-            { <div className="row mt-3">
-              <div className="col-12 mx-auto">
-                <div className="card p-3">
-                  <BarGraph
-                    series={[
-                      {
-                        data: [80, 60],
-                      },
-                    ]}
-                    title="Percentage of Compliant Requests By Component"
-                    categories={["Client Registry", "Facility Registry"]}
-                  />
-                </div>
-              </div>
-            </div> }
-            {/* <div className="d-flex justify-content-center my-5">
-              <div style={{ width: "70%" }}>
-                <BarGraph
-                  series={[
-                    {
-                      data: [80, 60],
-                    },
-                  ]}
-                  title="Percentage of Compliant Requests By Component"
-                  categories={["Client Registry", "Facility Registry"]}
-                />
-              </div>
-            </div> */}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

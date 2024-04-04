@@ -1,22 +1,21 @@
-import React from 'react';
-import ReactApexChart from 'react-apexcharts';
-
+import React, { useState, useEffect } from "react";
+import ReactApexChart from "react-apexcharts";
+import { Empty } from "antd";
 const BarGraph = (props) => {
-  const chartData = {
-   
+  const [chartData, setChartData] = useState({
     options: {
       chart: {
-        type: 'bar',
+        type: "bar",
         height: 350,
-        toolbar:{
-            show:false
-        }
+        toolbar: {
+          show: false,
+        },
       },
       plotOptions: {
         bar: {
           horizontal: true,
           distributed: true,
-          barHeight: '40%', // Adjust as needed
+          barHeight: "40%", // Adjust as needed
           borderRadius: 4,
         },
       },
@@ -36,26 +35,60 @@ const BarGraph = (props) => {
       },
       title: {
         text: props.title,
-        align: 'center',
-        margin: 20,
-        style: {
-          fontSize: '20px',
-        },
       },
       tooltip: {
         y: {
           formatter: function (val) {
-            return val + '% applications';
+            return val + "% applications";
           },
         },
       },
     },
-  };
+  });
+  useEffect(() => {
+    setChartData((prevChartData) => ({
+      ...prevChartData,
+      options: {
+        ...prevChartData.options,
+        xaxis: {
+          ...prevChartData.options.xaxis,
+          categories: props.categories,
+        },
+      },
+    }));
+  }, [props.categories]);
 
   return (
-    <div id="chart">
-      <ReactApexChart options={chartData.options} series={props.series} type="bar" height={350} />
-    </div>
+    <>
+      {props.series[0].data.length > 0 ? (
+        <>
+          <div id="chart">
+            <ReactApexChart
+              options={chartData.options}
+              series={props.series}
+              type="bar"
+              height={350}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div
+            className="d-flex justify-content-left"
+            style={{ fontWeight: 600, fontSize: "13px" }}
+          >
+            <p>{props.title}</p>
+          </div>
+
+          <Empty
+            description="No Record Found."
+            imageStyle={{
+              height: 200,
+            }}
+          />
+        </>
+      )}
+    </>
   );
 };
 

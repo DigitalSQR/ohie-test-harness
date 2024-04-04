@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
+import { Empty } from "antd";
 const StackedBarGraph = (props) => {
   const [chartData, setChartData] = useState({
     options: {
@@ -12,29 +13,6 @@ const StackedBarGraph = (props) => {
           index: 2,
           tools: {
             download: false,
-            customIcons: [
-              {
-                icon: `
-                      <div class="custom-dropdown" style="position: absolute;  right: 0; top: 0; border: 1px solid #ccc; border-radius: 4px;>
-                        <div class="dropdown">
-                          <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Option 1
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Option 1</a>
-                            <a class="dropdown-item" href="#">Option 2</a>
-                            <a class="dropdown-item" href="#">Option 3</a>
-                          </div>
-                        </div>
-                      </div>
-                    `,
-                title: "Custom Dropdown",
-                click: function (chart, options, e) {
-                  console.log("Custom dropdown clicked");
-                  // Handle click event if needed
-                },
-              },
-            ],
           },
         },
       },
@@ -63,11 +41,6 @@ const StackedBarGraph = (props) => {
       },
       xaxis: {
         categories: props.categories,
-        // labels: {
-        //   formatter: function (val) {
-        //     return val + 'K';
-        //   }
-        // }
       },
       yaxis: {
         title: {
@@ -79,32 +52,53 @@ const StackedBarGraph = (props) => {
           },
         },
       },
-      tooltip: {
-        // y: {
-        //   formatter: function (val) {
-        //     return val + 'K';
-        //   }
-        // }
-      },
       fill: {
         opacity: 1,
       },
-      //   legend: {
-      //     position: "top",
-      //     horizontalAlign: "right",
-      //     offsetX: 40,
-      //   },
     },
   });
+
+  useEffect(() => {
+    setChartData((prevChartData) => ({
+      ...prevChartData,
+      options: {
+        ...prevChartData.options,
+        xaxis: {
+          ...prevChartData.options.xaxis,
+          categories: props.categories,
+        },
+      },
+    }));
+  }, [props.series, props.categories]);
+
   return (
     <div>
-      <ReactApexChart
-        options={chartData.options}
-        series={props.series}
-        type="bar"
-        height={350}
-      />
+      {props.series.length > 0 ? (
+        <ReactApexChart
+          options={chartData.options}
+          series={props.series}
+          type="bar"
+          height={350}
+        />
+      ) : (
+        <>
+          <div
+            className="d-flex justify-content-left"
+            style={{ fontWeight: 600, fontSize: "13px" }}
+          >
+            <p>{props.title}</p>
+          </div>
+
+          <Empty
+            description="No Record Found."
+            imageStyle={{
+              height: 200,
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };
+
 export default StackedBarGraph;
