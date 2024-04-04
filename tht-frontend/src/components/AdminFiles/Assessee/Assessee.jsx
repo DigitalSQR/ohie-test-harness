@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import "./assessee.scss";
 import { UserAPI } from "../../../api/UserAPI";
-import { Empty, notification } from "antd";
+import { Empty, Modal, notification } from "antd";
 import { Pagination } from "@mui/material";
 import {
   userBadgeClasses,
@@ -145,28 +145,34 @@ const Assessee = () => {
 
   //Function to change the state of the assessee from active to inactive and vice verca
   const changeState = (userId, state, newState, index) => {
-    showLoader();
-    UserAPI.changeState(userId, state)
-      .then((res) => {
-        hideLoader();
-        notification.success({
-          className:"notificationSuccess",
-          placement: "top",
-          message:"Success",
-          description: `Assessee ${newState === 'active' || newState === 'inactive' ? '' : 'request '}has been ${
-            newState === 'active' ? 'marked as active' :
-            newState === 'inactive' ? 'marked as inactive' :
-            newState === 'approve' ? 'accepted' :
-            newState === 'reject' ? 'rejected' :
-            ''
-          } successfully!`
-        });
-        availableUsers[index] = res.data;
-        setAvailableUsers(availableUsers);
-      })
-      .catch((error) => {
-        hideLoader();
-      });
+    Modal.confirm({
+      title: `Confirmation`,
+      content: `Are you sure you want to ${newState} this assessee?`,
+      onOk() {
+        showLoader();
+        UserAPI.changeState(userId, state)
+          .then((res) => {
+            hideLoader();
+            notification.success({
+              className:"notificationSuccess",
+              placement: "top",
+              message:"Success",
+              description: `Assessee ${newState === 'active' || newState === 'inactive' ? '' : 'request '}has been ${
+                newState === 'active' ? 'marked as active' :
+                newState === 'inactive' ? 'marked as inactive' :
+                newState === 'approve' ? 'accepted' :
+                newState === 'reject' ? 'rejected' :
+                ''
+              } successfully!`
+            });
+            availableUsers[index] = res.data;
+            setAvailableUsers(availableUsers);
+          })
+          .catch((error) => {
+            hideLoader();
+          });
+      }
+    })
   };
 
     //Function to handle the page change in pagination

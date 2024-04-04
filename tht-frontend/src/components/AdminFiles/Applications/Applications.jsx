@@ -215,25 +215,42 @@ const Applications = () => {
           },
         }); 
       } else {
-        TestRequestAPI.changeState(testRequestId, updatedState)
-        .then((res) => {
-          notification.success({
-            className: "notificationSuccess",
-            placement: "top",
-            message: "Success",
-            description: `Application testing request has been ${updatedState === 'test.request.status.rejected' ? 'rejected' : 'accepted'} successfully!`
-          });
-          testRequests[index] = res;
-          setTestRequests(testRequests);
-          hideLoader();
-        })
-        .catch((err) => {       
-          hideLoader();
-        }); 
+        Modal.confirm({
+          title: 'Confirmation',
+          content: `Are you sure you want to change the status of this application testing request to ${
+            updatedState === 'test.request.status.rejected' ? 'rejected' : 'accepted'
+          }?`,
+          onOk() {
+            showLoader();
+            TestRequestAPI.changeState(testRequestId, updatedState)
+              .then((res) => {
+                notification.success({
+                  className: "notificationSuccess",
+                  placement: "top",
+                  message: "Success",
+                  description: `Application testing request has been ${
+                    updatedState === "test.request.status.rejected" ? "rejected" : "accepted"
+                  } successfully!`,
+                });
+                const updatedTestRequests = [...testRequests];
+                updatedTestRequests[index] = res;
+                setTestRequests(updatedTestRequests);
+                hideLoader();
+              })
+              .catch((err) => {
+                hideLoader();
+              })
+              .finally(() => {
+                hideLoader(); // Ensure that hideLoader is always called after the operation
+              });
+          },
+        });
       }
     }).catch((err) => {       
       hideLoader();
-    });
+    }).finally(() => {
+      hideLoader();
+    })
   };
 
   return (
