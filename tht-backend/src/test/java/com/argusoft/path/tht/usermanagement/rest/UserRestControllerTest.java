@@ -22,10 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -205,9 +202,13 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
                 .getResponseBody();
         assertEquals(UserServiceConstants.USER_STATUS_ACTIVE, userInfo.getState());
 
+        Map<String,String> message = new HashMap<>();
+        message.put("message","For Testing");
+
         UserInfo changeState = this.webTestClient
                 .patch()
                 .uri("/user/state/{userId}/{changeState}", "user.02","user.status.inactive")
+                .body(BodyInserters.fromValue(message))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + super.tokenMap.get("access_token")).exchange()
                 .expectStatus()
                 .isEqualTo(OK)

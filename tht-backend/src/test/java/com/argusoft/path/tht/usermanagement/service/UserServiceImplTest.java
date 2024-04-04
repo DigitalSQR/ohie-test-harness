@@ -214,12 +214,12 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
     @Transactional
     void testChangeState() throws InvalidParameterException, DoesNotExistException, MessagingException, DataValidationErrorException, OperationFailedException, IOException, VersionMismatchException {
         //change the state of user
-        UserEntity changeState = this.userService.changeState("user.03", UserServiceConstants.USER_STATUS_INACTIVE, contextInfo);
+        UserEntity changeState = this.userService.changeState("user.03", "For Testing", UserServiceConstants.USER_STATUS_INACTIVE, contextInfo);
         assertEquals(UserServiceConstants.USER_STATUS_INACTIVE, changeState.getState());
 
         //change state of admin if only one is present
         Assert.assertThrows(DataValidationErrorException.class, () -> {
-            this.userService.changeState("SYSTEM_USER", UserServiceConstants.USER_STATUS_INACTIVE, contextInfo);
+            this.userService.changeState("SYSTEM_USER", "For Testing", UserServiceConstants.USER_STATUS_INACTIVE, contextInfo);
         });
 
     }
@@ -239,22 +239,22 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
     void testSendMailToUserOnChangeState() throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
         UserEntity userEntity = this.userService.getUserById("user.01", contextInfo);
         //from approval pending to active
-        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, UserServiceConstants.USER_STATUS_ACTIVE, userEntity,contextInfo);
+        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, null, UserServiceConstants.USER_STATUS_ACTIVE, userEntity,contextInfo);
 
         //from approval pending  to inactive
-        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, UserServiceConstants.USER_STATUS_INACTIVE, userEntity,contextInfo);
+        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, "For Testing", UserServiceConstants.USER_STATUS_INACTIVE, userEntity,contextInfo);
 
         //from verification pending to approval pending
-        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userEntity,contextInfo);
+        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, null, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userEntity,contextInfo);
 
         //user status active to inactive
-        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_ACTIVE, UserServiceConstants.USER_STATUS_INACTIVE, userEntity,contextInfo);
+        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_ACTIVE, "For Testing", UserServiceConstants.USER_STATUS_INACTIVE, userEntity,contextInfo);
 
         //verification pending to active
-        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_ACTIVE, userEntity,contextInfo);
+        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, null, UserServiceConstants.USER_STATUS_ACTIVE, userEntity,contextInfo);
 
         //inactive to active
-        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_INACTIVE, UserServiceConstants.USER_STATUS_ACTIVE, userEntity,contextInfo);
+        this.userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_INACTIVE, null, UserServiceConstants.USER_STATUS_ACTIVE, userEntity,contextInfo);
     }
 
 

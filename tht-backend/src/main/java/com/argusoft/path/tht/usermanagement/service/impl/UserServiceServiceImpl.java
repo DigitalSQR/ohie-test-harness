@@ -226,11 +226,17 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
+    public UserEntity changeState(String userId, String message, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         UserEntity userEntity = this.getUserById(userId, contextInfo);
         String oldState = userEntity.getState();
+
+        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))){
+            userEntity.setMessage(message);
+        } else {
+            userEntity.setMessage(null);
+        }
 
         UserValidator.validateChangeState(userEntity, this, errors, stateKey, contextInfo);
 
@@ -238,9 +244,11 @@ public class UserServiceServiceImpl implements UserService {
 
         userEntity.setState(stateKey);
 
+
+
         userEntity = this.updateUser(userEntity, contextInfo);
 
-        sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity, contextInfo);
+        sendMailToTheUserOnChangeState(oldState, message, userEntity.getState(), userEntity, contextInfo);
 
         if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE)) {
             revokeAccessTokenOnStateChange(UserServiceConstants.CLIENT_ID, userEntity.getId());
@@ -262,11 +270,11 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    public void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    public void sendMailToTheUserOnChangeState(String oldState, String message, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
         if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
             messageAssesseeIfAccountApproved(userEntity, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
-            messageAssesseeIfAccountRejected(userEntity, contextInfo);
+            messageAssesseeIfAccountRejected(userEntity, message, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(newState)) {
             messageAdminsIfApprovalPending(userEntity, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_ACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
@@ -313,9 +321,9 @@ public class UserServiceServiceImpl implements UserService {
         if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
             tokenVerificationService.generateTokenForUserAndSendEmailForType(userEntity.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
         } else if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_APPROVAL_PENDING)) {
-            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userEntity, contextInfo);
+            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING,null, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userEntity, contextInfo);
         } else if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_ACTIVE)) {
-            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_ACTIVE, userEntity, contextInfo);
+            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING,null, UserServiceConstants.USER_STATUS_ACTIVE, userEntity, contextInfo);
         }
         return userEntity;
     }
@@ -519,9 +527,9 @@ public class UserServiceServiceImpl implements UserService {
         }
     }
 
-    private void messageAssesseeIfAccountRejected(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAssesseeIfAccountRejected(UserEntity userEntity, String message, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
         if (accountRejectMail) {
-            emailService.accountRejectedMessage(userEntity.getEmail(), userEntity.getName());
+            emailService.accountRejectedMessage(userEntity.getEmail(), userEntity.getName(), message);
         }
         if (accountRejectNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your account has been rejected", userEntity);

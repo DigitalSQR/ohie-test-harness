@@ -30,6 +30,9 @@ public class UserEntity extends IdStateMetaEntity {
     @Column(name = "company_name")
     private String companyName;
 
+    @Column(name = "message")
+    private String message;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = {})
     @JoinTable(
             name = "role_tht_user",
@@ -51,6 +54,7 @@ public class UserEntity extends IdStateMetaEntity {
         this.setName(userEntity.getName());
         this.setPassword(userEntity.getPassword());
         this.setCompanyName(userEntity.getCompanyName());
+        this.setMessage(userEntity.getMessage());
         if (userEntity.getRoles() != null) {
             this.setRoles(userEntity.getRoles().stream().map(RoleEntity::new).collect(Collectors.toSet()));
         }
@@ -81,13 +85,22 @@ public class UserEntity extends IdStateMetaEntity {
         this.name = name;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
         return "UserEntity{"
                 + "email='" + email + '\''
                 + ", name='" + name + '\''
                 + ", password='" + password + '\''
-                + ", roles=" + roles
+                + ", roles=" + roles + '\''
+                + ", message=" + message
                 + '}';
     }
 

@@ -46,7 +46,7 @@ public interface UserService {
      * @throws InvalidParameterException getUsersByRole is not valid
      * @throws DoesNotExistException getUsersByRole is not valid
      */
-    public void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException;
+    public void sendMailToTheUserOnChangeState(String oldState, String message, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException;
 
     /**
      * Creates a new User.In the user Id, Description, and Meta information may
@@ -306,13 +306,14 @@ public interface UserService {
      * change state of user with id and giving the expected state
      *
      * @param documentId  id of the user
+     * @param message     message for rejection
      * @param stateKey    expected state key
      * @param contextInfo ContextInfo
      * @return UserEntity
      * @throws DoesNotExistException        when user does not exist for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public UserEntity changeState(String documentId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException;
+    public UserEntity changeState(String documentId, String message, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException;
 
     /**
      * resend verification email

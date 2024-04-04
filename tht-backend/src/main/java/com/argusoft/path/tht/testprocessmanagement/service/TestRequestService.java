@@ -178,12 +178,13 @@ public interface TestRequestService {
      *
      * @param testRequestId id of the testRequest
      * @param stateKey      expected statekey
+     * @param message       message for rejection
      * @param contextInfo   ContextInfo
      * @return DocumentEntity
-     * @throws DoesNotExistException        when document does not exists for that id
+     * @throws DoesNotExistException        when document does not exist for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+    public TestRequestEntity changeState(String testRequestId, String message, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
     /**
      * Validates a TestRequest statechange.

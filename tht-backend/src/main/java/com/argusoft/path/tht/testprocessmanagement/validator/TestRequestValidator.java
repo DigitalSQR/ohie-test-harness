@@ -31,6 +31,7 @@ import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.argusoft.path.tht.usermanagement.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -505,6 +506,18 @@ public class TestRequestValidator {
         });
     }
 
+    public static void rejectionMessageValidation(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors){
+        if(testRequestEntity.getMessage()==null){
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("Rejection Message is not provided");
+            validationResultInfo.setElement("Message");
+
+            errors.add(validationResultInfo);
+        }
+    }
+
     public static void validateChangeState(TestRequestEntity testRequestEntity,
                                            String nextStateKey,
                                            ComponentService componentService,
@@ -513,6 +526,11 @@ public class TestRequestValidator {
                                            TestcaseOptionService testcaseOptionService,
                                            List<ValidationResultInfo> errors,
                                            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+
+        if(nextStateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)){
+            TestRequestValidator.rejectionMessageValidation(testRequestEntity, errors);
+        }
+
         if (TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextStateKey)) {
 
             Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();
