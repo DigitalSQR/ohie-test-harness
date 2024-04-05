@@ -148,7 +148,7 @@ public class UserServiceServiceImpl implements UserService {
     public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException {
         if (!StringUtils.hasLength(email)) {
-            throw new DoesNotExistException("User does not found with email : " + email);
+            throw new DoesNotExistException("No user found with this email: " + email);
         }
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
         userSearchCriteriaFilter.setEmail(email);

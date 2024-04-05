@@ -132,7 +132,7 @@ public class UserValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "Given User with same Email already exists."));
+                                "An account with this email already exists. Please use a different email address."));
             }
 
         }
@@ -305,7 +305,7 @@ public class UserValidator {
         ValidationUtils.validatePattern(userEntity.getName(),
                 "name",
                 Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
+                "Given name is invalid. Only alphanumeric characters and the following special characters are allowed: @ # ( ) . , ' - * / & space _.",
                 errors);
         ValidationUtils.validateLength(userEntity.getName(),
                 "name",
@@ -369,7 +369,7 @@ public class UserValidator {
         if (userList.size() == 1) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("Can't remove/disable admin if there are no other admin available.");
+            validationResultInfo.setMessage("Changing the status or role of the only active admin is not allowed. Please ensure there is at least one active admin account at all times.");
             validationResultInfo.setElement("state/role");
             errors.add(validationResultInfo);
         }
@@ -383,7 +383,7 @@ public class UserValidator {
             errors.add(new ValidationResultInfo("Old password", ErrorLevel.ERROR, "Old password is incorrect."));
         }
         if (Objects.equals(oldPassword, newPassword)) {
-            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR, "Old password can not be usable as new password."));
+            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR, "Your new password cannot be the same as your old password. Please choose a different one."));
         }
     }
 

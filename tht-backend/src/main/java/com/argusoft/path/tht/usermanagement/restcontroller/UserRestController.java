@@ -142,7 +142,7 @@ public class UserRestController {
             VersionMismatchException {
         ValidationResultInfo validationResultInfo = new ValidationResultInfo();
         userService.updatePasswordWithVerificationToken(updatePasswordInfo, contextInfo);
-        validationResultInfo.setMessage("Password Updated Successfully!");
+        validationResultInfo.setMessage("Password has been updated successfully!");
         validationResultInfo.setLevel(ErrorLevel.OK);
         return validationResultInfo;
     }

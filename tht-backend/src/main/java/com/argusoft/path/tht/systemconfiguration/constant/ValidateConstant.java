@@ -8,7 +8,7 @@ package com.argusoft.path.tht.systemconfiguration.constant;
 
 public final class ValidateConstant {
 
-    public static final String MUST_PROVIDED = " must be provided";
+    public static final String MUST_PROVIDED = " is required.";
     public static final String ERRORS = "Error(s) occurred in the validating ";
     public static final String ID_SUPPLIED = "The id supplied for the ";
     public static final String ALREADY_EXIST = " already exists";
@@ -31,8 +31,8 @@ public final class ValidateConstant {
     public static final String PARSE_EXCEPTION = "caught ParseException in ";
     public static final String NUMBER_FORMAT_EXCEPTION = "caught NumberFormatException in ";
     public static final String UNSUPPORTED_EXCEPTION = "caught UnsupportedEncodingException in";
-    public static final String SOMEONE_UPDATED = "someone else has updated the";
-    public static final String REFRESH_COPY = "since you started updating, you might want to refresh your copy.";
+    public static final String SOMEONE_UPDATED = "Another user has updated the";
+    public static final String REFRESH_COPY = "since you started updating. Please consider refreshing your copy.";
 
     private ValidateConstant() {
     }
