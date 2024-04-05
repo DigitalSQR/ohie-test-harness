@@ -1,11 +1,13 @@
 package com.argusoft.path.tht.systemconfiguration.email.service;
 
 import com.argusoft.path.tht.systemconfiguration.constant.MessageConstant;
+import com.argusoft.path.tht.systemconfiguration.email.event.EmailEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -20,13 +22,12 @@ public class EmailService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
-    private final MessageService messageService;
+    ApplicationEventPublisher applicationEventPublisher;
 
-    public EmailService(MessageService messageService) {
-        this.messageService = messageService;
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
-
-
 
     public void verifyEmailMessage(String to, String username, String link) {
         String subject = "Verify your email id";
@@ -34,11 +35,9 @@ public class EmailService {
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, link);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -48,11 +47,9 @@ public class EmailService {
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, link);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -62,13 +59,10 @@ public class EmailService {
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
-
     }
 
     public void accountRejectedMessage(String to, String username, String message) {
@@ -78,13 +72,10 @@ public class EmailService {
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${message}", message);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
-
     }
 
     public void accountInactiveMessage(String to, String username) {
@@ -93,27 +84,22 @@ public class EmailService {
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
-
     }
+
     public void accountActiveMessage(String to, String username) {
         String subject = "Account Re-activated";
         String templateFileName = "templates/account-active-email.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
-
     }
 
     public void testRequestCreatedMessage(String to, String username, String currentEmail) {
@@ -123,11 +109,9 @@ public class EmailService {
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.TEST_REQUEST_CREATE_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.TEST_REQUEST_CREATE_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -155,11 +139,9 @@ public class EmailService {
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -170,11 +152,9 @@ public class EmailService {
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${name}", testRequestName);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -186,11 +166,9 @@ public class EmailService {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${name}", testRequestName);
             htmlContent = htmlContent.replace("${message}", message);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -201,11 +179,9 @@ public class EmailService {
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${name}", testRequestName);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 

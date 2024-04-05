@@ -3,15 +3,14 @@ package com.argusoft.path.tht.systemconfiguration.security.filters;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.security.service.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -33,11 +32,11 @@ public class ContextSetterFilter extends OncePerRequestFilter {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ContextSetterFilter.class);
 
-    private DefaultTokenServices defaultTokenServices;
+    private AuthenticationService authenticationService;
 
     @Autowired
-    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices) {
-        this.defaultTokenServices = defaultTokenServices;
+    public void setAuthenticationService(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
 
     /**
@@ -57,8 +56,7 @@ public class ContextSetterFilter extends OncePerRequestFilter {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             token = (requestTokenHeader.substring(7));
             try {
-                OAuth2Authentication authority
-                        = loadAuthentication(token);
+                OAuth2Authentication authority = authenticationService.loadAuthentication(token);
                 WebAuthenticationDetails webAuthenticationDetails = new WebAuthenticationDetails(request);
                 authority.setDetails(webAuthenticationDetails);
                 contextInfo = ((ContextInfo) authority.getPrincipal());
@@ -77,10 +75,5 @@ public class ContextSetterFilter extends OncePerRequestFilter {
         contextInfo.setCurrentDate(Calendar.getInstance().getTime());
         request.setAttribute("contextInfo", contextInfo);
         chain.doFilter(request, response);
-    }
-
-    @Cacheable(value = "authenticationCache", key = "#token")
-    private OAuth2Authentication loadAuthentication(String token) {
-        return defaultTokenServices.loadAuthentication(token);
     }
 }

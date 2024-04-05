@@ -1,9 +1,11 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
+import com.argusoft.path.tht.notificationmanagement.event.NotificationCreationEvent;
 import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
-import com.argusoft.path.tht.notificationmanagement.service.NotificationService;
-import com.argusoft.path.tht.systemconfiguration.constant.*;
+import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
+import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -30,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -57,11 +60,10 @@ public class UserServiceServiceImpl implements UserService {
     RoleRepository roleRepository;
     TokenStore tokenStore;
     UserService userService;
+    ApplicationEventPublisher applicationEventPublisher;
     private TokenVerificationService tokenVerificationService;
     private DefaultTokenServices defaultTokenServices;
     private EmailService emailService;
-
-    private NotificationService notificationService;
 
     @Value("${message-configuration.account.approve.mail}")
     private boolean accountApproveMail;
@@ -129,8 +131,8 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Autowired
-    public void setNotificationService(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     /**
@@ -517,37 +519,37 @@ public class UserServiceServiceImpl implements UserService {
                 .orElseThrow(() -> new DoesNotExistException("No user found with role : " + role));
     }
 
-    private void messageAssesseeIfAccountApproved(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAssesseeIfAccountApproved(UserEntity userEntity, ContextInfo contextInfo) {
         if (accountApproveMail) {
             emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
         }
         if (accountApproveNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your account has been approved, you can start testing.", userEntity);
-            notificationService.createNotification(notificationEntity, contextInfo);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
 
-    private void messageAssesseeIfAccountRejected(UserEntity userEntity, String message, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAssesseeIfAccountRejected(UserEntity userEntity, String message, ContextInfo contextInfo) {
         if (accountRejectMail) {
             emailService.accountRejectedMessage(userEntity.getEmail(), userEntity.getName(), message);
         }
         if (accountRejectNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your account has been rejected", userEntity);
-            notificationService.createNotification(notificationEntity, contextInfo);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
 
-    private void messageAssesseeIfAccountInactive(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAssesseeIfAccountInactive(UserEntity userEntity, ContextInfo contextInfo) {
         if (accountDeactivateMail) {
             emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName());
         }
         if (accountDeactivateNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your account has been deactivated!", userEntity);
-            notificationService.createNotification(notificationEntity, contextInfo);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
 
-    private void messageAdminsIfApprovalPending(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAdminsIfApprovalPending(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
         //Message all admins stating approval pending
         List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
         for (UserEntity admin : admins) {
@@ -556,18 +558,18 @@ public class UserServiceServiceImpl implements UserService {
             }
             if (accountApprovalPendingNotification) {
                 NotificationEntity notificationEntity = new NotificationEntity("New Account has been created by "+userEntity.getEmail()+", Awaiting approval", admin);
-                notificationService.createNotification(notificationEntity, contextInfo);
+                applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
             }
         }
     }
 
-    private void messageAssesseeIfAccountReactivated(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAssesseeIfAccountReactivated(UserEntity userEntity, ContextInfo contextInfo) {
         if (accountReactivateMail) {
             emailService.accountActiveMessage(userEntity.getEmail(), userEntity.getName());
         }
         if (accountReactivateNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your Account has been Re-Activated", userEntity);
-            notificationService.createNotification(notificationEntity, contextInfo);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
 
