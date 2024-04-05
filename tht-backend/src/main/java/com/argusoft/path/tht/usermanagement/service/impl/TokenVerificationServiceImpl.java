@@ -1,7 +1,7 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
+import com.argusoft.path.tht.notificationmanagement.event.NotificationCreationEvent;
 import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
-import com.argusoft.path.tht.notificationmanagement.service.NotificationService;
 import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
@@ -16,10 +16,9 @@ import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -34,7 +33,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     private TokenVerificationRepository tokenVerificationRepository;
     private UserService userService;
     private EmailService emailService;
-    private NotificationService notificationService;
+    ApplicationEventPublisher applicationEventPublisher;
 
     @Value("${message-configuration.account.verify-email.mail}")
     private boolean accountVerifyEmailMail;
@@ -74,8 +73,8 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     }
 
     @Autowired
-    public void setNotificationService(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -197,23 +196,23 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         return tokenVerification;
     }
 
-    private void messageVerifyEmail(UserEntity userById, ContextInfo contextInfo, String link) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageVerifyEmail(UserEntity userById, ContextInfo contextInfo, String link) {
         if (accountVerifyEmailMail) {
             emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), link);
         }
         if (accountVerifyEmailNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Please verify your account by clicking on link sent on your mailId", userById);
-            notificationService.createNotification(notificationEntity, contextInfo);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
 
-    private void messageIfForgotPassword(UserEntity userById, ContextInfo contextInfo, String link) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageIfForgotPassword(UserEntity userById, ContextInfo contextInfo, String link) {
         if (accountForgotPasswordMail) {
             emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), link);
         }
         if (accountForgotPasswordNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("A password rest link has been sent on your email id", userById);
-            notificationService.createNotification(notificationEntity, contextInfo);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
 

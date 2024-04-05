@@ -4,6 +4,7 @@ import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
+import com.argusoft.path.tht.notificationmanagement.event.NotificationCreationEvent;
 import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
 import com.argusoft.path.tht.notificationmanagement.service.NotificationService;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
@@ -58,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -107,7 +109,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     private EmailService emailService;
 
-    private NotificationService notificationService;
+    ApplicationEventPublisher applicationEventPublisher;
 
     @Value("${message-configuration.test-request.create.mail}")
     private boolean testRequestCreateMail;
@@ -196,7 +198,9 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Autowired
-    public void setNotificationService(NotificationService notificationService) { this.notificationService = notificationService; }
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
     @Autowired
     public void setGradeEvaluator(GradeEvaluator gradeEvaluator) {
@@ -1062,7 +1066,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             }
             if (testRequestCreateNotification) {
                 NotificationEntity notificationEntity = new NotificationEntity("A new Test Request has been created by "+contextInfo.getEmail(), admin);
-                notificationService.createNotification(notificationEntity, contextInfo);
+                applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
             }
         }
     }
@@ -1073,7 +1077,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
         if(testRequestAcceptNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been accepted.",requestingUser);
-            notificationService.createNotification(notificationEntity, contextInfo);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
 
@@ -1083,7 +1087,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
         if(testRequestRejectNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been rejected.\nRejection Message : "+message,requestingUser);
-            notificationService.createNotification(notificationEntity, contextInfo);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
 
@@ -1093,7 +1097,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
         if(testRequestFinishNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been finished.",requestingUser);
-            notificationService.createNotification(notificationEntity, contextInfo);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
     private static String getMessage(String x, TestcaseResultEntity testcaseResultEntity, String x1, List<String> failedSpecificationTestcaseResultName) {
