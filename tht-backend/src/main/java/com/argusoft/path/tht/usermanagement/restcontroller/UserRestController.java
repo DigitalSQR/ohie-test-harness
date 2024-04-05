@@ -226,15 +226,15 @@ public class UserRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PatchMapping(value = "/state/{userId}/{changeState}",consumes = "application/json")
+    @PatchMapping(value = "/state/{userId}/{changeState}")
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public UserInfo updateUserState(@PathVariable("userId") String userId,
                                     @PathVariable("changeState") String changeState,
-                                    @RequestBody Map<String, String> requestMap,
+                                    @RequestBody(required = false) Map<String, String> requestMap,
                                     @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
-        String message = requestMap.get("message");
+        String message = requestMap!=null ? requestMap.get("message") : null;
         UserEntity userEntity = userService.changeState(userId, message, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
     }
