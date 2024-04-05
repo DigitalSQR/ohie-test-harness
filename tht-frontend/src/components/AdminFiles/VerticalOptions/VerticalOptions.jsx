@@ -134,7 +134,6 @@ export default function VerticalOptions(props) {
 
   // This useEffect fetches all the concerned options for a specific testcase.
   useEffect(() => {
-    // console.log("the infooooo ",testcaseResultInfo);
     getReferenceImages();
     showLoader();
     TestResultRelationAPI.getTestcaseResultRelatedObject(
@@ -331,16 +330,9 @@ export default function VerticalOptions(props) {
               ...newArray[index],
               selectedTestcaseOptionIds: currentOptions,
             };
-            console.log(newArray);
             return newArray;
           } else {
-            console.log([
-              ...prev,
-              {
-                testcaseResultId: testcaseResultInfo.id,
-                selectedTestcaseOptionIds: currentOptions,
-              },
-            ]);
+
             return [
               ...prev,
               {
@@ -354,11 +346,7 @@ export default function VerticalOptions(props) {
         JSON.stringify(currentOptions) == JSON.stringify(previousOption)
       ) {
         setOptionsArray((prev) => {
-          console.log(
-            prev.filter(
-              (item) => item.testcaseResultId !== testcaseResultInfo.id
-            )
-          );
+
           return prev.filter(
             (item) => item.testcaseResultId !== testcaseResultInfo.id
           );
@@ -484,9 +472,7 @@ export default function VerticalOptions(props) {
   };
 
   useEffect(() => {
-    console.log(testcaseResultInfo);
     const id = testcaseResultInfo.refId;
-    console.log(id);
     if (testcaseResultInfo) {
       DocumentAPI.getDocumentsByRefObjUriAndRefId(
         RefObjUriConstants.TESTCASE_RESULT_REFOBJURI,
@@ -507,7 +493,7 @@ export default function VerticalOptions(props) {
             <b>
               {" "}
               {index + 1 + ". "}
-              {currentQuestion ? currentQuestion.name : " "}
+              {testcaseResultInfo ? testcaseResultInfo.name : " "}
             </b>
           </h2>
         </div>
