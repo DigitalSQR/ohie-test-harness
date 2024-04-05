@@ -269,10 +269,10 @@ public class TestRequestRestController {
     @Transactional(rollbackFor = Exception.class)
     public TestRequestInfo updateTestRequestState(@PathVariable("testRequestId") String testRequestId,
                                                   @PathVariable("changeState") String changeState,
-                                                  @RequestBody Map<String, String> requestMap,
+                                                  @RequestBody(required = false) Map<String, String> requestMap,
                                                   @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
-        String message = requestMap.get("message");
+        String message = requestMap!=null ? requestMap.get("message") : null;
         TestRequestEntity testRequestEntity = testRequestService.changeState(testRequestId,message, changeState, contextInfo);
         return testRequestMapper.modelToDto(testRequestEntity);
     }
