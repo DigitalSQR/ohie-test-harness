@@ -121,5 +121,22 @@ public interface NotificationService {
      *                                      was attempted on an out of date version
      */
     public NotificationEntity changeState(String notificationId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
+    /**
+     * Change the state of notification
+     *
+     * @param oldStateKey NotificationId of notification to be retrieved
+     * @param newStateKey    state type to which notification state to be changed
+     * @param contextInfo information containing the principalId and locale
+     *                    information about the caller of service operation
+     * @return changed state notification
+     * @throws DoesNotExistException        a NotificationId in NotificationIds not found
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+     * @throws VersionMismatchException     optimistic locking failure or the action
+     *                                      was attempted on an out of date version
+     */
+    public List<NotificationEntity> bulkChangeState(String oldStateKey, String newStateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
     
 }

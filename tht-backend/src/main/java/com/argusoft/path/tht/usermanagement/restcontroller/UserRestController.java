@@ -148,6 +148,7 @@ public class UserRestController {
     }
 
     @GetMapping("/forgot/password")
+    @Transactional(rollbackFor = Exception.class)
     public ValidationResultInfo forgotPasswordRequest(@RequestParam("userEmail") String userEmail,
                                                       @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
         userService.createForgotPasswordRequestAndSendEmail(userEmail, contextInfo);

@@ -6,6 +6,8 @@ import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEn
 import com.argusoft.path.tht.notificationmanagement.repository.NotificationRepository;
 import com.argusoft.path.tht.notificationmanagement.service.NotificationService;
 import com.argusoft.path.tht.notificationmanagement.validator.NotificationValidator;
+import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultAnswerInfo;
+import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
@@ -22,9 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This NotificationServiceImpl contains implementation for Notification
@@ -145,6 +145,23 @@ public class NotificationServiceImpl implements NotificationService {
         notificationEntity.setState(stateKey);
         notificationEntity = notificationRepository.saveAndFlush(notificationEntity);
         return notificationEntity;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public List<NotificationEntity> bulkChangeState(String oldStateKey, String newStateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        List<NotificationEntity> resultNotificationEntities = new ArrayList<>();
+        NotificationCriteriaSearchFilter notificationCriteriaSearchFilter = new NotificationCriteriaSearchFilter();
+        notificationCriteriaSearchFilter.setState(Collections.singletonList(oldStateKey));
+        List<NotificationEntity> notificationEntities = searchNotifications(notificationCriteriaSearchFilter, contextInfo);
+        for(NotificationEntity notificationEntity : notificationEntities){
+            resultNotificationEntities.add(changeState(notificationEntity.getId(), newStateKey, contextInfo));
+        }
+        return resultNotificationEntities;
     }
 
     private void defaultValueCreateNotification(NotificationEntity notificationEntity) {
