@@ -19,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * This NotificationRestController maps end points with standard service.
  *
@@ -88,6 +90,22 @@ public class NotificationRestController {
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
         NotificationEntity notificationEntity = notificationService.changeState(notificationId, changeState, contextInfo);
         return notificationMapper.modelToDto(notificationEntity);
+    }
+
+    @ApiOperation(value = "To change status of all the Notification", response = NotificationInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully updated Notification"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
+    })
+    @PatchMapping("/state/bulk/{oldState}/{newState}")
+    @Transactional(rollbackFor = Exception.class)
+    public List<NotificationInfo> bulkUpdateNotificationState(@PathVariable("oldState") String oldState,
+                                                          @PathVariable("newState") String newState,
+                                                          @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+        List<NotificationEntity> notificationEntities = notificationService.bulkChangeState(oldState, newState, contextInfo);
+        return notificationMapper.modelToDto(notificationEntities);
     }
 
 }

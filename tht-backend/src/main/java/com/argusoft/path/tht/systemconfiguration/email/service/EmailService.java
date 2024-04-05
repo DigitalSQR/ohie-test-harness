@@ -30,7 +30,7 @@ public class EmailService {
     }
 
     public void verifyEmailMessage(String to, String username, String link) {
-        String subject = "Verify your email id";
+        String subject = "Verify Your Email for Testing Harness Tool";
         String templateFileName = "templates/verification-email.html";
         String htmlContent = null;
         try {
@@ -42,7 +42,7 @@ public class EmailService {
     }
 
     public void forgotPasswordMessage(String to, String username, String link) {
-        String subject = "Reset your password";
+        String subject = "Reset Your Password";
         String templateFileName = "templates/reset-password-email.html";
         String htmlContent = null;
         try {
@@ -54,7 +54,7 @@ public class EmailService {
     }
 
     public void accountApprovedMessage(String to, String username) {
-        String subject = "Account approval";
+        String subject = "Account Approved: Welcome to Testing Harness Tool (THT)!";
         String templateFileName = "templates/account-approval-email.html";
         String htmlContent = null;
         try {
@@ -66,7 +66,7 @@ public class EmailService {
     }
 
     public void accountRejectedMessage(String to, String username, String message) {
-        String subject = "Account Rejection";
+        String subject = "Registration Request Declined ";
         String templateFileName = "templates/account-rejection-email.html";
         String htmlContent = null;
         try {
@@ -78,12 +78,13 @@ public class EmailService {
         }
     }
 
-    public void accountInactiveMessage(String to, String username) {
-        String subject = "Account Deactivated";
+    public void accountInactiveMessage(String to, String username, String message) {
+        String subject = "Account Disabled";
         String templateFileName = "templates/account-inactive-email.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
+            htmlContent = htmlContent.replace("${message}", message);
             applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
@@ -91,7 +92,7 @@ public class EmailService {
     }
 
     public void accountActiveMessage(String to, String username) {
-        String subject = "Account Re-activated";
+        String subject = "Account Enabled ";
         String templateFileName = "templates/account-active-email.html";
         String htmlContent = null;
         try {
@@ -146,7 +147,7 @@ public class EmailService {
     }
 
     public void testRequestAcceptedMessage(String to, String username, String testRequestName) {
-        String subject = "Test Request Accepted";
+        String subject = "Application Testing Request Accepted";
         String templateFileName = "templates/test-request-accepted.html";
         String htmlContent = null;
         try {
@@ -159,7 +160,7 @@ public class EmailService {
     }
 
     public void testRequestRejectedMessage(String to, String username, String testRequestName, String message) {
-        String subject = "Test Request Rejected";
+        String subject = "Application Testing Request Accepted";
         String templateFileName = "templates/test-request-rejected.html";
         String htmlContent = null;
         try {
@@ -173,7 +174,7 @@ public class EmailService {
     }
 
     public void testRequestFinishedMessage(String to, String username, String testRequestName) {
-        String subject = "Test Request Finished";
+        String subject = "Application Testing Request Completed";
         String templateFileName = "templates/test-request-finished.html";
         String htmlContent = null;
         try {

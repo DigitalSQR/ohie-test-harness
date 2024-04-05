@@ -250,7 +250,7 @@ public class UserServiceServiceImpl implements UserService {
 
         userEntity = this.updateUser(userEntity, contextInfo);
 
-        sendMailToTheUserOnChangeState(oldState, message, userEntity.getState(), userEntity, contextInfo);
+        sendMailToTheUserOnChangeState(oldState, userEntity.getMessage(), userEntity.getState(), userEntity, contextInfo);
 
         if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE)) {
             revokeAccessTokenOnStateChange(UserServiceConstants.CLIENT_ID, userEntity.getId());
@@ -280,7 +280,7 @@ public class UserServiceServiceImpl implements UserService {
         } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(newState)) {
             messageAdminsIfApprovalPending(userEntity, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_ACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
-            messageAssesseeIfAccountInactive(userEntity, contextInfo);
+            messageAssesseeIfAccountInactive(userEntity, message, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_INACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
             messageAssesseeIfAccountReactivated(userEntity, contextInfo);
         }
@@ -539,9 +539,9 @@ public class UserServiceServiceImpl implements UserService {
         }
     }
 
-    private void messageAssesseeIfAccountInactive(UserEntity userEntity, ContextInfo contextInfo) {
+    private void messageAssesseeIfAccountInactive(UserEntity userEntity, String message, ContextInfo contextInfo) {
         if (accountDeactivateMail) {
-            emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName());
+            emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName(), message);
         }
         if (accountDeactivateNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your account has been deactivated!", userEntity);
