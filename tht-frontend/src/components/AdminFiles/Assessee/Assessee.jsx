@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import "./assessee.scss";
 import { UserAPI } from "../../../api/UserAPI";
 import { Empty, Modal, notification } from "antd";
+import moment from 'moment'
 import { Pagination } from "@mui/material";
 import {
   userBadgeClasses,
@@ -253,6 +254,16 @@ const Assessee = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
+                  <th style={{ width: thPercentage.company }}>
+                    Company
+                    <span
+                      className="ps-1"
+                      href="# "
+                      onClick={() => handleSort("companyName")}
+                    >
+                      {renderSortIcon("companyName")}
+                    </span>
+                  </th>
                   <th style={{ width: thPercentage.email }}>
                     Email
                     <span
@@ -264,23 +275,13 @@ const Assessee = () => {
                     </span>
                   </th>
                   <th style={{ width: thPercentage.requestedDate }}>
-                    requested date
+                    request date
                     <span
                       className="ps-1"
                       href="# "
                       onClick={() => handleSort("createdAt")}
                     >
                       {renderSortIcon("createdAt")}
-                    </span>
-                  </th>
-                  <th style={{ width: thPercentage.company }}>
-                    Company
-                    <span
-                      className="ps-1"
-                      href="# "
-                      onClick={() => handleSort("companyName")}
-                    >
-                      {renderSortIcon("companyName")}
                     </span>
                   </th>
                   <th style={{ width: thPercentage.status }}>
@@ -316,26 +317,20 @@ const Assessee = () => {
                   </tr>
                 ) : null}
                 {availableUsers.map((user, index) => {
-                  const formattedDate = new Date(
-                    user.meta.createdAt
-                  ).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  });
+                  const formattedDate = moment(user.meta.createdAt).format("Do MMMM, YYYY");
+
                   let currentStatus = userStateConstantNames[user.state];
                   return (
                     <Fragment key={user.id}>
                       <tr>
                         <td className="fw-bold">{user.name}</td>
-                        <td className="toLowerCase-words">{user.email}</td>
-                        <td>{formattedDate}</td>
                         {user.companyName ? (
                           <td className="fw-bold">{user.companyName}</td>
                         ) : (
                           <td>&ndash;</td>
                         )}
-
+                        <td className="toLowerCase-words">{user.email}</td>
+                        <td>{formattedDate}</td>
                         <td>
                           <span
                             className={"status " + userBadgeClasses[user.state]}
@@ -391,7 +386,7 @@ const Assessee = () => {
                                   }}
                                 >
                                   <i className="bi bi-x-circle-fill  font-size-16"></i>{" "}
-                                  REJECT{" "}
+                                  DECLINE{" "}
                                 </span>
                               </Fragment>
                             )}

@@ -443,7 +443,7 @@ const Applications = () => {
                               }}
                             >
                               <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                              REJECT{" "}
+                              DECLINE{" "}
                             </span>
                           </>
                         ) : null}
