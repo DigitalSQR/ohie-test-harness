@@ -253,9 +253,11 @@ public class TestRequestRestController {
     @Transactional(rollbackFor = Exception.class)
     public List<ValidationResultInfo> validateTestRequestState(@PathVariable("testRequestId") String testRequestId,
                                                                @PathVariable("changeState") String changeState,
+                                                               @RequestBody(required = false) Map<String, String> requestMap,
                                                                @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException, OperationFailedException {
-        return testRequestService.validateChangeState(testRequestId, changeState, contextInfo);
+        String message = requestMap!=null ? requestMap.get("message") : null;
+        return testRequestService.validateChangeState(testRequestId, message, changeState, contextInfo);
     }
 
     @ApiOperation(value = "To change status of TestRequest", response = DocumentInfo.class)
