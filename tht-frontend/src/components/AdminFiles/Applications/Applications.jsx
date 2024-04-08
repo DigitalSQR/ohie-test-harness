@@ -25,6 +25,7 @@ import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
 import UserIdNameEmailConnector from "../../connectors/UserIdNameEmailConnector/UserIdNameEmailConnector";
+import moment from "moment";
 
 /**
  * Applications Component:
@@ -320,8 +321,11 @@ const Applications = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
+                  <th style={{ width: "10%" }}>Assessee</th>
+                  <th style={{ width: "10%" }}>Company</th>
+                  <th style={{ width: "20%" }}>EMAIL ID</th>
                   <th style={{ width: "15%" }}>
-                    DATE OF APPLICATION
+                    REQUEST DATE
                     <span
                       className="ps-1"
                       href="#"
@@ -330,8 +334,6 @@ const Applications = () => {
                       {renderSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th style={{ width: "15%" }}>Assessee</th>
-                  <th style={{ width: "20%" }}>EMAIL ID</th>
                   <th style={{ width: "15%" }}>
                     STATUS
                     <span
@@ -364,8 +366,10 @@ const Applications = () => {
                     </tr>
                   </>
                 ) : null}
-                {testRequests?.map((testRequest, index) => (
-                  <>
+                {testRequests?.map((testRequest, index) => {
+                  const formattedDate = moment(testRequest.meta.createdAt).format("Do MMMM, YYYY");
+                  return (
+                    <React.Fragment key={testRequest.id}>
                     <tr
                       className={index % 2 == 0 ? "even" : "odd"}
                       key={testRequest.id}
@@ -376,13 +380,12 @@ const Applications = () => {
                         ? testRequest.productName
                         : "-"}
                     </td> */}
-                      <td>{formatDate(testRequest.meta.createdAt)}</td>
-                      <UserIdNameEmailConnector
+                    <UserIdNameEmailConnector
                         className="fw-bold"
                         isLink={true}
                         userId={testRequest.assesseeId}
                       />
-
+                      <td>{formattedDate}</td>
                       <td>
                         {testRequest.state !==
                         "test.request.status.finished" ? (
@@ -573,8 +576,9 @@ const Applications = () => {
                         </div>
                       </td>
                     </tr>
-                  </>
-                ))}
+                   </React.Fragment>
+                  )
+                })}
               </tbody>
             </table>
           </div>

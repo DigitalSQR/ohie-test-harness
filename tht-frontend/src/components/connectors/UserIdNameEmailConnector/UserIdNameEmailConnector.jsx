@@ -17,14 +17,25 @@ const UserIdNameEmailConnector = ({ userId, isLink }) => {
 
   return (
     <Fragment>
-      <td className="d-flex align-items-center" id="nameId">
+      <td id="nameId">
         <span>
           {loading ? (
             <td>
               <Spin indicator={<LoadingOutlined className="loading-indicator" />} />
             </td>
           ) : (
-            <p className="user-name fw-bold">{user?.name}</p>
+            <span className="fw-bold">{user?.name}</span>
+          )}
+        </span>
+      </td>
+      <td>
+        <span>
+          {loading ? (
+            <td>
+              <Spin indicator={<LoadingOutlined className="loading-indicator" />} />
+            </td>
+          ) : (
+            <span className="fw-bold">{user?.companyName}</span>
           )}
         </span>
       </td>
