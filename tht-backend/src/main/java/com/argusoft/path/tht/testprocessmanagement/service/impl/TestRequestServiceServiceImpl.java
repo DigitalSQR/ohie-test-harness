@@ -6,7 +6,6 @@ import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
 import com.argusoft.path.tht.notificationmanagement.event.NotificationCreationEvent;
 import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
-import com.argusoft.path.tht.notificationmanagement.service.NotificationService;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
@@ -52,7 +51,6 @@ import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.testprocessmanagement.validator.TestRequestValidator;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
-import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
@@ -61,17 +59,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -110,6 +102,9 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     private EmailService emailService;
 
     ApplicationEventPublisher applicationEventPublisher;
+
+    @Value("${base-url}")
+    private String baseUrl;
 
     @Value("${message-configuration.test-request.create.mail}")
     private boolean testRequestCreateMail;
@@ -574,19 +569,19 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
         UserEntity requestingUser = testRequestEntity.getAssessee();
 
-        sendMailToTheUserOnChangeState(oldState,  message, stateKey, requestingUser, testRequestEntity.getName(), contextInfo);
+        sendMailToTheUserOnChangeState(oldState,  message, stateKey, requestingUser, testRequestEntity.getName(), testRequestId, contextInfo);
 
         changeStateCallback(testRequestEntity, contextInfo);
         return testRequestEntity;
     }
 
-    private void sendMailToTheUserOnChangeState(String oldState, String message, String newState, UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void sendMailToTheUserOnChangeState(String oldState, String message, String newState, UserEntity requestingUser, String testRequestName, String testRequestId, ContextInfo contextInfo) {
         if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(newState)) {
             messageAssesseeIfTestRequestAccepted(requestingUser, testRequestName, contextInfo);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED.equals(newState)) {
             messageAssesseeIfTestRequestRejected(requestingUser, message, testRequestName, contextInfo);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(newState)) {
-            messageAssesseeIfTestRequestFinished(requestingUser, testRequestName, contextInfo);
+            messageAssesseeIfTestRequestFinished(requestingUser, testRequestName, baseUrl + "/application-report/" + testRequestId, contextInfo);
         }
     }
 
@@ -1062,7 +1057,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
     }
 
-    private void messageAdminsIfTestRequestCreated(ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAdminsIfTestRequestCreated(ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
         //Notify each admin that a test request is created
         List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
         for (UserEntity admin : admins) {
@@ -1076,7 +1071,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
     }
 
-    private void messageAssesseeIfTestRequestAccepted(UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAssesseeIfTestRequestAccepted(UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) {
         if(testRequestAcceptMail) {
             emailService.testRequestAcceptedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
         }
@@ -1086,7 +1081,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
     }
 
-    private void messageAssesseeIfTestRequestRejected(UserEntity requestingUser, String message, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAssesseeIfTestRequestRejected(UserEntity requestingUser, String message, String testRequestName, ContextInfo contextInfo) {
         if(testRequestRejectMail) {
             emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName, message);
         }
@@ -1096,9 +1091,9 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
     }
 
-    private void messageAssesseeIfTestRequestFinished(UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+    private void messageAssesseeIfTestRequestFinished(UserEntity requestingUser, String testRequestName, String reportLink, ContextInfo contextInfo) {
         if(testRequestFinishMail) {
-            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName, reportLink);
         }
         if(testRequestFinishNotification) {
             NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been finished.",requestingUser);

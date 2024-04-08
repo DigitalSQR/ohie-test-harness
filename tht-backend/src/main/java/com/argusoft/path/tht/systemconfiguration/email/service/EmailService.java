@@ -173,13 +173,14 @@ public class EmailService {
         }
     }
 
-    public void testRequestFinishedMessage(String to, String username, String testRequestName) {
+    public void testRequestFinishedMessage(String to, String username, String testRequestName, String reportLink) {
         String subject = "Application Testing Request Completed";
         String templateFileName = "templates/test-request-finished.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${name}", testRequestName);
+            htmlContent = htmlContent.replace("${link}", reportLink);
             applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
