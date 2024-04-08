@@ -240,8 +240,16 @@ export default function Dashboard() {
                 </div>
                 <div className="col">
                   <div className="font-size-16 mt-4">
-                    {role === "ADMIN" &&
-                      "Manage the verification process by configuring test cases, evaluating registration requests, and monitoring progress to ensure alignment with OpenHIE Architecture and WHO SMART Guidelines."}
+                    {role === "ADMIN" && (
+                      <>
+                        <p>
+                          As a THT Admin, you hold the key to managing the application testing process. Your responsibilities include configuring and modifying test cases, evaluating new assessee registration request, evaluating new application testing requests, and monitoring progress to ensure alignment with OpenHIE Architecture and WHO SMART Guidelines.
+                        </p>
+                        <p>
+                          Please note that your dashboard will initially appear empty as there is no data available for analysis. As you configure test cases and evaluate testing requests, data will populate the dashboard, enabling you to monitor progress and get insights regarding application testing.
+                        </p>
+                      </>
+                    )}
                     {role === "TESTER" &&
                       "Oversee verification requests and execute manual/automatic tests. Responsibilities include reviewing and approving verification requests, conducting various tests to determine alignment with OpenHEI Architecture specification and health and data content, as specified by  WHO SMART Guidelines."}
                     {role === "ASSESSEE" &&
