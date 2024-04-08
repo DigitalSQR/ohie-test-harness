@@ -48,8 +48,13 @@ const Assessee = () => {
   const [sortFieldName, setSortFieldName] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [reasonForRejection, setReasonForRejection] = useState();
+  const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
+  const [currentAssesseeId, setCurrentAssesseeId] = useState();
+  const [currentIndex, setCurrentIndex] = useState();
+  const [newState, setNewState] = useState();
 
-   //This is the default table header width according to tester/role.
+  //This is the default table header width according to tester/role.
   const [thPercentage, setThPercentage] = useState({
     name: "19%",
     email: "25%",
@@ -65,8 +70,7 @@ const Assessee = () => {
     sortFieldName,
     sortDirection,
     currentPage,
-    pageSize,
-    
+    pageSize
   ) => {
     showLoader();
 
@@ -88,14 +92,13 @@ const Assessee = () => {
       });
   };
 
-
   //useEffect that is used to set the user role and change with column width to certain values if the user role is admin
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserRoles(userInfo.roleIds);
 
     //table header width values for admin role
-    if (userInfo.roleIds.includes(ROLE_ID_ADMIN)) { 
+    if (userInfo.roleIds.includes(ROLE_ID_ADMIN)) {
       setThPercentage((prevState) => ({
         ...prevState,
         name: "15%",
@@ -108,7 +111,7 @@ const Assessee = () => {
     }
   }, []);
 
-    //Function to handle the sorting functionality based upon a certain field name
+  //Function to handle the sorting functionality based upon a certain field name
   const handleSort = (newSortFieldName) => {
     setSortFieldName(newSortFieldName);
     const newSortDirection = { ...obj };
@@ -123,7 +126,7 @@ const Assessee = () => {
     );
   };
 
-    //Function to toggle between the sort icons depending upon whether the current sort direction is ascending or descending
+  //Function to toggle between the sort icons depending upon whether the current sort direction is ascending or descending
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
@@ -145,37 +148,40 @@ const Assessee = () => {
 
   //Function to change the state of the assessee from active to inactive and vice verca
   const changeState = (userId, state, newState, index) => {
-    Modal.confirm({
-      title: `Confirmation`,
-      content: `Are you sure you want to ${newState} this assessee?`,
-      onOk() {
-        showLoader();
-        UserAPI.changeState(userId, state)
-          .then((res) => {
-            hideLoader();
-            notification.success({
-              className:"notificationSuccess",
-              placement: "top",
-              message:"Success",
-              description: `Assessee ${newState === 'active' || newState === 'inactive' ? '' : 'request '}has been ${
-                newState === 'active' ? 'marked as active' :
-                newState === 'inactive' ? 'marked as inactive' :
-                newState === 'approve' ? 'accepted' :
-                newState === 'reject' ? 'rejected' :
-                ''
-              } successfully!`
-            });
-            availableUsers[index] = res.data;
-            setAvailableUsers(availableUsers);
-          })
-          .catch((error) => {
-            hideLoader();
-          });
-      }
-    })
+    showLoader();
+    UserAPI.changeState(userId, state, reasonForRejection)
+      .then((res) => {
+        setIsReasonModalOpen(false);
+        setReasonForRejection();
+        setNewState();
+        hideLoader();
+        notification.success({
+          className: "notificationSuccess",
+          placement: "top",
+          message: "Success",
+          description: `Assessee ${
+            newState === "active" || newState === "inactive" ? "" : "request "
+          }has been ${
+            newState === "active"
+              ? "marked as active"
+              : newState === "inactive"
+              ? "marked as inactive"
+              : newState === "approve"
+              ? "accepted"
+              : newState === "reject"
+              ? "rejected"
+              : ""
+          } successfully!`,
+        });
+        availableUsers[index] = res.data;
+        setAvailableUsers(availableUsers);
+      })
+      .catch((error) => {
+        hideLoader();
+      });
   };
 
-    //Function to handle the page change in pagination
+  //Function to handle the page change in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
     fetchUserByState(
@@ -345,12 +351,10 @@ const Assessee = () => {
                                 <span
                                   className="cursor-pointer text-warning font-size-12 fw-bold"
                                   onClick={() => {
-                                    changeState(
-                                      user.id,
-                                      "user.status.inactive",
-                                      "inactive",
-                                      index
-                                    );
+                                    setIsReasonModalOpen(true);
+                                    setCurrentAssesseeId(user.id);
+                                    setCurrentIndex(index);
+                                    setNewState("inactive");
                                   }}
                                 >
                                   <i className="bi bi-ban text-warning font-size-16"></i>{" "}
@@ -380,12 +384,10 @@ const Assessee = () => {
                                 <span
                                   className="ps-3 cursor-pointer text-danger font-size-12 fw-bold"
                                   onClick={() => {
-                                    changeState(
-                                      user.id,
-                                      "user.status.inactive",
-                                      "reject",
-                                      index
-                                    );
+                                    setIsReasonModalOpen(true);
+                                    setCurrentAssesseeId(user.id);
+                                    setCurrentIndex(index);
+                                    setNewState("reject");
                                   }}
                                 >
                                   <i className="bi bi-x-circle-fill  font-size-16"></i>{" "}
@@ -432,6 +434,54 @@ const Assessee = () => {
           />
         )}
       </div>
+      <Modal
+        open={isReasonModalOpen}
+        onCancel={() => {
+          setIsReasonModalOpen(false);
+          setReasonForRejection();
+          setCurrentAssesseeId();
+          setCurrentIndex();
+          setNewState();
+        }}
+        onOk={() => {
+          if (!reasonForRejection) {
+            notification.error({
+              className: "notificationError",
+              message: "Error",
+              description: "Please provide a reason for disapproval.",
+              placement: "bottomRight",
+            });
+          } else {
+            changeState(
+              currentAssesseeId,
+              "user.status.inactive",
+              newState,
+              currentIndex
+            );
+          }
+        }}
+        destroyOnClose={true}
+      >
+        <div className="custom-input mb-3">
+          <label htmlFor="reason" className="form-label">
+            <b>
+              {" "}
+              {newState === "reject"
+                ? "Please provide a reason for Disapproval."
+                : "Please provide a reason for Disabling."}
+            </b>
+          </label>
+          <input
+            id="reason"
+            className="form-control"
+            type="text"
+            value={reasonForRejection}
+            onChange={(e) => {
+              setReasonForRejection(e.target.value);
+            }}
+          ></input>
+        </div>
+      </Modal>
     </div>
   );
 };

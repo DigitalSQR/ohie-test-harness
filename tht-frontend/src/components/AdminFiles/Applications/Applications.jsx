@@ -55,6 +55,11 @@ const Applications = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [userRole, setUserRole] = useState([]);
   const { showLoader, hideLoader } = useLoader();
+  const [reasonForRejection, setReasonForRejection] = useState();
+  const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
+  const [currentTestRequestId, setCurrentTestRequestId] = useState();
+  const [currentIndex, setCurrentIndex] = useState();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const pageSize = 10;
@@ -63,7 +68,7 @@ const Applications = () => {
   useEffect(() => {
     dispatch(set_header("Applications"));
     var state = filterState;
-      getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
+    getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
   }, [filterState]);
 
   //useEffect to set the user role
@@ -73,7 +78,7 @@ const Applications = () => {
         setUserRole(res.roleIds);
       })
       .catch((error) => {});
-  },[]);
+  }, []);
 
   //Function to get all the test requests varying with the different state we want to fetch
   const getAllTestRequests = (
@@ -100,7 +105,7 @@ const Applications = () => {
         hideLoader();
       });
   };
-  
+
   //Function to toggle between the visibility of the password i.e. to either show or hide the password
   const togglePasswordVisibility = (testUrl) => {
     if (testUrl.showPass) {
@@ -130,7 +135,7 @@ const Applications = () => {
     setSortFieldName(sortFieldName);
     const newSortDirection = { ...obj };
     newSortDirection[sortFieldName] =
-    sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
+      sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
     getAllTestRequests(
       filterState,
@@ -146,18 +151,20 @@ const Applications = () => {
       return (
         <img
           className="cursor-pointer"
-          style={{width:"8px"}}
-          src={
-            sortDirection[fieldName] === "asc"
-              ? sortedUp
-              : sortedDown
-          }
+          style={{ width: "8px" }}
+          src={sortDirection[fieldName] === "asc" ? sortedUp : sortedDown}
         ></img>
       );
     }
-    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
+    return (
+      <img
+        className="cursor-pointer"
+        style={{ width: "10px" }}
+        src={unsorted}
+      />
+    );
   };
-  
+
   //Function to handle the page change in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -172,85 +179,101 @@ const Applications = () => {
   //Function that handles whether the test request is to approved or rejected by the admin
   const changeState = (testRequestId, updatedState, index, proceedAnyways) => {
     showLoader();
-    TestRequestAPI.validateChangeState(testRequestId, updatedState)
-    .then((validationResults) => {
-      let warnings = [];
-      let errors = [];
-      for(let validationResult of validationResults) {
-        if(validationResult.level === "WARN") {
-          warnings.push(validationResult.message);
-        } else if(validationResult.level === "ERROR") {
-          errors.push(validationResult.message);
-        } 
-      }
-      if(!!errors.length) {
-        hideLoader();
-        errors.forEach((error, i) => {
-          notification.error({
-            className:"notificationError",
-            message:"Error",
-            description: error,
-            placement: "bottomRight",
+    TestRequestAPI.validateChangeState(
+      testRequestId,
+      updatedState,
+      reasonForRejection
+    )
+      .then((validationResults) => {
+        let warnings = [];
+        let errors = [];
+        for (let validationResult of validationResults) {
+          if (validationResult.level === "WARN") {
+            warnings.push(validationResult.message);
+          } else if (validationResult.level === "ERROR") {
+            errors.push(validationResult.message);
+          }
+        }
+        if (!!errors.length) {
+          hideLoader();
+          errors.forEach((error, i) => {
+            notification.error({
+              className: "notificationError",
+              message: "Error",
+              description: error,
+              placement: "bottomRight",
+            });
           });
-        })
-      } else if(!!warnings.length && !proceedAnyways) {
-        hideLoader();
-        Modal.confirm({
-          title: "Test Request Status Update",
-          content: (
-            <div>
-              <p><strong>Please review the following warnings:</strong></p>
-              <ul style={{ paddingLeft: 20 }}>
-                {warnings.map((warning, i) => (
-                  <li key={index}>{warning}</li>
-                ))}
-              </ul>
-            </div>
-          ),
-          okText: "Procced Anyway",
-          cancelText: "Cancel",
-          width: 600,
-          onOk() {
-            changeState(testRequestId, updatedState, index, true);
-          },
-        }); 
-      } else {
-        Modal.confirm({
-          title: 'Confirmation',
-          content: `Are you sure you want to change the status of this application testing request to ${
-            updatedState === 'test.request.status.rejected' ? 'rejected' : 'accepted'
-          }?`,
-          onOk() {
-            showLoader();
-            TestRequestAPI.changeState(testRequestId, updatedState)
-              .then((res) => {
-                notification.success({
-                  className: "notificationSuccess",
-                  placement: "top",
-                  message: "Success",
-                  description: `Application testing request has been ${
-                    updatedState === "test.request.status.rejected" ? "rejected" : "accepted"
-                  } successfully!`,
+        } else if (!!warnings.length && !proceedAnyways) {
+          hideLoader();
+          Modal.confirm({
+            title: "Test Request Status Update",
+            content: (
+              <div>
+                <p>
+                  <strong>Please review the following warnings:</strong>
+                </p>
+                <ul style={{ paddingLeft: 20 }}>
+                  {warnings.map((warning, i) => (
+                    <li key={index}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
+            ),
+            okText: "Procced Anyway",
+            cancelText: "Cancel",
+            width: 600,
+            onOk() {
+              changeState(testRequestId, updatedState, index, true);
+            },
+          });
+        } else {
+          Modal.confirm({
+            title: "Confirmation",
+            content: `Are you sure you want to change the status of this application testing request to ${
+              updatedState === "test.request.status.rejected"
+                ? "rejected"
+                : "accepted"
+            }?`,
+            onOk() {
+              showLoader();
+              TestRequestAPI.changeState(
+                testRequestId,
+                updatedState,
+                reasonForRejection
+              )
+                .then((res) => {
+                  notification.success({
+                    className: "notificationSuccess",
+                    placement: "top",
+                    message: "Success",
+                    description: `Application testing request has been ${
+                      updatedState === "test.request.status.rejected"
+                        ? "rejected"
+                        : "accepted"
+                    } successfully!`,
+                  });
+                  const updatedTestRequests = [...testRequests];
+                  updatedTestRequests[index] = res;
+                  setTestRequests(updatedTestRequests);
+                  hideLoader();
+                })
+                .catch((err) => {
+                  hideLoader();
+                })
+                .finally(() => {
+                  hideLoader(); // Ensure that hideLoader is always called after the operation
                 });
-                const updatedTestRequests = [...testRequests];
-                updatedTestRequests[index] = res;
-                setTestRequests(updatedTestRequests);
-                hideLoader();
-              })
-              .catch((err) => {
-                hideLoader();
-              })
-              .finally(() => {
-                hideLoader(); // Ensure that hideLoader is always called after the operation
-              });
-          },
-        });
-      }
-    }).catch((err) => {       
-      hideLoader();
-    }).finally(() => {
-      hideLoader();
-    })
+            },
+          });
+        }
+      })
+      .catch((err) => {
+        hideLoader();
+      })
+      .finally(() => {
+        hideLoader();
+      });
   };
 
   return (
@@ -287,7 +310,7 @@ const Applications = () => {
             <table className=" data-table capitalize-words">
               <thead>
                 <tr>
-                  <th style={{width:"15%"}}>
+                  <th style={{ width: "15%" }}>
                     APPLICATION NAME{" "}
                     <span
                       className="ps-1"
@@ -297,7 +320,7 @@ const Applications = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
-                  <th style={{width:"15%"}}>
+                  <th style={{ width: "15%" }}>
                     DATE OF APPLICATION
                     <span
                       className="ps-1"
@@ -307,9 +330,9 @@ const Applications = () => {
                       {renderSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th style={{width:"15%"}}>Assessee</th>
-                  <th style={{width:"20%"}}>EMAIL ID</th>
-                  <th style={{width:"15%"}}>
+                  <th style={{ width: "15%" }}>Assessee</th>
+                  <th style={{ width: "20%" }}>EMAIL ID</th>
+                  <th style={{ width: "15%" }}>
                     STATUS
                     <span
                       className="ps-1"
@@ -319,7 +342,7 @@ const Applications = () => {
                       {renderSortIcon("state")}
                     </span>
                   </th>
-                  <th style={{width:"20%"}}>
+                  <th style={{ width: "20%" }}>
                     ACTIONS
                     <span
                       className="ps-1"
@@ -341,51 +364,60 @@ const Applications = () => {
                     </tr>
                   </>
                 ) : null}
-                {testRequests?.map((testRequest,index) => (
+                {testRequests?.map((testRequest, index) => (
                   <>
-                  <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
-                    <td className="fw-bold">{testRequest.name}</td>
-                    {/* <td>
+                    <tr
+                      className={index % 2 == 0 ? "even" : "odd"}
+                      key={testRequest.id}
+                    >
+                      <td className="fw-bold">{testRequest.name}</td>
+                      {/* <td>
                       {testRequest.productName !== ""
                         ? testRequest.productName
                         : "-"}
                     </td> */}
-                    <td >{formatDate(testRequest.meta.createdAt)}</td>            
-                        <UserIdNameEmailConnector className="fw-bold"
-                          isLink={true}
-                          userId={testRequest.assesseeId}
-                        />
-                      
-                    <td>
-                      {testRequest.state !== "test.request.status.finished" ? (
-                        <Fragment>
-                          <span
-                            className={`status badge ${
-                              StateBadgeClasses[testRequest.state]
-                            }`}
-                          >
-                            {TestRequestStateConstantNames[testRequest.state].toLowerCase()}
-                          </span>
-                        </Fragment>
-                      ) : (
-                        <Fragment>
-                          <span
-                            className={`status badge ${
-                              StateBadgeClasses[testRequest.state]
-                            }`}
-                          >
-                            {TestRequestStateConstantNames[testRequest.state].toLowerCase()}
-                          </span>
-                        </Fragment>
-                      )}
-                    </td>
-                    <td className=" no-wrap text-left">
-                    {userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+                      <td>{formatDate(testRequest.meta.createdAt)}</td>
+                      <UserIdNameEmailConnector
+                        className="fw-bold"
+                        isLink={true}
+                        userId={testRequest.assesseeId}
+                      />
+
+                      <td>
+                        {testRequest.state !==
+                        "test.request.status.finished" ? (
+                          <Fragment>
+                            <span
+                              className={`status badge ${
+                                StateBadgeClasses[testRequest.state]
+                              }`}
+                            >
+                              {TestRequestStateConstantNames[
+                                testRequest.state
+                              ].toLowerCase()}
+                            </span>
+                          </Fragment>
+                        ) : (
+                          <Fragment>
+                            <span
+                              className={`status badge ${
+                                StateBadgeClasses[testRequest.state]
+                              }`}
+                            >
+                              {TestRequestStateConstantNames[
+                                testRequest.state
+                              ].toLowerCase()}
+                            </span>
+                          </Fragment>
+                        )}
+                      </td>
+                      <td className=" no-wrap text-left">
+                        {userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
                         testRequest.state ==
                           TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
                           <>
                             <span
-                            className="cursor-pointer text-success"
+                              className="cursor-pointer text-success"
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
@@ -394,21 +426,24 @@ const Applications = () => {
                                 );
                               }}
                             >
-                            <i className="bi bi-check-circle-fill text-success font-size-16"></i>{" "}
+                              <i className="bi bi-check-circle-fill text-success font-size-16"></i>{" "}
                               APPROVE{" "}
                             </span>
                             <span
                               className="cursor-pointer ps-3 text-danger"
                               onClick={() => {
-                                changeState(
-                                  testRequest.id,
-                                  TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED,
-                                  index
-                                );
+                                // changeState(
+                                //   testRequest.id,
+                                //   TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED,
+                                //   index
+                                // );
+                                setCurrentTestRequestId(testRequest.id);
+                                setCurrentIndex(index);
+                                setIsReasonModalOpen(true);
                               }}
                             >
                               <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                                REJECT{" "}
+                              REJECT{" "}
                             </span>
                           </>
                         ) : null}
@@ -463,46 +498,61 @@ const Applications = () => {
                             <i className="bi bi-arrow-down-circle-fill fs-5"></i>
                           )}
                         </span>
-                        
-                    </td>
-                  </tr>
-                  <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
+                      </td>
+                    </tr>
+                    <tr
+                      className={"collapse " + testRequest.class}
+                      key={"collapseable--" + testRequest.id}
+                    >
                       <td colSpan="5" className="hiddenRow m-0 field-box">
-                        <div
-                          
-                          id="Accordion"
-                        >
+                        <div id="Accordion">
                           <div className="mx-5 my-3">
                             <table className="data-table capitialize-words">
                               <thead>
                                 <tr>
-                                  <th style={{width:'20%'}}>Component</th>
-                                  <th style={{width:'20%'}}>Fhir Api Base Url</th>
-                                  <th style={{width:'20%'}}>Website/UI Base Url</th>
-                                  <th style={{width:'20%'}}>Username</th>
-                                  <th style={{width:'20%'}}>Password</th>
+                                  <th style={{ width: "20%" }}>Component</th>
+                                  <th style={{ width: "20%" }}>
+                                    Fhir Api Base Url
+                                  </th>
+                                  <th style={{ width: "20%" }}>
+                                    Website/UI Base Url
+                                  </th>
+                                  <th style={{ width: "20%" }}>Username</th>
+                                  <th style={{ width: "20%" }}>Password</th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {testRequest.testRequestUrls.length > 0 &&
                                   testRequest.testRequestUrls.map(
                                     (testUrls) => (
-                                      <tr id={testUrls.componentId} key={testUrls.componentId}>
+                                      <tr
+                                        id={testUrls.componentId}
+                                        key={testUrls.componentId}
+                                      >
                                         <td>
                                           <ComponentIdConnector
                                             componentId={testUrls.componentId}
                                           ></ComponentIdConnector>
                                         </td>
-                                        <td className="no-capitalization">{testUrls.fhirApiBaseUrl }</td>
-                                        <td className="no-capitalization">{testUrls.websiteUIBaseUrl}</td>
-                                        <td className = "toLowerCase-words">{testUrls.username}</td>
-                                        <td className = "toLowerCase-words" key={testRequest.id}>
+                                        <td className="no-capitalization">
+                                          {testUrls.fhirApiBaseUrl}
+                                        </td>
+                                        <td className="no-capitalization">
+                                          {testUrls.websiteUIBaseUrl}
+                                        </td>
+                                        <td className="toLowerCase-words">
+                                          {testUrls.username}
+                                        </td>
+                                        <td
+                                          className="toLowerCase-words"
+                                          key={testRequest.id}
+                                        >
                                           {testUrls.showPass
                                             ? testUrls.password
                                             : "*********"}
                                         </td>
                                         <td>
-                                        <i
+                                          <i
                                             className={`bi ${
                                               testUrls.showPass
                                                 ? "bi-eye-fill"
@@ -523,7 +573,7 @@ const Applications = () => {
                         </div>
                       </td>
                     </tr>
-                    </>
+                  </>
                 ))}
               </tbody>
             </table>
@@ -539,6 +589,47 @@ const Applications = () => {
             shape="rounded"
           />
         )}
+        <Modal
+          open={isReasonModalOpen}
+          onCancel={() => {
+            setIsReasonModalOpen(false);
+            setReasonForRejection();
+          }}
+          onOk={() => {
+            if (!reasonForRejection) {
+              notification.error({
+                className: "notificationError",
+                message: "Error",
+                description: "Please provide a reason for disapproval.",
+                placement: "bottomRight",
+              });
+            } else {
+              changeState(
+                currentTestRequestId,
+                TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED,
+                currentIndex
+              );
+              setIsReasonModalOpen(false);
+              setReasonForRejection();
+            }
+          }}
+          destroyOnClose={true}
+        >
+          <div className="custom-input mb-3">
+            <label htmlFor="reason" className="form-label">
+              <b>Please provide a reason for Disabling this Test request.</b>
+            </label>
+            <input
+              id="reason"
+              className="form-control"
+              type="text"
+              value={reasonForRejection}
+              onChange={(e) => {
+                setReasonForRejection(e.target.value);
+              }}
+            ></input>
+          </div>
+        </Modal>{" "}
       </div>
     </div>
   );
