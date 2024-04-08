@@ -14,7 +14,8 @@ import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import WebSocketService from "../../../api/WebSocketService";
-
+import VerificationGuidelines from "./Verification-Guidelines/VerificationGuidelines";
+import { AutomatedTestingGuidelines, ManualTestingGuidelines } from "../../../constants/guidelines_constants";
 /* 
   Choose Test page
 
@@ -266,9 +267,26 @@ export default function ChooseTest() {
                 <h6 className="">Manual Verification</h6>
                 <p className="mb-0">
                   If you need more info, please check out{" "}
-                  <a className="text-blue" href="#">
-                    Guideline.
-                  </a>
+                  <span className="fixed-button">
+                    <a
+                      className="text-blue"
+                      data-bs-toggle="offcanvas"
+                      href="#manualTesting"
+                      aria-controls="manualTesting"
+                    >
+                      Guideline.
+                    </a>
+                  </span>
+                  <div
+                    className="offcanvas offcanvas-end"
+                    tabIndex="-1"
+                    id="manualTesting"
+                    aria-labelledby="manualTestingLabel"
+                  >
+                    <div id="mySidebar" class="sidebar-right">
+                      <VerificationGuidelines title="Manual Testing Guidelines" guidelines={ManualTestingGuidelines}/>
+                    </div>
+                  </div>
                 </p>
                 {totalManualTestcaseResults == 0 && (
                   <button
@@ -339,9 +357,26 @@ export default function ChooseTest() {
                 <h6 className="">Automated Verification</h6>
                 <p className="mb-0">
                   If you need more info, please check out{" "}
-                  <a className="text-blue" href="#">
-                    Guideline.
-                  </a>
+                  <span className="fixed-button">
+                    <a
+                      className="text-blue"
+                      data-bs-toggle="offcanvas"
+                      href="#automatedTesting"
+                      aria-controls="automatedTesting"
+                    >
+                      Guideline.
+                    </a>
+                  </span>
+                  <div
+                    className="offcanvas offcanvas-end"
+                    tabIndex="-1"
+                    id="automatedTesting"
+                    aria-labelledby="automatedTestingLabel"
+                  >
+                    <div id="mySidebar" class="sidebar-right">
+                     <VerificationGuidelines title="Automated Testing Guidelines" guidelines={AutomatedTestingGuidelines}/>
+                    </div>
+                  </div>
                 </p>
                 {totalAutomatedTestcaseResults == 0 && (
                   <button

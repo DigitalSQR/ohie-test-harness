@@ -256,6 +256,65 @@
   }
   .custom-breadcrumb .breadcrumb-item {
     // font-size: 16px;
-        text-decoration: none;
-      } 
+    text-decoration: none;
+  }
+
+  .sidebar-right {
+    height: 100%;
+    width: 310px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    overflow-x: hidden;
+    transition: 0.3s;
+    z-index: 99;
+    box-shadow: 0px 0px 14px 4px #00000024;
+    white-space: nowrap;
+  }
+  .sidebar-right h3 {
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .sidebar-right ul {
+    padding-left: 15px;
+  }
+  .sidebar-right ul li {
+    white-space: wrap;
+    color: #596f84;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    margin-bottom: 10px;
+  }
+
+  .sidebar-right a {
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+
+  .sidebar-right a:hover {
+    color: #f1f1f1;
+  }
+
+  .sidebar-right .closebtn {
+    font-size: 0.7rem;
+    position: absolute;
+    top: 18px;
+    right: 16px;
+  }
+
+  .offcanvas-end {
+    width: 310px !important;
+  }
+
+  .offcanvas-backdrop {
+    /* Set the backdrop to none */
+    display: none !important;
+  }
 }
