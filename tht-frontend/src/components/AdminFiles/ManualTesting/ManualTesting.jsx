@@ -45,6 +45,7 @@ export default function ManualTesting() {
   const [totalTestCasesCount, setTotalTestCasesCount] = useState(0);
   const [isTop, setIsTop] = useState(true);
   const [isHorizontal, setIsHorizontal] = useState(true);
+  const [test, setTest] = useState(0);
   var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
   const { showLoader, hideLoader } = useLoader();
   const dispatch = useDispatch();
@@ -237,6 +238,7 @@ export default function ManualTesting() {
   // specification which saves time and makes the process of testing efficient. 
   const selectSpecification = (specificationIndex, componentIndex) => {
     specificationIndex = parseInt(specificationIndex);
+    setTest(specificationIndex);
     if (componentIndex === undefined) {
       componentIndex = currentComponentIndex;
     }
@@ -284,9 +286,18 @@ export default function ManualTesting() {
   const selectParticularTestCase = (componentIndex, specificationIndex, testcaseIndex) => {
     selectComponent(componentIndex);
     selectSpecification(specificationIndex, componentIndex);
-    selectTestcase(testcaseIndex, specificationIndex, componentIndex);
+    if(isHorizontal){
+      selectTestcase(testcaseIndex, specificationIndex, componentIndex);
+    }else{
+      if(test!==specificationIndex){
+        setTimeout(()=>{
+          window.scrollTo({ top: testcaseIndex*300, behavior: 'smooth' });
+        }, 800);}
+      else{
+          window.scrollTo({ top: testcaseIndex*300, behavior: 'smooth' });
+        }}
   }
-
+  
   // This function navigates the tester to the next succeeding testcase, once a testcase has been answered.
   const selectNextTestcase = () => {
     if (
@@ -523,11 +534,11 @@ export default function ManualTesting() {
 } */}
       </div>
 
-      {isTop ? (
+   
         <div className="fixed-button">
           <button data-bs-toggle="offcanvas" href="#manualTesting" aria-controls="manualTesting">{finishedTestCasesCount}/{totalTestCasesCount}</button>
         </div>
-      ) : (<></>)}
+     
     </div>
 
   );
