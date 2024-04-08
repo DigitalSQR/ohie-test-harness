@@ -479,76 +479,7 @@ const RegisterApplication = () => {
                             </div>
 
                             <div className="row">
-                              <div className="col-12">
-                                <div className="custom-input">
-                                  <label
-                                    htmlFor="fhirApiBaseUrl"
-                                    className="form-label"
-                                  >
-                                    Fhir Api Base URL:{" "}
-                                    <span style={{ color: "red" }}>*</span>
-                                    {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
-                                  </label>
-                                  <input
-                                    id={
-                                      "testRequestUrls[" +
-                                      index +
-                                      "].fhirApiBaseUrl"
-                                    }
-                                    name={
-                                      "testRequestUrls[" +
-                                      index +
-                                      "].fhirApiBaseUrl"
-                                    }
-                                    type="text"
-                                    className={`form-control ${
-                                      touched?.[
-                                        modifiedComponentId(url.componentId)
-                                      ]?.fhirApiBaseUrl &&
-                                      formik.errors[
-                                        "testRequestUrls[" +
-                                          modifiedComponentId(url.componentId) +
-                                          "].fhirApiBaseUrl"
-                                      ]
-                                        ? "is-invalid"
-                                        : ""
-                                    }`}
-                                    placeholder="../base-url/"
-                                    value={
-                                      formik.values.testRequestUrls[index]
-                                        .fhirApiBaseUrl
-                                    }
-                                    onChange={formik.handleChange}
-                                    onBlur={() =>
-                                      handleBlur(
-                                        "fhirApiBaseUrl",
-                                        url.componentId
-                                      )
-                                    }
-                                    autoComplete="off"
-                                  />
-                                </div>
-                                {touched?.[modifiedComponentId(url.componentId)]
-                                  ?.fhirApiBaseUrl &&
-                                  formik.errors[
-                                    "testRequestUrls[" +
-                                      modifiedComponentId(url.componentId) +
-                                      "].fhirApiBaseUrl"
-                                  ] && (
-                                    <div className="error-message">
-                                      {
-                                        formik.errors[
-                                          "testRequestUrls[" +
-                                            modifiedComponentId(
-                                              url.componentId
-                                            ) +
-                                            "].fhirApiBaseUrl"
-                                        ]
-                                      }
-                                    </div>
-                                  )}
-                              </div>
-                              <div className="col-12 mt-3">
+                            <div className="col-12 ">
                                 <div className="custom-input">
                                   <label
                                     htmlFor="fhirApiBaseUrl"
@@ -625,6 +556,76 @@ const RegisterApplication = () => {
                                     </div>
                                   )}
                               </div>
+                              <div className="col-12 mt-3">
+                                <div className="custom-input">
+                                  <label
+                                    htmlFor="fhirApiBaseUrl"
+                                    className="form-label"
+                                  >
+                                    FHIR API Base URL:{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                    {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
+                                  </label>
+                                  <input
+                                    id={
+                                      "testRequestUrls[" +
+                                      index +
+                                      "].fhirApiBaseUrl"
+                                    }
+                                    name={
+                                      "testRequestUrls[" +
+                                      index +
+                                      "].fhirApiBaseUrl"
+                                    }
+                                    type="text"
+                                    className={`form-control ${
+                                      touched?.[
+                                        modifiedComponentId(url.componentId)
+                                      ]?.fhirApiBaseUrl &&
+                                      formik.errors[
+                                        "testRequestUrls[" +
+                                          modifiedComponentId(url.componentId) +
+                                          "].fhirApiBaseUrl"
+                                      ]
+                                        ? "is-invalid"
+                                        : ""
+                                    }`}
+                                    placeholder="../base-url/"
+                                    value={
+                                      formik.values.testRequestUrls[index]
+                                        .fhirApiBaseUrl
+                                    }
+                                    onChange={formik.handleChange}
+                                    onBlur={() =>
+                                      handleBlur(
+                                        "fhirApiBaseUrl",
+                                        url.componentId
+                                      )
+                                    }
+                                    autoComplete="off"
+                                  />
+                                </div>
+                                {touched?.[modifiedComponentId(url.componentId)]
+                                  ?.fhirApiBaseUrl &&
+                                  formik.errors[
+                                    "testRequestUrls[" +
+                                      modifiedComponentId(url.componentId) +
+                                      "].fhirApiBaseUrl"
+                                  ] && (
+                                    <div className="error-message">
+                                      {
+                                        formik.errors[
+                                          "testRequestUrls[" +
+                                            modifiedComponentId(
+                                              url.componentId
+                                            ) +
+                                            "].fhirApiBaseUrl"
+                                        ]
+                                      }
+                                    </div>
+                                  )}
+                              </div>
+                              
                             </div>
                           </div>
                         ) : null}
