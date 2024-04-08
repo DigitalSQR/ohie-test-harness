@@ -252,8 +252,22 @@ export default function Dashboard() {
                     )}
                     {role === "TESTER" &&
                       "Oversee verification requests and execute manual/automatic tests. Responsibilities include reviewing and approving verification requests, conducting various tests to determine alignment with OpenHEI Architecture specification and health and data content, as specified by  WHO SMART Guidelines."}
-                    {role === "ASSESSEE" &&
-                      "Register your application to the open-source verification harness and complete test framework that will facilitate verifying how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines. "}
+                    {role === "ASSESSEE" && (
+                      <>
+                        <p>
+                          As a THT Assessee, you can register your application
+                          for testing. Our platform facilitates the verification
+                          process to ensure your application aligns with the
+                          OpenHIE Architecture specification and WHO SMART
+                          Guidelines.
+                        </p>
+                        <p>
+                          Register your application now to begin the journey
+                          towards compliance and excellence in healthcare
+                          technology by clicking on the button below.
+                        </p>
+                      </>
+                    )}
                   </div>
                   <div className="col">
                     <p className="mt-2">

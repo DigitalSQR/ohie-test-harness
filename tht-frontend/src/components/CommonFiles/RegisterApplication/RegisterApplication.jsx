@@ -10,7 +10,7 @@ import { notification } from "antd";
 import { TestRequestStateConstants } from "../../../constants/test_requests_constants.js";
 import { CREATE_VALIDATION } from "../../../constants/validation_constants.js";
 import { store } from "../../../store/store.js";
-
+import { Tooltip } from "antd";
 const RegisterApplication = () => {
   const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
@@ -313,7 +313,27 @@ const RegisterApplication = () => {
                                   htmlFor="username"
                                   className="form-label"
                                 >
-                                  Credentials
+                                  <Tooltip
+                                    title={
+                                      <div>
+                                        <p>
+                                          Please provide the username and
+                                          password that testers will use to log
+                                          in to your application/website.
+                                        </p>
+                                        <p>
+                                          {" "}
+                                          These credentials will also be
+                                          utilized by the system to execute test
+                                          scripts for testing purposes.
+                                        </p>
+                                      </div>
+                                    }
+                                  >
+                                    {" "}
+                                    Credentials
+                                  </Tooltip>
+
                                   <span style={{ color: "red" }}>*</span>
                                 </label>
                               </div>
@@ -534,7 +554,17 @@ const RegisterApplication = () => {
                                     htmlFor="fhirApiBaseUrl"
                                     className="form-label"
                                   >
-                                    Website/UI URL:{" "}
+                                    <Tooltip
+                                      title={
+                                        <div>
+                                          {" "}
+                                          Please provide link to your
+                                          application/ website.
+                                        </div>
+                                      }
+                                    >
+                                      Website/UI URL:{" "}
+                                    </Tooltip>
                                   </label>
                                   <input
                                     id={
