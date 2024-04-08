@@ -197,7 +197,7 @@ public interface TestRequestService {
      * @throws InvalidParameterException TestRequestInfo or contextInfo is not valid
      * @throws OperationFailedException  unable to complete request
      */
-    public List<ValidationResultInfo> validateChangeState(String testRequestId, String stateKey, ContextInfo contextInfo)
+    public List<ValidationResultInfo> validateChangeState(String testRequestId, String message, String stateKey, ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException;
 

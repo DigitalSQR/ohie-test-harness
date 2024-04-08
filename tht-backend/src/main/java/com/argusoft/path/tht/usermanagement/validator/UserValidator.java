@@ -397,6 +397,16 @@ public class UserValidator {
         }
     }
 
+    public static void rejectionMessageValidation(UserEntity userEntity, List<ValidationResultInfo> errors){
+        if(userEntity.getMessage()==null){
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("Rejection Message is not provided");
+            validationResultInfo.setElement("message");
+            errors.add(validationResultInfo);
+        }
+    }
+
     public static void validateChangeState(UserEntity userEntity, UserService userService, List<ValidationResultInfo> errors, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
         if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))){

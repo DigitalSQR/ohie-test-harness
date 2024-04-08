@@ -420,10 +420,15 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Override
-    public List<ValidationResultInfo> validateChangeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public List<ValidationResultInfo> validateChangeState(String testRequestId, String message, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> errors = new ArrayList<>();
         try {
             TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
+            if(stateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)){
+                testRequestEntity.setMessage(message);
+            } else {
+                testRequestEntity.setMessage(null);
+            }
             TestRequestValidator.validateChangeState(testRequestEntity, stateKey, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
             CommonStateChangeValidator.validateStateChangeByMap(TestRequestServiceConstants.TEST_REQUEST_STATUS, TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, testRequestEntity.getState(), stateKey, errors);
         } catch (DoesNotExistException ex) {
