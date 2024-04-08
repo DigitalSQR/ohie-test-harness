@@ -143,11 +143,12 @@ export default function Login() {
           <div className="col-md-6 col-12 col-sm-12 p-0">
             <div className="login-bg">
               <div className="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
-                <h1>Testing Harness Test Automation</h1>
-                <p className="font-size-16 mt-3">
-                  Experience streamlined OpenHIE standards compliance verification
-                  for healthcare websites. Our tool ensures precision,
-                  simplifies complexities, and empowers your projects.
+                <h1>Testing Harness Tool</h1>
+                <p className="font-size-16 mt-4 text-align">
+                  Testing Harness Tool (THT) is your gateway to ensuring the quality and compliance of your healthcare applications against OpenHIE standards.Upon successful testing, THT issues compliance certificates, validating your application's adherence to established benchmarks.
+                </p>
+                <p className="font-size-16 mt-3 text-align">
+                  Log in now to access THT's comprehensive testing capabilities and contribute to the advancement of healthcare application quality and compliance.
                 </p>
               </div>
             </div>
