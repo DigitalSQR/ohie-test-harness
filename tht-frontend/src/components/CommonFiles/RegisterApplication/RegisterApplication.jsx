@@ -479,7 +479,7 @@ const RegisterApplication = () => {
                             </div>
 
                             <div className="row">
-                            <div className="col-12 ">
+                              <div className="col-12 ">
                                 <div className="custom-input">
                                   <label
                                     htmlFor="fhirApiBaseUrl"
@@ -490,7 +490,10 @@ const RegisterApplication = () => {
                                         <div>
                                           {" "}
                                           Please provide link to your
-                                          application/ website.
+                                          application/ website. Make sure the
+                                          URL is accurate and includes the
+                                          correct protocol (e.g., http:// or
+                                          https://).
                                         </div>
                                       }
                                     >
@@ -562,9 +565,21 @@ const RegisterApplication = () => {
                                     htmlFor="fhirApiBaseUrl"
                                     className="form-label"
                                   >
-                                    FHIR API Base URL:{" "}
-                                    <span style={{ color: "red" }}>*</span>
-                                    {/* <i className="bi bi-info-circle-fill cursor-pointer"></i> */}
+                                    <Tooltip
+                                      title={
+                                        <div>
+                                          {" "}
+                                          Please provide the base URL of the
+                                          FHIR API endpoint. This URL will be
+                                          used to execute testing on the
+                                          specified API. Make sure to include
+                                          the correct protocol (e.g., http:// or
+                                          https://) and endpoint path.
+                                        </div>
+                                      }
+                                    >
+                                      FHIR API Base URL:{" "}
+                                    </Tooltip>
                                   </label>
                                   <input
                                     id={
@@ -625,7 +640,6 @@ const RegisterApplication = () => {
                                     </div>
                                   )}
                               </div>
-                              
                             </div>
                           </div>
                         ) : null}
