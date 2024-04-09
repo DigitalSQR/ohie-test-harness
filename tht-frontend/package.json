@@ -50,7 +50,7 @@
     "build:dev": "env-cmd -f ./.env.development npm run-script build" ,
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "serve -s build",
+    "deploy": "serve -l 3000 -s build",
     "devdeploy": "serve -l 3001 -s build"
   },
   "eslintConfig": {
