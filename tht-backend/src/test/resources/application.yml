@@ -84,7 +84,7 @@ mailSender:
   host: "smtp.gmail.com"
   port: 587
 
-base-url: https://tht.argusoft.com
+base-url: https://tht.argusservices.in
 
 message-configuration:
   account:
