@@ -1,7 +1,7 @@
 # ===============================
 # ALL PROFILES
 # ===============================
-base-url: https://tht.argusoft.com
+base-url: https://tht.argusservices.in
 spring:
   cache:
     caches:
