@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import "./testingRequest.scss";
 import {
   TestRequestStateLabels,
@@ -19,6 +19,7 @@ import { Pagination } from "@mui/material";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
+import moment from "moment";
 const TestingRequests = () => {
   const testRequestStates = [
     ...TestRequestStateLabels,
@@ -240,7 +241,7 @@ const TestingRequests = () => {
             <table className="data-table capitalize-words">
               <thead>
                 <tr>
-                  <th className="app-name-columnapp-name-column">
+                  <th className="app-name-column">
                   APPLICATION NAME
                     <span
                       className="ps-1"
@@ -250,6 +251,9 @@ const TestingRequests = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
+                  <th className="assessee-column">Assessee</th>
+                  <th className="company-column">Company</th>
+                  <th className="emailId-column">Email Id</th>
                   <th className="date-column">
                     DATE OF APPLICATION{" "}
                     <span
@@ -260,7 +264,7 @@ const TestingRequests = () => {
                       {renderSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th className="assessee-column">Assessee</th>
+                  
                   <th className="status-column">STATUS</th>
                   <th className="actions-column">
                     <span
@@ -278,33 +282,42 @@ const TestingRequests = () => {
                     </span>
                     </span>
                   </th>
+                  <th className="empty"></th>
                 </tr>
               </thead>
               <tbody>
                 {testRequests.length === 0 ? (
                   <>
                     <tr>
-                      <td className="text-center" colSpan={7}>
+                      <td className="text-center" colSpan={12}>
                         <Empty description="No Record Found." />
                       </td>
                     </tr>
                   </>
                 ) : null}
-                {testRequests.map((testRequest,index) => (
-                  <>
+                {testRequests.map((testRequest,index) => {
+                  const formattedDate = moment(testRequest.meta.createdAt).format("Do MMMM, YYYY");
+                  return (
+                  <Fragment key={testRequest.id}>
                     <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
                       <td>{testRequest.name}</td>
-                      <td>{formatDate(testRequest.meta.updatedAt)}</td>
-                      <td>
                         <UserIdConnector
                           isLink={true}
                           userId={testRequest.assesseeId}
                         />
-                      </td>
+                      <td>{formattedDate}</td>
                       <td>
-                        <span className={"status "+ StateBadgeClasses[testRequest.state]}>
-                          {TestRequestStateConstantNames[testRequest.state]}
-                        </span>
+                      <Fragment>
+                              <span
+                                className={`status badge ${
+                                  StateBadgeClasses[testRequest.state]
+                                }`}
+                              >
+                                {TestRequestStateConstantNames[
+                                  testRequest.state
+                                ].toLowerCase()}
+                              </span>
+                            </Fragment>
                       </td>
                       <td className=" no-wrap text-left">
                         {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) &&
@@ -344,13 +357,15 @@ const TestingRequests = () => {
                           TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED 
                           && 
                           <span
-                              className="cursor-pointer"
+                              className="cursor-pointer d-inline-flex align-items-center"
                               onClick={() => {navigate(`/application-report/${testRequest.id}`)}}
                             >
                               <i className="bi bi-file-text text-green-50 font-size-16"></i>{" "}
                               REPORT{" "}
                           </span>
                         }
+                        </td>
+                        <td>
                         <span
                           onClick={() => toggleRow(testRequest.id)}
                           type="button"
@@ -421,8 +436,9 @@ const TestingRequests = () => {
                         </div>
                       </td>
                     </tr>
-                  </>
-                ))}
+                  </Fragment>
+                  )
+                })}
               </tbody>
             </table>
           </div>

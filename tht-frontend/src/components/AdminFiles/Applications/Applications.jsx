@@ -311,7 +311,7 @@ const Applications = () => {
             <table className=" data-table capitalize-words">
               <thead>
                 <tr>
-                  <th style={{ width: "15%" }}>
+                  <th style={{ width: "12%" }}>
                     APPLICATION NAME{" "}
                     <span
                       className="ps-1"
@@ -321,9 +321,9 @@ const Applications = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
-                  <th style={{ width: "10%" }}>Assessee</th>
-                  <th style={{ width: "10%" }}>Company</th>
-                  <th style={{ width: "20%" }}>EMAIL ID</th>
+                  <th style={{ width: "12%" }}>Assessee</th>
+                  <th style={{ width: "12%" }}>Company</th>
+                  <th style={{ width: "16%" }}>EMAIL ID</th>
                   <th style={{ width: "15%" }}>
                     REQUEST DATE
                     <span
@@ -354,13 +354,14 @@ const Applications = () => {
                       {renderSortIcon("default")}
                     </span>
                   </th>
+                  <th style={{ width: "1%" }}></th>
                 </tr>
               </thead>
               <tbody>
                 {testRequests.length === 0 ? (
                   <>
                     <tr>
-                      <td className="text-center" colSpan={6}>
+                      <td className="text-center" colSpan={8}>
                         <Empty description="No Record Found." />
                       </td>
                     </tr>
@@ -380,76 +381,78 @@ const Applications = () => {
                         ? testRequest.productName
                         : "-"}
                     </td> */}
-                    <UserIdNameEmailConnector
-                        className="fw-bold"
-                        isLink={true}
-                        userId={testRequest.assesseeId}
-                      />
-                      <td>{formattedDate}</td>
-                      <td>
-                        {testRequest.state !==
-                        "test.request.status.finished" ? (
-                          <Fragment>
-                            <span
-                              className={`status badge ${
-                                StateBadgeClasses[testRequest.state]
-                              }`}
-                            >
-                              {TestRequestStateConstantNames[
-                                testRequest.state
-                              ].toLowerCase()}
-                            </span>
-                          </Fragment>
-                        ) : (
-                          <Fragment>
-                            <span
-                              className={`status badge ${
-                                StateBadgeClasses[testRequest.state]
-                              }`}
-                            >
-                              {TestRequestStateConstantNames[
-                                testRequest.state
-                              ].toLowerCase()}
-                            </span>
-                          </Fragment>
-                        )}
-                      </td>
-                      <td className=" no-wrap text-left">
-                        {userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
-                        testRequest.state ==
-                          TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
-                          <>
-                            <span
-                              className="cursor-pointer text-success"
-                              onClick={() => {
-                                changeState(
-                                  testRequest.id,
-                                  TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED,
-                                  index
-                                );
-                              }}
-                            >
-                              <i className="bi bi-check-circle-fill text-success font-size-16"></i>{" "}
-                              APPROVE{" "}
-                            </span>
-                            <span
-                              className="cursor-pointer ps-3 text-danger"
-                              onClick={() => {
-                                // changeState(
-                                //   testRequest.id,
-                                //   TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED,
-                                //   index
-                                // );
-                                setCurrentTestRequestId(testRequest.id);
-                                setCurrentIndex(index);
-                                setIsReasonModalOpen(true);
-                              }}
-                            >
-                              <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                              DECLINE{" "}
-                            </span>
-                          </>
-                        ) : null}
+                        <UserIdNameEmailConnector
+                          className="fw-bold"
+                          isLink={true}
+                          userId={testRequest.assesseeId}
+                        />
+                        <td>{formattedDate}</td>
+                        <td>
+                          {testRequest.state !==
+                          "test.request.status.finished" ? (
+                            <Fragment>
+                              <span
+                                className={`status badge ${
+                                  StateBadgeClasses[testRequest.state]
+                                }`}
+                              >
+                                {TestRequestStateConstantNames[
+                                  testRequest.state
+                                ].toLowerCase()}
+                              </span>
+                            </Fragment>
+                          ) : (
+                            <Fragment>
+                              <span
+                                className={`status badge ${
+                                  StateBadgeClasses[testRequest.state]
+                                }`}
+                              >
+                                {TestRequestStateConstantNames[
+                                  testRequest.state
+                                ].toLowerCase()}
+                              </span>
+                            </Fragment>
+                          )}
+                        </td>
+                        <td className=" no-wrap text-left">
+                          {userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+                          testRequest.state ==
+                            TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
+                            <div className="">
+                            <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                              <div class="d-flex flex-column flex-md-row">
+                                <div
+                                  class="cursor-pointer text-success d-flex align-items-center"
+                                  onClick={() => {
+                                    changeState(
+                                      testRequest.id,
+                                      TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED,
+                                      index
+                                    );
+                                  }}
+                                >
+                                  <i class="bi bi-check-circle-fill text-success font-size-16"></i>
+                                  <span>APPROVE</span>
+                                </div>
+                                <div
+                                  class="cursor-pointer ps-md-3 text-danger mt-2 mt-md-0 ml-lg-3 d-flex align-items-center"
+                                  onClick={() => {
+                                    setCurrentTestRequestId(testRequest.id);
+                                    setCurrentIndex(index);
+                                    setIsReasonModalOpen(true);
+                                  }}
+                                >
+                                  <i class="bi bi-x-circle-fill text-red font-size-16"></i>
+                                  <span>DECLINE</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                            </div>
+                          ) : null}
                         {testRequest.state !==
                           TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING &&
                         testRequest.state !==
@@ -459,7 +462,7 @@ const Applications = () => {
                           userRole.includes("role.tester") ||
                           userRole.includes("role.admin") ? (
                             <button
-                              className="cursor-pointer glossy-button glossy-button--green"
+                              className="cursor-pointer glossy-button glossy-button--green d-flex align-items-center"
                               onClick={() => {
                                 navigate(`/choose-test/${testRequest.id}`);
                               }}
@@ -481,7 +484,7 @@ const Applications = () => {
                           testRequest.state ===
                             TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED && (
                             <button
-                              className="cursor-pointer glossy-button glossy-button--gold"
+                              className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
                               onClick={() => viewReport(testRequest.id)}
                             >
                               <i className="bi bi-file-text font-size-16"></i>{" "}
@@ -489,7 +492,8 @@ const Applications = () => {
                             </button>
                           )
                         )}
-
+                        </td>
+                        <td>
                         <span
                           onClick={() => toggleRow(testRequest.id)}
                           type="button"
@@ -501,7 +505,7 @@ const Applications = () => {
                             <i className="bi bi-arrow-down-circle-fill fs-5"></i>
                           )}
                         </span>
-                      </td>
+                        </td>
                     </tr>
                     <tr
                       className={"collapse " + testRequest.class}
