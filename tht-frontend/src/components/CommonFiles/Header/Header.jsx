@@ -172,47 +172,42 @@ export default function Header({ headerContent, isSidebarOpen }) {
                 <div style={{ marginRight: "30px", fontSize: "28px" }}>
                   <BellOutlined />
                 </div>
-                {unreadCount > 0 ? (
+                {unreadCount > 0 && (
                   <div className="notification-count">{unreadCount}</div>
-                ) : (
-                  <></>
                 )}
               </div>
-              {notifications?.length > 0 ? (
-                <ul className="dropdown-menu notification-menu p-3 mt-2">
-                  <h5 className="notification-header">Notifications</h5>
-                  {unreadCount > 0 ? (
-                    <button
-                      className="archive-all-notifications-btn"
-                      onClick={bulkArchiveNotifications}
-                    >
-                      Archive All Notifications
-                    </button>
-                  ) : (
-                    <></>
-                  )}
-
-                  {notifications?.map((notification, index) =>
-                    notification?.state == NOTIFICATION_STATUS_UNREAD ? (
-                      <li
-                        key={notification?.id}
-                        className="list-group-item rounded mt-2 notification-item d-flex"
+              <ul className="dropdown-menu notification-menu p-3 mt-2">
+                <h5 className="notification-header">Notifications</h5>
+                {notifications && notifications.length > 0 && (
+                  <>
+                    {unreadCount > 0 && (
+                      <button
+                        className="archive-all-notifications-btn"
+                        onClick={bulkArchiveNotifications}
                       >
-                        <div>{notification.message}</div>
-                        <div>
-                          <DeleteOutlined
-                            onClick={() => ArchiveNotificationById(notification?.id)}
+                        Archive All Notifications
+                      </button>
+                    )}
+                    {notifications.map((notification, index) =>
+                      notification.state === NOTIFICATION_STATUS_UNREAD ? (
+                        <li
+                          key={notification.id}
+                          className="list-group-item rounded mt-2 notification-item d-flex"
+                        >
+                          <div>{notification.message}</div>
+                          <div>
+                            <DeleteOutlined
+                              onClick={() =>
+                                ArchiveNotificationById(notification.id)
+                            }
                           />
                         </div>
                       </li>
-                    ) : (
-                      <></>
-                    )
-                  )}
-                </ul>
-              ) : (
-                <></>
-              )}
+                    ) : null
+                    )}
+                  </>
+                )}
+              </ul>
             </div>
 
             <div className="dropdown">
