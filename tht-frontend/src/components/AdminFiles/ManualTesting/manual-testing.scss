@@ -1,5 +1,5 @@
 #manualQuestions {
- 
+
   #wrapper {
     transition: 0.5s;
     margin-left: 230px;
@@ -127,7 +127,7 @@
   }
 
   .non-fuctional-requirement .question-box h2 {
-    background: #f4f8fa;
+    // background: #f4f8fa;
     padding: 12px 18px;
     color: #354853;
     font-size: 16px;
@@ -135,7 +135,7 @@
     line-height: 24px;
     margin-bottom: 0;
     // border-bottom: 1px solid #d7dde3;
-    
+
   }
 
   @media (max-width: 767.98px) {
@@ -457,7 +457,7 @@
   .save-and-next {
     margin-top: 7px !important;
     margin-bottom: 12px !important;
-    width: 140px !important;
+    // width: 140px !important;
     color: white !important;
   }
 
@@ -503,7 +503,7 @@
     line-height: 24px;
     margin-bottom: 0;
     padding: 12px 18px;
-   
+
   }
 
   .question-header h2.border-left {
@@ -532,14 +532,20 @@
     font-weight: 400;
     padding: 14px 24px !important;
     color: #425058;
-    &:first-of-type{
-     border-top-left-radius: 10px;
+
+    &:first-of-type {
+      border-top-left-radius: 10px;
     }
- &:hover{
-  background: #ebf4f9;
-  color: #000;
- }
- 
+
+    &:hover {
+      background: #ebf4f9;
+      color: #000;
+    }
+
+    .completed-questions {
+      color: #009fc8;
+    }
+
   }
 
   .ant-tabs-tab-active {
@@ -551,14 +557,18 @@
       color: #fff !important;
       text-shadow: none;
     }
-    &:hover{
+
+    &:hover {
       background: #009fc8;
     }
+    .completed-questions {
+      color: #fff;
+    }
   }
-  
+
 }
 
 
-.ant-tabs-nav-list .ant-tabs-tab:nth-child(8){
+.ant-tabs-nav-list .ant-tabs-tab:nth-child(8) {
   border-bottom-left-radius: 16px;
- }
+}

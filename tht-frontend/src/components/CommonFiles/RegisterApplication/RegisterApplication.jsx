@@ -278,7 +278,7 @@ const RegisterApplication = () => {
                 <Fragment key={index}>
                   <div className="row mt-2">
                     <div className="col-12">
-                      <div className="field-box">
+                      <div className="field-box d-flex align-items-center">
                         <input
                           id={index}
                           type="checkbox"
@@ -291,7 +291,7 @@ const RegisterApplication = () => {
                         />
                         <label
                           htmlFor={index}
-                          className="form-label mx-2 align-middle"
+                          className="form-label m-0 ms-2 align-middle d-block w-100 cursor-pointer"
                         >
                           {component.name}
                         </label>
@@ -303,7 +303,7 @@ const RegisterApplication = () => {
                       <Fragment key={index}>
                         {url.componentId == component.id ? (
                           <div className="form-bg-white mt-3">
-                            <span className="heading-line-up">
+                            <span className="heading-line-up font-size-16 bg-white">
                               {component.name} Details
                             </span>
                             <div className="row">

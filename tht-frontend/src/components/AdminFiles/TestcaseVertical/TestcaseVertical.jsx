@@ -439,7 +439,7 @@ export default function TestcaseVertical(props) {
             <div className="col-12 non-fuctional-requirement">
               <div>
                 {testcaseResult && (
-                  <div className="row question-box" key={testcaseResult.id}>
+                  <div className=" question-box" key={testcaseResult.id}>
                   
 
                       <VerticalOptions

@@ -14,13 +14,15 @@ export default function TestCaseVerticalView(props) {
   console.log(currentSpecification);
   return (
     <div className="vertical-layout">
-      <div className="row question-header">
-        <div className="col-md-9 col-12 p-0">
+      <div className="question-header">
+        <div className="row">
+        <div className="col-md-9 col-12">
           <h2>Question</h2>
         </div>
 
-        <div className="col-md-3 col-12 d-md-flex d-none p-0">
+        <div className="col-md-3 col-12 d-md-flex d-none ">
           <h2 className="border-left">Reference</h2>
+        </div>
         </div>
       </div>
       <TestcaseVertical

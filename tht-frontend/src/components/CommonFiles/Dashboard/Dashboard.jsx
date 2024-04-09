@@ -301,7 +301,7 @@ export default function Dashboard() {
 
         {(role === "ADMIN" || role === "TESTER") && (
           <div className="pt-0">
-            <div className="text-center row">
+            <div className="text-center ">
               <div className="d-flex mb-3">
                 {Object.keys(statistics).map((key) => (
                   <Statistics

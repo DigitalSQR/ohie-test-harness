@@ -34,6 +34,7 @@
     font-size: 18px;
     font-weight: 600;
     border-color: #009fc8;
+    border-radius: 4px;
   }
   .btn-blue:hover {
     background: #1991b1;
@@ -58,6 +59,7 @@
     color: #51516d;
     font-weight: 600;
     border-color: #ccdade;
+    border-radius: 4px;
   }
   .btn-white:hover {
     background: #1991b1;
@@ -65,6 +67,12 @@
   }
   .btn-white i {
     padding-right: 6px;
+  }
+  .btn-white:focus {
+    box-shadow: none;
+    background: #fff;
+    color: #51516d;
+    border-color: #ccdade;
   }
   .btn-white:focus {
     box-shadow: none;

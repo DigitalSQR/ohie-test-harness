@@ -56,7 +56,7 @@
     background: #ff8a65;
     color: #fff;
     border-radius: 4px;
-    padding: 0px 0px;
+    padding: 0px 12px;
     text-align: center;
     font-size: 12px;
     font-weight: 700;
@@ -68,7 +68,7 @@
     background: #00adff;
     color: #fff;
     border-radius: 4px;
-    padding: 0px 0px;
+    padding: 0px 12px;
     text-align: center;
     font-size: 12px;
     font-weight: 700;
@@ -150,6 +150,9 @@
   }
   .text-red {
     color: #FF6666;
+  }
+  .status{
+    // width:75% !important;
   }
 
   .pagination-ui {

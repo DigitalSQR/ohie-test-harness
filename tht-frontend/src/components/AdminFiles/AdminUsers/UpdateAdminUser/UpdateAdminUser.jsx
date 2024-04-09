@@ -183,7 +183,7 @@ const UpdateAdminUser = ({
                             <span className="text-danger">*</span>
                           </label>
                           <Field
-                            className={`custom-select ${
+                            className={`custom-select user-role-select ${
                               touched.roleIds && errors.roleIds
                                 ? "is-invalid"
                                 : ""
