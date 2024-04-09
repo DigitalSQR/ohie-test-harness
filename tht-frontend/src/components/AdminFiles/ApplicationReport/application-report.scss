@@ -131,9 +131,14 @@
     font-size: 18px;
     font-weight: 700;
     border-bottom: 1px solid #e0e9f1;
+
+    .header-description {
+      font-size: 12px;
+      font-weight: normal;
+      color: #333;
+    }
   }
   .compliance-card .c-card-body {
-    page-break-inside: avoid;
     padding: 15px 0px;
   }
   .compliance-card .c-card-body .data-table th {
@@ -209,11 +214,11 @@
     border-radius: 5px;
   }
 
-  .btn-blue{
-    width: 112px
+  .btn-blue {
+    width: 112px;
   }
 
-  tr{
+  tr {
     page-break-inside: avoid;
   }
 }

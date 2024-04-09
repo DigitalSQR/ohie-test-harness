@@ -48,7 +48,7 @@ const ApplicationReport = () => {
   const [user, setUser] = useState();
   const [rangedGradeData, setRangedGradeData] = useState();
   const [columns, setColumns] = useState([]);
-  const [loggedInUser, setLoggedInUser]=useState();
+  const [loggedInUser, setLoggedInUser] = useState();
 
   //UseEffect to call fetchTestCaseResultData, fetchTestCaseRequestData and fetchAllGrades functions when the component initially loads
   useEffect(() => {
@@ -58,7 +58,7 @@ const ApplicationReport = () => {
     fetchAllGrades();
   }, []);
 
-  //Function to fetch the user details corresponding to the userId passed as a parameter  
+  //Function to fetch the user details corresponding to the userId passed as a parameter
   const fetchUserDetails = async (userId) => {
     const response = await UserAPI.getUserById(userId);
     setUser({ name: response.name, email: response.email });
@@ -86,19 +86,22 @@ const ApplicationReport = () => {
   const fetchAllGrades = () => {
     GradeAPI.getAllGrades()
       .then((res) => {
-        const columns = res.data.map(item => ({
+        const columns = res.data.map((item) => ({
           title: `Grade ${item.grade}`,
           dataIndex: item.grade,
           key: item.grade,
           width: 150,
-          align: 'center',
+          align: "center",
           render: (text, record) => rangedGradeData[item.grade],
         }));
 
         const rangedGradeData = {};
         res.data.forEach((item, index) => {
-          const endPercentage = index === 0 ? 100 : res.data[index - 1].percentage - 1;
-          rangedGradeData[item.grade] = `${item.percentage}% - ${endPercentage}%`;
+          const endPercentage =
+            index === 0 ? 100 : res.data[index - 1].percentage - 1;
+          rangedGradeData[
+            item.grade
+          ] = `${item.percentage}% - ${endPercentage}%`;
         });
 
         setColumns(columns);
@@ -119,10 +122,12 @@ const ApplicationReport = () => {
     if (navigate.length > 3) {
       navigate(-1);
     } else {
-      if(loggedInUser?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
-      loggedInUser?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)){
+      if (
+        loggedInUser?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+        loggedInUser?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)
+      ) {
         navigate("/applications");
-      }else{
+      } else {
         navigate("/testing-requests");
       }
     }
@@ -133,21 +138,30 @@ const ApplicationReport = () => {
     try {
       // Fetch required and recommended test case results concurrently
       const [requiredResponse, recommendedResponse] = await Promise.all([
-        TestResultAPI.getMultipleTestcaseResultStatus({ testRequestId, required: true }),
-        TestResultAPI.getMultipleTestcaseResultStatus({ testRequestId, recommended: true })
+        TestResultAPI.getMultipleTestcaseResultStatus({
+          testRequestId,
+          required: true,
+        }),
+        TestResultAPI.getMultipleTestcaseResultStatus({
+          testRequestId,
+          recommended: true,
+        }),
       ]);
-       // Initialize arrays to store required and recommended test case results
+      // Initialize arrays to store required and recommended test case results
       const requiredTestcaseResults = [];
       const recommendedTestcaseResults = [];
-       // Initialize a set to store unique component names
+      // Initialize a set to store unique component names
       const compNames = new Set();
-       // Initialize an array to store passed required component names
+      // Initialize an array to store passed required component names
       const passedRequiredComponentNames = [];
       for (let testcaseResult of requiredResponse) {
-        if (testcaseResult.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI) {
+        if (
+          testcaseResult.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI
+        ) {
           setRequiredTestRequestTestcaseResult(testcaseResult);
-        }
-        else if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
+        } else if (
+          testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI
+        ) {
           compNames.add(testcaseResult.name);
           if (!!testcaseResult.success) {
             passedRequiredComponentNames.push(testcaseResult.name);
@@ -156,24 +170,35 @@ const ApplicationReport = () => {
             ...testcaseResult,
             specifications: [],
           });
-        }
-        else if (testcaseResult.refObjUri === RefObjUriConstants.SPECIFICATION_REFOBJURI) {
-          requiredTestcaseResults[requiredTestcaseResults.length - 1].specifications.push(testcaseResult);
+        } else if (
+          testcaseResult.refObjUri ===
+          RefObjUriConstants.SPECIFICATION_REFOBJURI
+        ) {
+          requiredTestcaseResults[
+            requiredTestcaseResults.length - 1
+          ].specifications.push(testcaseResult);
         }
       }
       for (let testcaseResult of recommendedResponse) {
-        if (testcaseResult.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI) {
+        if (
+          testcaseResult.refObjUri === RefObjUriConstants.TESTREQUEST_REFOBJURI
+        ) {
           setRecommendedTestRequestTestcaseResult(testcaseResult);
-        }
-        else if (testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI) {
+        } else if (
+          testcaseResult.refObjUri === RefObjUriConstants.COMPONENT_REFOBJURI
+        ) {
           compNames.add(testcaseResult.name);
           recommendedTestcaseResults.push({
             ...testcaseResult,
             specifications: [],
           });
-        }
-        else if (testcaseResult.refObjUri === RefObjUriConstants.SPECIFICATION_REFOBJURI) {
-          recommendedTestcaseResults[recommendedTestcaseResults.length - 1].specifications.push(testcaseResult);
+        } else if (
+          testcaseResult.refObjUri ===
+          RefObjUriConstants.SPECIFICATION_REFOBJURI
+        ) {
+          recommendedTestcaseResults[
+            recommendedTestcaseResults.length - 1
+          ].specifications.push(testcaseResult);
         }
       }
       setRequiredTestcaseResults(requiredTestcaseResults);
@@ -213,489 +238,514 @@ const ApplicationReport = () => {
                 </div>
               </div>
               <div id="reportprint">
-              <div id="report">
-                <div className="report-details">
-                  <div className="container-fluid">
-                    <div className="row">
-                      <div className="col-lg-3 col-md-6 col-12 mb-4">
-                        <p>
-                          Assessee Name:<span>{user?.name}</span>
-                        </p>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-4">
-                        <p>
-                          Email:
-                          <span>{user?.email}</span>
-                        </p>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-4">
-                        <p>
-                          Company name:<span>{testRequest?.productName}</span>
-                        </p>
-                      </div>
-                      <div className="col-lg-3 col-md-6 col-12 mb-4">
-                        <p>
-                          Application Date:
-                          <span>
-                            {formatDate(testRequest?.meta?.createdAt)}
-                          </span>
-                        </p>
-                      </div>
-                      <div className="col-12">
-                        <p>Components applied for verification:</p>
-                        <div>
-                          {componentNames?.map((item) => (
-                            <span key={item} className="comp-badge">
-                              {item}
+                <div id="report">
+                  <div className="report-details">
+                    <div className="container-fluid">
+                      <div className="row">
+                        <div className="col-lg-3 col-md-6 col-12 mb-4">
+                          <p>
+                            Assessee Name:<span>{user?.name}</span>
+                          </p>
+                        </div>
+                        <div className="col-lg-3 col-md-6 col-12 mb-4">
+                          <p>
+                            Email:
+                            <span>{user?.email}</span>
+                          </p>
+                        </div>
+                        <div className="col-lg-3 col-md-6 col-12 mb-4">
+                          <p>
+                            Company name:<span>{testRequest?.productName}</span>
+                          </p>
+                        </div>
+                        <div className="col-lg-3 col-md-6 col-12 mb-4">
+                          <p>
+                            Application Date:
+                            <span>
+                              {formatDate(testRequest?.meta?.createdAt)}
                             </span>
-                          ))}
+                          </p>
+                        </div>
+                        <div className="col-12">
+                          <p>Components applied for verification:</p>
+                          <div>
+                            {componentNames?.map((item) => (
+                              <span key={item} className="comp-badge">
+                                {item}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="result-box mb-4">
-                  <div className="container-fluid">
-                    <div className="row">
-                      <div className="col-lg-1 col-md-2 col-12 title">
-                        <p>Result:</p>
-                      </div>
-                      <div className="col-lg-11 col-md-10 col-12 details">
-                        <p>
-                          The <b> {testRequest?.name} </b> system is{" "}
-                          {passReqCompNames?.length > 0 ? (
-                            <>
-                              <b>compliant</b> to{" "}
-                              {passReqCompNames?.map((item, index) => (
-                                <span key={index}>
-                                  {index === passReqCompNames.length - 1 ? (
-                                    <>
-                                      <b>{item}</b>
-                                      <span> </span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <b>{item}</b>
-                                      <span>{", "}</span>
-                                    </>
-                                  )}
-                                </span>
-                              ))}
-                            </>
-                          ) : (
-                            <>
-                              not <b>compliant</b> to any component{" "}
-                            </>
-                          )}
-                          and has been awarded a{" "}
-                          <b>
-                            Conformance Grade{" "}
-                            {!!recommendedTestRequestTestcaseResult.grade
-                              ? recommendedTestRequestTestcaseResult.grade
-                              : "-"}
-                          </b>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="compliance-card">
-                  <div className="c-card-header">Compliance</div>
-                  <div className="c-card-body">
-                    <div className="table-responsive">
-                      <table className="data-table capitalize-words">
-                        <thead>
-                          <tr>
-                            <th>COMPONENTS</th>
-                            <th>SPECIFICATIONS</th>
-                            <th>RESULTS</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Object.values(requiredTestcaseResults).map(
-                            (component, index) =>
-                              !!component &&
-                              !!component.specifications[0] && (
-                                <React.Fragment key={component.id}>
-                                  <tr
-                                    className={
-                                      index % 2 === 0 ? "even-row" : "odd-row"
-                                    }
-                                  >
-                                    <td>
-                                      <b>{component.name}</b>
-                                    </td>
-                                    <td>{component.specifications[0]?.name}</td>
-                                    <td
-                                      className={
-                                        component.specifications[0].state ===
-                                        TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                          ? !!component.specifications[0]
-                                              .success
-                                            ? StateClasses[
-                                                "testcase.result.status.finished.pass"
-                                              ].cardClass
-                                            : StateClasses[
-                                                "testcase.result.status.finished.fail"
-                                              ].cardClass
-                                          : StateClasses[
-                                              component.specifications[0].state
-                                            ].cardClass
-                                      }
-                                    >
-                                      {
-                                        <>
-                                          {component.specifications[0].state ===
-                                          TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                            ? !!component.specifications[0]
-                                                .success
-                                              ? StateClasses[
-                                                  "testcase.result.status.finished.pass"
-                                                ].text
-                                              : StateClasses[
-                                                  "testcase.result.status.finished.fail"
-                                                ].text
-                                            : StateClasses[
-                                                component.specifications[0]
-                                                  .state
-                                              ].text}{" "}
-                                          <i
-                                            className={
-                                              component.specifications[0]
-                                                .state ===
-                                              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                                ? !!component.specifications[0]
-                                                    .success
-                                                  ? StateClasses[
-                                                      "testcase.result.status.finished.pass"
-                                                    ].iconClass
-                                                  : StateClasses[
-                                                      "testcase.result.status.finished.fail"
-                                                    ].iconClass
-                                                : StateClasses[
-                                                    component.specifications[0]
-                                                      .state
-                                                  ].iconClass
-                                            }
-                                          ></i>
-                                        </>
-                                      }
-                                    </td>
-                                  </tr>
-                                  {component.specifications
-                                    .slice(1)
-                                    .map((specification, specIndex) => (
-                                      <tr
-                                        key={specification.id}
-                                        className={
-                                          specIndex % 2 === 0
-                                            ? "even-row"
-                                            : "odd-row"
-                                        }
-                                      >
-                                        <td></td>
-                                        <td>{specification.name}</td>
-                                        <td
-                                          className={
-                                            specification.state ===
-                                            TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                              ? !!specification.success
-                                                ? StateClasses[
-                                                    "testcase.result.status.finished.pass"
-                                                  ].cardClass
-                                                : StateClasses[
-                                                    "testcase.result.status.finished.fail"
-                                                  ].cardClass
-                                              : StateClasses[
-                                                  specification.state
-                                                ].cardClass
-                                          }
-                                        >
-                                          {
-                                            <>
-                                              {specification.state ===
-                                              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                                ? !!specification.success
-                                                  ? StateClasses[
-                                                      "testcase.result.status.finished.pass"
-                                                    ].text
-                                                  : StateClasses[
-                                                      "testcase.result.status.finished.fail"
-                                                    ].text
-                                                : StateClasses[
-                                                    specification.state
-                                                  ].text}{" "}
-                                              <i
-                                                className={
-                                                  specification.state ===
-                                                  TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                                    ? !!specification.success
-                                                      ? StateClasses[
-                                                          "testcase.result.status.finished.pass"
-                                                        ].iconClass
-                                                      : StateClasses[
-                                                          "testcase.result.status.finished.fail"
-                                                        ].iconClass
-                                                    : StateClasses[
-                                                        specification.state
-                                                      ].iconClass
-                                                }
-                                              ></i>
-                                            </>
-                                          }
-                                        </td>
-                                      </tr>
-                                    ))}
-                                </React.Fragment>
-                              )
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="compliance-card">
-                  <div className="c-card-header">Conformance</div>
-                  <div className="c-card-body">
-                    <div className="table-responsive">
-                      <table className="data-table capitalize-words">
-                        <thead>
-                          <tr>
-                            <th>COMPONENTS</th>
-                            <th>SPECIFICATIONS</th>
-                            <th>RESULTS</th>
-                            <th>GRADE</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Object.values(recommendedTestcaseResults).map(
-                            (component, index) =>
-                              !!component &&
-                              !!component.specifications[0] && (
-                                <React.Fragment key={component.id}>
-                                  <tr
-                                    className={
-                                      index % 2 === 0 ? "even-row" : "odd-row"
-                                    }
-                                  >
-                                    <td>
-                                      <b>{component.name}</b>
-                                    </td>
-                                    <td>{component.specifications[0]?.name}</td>
-                                    <td
-                                      className={
-                                        component.specifications[0].state ===
-                                        TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                          ? !!component.specifications[0]
-                                              .success
-                                            ? StateClasses[
-                                                "testcase.result.status.finished.pass"
-                                              ].cardClass
-                                            : StateClasses[
-                                                "testcase.result.status.finished.fail"
-                                              ].cardClass
-                                          : StateClasses[
-                                              component.specifications[0].state
-                                            ].cardClass
-                                      }
-                                    >
-                                      {
-                                        <>
-                                          {component.specifications[0].state ===
-                                          TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                            ? !!component.specifications[0]
-                                                .success
-                                              ? StateClasses[
-                                                  "testcase.result.status.finished.pass"
-                                                ].text
-                                              : StateClasses[
-                                                  "testcase.result.status.finished.fail"
-                                                ].text
-                                            : StateClasses[
-                                                component.specifications[0]
-                                                  .state
-                                              ].text}{" "}
-                                          <i
-                                            className={
-                                              component.specifications[0]
-                                                .state ===
-                                              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                                ? !!component.specifications[0]
-                                                    .success
-                                                  ? StateClasses[
-                                                      "testcase.result.status.finished.pass"
-                                                    ].iconClass
-                                                  : StateClasses[
-                                                      "testcase.result.status.finished.fail"
-                                                    ].iconClass
-                                                : StateClasses[
-                                                    component.specifications[0]
-                                                      .state
-                                                  ].iconClass
-                                            }
-                                          ></i>
-                                        </>
-                                      }
-                                    </td>
-                                    <td>
-                                      <span className="grade-badge">
-                                        {!!component.grade
-                                          ? component.grade
-                                          : "-"}
-                                      </span>
-                                    </td>
-                                  </tr>
-                                  {component.specifications
-                                    .slice(1)
-                                    .map((specification, specIndex) => (
-                                      <tr
-                                        key={specification.id}
-                                        className={
-                                          specIndex % 2 === 0
-                                            ? "even-row"
-                                            : "odd-row"
-                                        }
-                                      >
-                                        <td></td>
-                                        <td>{specification.name}</td>
-                                        <td
-                                          className={
-                                            specification.state ===
-                                            TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                              ? !!specification.success
-                                                ? StateClasses[
-                                                    "testcase.result.status.finished.pass"
-                                                  ].cardClass
-                                                : StateClasses[
-                                                    "testcase.result.status.finished.fail"
-                                                  ].cardClass
-                                              : StateClasses[
-                                                  specification.state
-                                                ].cardClass
-                                          }
-                                        >
-                                          {
-                                            <>
-                                              {specification.state ===
-                                              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                                ? !!specification.success
-                                                  ? StateClasses[
-                                                      "testcase.result.status.finished.pass"
-                                                    ].text
-                                                  : StateClasses[
-                                                      "testcase.result.status.finished.fail"
-                                                    ].text
-                                                : StateClasses[
-                                                    specification.state
-                                                  ].text}{" "}
-                                              <i
-                                                className={
-                                                  specification.state ===
-                                                  TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                                    ? !!specification.success
-                                                      ? StateClasses[
-                                                          "testcase.result.status.finished.pass"
-                                                        ].iconClass
-                                                      : StateClasses[
-                                                          "testcase.result.status.finished.fail"
-                                                        ].iconClass
-                                                    : StateClasses[
-                                                        specification.state
-                                                      ].iconClass
-                                                }
-                                              ></i>
-                                            </>
-                                          }
-                                        </td>
-                                        <td></td>
-                                      </tr>
-                                    ))}
-                                </React.Fragment>
-                              )
-                          )}
-                        </tbody>
-                        <tbody>
-                          <tr className="result">
-                            <td colSpan={2}>Final Result</td>
-                            {!requiredTestRequestTestcaseResult ||
-                            !requiredTestRequestTestcaseResult.state ? (
-                              <td />
+                  <div className="result-box mb-4">
+                    <div className="container-fluid">
+                      <div className="row">
+                        <div className="col-lg-1 col-md-2 col-12 title">
+                          <p>Result:</p>
+                        </div>
+                        <div className="col-lg-11 col-md-10 col-12 details">
+                          <p>
+                            The <b> {testRequest?.name} </b> system is{" "}
+                            {passReqCompNames?.length > 0 ? (
+                              <>
+                                <b>compliant</b> to{" "}
+                                {passReqCompNames?.map((item, index) => (
+                                  <span key={index}>
+                                    {index === passReqCompNames.length - 1 ? (
+                                      <>
+                                        <b>{item}</b>
+                                        <span> </span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <b>{item}</b>
+                                        <span>{", "}</span>
+                                      </>
+                                    )}
+                                  </span>
+                                ))}
+                              </>
                             ) : (
-                              <td
-                                className={
-                                  requiredTestRequestTestcaseResult.state ===
-                                  TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                    ? !!requiredTestRequestTestcaseResult.success
-                                      ? StateClasses[
-                                          "testcase.result.status.finished.pass"
-                                        ].cardClass
-                                      : StateClasses[
-                                          "testcase.result.status.finished.fail"
-                                        ].cardClass
-                                    : StateClasses[
-                                        requiredTestRequestTestcaseResult.state
-                                      ].cardClass
-                                }
-                              >
-                                {requiredTestRequestTestcaseResult.state ===
-                                TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
-                                  ? !!requiredTestRequestTestcaseResult.success
-                                    ? StateClasses[
-                                        "testcase.result.status.finished.pass"
-                                      ].text
-                                    : StateClasses[
-                                        "testcase.result.status.finished.fail"
-                                      ].text
-                                  : StateClasses[
-                                      requiredTestRequestTestcaseResult.state
-                                    ].text}{" "}
-                                <i
+                              <>
+                                <b>not compliant</b> to any component{" "}
+                              </>
+                            )}
+                            and has been awarded a{" "}
+                            <b>
+                              Conformance Grade{" "}
+                              {!!recommendedTestRequestTestcaseResult.grade
+                                ? recommendedTestRequestTestcaseResult.grade
+                                : "-"}
+                            </b>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="compliance-card">
+                    <div className="c-card-header">
+                      Compliance<sup>*</sup>
+                      <div className="header-description">
+                        Compliance refers to whether the system meets the{" "}
+                        <b>required</b> specifications of the applied
+                        components, determining its adherence to OpenHIE
+                        standards.
+                      </div>
+                    </div>
+                    <div className="c-card-body">
+                      <div className="table-responsive">
+                        <table className="data-table capitalize-words">
+                          <thead>
+                            <tr>
+                              <th>COMPONENTS</th>
+                              <th>SPECIFICATIONS</th>
+                              <th>RESULTS</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {Object.values(requiredTestcaseResults).map(
+                              (component, index) =>
+                                !!component &&
+                                !!component.specifications[0] && (
+                                  <React.Fragment key={component.id}>
+                                    <tr
+                                      className={
+                                        index % 2 === 0 ? "even-row" : "odd-row"
+                                      }
+                                    >
+                                      <td>
+                                        <b>{component.name}</b>
+                                      </td>
+                                      <td>
+                                        {component.specifications[0]?.name}
+                                      </td>
+                                      <td
+                                        className={
+                                          component.specifications[0].state ===
+                                          TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                            ? !!component.specifications[0]
+                                                .success
+                                              ? StateClasses[
+                                                  "testcase.result.status.finished.pass"
+                                                ].cardClass
+                                              : StateClasses[
+                                                  "testcase.result.status.finished.fail"
+                                                ].cardClass
+                                            : StateClasses[
+                                                component.specifications[0]
+                                                  .state
+                                              ].cardClass
+                                        }
+                                      >
+                                        {
+                                          <>
+                                            {component.specifications[0]
+                                              .state ===
+                                            TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                              ? !!component.specifications[0]
+                                                  .success
+                                                ? StateClasses[
+                                                    "testcase.result.status.finished.pass"
+                                                  ].text
+                                                : StateClasses[
+                                                    "testcase.result.status.finished.fail"
+                                                  ].text
+                                              : StateClasses[
+                                                  component.specifications[0]
+                                                    .state
+                                                ].text}{" "}
+                                            <i
+                                              className={
+                                                component.specifications[0]
+                                                  .state ===
+                                                TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                                  ? !!component
+                                                      .specifications[0].success
+                                                    ? StateClasses[
+                                                        "testcase.result.status.finished.pass"
+                                                      ].iconClass
+                                                    : StateClasses[
+                                                        "testcase.result.status.finished.fail"
+                                                      ].iconClass
+                                                  : StateClasses[
+                                                      component
+                                                        .specifications[0].state
+                                                    ].iconClass
+                                              }
+                                            ></i>
+                                          </>
+                                        }
+                                      </td>
+                                    </tr>
+                                    {component.specifications
+                                      .slice(1)
+                                      .map((specification, specIndex) => (
+                                        <tr
+                                          key={specification.id}
+                                          className={
+                                            specIndex % 2 === 0
+                                              ? "even-row"
+                                              : "odd-row"
+                                          }
+                                        >
+                                          <td></td>
+                                          <td>{specification.name}</td>
+                                          <td
+                                            className={
+                                              specification.state ===
+                                              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                                ? !!specification.success
+                                                  ? StateClasses[
+                                                      "testcase.result.status.finished.pass"
+                                                    ].cardClass
+                                                  : StateClasses[
+                                                      "testcase.result.status.finished.fail"
+                                                    ].cardClass
+                                                : StateClasses[
+                                                    specification.state
+                                                  ].cardClass
+                                            }
+                                          >
+                                            {
+                                              <>
+                                                {specification.state ===
+                                                TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                                  ? !!specification.success
+                                                    ? StateClasses[
+                                                        "testcase.result.status.finished.pass"
+                                                      ].text
+                                                    : StateClasses[
+                                                        "testcase.result.status.finished.fail"
+                                                      ].text
+                                                  : StateClasses[
+                                                      specification.state
+                                                    ].text}{" "}
+                                                <i
+                                                  className={
+                                                    specification.state ===
+                                                    TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                                      ? !!specification.success
+                                                        ? StateClasses[
+                                                            "testcase.result.status.finished.pass"
+                                                          ].iconClass
+                                                        : StateClasses[
+                                                            "testcase.result.status.finished.fail"
+                                                          ].iconClass
+                                                      : StateClasses[
+                                                          specification.state
+                                                        ].iconClass
+                                                  }
+                                                ></i>
+                                              </>
+                                            }
+                                          </td>
+                                        </tr>
+                                      ))}
+                                  </React.Fragment>
+                                )
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="compliance-card">
+                    <div className="c-card-header">
+                      Conformance
+                      <sup>*</sup>
+                      <div className="header-description">
+                        Conformance refers to the degree to which the system
+                        aligns with the <b>recommended</b> specifications of the
+                        applied components within OpenHIE standards.
+                      </div>
+                    </div>
+                    <div className="c-card-body">
+                      <div className="table-responsive">
+                        <table className="data-table capitalize-words">
+                          <thead>
+                            <tr>
+                              <th>COMPONENTS</th>
+                              <th>SPECIFICATIONS</th>
+                              <th>RESULTS</th>
+                              <th>GRADE</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {Object.values(recommendedTestcaseResults).map(
+                              (component, index) =>
+                                !!component &&
+                                !!component.specifications[0] && (
+                                  <React.Fragment key={component.id}>
+                                    <tr
+                                      className={
+                                        index % 2 === 0 ? "even-row" : "odd-row"
+                                      }
+                                    >
+                                      <td>
+                                        <b>{component.name}</b>
+                                      </td>
+                                      <td>
+                                        {component.specifications[0]?.name}
+                                      </td>
+                                      <td
+                                        className={
+                                          component.specifications[0].state ===
+                                          TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                            ? !!component.specifications[0]
+                                                .success
+                                              ? StateClasses[
+                                                  "testcase.result.status.finished.pass"
+                                                ].cardClass
+                                              : StateClasses[
+                                                  "testcase.result.status.finished.fail"
+                                                ].cardClass
+                                            : StateClasses[
+                                                component.specifications[0]
+                                                  .state
+                                              ].cardClass
+                                        }
+                                      >
+                                        {
+                                          <>
+                                            {component.specifications[0]
+                                              .state ===
+                                            TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                              ? !!component.specifications[0]
+                                                  .success
+                                                ? StateClasses[
+                                                    "testcase.result.status.finished.pass"
+                                                  ].text
+                                                : StateClasses[
+                                                    "testcase.result.status.finished.fail"
+                                                  ].text
+                                              : StateClasses[
+                                                  component.specifications[0]
+                                                    .state
+                                                ].text}{" "}
+                                            <i
+                                              className={
+                                                component.specifications[0]
+                                                  .state ===
+                                                TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                                  ? !!component
+                                                      .specifications[0].success
+                                                    ? StateClasses[
+                                                        "testcase.result.status.finished.pass"
+                                                      ].iconClass
+                                                    : StateClasses[
+                                                        "testcase.result.status.finished.fail"
+                                                      ].iconClass
+                                                  : StateClasses[
+                                                      component
+                                                        .specifications[0].state
+                                                    ].iconClass
+                                              }
+                                            ></i>
+                                          </>
+                                        }
+                                      </td>
+                                      <td>
+                                        <span className="grade-badge">
+                                          {!!component.grade
+                                            ? component.grade
+                                            : "-"}
+                                        </span>
+                                      </td>
+                                    </tr>
+                                    {component.specifications
+                                      .slice(1)
+                                      .map((specification, specIndex) => (
+                                        <tr
+                                          key={specification.id}
+                                          className={
+                                            specIndex % 2 === 0
+                                              ? "even-row"
+                                              : "odd-row"
+                                          }
+                                        >
+                                          <td></td>
+                                          <td>{specification.name}</td>
+                                          <td
+                                            className={
+                                              specification.state ===
+                                              TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                                ? !!specification.success
+                                                  ? StateClasses[
+                                                      "testcase.result.status.finished.pass"
+                                                    ].cardClass
+                                                  : StateClasses[
+                                                      "testcase.result.status.finished.fail"
+                                                    ].cardClass
+                                                : StateClasses[
+                                                    specification.state
+                                                  ].cardClass
+                                            }
+                                          >
+                                            {
+                                              <>
+                                                {specification.state ===
+                                                TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                                  ? !!specification.success
+                                                    ? StateClasses[
+                                                        "testcase.result.status.finished.pass"
+                                                      ].text
+                                                    : StateClasses[
+                                                        "testcase.result.status.finished.fail"
+                                                      ].text
+                                                  : StateClasses[
+                                                      specification.state
+                                                    ].text}{" "}
+                                                <i
+                                                  className={
+                                                    specification.state ===
+                                                    TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                                      ? !!specification.success
+                                                        ? StateClasses[
+                                                            "testcase.result.status.finished.pass"
+                                                          ].iconClass
+                                                        : StateClasses[
+                                                            "testcase.result.status.finished.fail"
+                                                          ].iconClass
+                                                      : StateClasses[
+                                                          specification.state
+                                                        ].iconClass
+                                                  }
+                                                ></i>
+                                              </>
+                                            }
+                                          </td>
+                                          <td></td>
+                                        </tr>
+                                      ))}
+                                  </React.Fragment>
+                                )
+                            )}
+                          </tbody>
+                          <tbody>
+                            <tr className="result">
+                              <td colSpan={2}>Final Result</td>
+                              {!requiredTestRequestTestcaseResult ||
+                              !requiredTestRequestTestcaseResult.state ? (
+                                <td />
+                              ) : (
+                                <td
                                   className={
                                     requiredTestRequestTestcaseResult.state ===
                                     TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
                                       ? !!requiredTestRequestTestcaseResult.success
                                         ? StateClasses[
                                             "testcase.result.status.finished.pass"
-                                          ].iconClass
+                                          ].cardClass
                                         : StateClasses[
                                             "testcase.result.status.finished.fail"
-                                          ].iconClass
+                                          ].cardClass
                                       : StateClasses[
                                           requiredTestRequestTestcaseResult
                                             .state
-                                        ].iconClass
+                                        ].cardClass
                                   }
-                                ></i>
+                                >
+                                  {requiredTestRequestTestcaseResult.state ===
+                                  TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                    ? !!requiredTestRequestTestcaseResult.success
+                                      ? StateClasses[
+                                          "testcase.result.status.finished.pass"
+                                        ].text
+                                      : StateClasses[
+                                          "testcase.result.status.finished.fail"
+                                        ].text
+                                    : StateClasses[
+                                        requiredTestRequestTestcaseResult.state
+                                      ].text}{" "}
+                                  <i
+                                    className={
+                                      requiredTestRequestTestcaseResult.state ===
+                                      TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_FINISHED
+                                        ? !!requiredTestRequestTestcaseResult.success
+                                          ? StateClasses[
+                                              "testcase.result.status.finished.pass"
+                                            ].iconClass
+                                          : StateClasses[
+                                              "testcase.result.status.finished.fail"
+                                            ].iconClass
+                                        : StateClasses[
+                                            requiredTestRequestTestcaseResult
+                                              .state
+                                          ].iconClass
+                                    }
+                                  ></i>
+                                </td>
+                              )}
+                              <td>
+                                <span className="grade-badge">
+                                  {" "}
+                                  {!!recommendedTestRequestTestcaseResult.grade
+                                    ? recommendedTestRequestTestcaseResult.grade
+                                    : "-"}
+                                </span>
                               </td>
-                            )}
-                            <td>
-                              <span className="grade-badge">
-                                {" "}
-                                {!!recommendedTestRequestTestcaseResult.grade
-                                  ? recommendedTestRequestTestcaseResult.grade
-                                  : "-"}
-                              </span>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="compliance-card">
+                    <div className="c-card-header">Grade Legend</div>
+                    <div className="c-card-body">
+                      <Table
+                        dataSource={[{ key: 1 }]} // Providing a dummy data source with one row
+                        columns={columns}
+                        pagination={false}
+                      />
                     </div>
                   </div>
                 </div>
-
-                <div className="compliance-card">
-                  <div className="c-card-header">Grade Legend</div>
-                  <div className="c-card-body">
-                    <Table
-                      dataSource={[{ key: 1 }]} // Providing a dummy data source with one row
-                      columns={columns}
-                      pagination={false}
-                    />
-                  </div>
-                </div>
-              </div>
               </div>
             </div>
           </div>
