@@ -580,6 +580,7 @@ const RegisterApplication = () => {
                                     >
                                       FHIR API Base URL:{" "}
                                     </Tooltip>
+                                    <span style={{ color: "red" }}>*</span>
                                   </label>
                                   <input
                                     id={

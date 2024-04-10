@@ -38,11 +38,11 @@ export const StateBadgeClasses = {
 };
 
 export const TestRequestActionStateLabels = [
-    {label: "Pending", value:"test.request.status.pending"},
-    {label:"Rejected", value:"test.request.status.rejected"},
-    {label: "Approved", value: "test.request.status.accepted"},
-    {label: "In Progress", value: "test.request.status.inprogress"},
-    {label: "Completed", value: "test.request.status.finished"},
+    {label: "Request Pending", value:"test.request.status.pending"},
+    {label:"Request Declined", value:"test.request.status.rejected"},
+    {label: "Ready For Testing", value: "test.request.status.accepted"},
+    {label: "Testing Started", value: "test.request.status.inprogress"},
+    {label: "Testing Completed", value: "test.request.status.finished"},
 ];
 
 export const StateClasses = {

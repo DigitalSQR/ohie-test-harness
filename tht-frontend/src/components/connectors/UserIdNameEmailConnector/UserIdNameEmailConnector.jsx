@@ -35,7 +35,7 @@ const UserIdNameEmailConnector = ({ userId, isLink }) => {
               <Spin indicator={<LoadingOutlined className="loading-indicator" />} />
             </td>
           ) : (
-            <span className="fw-bold">{user?.companyName}</span>
+            <span className="fw-bold">{user.companyName ? user.companyName : '–'}</span>
           )}
         </span>
       </td>
