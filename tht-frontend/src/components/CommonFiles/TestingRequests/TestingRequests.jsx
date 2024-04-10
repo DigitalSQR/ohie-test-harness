@@ -19,6 +19,7 @@ import { Pagination } from "@mui/material";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
+import { Tooltip } from "antd";
 import moment from "moment";
 const TestingRequests = () => {
   const testRequestStates = [
@@ -306,8 +307,9 @@ const TestingRequests = () => {
                           userId={testRequest.assesseeId}
                         />
                       <td>{formattedDate}</td>
-                      <td>
-                      <Fragment>
+                                             <td>
+                          {!testRequest?.message ? (
+                            <Fragment>
                               <span
                                 className={`status badge ${
                                   StateBadgeClasses[testRequest.state]
@@ -318,7 +320,24 @@ const TestingRequests = () => {
                                 ].toLowerCase()}
                               </span>
                             </Fragment>
-                      </td>
+                          ) : (
+                            <Fragment>
+                              <Tooltip
+                                title={<div>{testRequest?.message}</div>}
+                              >
+                                <span
+                                  className={`status badge ${
+                                    StateBadgeClasses[testRequest.state]
+                                  }`}
+                                >
+                                  {TestRequestStateConstantNames[
+                                    testRequest.state
+                                  ].toLowerCase()}
+                                </span>
+                              </Tooltip>
+                            </Fragment>
+                          )}
+                        </td>
                       <td className=" no-wrap text-left">
                         {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) &&
                         testRequest.state ==
