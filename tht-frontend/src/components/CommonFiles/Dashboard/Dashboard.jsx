@@ -198,8 +198,8 @@ export default function Dashboard() {
         statsGraph(
           responseData.totalApplications,
           responseData.assesseeRegistered,
-          responseData.complianceRate,
-          responseData.testingRate
+          Math.round(responseData.complianceRate),
+          Math.round(responseData.testingRate)
         );
 
         //Function being called to display the pieChart
