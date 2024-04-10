@@ -15,7 +15,7 @@ import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import WebSocketService from "../../../api/WebSocketService";
 import VerificationGuidelines from "./Verification-Guidelines/VerificationGuidelines";
-import { AutomatedTestingGuidelines, ManualTestingGuidelines } from "../../../constants/guidelines_constants";
+import { AutomatedVerificationGuidelines, ManualVerificationGuidelines } from "../../../constants/guidelines_constants";
 /* 
   Choose Test page
 
@@ -284,7 +284,7 @@ export default function ChooseTest() {
                     aria-labelledby="manualTestingLabel"
                   >
                     <div id="mySidebar" class="sidebar-right">
-                      <VerificationGuidelines title="Manual Testing Guidelines" guidelines={ManualTestingGuidelines}/>
+                      <VerificationGuidelines title="Manual Verification Guidelines" guidelines={ManualVerificationGuidelines}/>
                     </div>
                   </div>
                 </p>
@@ -374,7 +374,7 @@ export default function ChooseTest() {
                     aria-labelledby="automatedTestingLabel"
                   >
                     <div id="mySidebar" class="sidebar-right">
-                     <VerificationGuidelines title="Automated Testing Guidelines" guidelines={AutomatedTestingGuidelines}/>
+                     <VerificationGuidelines title="Automated Verification Guidelines" guidelines={AutomatedVerificationGuidelines}/>
                     </div>
                   </div>
                 </p>
