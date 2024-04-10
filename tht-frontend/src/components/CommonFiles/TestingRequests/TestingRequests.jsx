@@ -19,7 +19,8 @@ import { Pagination } from "@mui/material";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
-import { Tooltip } from "antd";
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Popover } from "antd";
 import moment from "moment";
 const TestingRequests = () => {
   const testRequestStates = [
@@ -306,9 +307,10 @@ const TestingRequests = () => {
                           isLink={true}
                           userId={testRequest.assesseeId}
                         />
-                      <td>{formattedDate}</td>
-                                             <td>
-                          {!testRequest?.message ? (
+                        <td>{formattedDate}</td>
+                        <td>
+                          {testRequest?.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED ? (
                             <Fragment>
                               <span
                                 className={`status badge ${
@@ -322,19 +324,20 @@ const TestingRequests = () => {
                             </Fragment>
                           ) : (
                             <Fragment>
-                              <Tooltip
+                              <span
+                                className={`status badge ${
+                                  StateBadgeClasses[testRequest.state]
+                                }`}
+                              >
+                                {TestRequestStateConstantNames[
+                                  testRequest.state
+                                ].toLowerCase()}
+                              </span>
+                              <Popover
                                 title={<div>{testRequest?.message}</div>}
                               >
-                                <span
-                                  className={`status badge ${
-                                    StateBadgeClasses[testRequest.state]
-                                  }`}
-                                >
-                                  {TestRequestStateConstantNames[
-                                    testRequest.state
-                                  ].toLowerCase()}
-                                </span>
-                              </Tooltip>
+                                <InfoCircleOutlined style={{marginLeft:"0.5rem", marginTop:"0.7rem"}}/>
+                              </Popover>
                             </Fragment>
                           )}
                         </td>

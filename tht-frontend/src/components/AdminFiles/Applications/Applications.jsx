@@ -25,9 +25,9 @@ import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
 import UserIdNameEmailConnector from "../../connectors/UserIdNameEmailConnector/UserIdNameEmailConnector";
-import { Tooltip } from "antd";
+import { Popover } from "antd";
 import moment from "moment";
-
+import { InfoCircleOutlined } from "@ant-design/icons";
 /**
  * Applications Component:
  * This component displays a table of applications with options to filter, sort, and update their statuses.
@@ -389,7 +389,8 @@ const Applications = () => {
                         />
                         <td>{formattedDate}</td>
                         <td>
-                          {!testRequest?.message ? (
+                          {testRequest?.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED ? (
                             <Fragment>
                               <span
                                 className={`status badge ${
@@ -403,19 +404,20 @@ const Applications = () => {
                             </Fragment>
                           ) : (
                             <Fragment>
-                              <Tooltip
+                              <span
+                                className={`status badge ${
+                                  StateBadgeClasses[testRequest.state]
+                                }`}
+                              >
+                                {TestRequestStateConstantNames[
+                                  testRequest.state
+                                ].toLowerCase()}
+                              </span>
+                              <Popover
                                 title={<div>{testRequest?.message}</div>}
                               >
-                                <span
-                                  className={`status badge ${
-                                    StateBadgeClasses[testRequest.state]
-                                  }`}
-                                >
-                                  {TestRequestStateConstantNames[
-                                    testRequest.state
-                                  ].toLowerCase()}
-                                </span>
-                              </Tooltip>
+                                <InfoCircleOutlined style={{marginLeft:"0.5rem", marginTop:"0.7rem"}}/>
+                              </Popover>
                             </Fragment>
                           )}
                         </td>
@@ -513,7 +515,7 @@ const Applications = () => {
                     </td>
                   </tr>
                   <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
-                      <td colSpan="7" className="hiddenRow m-0 p-0 field-box">
+                      <td colSpan="8" className="hiddenRow m-0 p-0 field-box">
                         <div
                           
                           id="Accordion" className="p-3   table-accordion-bg"
