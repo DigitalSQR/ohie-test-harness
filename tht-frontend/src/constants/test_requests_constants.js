@@ -9,15 +9,6 @@ export const TestRequestStateConstants = {
     TEST_REQUEST_STATUS_FINISHED: "test.request.status.finished"
 };
 
-export const TestRequestStateLabels = [
-    // {label: "Draft", value: "test.request.status.draft"},
-    {label: "Pending", value: "test.request.status.pending"},
-    {label: "Approved", value: "test.request.status.accepted"},
-    {label: "Rejected", value: "test.request.status.rejected"},
-    {label: "In Progress", value: "test.request.status.inprogress"},
-    {label: "Finished", value: "test.request.status.finished"},
-];
-
 export const TestRequestStateConstantNames = {
     "test.request.status.draft": "DRAFT",
     "test.request.status.pending": "Request Pending",

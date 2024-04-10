@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
 import "./testingRequest.scss";
 import {
-  TestRequestStateLabels,
   TestRequestStateConstants,
   TestRequestStateConstantNames,
   StateBadgeClasses,
+  TestRequestActionStateLabels,
 } from "../../../constants/test_requests_constants.js";
 import { USER_ROLES } from "../../../constants/role_constants.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
@@ -22,7 +22,7 @@ import sortedDown from "../../../styles/images/sort-down.png";
 import moment from "moment";
 const TestingRequests = () => {
   const testRequestStates = [
-    ...TestRequestStateLabels,
+    ...TestRequestActionStateLabels,
     { label: "All", value: "" },
   ];
   const [currentPage, setCurrentPage] = useState(1);
@@ -255,7 +255,7 @@ const TestingRequests = () => {
                   <th className="company-column">Company</th>
                   <th className="emailId-column">Email Id</th>
                   <th className="date-column">
-                    DATE OF APPLICATION{" "}
+                    REQUEST DATE{" "}
                     <span
                       className="ps-1"
                       href="#"
