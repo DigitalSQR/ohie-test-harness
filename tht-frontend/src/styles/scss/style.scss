@@ -139,3 +139,9 @@ body {
 //     -12px 12px 5px hsla(0, 0%, 0%, 0.15), /* drop shadow 1 */
 //     10px 25px 10px hsla(0, 0%, 0%, 0.2); /* drop shadow 2 */
 // }
+
+.form-control{
+  &:focus{
+    border:1px solid #009fc8 !important;
+  }
+}

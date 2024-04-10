@@ -505,38 +505,33 @@ const Applications = () => {
                             <i className="bi bi-arrow-down-circle-fill fs-5"></i>
                           )}
                         </span>
-                        </td>
-                    </tr>
-                    <tr
-                      className={"collapse " + testRequest.class}
-                      key={"collapseable--" + testRequest.id}
-                    >
-                      <td colSpan="5" className="hiddenRow m-0 field-box">
-                        <div id="Accordion">
-                          <div className="mx-5 my-3">
-                            <table className="data-table capitialize-words">
+                        
+                    </td>
+                  </tr>
+                  <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
+                      <td colSpan="7" className="hiddenRow m-0 p-0 field-box">
+                        <div
+                          
+                          id="Accordion" className="p-3   table-accordion-bg"
+                        >
+                          <div className="">
+                            <table className="data-table-inner capitialize-words">
                               <thead>
                                 <tr>
-                                  <th style={{ width: "20%" }}>Component</th>
-                                  <th style={{ width: "20%" }}>
-                                    Fhir Api Base Url
-                                  </th>
-                                  <th style={{ width: "20%" }}>
-                                    Website/UI Base Url
-                                  </th>
-                                  <th style={{ width: "20%" }}>Username</th>
-                                  <th style={{ width: "20%" }}>Password</th>
+                                  <th style={{width:'20%'}}>Component</th>
+                                  <th style={{width:'20%'}}>Fhir Api Base Url</th>
+                                  <th style={{width:'20%'}}>Website/UI Base Url</th>
+                                  <th style={{width:'20%'}}>Username</th>
+                                  <th style={{width:'20%'}}>Password</th>
+                                  <th></th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {testRequest.testRequestUrls.length > 0 &&
                                   testRequest.testRequestUrls.map(
                                     (testUrls) => (
-                                      <tr
-                                        id={testUrls.componentId}
-                                        key={testUrls.componentId}
-                                      >
-                                        <td>
+                                      <tr id={testUrls.componentId} key={testUrls.componentId}>
+                                        <td className="fw-bold">
                                           <ComponentIdConnector
                                             componentId={testUrls.componentId}
                                           ></ComponentIdConnector>

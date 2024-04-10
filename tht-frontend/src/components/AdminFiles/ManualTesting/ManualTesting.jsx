@@ -494,10 +494,10 @@ export default function ManualTesting() {
                   key={index}
                   value={specification.id}
                   tab={
-                    <span>
+                    <span style={{ display: "flex", alignItems:"center" }}>
                       {specification.name}
                       {specification?.state === "testcase.result.status.finished" && (
-                        <>&nbsp;<i style={{ color: "green" }} className="bi bi-check-circle-fill"></i></>
+                        <>&nbsp;<i style={{ lineHeight:"16px" }} className="bi bi-check2-all fs-4 completed-questions"></i></>
                       )}
                     </span>
                   }

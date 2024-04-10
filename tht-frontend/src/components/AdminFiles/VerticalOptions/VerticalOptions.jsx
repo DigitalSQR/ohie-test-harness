@@ -499,7 +499,7 @@ export default function VerticalOptions(props) {
         </div>
       </div>
       <div className="row">
-        <div className="col-md-9 col-12 p-0 question">
+        <div className="col-md-9 col-12 question">
           <div className="custom-multiselect field-checkbox">
             {options &&
               options.map((option, index) => (
@@ -659,7 +659,7 @@ export default function VerticalOptions(props) {
             </div>
           </div>
         </div>
-        <div className="col-md-3 col-12 p-0">
+        <div className="col-md-3 col-12">
           <div className=" p-2 pt-5 q-img">
             <>
               <Image.PreviewGroup>

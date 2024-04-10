@@ -176,7 +176,7 @@ export default function Login() {
                     </span>
                     <input
                       type="text"
-                      className={"form-control border-start-0 ps-0"}
+                      className={"form-control border-start-rounded-0 rounded-end"}
                       name="username"
                       id="exampleFormControlInput1"
                       autoComplete="on"
@@ -209,7 +209,7 @@ export default function Login() {
                     </span>
                     <input
                       type={showPassword ? "text" : "password"}
-                      className="form-control border-start-0 ps-0"
+                      className="form-control "
                       name="password"
                       id="exampleFormControlInput2"
                       autoComplete="off"

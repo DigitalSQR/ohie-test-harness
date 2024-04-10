@@ -227,9 +227,9 @@ const TestingRequests = () => {
                     navigate("/register-application");
                   }}
                   type="button"
-                  className="btn btn-sm btn-outline-secondary menu-like-item"
+                  className="btn btn-sm btn-outline-secondary menu-like-item d-flex align-items-center py-0"
                 >
-                  <i className="bi bi-plus"></i>
+                  <i className="bi bi-plus fs-3"></i>
                   Register Test Request
                 </button>
               </div>
@@ -300,7 +300,7 @@ const TestingRequests = () => {
                   return (
                   <Fragment key={testRequest.id}>
                     <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
-                      <td>{testRequest.name}</td>
+                      <td className="fw-bold">{testRequest.name}</td>
                         <UserIdConnector
                           isLink={true}
                           userId={testRequest.assesseeId}
@@ -372,21 +372,21 @@ const TestingRequests = () => {
                           className="approval-action-button float-end my-auto display"
                         >
                           {testRequest.class === "show" ? (
-                            <i className="bi bi-chevron-double-down"></i>
+                            <i className="bi bi-arrow-up-circle-fill fs-5"></i>
                           ) : (
-                            <i className="bi bi-chevron-double-right"></i>
+                            <i className="bi bi-arrow-down-circle-fill fs-5"></i>
                           )}
                         </span>
                       </td>
                     </tr>
                     <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
-                      <td colSpan="5" className="hiddenRow m-0 field-box">
+                      <td colSpan="5" className="p-4  hiddenRow m-0 field-box">
                         <div
                           
                           id="Accordion"
                         >
-                          <div className="mx-5 my-3">
-                            <table className="data-table capitialize-words">
+                          <div >
+                            <table className="data-table-inner capitialize-words">
                               <thead>
                                 <tr>
                                   <th style={{width:'20%'}}>Component</th>
@@ -401,7 +401,7 @@ const TestingRequests = () => {
                                   testRequest.testRequestUrls.map(
                                     (testUrls) => (
                                       <tr id={testUrls.componentId} key={testUrls.componentId}>
-                                        <td>
+                                        <td className="fw-bold">
                                           <ComponentIdConnector
                                             componentId={testUrls.componentId}
                                           ></ComponentIdConnector>

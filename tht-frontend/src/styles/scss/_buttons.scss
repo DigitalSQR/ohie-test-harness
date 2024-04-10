@@ -1,8 +1,8 @@
 // 
 
 .btn-blue {
-  height: 36px;
-  width: 87px;
+  // height: 36px;
+  // width: 87px;
   background: #009fc8;
   transition: all 0.5s;
   text-transform: uppercase;
@@ -11,6 +11,7 @@
   font-size: 15px;
   font-weight: 700;
   border-color: #009fc8;
+  padding: 8px 24px !important; 
 }
 .btn-blue:hover {
   background: #1991b1;
@@ -26,8 +27,9 @@
 }
 
 .btn-white {
-  height: 36px;
-  width: 87px;
+  // height: 36px;
+  // width: 87px;
+  padding: 8px 24px !important; 
   background: #fff;
   transition: all 0.5s;
   text-transform: uppercase;

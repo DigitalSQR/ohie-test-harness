@@ -113,11 +113,16 @@
   }
   .field-box {
     border-radius: 6px;
-    background: #f0f3f5;
-    padding: 10px 15px;
-    padding-bottom: 15px;
-    margin-bottom: 10px;
+    background: #f1f7fb;
+    padding-left:10px;
+     
+    // padding-bottom: 15px;
+    // margin-bottom: 10px;
     // width: 49%;
+    label{
+      padding: 10px ;
+      padding-left: 0px;
+    }
   }
   .field-checkbox input[type="checkbox"] {
     display: none;

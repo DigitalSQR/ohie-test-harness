@@ -2,23 +2,61 @@
 
 .data-table {
   width: 100%;
-  background: #fff; }
-  .data-table th {
+  background: #fff;
+}
+
+.data-table th {
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.data-table td {
+  border-top: 1px solid #F9F9F9;
+  padding: 12px;
+  font-weight: 500;
+  font-size: 13px;
+  border-top: 1px solid #DFEFF3;
+  line-height: 18px;
+}
+
+.data-table>tbody>tr:nth-of-type(odd) {
+  background: #F0F6FB;
+}
+
+.data-table-inner {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ced8e1;
+
+  th {
     padding: 12px;
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     line-height: 18px;
-    white-space: nowrap; }
-  .data-table td {
+    white-space: nowrap;
+    background: #eff2f5;
+    
+  }
+
+  td {
     border-top: 1px solid #F9F9F9;
     padding: 12px;
     font-weight: 500;
     font-size: 13px;
     border-top: 1px solid #DFEFF3;
-    line-height: 18px; }
+    line-height: 18px;
+  }
 
-    .data-table > tbody > tr:nth-of-type(odd) {
-      background: #F0F6FB; }
-
-      
+  tr:nth-of-type(odd) {
+    background: #fff;
+  }
+}
+.table-accordion-bg{
+  background: #f8f9fb;
+  border: 1px solid #bccfd3;
+}
