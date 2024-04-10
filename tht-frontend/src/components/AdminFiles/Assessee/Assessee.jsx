@@ -103,8 +103,8 @@ const Assessee = () => {
       setThPercentage((prevState) => ({
         ...prevState,
         name: "15%",
-        email: "20%",
-        requestedDate: "10%",
+        email: "18%",
+        requestedDate: "18%",
         company: "15%",
         status: "15%",
         action: "25%",
