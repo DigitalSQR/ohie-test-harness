@@ -356,13 +356,13 @@ const TestingRequests = () => {
                           testRequest.state ==
                           TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED 
                           && 
-                          <span
-                              className="cursor-pointer d-inline-flex align-items-center"
+                          <button
+                              className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
                               onClick={() => {navigate(`/application-report/${testRequest.id}`)}}
                             >
                               <i className="bi bi-file-text text-green-50 font-size-16"></i>{" "}
                               REPORT{" "}
-                          </span>
+                          </button>
                         }
                         </td>
                         <td>
