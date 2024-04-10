@@ -25,6 +25,7 @@ import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
 import UserIdNameEmailConnector from "../../connectors/UserIdNameEmailConnector/UserIdNameEmailConnector";
+import { Tooltip } from "antd";
 import moment from "moment";
 
 /**
@@ -388,8 +389,7 @@ const Applications = () => {
                         />
                         <td>{formattedDate}</td>
                         <td>
-                          {testRequest.state !==
-                          "test.request.status.finished" ? (
+                          {!testRequest?.message ? (
                             <Fragment>
                               <span
                                 className={`status badge ${
@@ -403,15 +403,19 @@ const Applications = () => {
                             </Fragment>
                           ) : (
                             <Fragment>
-                              <span
-                                className={`status badge ${
-                                  StateBadgeClasses[testRequest.state]
-                                }`}
+                              <Tooltip
+                                title={<div>{testRequest?.message}</div>}
                               >
-                                {TestRequestStateConstantNames[
-                                  testRequest.state
-                                ].toLowerCase()}
-                              </span>
+                                <span
+                                  className={`status badge ${
+                                    StateBadgeClasses[testRequest.state]
+                                  }`}
+                                >
+                                  {TestRequestStateConstantNames[
+                                    testRequest.state
+                                  ].toLowerCase()}
+                                </span>
+                              </Tooltip>
                             </Fragment>
                           )}
                         </td>
