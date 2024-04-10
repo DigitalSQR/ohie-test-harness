@@ -116,7 +116,6 @@ public class TestResultRelationValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("{}{}", ValidateConstant.DOES_NOT_EXIST_EXCEPTION, TestResultRelationValidator.class.getSimpleName());
                 // This is ok because created id should be unique
             }
         }

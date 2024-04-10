@@ -166,7 +166,6 @@ public class TestcaseValidator {
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
         }
