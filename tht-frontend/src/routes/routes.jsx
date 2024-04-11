@@ -182,8 +182,9 @@ const routesConfig = [
         ),
       },
       {
-        path: "register-application",
-        name: "Register Application",
+        path: "register-application/:testRequestId?",
+        // name: "Register Application", 
+        // It overrides in the register application page where we need dynamic header content.
         element: (
           <PrivateRoute
             roles={[

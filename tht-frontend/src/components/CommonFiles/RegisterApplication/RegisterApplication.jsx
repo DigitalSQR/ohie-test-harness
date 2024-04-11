@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import "./_registrationApplication.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import { UserAPI } from "../../../api/UserAPI.js";
 import { ComponentAPI } from "../../../api/ComponentAPI.js";
@@ -8,9 +8,14 @@ import { useLoader } from "../../loader/LoaderContext.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
 import { notification } from "antd";
 import { TestRequestStateConstants } from "../../../constants/test_requests_constants.js";
-import { CREATE_VALIDATION } from "../../../constants/validation_constants.js";
+import {
+  CREATE_VALIDATION,
+  UPDATE_VALIDATION,
+} from "../../../constants/validation_constants.js";
 import { store } from "../../../store/store.js";
 import { Tooltip } from "antd";
+import { useDispatch } from "react-redux";
+import { set_header } from "../../../reducers/homeReducer.jsx";
 const RegisterApplication = () => {
   const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
@@ -18,22 +23,9 @@ const RegisterApplication = () => {
   const [userId, setUserId] = useState();
   const [showPassword, setShowPassword] = useState(false);
   const [touched, setTouched] = useState({});
-
-  useEffect(() => {
-    const userInfo = store.getState().userInfoSlice;
-    setUserId(userInfo.id);
-    const params = {};
-    params.state = "component.status.active";
-    params.sort = "rank,asc";
-    ComponentAPI.getComponents(params)
-      .then((res) => {
-        setComponents(res.content);
-        hideLoader();
-      })
-      .catch((err) => {
-        hideLoader();
-      });
-  }, []);
+  const [meta, setMeta] = useState(); //only used when updating test request.
+  const { testRequestId } = useParams();
+  const dispatch = useDispatch();
 
   // A custom validation function. This must return an object
   // which keys are symmetrical to our values/initialValues
@@ -117,38 +109,72 @@ const RegisterApplication = () => {
     },
     validate,
     onSubmit: (values) => {
-      showLoader();
       formik.values.assesseeId = userId;
-      TestRequestAPI.validateTestRequest(CREATE_VALIDATION, values)
-        .then((res) => {
-          if (res.length == 0) {
-            TestRequestAPI.createTestRequest(values)
-              .then((res) => {
-                notification.success({
-                  className: "notificationSuccess",
-                  placement: "top",
-                  message: "Success",
-                  description: `Your application testing request has been successfully created and sent to admin for approval.`,
+
+      if (testRequestId) {
+        const data = { ...values, id: testRequestId,meta:meta };
+        showLoader();
+        TestRequestAPI.validateTestRequest(UPDATE_VALIDATION, data)
+          .then((res) => {
+            if (res.length == 0) {
+              TestRequestAPI.updateTestRequest(data)
+                .then((res) => {
+                  notification.success({
+                    className: "notificationSuccess",
+                    placement: "top",
+                    message: "Success",
+                    description: "Test Request Updated Successfully.",
+                  });
+                  hideLoader();
+                  navigate("/testing-requests");
+                })
+                .catch(() => {});
+            } else {
+              res.forEach((err) => {
+                notification.error({
+                  className: "notificationError",
+                  message: "Error",
+                  placement: "bottomRight",
+                  description: err.message,
                 });
-                hideLoader();
-                navigate("/testing-requests");
-              })
-              .catch((error) => {
-                hideLoader();
               });
-          } else {
-            res.forEach((err) => {
-              notification.error({
-                className:"notificationError",
-                message:"Error",
-                placement: "bottomRight",
-                description: err.message,
+              hideLoader();
+            }
+          })
+          .catch(() => {});
+      } else {
+        showLoader();
+        TestRequestAPI.validateTestRequest(CREATE_VALIDATION, values)
+          .then((res) => {
+            if (res.length == 0) {
+              TestRequestAPI.createTestRequest(values)
+                .then((res) => {
+                  notification.success({
+                    className: "notificationSuccess",
+                    placement: "top",
+                    message: "Success",
+                    description: `Your application testing request has been successfully created and sent to admin for approval.`,
+                  });
+                  hideLoader();
+                  navigate("/testing-requests");
+                })
+                .catch((error) => {
+                  hideLoader();
+                });
+            } else {
+              res.forEach((err) => {
+                notification.error({
+                  className: "notificationError",
+                  message: "Error",
+                  placement: "bottomRight",
+                  description: err.message,
+                });
               });
-            });
-            hideLoader();
-          }
-        })
-        .catch((error) => {});
+              hideLoader();
+            }
+          })
+          .catch((error) => {});
+      }
     },
   });
 
@@ -200,11 +226,43 @@ const RegisterApplication = () => {
     setTouched((prevTouched) => {
       const updatedTouched = {
         ...prevTouched,
+        [modifiedComponentId(componentId)]: {
+          ...prevTouched[modifiedComponentId(componentId)],
+          [key]: true,
+        },
       };
-      updatedTouched[modifiedComponentId(componentId)][key] = true;
       return updatedTouched;
     });
   };
+
+  useEffect(() => {
+    if (testRequestId) {
+      dispatch(set_header("Update Application"));
+      TestRequestAPI.getTestRequestsById(testRequestId).then((res) => {
+        formik.values.name = res.name;
+        formik.values.description = res.description;
+        formik.values.testRequestUrls = res.testRequestUrls;
+        setMeta(res.meta);
+      });
+    } else {
+      dispatch(set_header("Register Application"));
+    }
+    console.log(formik.values);
+
+    const userInfo = store.getState().userInfoSlice;
+    setUserId(userInfo.id);
+    const params = {};
+    params.state = "component.status.active";
+    params.sort = "rank,asc";
+    ComponentAPI.getComponents(params)
+      .then((res) => {
+        setComponents(res.content);
+        hideLoader();
+      })
+      .catch((err) => {
+        hideLoader();
+      });
+  }, []);
 
   return (
     <div id="registerApplication">
@@ -274,6 +332,10 @@ const RegisterApplication = () => {
             </div>
 
             {components.map((component, index) => {
+              const isChecked = formik.values.testRequestUrls.some(
+                (selectedComponent) =>
+                  selectedComponent.componentId === component.id
+              );
               return (
                 <Fragment key={index}>
                   <div className="row mt-2">
@@ -281,6 +343,7 @@ const RegisterApplication = () => {
                       <div className="field-box d-flex align-items-center">
                         <input
                           id={index}
+                          checked={isChecked}
                           type="checkbox"
                           className="field-checkbox component-checkbox"
                           name="component"
@@ -672,7 +735,7 @@ const RegisterApplication = () => {
               onClick={formik.handleSubmit}
               className="btn btn-primary btn-blue"
             >
-              submit
+              {testRequestId ? "Update" : "Submit"}
             </button>
           </div>
         </div>
