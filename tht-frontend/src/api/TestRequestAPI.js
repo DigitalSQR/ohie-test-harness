@@ -72,4 +72,11 @@ export const TestRequestAPI = {
     });
     return response.data;
   },
+  updateTestRequest:async function(data){
+    const response = await api.request({
+      url:"/test-request",
+      method:"PUT",
+      data
+    })
+  }
 };
