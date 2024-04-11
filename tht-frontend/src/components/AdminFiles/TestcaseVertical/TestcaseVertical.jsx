@@ -436,7 +436,7 @@ export default function TestcaseVertical(props) {
       {currentSpecification.childTestcaseResults.map(
         (testcaseResult, index) => {
           return (
-            <div className="col-12 non-fuctional-requirement">
+            <div className="col-12 non-fuctional-requirement" id={testcaseResult.id}>
               <div>
                 {testcaseResult && (
                   <div className=" question-box" key={testcaseResult.id}>
