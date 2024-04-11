@@ -176,7 +176,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
                   <div className="notification-count">{unreadCount}</div>
                 )}
               </div>
-              <ul className="dropdown-menu notification-menu p-3 mt-2">
+              <ul className="dropdown-menu notification-menu p-3 mt-2" style={{ maxHeight: "90vh", overflowY: "auto" }}>
                 <h5 className="notification-header">Notifications</h5>
                 {notifications && notifications.length > 0 && (
                   <>
