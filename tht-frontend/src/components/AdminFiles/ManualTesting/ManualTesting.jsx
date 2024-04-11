@@ -288,14 +288,32 @@ export default function ManualTesting() {
     selectSpecification(specificationIndex, componentIndex);
     if(isHorizontal){
       selectTestcase(testcaseIndex, specificationIndex, componentIndex);
-    }else{
+      return;
+    }
+    if(testcaseIndex>0){
+      const idn = testcaseResults[componentIndex].childTestcaseResults[specificationIndex].childTestcaseResults[testcaseIndex-1].id;
+
       if(test!==specificationIndex){
-        setTimeout(()=>{
-          window.scrollTo({ top: testcaseIndex*300, behavior: 'smooth' });
+        setTimeout(() => {
+          document.getElementById(idn).scrollIntoView({
+            behavior: "smooth",
+          });
         }, 800);}
       else{
-          window.scrollTo({ top: testcaseIndex*300, behavior: 'smooth' });
-        }}
+        document.getElementById(idn).scrollIntoView({
+          behavior: "smooth",
+        });
+       } 
+      }
+      else{
+        if (test !== specificationIndex) {
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }, 800);
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
   }
   
   // This function navigates the tester to the next succeeding testcase, once a testcase has been answered.
@@ -432,7 +450,7 @@ export default function ManualTesting() {
             <div className="offcanvas-title">
               <h5 id="manualTestingLabel">Manual Verification </h5>
               <div className="answeredQuest">
-                <h6>Status:{finishedTestCasesCount}/{totalTestCasesCount} </h6>
+                <h6>Status: {finishedTestCasesCount} of {totalTestCasesCount} </h6>
               </div>
             </div>
 
@@ -536,7 +554,7 @@ export default function ManualTesting() {
 
    
         <div className="fixed-button">
-          <button data-bs-toggle="offcanvas" href="#manualTesting" aria-controls="manualTesting">{finishedTestCasesCount}/{totalTestCasesCount}</button>
+          <button data-bs-toggle="offcanvas" href="#manualTesting" aria-controls="manualTesting">Status: {finishedTestCasesCount} of {totalTestCasesCount}</button>
         </div>
      
     </div>
