@@ -13,7 +13,8 @@ import {
   UPDATE_VALIDATION,
 } from "../../../constants/validation_constants.js";
 import { store } from "../../../store/store.js";
-import { Tooltip } from "antd";
+import { Popover } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer.jsx";
 const RegisterApplication = () => {
@@ -376,7 +377,10 @@ const RegisterApplication = () => {
                                   htmlFor="username"
                                   className="form-label"
                                 >
-                                  <Tooltip
+                                  {" "}
+                                  Credentials
+                                  <span style={{ color: "red" }}>*</span>
+                                  <Popover
                                     title={
                                       <div>
                                         <p>
@@ -393,11 +397,13 @@ const RegisterApplication = () => {
                                       </div>
                                     }
                                   >
-                                    {" "}
-                                    Credentials
-                                  </Tooltip>
-
-                                  <span style={{ color: "red" }}>*</span>
+                                    <InfoCircleOutlined
+                                      style={{
+                                        marginLeft: "0.5rem",
+                                        marginTop: "0.7rem",
+                                      }}
+                                    />
+                                  </Popover>
                                 </label>
                               </div>
                               <div className="col-sm-6 col-12">
@@ -548,7 +554,8 @@ const RegisterApplication = () => {
                                     htmlFor="fhirApiBaseUrl"
                                     className="form-label"
                                   >
-                                    <Tooltip
+                                    Website/UI URL:{" "}
+                                    <Popover
                                       title={
                                         <div>
                                           {" "}
@@ -560,8 +567,13 @@ const RegisterApplication = () => {
                                         </div>
                                       }
                                     >
-                                      Website/UI URL:{" "}
-                                    </Tooltip>
+                                      <InfoCircleOutlined
+                                        style={{
+                                          marginLeft: "0.5rem",
+                                          marginTop: "0.7rem",
+                                        }}
+                                      />
+                                    </Popover>
                                   </label>
                                   <input
                                     id={
@@ -628,7 +640,9 @@ const RegisterApplication = () => {
                                     htmlFor="fhirApiBaseUrl"
                                     className="form-label"
                                   >
-                                    <Tooltip
+                                    FHIR API Base URL:{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                    <Popover
                                       title={
                                         <div>
                                           {" "}
@@ -641,9 +655,13 @@ const RegisterApplication = () => {
                                         </div>
                                       }
                                     >
-                                      FHIR API Base URL:{" "}
-                                    </Tooltip>
-                                    <span style={{ color: "red" }}>*</span>
+                                      <InfoCircleOutlined
+                                        style={{
+                                          marginLeft: "0.5rem",
+                                          marginTop: "0.7rem",
+                                        }}
+                                      />
+                                    </Popover>
                                   </label>
                                   <input
                                     id={

@@ -25,7 +25,7 @@ const PieChart = (props) => {
         },
       ],
       legend: {
-        show: false,
+        show: true,
       },
       title: {
         text: props.title,
