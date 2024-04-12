@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import { Empty } from "antd";
+import { TestRequestActionStateLabels } from "../../../../constants/test_requests_constants";
+import PieChartModal from "../Modals/PieChartModal";
 const PieChart = (props) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [clickedValue, setClickedValue]=useState();
   const [chartData, setChartData] = useState({
     series: [],
     options: {
       chart: {
         width: 380,
         type: "pie",
+        events: {
+          dataPointSelection: (event, chartContext, config) => {
+            const label = config.w.config.labels[config.dataPointIndex];
+            const value = TestRequestActionStateLabels.find(
+              (item) => item.label === label
+            ).value;
+            setClickedValue(value);
+            setIsModalOpen(true);
+          },
+        },
       },
       labels: [],
 
@@ -30,7 +44,7 @@ const PieChart = (props) => {
       title: {
         text: props.title,
         offsetY: -10,
-        margin:30
+        margin: 30,
       },
     },
   });
@@ -77,6 +91,13 @@ const PieChart = (props) => {
           />
         </>
       )}
+      <div>
+        <PieChartModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          clickedValue={clickedValue}
+        />
+      </div>
     </div>
   );
 };
