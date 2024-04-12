@@ -5,6 +5,7 @@ import { Outlet } from "react-router-dom";
 import Footer from "../Footer/Footer";
 import { useSelector } from "react-redux";
 import "./landing.scss";
+import CompanyModal from "../CompanyModal";
 export default function Landing() {
   const header = useSelector((state) => state.homeSlice.header);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -16,7 +17,14 @@ export default function Landing() {
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
         />
-        <main>{<Outlet />}</main>
+        <main>
+          {
+            <>
+              <CompanyModal />
+              <Outlet />
+            </>
+          }
+        </main>
       </div>
       <Footer />
     </div>
