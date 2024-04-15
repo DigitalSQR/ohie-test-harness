@@ -7,6 +7,8 @@ spring:
     caches:
       authenticationCache:
         time-to-live: 36000000  #10 hours
+    jcache:
+      config: classpath:ehcache.xml
   jackson:
     serialization:
       fail-on-empty-beans: false
@@ -33,6 +35,13 @@ spring:
         jdbc:
           lob.non_contextual_creation: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        generate_statistics: true
+        cache:
+          use_second_level_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+          use_query_cache: true
     hibernate:
       ddl-auto: update
       generate-ddl: true

@@ -2,6 +2,7 @@ package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -17,6 +18,8 @@ import java.util.stream.Collectors;
 @Entity
 @Audited
 @Table(name = "specification")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SpecificationEntity extends IdStateNameMetaEntity {
 
     @Column(name = "rank")
@@ -28,10 +31,12 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "component_id")
     @JsonIgnore
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private ComponentEntity component;
 
     @JsonIgnore
     @OneToMany(mappedBy = "specification", cascade = {})
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<TestcaseEntity> testcases;
     @Column(name = "is_required")
     private Boolean isRequired;
