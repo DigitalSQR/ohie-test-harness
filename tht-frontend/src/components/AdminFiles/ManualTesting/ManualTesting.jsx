@@ -46,6 +46,7 @@ export default function ManualTesting() {
   const [isTop, setIsTop] = useState(false);
   const [isHorizontal, setIsHorizontal] = useState(false);
   const [test, setTest] = useState(0);
+  const [component, setComponent] = useState(0);
   var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
   const { showLoader, hideLoader } = useLoader();
   const dispatch = useDispatch();
@@ -205,6 +206,7 @@ export default function ManualTesting() {
   const selectComponent = (componentIndex) => {
     componentIndex = parseInt(componentIndex);
     setCurrentComponent(testcaseResults[componentIndex]);
+    setComponent(componentIndex);
     setCurrentComponentIndex(componentIndex);
     let specificationIndex = 0;
     if (totalTestCasesCount !== finishedTestCasesCount) {
@@ -290,30 +292,30 @@ export default function ManualTesting() {
       selectTestcase(testcaseIndex, specificationIndex, componentIndex);
       return;
     }
-    if(testcaseIndex>0){
-      const idn = testcaseResults[componentIndex].childTestcaseResults[specificationIndex].childTestcaseResults[testcaseIndex-1].id;
-
-      if(test!==specificationIndex){
-        setTimeout(() => {
+    
+    if (component !== componentIndex || test !== specificationIndex) {
+      setTimeout(() => {
+        if (testcaseIndex > -1) {
+          const idn = testcaseResults[componentIndex].childTestcaseResults[specificationIndex].childTestcaseResults[testcaseIndex].id;
           document.getElementById(idn).scrollIntoView({
-            behavior: "smooth",
+            behavior: "smooth"
           });
-        }, 800);}
-      else{
-        document.getElementById(idn).scrollIntoView({
-          behavior: "smooth",
-        });
-       } 
-      }
-      else{
-        if (test !== specificationIndex) {
-          setTimeout(() => {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }, 800);
         } else {
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
+      }, 800);
+    }else{
+      if (testcaseIndex > -1) {
+        const idn = testcaseResults[componentIndex].childTestcaseResults[specificationIndex].childTestcaseResults[testcaseIndex].id;
+        console.log(idn);
+        document.getElementById(idn).scrollIntoView({
+          behavior: "smooth"
+        });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
+    }
+    
   }
   
   // This function navigates the tester to the next succeeding testcase, once a testcase has been answered.
@@ -500,6 +502,9 @@ export default function ManualTesting() {
         <div className="vertical-tab-list">
           {!!currentSpecification && (
             <Tabs
+              style={{
+                height: 580,
+              }}
               destroyInactiveTabPane={true}
               tabPosition={isTop ? 'top' : 'left'}
               activeKey={currentSpecificationIndex.toString()}
