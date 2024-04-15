@@ -198,6 +198,9 @@ public class TestRequestValidator {
         List<ValidationResultInfo> errors = new ArrayList<>();
         trimTestRequest(testRequestEntity);
 
+        //check for assessee company name
+        validateAssesseeCompany(testRequestEntity, errors);
+
         // check Common Required
         validateCommonRequired(testRequestEntity, errors);
 
@@ -606,5 +609,11 @@ public class TestRequestValidator {
     @Autowired
     public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
         TestRequestValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
+    }
+
+    public static void validateAssesseeCompany(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors){
+        if(testRequestEntity.getAssessee() != null) {
+            ValidationUtils.validateRequired(testRequestEntity.getAssessee().getCompanyName(), "assessee's company name", errors);
+        }
     }
 }
