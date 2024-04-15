@@ -185,10 +185,29 @@ export default function Dashboard() {
           ((x.passedTestcases / x.totalTestcases) * 100).toFixed(2)
         );
       });
+  
+      const combinedData = topComplianceObj.data.appName.map((appName, index) => ({
+        appName,
+        compliancePercentage: topComplianceObj.data.compliancePercentage[index],
+      }));
+  
+      combinedData.sort(
+        (a, b) => b.compliancePercentage - a.compliancePercentage
+      );
+  
+      const sortedAppName = combinedData.map((item) => item.appName);
+      const sortedCompliancePercentage = combinedData.map(
+        (item) => item.compliancePercentage
+      );
+  
+      topComplianceObj.data.appName = sortedAppName;
+      topComplianceObj.data.compliancePercentage = sortedCompliancePercentage;
+  
       if (topComplianceObj.data.appName.length > 0)
         topComplianceArray.push(topComplianceObj);
-      setComponentComplianceData(topComplianceArray);
+     
     });
+    setComponentComplianceData(topComplianceArray);
   };
 
   useEffect(() => {
@@ -412,6 +431,7 @@ export default function Dashboard() {
                           <ComplianceByComponent
                             component={x?.component}
                             data={x?.data}
+                            show={false}
                           />
                         </div>
                       ))

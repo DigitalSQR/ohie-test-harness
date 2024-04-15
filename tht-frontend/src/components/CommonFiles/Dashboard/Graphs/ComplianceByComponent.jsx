@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { TrophyOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import { TrophyOutlined, EyeOutlined } from "@ant-design/icons";
+import ComplianceByComponentModal from "../Modals/ComplianceByComponentModal";
 const ComplianceByComponent = (props) => {
-  const [show, setShow] = useState(false);
-  const toggleShow = () => {
-    setShow(!show);
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
       <div
@@ -15,7 +13,7 @@ const ComplianceByComponent = (props) => {
           <TrophyOutlined style={{ fontSize: "48px" }} />
         </div>
 
-        <div className="col-auto">
+        <div className="col-lg-4 col-md-6 col-sm-8 col-12">
           <p className="mb-0" style={{ fontSize: "18px" }}>
             {props?.component}
           </p>
@@ -28,7 +26,7 @@ const ComplianceByComponent = (props) => {
                 <>
                   <p
                     className="fw-bold"
-                    style={{ fontSize: "20px", marginBottom: "8px" }}
+                    style={{ fontSize: "20px", marginBottom: "8px", textTransform:"capitalize" }}
                   >
                     {appName}
                   </p>
@@ -37,7 +35,7 @@ const ComplianceByComponent = (props) => {
                   </p>
                 </>
               )}
-              {index !== 0 && !!show && (
+              {index !== 0 && !!props.show && (
                 <>
                   <p
                     className="fw-bold"
@@ -54,12 +52,16 @@ const ComplianceByComponent = (props) => {
           ))}
         </div>
 
-        <div
-          className="col-auto cursor-pointer"
-          style={{ fontSize: "30px" }}
-          onClick={toggleShow}
-        >
-          <PlayCircleOutlined />
+        <div className="col-auto cursor-pointer" style={{ fontSize: "30px" }}>
+          <EyeOutlined onClick={() => setIsModalOpen(true)} />
+        </div>
+        <div>
+          <ComplianceByComponentModal
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            component={props?.component}
+            data={props?.data}
+          />
         </div>
       </div>
     </>

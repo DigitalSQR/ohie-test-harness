@@ -192,10 +192,10 @@ export default function Header({ headerContent, isSidebarOpen }) {
                       notification.state === NOTIFICATION_STATUS_UNREAD ? (
                         <li
                           key={notification.id}
-                          className="list-group-item rounded mt-2 notification-item d-flex"
+                          className="list-group-item rounded mt-2 notification-item d-flex justify-content-between"
                         >
                           <div>{notification.message}</div>
-                          <div>
+                          <div style={{marginLeft:"1rem"}}>
                             <DeleteOutlined
                               onClick={() =>
                                 ArchiveNotificationById(notification.id)
