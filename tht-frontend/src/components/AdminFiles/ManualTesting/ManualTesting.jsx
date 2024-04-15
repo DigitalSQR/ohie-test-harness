@@ -43,8 +43,8 @@ export default function ManualTesting() {
   const [testcaseRequestResult, setTestcaseRequestResult] = useState();
   const [finishedTestCasesCount, setFinishedTestCasesCount] = useState(0);
   const [totalTestCasesCount, setTotalTestCasesCount] = useState(0);
-  const [isTop, setIsTop] = useState(true);
-  const [isHorizontal, setIsHorizontal] = useState(true);
+  const [isTop, setIsTop] = useState(false);
+  const [isHorizontal, setIsHorizontal] = useState(false);
   const [test, setTest] = useState(0);
   var { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
   const { showLoader, hideLoader } = useLoader();
@@ -429,7 +429,7 @@ export default function ManualTesting() {
               </Select>
             </div>
             {/* Below is the button code which is currently commented out */}
-            <div className="col-md-6 text-end">
+            {/* <div className="col-md-6 text-end">
               <div className="layout-buttons">
                 <button className={`${isHorizontal ? 'btn btn-outline-secondary   ' : 'btn btn-outline-secondary  '}`} onClick={handleHorizontalClick}>
                   Horizontal
@@ -438,7 +438,7 @@ export default function ManualTesting() {
                   Vertical
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
 
 
@@ -520,7 +520,8 @@ export default function ManualTesting() {
                     </span>
                   }
                 >
-                  {isHorizontal ? (
+                  {/* Supplying data to both the question formats, if needed in the future */}
+                  {/* {isHorizontal ? (
                     <TestCase
                       currentTestcaseIndex={currentTestcaseIndex}
                       currentTestcase={currentTestcase}
@@ -541,7 +542,17 @@ export default function ManualTesting() {
                     isLastQuestion={isLastQuestion}
                     selectNextSpecification={selectNextSpecification}
                     ></TestCaseVerticalView>
-                  }
+                  } */}
+                      <TestCaseVerticalView 
+                    currentTestcaseIndex={currentTestcaseIndex}
+                    currentTestcase={currentTestcase}
+                    currentSpecification={currentSpecification}
+                    selectTestcase={selectTestcase}
+                    selectNextTestcase={selectNextTestcase}
+                    refreshCurrentTestcase={refreshCurrentTestcase}
+                    isLastQuestion={isLastQuestion}
+                    selectNextSpecification={selectNextSpecification}
+                    ></TestCaseVerticalView>
                 </Item>
               ))}
             </Tabs>
