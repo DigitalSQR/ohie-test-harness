@@ -198,14 +198,14 @@ public class TestRequestValidator {
         List<ValidationResultInfo> errors = new ArrayList<>();
         trimTestRequest(testRequestEntity);
 
-        //check for assessee company name
-        validateAssesseeCompany(testRequestEntity, errors);
-
         // check Common Required
         validateCommonRequired(testRequestEntity, errors);
 
         // check Common ForeignKey
         validateCommonForeignKey(testRequestEntity, errors, userService, componentService, contextInfo);
+
+        //check for assessee company name
+        validateAssesseeCompany(testRequestEntity, errors);
 
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
