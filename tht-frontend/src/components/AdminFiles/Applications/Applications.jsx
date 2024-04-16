@@ -516,11 +516,7 @@ const Applications = () => {
                   </tr>
                   <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
                       <td colSpan="8" className="hiddenRow m-0 p-0 field-box">
-                        <div
-                          
-                          id="Accordion" className="p-3   table-accordion-bg"
-                        >
-                          <div className="">
+                        <div id="Accordion" className="p-3 table-accordion-bg">
                             <table className="data-table-inner capitialize-words">
                               <thead>
                                 <tr>
@@ -578,7 +574,6 @@ const Applications = () => {
                               </tbody>
                             </table>
                           </div>
-                        </div>
                       </td>
                     </tr>
                    </React.Fragment>
