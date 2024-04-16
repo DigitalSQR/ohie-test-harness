@@ -150,6 +150,14 @@ export default function Header({ headerContent, isSidebarOpen }) {
     fetchNotifications();
   }, []);
 
+  const handleDeleteNotification = (notificationId, event) => {
+    // Handle delete logic here
+    ArchiveNotificationById(notificationId);
+
+    // Prevent event propagation to parent elements (including dropdown toggle)
+    event.stopPropagation();
+  };
+
   return (
     <div id="header" style={{ cursor: "pointer" }}>
       <header>
@@ -197,9 +205,9 @@ export default function Header({ headerContent, isSidebarOpen }) {
                           <div>{notification.message}</div>
                           <div style={{marginLeft:"1rem"}}>
                             <DeleteOutlined
-                              onClick={() =>
-                                ArchiveNotificationById(notification.id)
-                            }
+                              onClick={(event) =>
+                                 handleDeleteNotification(notification.id, event)
+                            } 
                           />
                         </div>
                       </li>
