@@ -48,7 +48,7 @@ const StackedBarGraph = (props) => {
         },
         labels: {
           formatter: function (val) {
-            return props.yAxisSymbol ? val + " " + props.yAxisSymbol : val;
+            return props.yAxisSymbol ? val.toFixed(1) + " " + props.yAxisSymbol : val;
           },
         },
       },
