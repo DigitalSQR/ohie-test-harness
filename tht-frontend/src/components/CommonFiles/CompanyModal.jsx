@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Modal, notification } from "antd";
 import { UserAPI } from "../../api/UserAPI";
 import { store } from "../../store/store";
+import { useDispatch } from "react-redux";
+import { userinfo_success } from "../../reducers/UserInfoReducer";
 
 const CompanyModal = () => {
   const [companyName, setCompanyName] = useState("");
   const [userInfo, setUserInfo] = useState();
   const [userDetails, setUserDetails] = useState();
-
+  const dispatch = useDispatch();
   const fetchUser = () => {
     UserAPI.viewUser()
       .then((res) => {
@@ -38,6 +40,7 @@ const CompanyModal = () => {
           ...prevUserInfo,
           companyName: companyName,
         }));
+        dispatch(userinfo_success(body));
         notification.success({
           className: "notificationSuccess",
           placement: "top",
