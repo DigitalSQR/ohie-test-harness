@@ -431,24 +431,17 @@ const TestingRequests = () => {
                         className={"collapse " + testRequest.class}
                         key={"collapseable--" + testRequest.id}
                       >
-                        <td
-                          colSpan="5"
-                          className="p-4  hiddenRow m-0 field-box"
-                        >
-                          <div id="Accordion">
-                            <div>
-                              <table className="data-table-inner capitialize-words">
-                                <thead>
+                      <td colSpan="8" className="hiddenRow m-0 p-0 field-box">
+                        <div id="Accordion" className="p-3 table-accordion-bg">
+                            <table className="data-table-inner capitialize-words">
+                              <thead>
                                   <tr>
-                                    <th style={{ width: "20%" }}>Component</th>
-                                    <th style={{ width: "20%" }}>
-                                      Fhir Api Base Url
-                                    </th>
-                                    <th style={{ width: "20%" }}>
-                                      Website/UI Base Url
-                                    </th>
-                                    <th style={{ width: "20%" }}>Username</th>
-                                    <th style={{ width: "20%" }}>Password</th>
+                                    <th style={{width:'20%'}}>Component</th>
+                                    <th style={{width:'20%'}}>Fhir Api Base Url</th>
+                                    <th style={{width:'20%'}}>Website/UI Base Url</th>
+                                    <th style={{width:'20%'}}>Username</th>
+                                    <th style={{width:'20%'}}>Password</th>
+                                    <th></th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -464,7 +457,7 @@ const TestingRequests = () => {
                                               componentId={testUrls.componentId}
                                             ></ComponentIdConnector>
                                           </td>
-                                          <td className="no-capitalization">
+                                          <td className="no-capitalization">  
                                             {testUrls.fhirApiBaseUrl}
                                           </td>
                                           <td className="no-capitalization">
@@ -501,7 +494,6 @@ const TestingRequests = () => {
                                     )}
                                 </tbody>
                               </table>
-                            </div>
                           </div>
                         </td>
                       </tr>
