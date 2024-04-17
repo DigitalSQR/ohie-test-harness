@@ -10,7 +10,7 @@ const PieChart = (props) => {
     series: [],
     options: {
       chart: {
-        width: 380,
+        width: 680,
         type: "pie",
         events: {
           dataPointSelection: (event, chartContext, config) => {
@@ -30,7 +30,7 @@ const PieChart = (props) => {
           breakpoint: 480,
           options: {
             chart: {
-              width: 200,
+              width: 600,
             },
             legend: {
               position: "bottom",
@@ -69,7 +69,7 @@ const PieChart = (props) => {
               options={chartData.options}
               series={chartData.series}
               type="pie"
-              width={380}
+              width={600}
             />
           </div>
           <div id="html-dist"></div>

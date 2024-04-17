@@ -117,7 +117,7 @@
     position: absolute;
     top: -0px; /* Adjust this value to move the circle up */
     transform: translate(50%, -50%); /* Center the circle */
-    background-color: #009fc8; /* Set your desired color */
+    background-color: #dd0000; /* Set your desired color */
     border-radius: 50%;
     width: 24px; /* Set your desired width and height for the circle */
     height: 24px;
@@ -125,7 +125,8 @@
     justify-content: center;
     align-items: center;
     color: white; /* Set the color of the number */
-    font-size: 16px; /* Set the font size of the number */
+    font-size: 12px; /* Set the font size of the number */
+    font-weight: 600;
   }  
 
   .notification-menu{

@@ -343,8 +343,9 @@ const Assessee = () => {
                             {" "}
                             {user.state === "user.status.active" && (
                               <Fragment>
+                                <i className="bi bi-ban text-warning font-size-16"></i>
                                 <span
-                                  className="cursor-pointer text-warning font-size-12 fw-bold"
+                                  className="cursor-pointer text-warning font-size-12 fw-bold ps-1"
                                   onClick={() => {
                                     setIsReasonModalOpen(true);
                                     setCurrentAssesseeId(user.id);
@@ -352,7 +353,7 @@ const Assessee = () => {
                                     setNewState("inactive");
                                   }}
                                 >
-                                  <i className="bi bi-ban text-warning font-size-16"></i>{" "}
+                                  
                                   DISABLE
                                 </span>
                               </Fragment>
@@ -370,12 +371,13 @@ const Assessee = () => {
                                     );
                                   }}
                                 >
-                                  <span>
-                                    <i className="bi bi-check-circle-fill  font-size-16"></i>{" "}
-                                    APPROVE{" "}
+                                  <i className="bi bi-check-circle-fill  font-size-16"></i>
+                                  <span className="ps-1">
+                                    
+                                    APPROVE
                                   </span>
                                 </span>
-                                &nbsp;
+                               
                                 <span
                                   className="ps-3 cursor-pointer text-danger font-size-12 fw-bold"
                                   onClick={() => {
