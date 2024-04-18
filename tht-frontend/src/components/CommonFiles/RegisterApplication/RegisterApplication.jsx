@@ -381,13 +381,14 @@ const RegisterApplication = () => {
                                   Credentials
                                   <span style={{ color: "red" }}>*</span>
                                   <Popover
+                                    placement="topLeft"
                                     title={
-                                      <div>
+                                      <div style={{ maxWidth: '450px', fontWeight: 'normal' }}>
                                         <p>
                                           Please provide the username and
                                           password that testers will use to log
                                           in to your application/website.
-                                        </p>
+                                        </p>  
                                         <p>
                                           {" "}
                                           These credentials will also be
@@ -556,8 +557,9 @@ const RegisterApplication = () => {
                                   >
                                     Website/UI URL:{" "}
                                     <Popover
+                                      placement="topLeft"
                                       title={
-                                        <div>
+                                        <div style={{ maxWidth: '450px', fontWeight: 'normal' }}>
                                           {" "}
                                           Please provide link to your
                                           application/ website. Make sure the
@@ -643,8 +645,9 @@ const RegisterApplication = () => {
                                     FHIR API Base URL:{" "}
                                     <span style={{ color: "red" }}>*</span>
                                     <Popover
+                                      placement="topLeft"
                                       title={
-                                        <div>
+                                        <div style={{ maxWidth: '450px', fontWeight: 'normal' }}>
                                           {" "}
                                           Please provide the base URL of the
                                           FHIR API endpoint. This URL will be
