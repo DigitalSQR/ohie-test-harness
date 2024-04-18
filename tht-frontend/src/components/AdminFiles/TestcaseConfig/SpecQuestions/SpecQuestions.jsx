@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { TestCaseAPI } from "../../../../api/TestCaseAPI";
 import { SpecificationAPI } from "../../../../api/SpecificationAPI";
 import { ComponentAPI } from "../../../../api/ComponentAPI";
@@ -242,8 +242,12 @@ export default function ManualTestCases() {
     <div id="SpecQuestions">
       <div id="wrapper">
       <Breadcrumb className="custom-breadcrumb">
-        <Breadcrumb.Item onClick={() => handleClick("/testcase-config")} className="breadcrumb-item" href="">Components</Breadcrumb.Item>
-        <Breadcrumb.Item onClick={() => handleClick(`/testcase-config/component-specification/${componentDetails?.id}`)} className="breadcrumb-item" href="">{componentDetails?.name}</Breadcrumb.Item>
+        <Breadcrumb.Item><Link to="/testcase-config" className="breadcrumb-item">Components</Link></Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <Link to={`/testcase-config/component-specification/${componentDetails?.id}`} className="breadcrumb-item">
+            {componentDetails?.name}
+          </Link>
+        </Breadcrumb.Item>
         <Breadcrumb.Item className="breadcrumb-item">Testcase Configuration</Breadcrumb.Item>
       </Breadcrumb>
 

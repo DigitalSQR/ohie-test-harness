@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ComponentSpecification.scss";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { EditFilled, EyeOutlined } from "@ant-design/icons";
 import { useLoader } from "../../../loader/LoaderContext";
 import { SpecificationAPI } from "../../../../api/SpecificationAPI";
@@ -206,7 +206,7 @@ export default function ComponentSpecification() {
         <div className="mb-3">
           <div className="d-flex justify-content-between align-items-center">
           <Breadcrumb className="custom-breadcrumb">
-            <Breadcrumb.Item onClick={() => navigate(`/testcase-config`)} className="breadcrumb-item" href="">Components</Breadcrumb.Item>
+            <Breadcrumb.Item><Link to="/testcase-config" className="breadcrumb-item">Components</Link></Breadcrumb.Item>
             <Breadcrumb.Item className="breadcrumb-item">{componentDetails?.name}</Breadcrumb.Item>
           </Breadcrumb>
           

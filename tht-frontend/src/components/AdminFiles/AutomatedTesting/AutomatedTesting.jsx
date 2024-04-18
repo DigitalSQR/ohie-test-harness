@@ -4,7 +4,7 @@ import "./automatedtesting.scss";
 import "././TestcaseResultRow/TestcaseResultRow.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import { useLoader } from "../../loader/LoaderContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import WebSocketService from "../../../api/WebSocketService";
 import TestcaseResultRow from "./TestcaseResultRow/TestcaseResultRow";
@@ -40,7 +40,6 @@ export default function AutomatedTesting() {
   const [resultFlag, setResultFlag]=useState(false);
 
   const [data, setData] = useState([]);
-  const navigate = useNavigate();
   const { stompClient, webSocketConnect, webSocketDisconnect } =
     WebSocketService();
   const dispatch = useDispatch();
@@ -294,9 +293,13 @@ export default function AutomatedTesting() {
       <div className="container">
         <div className="col-12">
           <div className="d-flex justify-content-between">
-            <Breadcrumb className="custom-breadcrumb">
-              <Breadcrumb.Item href="" onClick={() => { navigate(`/applications`); }} className="breadcrumb-item">Applications</Breadcrumb.Item>
-              <Breadcrumb.Item href="" onClick={() => { navigate(`/choose-test/${testRequestId}`); }} className="breadcrumb-item">{testcaseName}</Breadcrumb.Item>
+            <Breadcrumb className="custom-breadcrumb mb-3">
+              <Breadcrumb.Item>
+                <Link to="/applications" className="breadcrumb-item">Applications</Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Item>
+                <Link to={`/choose-test/${testRequestId}`} className="breadcrumb-item">{testcaseName}</Link>
+              </Breadcrumb.Item>
               <Breadcrumb.Item className="breadcrumb-item">Automated Verification</Breadcrumb.Item>
             </Breadcrumb>
             {(

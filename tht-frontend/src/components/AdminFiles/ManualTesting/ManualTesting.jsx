@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { log_out } from "../../../reducers/authReducer";
 import { Fragment, useEffect, useState } from "react";
@@ -383,11 +383,15 @@ export default function ManualTesting() {
     <div id="manualQuestions">
       <div id="wrapper" className="stepper-wrapper">
       <Breadcrumb className="mb-3 custom-breadcrumb">
-      <Breadcrumb.Item href="" onClick={() => navigate(`/applications`)} className="breadcrumb-item">
-        Applications
+      <Breadcrumb.Item>
+        <Link to="/applications" className="breadcrumb-item">
+          Applications
+        </Link>
       </Breadcrumb.Item>
-      <Breadcrumb.Item href="" onClick={() => navigate(`/choose-test/${testRequestId}`)} className="breadcrumb-item">
-        {testcaseName}
+      <Breadcrumb.Item>
+        <Link to={`/choose-test/${testRequestId}`} className="breadcrumb-item">
+          {testcaseName}
+        </Link>
       </Breadcrumb.Item>
       <Breadcrumb.Item className="breadcrumb-item">Manual Verification</Breadcrumb.Item>
     </Breadcrumb>
