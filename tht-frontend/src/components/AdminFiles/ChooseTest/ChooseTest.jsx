@@ -33,6 +33,7 @@ export default function ChooseTest() {
   const [totalAllAutomated, setTotalAllAutomated] = useState(0);
   const [totalInprogressAutomated, setTotalInprogressAutomated] = useState(0);
   const [testcaseResults, setTestCaseResults] = useState([]);
+  const [submitButtonFlag, setSubmitButtonFlag]=useState(false);
   const [resultFlag, setResultFlag]=useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -134,6 +135,7 @@ export default function ChooseTest() {
     TestResultAPI.fetchCasesForProgressBar(params)
       .then((res) => {
         setTestCaseResults(res.data.content);
+        setSubmitButtonFlag(true);
         setResultFlag(true);
       })
       .catch((error) => {
@@ -387,7 +389,7 @@ export default function ChooseTest() {
                     disabled={!resultFlag}
                   >
                     Start Verification
-                    {!resultFlag && <Spin size="small" />}
+                    {!resultFlag && <Spin size="small"/>}
                   </button>
                 )}
 
@@ -472,7 +474,7 @@ export default function ChooseTest() {
             </div>
           </div>
         </div>
-          {totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
+          {!!submitButtonFlag && totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
           <div className="message-grid">
             <p>Verification has been successfully completed. Please click the button below to submit the results.</p>
             <button className="submit-btn cst-btn-group btn" onClick={submitHandler}>Submit</button>

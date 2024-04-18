@@ -17,7 +17,7 @@ export default function SignUp() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const [enterPressed,setEnterPressed]=useState(false);
   const validationSchema = Yup.object({
     name: Yup.string()
       .required("Name is required")
@@ -90,6 +90,14 @@ export default function SignUp() {
         captcha: captcha
       });
   }
+
+  const handleConfirmPasswordKeyDown = (event) => {
+    if (event.key === "Enter") {
+      setEnterPressed(true); // Set state to indicate Enter key was pressed
+      formik.validateField("confirmPassword"); // Trigger validation for confirmPassword field
+    }
+  };
+
   const { showLoader, hideLoader } = useLoader();
 
   const ClickHandler = () => {
@@ -295,6 +303,7 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
                       value={formik.values.confirmPassword}    
+                      onKeyDown={handleConfirmPasswordKeyDown}
                       autoComplete="off"
                     />
                     <button
@@ -311,7 +320,7 @@ export default function SignUp() {
                       ></i>
                     </button>
                     </div>
-                    {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                    {(formik.touched.confirmPassword || enterPressed ) && formik.errors.confirmPassword && (
                       <div className="text-danger">
                         {formik.errors.confirmPassword}
                       </div>
