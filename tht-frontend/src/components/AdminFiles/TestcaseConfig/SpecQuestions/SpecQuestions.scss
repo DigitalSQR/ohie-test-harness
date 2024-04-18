@@ -532,6 +532,9 @@
     font-weight: 500;
   }
 
+  .custom-breadcrumb .breadcrumb-item {
+    text-decoration: none;
+  } 
 }
 
 .cst-btn-group .btn:first-of-type{

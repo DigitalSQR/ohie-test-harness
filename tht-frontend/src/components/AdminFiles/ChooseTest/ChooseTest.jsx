@@ -1,6 +1,6 @@
 import workflow_logo from "../../../styles/images/workflow-testing.png";
 import functional_logo from "../../../styles/images/functional-testing.png";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./choose-test.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import { Fragment, useEffect, useState } from "react";
@@ -250,9 +250,11 @@ export default function ChooseTest() {
       <div id="wrapper">
         <div className="col-12 pt-3">
           <Breadcrumb className="custom-breadcrumb">
-            <Breadcrumb.Item href="" onClick={() => navigate(`/applications`)} className="breadcrumb-item">
+          <Breadcrumb.Item>
+            <Link to="/applications" className="breadcrumb-item">
               Applications
-            </Breadcrumb.Item>
+            </Link>
+          </Breadcrumb.Item>
             <Breadcrumb.Item className="breadcrumb-item">{testcaseName}</Breadcrumb.Item>
           </Breadcrumb>
           <hr className="hr-light"/>

@@ -389,7 +389,7 @@
 
   .fixed-button button {
     transform: rotate(-90deg);
-    padding: 0px 20px;
+    // padding: 0px 20px;
     background-color: #009fc8;
     color: #fff;
     border: none;
@@ -518,7 +518,9 @@
     margin-bottom: 30px !important;
     border-radius: 6px;
   }
-
+  .custom-breadcrumb .breadcrumb-item {
+    text-decoration: none;
+  } 
 }
 
 .vertical-tab-list {

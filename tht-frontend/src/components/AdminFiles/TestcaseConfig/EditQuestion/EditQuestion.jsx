@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Switch, notification, Modal, Breadcrumb } from "antd";
 import "./EditQuestion.scss";
 import { TestCaseOptionsAPI } from "../../../../api/TestCaseOptionsAPI";
@@ -25,7 +25,6 @@ export default function EditQuestion() {
   const { testcaseId } = useParams();
   const [currentTestcase, setCurrentTestcase] = useState({});
   const [currentAccordionIndex, setCurrentAccordionIndex] = useState(null);
-  const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedQuestion, setEditedQuestion] = useState("");
@@ -396,9 +395,19 @@ export default function EditQuestion() {
       <div id="editQuestion">
       <div id="wrapper">
         <Breadcrumb className="custom-breadcrumb">
-          <Breadcrumb.Item className="breadcrumb-item" onClick={() => navigate("/testcase-config")} href="">Components</Breadcrumb.Item>
-          <Breadcrumb.Item className="breadcrumb-item" onClick={() => navigate(`/testcase-config/component-specification/${component?.id}`)} href="">{component?.name}</Breadcrumb.Item>
-          <Breadcrumb.Item onClick={() => navigate(`/testcase-config/manual-testcases/${specification?.id}`)} className="breadcrumb-item" href="">{specification?.name} - Testcase Configuration</Breadcrumb.Item>
+          <Breadcrumb.Item><Link to="/testcase-config" className="breadcrumb-item">Components</Link></Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link to={`/testcase-config/component-specification/${component?.id}`} className="breadcrumb-item">
+              {component?.name}
+            </Link>
+          </Breadcrumb.Item>
+
+          
+          <Breadcrumb.Item>
+          <Link to={`/testcase-config/manual-testcases/${specification?.id}`} className="breadcrumb-item">
+          {specification?.name} - Testcase Configuration
+          </Link>
+          </Breadcrumb.Item>
           <Breadcrumb.Item className="breadcrumb-item">Question</Breadcrumb.Item>
         </Breadcrumb>
         <div className="col-12 my-4">
