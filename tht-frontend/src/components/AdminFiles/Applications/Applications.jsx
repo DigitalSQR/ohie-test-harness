@@ -430,7 +430,7 @@ const Applications = () => {
                             <div class="col-lg-6 col-md-12">
                               <div class="d-flex flex-column flex-md-row">
                                 <div
-                                  class="cursor-pointer text-success d-flex align-items-center"
+                                  class="cursor-pointer text-success d-flex align-items-center font-size-12 fw-bold"
                                   onClick={() => {
                                     changeState(
                                       testRequest.id,
@@ -440,18 +440,20 @@ const Applications = () => {
                                   }}
                                 >
                                   <i class="bi bi-check-circle-fill text-success font-size-16"></i>
-                                  <span>ACCEPT</span>
+                                  <span className="ps-1"> 
+                                    ACCEPT</span>
                                 </div>
                                 <div
-                                  class="cursor-pointer ps-md-3 text-danger mt-2 mt-md-0 ml-lg-3 d-flex align-items-center"
+                                  class="cursor-pointer ps-md-3 text-danger font-size-12 fw-bold mt-2 mt-md-0 ml-lg-3 d-flex align-items-center"
                                   onClick={() => {
                                     setCurrentTestRequestId(testRequest.id);
                                     setCurrentIndex(index);
                                     setIsReasonModalOpen(true);
                                   }}
                                 >
-                                  <i class="bi bi-x-circle-fill text-red font-size-16"></i>
-                                  <span>DECLINE</span>
+                                  <i class="bi bi-x-circle-fill text-danger font-size-16"></i>
+                                  <span className="ps-1">
+                                  DECLINE</span>
                                 </div>
                               </div>
                             </div>

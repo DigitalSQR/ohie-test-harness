@@ -407,7 +407,7 @@ export default function Dashboard() {
                 </div>
               }
               <div className="row mt-3">
-                <div className="col-md-6 ">
+                <div className="col-md-4 ">
                   <div className="card p-3">
                     <PieChart
                       title={"Application Requests By Status"}
@@ -416,7 +416,7 @@ export default function Dashboard() {
                     />
                   </div>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-8">
                   <div className="card p-3" style={{ height: "100%" }}>
                     <div
                       className="d-flex justify-content-left"
