@@ -91,11 +91,11 @@ api.interceptors.response.use(
       }).catch((error) => {       
         return Promise.reject(error);
       });
-    }else if(response.status > 500){
+    }else if(response.status >= 500){
       notification.error({
         className:"notificationError",
         message:"Error",
-        description: "Oops! Something went wrong",
+        description: "Oops! Something went wrong. Please try again",
         placement: "bottomRight",
       });
     }else if(response.status == 404){

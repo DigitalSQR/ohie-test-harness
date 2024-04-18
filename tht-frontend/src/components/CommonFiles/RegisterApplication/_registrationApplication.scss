@@ -11,6 +11,11 @@
     }
   }
 
+  button {
+    z-index: 1;
+    position: relative;
+  }
+
   .custom-input input {
     height: 50px;
     border-radius: 5px;
