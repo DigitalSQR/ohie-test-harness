@@ -87,28 +87,6 @@
       }
     }
   }
-  .form-bg-white {
-    background: $color-white;
-    border: 1px solid $color-light;
-    border-radius: 5px;
-    padding: 30px;
-
-    .heading-line-up {
-      display: inline-block;
-      padding: 6px;
-      padding-bottom: 0px;
-      background: $color-gray-20;
-      font-size: 20px;
-      font-weight: 600;
-      position: relative;
-      top: -42px;
-      line-height: 12px;
-
-      @media (max-width: 991px) {
-        font-size: 16px;
-      }
-    }
-  }
 
   .color {
     border-color: #ccdade;
@@ -169,4 +147,5 @@
     margin-top: 10px !important;
     margin-bottom: 0px !important;
   }
+
 }

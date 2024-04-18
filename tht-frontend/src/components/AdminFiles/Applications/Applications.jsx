@@ -440,7 +440,7 @@ const Applications = () => {
                                   }}
                                 >
                                   <i class="bi bi-check-circle-fill text-success font-size-16"></i>
-                                  <span>APPROVE</span>
+                                  <span>ACCEPT</span>
                                 </div>
                                 <div
                                   class="cursor-pointer ps-md-3 text-danger mt-2 mt-md-0 ml-lg-3 d-flex align-items-center"
