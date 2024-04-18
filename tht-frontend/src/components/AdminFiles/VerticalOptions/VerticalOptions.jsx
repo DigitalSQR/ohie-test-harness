@@ -40,6 +40,7 @@ export default function VerticalOptions(props) {
     setIsModified,
     fileId,
     index,
+    setUnSavedNotes
   } = props;
   const [options, setOptions] = useState([]);
   const [currentOptions, setCurrentOptions] = useState([]);
@@ -53,8 +54,29 @@ export default function VerticalOptions(props) {
   const [noteMessage, setNoteMessage] = useState();
   const [questionAndDocument, setQuestionAndDocument] = useState([]);
 
-  const handleOnChangeForNote = (e) => {
-    setNoteMessage(e.target.value);
+  const handleOnChangeForNote = (e,testcaseResultInfo,index) => {
+    const value = e.target.value;
+
+    setNoteMessage(value);
+    setUnSavedNotes((prev)=>{
+      const intentedIndex = prev.findIndex(notes=>notes?.key === index);
+      if (intentedIndex !== -1) {
+        const updatedNotes = [...prev]; 
+        updatedNotes[intentedIndex] = {
+            ...updatedNotes[intentedIndex],
+            value: value,
+            testcaseResultInfo: testcaseResultInfo,
+            key: index
+        }
+
+        return updatedNotes; //if an object is found,update that particular object
+        
+    } else {
+        return [...prev, { value, testcaseResultInfo, key: index }];//create a new object if not found
+    }  
+    
+      
+    })
   };
 
   const handleCancelNoteButtonClick = () => {
@@ -70,6 +92,12 @@ export default function VerticalOptions(props) {
         onOk() {
           setNoteMessage(initialNoteMessage);
           setEditMode(false);
+          setUnSavedNotes(prev=>{
+            const intendedIndex = prev.findIndex(note => note.key === index);
+            const updatedNotes = [...prev];
+            updatedNotes.splice(intendedIndex,1);
+            return updatedNotes;
+          })
         },
       });
     } else {
@@ -91,7 +119,7 @@ export default function VerticalOptions(props) {
     setShowNote(!showNote);
   };
 
-  const saveTestcaseResultWithNote = (showNotification = true) => {
+  const saveTestcaseResultWithNote = (index,showNotification = true) => {
     return new Promise((resolve, reject) => {
       if (!isMessageSame()) {
         var notePatch = [
@@ -101,6 +129,13 @@ export default function VerticalOptions(props) {
           .then((res) => {
             setInitialNoteMessage(res.message);
             setEditMode(false);
+            if(!!noteMessage){
+            setUnSavedNotes(prev=>{
+              const updatedUnsavedNotes = [...prev];
+              const intendedIndex = updatedUnsavedNotes.findIndex(note=>note.key === index);
+              updatedUnsavedNotes.splice(intendedIndex,1);
+              return updatedUnsavedNotes;
+            })}
             notification.success({
               className: "notificationSuccess",
               placement: "top",
@@ -463,8 +498,8 @@ export default function VerticalOptions(props) {
     }
   }, [files]);
 
-  const handleSaveNote = async () => {
-    await saveTestcaseResultWithNote();
+  const handleSaveNote = async (index) => {
+    await saveTestcaseResultWithNote(index);
   };
 
   const handleEditNoteButtonClick = () => {
@@ -570,11 +605,13 @@ export default function VerticalOptions(props) {
           {showNote && (
             <div className="text-end m-3 position-relative" id="note-textarea">
               <textarea
+                
                 className="form-control note-text-area"
                 rows="3"
                 disabled={!editMode}
                 value={noteMessage || ""}
-                onChange={handleOnChangeForNote}
+                onChange={(e)=>{handleOnChangeForNote(e,testcaseResultInfo,index)
+                }}
               ></textarea>
               <div className="note-text-area-button-group">
                 {editMode && (
@@ -582,7 +619,7 @@ export default function VerticalOptions(props) {
                     role="button"
                     className="save-btn-for-now fw-bold mx-1"
                     title="Cancel"
-                    onClick={handleCancelNoteButtonClick}
+                    onClick={()=>{handleCancelNoteButtonClick(index)}}
                   >
                     <i className="bi bi-x-lg"></i>
                   </span>
@@ -592,7 +629,7 @@ export default function VerticalOptions(props) {
                     role="button"
                     className="save-btn-for-now fw-bold mx-1"
                     title="Save Note"
-                    onClick={handleSaveNote}
+                    onClick={()=>{handleSaveNote(index)}}
                   >
                     <i className="bi bi-floppy"></i>
                   </span>
