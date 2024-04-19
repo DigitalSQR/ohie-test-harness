@@ -13,6 +13,8 @@ import { DocumentAPI } from "../../../api/DocumentAPI";
 import UseEventEmitter from "../EventEmitter/EventEmitter";
 import { APP_EVENTS } from "../../../constants/event_constants";
 import { NotificationAPI } from "../../../api/NotificationAPI";
+import WebSocketService from "../../../api/WebSocketService";
+
 import {
   NOTIFICATION_STATUS_ARCHIVED,
   NOTIFICATION_STATUS_UNREAD,
@@ -49,10 +51,15 @@ export default function Header({ headerContent, isSidebarOpen }) {
   // Retrieves the user ID from the Redux store.
   const userID = useSelector((store) => store.userInfoSlice.id);
 
+  const token = useSelector((store) => store.authSlice.access_token);
+
   const [notifications, setNotifications] = useState();
 
   //useState for the unread notification count
   const [unreadCount, setUnreadCount] = useState();
+
+  const { stompClient, webSocketConnect, webSocketDisconnect } =
+    WebSocketService();
 
   // Function: getUserInfo
   // Description: Fetches user information from the Redux store and updates the state with the retrieved data. It also fetches the user's display picture URL from the server.
@@ -122,6 +129,25 @@ export default function Header({ headerContent, isSidebarOpen }) {
       })
       .catch((error) => {});
   };
+
+  useEffect(() => {
+    webSocketConnect();
+    if (stompClient && stompClient.connected) {
+      const destination = "/notification/" + userInfo?.id;
+      stompClient.subscribe(
+        destination,
+        (msg) => {
+          const parsedNotifications = JSON.parse(msg.body);
+          setNotifications((prevNotifications) => [
+            parsedNotifications,
+            ...prevNotifications,
+          ]);
+          setUnreadCount((prevCount) => prevCount + 1);
+        },
+        { token: `Bearer ${token}` }
+      );
+    }
+  }, [stompClient]);
 
   useEffect(() => {
     getUserInfo();
