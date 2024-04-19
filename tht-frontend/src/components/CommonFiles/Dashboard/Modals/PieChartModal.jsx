@@ -33,7 +33,7 @@ const PieChartModal = ({ isModalOpen, setIsModalOpen, clickedValue }) => {
   }, [isModalOpen]);
 
   return (
-    <div>
+    <div id="pieChart">
       <Modal
         open={isModalOpen}
         footer={null}

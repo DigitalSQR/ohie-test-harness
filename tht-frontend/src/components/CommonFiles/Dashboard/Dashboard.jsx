@@ -5,7 +5,7 @@ import { UserAPI } from "../../../api/UserAPI";
 import "./dashboard.scss";
 import { USER_ROLES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
-import { Empty } from "antd";
+import { Empty, Tabs } from "antd";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import { getHighestPriorityRole } from "../../../utils/utils";
@@ -14,6 +14,7 @@ import StackedBarGraph from "./Graphs/StackedBarGraph";
 import BarGraph from "./Graphs/BarGraph";
 import PieChart from "./Graphs/PieChart";
 import Statistics from "./Graphs/Statistics";
+import TabPane from "antd/es/tabs/TabPane";
 import { DashboardAPI } from "../../../api/DashboardAPI";
 import { TestRequestStateConstantNames } from "../../../constants/test_requests_constants";
 export default function Dashboard() {
@@ -320,7 +321,7 @@ export default function Dashboard() {
 
         {(role === "ADMIN" || role === "TESTER") && (
           <div className="pt-0">
-            <div className="text-center ">
+            <div className="text-center">
               <div className="d-flex mb-3">
                 {Object.keys(statistics).map((key) => (
                   <Statistics
@@ -407,7 +408,7 @@ export default function Dashboard() {
                 </div>
               }
               <div className="row mt-3">
-                <div className="col-md-4 ">
+                <div className="col-12">
                   <div className="card p-3">
                     <PieChart
                       title={"Application Requests By Status"}
@@ -416,36 +417,52 @@ export default function Dashboard() {
                     />
                   </div>
                 </div>
-                <div className="col-md-8">
-                  <div className="card p-3" style={{ height: "100%" }}>
-                    <div
-                      className="d-flex justify-content-left"
-                      style={{ fontWeight: 600, fontSize: "13px" }}
-                    >
-                      {" "}
-                      <p>Top Compliance By Component</p>
-                    </div>
-                    {componentComplianceData?.length > 0 ? (
-                      componentComplianceData?.map((x, index) => (
-                        <div key={index} className="p-3">
+              </div>
+              <div className="row mt-3 tabCard">
+                <div className="card p-3">
+                  <div
+                    className="d-flex justify-content-left"
+                    style={{ fontWeight: 600, fontSize: "13px" }}
+                  >
+                    {" "}
+                    <p>Top Compliance By Component</p>
+                  </div>
+                  <Tabs defaultActiveKey="1" type="card">
+                    {componentComplianceData?.map((x, index) => (
+                      <TabPane
+                        tab={
+                          <div
+                          style={{
+                            width: "max-content",
+                            maxWidth: "130px", 
+                            whiteSpace: "pre-wrap", 
+                            lineHeight: "1.2",
+                          }}
+                          >
+                            {x.component}
+                          </div>
+                        }
+                        key={index + 1}
+                      >
+                        <div>
                           <ComplianceByComponent
-                            component={x?.component}
                             data={x?.data}
-                            show={false}
+                            component={x.component}
                           />
                         </div>
-                      ))
-                    ) : (
-                      <>
+                      </TabPane>
+                    ))}
+                    {componentComplianceData?.length === 0 && (
+                      <TabPane tab="No Record Found" key="empty">
                         <Empty
                           description="No Record Found."
                           imageStyle={{
                             height: 200,
                           }}
                         />
-                      </>
+                      </TabPane>
                     )}
-                  </div>
+                  </Tabs>
                 </div>
               </div>
             </div>

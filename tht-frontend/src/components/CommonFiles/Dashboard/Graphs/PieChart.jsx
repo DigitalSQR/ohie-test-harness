@@ -3,6 +3,7 @@ import ReactApexChart from "react-apexcharts";
 import { Empty } from "antd";
 import { TestRequestActionStateLabels } from "../../../../constants/test_requests_constants";
 import PieChartModal from "../Modals/PieChartModal";
+import { chartColorConstants } from "../../../../constants/chart_constants";
 const PieChart = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedValue, setClickedValue]=useState();
@@ -40,12 +41,16 @@ const PieChart = (props) => {
       ],
       legend: {
         show: true,
+        position: "bottom",
+        horizontalAlign: "center",
+        fontSize: "12px",
       },
       title: {
         text: props.title,
         offsetY: -10,
         margin: 30,
       },
+      colors: chartColorConstants.map(color => color.code),  
     },
   });
 

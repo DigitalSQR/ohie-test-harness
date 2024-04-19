@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { Empty } from "antd";
+import { chartColorConstants } from "../../../../constants/chart_constants";
 const StackedBarGraph = (props) => {
   const [chartData, setChartData] = useState({
     options: {
@@ -55,6 +56,7 @@ const StackedBarGraph = (props) => {
       fill: {
         opacity: 1,
       },
+      colors: chartColorConstants.map(color => color.code),  
     },
   });
 
