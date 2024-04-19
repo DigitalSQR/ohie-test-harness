@@ -48,13 +48,18 @@ export default function TestcaseVertical(props) {
   const [isModified, setIsModified] = useState(true);
   const [optionsArray,setOptionsArray] = useState([]);
   const [unsavedNotes,setUnSavedNotes] = useState([]);
-
-
   useEffect(() => {
     getCurrentTestcaseResultById(currentTestcase.id);
   }, [currentTestcase]);
 
   const handleSaveandNext = () => {
+    var correctLength = true;
+
+    unsavedNotes.forEach(note=>{
+      if(note.value.length > 2000)
+      {correctLength = false}
+    })
+    if(correctLength){
     const testcaseNos = unsavedNotes.map(note => note.key + 1).join(",");
     if(unsavedNotes.length !== 0){
       Modal.confirm({
@@ -85,6 +90,14 @@ export default function TestcaseVertical(props) {
       selectNextSpecification();
       }
     }
+  }else {
+    notification.error({
+      className:"notificationError",
+      message:"Error",
+      description:"One of your notes exceeds the notes limitation. Please check your notes.",
+      placement:"bottomRight"
+    })
+  }
 
   }
 

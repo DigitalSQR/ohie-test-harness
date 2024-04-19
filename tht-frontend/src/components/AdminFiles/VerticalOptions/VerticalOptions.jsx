@@ -51,13 +51,14 @@ export default function VerticalOptions(props) {
   const [uploadQuestion, setUploadedQuestion] = useState({});
   const [showNote, setShowNote] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [noteMessage, setNoteMessage] = useState();
+  const [noteMessage, setNoteMessage] = useState("");
   const [questionAndDocument, setQuestionAndDocument] = useState([]);
 
   const handleOnChangeForNote = (e,testcaseResultInfo,index) => {
     const value = e.target.value;
-
+    if(value.length <= 2001){
     setNoteMessage(value);
+    }
     setUnSavedNotes((prev)=>{
       const intentedIndex = prev.findIndex(notes=>notes?.key === index);
       if (intentedIndex !== -1) {
@@ -605,7 +606,7 @@ export default function VerticalOptions(props) {
           {showNote && (
             <div className="text-end m-3 position-relative" id="note-textarea">
               <textarea
-                
+                style={{borderColor : noteMessage?.length > 2000 ? "red" : ""}}
                 className="form-control note-text-area"
                 rows="3"
                 disabled={!editMode}
@@ -624,7 +625,7 @@ export default function VerticalOptions(props) {
                     <i className="bi bi-x-lg"></i>
                   </span>
                 )}
-                {editMode && (
+                {editMode && noteMessage.length <= 2000 && (
                   <span
                     role="button"
                     className="save-btn-for-now fw-bold mx-1"
@@ -645,6 +646,7 @@ export default function VerticalOptions(props) {
                   </span>
                 )}
               </div>
+              {noteMessage.length > 2000 && <p style={{color:"red",textAlign:"left"}}>The note can't be longer than 2000 characters.</p>}
             </div>
           )}
           <div className="text-end mb-3">
