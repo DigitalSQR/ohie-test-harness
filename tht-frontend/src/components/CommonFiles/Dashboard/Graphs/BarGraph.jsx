@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import { Empty } from "antd";
+import { chartColorConstants } from "../../../../constants/chart_constants";
 const BarGraph = (props) => {
   const [chartData, setChartData] = useState({
     options: {
@@ -43,6 +44,7 @@ const BarGraph = (props) => {
           },
         },
       },
+      colors: chartColorConstants.map(color => color.code), 
     },
   });
   useEffect(() => {

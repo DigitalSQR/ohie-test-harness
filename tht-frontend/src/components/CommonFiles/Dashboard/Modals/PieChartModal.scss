@@ -1,4 +1,4 @@
-
+#pieChart {
   .pieModalHeading {
     background-color: #fff;
     border-bottom: 1px solid #ccdade;
@@ -8,15 +8,16 @@
     margin-bottom: 1.5rem;
   }
 
-  .pie-grid{
+  .pie-grid {
     text-transform: capitalize;
     font-family: "Inter", sans-serif;
     font-size: 14px;
     line-height: 24px;
     font-weight: 400;
-    color: #51516D;
+    color: #51516d;
   }
 
-  .toLowerCase-words{
+  .toLowerCase-words {
     text-transform: lowercase;
   }
+}
