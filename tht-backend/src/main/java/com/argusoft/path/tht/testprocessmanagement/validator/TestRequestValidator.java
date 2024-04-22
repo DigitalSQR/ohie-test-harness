@@ -396,7 +396,6 @@ public class TestRequestValidator {
 
         //check at least one component/testRequestUrl required
         Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
-        ValidationUtils.validateRequired(urlEntitySet, "test request url", errors);
 
         //loop to check email and password not null in testrequest url
         for (TestRequestUrlEntity entity : urlEntitySet) {
@@ -444,6 +443,8 @@ public class TestRequestValidator {
     private static void validateTestRequestEntityTestRequestUrl(TestRequestEntity testRequestEntity,
                                                                 List<ValidationResultInfo> errors) {
         Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
+        ValidationUtils.validateCollectionSize(urlEntitySet, "testRequestUrl", 1, null, errors);
+
         //loop to check length of email , password, baseUrl in testrequest url
         for (TestRequestUrlEntity entity : urlEntitySet) {
             //check for username
