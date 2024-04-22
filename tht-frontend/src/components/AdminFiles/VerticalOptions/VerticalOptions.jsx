@@ -611,7 +611,7 @@ export default function VerticalOptions(props) {
               <textarea
                 style={{borderColor : noteMessage?.length > 2000 ? "red" : ""}}
                 className="form-control note-text-area"
-                rows="3"
+                rows="2"
                 disabled={!editMode}
                 value={noteMessage || ""}
                 onChange={(e)=>{handleOnChangeForNote(e,testcaseResultInfo,index)
@@ -704,7 +704,7 @@ export default function VerticalOptions(props) {
 
         { !!questionAndDocument &&
         <div className="col-md-3 col-12">
-          <div className="p-2 q-img">
+          <div className=" p-3  q-img">
             <>
               <Image.PreviewGroup>
                 <Carousel

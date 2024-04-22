@@ -203,39 +203,40 @@ export default function Header({ headerContent, isSidebarOpen }) {
                 aria-expanded="false"
                 style={{ position: "relative", display: "inline-block" }}
               >
-                <div style={{ marginRight: "30px", fontSize: "28px" }}>
+                <div style={{ marginRight: "30px", fontSize: "24px" }}>
                   <BellOutlined />
                 </div>
                 {unreadCount > 0 && (
                   <div className="notification-count">{unreadCount}</div>
                 )}
               </div>
-              <ul className="dropdown-menu notification-menu p-3 mt-2" style={{ maxHeight: "90vh", overflowY: "auto" }}>
-                <h5 className="notification-header">Notifications</h5>
+              <ul className="dropdown-menu notification-menu  mt-2" style={{ maxHeight: "90vh", overflowY: "auto" }}>
+                <h5 className="notification-header  p-3"><i class="bi bi-bell me-1 fw-bold"></i>Notifications <span style={{fontSize:"12px",fontWeight:"bold",float:"right",textDecoration:"underline"}}> Archive All Notifications</span></h5>
                 {notifications && notifications.length > 0 && (
                   <>
-                    {unreadCount > 0 && (
+                    {/* {unreadCount > 0 && (
                       <button
                         className="archive-all-notifications-btn"
                         onClick={bulkArchiveNotifications}
                       >
                         Archive All Notifications
                       </button>
-                    )}
+                    )} */}
                     {notifications.map((notification, index) =>
                       notification.state === NOTIFICATION_STATUS_UNREAD ? (
                         <li
                           key={notification.id}
-                          className="list-group-item rounded mt-2 notification-item d-flex justify-content-between"
+                          className="list-group-item  notification-item"
                         >
                           <div>{notification.message}</div>
-                          <div style={{marginLeft:"1rem"}}>
+                          <div className="delete-icon">
                             <DeleteOutlined
                               onClick={(event) =>
                                  handleDeleteNotification(notification.id, event)
                             } 
                           />
                         </div>
+                        <div className="time-stamp">12/08/2024 05:53</div>
                       </li>
                     ) : null
                     )}

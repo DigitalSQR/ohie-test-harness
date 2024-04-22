@@ -2,6 +2,7 @@
   ::-webkit-scrollbar {
     display: none;
   }
+
   #wrapper {
     transition: 0.5s;
     margin-left: 230px;
@@ -518,9 +519,10 @@
     margin-bottom: 30px !important;
     border-radius: 6px;
   }
+
   .custom-breadcrumb .breadcrumb-item {
     text-decoration: none;
-  } 
+  }
 }
 
 .vertical-tab-list {
@@ -565,6 +567,7 @@
     &:hover {
       background: #009fc8;
     }
+
     .completed-questions {
       color: #fff;
     }
@@ -575,4 +578,10 @@
 
 .ant-tabs-nav-list .ant-tabs-tab:nth-child(8) {
   border-bottom-left-radius: 16px;
+}
+
+.vertical-tab-wrapper {
+  .ant-tabs-nav {
+    height: calc(100vh - 294px);
+  }
 }
