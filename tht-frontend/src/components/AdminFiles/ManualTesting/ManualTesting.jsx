@@ -505,10 +505,10 @@ export default function ManualTesting() {
         </div>
         <div className="vertical-tab-list">
           {!!currentSpecification && (
-            <Tabs
-              style={{
-                height: 580,
-              }}
+            <Tabs className="vertical-tab-wrapper"
+              // style={{
+              //   height: "calc(100vh - 414px)",
+              // }}
               destroyInactiveTabPane={true}
               tabPosition={isTop ? 'top' : 'left'}
               activeKey={currentSpecificationIndex.toString()}

@@ -156,23 +156,28 @@
     width: 25rem;
     min-height: 20rem;
     li{
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 500;
     }
   }
 
   .notification-item {
-    padding: 14px 14px 8px 14px;
+    padding: 10px 14px 8px 14px;
     color: #4f6072;
     line-height: 16px;
+    font-weight: 700;
+    
     border-bottom: 1px solid #d7e0e3;
     font-weight: normal;
+    position: relative;
+    padding-right: 54px;
     &:last-of-type{
       border-bottom: none;
     }
     &:hover{
-      background: #f7f7f7;
+      background: #f5f7f7;
       color: #000;
-      font-weight: 600;
+      // font-weight: 600;
       .time-stamp{
         font-size: 11px;
         padding-top: 8px;
@@ -183,6 +188,23 @@
       font-size: 11px;
       padding-top: 8px;
       color: #97a4af;
+      font-weight: normal;
+    }
+    .delete-icon{
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #eaeff1;
+      color: #2d4046;
+      text-align: center;
+      line-height: 36px;
+      .anticon-delete{
+        color: #9eb1b9;
+      }
     }
   }
 

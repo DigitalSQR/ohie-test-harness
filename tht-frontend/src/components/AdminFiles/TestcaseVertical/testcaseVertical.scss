@@ -100,7 +100,7 @@
     }
   
     .note-text-area {
-      min-height: 200px !important;
+      // min-height: 200px !important;
     }
   
     .save-btn-for-now {
@@ -151,7 +151,7 @@
       background: #364d79;
     }      
  
-    height: 62vh;
+    height:calc(100vh - 336px) ;
     overflow-y:auto;
   }
   .question-list{
