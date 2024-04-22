@@ -16,6 +16,7 @@ import { set_header } from "../../../reducers/homeReducer";
 import WebSocketService from "../../../api/WebSocketService";
 import VerificationGuidelines from "./Verification-Guidelines/VerificationGuidelines";
 import { AutomatedVerificationGuidelines, ManualVerificationGuidelines } from "../../../constants/guidelines_constants";
+import {  TestRequestStateConstants } from "../../../constants/test_requests_constants";
 /* 
   Choose Test page
 
@@ -180,8 +181,13 @@ export default function ChooseTest() {
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
+        if(res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED){
+          navigate("/applications")
+        }
+        else{
         setTestCaseName(res.name);
         dispatch(set_header(res.name));
+        }
       }).catch((error) => {
 
       });
@@ -241,6 +247,7 @@ export default function ChooseTest() {
           const newTab = window.open(`/application-report/${testRequestId}`, '_blank');
           newTab.focus();      
           navigate(`/applications`);
+
         })
         .catch((err) => {       
         }); 
