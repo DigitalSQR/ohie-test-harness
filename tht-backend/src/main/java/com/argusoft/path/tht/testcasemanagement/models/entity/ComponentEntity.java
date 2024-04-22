@@ -60,6 +60,16 @@ public class ComponentEntity extends IdStateNameMetaEntity {
         return specifications;
     }
 
+    @Override
+    public String toString() {
+        return "ComponentEntity{" +
+                "id=" + this.getId() +
+                ", name=" + this.getName() +
+                ", rank=" + rank +
+                ", specifications=" + specifications +
+                '}';
+    }
+
     public void setSpecifications(Set<SpecificationEntity> specifications) {
         this.specifications = specifications;
     }
