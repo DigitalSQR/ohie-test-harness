@@ -4,7 +4,7 @@ import "./verticalOptions.scss";
 import { useLoader } from "../../loader/LoaderContext";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { TestResultRelationAPI } from "../../../api/TestResultRelationAPI";
-import { Button, Tooltip, notification, Carousel, Image, Modal } from "antd";
+import { Button, notification, Carousel, Image, Modal } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { ManualQuestionTypeConstants } from "../../../constants/testcase_constants";
 import { DocumentAPI } from "../../../api/DocumentAPI";
@@ -16,6 +16,8 @@ import {
 } from "../../../constants/document_constants";
 import { fileTypeIcon } from "../../../utils/utils";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+
 
 /* 
 	Vertical Options Component.
@@ -535,7 +537,8 @@ export default function VerticalOptions(props) {
         </div>
       </div>
       <div className="row">
-        <div className="col-md-9 col-12 question">
+        
+        <div className={questionAndDocument.length !== 0 ? "col-md-9 col-12 question" : "col-md-12 question"}>
           <div className="custom-multiselect field-checkbox">
             {options &&
               options.map((option, index) => (
@@ -625,7 +628,7 @@ export default function VerticalOptions(props) {
                     <i className="bi bi-x-lg"></i>
                   </span>
                 )}
-                {editMode && noteMessage.length <= 2000 && (
+                {editMode && noteMessage?.length <= 2000 && (
                   <span
                     role="button"
                     className="save-btn-for-now fw-bold mx-1"
@@ -646,7 +649,7 @@ export default function VerticalOptions(props) {
                   </span>
                 )}
               </div>
-              {noteMessage.length > 2000 && <p style={{color:"red",textAlign:"left"}}>The note can't be longer than 2000 characters.</p>}
+              {noteMessage?.length > 2000 && <p style={{color:"red",textAlign:"left"}}>The note can't be longer than 2000 characters.</p>}
             </div>
           )}
           <div className="text-end mb-3">
@@ -673,13 +676,13 @@ export default function VerticalOptions(props) {
               >
                 <i className="bi bi-paperclip rotate"></i>
                 Add Attachments
-                {/* <OverlayTrigger
-                              placement="right"
+                <OverlayTrigger
+                              placement="top"
                               delay={{ show: 250, hide: 400 }}
                               overlay={renderTooltip}
                             >
                               <i className="bi bi-info-circle-fill document-tooltip-info"></i>
-                            </OverlayTrigger> */}
+                            </OverlayTrigger>
               </button>
               <button
                 type="button"
@@ -698,8 +701,10 @@ export default function VerticalOptions(props) {
             </div>
           </div>
         </div>
+
+        { !!questionAndDocument &&
         <div className="col-md-3 col-12">
-          <div className=" p-2 pt-5 q-img">
+          <div className="p-2 q-img">
             <>
               <Image.PreviewGroup>
                 <Carousel
@@ -723,6 +728,7 @@ export default function VerticalOptions(props) {
             </>
           </div>
         </div>
+}
       </div>
     </div>
   );
