@@ -22,8 +22,8 @@ VALUES
         'Logistic management information system Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-logistics-management-information-system-lmis)',
         'component.status.inactive',
         7,
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
+        'SYSTEM_USER',
+        'SYSTEM_USER',
         Now(),
         Now(),
         0

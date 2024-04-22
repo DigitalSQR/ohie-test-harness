@@ -22,10 +22,9 @@ public class TestcaseExecutionStartEvent extends ApplicationEvent {
     private final Boolean isFunctional;
     private final Boolean isRequired;
     private final Boolean isRecommended;
-    private final Map<String, IGenericClient> iGenericClientMap;
     private final ContextInfo contextInfo;
 
-    public TestcaseExecutionStartEvent(Object testRequestId, List<String> testcaseResultEntityIds, String refId, String refObjUri, Boolean isWorkflow, Boolean isFunctional, Boolean isRequired, Boolean isRecommended, Map<String, IGenericClient> iGenericClientMap, ContextInfo contextInfo) {
+    public TestcaseExecutionStartEvent(Object testRequestId, List<String> testcaseResultEntityIds, String refId, String refObjUri, Boolean isWorkflow, Boolean isFunctional, Boolean isRequired, Boolean isRecommended, ContextInfo contextInfo) {
         super(testRequestId);
         this.testcaseResultEntityIds = testcaseResultEntityIds;
         this.refId = refId;
@@ -34,7 +33,6 @@ public class TestcaseExecutionStartEvent extends ApplicationEvent {
         this.isFunctional = isFunctional;
         this.isRequired = isRequired;
         this.isRecommended = isRecommended;
-        this.iGenericClientMap = iGenericClientMap;
         this.contextInfo = contextInfo;
     }
 
@@ -65,11 +63,6 @@ public class TestcaseExecutionStartEvent extends ApplicationEvent {
     public Boolean getRecommended() {
         return isRecommended;
     }
-
-    public Map<String, IGenericClient> getiGenericClientMap() {
-        return iGenericClientMap;
-    }
-
     public ContextInfo getContextInfo() {
         return contextInfo;
     }

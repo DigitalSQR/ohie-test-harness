@@ -65,7 +65,7 @@ public class TestcaseServiceImplTest extends TestingHarnessToolTestConfiguration
         testcaseEntity.setCreatedAt(new Date());
         testcaseEntity.setUpdatedAt(new Date());
         testcaseEntity.setManual(true);
-        TestcaseEntity resultantTestcaseEntity = testcaseService.createTestcase(testcaseEntity, contextInfo);
+        TestcaseEntity resultantTestcaseEntity = testcaseService.createTestcase(testcaseEntity, null, contextInfo);
         assertEquals(testcaseEntity.getId(), resultantTestcaseEntity.getId());
 
 
@@ -76,19 +76,19 @@ public class TestcaseServiceImplTest extends TestingHarnessToolTestConfiguration
         testcaseEntity.setRank(1);
         testcaseEntity.setSpecification(specificationService.getSpecificationById("specification.01", contextInfo));
 
-        resultantTestcaseEntity = testcaseService.createTestcase(testcaseEntity, contextInfo);
+        resultantTestcaseEntity = testcaseService.createTestcase(testcaseEntity, null, contextInfo);
         assertEquals(testcaseEntity.getName(), resultantTestcaseEntity.getName());
 
         //Test case 3 : testcaseEntity is null
         TestcaseEntity testcaseEntity2 = null;
 
         assertThrows(InvalidParameterException.class, () -> {
-            testcaseService.createTestcase(testcaseEntity2, contextInfo);
+            testcaseService.createTestcase(testcaseEntity2, null, contextInfo);
         });
 
         // Test case 4 : Create a new testcase with same id
         assertThrows(DataValidationErrorException.class, () -> {
-            testcaseService.createTestcase(testcaseEntity, contextInfo);
+            testcaseService.createTestcase(testcaseEntity, null, contextInfo);
         });
 
         // Test case 5 : Create a new testcase to validate Specification
@@ -104,7 +104,7 @@ public class TestcaseServiceImplTest extends TestingHarnessToolTestConfiguration
         testcaseEntity1.setSpecification(specificationEntity);
 
         assertThrows(DataValidationErrorException.class, () -> {
-            testcaseService.createTestcase(testcaseEntity1, contextInfo);
+            testcaseService.createTestcase(testcaseEntity1, null, contextInfo);
         });
 
     }
@@ -120,7 +120,7 @@ public class TestcaseServiceImplTest extends TestingHarnessToolTestConfiguration
         testcaseEntity.setName("Updated testcase name");
         testcaseEntity.setDescription("Updated testcase description");
 
-        TestcaseEntity updatedTestcase = testcaseService.updateTestcase(testcaseEntity, contextInfo);
+        TestcaseEntity updatedTestcase = testcaseService.updateTestcase(testcaseEntity, null, contextInfo);
         assertEquals(testcaseEntity.getName(), updatedTestcase.getName());
         assertEquals(testcaseEntity.getDescription(), updatedTestcase.getDescription());
         assertEquals(testcaseEntity.getRank(), updatedTestcase.getRank());
@@ -130,7 +130,7 @@ public class TestcaseServiceImplTest extends TestingHarnessToolTestConfiguration
         TestcaseEntity testcaseEntity1 = null;
 
         assertThrows(InvalidParameterException.class, () -> {
-            testcaseService.updateTestcase(testcaseEntity1, contextInfo);
+            testcaseService.updateTestcase(testcaseEntity1, null, contextInfo);
         });
 
         // Test case 3 : Given testcase id does not exist
@@ -139,7 +139,7 @@ public class TestcaseServiceImplTest extends TestingHarnessToolTestConfiguration
         testcaseEntity2.setName("Updated name");
 
         assertThrows(DataValidationErrorException.class, () -> {
-            testcaseService.updateTestcase(testcaseEntity2, contextInfo);
+            testcaseService.updateTestcase(testcaseEntity2, null, contextInfo);
         });
 
         // Test case 4 : Testcase update with wrong version
@@ -174,36 +174,36 @@ public class TestcaseServiceImplTest extends TestingHarnessToolTestConfiguration
         TestcaseEntity testcaseEntity = testcaseService.getTestcaseById("testcase.03", contextInfo);
         String validationTypeKey = "update.validation.test";
         assertThrows(InvalidParameterException.class, () -> {
-            testcaseService.validateTestcase(validationTypeKey, testcaseEntity, contextInfo);
+            testcaseService.validateTestcase(validationTypeKey, null, testcaseEntity, contextInfo);
         });
 
         //when validation type key is null
         assertThrows(InvalidParameterException.class, () -> {
-            testcaseService.validateTestcase(null,testcaseEntity , contextInfo);
+            testcaseService.validateTestcase(null, null, testcaseEntity, contextInfo);
         });
 
         // when testcase entity is null
         assertThrows(InvalidParameterException.class,() ->{
-            testcaseService.validateTestcase(validationTypeKey,null , contextInfo);
+            testcaseService.validateTestcase(validationTypeKey, null, null, contextInfo);
         });
 
         //validating beanName with valid beanName
         TestcaseEntity testcaseEntity2 = testcaseService.getTestcaseById("testcase.03", contextInfo);
         testcaseEntity2.setBeanName("CRWF1TestCase1");
-        testcaseService.updateTestcase(testcaseEntity, contextInfo);
+        testcaseService.updateTestcase(testcaseEntity, null, contextInfo);
 
         //validating beanName with invalid beanName
         TestcaseEntity testcaseEntity3 = new TestcaseEntity();
         testcaseEntity3.setBeanName("a".repeat(256));
         assertThrows(DataValidationErrorException.class, () -> {
-            testcaseService.updateTestcase(testcaseEntity3,contextInfo);
+            testcaseService.updateTestcase(testcaseEntity3, null, contextInfo);
         });
 
         //validate common foreign key
         TestcaseEntity testcaseEntity4 = new TestcaseEntity();
         testcaseEntity4.getSpecification();
         assertThrows(DataValidationErrorException.class, () -> {
-            testcaseService.updateTestcase(testcaseEntity3,contextInfo);
+            testcaseService.updateTestcase(testcaseEntity3, null, contextInfo);
         });
     }
 

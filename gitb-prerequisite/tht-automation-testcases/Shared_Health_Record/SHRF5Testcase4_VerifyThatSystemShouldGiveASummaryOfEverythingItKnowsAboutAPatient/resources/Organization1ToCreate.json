@@ -1,0 +1,13 @@
+{
+    "resourceType" : "Organization",
+    "name" : "Good Health Clinic",
+    "telecom" : [ {
+      "system" : "phone",
+      "value" : "111-111-111",
+      "use" : "mobile"
+    } ],
+    "address" : [ {
+      "city" : "Gandhinagar",
+      "country" : "India"
+    } ]
+  }

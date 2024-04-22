@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase id="tswf4_query_concept_maps_operation" xmlns="http://www.gitb.com/tdl/v1/" xmlns:gitb="http://www.gitb.com/core/v1/">
+    <metadata>
+		<gitb:name>Query Concept Maps</gitb:name>
+		<gitb:type>CONFORMANCE</gitb:type>
+		<gitb:version>1.0</gitb:version>
+		<gitb:description>Test case to query conceptMap based on different parameter</gitb:description>
+	</metadata>
+    <imports>
+        <!-- read data from the JSON stores in name as json string-->
+        <artifact type="binary" encoding="UTF-8" name="conceptMapToCreateInJsonString">/TSWF4_QueryConceptMaps/resources/ConceptMapToCreate.json</artifact>
+        <artifact type="binary" encoding="UTF-8" name="conceptMap2ToCreateInJsonString">/TSWF4_QueryConceptMaps/resources/ConceptMap2ToCreate.json</artifact>
+    </imports>
+    <variables>
+        <var name="componentURI" type="string"/>
+        <var name="username" type="string"/>
+        <var name="password" type="string"/>
+    </variables>
+    <actors>
+		<gitb:actor id="ITB" name="ITB" role="SUT"/>
+		<gitb:actor id="FhirHandler" name="FhirHandlers" role="SIMULATED"/>
+	</actors>
+    <steps stopOnError="true">
+        <!-- Steps for creating first conceptMap -->
+        <!-- assigning value -->
+        <assign to="resourceType" type="string">'ConceptMap'</assign>
+
+        <send id="conceptMapToCreate" desc="Convert conceptMap jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$conceptMapToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!-- Add log -->
+        <log>'Converted ConceptMap Data'</log>
+        <log>$conceptMapToCreate</log>
+
+        <!-- Create ConceptMap -->
+        <send id="createdConceptMap" desc="Create ConceptMap in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$conceptMapToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created ConceptMap Data'</log>
+        <log>$createdConceptMap</log>
+
+        <!--
+            verify conceptMap creation
+        -->
+        <verify id="verifyConceptMapCreation" handler="StringValidator" desc="Check conceptMap got created successfully or not with correct data.">
+            <input name="actualstring">$createdConceptMap{response}{body}{date}</input>
+            <input name="expectedstring">'2024-04-08'</input>
+        </verify>
+
+
+         <!-- Steps for creating second conceptMap -->
+        <send id="conceptMap2ToCreate" desc="Convert conceptMap2 jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$conceptMap2ToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!-- Add log -->
+        <log>'Converted ConceptMap2 Data'</log>
+        <log>$conceptMap2ToCreate</log>
+
+        <!-- Create second ConceptMap -->
+        <send id="createdConceptMap2" desc="Create ConceptMap2 in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$conceptMap2ToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created ConceptMap Data'</log>
+        <log>$createdConceptMap2</log>
+
+        <!--
+            verify second conceptMap creation
+        -->
+        <verify id="verifyConceptMap2Creation" handler="StringValidator" desc="Check conceptMap2 got created successfully or not with correct data.">
+            <input name="actualstring">$createdConceptMap2{response}{body}{publisher}</input>
+            <input name="expectedstring">'Organization Name'</input>
+        </verify>
+
+        <!-- Search by Url -->
+        <send id="searchedConceptMapByUrl" desc="Search ConceptMap by url from the FHIR server" from="ITB" to="FhirHandler"
+        handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="httpMethod">GET</input>
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="fhirResourceType">'ConceptMap'</input>
+            <input name="operationType">"search"</input>
+            <input name="parameters">"url=http://example.org/conceptmaps"</input>
+        </send>
+
+        <log>'Searched ConceptMap based on url'</log>
+        <log>$searchedConceptMapByUrl</log>
+
+        <!-- verifying search by url -->
+        <verify id="verifySearchedConceptMapByUrl" handler="NumberValidator" desc="Verifying search by url">
+            <input name="actualnumber">$searchedConceptMapByUrl{response}{body}{total}</input>
+            <input name="expectednumber">'1'</input>
+        </verify>
+
+        <!-- Search by Status and Date -->
+        <send id="searchedConceptMapByParam" desc="Search ConceptMap by status and date from the FHIR server" from="ITB" to="FhirHandler"
+            handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="httpMethod">GET</input>
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="fhirResourceType">'ConceptMap'</input>
+            <input name="operationType">"search"</input>
+            <input name="parameters">"status=active&amp;date=2024-04-08"</input>
+        </send>
+
+        <log>'Searched ConceptMap based on status and date'</log>
+        <log>$searchedConceptMapByParam</log>
+
+         <!-- verifying search by status and date -->
+        <verify id="verifySearchedConceptMapByParam" handler="NumberValidator" desc="Verifying search by status and date">
+            <input name="actualnumber">$searchedConceptMapByParam{response}{body}{total}</input>
+            <input name="expectednumber">'2'</input>
+        </verify>
+
+         <!-- Search by Source uri -->
+        <send id="searchedConceptMapBySourceUri" desc="Search ConceptMap by sourceUri from the FHIR server" from="ITB" to="FhirHandler"
+        handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="httpMethod">GET</input>
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="fhirResourceType">'ConceptMap'</input>
+            <input name="operationType">"search"</input>
+            <input name="parameters">"source-system=http://example.org/codesystem/source&amp;_id="|| $createdConceptMap2{response}{body}{id}</input>
+        </send>
+        <log>'Searched ConceptMap based on source uri'</log>
+        <log>$searchedConceptMapBySourceUri</log>
+
+        <!-- verifying search by source uri -->
+        <verify id="verifySearchedConceptMapBySourceUri" handler="StringValidator" desc="Verifying search by Source uri">
+            <input name="actualstring">$searchedConceptMapBySourceUri{response}{body}{entry}{0}{resource}{url}</input>
+            <input name="expectedstring">"http://example.org/conceptmaps"</input>
+        </verify>
+
+        <!-- Search by Target uri -->
+        <send id="searchedConceptMapByTargetUri" desc="Search ConceptMap by targetUri from the FHIR server" from="ITB" to="FhirHandler"
+        handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="httpMethod">GET</input>
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="fhirResourceType">'ConceptMap'</input>
+            <input name="operationType">"search"</input>
+            <input name="parameters">"target-system=http://hl7.org/fhir/v2/0396&amp;_id=" || $createdConceptMap{response}{body}{id}</input>
+        </send>
+
+        <log>'Searched ConceptMap based on target uri'</log>
+        <log>$searchedConceptMapByTargetUri</log>
+
+        <!-- verifying search by target uri -->
+        <verify id="verifySearchedConceptMapByTargetUri" handler="StringValidator" desc="Verifying search by target Uri ">
+            <input name="actualstring">$searchedConceptMapByTargetUri{response}{body}{entry}{0}{resource}{description}</input>
+            <input name="expectedstring">"An example concept map illustrating mapping b/w different code systems."</input>
+        </verify>
+        
+        <!-- Search by Source code -->
+        <send id="searchedConceptMapBySourceCode" desc="Search ConceptMap by source code from the FHIR server" from="ITB" to="FhirHandler"
+        handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="httpMethod">GET</input>
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="fhirResourceType">'ConceptMap'</input>
+            <input name="operationType">"search"</input>
+            <input name="parameters">"source-code=ACT&amp;_id=" || $createdConceptMap{response}{body}{id}</input>
+        </send>
+        <log>'Searched ConceptMap based on source code'</log>
+        <log>$searchedConceptMapBySourceCode</log>
+
+
+        <!-- verifying search by source code -->
+        <verify id="verifySearchedConceptMapBySourceCode" handler="StringValidator" desc="Verifying search by source code ">
+            <input name="actualstring">$searchedConceptMapBySourceCode{response}{body}{entry}{0}{resource}{group}{0}{element}{0}{target}{1}{code}</input>
+            <input name="expectedstring">"WPA"</input>
+        </verify>
+
+        <!-- delete conceptMap -->
+        <send id="deleteConceptMap" desc="delete conceptMap from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"delete"</input>
+            <input name="fhirResourceType">$resourceType</input>
+            <input name="fhirResourceId">$createdConceptMap{response}{body}{id}</input>
+        </send>
+     
+        <log>'Delete ConceptMap Response'</log>
+        <log>$deleteConceptMap</log>
+
+        <!-- delete conceptMap2 -->
+        <send id="deleteConceptMap2" desc="delete conceptMap2 from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"delete"</input>
+            <input name="fhirResourceType">$resourceType</input>
+            <input name="fhirResourceId">$createdConceptMap2{response}{body}{id}</input>
+        </send>
+     
+        <log>'Delete ConceptMap2 Response'</log>
+        <log>$deleteConceptMap2</log>
+
+    </steps>
+
+    <output>
+        <success>
+            <default>"Test case completed successfully."</default>
+        </success>
+        <failure>
+           <case>
+                <cond>$STEP_STATUS{conceptMapToCreate} = 'ERROR'</cond>
+                <message>"Failed to convert first conceptMap type (jsonString to anyContent)."</message>
+            </case>     
+            <case>
+                <cond>$STEP_STATUS{createdConceptMap} = 'ERROR'</cond>
+                <message>"Failed to create first conceptMap"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyConceptMapCreation} = 'ERROR'</cond>
+                <message>"Failed to verify first conceptMap creation"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{conceptMap2ToCreate} = 'ERROR'</cond>
+                <message>"Failed to convert second conceptMap type (jsonString to anyContent)."</message>
+            </case>     
+            <case>
+                <cond>$STEP_STATUS{createdConceptMap2} = 'ERROR'</cond>
+                <message>"Failed to create second conceptMap"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyConceptMap2Creation} = 'ERROR'</cond>
+                <message>"Failed to verify second conceptMap creation"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{searchedConceptMapByUrl} = 'ERROR'</cond>
+                <message>"Failed to perform search operation based on url"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedConceptMapByUrl} = 'ERROR'</cond>
+                <message>"Invalid result for the search operation based on url"</message>
+            </case>   
+            <case>
+                <cond>$STEP_STATUS{searchedConceptMapByParam} = 'ERROR'</cond>
+                <message>"Failed to perform search operation based on date and status"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedConceptMapByParam} = 'ERROR'</cond>
+                <message>"Invalid result for the search operation based on date and status"</message>
+            </case> 
+            <case>
+                <cond>$STEP_STATUS{searchedConceptMapBySourceUri} = 'ERROR'</cond>
+                <message>"Failed to perform search operation based on source url"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedConceptMapBySourceUri} = 'ERROR'</cond>
+                <message>"Invalid result for the search operation based on source url"</message>
+            </case> 
+            <case>
+                <cond>$STEP_STATUS{searchedConceptMapByTargetUri} = 'ERROR'</cond>
+                <message>"Failed to perform search operation based on target url"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedConceptMapByTargetUri} = 'ERROR'</cond>
+                <message>"Invalid result for the search operation based on target url"</message>
+            </case> 
+             <case>
+                <cond>$STEP_STATUS{searchedConceptMapBySourceCode} = 'ERROR'</cond>
+                <message>"Failed to perform search operation based on source code"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedConceptMapBySourceCode} = 'ERROR'</cond>
+                <message>"Invalid result for the search operation based on source code"</message>
+            </case> 
+            <case>
+                <cond>$STEP_STATUS{deleteConceptMap} = 'ERROR'</cond>
+                <message>"Failed to delete first conceptMap"</message>
+            </case> 
+            <case>
+                <cond>$STEP_STATUS{deleteConceptMap2} = 'ERROR'</cond>
+                <message>"Failed to delete second conceptMap"</message>
+            </case>                   
+            <default>"Test case failed. Please check the failed step's report for more information and the test log."</default> 
+        </failure>
+    </output>  
+</testcase>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase id="frwf1_verify_create_and_query_location_by_organization_operation" xmlns="http://www.gitb.com/tdl/v1/" xmlns:gitb="http://www.gitb.com/core/v1/">
+    <metadata>
+		<gitb:name>Create and query location by organization workflow.</gitb:name>
+		<gitb:type>CONFORMANCE</gitb:type>
+		<gitb:version>1.0</gitb:version>
+		<gitb:description>Test case to verify create and query location by organization workflow.</gitb:description>
+	</metadata>
+    <imports>
+        <!-- read data from the JSON stores in name as json string-->
+        <artifact type="binary" encoding="UTF-8" name="organizationToCreateInJsonString">/FRWF1_CreateAndQueryLocationByOrganization/resources/OrganizationToCreate.json</artifact>
+        <artifact type="binary" encoding="UTF-8" name="locationToCreateInJsonString">/FRWF1_CreateAndQueryLocationByOrganization/resources/LocationToCreate.json</artifact>
+    </imports>
+    <variables>
+        <var name="componentURI" type="string"/>
+        <var name="username" type="string"/>
+        <var name="password" type="string"/>
+    </variables>
+    <actors>
+		<gitb:actor id="ITB" name="ITB" role="SUT"/>
+		<gitb:actor id="FhirHandler" name="FhirHandlers" role="SIMULATED"/>
+	</actors>
+    <steps stopOnError="true">
+
+        <assign to="resourceType" type="string">'Organization'</assign>
+        <assign to="resourceType2" type="string">'Location'</assign>
+
+        <!-- Create new orgnization -->
+        <send id="organizationToCreate" desc="Convert organizationToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$organizationToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send> 
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Organization Data'</log>
+        <log>$organizationToCreate</log>
+
+         <send id="createdOrganization" desc="Create Orgnization in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$organizationToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Organization Data'</log>
+        <log>$createdOrganization</log> 
+
+
+        <verify id="verifyCreateOrganization" handler="StringValidator" desc="Verify create organization">
+            <input name="actualstring">$createdOrganization{response}{body}{name}</input>
+            <input name="expectedstring">"Health Level Seven International"</input>
+        </verify>
+
+       
+
+         <!-- Create new location -->
+        <send id="locationToCreate" desc="Convert locationToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$locationToCreateInJsonString</input>
+             <input name="id">$createdOrganization{response}{body}{id}</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Location Data'</log>
+        <log>$locationToCreate</log>
+
+         <assign to="$locationToCreate{convertedBody}{managingOrganization}{reference}">"#" || $createdOrganization{response}{body}{id}</assign>
+
+
+        <send id="createdLocation" desc="Create Location in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$locationToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Location Data'</log>
+        <log>$createdLocation</log>
+
+        <verify id="verifyCreateLocation" handler="StringValidator" desc="Verify create Location">
+            <input name="actualstring">$createdLocation{response}{body}{name}</input>
+            <input name="expectedstring">"South Wing, second floor"</input>
+        </verify>
+
+        <verify id="fetchOrganizationFromLocation" handler="StringValidator" desc="Verify fetch organization from location">
+            <input name="actualstring">$createdLocation{response}{body}{managingOrganization}{reference}</input>
+            <input name="expectedstring">"#" || $createdOrganization{response}{body}{id}</input>
+        </verify>
+
+ 
+         <!--
+            Verify searching organization by name and id 
+        -->
+ 
+        <send id="searchedOrgnization" desc="Search organization by name from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"search"</input>
+            <input name="fhirResourceType">$resourceType</input>
+            <input name="parameters">"name=Health%20Level%20Seven%20International&amp;_id=" || $createdOrganization{response}{body}{id}</input>
+        </send>
+     
+        <log>'Searched Orgnization Data by name'</log>
+        <log>$searchedOrgnization</log>
+
+        <verify id="verifySearchedOrgnizationByName" handler="StringValidator" desc="Verify search organization by name">
+            <input name="actualstring">$searchedOrgnization{response}{body}{total}</input>
+            <input name="expectedstring">1</input>
+        </verify>
+
+
+       
+        <!--
+            Verify searching location by name and id 
+        -->
+ 
+
+        <send id="searchedLocation" desc="Search location by name from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"search"</input>
+            <input name="fhirResourceType">$resourceType2</input>
+            <input name="parameters">"name=South%20Wing,%20second%20floor&amp;_id=" || $createdLocation{response}{body}{id}</input>
+        </send>
+     
+        <log>'Searched Location Data by name and id'</log>
+        <log>$searchedLocation</log>
+
+        <verify id="verifySearchLocationByName" handler="StringValidator" desc="Verify search location by name">
+            <input name="actualstring">$searchedLocation{response}{body}{total}</input>
+            <input name="expectedstring">1</input>
+        </verify>
+
+
+    </steps>
+
+    <output>
+        <success>
+            <default>"Test case completed successfully."</default>
+        </success>
+        <failure>
+            <case>
+                <cond>$STEP_STATUS{verifyCreateOrganization} = 'ERROR'</cond>
+                <message>"The organization was not successfully created."</message>
+            </case>     
+            <case>
+                <cond>$STEP_STATUS{verifySearchedOrgnizationByName} = 'ERROR'</cond>
+                <message>"Search operation for the organization by name is failed."</message>
+            </case>  
+            <case>
+                <cond>$STEP_STATUS{verifyCreateLocation} = 'ERROR'</cond>
+                <message>"The location was not successfully created."</message>
+            </case>     
+             <case>
+                <cond>$STEP_STATUS{fetchOrganizationFromLocation} = 'ERROR'</cond>
+                <message>"Fetch operation for the location by organization is failed."</message>
+            </case> 
+            <case>
+                <cond>$STEP_STATUS{verifySearchLocationByName} = 'ERROR'</cond>
+                <message>"Search operation for the location by name is failed."</message>
+            </case>     
+            <default>"Test case failed. Please check the failed step's report for more information and the test log."</default>
+        </failure>
+    </output>  
+</testcase>

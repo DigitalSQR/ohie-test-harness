@@ -1,0 +1,17 @@
+{
+  "resourceType" : "Practitioner",
+  "identifier" : [ {
+    "system" : "urn:oid:1.2.3.4.5.6",
+    "value" : "00010"
+  } ],
+  "name" : [ {
+    "given" : [ "Smith" ]
+  } ],
+  "telecom" : [ {
+    "system" : "phone",
+    "value" : "888-888-8888",
+    "use" : "mobile"
+  } ],
+  "gender" : "male",
+  "birthDate" : "1962-12-12"
+}

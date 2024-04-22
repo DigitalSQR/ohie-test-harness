@@ -151,6 +151,9 @@ public class TestcaseResultValidator {
         // For :Message
         validateTestcaseResultEntityMessage(testcaseResultEntity,
                 errors);
+        // For :FailureMessage
+        validateTestcaseResultEntityFailureMessage(testcaseResultEntity,
+                errors);
 
         return errors;
     }
@@ -402,6 +405,16 @@ public class TestcaseResultValidator {
                 errors);
     }
 
+    //Validation For :FailureMessage
+    private static void validateTestcaseResultEntityFailureMessage(TestcaseResultEntity testcaseResultEntity,
+                                                            List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseResultEntity.getFailureMessage(),
+                "failureMessage",
+                0,
+                2000,
+                errors);
+    }
+
     //trim all TestcaseResult field
     private static void trimTestcaseResult(TestcaseResultEntity testcaseResultEntity) {
         if (testcaseResultEntity.getId() != null) {
@@ -415,6 +428,9 @@ public class TestcaseResultValidator {
         }
         if (testcaseResultEntity.getMessage() != null) {
             testcaseResultEntity.setMessage(testcaseResultEntity.getMessage().trim());
+        }
+        if (testcaseResultEntity.getFailureMessage() != null) {
+            testcaseResultEntity.setFailureMessage(testcaseResultEntity.getFailureMessage().trim());
         }
         if (testcaseResultEntity.getRefObjUri() != null) {
             testcaseResultEntity.setRefObjUri(testcaseResultEntity.getRefObjUri().trim());

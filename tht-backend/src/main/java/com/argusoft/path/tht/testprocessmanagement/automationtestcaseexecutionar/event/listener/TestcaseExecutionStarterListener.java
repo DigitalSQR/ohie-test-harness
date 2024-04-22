@@ -10,8 +10,13 @@ import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.event.TestcaseExecutionStartEvent;
+import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.event.stopper.AutomationTestingProcessStopper;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.util.TestcaseExecutioner;
+import com.argusoft.path.tht.testprocessmanagement.execute.strategy.ExecutionStrategy;
+import com.argusoft.path.tht.testprocessmanagement.execute.strategy.factory.ExecutionStrategyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +42,11 @@ public class TestcaseExecutionStarterListener {
     private TestcaseExecutioner testcaseExecutioner;
     private TestcaseResultAttributesService testcaseResultAttributesService;
     private TestcaseResultService testcaseResultService;
+    private TestcaseService testcaseService;
+    private ExecutionStrategyFactory executionStrategyFactory;
+
+    @Autowired
+    private AutomationTestingProcessStopper automationTestingProcessStopper;
 
     @Autowired
     public void setTestcaseExecutioner(TestcaseExecutioner testcaseExecutioner) {
@@ -53,6 +63,11 @@ public class TestcaseExecutionStarterListener {
         this.testcaseResultService = testcaseResultService;
     }
 
+    @Autowired
+    public void setExecutionStrategyFactory(ExecutionStrategyFactory executionStrategyFactory) {
+        this.executionStrategyFactory = executionStrategyFactory;
+    }
+
     @Async
     @Transactional(rollbackFor = Exception.class)
     @TransactionalEventListener
@@ -66,64 +81,31 @@ public class TestcaseExecutionStarterListener {
         ContextInfo contextInfo = event.getContextInfo();
         Boolean isRequired = event.getRequired();
         Boolean isRecommended = event.getRecommended();
-        Map<String, IGenericClient> iGenericClientMap = event.getiGenericClientMap();
 
         Thread.currentThread().setName(testRequestId + refId + refObjUri + (isWorkflow == null ? "null" : isWorkflow.toString()) + (isFunctional == null ? "null" : isFunctional.toString()) + (isRequired == null ? "null" : isRequired.toString()) + (isRecommended == null ? "null" : isRecommended.toString()));
-        try {
+
             int totalTestcaseResults = testcaseResultEntityIds.size();
+        try {
+                for (int i = 0; i < totalTestcaseResults; i++) {
 
-            for (int i = 0; i < totalTestcaseResults; i++) {
+                        if (Thread.currentThread().isInterrupted()) {
+                            automationTestingProcessStopper.stopProcess(testRequestId, contextInfo, refObjUri, refId, isRequired, isRecommended, isWorkflow, isFunctional);
+                            break;
+                        }
 
-                if (Thread.currentThread().isInterrupted()) {
-                    stopProcess(testRequestId, contextInfo, refObjUri, refId, isRequired, isRecommended, isWorkflow, isFunctional);
-                    break;
+                        ExecutionStrategy executionStrategy = executionStrategyFactory.createExecutionStrategyBasedOnTestcaseResultId(testcaseResultEntityIds.get(i), contextInfo);
+                        executionStrategy.execute();
+
+                        if (i == totalTestcaseResults - 1) {
+                            deleteFinishedExecutionAttributes(testRequestId, contextInfo);
+                        }
+                        LOGGER.info("It has successfully executed the test case");
+
                 }
-                testcaseExecutioner.markTestcaseResultInProgress(testcaseResultEntityIds.get(i), contextInfo);
-
-                testcaseExecutioner.executeTestcase(testcaseResultEntityIds.get(i), iGenericClientMap, contextInfo);
-                if (i == totalTestcaseResults - 1) {
-                    deleteFinishedExecutionAttributes(testRequestId, contextInfo);
-                }
-                LOGGER.info("It has successfully executed the test case");
-            }
         } catch (Exception e) {
             LOGGER.error(ValidateConstant.EXCEPTION + TestcaseExecutionStarterListener.class.getSimpleName(), e);
         }
-    }
 
-    public void stopProcess(String testRequestId, ContextInfo contextInfo, String refObjUri, String refId, Boolean isRequired, Boolean isRecommended, Boolean isWorkflow, Boolean isFunctional) throws OperationFailedException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, VersionMismatchException {
-        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
-        testcaseResultCriteriaSearchFilter.setRefId(testRequestId);
-        List<TestcaseResultEntity> testcaseResultEntity = testcaseResultService.searchTestcaseResults(testcaseResultCriteriaSearchFilter, contextInfo);
-        if (testcaseResultEntity.isEmpty()) {
-
-            LOGGER.error("TestcaseResultEntity list is empty");
-            throw new DoesNotExistException("testcaseResultEntity list is empty");
-
-        }
-
-        TestcaseResultEntity testcaseResultTestRequestEntity = testcaseResultEntity.get(0);
-        Optional<TestcaseResultAttributesEntity> testcaseResultAttributesEntity = testcaseResultAttributesService.getTestcaseResultAttributes(testcaseResultTestRequestEntity, "reset", contextInfo);
-
-        List<TestcaseResultEntity> results = testcaseExecutioner.fetchTestcaseResultsByInputsForReinitialize(testRequestId,
-                refObjUri,
-                refId,
-                null,
-                true,
-                isRequired,
-                isRecommended,
-                isWorkflow,
-                isFunctional,
-                contextInfo);
-
-        testcaseExecutioner.changeTestcaseResultsState(
-                results,
-                TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT,
-                testcaseResultAttributesEntity.isPresent() && testcaseResultAttributesEntity.get().getValue().equals("true"),
-                contextInfo);
-        if (testcaseResultAttributesEntity.isPresent() && testcaseResultAttributesEntity.get().getValue().equals("true")) {
-            deleteFinishedExecutionAttributes(testRequestId, contextInfo);
-        }
     }
 
     private void deleteFinishedExecutionAttributes(String testRequestId, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {

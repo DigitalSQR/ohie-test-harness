@@ -1,0 +1,43 @@
+{
+    "resourceType" : "Observation",
+    "status" : "final",
+    "code" : {
+      "coding" : [ {
+        "system" : "http://loinc.org",
+        "code" : "Code",
+        "display" : "Observation Display Name"
+      } ]
+    },
+    "performer" : [ {
+      "reference" : "Practitioner/456789"
+    } ],
+    "valueQuantity" : {
+      "value" : 24.4,
+      "unit" : "Unit"
+    },
+    "interpretation" : [ {
+      "coding" : [ {
+        "system" : "http://snomed.info/sct",
+        "code" : "789012"
+      } ]
+    } ],
+    "method" : {
+      "coding" : [ {
+        "system" : "http://snomed.info/sct",
+        "code" : "123456"
+      }, {
+        "system" : "http://snomed.info/sct",
+        "code" : "789012"
+      } ]
+    },
+    "referenceRange" : [ {
+      "low" : {
+        "value" : 10.0,
+        "unit" : "Unit"
+      },
+      "high" : {
+        "value" : 20.0,
+        "unit" : "Unit"
+      }
+    } ]
+  }

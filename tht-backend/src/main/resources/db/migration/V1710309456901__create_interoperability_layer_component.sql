@@ -22,8 +22,8 @@ VALUES
         'Interoperability layer Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-interoperability-layer-iol)',
         'component.status.inactive',
         6,
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
+        'SYSTEM_USER',
+        'SYSTEM_USER',
         Now(),
         Now(),
         0

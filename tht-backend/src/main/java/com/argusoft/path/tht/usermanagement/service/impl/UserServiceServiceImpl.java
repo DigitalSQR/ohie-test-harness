@@ -10,6 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.security.service.AuthenticationService;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonUtil;
 import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
@@ -59,10 +60,10 @@ public class UserServiceServiceImpl implements UserService {
     UserRepository userRepository;
     RoleRepository roleRepository;
     TokenStore tokenStore;
+    AuthenticationService authenticationService;
     UserService userService;
     ApplicationEventPublisher applicationEventPublisher;
     private TokenVerificationService tokenVerificationService;
-    private DefaultTokenServices defaultTokenServices;
     private EmailService emailService;
 
     @Value("${message-configuration.account.approve.mail}")
@@ -111,8 +112,8 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Autowired
-    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices) {
-        this.defaultTokenServices = defaultTokenServices;
+    public void setAuthenticationService(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
 
     @Autowired
@@ -141,7 +142,7 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public Boolean logout(ContextInfo contextInfo)
             throws OperationFailedException {
-        return defaultTokenServices.revokeToken(contextInfo.getAccessToken());
+        return authenticationService.revokeToken(contextInfo.getAccessToken());
     }
 
     @Override
@@ -505,7 +506,7 @@ public class UserServiceServiceImpl implements UserService {
     public void revokeAccessTokenOnStateChange(String clientId, String userName) {
         Collection<OAuth2AccessToken> accessToken = tokenStore.findTokensByClientIdAndUserName(clientId, userName);
         for (OAuth2AccessToken oAuth2AccessToken : accessToken) {
-            defaultTokenServices.revokeToken(oAuth2AccessToken.getValue());
+            authenticationService.revokeToken(oAuth2AccessToken.getValue());
         }
     }
 

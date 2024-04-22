@@ -19,6 +19,12 @@ public class TestcaseServiceConstants {
     public static final String TESTCASE_STATUS_DRAFT = "testcase.status.draft";
     public static final String TESTCASE_STATUS_ACTIVE = "testcase.status.active";
     public static final String TESTCASE_STATUS_INACTIVE = "testcase.status.inactive";
+
+
+    //Testcase run environments
+    public static final String TESTCASE_RUN_ENVIRONMENT_JAVA_THT = "testcase.run.environment.java.tht";
+    public static final String TESTCASE_RUN_ENVIRONMENT_EU_TESTBED = "testcase.run.environment.eu.testbed";
+
     public static final Multimap<String, String> TESTCASE_STATUS_MAP = ArrayListMultimap.create();
     public static final List<String> TESTCASE_STATUS = List.of(
             TESTCASE_STATUS_DRAFT,
@@ -31,6 +37,11 @@ public class TestcaseServiceConstants {
         TESTCASE_STATUS_MAP.put(TESTCASE_STATUS_ACTIVE, TESTCASE_STATUS_INACTIVE);
         TESTCASE_STATUS_MAP.put(TESTCASE_STATUS_INACTIVE, TESTCASE_STATUS_ACTIVE);
     }
+
+    public static final List<String> TESTCASE_RUN_ENVIRONMENTS = List.of(
+            TESTCASE_RUN_ENVIRONMENT_JAVA_THT,
+            TESTCASE_RUN_ENVIRONMENT_EU_TESTBED
+    );
 
     private TestcaseServiceConstants() {
     }

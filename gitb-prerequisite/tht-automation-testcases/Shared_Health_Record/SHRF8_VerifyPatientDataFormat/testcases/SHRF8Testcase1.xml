@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase id="verify_patient_data_format" xmlns="http://www.gitb.com/tdl/v1/" xmlns:gitb="http://www.gitb.com/core/v1/">
+    <metadata>
+		<gitb:name>Verify patient data format</gitb:name>
+		<gitb:type>CONFORMANCE</gitb:type>
+		<gitb:version>1.0</gitb:version>
+		<gitb:description>Test case to verify FHIR resource patient related operations</gitb:description>
+	</metadata>
+    <imports>
+        <!-- read data from the JSON stores in name as json string-->
+        <artifact type="binary" encoding="UTF-8" name="patientToCreateInJsonString">/SHRF8_VerifyPatientDataFormat/resources/PatientToCreate.json</artifact>
+    </imports>
+    <variables>
+        <var name="componentURI" type="string"/>
+        <var name="username" type="string"/>
+        <var name="password" type="string"/>
+    </variables>
+    <actors>
+		<gitb:actor id="ITB" name="ITB" role="SUT"/>
+		<gitb:actor id="FhirHandler" name="FhirHandlers" role="SIMULATED"/>
+	</actors>
+    <steps stopOnError="true">
+
+        <!--
+            assign will stores value in variable, and it can be used as $variable_name
+
+            right now ITB doesn't support parsing JsonString as map/array
+            but it has specific type anyContent which works as map
+            and we can do stuff like $variable_name{$property_name_1}{0}{$property_name_2}
+
+            Detailed document : https://www.itb.ec.europa.eu/docs/tdl/latest/expressions/index.html#referring-to-variables
+        -->
+        <assign to="resourceType" type="string">'Patient'</assign>
+
+
+        <!-- 
+            send operation execute send method of handler (Which is written in JavaCode)
+            send operation's response will get stored in id 
+
+
+            Right now we have following custom handlers with following inputs:
+            1. $DOMAIN{jsonStringConverterServiceAddress} - converts anyContent <-> jsonString
+                1.body
+                    - required 
+                    - body which needs to be converted anyContent <-> jsonString                
+                2.bodyType
+                    - optional
+                    - default value = anyContent
+                    - possible value = jsonString, anyContent
+                    - convert body to opposite type.
+            Response 
+                - Structure $send_id{convertedBody}
+
+            2. $DOMAIN{fhirContextServiceAddress} - make operations for the FHIR
+                1.fhirServerBaseUrl
+                    - required
+                    - base URL of FHIR Server
+                2.fhirVersion
+                    - optional
+                    - default value = R4
+                    - possible value = DSTU2, DSTU3, STU3, R4, R4B, R5, Partial version strings (e.g. "3.0")
+                3.connectTimeout
+                    - optional
+                    - deafault value = 60000 (in milliseconds)
+                    - Sets the connect timeout, in milliseconds. This is the amount of time that the initial connection attempt network operation may block without failing.
+                4.socketTimeout
+                    - optional
+                    - deafault value = 60000 (in milliseconds)
+                    - Sets the socket timeout, in milliseconds. This is the SO_TIMEOUT time, which is the amount of time that a read/write network operation may block without failing.
+                5.userName
+                    - optional
+                    - username for the basic username/password based authentication/authorization
+                6.password
+                    - optional
+                    - password for the basic username/password based authentication/authorization
+                7.token
+                    - optional
+                    - token for the bearer token based authentication/authorization
+                8.responseType
+                    - optional
+                    - default value = anyContent
+                    - possible value = jsonString, anyContent
+                9.operationType
+                    - required
+                    - possible value = create, update, delete, search, getById, getHistoryById
+                    
+                extra parameters depending on operation:
+                create/update:
+                    1.bodyType
+                        - optional
+                        - default value = anyContent
+                        - possible value = jsonString, anyContent
+                    2.body
+                        -required
+                        -resource data which needs to be created/update
+                search:
+                    1.fhirResourceType
+                        - required
+                        - possible value = Patient, etc.
+                        - ResourceType of FHIR resource which needs to be fetched
+                    2.parameters
+                        -required
+                        -parameters as query parameters for filter
+                getById/delete/getHistoryById:
+                    1.fhirResourceType
+                        - required
+                        - possible value = Patient, etc.
+                        - ResourceType of FHIR resource for which we're making operation
+                    2.fhirResourceId
+                        - required
+                        - ID of FHIR resource for which we're making operation
+            Response Structure 
+                - $send_id{request}{endpoint}
+                - $send_id{request}{body}
+                - $send_id{response}{status}
+                - $send_id{response}{body}
+
+            3. $DOMAIN{apiCallServiceAddress} - make any kind of calls
+                1.httpMethod
+                    - required
+                    - possible value = GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+                    - Http Method Types
+                2.url
+                    - required
+                    - url for the Http Request
+                3.mediaType
+                    -optional
+                    -deafult value = application/json, etc
+                    -mediaType for the Http Call
+                3.body
+                    -optional
+                    -request body for the Http Call
+                4.header
+                    -optional
+                    -header parameters for the Http Call
+                5.responseType
+                    - optional
+                    - default value = anyContent
+                    - possible value = jsonString, anyContent
+            Response Structure 
+                - $send_id{request}{endpoint}
+                - $send_id{request}{body}
+                - $send_id{response}{status}
+                - $send_id{response}{body}
+        -->
+
+        <send id="patientToCreate" desc="Convert patientToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$patientToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Patient Data'</log>
+        <log>$patientToCreate</log>
+
+        <send id="createdPatient" desc="Create Patient in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$patientToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Patient Data'</log>
+        <log>$createdPatient</log>
+
+        <!--
+            verify data
+        -->
+        <verify id="verifyCreatePatient" handler="StringValidator" desc="Check that patient got created successfully or not with correct data.">
+            <input name="actualstring">$createdPatient{response}{body}{birthDate}</input>
+            <input name="expectedstring">'1990-01-01'</input>
+        </verify>
+
+        <send id="searchedPatient" desc="search same patient from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"search"</input>
+            <input name="fhirResourceType">$resourceType</input>
+            <input name="parameters">"_id="||$createdPatient{response}{body}{id}</input>
+        </send>
+
+        <log>$searchedPatient{response}{body}{entry}</log>
+        <log>$searchedPatient{response}{body}</log>
+        <log>$searchedPatient{response}{body}{entry}{0}</log>
+        <log>$searchedPatient{response}{body}{entry}{0}{resource}{resourceType}</log>
+
+        <verify id="verifySearchPatient" handler="StringValidator" desc="Check that searched patient has correct Resource type.">
+            <input name="actualstring">$searchedPatient{response}{body}{entry}{0}{resource}{resourceType}</input>
+            <input name="expectedstring">'Patient'</input>
+        </verify>
+
+        <assign to="hasPhoneNumber">'false'</assign>
+        <assign to="hasEmail">'true'</assign>
+
+        <process id="searchedPatientTelecomSize" handler="CollectionUtils">
+            <operation>size</operation>
+            <input name="list">$searchedPatient{response}{body}{entry}{0}{resource}{telecom}</input>
+        </process>
+
+        <assign to="searchedPatientTelecomSize-1">number($searchedPatientTelecomSize{output})-1</assign>
+
+        <foreach desc="Search for phone and email" counter="index" start="0" end="$searchedPatientTelecomSize-1">
+            <do>
+                <if desc="Check if phone is found">
+                    <cond>$searchedPatient{response}{body}{entry}{0}{resource}{telecom}{$index}{system}='phone'</cond>
+                    <then>
+                        <assign to="hasPhoneNumber">'true'</assign>
+                    </then>
+                </if>
+                <if desc="Check if email is found">
+                    <cond>$searchedPatient{response}{body}{entry}{0}{resource}{telecom}{$index}{system}='email'</cond>
+                    <then>
+                        <assign to="hasEmail">'true'</assign>
+                    </then>
+                </if>
+            </do>
+        </foreach>
+
+        <verify id="verifyPhone" handler="StringValidator" desc="Check that searched patient has phone.">
+            <input name="actualstring">$hasPhoneNumber</input>
+            <input name="expectedstring">'true'</input>
+        </verify>
+
+        <verify id="verifyEmail" handler="StringValidator" desc="Check that searched patient has email.">
+            <input name="actualstring">$hasEmail</input>
+            <input name="expectedstring">'true'</input>
+        </verify>
+
+        <process id="searchedPatientNameSize" handler="CollectionUtils">
+            <operation>size</operation>
+            <input name="map">$searchedPatient{response}{body}{entry}{0}{resource}{name}</input>
+        </process>
+
+        <verify id="verifyName" handler="NumberValidator" desc="Check name size">
+            <input name="actualnumber">$searchedPatientNameSize{output}</input>
+            <input name="expectednumber">'1'</input>
+        </verify>
+
+        <verify id="verifyBirthdate" handler="StringValidator" desc="Check that searched patient has birthdate.">
+            <input name="actualstring">$searchedPatient{response}{body}{entry}{0}{resource}{birthDate}</input>
+            <input name="expectedstring">'1990-01-01'</input>
+        </verify>
+
+        <verify id="verifyGender" handler="StringValidator" desc="Check that searched patient has email.">
+            <input name="actualstring">$searchedPatient{response}{body}{entry}{0}{resource}{gender}</input>
+            <input name="expectedstring">'male'</input>
+        </verify>
+
+    </steps>
+
+    <output>
+        <success>
+            <default>"Test case completed successfully."</default>
+        </success>
+        <failure>
+            <case>
+                <cond>$STEP_STATUS{verifyCreatePatient} = 'ERROR'</cond>
+                <message>"Patient Creation Failed"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchPatient} = 'ERROR'</cond>
+                <message>"Patient Search Failed"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyPhone} = 'ERROR'</cond>
+                <message>"Patient Telecom does not have phone"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyEmail} = 'ERROR'</cond>
+                <message>"Patient Telecom does not have email"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyName} = 'ERROR'</cond>
+                <message>"Patient does not have name"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyBirthdate} = 'ERROR'</cond>
+                <message>"Patient does not have correct birthdate"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyGender} = 'ERROR'</cond>
+                <message>"Patient does not have correct gender"</message>
+            </case>
+            <default>"Test case failed."</default>
+        </failure>
+    </output>  
+</testcase>

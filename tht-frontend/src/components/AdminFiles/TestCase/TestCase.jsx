@@ -187,6 +187,7 @@ export default function TestCase(props) {
       )
         .then((res) => {
           setUploadedFiles(res.content);
+		  console.log(res);
         })
         .catch((error) => {});
     }
@@ -323,6 +324,7 @@ export default function TestCase(props) {
   const addFiles = (event, question, index) => {
 	console.log(question);
     event.preventDefault();
+	console.log("uploaded files ",event.target.value);
     setFiles([...event.target.files]);
     setUploadedQuestion({
       ...question,

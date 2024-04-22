@@ -664,7 +664,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     isFunctional,
                     isWorkflow,
                     null,
-                    contextInfo);
+                    null, contextInfo);
             counter++;
 
             for (ComponentEntity componentEntity : activeComponents) {
@@ -714,7 +714,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                             isFunctional,
                             isWorkflow,
                             testRequestTestcaseResult.getId(),
-                            contextInfo);
+                            null, contextInfo);
                     counter++;
 
                     for (SpecificationEntity specificationEntity : activeSpecifications) {
@@ -748,7 +748,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                     isFunctional,
                                     isWorkflow,
                                     componentTestcaseResult.getId(),
-                                    contextInfo);
+                                    null, contextInfo);
                             counter++;
                             for (TestcaseEntity testcaseEntity : filteredTestcases) {
                                 TestcaseResultEntity testcaseResult = createDraftTestCaseResultIfNotExists(
@@ -764,7 +764,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                         isFunctional,
                                         isWorkflow,
                                         specificationTestcaseResult.getId(),
-                                        contextInfo);
+                                        testcaseEntity, contextInfo);
 
 
                                 // create TestResultRelation For Manual
@@ -917,19 +917,37 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
     private void createTestResultRelationsForManualTestcase(TestcaseEntity testcaseEntity, TestcaseResultEntity testcaseResult, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
 
-        if (Boolean.TRUE.equals(testcaseEntity.getManual())) {
+        // create for testcase
+        TestResultRelationEntity testResultRelationEntity = createTestResultRelationEntity(
+                TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
+                testcaseEntity.getId(),
+                testcaseEntity.getVersion(),
+                testcaseResult
+        );
 
-            // create for question
-            TestResultRelationEntity testResultRelationEntity = createTestResultRelationEntity(
-                    TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
-                    testcaseEntity.getId(),
-                    testcaseEntity.getVersion(),
+        testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+
+        // create for documents related to question
+        DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
+        documentCriteriaSearchFilter.setRefObjUri(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
+        documentCriteriaSearchFilter.setRefId(testcaseEntity.getId());
+        documentCriteriaSearchFilter.setState(Collections.singletonList(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE));
+
+        List<DocumentEntity> documentEntities = documentService.searchDocument(documentCriteriaSearchFilter, contextInfo);
+
+        for (DocumentEntity documentEntity : documentEntities) {
+            testResultRelationEntity = createTestResultRelationEntity(
+                    DocumentServiceConstants.DOCUMENT_REF_OBJ_URI,
+                    documentEntity.getId(),
+                    documentEntity.getVersion(),
                     testcaseResult
             );
 
             testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+        }
 
 
+        if (Boolean.TRUE.equals(testcaseEntity.getManual())) {
             // create for options
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter = new TestcaseOptionCriteriaSearchFilter();
             testcaseOptionCriteriaSearchFilter.setTestcaseId(testcaseEntity.getId());
@@ -942,25 +960,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         TestcaseOptionServiceConstants.TESTCASE_OPTION_REF_OBJ_URI,
                         testcaseOptionEntity.getId(),
                         testcaseOptionEntity.getVersion(),
-                        testcaseResult
-                );
-
-                testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
-            }
-
-            // create for documents related to question
-            DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
-            documentCriteriaSearchFilter.setRefObjUri(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
-            documentCriteriaSearchFilter.setRefId(testcaseEntity.getId());
-            documentCriteriaSearchFilter.setState(Collections.singletonList(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE));
-
-            List<DocumentEntity> documentEntities = documentService.searchDocument(documentCriteriaSearchFilter, contextInfo);
-
-            for (DocumentEntity documentEntity : documentEntities) {
-                testResultRelationEntity = createTestResultRelationEntity(
-                        DocumentServiceConstants.DOCUMENT_REF_OBJ_URI,
-                        documentEntity.getId(),
-                        documentEntity.getVersion(),
                         testcaseResult
                 );
 
@@ -998,7 +997,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                                                       Boolean isFunctional,
                                                                       Boolean isWorkflow,
                                                                       String parentTestcaseResultId,
-                                                                      ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+                                                                      TestcaseEntity testcaseEntity, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
         TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
         searchFilter.setRefObjUri(refObjUri);
@@ -1023,6 +1022,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         TestRequestEntity testRequestEntity = new TestRequestEntity();
         testRequestEntity.setId(testRequestId);
         testcaseResultEntity.setTestRequest(testRequestEntity);
+        testcaseResultEntity.setTestcase(testcaseEntity);
 
         testcaseResultEntity.setRank(counter);
         testcaseResultEntity.setName(name);

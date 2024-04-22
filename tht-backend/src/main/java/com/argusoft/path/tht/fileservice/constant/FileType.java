@@ -13,7 +13,9 @@ public enum FileType {
     //image png file
     IMAGE_PNG("image/png", "PNG"),
     //image jpeg file
-    IMAGE_JPEG("image/jpeg", "JPEG");
+    IMAGE_JPEG("image/jpeg", "JPEG"),
+    //zip file
+    ZIP("application/zip","ZIP");
 
     private final String type;
 

@@ -1,0 +1,27 @@
+{
+    "resourceType" : "DocumentReference",
+    "id" : "document123",
+    "status" : "current",
+    "type" : {
+      "coding" : [ {
+        "system" : "http://loinc.org",
+        "code" : "60591-5",
+        "display" : "Clinical Note"
+      } ],
+      "text" : "Clinical Note"
+    },
+    "subject" : {
+      "reference" : "Patient/1234"
+    },
+    "author" : [ {
+      "reference" : "Practitioner/5678"
+    } ],
+    "content" : [ {
+      "attachment" : {
+        "contentType" : "application/xml",
+        "data" : "PGNsaW5pY2lkYXRvcz4KICAgIDx0aXRsZT5TYW1wbGUgQ0RBIERvY3VtZW50PC90aXRsZT4KICAgIDxwYXRpZW50PjxuYW1lPkpvaG4gRG9lPC9uYW1lPjxkYXRlYmFzZT4xOTgwMDEwMTwvZGF0ZWJhc2U+CiAgICA8L3BhdGllbnQ+CjwvQ2xpY2lubmFtZURvY3VtZW50PjwvQ2xpY2lubmFtZWRhdG9ucz4=",
+        "url" : "ServerBaseUrl/Composition/OperativeNote1Id",
+        "title" : "Patient OperativeNote"
+      }
+    } ]
+  }

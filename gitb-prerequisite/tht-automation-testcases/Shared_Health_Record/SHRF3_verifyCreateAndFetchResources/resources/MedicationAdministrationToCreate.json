@@ -1,0 +1,17 @@
+{
+    "resourceType" : "MedicationAdministration",
+    "medicationReference" : {
+      "id" : "789456"
+    },
+    "subject" : {
+      "reference" : "123456"
+    },
+    "context" : {
+      "reference" : "456123"
+    },
+    "performer" : [ {
+      "actor" : {
+        "reference" : "456789"
+      }
+    } ]
+  }

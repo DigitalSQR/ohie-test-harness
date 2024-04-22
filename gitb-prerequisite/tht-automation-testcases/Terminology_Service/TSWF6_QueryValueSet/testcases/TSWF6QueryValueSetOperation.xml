@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase id="tswf6_query_value_set_operation" xmlns="http://www.gitb.com/tdl/v1/" xmlns:gitb="http://www.gitb.com/core/v1/">
+    <metadata>
+		<gitb:name>Query ValueSet</gitb:name>
+		<gitb:type>CONFORMANCE</gitb:type>
+		<gitb:version>1.0</gitb:version>
+		<gitb:description>Test case to query valueSet</gitb:description>
+	</metadata>
+    <imports>
+        <!-- read data from the JSON stores in name as json string-->
+        <artifact type="binary" encoding="UTF-8" name="valueSetToCreateInJsonString">/TSWF6_QueryValueSet/resources/ValueSetToCreate.json</artifact>
+        <artifact type="binary" encoding="UTF-8" name="valueSet2ToCreateInJsonString">/TSWF6_QueryValueSet/resources/ValueSet2ToCreate.json</artifact>
+    </imports>
+    <variables>
+        <var name="componentURI" type="string"/>
+        <var name="username" type="string"/>
+        <var name="password" type="string"/>
+    </variables>
+    <actors>
+		<gitb:actor id="ITB" name="ITB" role="SUT"/>
+		<gitb:actor id="FhirHandler" name="FhirHandlers" role="SIMULATED"/>
+	</actors>
+    <steps stopOnError="true">
+
+        <!-- create first valueSet -->
+
+        <!-- Assign ValueSet data -->
+        <!-- Convert ValueSet JSON to AnyContent -->
+        <send id="valueSetToCreate" desc="Convert valueSetToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+            handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$valueSetToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!-- Add log -->
+        <log>'Converted first ValueSet Data'</log>
+        <log>$valueSetToCreate</log>
+
+        <!-- Create first ValueSet in FHIR server -->
+        <send id="createdValueSet" desc="Create ValueSet in FHIR server" from="ITB" to="FhirHandler"
+        handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$valueSetToCreate{convertedBody}</input>
+        </send>
+
+        <!-- Add log -->
+        <log>'Created first ValueSet Data'</log>
+        <log>$createdValueSet</log>
+
+        <!-- Verify first ValueSet Creation -->
+        <verify id="verifyValueSetCreation" handler="StringValidator" desc="Check that ValueSet got created successfully or not with correct data.">
+            <input name="actualstring">$createdValueSet{response}{body}{compose}{include}{0}{system}</input>
+            <input name="expectedstring">'http://example.com/codesystem/example-codesystem'</input>
+        </verify>
+
+         <!-- create second valueSet -->
+
+        <!-- Assign ValueSet data -->
+        <!-- Convert ValueSet JSON to AnyContent -->
+        <send id="valueSet2ToCreate" desc="Convert valueSet2ToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+            handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$valueSet2ToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!-- Add log -->
+        <log>'Converted ValueSet Data'</log>
+        <log>$valueSet2ToCreate</log>
+
+        <!-- Create second ValueSet in FHIR server -->
+        <send id="createdValueSet2" desc="Create second ValueSet in FHIR server" from="ITB" to="FhirHandler"
+        handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$valueSet2ToCreate{convertedBody}</input>
+        </send>
+
+        <!-- Add log -->
+        <log>'Created second ValueSet Data'</log>
+        <log>$createdValueSet2</log>
+
+        <!-- Verify second ValueSet Creation -->
+        <verify id="verifyValueSet2Creation" handler="StringValidator" desc="Check that ValueSet got created successfully or not with correct data.">
+            <input name="actualstring">$createdValueSet2{response}{body}{compose}{include}{0}{system}</input>
+            <input name="expectedstring">'http://terminology.hl7.org/CodeSystem/v3-ActMood'</input>
+        </verify>
+
+
+       <!-- search valueSet based on publisher -->
+        <send id="searchedValueSetbyPublisher" desc="Search ValueSet from the FHIR server" from="ITB" to="FhirHandler"
+        handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="httpMethod">GET</input>
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="fhirResourceType">'ValueSet'</input>
+            <input name="operationType">"search"</input>
+            <input name="parameters">"publisher=Healthcare%20Standards%20Organization"</input>
+        </send>
+
+        <log>'Searched ValueSet List'</log>
+        <log>$searchedValueSetbyPublisher</log>
+
+        <process id="searchedValueSetbyPublisherLinkSize" handler="CollectionUtils">
+            <operation>size</operation>
+            <input name="map">$searchedValueSetbyPublisher{response}{body}{entry}</input>
+        </process>
+
+        <log>"size="||$searchedValueSetbyPublisherLinkSize{output}</log>
+
+        <assign to="urlFound" type="boolean">false</assign>
+        <assign to="index" type="number">0</assign>
+
+        <repuntil desc="Iterate through ValueSet entries">
+            <do>
+                <assign to="currentValueSetUrl" type="string">$searchedValueSetbyPublisher{response}{body}{entry}{$index}{resource}{url}</assign>
+                <if>
+                    <cond>$currentValueSetUrl = $createdValueSet{response}{body}{url}</cond>
+                    <then>
+                        <assign to="urlFound">1</assign>
+                        <log>'ValueSet with the desired URL found.'</log>
+                    </then>
+                </if>
+                <assign to="index">number($index)+1</assign>
+            </do>
+        <cond>$index &lt;= $searchedValueSetbyPublisherLinkSize{output} and not($urlFound)</cond>
+        </repuntil>
+
+        <!--
+            verify if valueSet found for given publisher name
+        -->
+        <verify id="verifySearchedValueSetbyPublisher" handler="ExpressionValidator" desc="Check if valueSet found for given publisher name">
+            <input name="expression">$urlFound</input>
+        </verify>
+
+        <log>'Validation result :'</log>
+        <log>$urlFound</log>
+
+         <!-- Search based on id -->
+        <send id="searchedValueSetById" desc="fetch valueSet by ID from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"getById"</input>
+            <input name="fhirResourceType">'ValueSet'</input>
+            <input name="fhirResourceId">$createdValueSet2{response}{body}{id}</input>
+        </send>
+
+        <log>'Searched valueSet by id'</log>
+        <log>$searchedValueSetById</log>
+
+        <!--
+            verify search operation based on id
+        -->
+        <verify id="verifySearchedValueSetById" handler="StringValidator" desc="Verifying search by id">
+            <input name="actualstring">$searchedValueSetById{response}{body}{description}</input>
+            <input name="expectedstring">'HL7 v3 ActMood Predicate codes, including inactive codes'</input>
+        </verify>
+
+        <!-- Search based on code -->
+         <send id="searchedValueSetByCode" desc="Search valueSet by code from the FHIR server" from="ITB" to="FhirHandler"
+        handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="httpMethod">GET</input>
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="fhirResourceType">'ValueSet'</input>
+            <input name="operationType">"search"</input>
+            <input name="parameters">"code=12345&amp;_id=" || $createdValueSet{response}{body}{id}</input>
+        </send>
+
+        <log>'Searched valueSet by code'</log>
+        <log>$searchedValueSetByCode</log>
+
+        <!--
+            verify search operation based on code
+        -->
+        <verify id="verifySearchedValueSetByCode" handler="StringValidator" desc="Verifying search by code">
+            <input name="actualstring">$searchedValueSetByCode{response}{body}{entry}{0}{resource}{compose}{include}{0}{system}</input>
+            <input name="expectedstring">'http://example.com/codesystem/example-codesystem'</input>
+        </verify>
+
+         
+        <!-- delete first valueSet -->
+         <send id="deleteValueSet" desc="delete first valueSet from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"delete"</input>
+            <input name="fhirResourceType">'ValueSet'</input>
+            <input name="fhirResourceId">$createdValueSet{response}{body}{id}</input>
+        </send>
+     
+        <log>'Delete first ValueSet Response'</log>
+        <log>$deleteValueSet</log>
+
+        <!-- delete second valueSet -->
+         <send id="deleteValueSet2" desc="delete second valueSet from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"delete"</input>
+            <input name="fhirResourceType">'ValueSet'</input>
+            <input name="fhirResourceId">$createdValueSet2{response}{body}{id}</input>
+        </send>
+     
+        <log>'Delete second ValueSet Response'</log>
+        <log>$deleteValueSet2</log>
+    </steps>
+
+    <output>
+        <success>
+            <default>"Test case completed successfully."</default>
+        </success>
+        <failure>
+           <case>
+                <cond>$STEP_STATUS{valueSetToCreate} = 'ERROR'</cond>
+                <message>"Failed to convert first valueSet type (jsonString to anyContent)."</message>
+            </case>     
+            <case>
+                <cond>$STEP_STATUS{createdValueSet} = 'ERROR'</cond>
+                <message>"Failed to create first valueSet"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyValueSetCreation} = 'ERROR'</cond>
+                <message>"Failed to verify first valueSet creation"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{valueSet2ToCreate} = 'ERROR'</cond>
+                <message>"Failed to convert second valueSet type (jsonString to anyContent)."</message>
+            </case>   
+            <case>
+                <cond>$STEP_STATUS{createdValueSet2} = 'ERROR'</cond>
+                <message>"Failed to create second valueSet"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyValueSet2Creation} = 'ERROR'</cond>
+                <message>"Failed to verify second valueSet creation"</message>
+            </case>  
+            <case>
+                <cond>$STEP_STATUS{searchedvalueSetByPublisher} = 'ERROR'</cond>
+                <message>"Failed to perform search operation based on publisher"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedvalueSetByPublisher} = 'ERROR'</cond>
+                <message>"Invalid result for the search operation based on publisher"</message>
+            </case> 
+            <case>
+                <cond>$STEP_STATUS{createdvalueSet2} = 'ERROR'</cond>
+                <message>"Failed to create second valueSet"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyCreatedvalueSet2} = 'ERROR'</cond>
+                <message>"Failed to verify second valueSet creation"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{searchedValueSetbyPublisher} = 'ERROR'</cond>
+                <message>"Failed to perform search operation based on publisher"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedValueSetbyPublisher} = 'ERROR'</cond>
+                <message>"Invalid result for the search operation based on publisher"</message>
+            </case>   
+            <case>
+                <cond>$STEP_STATUS{searchedValueSetById} = 'ERROR'</cond>
+                <message>"Failed to perform search operation based on id"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedValueSetById} = 'ERROR'</cond>
+                <message>"Invalid result for the search operation based on id"</message>
+            </case> 
+            <case>
+                <cond>$STEP_STATUS{searchedValueSetByCode} = 'ERROR'</cond>
+                <message>"Failed to perform search operation based on code"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedValueSetByCode} = 'ERROR'</cond>
+                <message>"Invalid result for the search operation based on code"</message>
+            </case> 
+            <case>
+                <cond>$STEP_STATUS{deleteValueSet} = 'ERROR'</cond>
+                <message>"Failed to delete first valueSet"</message>
+            </case> 
+            <case>
+                <cond>$STEP_STATUS{deleteValueSet2} = 'ERROR'</cond>
+                <message>"Failed to delete second valueSet"</message>
+            </case>                   
+            <default>"Test case failed. Please check the failed step's report for more information and the test log."</default> 
+        </failure>
+    </output>  
+</testcase>

@@ -1,0 +1,30 @@
+{
+    "resourceType" : "AllergyIntolerance",
+    "clinicalStatus" : {
+      "coding" : [ {
+        "system" : "http://hl7.org/fhir/v3/ActStatus",
+        "code" : "confirmed",
+        "display" : "Confirmed"
+      } ]
+    },
+    "verificationStatus" : {
+      "coding" : [ {
+        "system" : "http://hl7.org/fhir/v3/ActStatus",
+        "code" : "confirmed",
+        "display" : "Confirmed"
+      } ]
+    },
+    "type" : "allergy",
+    "patient" : {
+      "reference" : "123456"
+    },
+    "reaction" : [ {
+      "substance" : {
+        "coding" : [ {
+          "system" : "http://snomed.info/sct",
+          "code" : "98765",
+          "display" : "Peanut"
+        } ]
+      }
+    } ]
+  }

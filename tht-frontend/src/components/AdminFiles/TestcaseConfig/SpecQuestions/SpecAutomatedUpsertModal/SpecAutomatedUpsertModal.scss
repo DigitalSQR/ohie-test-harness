@@ -1,0 +1,20 @@
+.cst-btn-group .cst-btn-default {
+    border-radius: 6px;
+    border: 1px solid #e8e8e8;
+    background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
+    color: #303d43;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    // width: 150px;
+    white-space: nowrap;
+    justify-content: center;
+    padding: 4px 16px;
+  }
+
+  .visibility {
+    visibility: hidden;
+    width: 0;
+  }

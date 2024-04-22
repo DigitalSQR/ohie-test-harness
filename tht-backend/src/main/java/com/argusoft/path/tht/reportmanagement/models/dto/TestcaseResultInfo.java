@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.reportmanagement.models.dto;
 
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Set;
@@ -47,6 +48,13 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
             dataType = "String",
             required = false)
     private String message;
+
+    @ApiModelProperty(notes = "The failureMessage of the TestcaseResult",
+            allowEmptyValue = false,
+            example = "failureMessage",
+            dataType = "String",
+            required = false)
+    private String failureMessage;
 
     @ApiModelProperty(notes = "The testRequestId of the TestcaseResult",
             allowEmptyValue = false,
@@ -138,6 +146,16 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
             dataType = "String",
             required = false)
     private String grade;
+
+    @ApiModelProperty(notes = "The testSessionId from testbed",
+            allowEmptyValue = true,
+            dataType = "String")
+    private String testSessionId;
+
+    @ApiModelProperty(notes = "The testcaseId of the testcaseResult",
+            allowEmptyValue = true,
+            dataType = "String")
+    private String testcaseId;
     private Set<TestcaseResultAttributesInfo> testcaseResultAttributesEntities;
 
     public Set<TestcaseResultAttributesInfo> getTestcaseResultAttributesEntities() {
@@ -292,6 +310,30 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
         this.grade = grade;
     }
 
+    public String getTestSessionId() {
+        return testSessionId;
+    }
+
+    public void setTestSessionId(String testSessionId) {
+        this.testSessionId = testSessionId;
+    }
+
+    public String getTestcaseId() {
+        return testcaseId;
+    }
+
+    public void setTestcaseId(String testcaseId) {
+        this.testcaseId = testcaseId;
+    }
+
+    public String getFailureMessage() {
+        return failureMessage;
+    }
+
+    public void setFailureMessage(String failureMessage) {
+        this.failureMessage = failureMessage;
+    }
+
     @Override
     public String toString() {
         return "TestcaseResultInfo{"
@@ -300,6 +342,7 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
                 + ", refObjUri='" + refObjUri + '\''
                 + ", refId='" + refId + '\''
                 + ", message='" + message + '\''
+                + ", failureMessage='" + failureMessage + '\''
                 + ", testRequestId='" + testRequestId + '\''
                 + ", hasSystemError=" + hasSystemError
                 + ", isRequired=" + isRequired
@@ -313,6 +356,8 @@ public class TestcaseResultInfo extends IdStateNameMetaInfo {
                 + ", isWorkflow=" + isWorkflow
                 + ", duration=" + duration
                 + ", grade='" + grade + '\''
+                + ", testSessionId='" + testSessionId + '\''
+                + ", testcaseId='" + testcaseId + '\''
                 + ", testcaseResultAttributesEntities=" + testcaseResultAttributesEntities
                 + '}';
     }
