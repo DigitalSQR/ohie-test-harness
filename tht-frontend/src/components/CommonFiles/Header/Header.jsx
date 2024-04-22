@@ -14,7 +14,7 @@ import UseEventEmitter from "../EventEmitter/EventEmitter";
 import { APP_EVENTS } from "../../../constants/event_constants";
 import { NotificationAPI } from "../../../api/NotificationAPI";
 import WebSocketService from "../../../api/WebSocketService";
-
+import moment from "moment";
 import {
   NOTIFICATION_STATUS_ARCHIVED,
   NOTIFICATION_STATUS_UNREAD,
@@ -124,7 +124,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
   const fetchNotifications = () => {
     NotificationAPI.getAllNotifications()
       .then((responseData) => {
-        setNotifications(responseData.data.content);
+        setNotifications(responseData.data.content.reverse());
         unreadNotificationCount(responseData.data.content);
       })
       .catch((error) => {});
@@ -222,8 +222,13 @@ export default function Header({ headerContent, isSidebarOpen }) {
                         Archive All Notifications
                       </button>
                     )} */}
-                    {notifications.map((notification, index) =>
-                      notification.state === NOTIFICATION_STATUS_UNREAD ? (
+                    {notifications.map((notification, index) => {
+                      const formattedDateTime = moment(
+                        notification.meta.createdAt
+                      ).format("Do MMMM, YYYY hh:mm:ss A");
+
+                      return notification.state ===
+                        NOTIFICATION_STATUS_UNREAD ? (
                         <li
                           key={notification.id}
                           className="list-group-item  notification-item"
@@ -232,14 +237,14 @@ export default function Header({ headerContent, isSidebarOpen }) {
                           <div className="delete-icon">
                             <DeleteOutlined
                               onClick={(event) =>
-                                 handleDeleteNotification(notification.id, event)
-                            } 
-                          />
-                        </div>
-                        <div className="time-stamp">12/08/2024 05:53</div>
-                      </li>
-                    ) : null
-                    )}
+                                handleDeleteNotification(notification.id, event)
+                              }
+                            />
+                          </div>
+                          <div className="time-stamp">{formattedDateTime}</div>
+                        </li>
+                      ) : null;
+                    })}
                   </>
                 )}
               </ul>
