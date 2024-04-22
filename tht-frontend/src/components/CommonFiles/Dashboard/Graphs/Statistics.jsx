@@ -25,7 +25,12 @@ const Statistics = (props) => {
   }
 
   return (
-    <div className="container">
+    <div className="container"  
+      style={{
+        paddingLeft: props.index === 0 ? '0' : '',
+        paddingRight: props.index === (props.array.length - 1) ? '0' : ''
+      }}
+    >
       <div className="d-flex justify-content-between align-items-center p-3 border rounded card flex-row">
         <div className='text-start'>
           <p className="mb-2 ">{props.parameter}</p>

@@ -77,7 +77,6 @@ const PieChart = (props) => {
               width={600}
             />
           </div>
-          <div id="html-dist"></div>
         </>
       ) : (
         <>

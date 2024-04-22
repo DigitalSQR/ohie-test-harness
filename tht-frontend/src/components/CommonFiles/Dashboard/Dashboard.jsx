@@ -323,11 +323,13 @@ export default function Dashboard() {
           <div className="pt-0">
             <div className="text-center">
               <div className="d-flex mb-3">
-                {Object.keys(statistics).map((key) => (
+                {Object.keys(statistics).map((key, index, array) => (
                   <Statistics
                     key={key}
                     parameter={key}
                     value={statistics[key]}
+                    index={index}
+                    array={array}
                   />
                 ))}
               </div>
