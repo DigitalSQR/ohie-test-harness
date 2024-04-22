@@ -4,7 +4,7 @@
 BASE_DIR="/srv"
 TH_T_DIR="$BASE_DIR/tht"
 ERROR_LOG_DIR="$TH_T_DIR/error-logs"
-FILES_DIR="$TH_T_DIR/files-testbed"
+FILES_DIR="$TH_T_DIR/$1"
 
 # Create directories
 sudo mkdir -p "$TH_T_DIR"
@@ -15,7 +15,7 @@ sudo mkdir -p "$FILES_DIR"
 SOURCE_DIR="./gitb-prerequisite/tht-automation-testcases"
 
 # Destination directory where you want to copy the zip files
-FILES_DIR="/srv/tht/files-testbed"
+FILES_DIR="/srv/tht/$1"
 
 # Check if the destination directory exists, if not create it
 if [ ! -d "$FILES_DIR" ]; then

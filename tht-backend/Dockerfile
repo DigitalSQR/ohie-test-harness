@@ -16,11 +16,12 @@ FROM eclipse-temurin:17-jre-jammy
 #COPY wait-for-it.sh /wait-for-it.sh
 #RUN chmod +x /wait-for-it.sh
 
+ARG PROFILE;
+
+
 
 RUN mkdir /app
 COPY --from=builder /app/target/testing-harness-tool-0.0.1-SNAPSHOT.jar /app/app.jar
 RUN sh -c 'touch /app/app.jar'
 #CMD ["/wait-for-it.sh", "gitb-ui:9000", "--strict", "--", "java", "-jar", "/app/app.jar"]
-CMD ["java", "-jar", "/app/app.jar", "--spring.profiles.active=testbed"]
-EXPOSE 8081
-WORKDIR /app
+CMD ["java", "-jar", "/app/app.jar", "--spring.profiles.active=$PROFILE"]
