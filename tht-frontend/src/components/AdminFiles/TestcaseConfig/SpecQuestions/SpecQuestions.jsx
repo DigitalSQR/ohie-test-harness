@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { TestCaseAPI } from "../../../../api/TestCaseAPI";
 import { SpecificationAPI } from "../../../../api/SpecificationAPI";
@@ -27,6 +27,9 @@ import {
   DOCUMENT_STATE_INACTIVE,
   DOCUMENT_TYPE_FOR_TEST_CASES,
 } from "../../../../constants/document_constants";
+import { TestResultAPI } from "../../../../api/TestResultAPI";
+import SpecAutomatedUpsertModal from "./SpecAutomatedUpsertModal/SpecAutomatedUpsertModal";
+import { fileTypeIcon } from "../../../../utils/utils";
 
 export default function ManualTestCases() {
   const navigate = useNavigate();
@@ -41,6 +44,12 @@ export default function ManualTestCases() {
   const [componentDetails, setComponentDetails] = useState();
   const [specificationDetails, setSpecificationDetails] = useState();
   const [activeTab, setActiveTab] = useState("1");
+  const [isAutomatedModalOpen, setIsAutomatedModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentAutomatedTestcase, setCurrentAutomatedTestcase] = useState();
+  const [automatedTestcases, setAutomatedTestCases] = useState();
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+
   const items = [
     {
       key: "1",
@@ -56,10 +65,49 @@ export default function ManualTestCases() {
     fetchData(key === "1");
   };
 
+  const fetchAutomatedTestCases = () => {
+    const params = {
+      specificationId: specificationId,
+      manual: false,
+      testcaseRunEnvironment: "testcase.run.environment.eu.testbed",
+    };
+    TestCaseAPI.getTestCasesBySpecificationId(params)
+      .then((res) => {
+        setAutomatedTestCases(res.content);
+      })
+      .catch(() => {});
+  };
+
+  const fetchUploadedZipFiles = () => {
+    setUploadedFiles([]);
+    if(automatedTestcases){
+     automatedTestcases.forEach((question,index)=>{
+      DocumentAPI.getDocumentsByRefObjUriAndRefId(
+        RefObjUriConstants.TESTCASE_REFOBJURI,
+        question.id,
+        DOCUMENT_STATE_ACTIVE
+      ).then((res)=>{
+        setUploadedFiles((prev)=>{
+          if(res.content.length !== 0){
+          return [...prev,res.content[0]]
+          }
+        })
+      })
+    })}
+  
+  };
+
+  useEffect(()=>{
+    if(!!automatedTestcases){
+    fetchUploadedZipFiles();
+    }
+  },[automatedTestcases])
+
   useEffect(() => {
     fetchData(true);
     fetchCompSpecDetails();
     dispatch(set_header("Testcase Configuration"));
+    fetchAutomatedTestCases();
   }, []);
 
   const fetchCompSpecDetails = () => {
@@ -141,56 +189,66 @@ export default function ManualTestCases() {
     setActiveKey(key);
   };
 
-
   useEffect(() => {
     let key;
-    if(activeKey){
+    if (activeKey) {
       key = activeKey - 1;
     }
-    if(!!questions && questions.length > 0 && (questionAndDocument.filter((questionItem) => questionItem.key === questions[key].id) <= 0)){
+    if (
+      !!questions &&
+      questions.length > 0 &&
+      questionAndDocument.filter(
+        (questionItem) => questionItem.key === questions[key].id
+      ) <= 0
+    ) {
       setQuestionFetched(false);
-      let question = questions[key]
-        if(!!question){
+      let question = questions[key];
+      if (!!question) {
         DocumentAPI.getDocumentsByRefObjUriAndRefId(
           RefObjUriConstants.TESTCASE_REFOBJURI,
           question.id,
           DOCUMENT_STATE_ACTIVE
-        ).then(async (res) => {
-            const updatedFiles = await Promise.all(res.content.map(async (relatedDoc) => {
-              try {
-                  const base64Image = await DocumentAPI.base64Document(relatedDoc.id,relatedDoc.name);
+        )
+          .then(async (res) => {
+            const updatedFiles = await Promise.all(
+              res.content.map(async (relatedDoc) => {
+                try {
+                  const base64Image = await DocumentAPI.base64Document(
+                    relatedDoc.id,
+                    relatedDoc.name
+                  );
                   return {
-                      name: relatedDoc.name,
-                      status: 'done',
-                      url: base64Image,
-                      documentId : relatedDoc.id
+                    name: relatedDoc.name,
+                    status: "done",
+                    url: base64Image,
+                    documentId: relatedDoc.id,
                   };
-              } catch (error) {
+                } catch (error) {
                   console.error(error);
                   return {
-                      name: relatedDoc.name,
-                      status: 'error',
-                      url: null
+                    name: relatedDoc.name,
+                    status: "error",
+                    url: null,
                   };
-              }
-          }));
+                }
+              })
+            );
 
-          let item = {};
-          item.key = question.id;
-          item.files = updatedFiles;
+            let item = {};
+            item.key = question.id;
+            item.files = updatedFiles;
 
-          const updatedQuestions = [...questionAndDocument];
-          updatedQuestions.push(item);
-          setQuestionAndDocument(updatedQuestions);
+            const updatedQuestions = [...questionAndDocument];
+            updatedQuestions.push(item);
+            setQuestionAndDocument(updatedQuestions);
           })
-          .catch((err) => {
-          })
-          .finally(()=> {
+          .catch((err) => {})
+          .finally(() => {
             setQuestionFetched(true);
           });
       }
     }
-  }, [activeKey,questions]); // Run this effect whenever activeKey changes
+  }, [activeKey, questions]); // Run this effect whenever activeKey changes
 
   const changeTestCaseState = (testcaseId, state) => {
     const newState =
@@ -238,6 +296,18 @@ export default function ManualTestCases() {
     }
   };
 
+  const editHandler = (testcase) => {
+    setCurrentAutomatedTestcase(testcase);
+    setIsEditMode(true);
+    setIsAutomatedModalOpen(true);
+  };
+
+  const downloadFile = (zipFile) => {
+    DocumentAPI.downloadDocument(zipFile.id, zipFile.name).catch((err) => {});
+  };
+
+  useEffect(()=>{console.log(uploadedFiles)},[uploadedFiles])
+
   return (
     <div id="SpecQuestions">
       <div id="wrapper">
@@ -271,9 +341,22 @@ export default function ManualTestCases() {
               </button>
             </div>
           )}
+          {activeTab === "2" && (
+            <div>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary menu-like-item"
+                onClick={() => {setIsAutomatedModalOpen(true)
+                setCurrentAutomatedTestcase();}}
+              >
+                <i className="bi bi-plus"></i>
+                Create Automated Testcase
+              </button>
+            </div>
+          )}
         </div>
 
-        {activeTab === "1" ? (
+        {activeTab === "1" && (
           <div className="">
             {!questions || questions?.length === 0 ? (
               <Empty
@@ -286,7 +369,6 @@ export default function ManualTestCases() {
               <div className="row">
                 <div className="col-12 col-md-8 offset-md-2"></div>
                 <Tabs
-                  
                   defaultActiveKey="2"
                   tabPosition="top"
                   className="questions-tabs mt-3"
@@ -305,18 +387,26 @@ export default function ManualTestCases() {
                             <div className="col-md-3 col-12 d-md-flex d-none p-0">
                               <h2 className="border-left">Reference Images</h2>
                             </div>
-
                           </div>
 
-                          <div className="row question-box"  >
-                            <div className="col-md-9 col-12 p-0 question" style={{ display: "flex", flexDirection: "column" }}>
-                              <h2 >
+                          <div className="row question-box">
+                            <div
+                              className="col-md-9 col-12 p-0 question"
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                              }}
+                            >
+                              <h2>
                                 <b>
                                   {question.rank}. {question.question}
                                 </b>
                               </h2>
 
-                              <div className="custom-multiselect field-checkbox" style={{ flex: 1 }}>
+                              <div
+                                className="custom-multiselect field-checkbox"
+                                style={{ flex: 1 }}
+                              >
                                 {question.options &&
                                   question.options.map(
                                     (option, optionIndex) => (
@@ -324,7 +414,6 @@ export default function ManualTestCases() {
                                         className="field-box option-item-spec-question"
                                         key={optionIndex}
                                       >
-                                        
                                         <label
                                           className={
                                             question.questionType ===
@@ -332,23 +421,29 @@ export default function ManualTestCases() {
                                               ? "label-before-no-radius"
                                               : ""
                                           }
-                                        > 
-                                        {option.success ? (
-                                          <i className="bi bi-check-circle-fill me-2 text-success"></i>
-                                        ) : (
-                                          <i className="bi bi-x-circle-fill me-2 text-danger"></i>
-                                        )}
-                                        {option.name}
+                                        >
+                                          {option.success ? (
+                                            <i className="bi bi-check-circle-fill me-2 text-success"></i>
+                                          ) : (
+                                            <i className="bi bi-x-circle-fill me-2 text-danger"></i>
+                                          )}
+                                          {option.name}
                                         </label>
                                       </div>
                                     )
                                   )}
-                                  {question.options && question.options.length <= 0
-                                  && <Empty description="Currently, there are no available options. Please go to the editing question to create some." image={Empty.PRESENTED_IMAGE_SIMPLE} />
-
-                                  }
+                                {question.options &&
+                                  question.options.length <= 0 && (
+                                    <Empty
+                                      description="Currently, there are no available options. Please go to the editing question to create some."
+                                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    />
+                                  )}
                               </div>
-                              <div className="text-end" style={{ alignSelf: "flex-end" }}>
+                              <div
+                                className="text-end"
+                                style={{ alignSelf: "flex-end" }}
+                              >
                                 <span className="me-2">
                                   <Switch
                                     checked={
@@ -365,9 +460,13 @@ export default function ManualTestCases() {
                                     unCheckedChildren="INACTIVE"
                                   />
                                 </span>
-                                
-                                <button onClick={() => handleUpdate(question)} type="button" className="cursor-pointer btn btn-outline-success rounded-0">
-                                <i className="bi bi-pencil-square"></i>&nbsp;
+
+                                <button
+                                  onClick={() => handleUpdate(question)}
+                                  type="button"
+                                  className="cursor-pointer btn btn-outline-success rounded-0"
+                                >
+                                  <i className="bi bi-pencil-square"></i>&nbsp;
                                   Edit Question
                                 </button>
                               </div>
@@ -403,12 +502,22 @@ export default function ManualTestCases() {
                                     </Carousel>
                                   </Image.PreviewGroup>
                                 ) : (
-                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                                  <div style={{ textAlign: 'center' }}>
-                                    <i style={{ fontSize: 30 }} className="bi bi-card-image"></i>
-                                    <div>No Image Available</div>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                      height: "100%",
+                                    }}
+                                  >
+                                    <div style={{ textAlign: "center" }}>
+                                      <i
+                                        style={{ fontSize: 30 }}
+                                        className="bi bi-card-image"
+                                      ></i>
+                                      <div>No Image Available</div>
+                                    </div>
                                   </div>
-                                </div>
                                 )}
                                 {!questionFetched && (
                                   <div>
@@ -420,8 +529,6 @@ export default function ManualTestCases() {
                                 )}
                               </>
                             </div>
-
-
                           </div>
                         </div>
                       </div>
@@ -431,13 +538,71 @@ export default function ManualTestCases() {
               </div>
             )}
           </div>
-        ) : (
-          <Empty
-            imageStyle={{
-              height: 200, // Adjust the height of the image
-            }}
-            description={"Automated tests haven't been set up for this specification yet."} // Custom description message
-          />
+        )}
+
+        {activeTab === "2" && (
+          <div className="table-responsive">
+            <table className=" data-table capitalize-words">
+              <thead>
+                <tr>
+                  <th style={{ width: "35%" }}>TestCase</th>
+                  <th style={{ width: "20%" }}>Rank</th>
+                  <th style={{ width: "25%" }}>Zip File</th>
+                  <th style={{ width: "20%" }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {!!automatedTestcases &&
+                  automatedTestcases.map((testcase) => {
+                    return (
+                      <tr>
+                        <td>{testcase.name}</td>
+                        <td>{testcase.rank}</td>
+                          {!!uploadedFiles ? uploadedFiles?.filter((files)=>files.refId === testcase?.id)
+                          .map((files)=>(
+                      
+                        <td>
+
+                            <div
+                            className="doc-badge"
+                            type="button"
+                            key={files.id}
+                          >
+                            <img
+                              src={fileTypeIcon(files.fileType)}
+                            />
+                            <span>
+                            {files.name}
+                           </span>
+                            <span
+                              type="button"
+                              title="Download File"
+                              className="mx-2 font-size-14"
+                              onClick={() => downloadFile(files)}
+                            >
+                              <i className="bi bi-cloud-download"></i>
+                            </span>
+                          </div>
+                        </td>
+                        
+                        )) : <td></td>}
+
+                        <td
+                          onClick={() => {
+                            editHandler(testcase);
+                          }}
+                        >
+                          <span>
+                            <i class="bi bi-pencil-square"></i>
+                            EDIT{" "}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
         )}
 
         <div>
@@ -447,6 +612,17 @@ export default function ManualTestCases() {
             specificationId={specificationId}
             fetchData={fetchData}
           />
+        </div>
+        <div>
+          <SpecAutomatedUpsertModal
+            isAutomatedModalOpen={isAutomatedModalOpen}
+            setIsAutomatedModalOpen={setIsAutomatedModalOpen}
+            specificationId={specificationId}
+            isEditMode={isEditMode}
+            setIsEditMode={setIsEditMode}
+            currentAutomatedTestcase={currentAutomatedTestcase}
+            fetchAutomatedTestCases={fetchAutomatedTestCases}
+          ></SpecAutomatedUpsertModal>
         </div>
       </div>
     </div>

@@ -22,16 +22,16 @@ import java.util.Optional;
 public interface ComponentRepository
         extends JpaRepository<ComponentEntity, String>, JpaSpecificationExecutor<ComponentEntity> {
 
-    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
-    @Override
-    Optional<ComponentEntity> findById(String id);
-
-    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
-    @Override
-    Page<ComponentEntity> findAll(Specification<ComponentEntity> feature1Specifications, Pageable pageable);
-
-    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
-    @Override
-    List<ComponentEntity> findAll(Specification<ComponentEntity> feature1Specifications);
+//    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
+//    @Override
+//    Optional<ComponentEntity> findById(String id);
+//
+//    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
+//    @Override
+//    Page<ComponentEntity> findAll(Specification<ComponentEntity> feature1Specifications, Pageable pageable);
+//
+//    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
+//    @Override
+//    List<ComponentEntity> findAll(Specification<ComponentEntity> feature1Specifications);
 
 }

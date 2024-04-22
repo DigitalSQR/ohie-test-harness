@@ -48,10 +48,12 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "build:dev": "env-cmd -f ./.env.development npm run-script build" ,
+    "build:testbed": "env-cmd -f ./.env.testbed npm run-script build" ,
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "serve -l 3000 -s build",
-    "devdeploy": "serve -l 3001 -s build"
+    "devdeploy": "serve -l 3001 -s build",
+    "testbeddeploy": "serve -l 3002 -s build"
   },
   "eslintConfig": {
     "extends": [

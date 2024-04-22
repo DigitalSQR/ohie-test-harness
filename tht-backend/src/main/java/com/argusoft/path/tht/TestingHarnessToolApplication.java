@@ -24,7 +24,6 @@ import javax.sql.DataSource;
 @EnableSwagger2
 @EnableAuthorizationServer
 @EnableTransactionManagement
-@EnableCaching
 @EnableScheduling
 @EnableMethodSecurity
 public class TestingHarnessToolApplication implements CommandLineRunner {

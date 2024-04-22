@@ -92,6 +92,11 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     )
     private Boolean isRequired;
 
+    @ApiParam(
+            value = "testSessionId of the TestcaseResult"
+    )
+    private String testSessionId;
+
     private Root<TestcaseResultEntity> testcaseResultEntityRoot;
 
     private Join<TestcaseResultEntity, UserEntity> testcaseResultEntityUserEntityJoin;
@@ -142,6 +147,10 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
         if (StringUtils.hasLength(getParentTestcaseResultId())) {
             predicates.add(criteriaBuilder.equal(this.getTestcaseResultEntityTestcaseResultEntityJoin().get("id"), getParentTestcaseResultId()));
+        }
+
+        if(StringUtils.hasLength(getTestSessionId())){
+            predicates.add(criteriaBuilder.equal(this.getTestcaseResultEntityRoot().get("testSessionId"), getTestSessionId()));
         }
 
         if (getManual() != null) {
@@ -299,6 +308,14 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
 
     private Root<TestcaseResultEntity> getTestcaseResultEntityRoot() {
         return testcaseResultEntityRoot;
+    }
+
+    public String getTestSessionId() {
+        return testSessionId;
+    }
+
+    public void setTestSessionId(String testSessionId) {
+        this.testSessionId = testSessionId;
     }
 
     private void setTestcaseResultEntityRoot(Root<TestcaseResultEntity> testcaseResultEntityRoot) {

@@ -5,6 +5,7 @@
 import { notification } from "antd";
 import img_icon from "../styles/images/img.png";
 import pdf_icon from "../styles/images/pdf.png";
+import moment from "moment";
 import {
   ROLE_ID_ADMIN,
   ROLE_ID_ASSESSEE,
@@ -80,3 +81,28 @@ export const getHighestPriorityRole = (user) => {
     return "ASSESSEE";
   }
 };
+
+export function objectToFormData(obj, formData = null, parentKey = '') {
+  if (!formData) {
+      formData = new FormData();
+  }
+
+  for (let key in obj) {
+      if (Object.hasOwnProperty.call(obj, key)) {
+          const value = obj[key];
+          const finalKey = parentKey ? `${parentKey}.${key}` : key;
+
+          if (typeof value === 'string' && moment(value, moment.ISO_8601, true).isValid()) {
+              formData.append(finalKey, new Date(value));
+          } else if (typeof value === 'object' && !(value instanceof File)) {
+              objectToFormData(value, formData, finalKey);
+          } else {
+              formData.append(finalKey, value);
+          }
+      }
+  }
+
+  return formData;
+}
+
+

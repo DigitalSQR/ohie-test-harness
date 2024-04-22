@@ -1,0 +1,49 @@
+{
+  "resourceType" : "PractitionerRole",
+  "identifier" : [ {
+    "system" : "urn:oid:1.2.3.4.5",
+    "value" : "00011"
+  } ],
+  "code": [
+    {
+      "coding": [
+        {
+          "system": "http://example.com/role-codes",
+          "code": "RP"
+        }
+      ]
+    }
+  ],
+  "specialty" : [ {
+    "coding" : [ {
+      "system" : "http://hl7.org/fhir/sid/us-npi",
+      "code" : "207QS0010X",
+      "display" : "General medical practice"
+    } ]
+  } ],
+  "telecom" : [ {
+    "system" : "phone",
+    "value" : "888-888-8888",
+    "use" : "mobile"
+  } ],
+  "availableTime": [
+    {
+      "daysOfWeek": [
+        "mon",
+        "tue",
+        "wed"
+      ],
+      "availableStartTime": "09:00:00",
+      "availableEndTime": "16:30:00"
+    },
+    {
+      "daysOfWeek": [
+        "thu",
+        "fri"
+      ],
+      "availableStartTime": "09:00:00",
+      "availableEndTime": "12:00:00"
+    }
+  ],
+  "availabilityExceptions": "Generally unavailable on public holidays and during the Christmas/New Year break"
+}

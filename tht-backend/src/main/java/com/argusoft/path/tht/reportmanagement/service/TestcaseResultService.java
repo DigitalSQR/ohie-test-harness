@@ -6,6 +6,8 @@ import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.request.StatusRequest;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.response.StatusResponse;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -239,6 +241,8 @@ public interface TestcaseResultService {
      * @return classes name
      */
     public List<String> getSubClassesNameForTestCase();
+
+    public StatusResponse startTestcaseAndStatusResponse(String testSuiteId, ContextInfo contextInfo) throws Exception;
 
     public List<TestcaseResultEntity> findTopFiveTestRequestsResult();
 

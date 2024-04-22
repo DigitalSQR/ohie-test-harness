@@ -1,0 +1,16 @@
+{
+    "resourceType" : "PractitionerRole",
+    "practitioner" : {
+      "reference" : "1234"
+    },
+    "organization" : {
+      "reference" : "4567"
+    },
+    "code" : [ {
+      "coding" : [ {
+        "system" : "http://example.org/codes",
+        "code" : "GP",
+        "display" : "General Practitioner"
+      } ]
+    } ]
+  }

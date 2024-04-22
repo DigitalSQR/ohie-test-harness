@@ -52,6 +52,27 @@ public class TestcaseInfo extends IdStateNameMetaInfo {
             required = true)
     private String failureMessage;
 
+    @ApiModelProperty(notes = "The failureMessage of the specification",
+            allowEmptyValue = false,
+            example = "failureMessage",
+            dataType = "String",
+            required = true)
+    private String testcaseRunEnvironment;
+
+    @ApiModelProperty(notes = "The testsuite id from the zip file",
+            allowEmptyValue = false,
+            example = "Verify_Patient_Test_Suite_ID",
+            dataType = "String",
+            required = true)
+    private String testSuiteId;
+
+    @ApiModelProperty(notes = "The actor api key from the sut actor",
+            allowEmptyValue = false,
+            example = "ACTOR_1",
+            dataType = "String",
+            required = true)
+    private String sutActorApiKey;
+
     public Integer getRank() {
         return rank;
     }
@@ -98,5 +119,29 @@ public class TestcaseInfo extends IdStateNameMetaInfo {
 
     public void setFailureMessage(String failureMessage) {
         this.failureMessage = failureMessage;
+    }
+
+    public String getTestcaseRunEnvironment() {
+        return testcaseRunEnvironment;
+    }
+
+    public void setTestcaseRunEnvironment(String testcaseRunEnvironment) {
+        this.testcaseRunEnvironment = testcaseRunEnvironment;
+    }
+
+    public String getTestSuiteId() {
+        return testSuiteId;
+    }
+
+    public void setTestSuiteId(String testSuiteId) {
+        this.testSuiteId = testSuiteId;
+    }
+
+    public String getSutActorApiKey() {
+        return sutActorApiKey;
+    }
+
+    public void setSutActorApiKey(String sutActorApiKey) {
+        this.sutActorApiKey = sutActorApiKey;
     }
 }

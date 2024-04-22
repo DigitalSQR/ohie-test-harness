@@ -1,0 +1,15 @@
+{
+    "resourceType" : "CodeSystem",
+    "url" : "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+    "version" : "1.0.0",
+    "name" : "CodeSystem for blood pressure",
+    "title" : "Example Code System",
+    "status" : "active",
+    "publisher" : "HL7 International / Terminology Infrastructure",
+    "content" : "complete",
+    "concept" : [ {
+      "code" : "12345",
+      "display" : "Blood Pressure",
+      "definition" : "A measurement of the force of blood against the walls of the arteries."
+    } ]
+  }

@@ -1,0 +1,17 @@
+{
+    "resourceType" : "Immunization",
+    "status" : "completed",
+    "vaccineCode" : {
+      "coding" : [ {
+        "system" : "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code" : "78901",
+        "display" : "COVID-19 Vaccine"
+      } ]
+    },
+    "patient" : {
+      "reference" : "123456"
+    },
+    "reaction" : [ {
+      "date" : "2024-04-09T15:37:32+05:30"
+    } ]
+  }

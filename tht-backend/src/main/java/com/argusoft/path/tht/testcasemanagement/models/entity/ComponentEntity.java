@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @Entity
 @Audited
 @Table(name = "component")
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ComponentEntity extends IdStateNameMetaEntity {
 
     @Column(name = "rank")
@@ -27,7 +27,7 @@ public class ComponentEntity extends IdStateNameMetaEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "component", cascade = {})
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<SpecificationEntity> specifications;
 
     public ComponentEntity() {

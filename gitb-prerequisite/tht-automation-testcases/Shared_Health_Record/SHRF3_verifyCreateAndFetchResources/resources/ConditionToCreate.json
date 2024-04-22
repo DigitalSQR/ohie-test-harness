@@ -1,0 +1,16 @@
+{
+    "resourceType" : "Condition",
+    "code" : {
+      "coding" : [ {
+        "system" : "http://example.org/codes",
+        "code" : "12345",
+        "display" : "Hypertension"
+      } ]
+    },
+    "subject" : {
+      "reference" : "123"
+    },
+    "encounter" : {
+      "reference" : "456"
+    }
+  }

@@ -22,8 +22,8 @@ VALUES
         'Finance and Insurance Service Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-finance-and-insurance-service)',
         'component.status.inactive',
         3,
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
+        'SYSTEM_USER',
+        'SYSTEM_USER',
         Now(),
         Now(),
         0

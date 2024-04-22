@@ -22,17 +22,17 @@ import java.util.Optional;
 public interface TestcaseOptionRepository
         extends JpaRepository<TestcaseOptionEntity, String>, JpaSpecificationExecutor<TestcaseOptionEntity> {
 
-    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
-    @Override
-    Optional<TestcaseOptionEntity> findById(String id);
-
-    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
-    @Override
-    Page<TestcaseOptionEntity> findAll(Specification<TestcaseOptionEntity> feature1Specifications, Pageable pageable);
-
-    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
-    @Override
-    List<TestcaseOptionEntity> findAll(Specification<TestcaseOptionEntity> feature1Specifications);
+//    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
+//    @Override
+//    Optional<TestcaseOptionEntity> findById(String id);
+//
+//    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
+//    @Override
+//    Page<TestcaseOptionEntity> findAll(Specification<TestcaseOptionEntity> feature1Specifications, Pageable pageable);
+//
+//    @QueryHints(@QueryHint(name = "org.hibernate.cacheable", value = "true"))
+//    @Override
+//    List<TestcaseOptionEntity> findAll(Specification<TestcaseOptionEntity> feature1Specifications);
 
 
 }

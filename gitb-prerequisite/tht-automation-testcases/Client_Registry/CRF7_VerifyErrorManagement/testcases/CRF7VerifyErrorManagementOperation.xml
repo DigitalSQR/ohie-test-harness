@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase id="crf7_verify_error_management_operation" xmlns="http://www.gitb.com/tdl/v1/" xmlns:gitb="http://www.gitb.com/core/v1/">
+    <metadata>
+		<gitb:name>Error Management operations</gitb:name>
+		<gitb:type>CONFORMANCE</gitb:type>
+		<gitb:version>1.0</gitb:version>
+		<gitb:description>Test case to verify the system should support error management.</gitb:description>
+	</metadata>
+    <imports>
+        <!-- read data from the JSON stores in name as json string-->
+        <artifact type="binary" encoding="UTF-8" name="OperationOutcomeToCreateInJsonString">/CRF7_VerifyErrorManagement/resources/OperationOutcomeToCreate.json</artifact>
+    </imports>
+    <variables>
+        <var name="componentURI" type="string"/>
+        <var name="username" type="string"/>
+        <var name="password" type="string"/>
+    </variables>
+    <actors>
+		<gitb:actor id="ITB" name="ITB" role="SUT"/>
+		<gitb:actor id="FhirHandler" name="FhirHandlers" role="SIMULATED"/>
+	</actors>
+    <steps stopOnError="true">
+
+    
+        <assign to="resourceType" type="string">'OperationOutcome'</assign>
+
+
+        <!--
+        	Creating Operation Outcome-->
+
+        <send id="OperationOutcomeToCreate" desc="Convert OperationOutcomeToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$OperationOutcomeToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted OperationOutcome Data'</log>
+        <log>$OperationOutcomeToCreate</log>
+
+        <send id="createdOperationOutcome" desc="Create OperationOutcome in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$OperationOutcomeToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created OperationOutcome Data'</log>
+        <log>$createdOperationOutcome</log>
+
+        <!--
+            get operation outcome
+        -->
+        <send id="readOperationOutcome" desc="Read OperationOutcome resource" from="ITB" to="FhirHandler" handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"search"</input>
+            <input name="fhirResourceType">"OperationOutcome"</input>
+            <input name="fhirResourceId">$createdOperationOutcome{response}{id}</input>
+            <input name="parameters">"_id=" || $createdOperationOutcome{response}{id}</input>
+        </send>
+
+        <log>'Read OperationOutcome Data'</log>
+        <log>$readOperationOutcome{response}{body}{entry}{0}{resource}{issue}{0}{severity}</log>
+
+        <!--
+            verify data Patient created or not
+        -->
+        <verify id="verifyError" handler="StringValidator" desc="Check that response contains error or not.">
+            <input name="actualstring">$readOperationOutcome{response}{body}{entry}{0}{resource}{issue}{0}{severity}</input>
+            <input name="expectedstring">'error'</input>
+        </verify>
+
+
+    </steps>
+
+    <output>
+        <success>
+            <default>"Test case completed successfully."</default>
+        </success>
+        <failure>
+            <case>
+                <cond>$STEP_STATUS{verifyError} = 'ERROR'</cond>
+                <message>"Failed because operation outcome data is not matched."</message>
+            </case>   
+            <default>"Test case failed. Please check the failed step's report for more information and the test log."</default>
+        </failure>
+    </output>  
+</testcase>

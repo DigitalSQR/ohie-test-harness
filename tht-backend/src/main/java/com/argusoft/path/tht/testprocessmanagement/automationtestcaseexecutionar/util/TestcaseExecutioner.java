@@ -117,7 +117,7 @@ public class TestcaseExecutioner {
             Boolean isFunctional,
             ContextInfo contextInfo) throws OperationFailedException {
 
-        TestcaseResultEntitiesAndIgenericClient testcaseResultEntitiesAndIgenericClient = changeStateAndPrepareIgenericClient(
+        List<TestcaseResultEntity> testcaseResultEntities = changeStateAndPrepareIgenericClient(
                 testRequestId,
                 refObjUri,
                 refId,
@@ -128,19 +128,25 @@ public class TestcaseExecutioner {
                 isWorkflow,
                 isFunctional,
                 contextInfo);
-        if (testcaseResultEntitiesAndIgenericClient == null) {
+        if (testcaseResultEntities == null) {
             return;
         }
 
+        try {
+            ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(testRequestId, contextInfo);
+        } catch (DoesNotExistException | InvalidParameterException e) {
+            LOGGER.error(ValidateConstant.OPERATION_FAILED_EXCEPTION + TestcaseExecutioner.class.getSimpleName(), e);
+            throw new OperationFailedException(e.getMessage(), e);
+        }
+
         applicationEventPublisher.publishEvent(new TestcaseExecutionStartEvent(testRequestId,
-                testcaseResultEntitiesAndIgenericClient.testcaseResultEntities().stream().map(IdStateNameMetaEntity::getId).toList(),
+                testcaseResultEntities.stream().map(IdStateNameMetaEntity::getId).toList(),
                 refId,
                 refObjUri,
                 isWorkflow,
                 isFunctional,
                 isRequired,
                 isRecommended,
-                testcaseResultEntitiesAndIgenericClient.iGenericClientMap(),
                 Constant.SUPER_USER_CONTEXT));
 
     }
@@ -165,7 +171,7 @@ public class TestcaseExecutioner {
         }
     }
 
-    public TestcaseResultEntitiesAndIgenericClient changeStateAndPrepareIgenericClient(
+    public List<TestcaseResultEntity> changeStateAndPrepareIgenericClient(
             String testRequestId,
             String refObjUri,
             String refId,
@@ -200,7 +206,8 @@ public class TestcaseExecutioner {
                 return null;
             }
 
-            TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
+            return testcaseResultEntities;
+            /*TestRequestEntity testRequestEntity = testRequestService.getTestRequestById(testRequestId, contextInfo);
             List<ComponentEntity> activeComponents = fetchActiveComponents(contextInfo).stream().filter(componentEntity
                     -> testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> testRequestUrlEntity.getComponent().getId().equals(componentEntity.getId()))
             ).collect(Collectors.toList());
@@ -221,7 +228,7 @@ public class TestcaseExecutioner {
 
             ChangeTestcaseResultAttributeUsingCriteriaSearchFilter(testRequestId, contextInfo);
 
-            return testcaseResultEntitiesAndIgenericClient;
+            return testcaseResultEntitiesAndIgenericClient;*/
         } catch (DataValidationErrorException e) {
             LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseExecutioner.class.getSimpleName(), e);
             throw new OperationFailedException(e);
@@ -369,87 +376,6 @@ public class TestcaseExecutioner {
         }
 
         testcaseResultService.changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
-    }
-
-    private IGenericClient getClient(String contextType, String serverBaseURL, String username, String password) {
-        FhirContext context;
-        if (contextType == null) {
-            contextType = "R4";
-        }
-        switch (contextType) {
-            case "D2":
-                context = FhirContext.forDstu2();
-                break;
-            case "D3":
-                context = FhirContext.forDstu3();
-                break;
-            default:
-                //Default is for R4
-                context = FhirContext.forR4();
-        }
-
-        context.getRestfulClientFactory().setConnectTimeout(60 * 1000);
-        context.getRestfulClientFactory().setSocketTimeout(60 * 1000);
-
-        //Commenting this code as adding certificate is not user requirement.
-        //Add keyStore and trustStore
-        /*try {
-            String certificateKeyStorePath = "keystore.p12";
-            String certificateKeyStorePassword = "1234";
-
-            String certificateTrustStorePath = "keystore.p12";
-            String certificateTrustStorePassword = "1234";
-
-            FileInputStream keyStoreFileInputStream = new FileInputStream(certificateKeyStorePath);
-            KeyStore keystore = KeyStore.getInstance("PKCS12");
-            keystore.load(keyStoreFileInputStream, certificateKeyStorePassword.toCharArray());
-
-
-
-            FileInputStream trustStoreFileInputStream = new FileInputStream(certificateTrustStorePath);
-            KeyStore truststore = KeyStore.getInstance("PKCS12");
-            truststore.load(trustStoreFileInputStream, certificateTrustStorePassword.toCharArray());
-
-            SSLContext sslContext =
-                    SSLContexts
-                            .custom()
-                            .loadKeyMaterial(keystore, certificateKeyStorePassword.toCharArray())
-                            .loadTrustMaterial(truststore, new TrustSelfSignedStrategy()).build();
-
-            HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
-            SSLConnectionSocketFactory sslFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
-
-            CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(sslFactory).build();
-            context.getRestfulClientFactory().setHttpClient(httpClient);
-        } catch (Exception e) {
-            throw new OperationFailedException("Failed to add certificates for the keyStore/trustStore", e);
-        }*/
-        IGenericClient client = context.newRestfulGenericClient(serverBaseURL);
-
-        //Log details of HTTP requests and responses made by the FHIR client
-        client.registerInterceptor(new LoggingInterceptor());
-
-        //Add username/password authentication credentials to the client from test Request
-        client.registerInterceptor(new BasicAuthInterceptor(username, password));
-
-        //Add token authentication credentials to the client from test Request
-        //String token = "";
-        //client.registerInterceptor(new BearerTokenAuthInterceptor(token));
-        //GZipContentInterceptor will handle compression
-        //client.registerInterceptor(new GZipContentInterceptor());
-        //Add sessionCookie authentication credentials to the client from test Request
-        //String sessionCookie = "";
-        //client.registerInterceptor(new CookieInterceptor(sessionCookie));
-        //Add Header parameters for all requests
-        //client.registerInterceptor(new SimpleRequestHeaderInterceptor("Custom-Header", "123"));
-        //The concept of "ThreadLocalCapturingInterceptor" suggests an interceptor that captures information specific to the current thread.
-        //client.registerInterceptor(new ThreadLocalCapturingInterceptor());
-        //This could be useful for tracking or managing requests based on user-related criteria on the server side.
-        //String theUserId = "";
-        //String theUserName = "";
-        //String theAppName = "";
-        //client.registerInterceptor(new UserInfoInterceptor(theUserId, theUserName, theAppName));
-        return client;
     }
 
     public void changeTestcaseResultsState(

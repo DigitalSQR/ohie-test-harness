@@ -29,8 +29,13 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.response.StartResponse;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.response.StatusResponse;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.TestSessionStarter;
+import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.VerifyTestcaseSessionStatusAndUpdateAccordingly;
+import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.callback.impl.StatusCallbackLoggerHandler;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -39,14 +44,15 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClientException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -68,6 +74,14 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     private UserService userService;
     private GradeEvaluator gradeEvaluator;
     private AuditService auditService;
+
+    @Value("${testbed.actor-api}")
+    private String testbedActorApiKey;
+
+    private TestSessionStarter testSessionStarter;
+    private StatusCallbackLoggerHandler statusCallback;
+
+    private VerifyTestcaseSessionStatusAndUpdateAccordingly verifyTestcaseSessionStatusAndUpdateAccordingly;
     private TestResultRelationService testResultRelationService;
 
     private static String getMessage(String x, TestcaseResultEntity testcaseResultEntity, String x1, List<String> failedSpecificationTestcaseResultName) {
@@ -369,10 +383,24 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         if (!stateKey.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
             testcaseResultEntity.setMessage(null);
+            testcaseResultEntity.setFailureMessage(null);
             testcaseResultEntity.setHasSystemError(Boolean.FALSE);
             testcaseResultEntity.setSuccess(Boolean.FALSE);
-            testcaseResultEntity.setSuccess(Boolean.FALSE);
             testcaseResultEntity.setDuration(null);
+        } else {
+            if(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri()) && !Boolean.TRUE.equals(testcaseResultEntity.getSuccess())) {
+                List<Object> testResultRelationEntitiesFromAuditMapping = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(testcaseResultId, TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, contextInfo);
+                Optional<TestcaseEntity> testcaseEntityOptional = testResultRelationEntitiesFromAuditMapping.stream().findFirst().map(TestcaseEntity.class::cast);
+
+                if(testcaseEntityOptional.isEmpty()){
+                    LOGGER.error("Testcase not found in testcase result relation for testcaseResultId ->"+testcaseResultId);
+                    throw new DoesNotExistException("Testcase not found in testcase result relation for testcaseResultId ->"+testcaseResultId);
+                }
+
+                TestcaseEntity testcase = testcaseEntityOptional.get();
+
+                testcaseResultEntity.setFailureMessage(testcase.getFailureMessage());
+            }
         }
 
         testcaseResultEntity.setState(stateKey);
@@ -563,6 +591,17 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             classNames.add(subType.getSimpleName());
         }
         return classNames;
+    }
+
+    @Override
+    public StatusResponse startTestcaseAndStatusResponse(String  testSuiteId, ContextInfo contextInfo) throws Exception {
+        try {
+            StartResponse process = testSessionStarter.process(testSuiteId, testbedActorApiKey, contextInfo);
+            verifyTestcaseSessionStatusAndUpdateAccordingly.process(process.getCreatedSessions().get(0).getSession(), statusCallback, contextInfo);
+            return statusCallback.getStatusResponse();
+        }catch (RestClientException e){
+            throw new OperationFailedException("Rest Client error : "+ e.getMessage(),e);
+        }
     }
 
     private RecursiveTestcaseResults fetchTestcaseResultStatusByInputs(
@@ -821,5 +860,20 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
 
         return resultPage.getContent();
+    }
+
+    @Autowired
+    public void setTestSessionStarter(TestSessionStarter testSessionStarter) {
+        this.testSessionStarter = testSessionStarter;
+    }
+
+    @Autowired
+    public void setVerifyTestcaseSessionStatusAndUpdateAccordingly(VerifyTestcaseSessionStatusAndUpdateAccordingly verifyTestcaseSessionStatusAndUpdateAccordingly) {
+        this.verifyTestcaseSessionStatusAndUpdateAccordingly = verifyTestcaseSessionStatusAndUpdateAccordingly;
+    }
+
+    @Autowired
+    public void setStatusCallback(StatusCallbackLoggerHandler statusCallback) {
+        this.statusCallback = statusCallback;
     }
 }

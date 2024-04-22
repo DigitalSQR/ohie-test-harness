@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @Entity
 @Audited
 @Table(name = "specification")
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SpecificationEntity extends IdStateNameMetaEntity {
 
     @Column(name = "rank")
@@ -31,12 +31,12 @@ public class SpecificationEntity extends IdStateNameMetaEntity {
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "component_id")
     @JsonIgnore
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private ComponentEntity component;
 
     @JsonIgnore
     @OneToMany(mappedBy = "specification", cascade = {})
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+//    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<TestcaseEntity> testcases;
     @Column(name = "is_required")
     private Boolean isRequired;

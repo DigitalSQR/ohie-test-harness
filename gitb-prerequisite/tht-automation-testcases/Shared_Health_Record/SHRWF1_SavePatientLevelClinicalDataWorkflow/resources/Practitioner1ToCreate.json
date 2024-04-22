@@ -1,0 +1,17 @@
+{
+  "resourceType" : "Practitioner",
+  "identifier" : [ {
+    "system" : "urn:oid:1.2.3.4.5.6",
+    "value" : "MIHERD-645"
+  } ],
+  "name" : [ {
+    "given" : [ "Jane Doe" ]
+  } ],
+  "telecom" : [ {
+    "system" : "phone",
+    "value" : "666-666-6666",
+    "use" : "mobile"
+  } ],
+  "gender" : "female",
+  "birthDate" : "1970-02-02"
+}

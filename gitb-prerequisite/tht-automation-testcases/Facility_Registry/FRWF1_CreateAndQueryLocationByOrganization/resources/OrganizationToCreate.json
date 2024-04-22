@@ -1,0 +1,24 @@
+{
+  "resourceType" : "Organization",
+  "identifier" : [ {
+    "system" : "urn:oid:1.2.3.4.5",
+    "value" : "0222"
+  } ],
+  "name" : "Health Level Seven International",
+  "telecom" : [ {
+    "system" : "phone",
+    "value" : "999-999-9999",
+    "use" : "mobile"
+  }, {
+    "system" : "email",
+    "value" : "hq@HL7.org",
+    "use" : "home"
+  } ],
+  "address" : [ {
+    "city" : "Ann Arbor"
+  }, {
+    "state" : "MI"
+  }, {
+    "country" : "USA"
+  } ]
+}

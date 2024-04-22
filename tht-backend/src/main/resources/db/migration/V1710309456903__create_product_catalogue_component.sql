@@ -22,8 +22,8 @@ VALUES
         'Product Catalogue Component (https://guides.ohie.org/arch-spec/openhie-component-specifications-1/openhie-product-catalogue-pc)',
         'component.status.inactive',
         8,
-        'ivasiwala@argusoft.com',
-        'ivasiwala@argusoft.com',
+        'SYSTEM_USER',
+        'SYSTEM_USER',
         Now(),
         Now(),
         0

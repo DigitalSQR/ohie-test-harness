@@ -11,6 +11,9 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.request.StartRequest;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.request.StatusRequest;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.response.StatusResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -361,6 +364,11 @@ public class TestcaseResultRestController {
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
         Collection<String> strings = TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
+    }
+
+    @GetMapping("/start-test-case/{testSuiteId}")
+    public StatusResponse startTestcaseAndStatusResponse(@PathVariable(value = "testSuiteId") String testSuiteId, @RequestAttribute("contextInfo") ContextInfo contextInfo) throws Exception {
+        return testcaseResultService.startTestcaseAndStatusResponse(testSuiteId, contextInfo);
     }
 
 }
