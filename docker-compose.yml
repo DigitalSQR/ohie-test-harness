@@ -46,7 +46,7 @@ services:
     # This is the only Test Bed component for which we currently add a host port mapping. If port 9000 on your
     # host is taken just replace "9000:9000" with say "9001:9000".
     ports:
-      - "9001:9000"
+      - ${GITB_UI_PORT}:9000
     environment:
       # This is the key to decrypt the initialisation data archive (see below).
       - DATA_ARCHIVE_KEY=fhir
@@ -76,7 +76,7 @@ services:
       context: ./gitb-prerequisite/fhir-test-services
     restart: unless-stopped
     ports:
-      - "9002:8181"
+      - ${HANDLER_PORT}:8181
   fhir-server:
     # This is the internal FHIR server that is used by the Test Bed to validate FHIR client test cases. It has no host port mappings 
     # as this is only expected to be used by the test engine directly.
@@ -123,7 +123,7 @@ services:
       - ig_version=1.2.0
       - fhir_version=R4
       - server_port=8080
-      - static_server_port=9003
+      - static_server_port=${FHIR_SUT_SERVER_PORT}
       - server_name=AllergyTB      
       - hapi.fhir.allow_multiple_delete=true
       - hapi.fhir.server_address=localhost:8080
@@ -143,7 +143,7 @@ services:
       - ./config/fhir/custom:/custom
       - ./config/fhir/apps:/apps
     ports:
-      - 9003:8080
+      - ${FHIR_SUT_SERVER_PORT}:8080
   tht-postgressql:
     # The Test Bed's DB. 
     image: postgres
@@ -155,18 +155,20 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: argusadmin
     ports:
-      - 5435:5432
+      - ${POSTGRES_PORT}:5432
   tht-backend:
     build:
       context: ./tht-backend
+      args:
+        PROFILE: ${BACKEND_PROFILE}
     restart: unless-stopped
     ports:
-      - 8083:8081
+      - ${BACKEND_PORT}:8081
     depends_on:
       tht-postgressql:
         condition: service_started
     volumes:
-      - /srv/tht/files-testbed:/srv/tht/files-testbed:rw
+      - ${FILES_PATH}:/srv/tht/files:rw
     environment:
       - SERVER_PORT=8081 
       - SPRING_DATASOURCE_URL=jdbc:postgresql://tht-postgressql:5432/testing_harness_tool
@@ -174,21 +176,21 @@ services:
       - SPRING_DATASOURCE_PASSWORD=argusadmin
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       - testbed_url=http://gitb-ui:9000/
-      - base-url=${BASE_URL:-http://localhost:8080}
+      - base-url=${BASE_URL}
   tht-frontend:
     build:
       context: ./tht-frontend
       args:
-        REACT_APP_HOST: ${BASE_URL:-http://localhost:8080}/api
-        REACT_APP_WEB_SOCKET_URL: ${WS_BASE_URL:-ws://localhost:8080}/api/socket
+        REACT_APP_HOST: ${BASE_URL}/api
+        REACT_APP_WEB_SOCKET_URL: ${WS_BASE_URL}/api/socket
     restart: unless-stopped
     ports:
-      - 3002:3000
+      - ${UI_PORT}:3000
   nginx:
     image: nginx
     restart: unless-stopped
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/nginx-tht.conf:ro
     ports:
-      - 8085:8080
+      - ${NGINX_PORT}:8080
       - 443:443
