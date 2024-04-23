@@ -442,7 +442,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             String sutActorApiKey = getSutActorApiKey(sutActorId, deployResponse);
 
             testcaseEntity.setSutActorApiKey(sutActorApiKey);
-            testcaseEntity.setTestSuiteId(testSuiteId);
+            testcaseEntity.setTestSuiteId(updatedTestSuiteId);
 
             createConformanceStatementFromSutActorApiKey(sutActorApiKey);
 
