@@ -26,7 +26,7 @@ export default function ResetPassword() {
   };
   const formik = useFormik({
     initialValues: {
-      oldPassword: "",
+      oldPassword: null,
       newPassword: "",
       confirmPassword: "",
     },

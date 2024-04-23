@@ -62,6 +62,9 @@ public class EncryptDecrypt {
     }
 
     public static boolean checkRawString(String rawString, String encodedString) {
+        if (rawString == null && encodedString == null) {
+            return true;
+        }
         return passwordEncoder.matches(rawString, encodedString);
     }
 }
