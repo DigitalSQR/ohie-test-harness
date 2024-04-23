@@ -5,6 +5,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.google.common.collect.Multimap;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -291,7 +292,14 @@ public final class ValidationUtils {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setElement("state");
             validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("provided transition is not valid [Current state : " + currentState + " , Next state : " + nextState + " ]");
+            if(currentState.equals(nextState)){
+                String currentComponent = currentState.split("\\.status\\.")[0].replaceAll("\\.", " ");
+                String currentStatus = currentState.split("\\.status\\.")[1];
+                validationResultInfo.setMessage(StringUtils.capitalize(currentComponent)+" already present in "+currentStatus+" state.");
+            }
+            else{
+                validationResultInfo.setMessage("provided transition is not valid [Current state : " + currentState + " , Next state : " + nextState + " ]");
+            }
             errors.add(validationResultInfo);
         }
     }
