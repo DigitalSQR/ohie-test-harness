@@ -232,3 +232,26 @@ You can create the database using the following SQL command:
 ```sql
 CREATE DATABASE testing_harness_tool;
 ```
+
+## [Docker Setup](#docker-setup)
+
+### Step 1: Directory Modifications and Initial Zip File Movement
+1. Go to the project directory.
+2. Execute the following command:
+    ```
+    sudo bash ./copy-zips.sh files
+    ```
+3. The terminal will display the list of files copied to the directory `/srv/tht/files`.
+4. Grant permissions to that folder using the following command:
+    ```
+    sudo chmod -R 777 /srv/tht
+    ```
+
+### Step 2: Launch Docker-Compose
+1. Navigate to the project directory.
+2. Run the following command:
+    ```
+    sudo docker-compose up
+    ```
+3. The `.env` file is available to configure ports and other settings. If needed, make changes there.
+4. Attempt to access `http://localhost:8080/` to reach the testing-harness-tool's login page.
