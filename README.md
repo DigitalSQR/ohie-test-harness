@@ -239,7 +239,7 @@ CREATE DATABASE testing_harness_tool;
 1. Go to the project directory.
 2. Execute the following command:
     ```
-    sudo bash ./copy-zips.sh files
+    sudo bash ./copy_zips.sh files
     ```
 3. The terminal will display the list of files copied to the directory `/srv/tht/files`.
 4. Grant permissions to that folder using the following command:
