@@ -90,4 +90,13 @@ public interface DocumentService {
      */
     public ByteArrayResource getByteArrayResourceByFileId(String fileId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException;
 
+    /**
+     * get image type by documentId
+     *
+     * @param documentId  documentId in which file is associated
+     * @param contextInfo ContextInfo
+     * @return ByteArrayResource of file
+     */
+    public String getImageTypeByDocumentId(String documentId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException;
+
 }
