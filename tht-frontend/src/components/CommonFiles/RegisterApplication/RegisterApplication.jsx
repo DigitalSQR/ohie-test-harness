@@ -45,12 +45,12 @@ const RegisterApplication = () => {
       errors.name = "Application name must have less than 1000 characters.";
     }
 
-    if (values.description === "") {
-      errors.description = "Application Description is required";
-    } else if (values.description.length > 1000) {
-      errors.description =
-        "Application description must have less than 1000 characters.";
-    }
+    // if (values.description === "") {
+    //   errors.description = "Application Description is required";
+    // } else if (values.description.length > 1000) {
+    //   errors.description =
+    //     "Application description must have less than 1000 characters.";
+    // }
 
     values.testRequestUrls.forEach((url, index) => {
       if (url.username === "") {
@@ -300,7 +300,7 @@ const RegisterApplication = () => {
                 </div>
               </div>
             </div>
-            <div className="row">
+          {/*  <div className="row">
               <div className="col-12">
                 <div className="custom-input mb-3">
                   <label htmlFor="description" className="form-label">
@@ -331,7 +331,12 @@ const RegisterApplication = () => {
                 </div>
               </div>
             </div>
-
+           */}
+           {formik.errors.testRequestUrls ? (
+            <div className="error-message">
+              {formik.errors.testRequestUrls}
+            </div>
+          ) : null}
             {components.map((component, index) => {
               const isChecked = formik.values.testRequestUrls.some(
                 (selectedComponent) =>
@@ -734,11 +739,7 @@ const RegisterApplication = () => {
                 </Fragment>
               );
             })}
-            {formik.errors.testRequestUrls ? (
-              <div className="error-message">
-                {formik.errors.testRequestUrls}
-              </div>
-            ) : null}
+           
           </div>
 
           <div className="text-end">
