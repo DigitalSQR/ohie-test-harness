@@ -163,12 +163,10 @@ public class DocumentRestController {
     public String getFileByDocumentBase64(@PathVariable("documentId") String documentId,
                                           @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, OperationFailedException {
-
         ByteArrayResource byteArrayResourceByDocumentId = documentService.getByteArrayResourceByDocumentId(documentId, contextInfo);
-
+        String imageType = documentService.getImageTypeByDocumentId(documentId, contextInfo);
         byte[] byteArrayOfFile = byteArrayResourceByDocumentId.getByteArray();
-
-        return "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(byteArrayOfFile);
+        return "data:" + imageType + ";base64," + Base64.getEncoder().encodeToString(byteArrayOfFile);
     }
 
     @ApiOperation(value = "Retrieves all status of document.", response = Multimap.class)

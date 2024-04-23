@@ -227,6 +227,17 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    public String getImageTypeByDocumentId(String documentId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException {
+        DocumentEntity document = this.getDocument(documentId, contextInfo);
+        String imageType = document.getFileType();
+        if(!imageType.startsWith("image/")) {
+            LOGGER.error("The document type is not a valid image type");
+            throw new OperationFailedException("The document type is not a valid image type");
+        }
+        return imageType;
+    }
+
+    @Override
     public ByteArrayResource getByteArrayResourceByFileId(String fileId, ContextInfo contextInfo) throws OperationFailedException {
         List<DocumentEntity> documentEntities = new ArrayList<>();
         try {
