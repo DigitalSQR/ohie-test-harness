@@ -193,4 +193,3 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/nginx-tht.conf:ro
     ports:
       - ${NGINX_PORT}:8080
-      - 443:443
