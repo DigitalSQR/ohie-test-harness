@@ -60,6 +60,9 @@ export default function UserProfile () {
   // Selector to retrieve the user ID from the Redux store.
   const userID = useSelector((store) => store.userInfoSlice.id);
 
+  // State to track if there are unsaved changes in the form
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+
   // Function to handle profile picture upload
   const handleUpload = () => {
 
@@ -124,6 +127,23 @@ export default function UserProfile () {
     }
     return errors;
   };
+
+  // Function to handle beforeunload event
+  const handleBeforeUnload = (event) => {
+    event.preventDefault();
+    event.returnValue = "";
+    return "You have unsaved changes. Are you sure you want to leave this page?";
+  };
+
+  // useEffect hook to track unsavedChanges state
+  useEffect(() => {
+    if (unsavedChanges) {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    } 
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [unsavedChanges]);
 
   // useEffect hook used to update the header title, fetch user data, and display profile picture on component mount.
   useEffect(() => {
@@ -190,7 +210,28 @@ export default function UserProfile () {
     return false;
   };
 
-  const handleCancel = () => setPreviewOpen(false);
+  // Function to handle cancel button click
+  const handleCancel = () => {
+    if (unsavedChanges || uploadedFlag) {
+      Modal.confirm({
+        title: "Discard Changes",
+        content: "Are you sure you want to discard changes?",
+        okText: "Yes",
+        cancelText: "Cancel",
+        onOk() {
+          // Reset form and navigate back
+          navigate(-1);
+          formik.resetForm();
+          setUnsavedChanges(false);
+          setUploadedFlag(false);
+        },
+      });
+    } else {
+      // If no unsaved changes, navigate back
+      navigate(-1);
+      formik.resetForm();
+    }
+  };
 
   // Formik hook to manage form state, validation, and submission.
   const formik = useFormik({
@@ -202,6 +243,8 @@ export default function UserProfile () {
     },
     validate: validate,
     onSubmit: (values) => {
+      setUnsavedChanges(false);
+      setUploadedFlag(false);
       showLoader();
       const trimmedValues = {
         ...values,
@@ -234,9 +277,15 @@ export default function UserProfile () {
     },
   });
 
+  // Function to handle changes in form fields
+  const handleFormChange = () => {
+    setUnsavedChanges(true);
+  };
+
   // Function to handle the selection of a new profile picture.
   const handlePictureSelect = (e) => {
     setUploadedFlag(true);
+    setUnsavedChanges(true); 
     setProfilePicture(() => {
       const currentImage = {
         file: e.file,
@@ -381,7 +430,11 @@ export default function UserProfile () {
                     placeholder="Your Name"
                     name="name"
                     value={formik.values.name}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      formik.handleChange(event); 
+                      handleFormChange(); 
+                    }}
+
                     onBlur={formik.handleBlur}
                   />
                   {formik.touched.name && formik.errors.name && (
@@ -470,10 +523,7 @@ export default function UserProfile () {
               </button>
               <button
                 className="btn btn-primary btn-white font-size-14"
-                onClick={() => {
-                  navigate(-1);
-                  formik.resetForm();
-                }}
+                onClick={handleCancel}
               >
                 Cancel
               </button>
