@@ -456,7 +456,7 @@ const RegisterApplication = () => {
                                 </div>
                               </div>
                               <div className=" custom-input col-sm-6 col-12">
-                                <div className=" input-group position-relative">
+                                <div className=" input-group position-relative z-0">
                                   <input
                                     id={
                                       "testRequestUrls[" + index + "].password"
