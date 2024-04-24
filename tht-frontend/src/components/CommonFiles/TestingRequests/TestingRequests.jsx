@@ -12,7 +12,6 @@ import { useLoader } from "../../loader/LoaderContext.js";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
 import { notification, Modal, Empty } from "antd";
 import { formatDate } from "../../../utils/utils.js";
-import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.jsx";
 import { useNavigate } from "react-router-dom";
 import { store } from "../../../store/store.js";
 import { Pagination } from "@mui/material";
@@ -258,9 +257,6 @@ const TestingRequests = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
-                  <th className="assessee-column">Assessee</th>
-                  <th className="company-column">Company</th>
-                  <th className="emailId-column">Email Id</th>
                   <th className="date-column">
                     REQUEST DATE{" "}
                     <span
@@ -315,10 +311,6 @@ const TestingRequests = () => {
                         key={testRequest.id}
                       >
                         <td className="fw-bold">{testRequest.name}</td>
-                        <UserIdConnector
-                          isLink={true}
-                          userId={testRequest.assesseeId}
-                        />
                         <td>{formattedDate}</td>
                         <td>
                           {testRequest?.state !==

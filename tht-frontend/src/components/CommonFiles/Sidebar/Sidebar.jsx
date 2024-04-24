@@ -63,7 +63,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
         <div className="logo-white">
           <img src={logo} alt="Logo" />
         </div>
-        <ul className="side-menu" style={{ cursor: "pointer" }}>
+        <ul className="side-menu">
           <li>
             <a
               className={
