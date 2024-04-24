@@ -633,7 +633,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent().stream().map(testcaseResultEntity1 -> new TestcaseResultEntity(testcaseResultEntity1)).collect(Collectors.toList());
         if(testcaseResultEntities.isEmpty()){
-            throw new DoesNotExistException("No Test case results found for given input.");
+            return new RecursiveTestcaseResults(new ArrayList<>(), testcaseResultEntity);
         }
 
         if (!StringUtils.hasLength(testcaseResultEntity.getId())) {
