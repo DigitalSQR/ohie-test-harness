@@ -51,6 +51,7 @@ const AddAdminUser = ({
   };
   const validationSchema = Yup.object({
     name: Yup.string()
+      .trim()
       .required("Name is required")
       .max(1000, "Name must have less than 1000 characters"),
     email: Yup.string()
@@ -58,11 +59,13 @@ const AddAdminUser = ({
       .required("Email is required")
       .max(255, "Email must have less than 255 characters"),
     password: Yup.string()
+      .trim()
       .required("Password is required")
       .min(6, "Password must be of minimum 6 characters")
       .max(15, "Password must have less than 15 characters"),
     roleIds: Yup.array().min(1, "Role is required"),
     confirmPassword: Yup.string()
+      .trim()
       .required("Confirm password is required").oneOf(
       [Yup.ref("password"), null],
       "Confirm password does not match with the password."
@@ -72,7 +75,12 @@ const AddAdminUser = ({
   //Function to submit the details of the new users
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     showLoader();
-    const { confirmPassword, ...body } = values;
+
+    const trimmedValues = Object.fromEntries(
+      Object.entries(values).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
+    );
+
+    const { confirmPassword, ...body } = trimmedValues;
     body.roleIds = body.roleIds.map((role) => role);
     AdminUserAPI.addUser(body)
       .then((response) => {

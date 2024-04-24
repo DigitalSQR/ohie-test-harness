@@ -58,6 +58,7 @@ const UpdateAdminUser = ({
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required")
+      .trim()
       .max(1000, "Name must have less than 1000 characters"),
     email: Yup.string()
       .email("Invalid email address")
@@ -88,9 +89,18 @@ const UpdateAdminUser = ({
   //Function to Submit the form with updated user details
   const handleSubmit = async (values, {resetForm}) => {
     showLoader();
+    const trimmedValues = {};
+    Object.keys(values).forEach(key => {
+        if (typeof values[key] === 'string') {
+            trimmedValues[key] = values[key].trim();
+        } else {
+            trimmedValues[key] = values[key];
+        }
+    });
+
     const body = {
-      ...values,
-      roleIds: values.roleIds.map((role) => role),
+      ...trimmedValues,
+      roleIds: trimmedValues.roleIds.map((role) => role),
       id: userId,
       state: state,
       meta: meta,

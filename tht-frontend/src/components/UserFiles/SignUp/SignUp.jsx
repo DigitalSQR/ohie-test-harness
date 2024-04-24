@@ -20,23 +20,28 @@ export default function SignUp() {
   const [enterPressed,setEnterPressed]=useState(false);
   const validationSchema = Yup.object({
     name: Yup.string()
+      .trim()
       .required("Name is required")
       .max(1000, "Name must have less than 1000 characters"),
     email: Yup.string()
+      .trim()
       .email("Invalid email address")
       .required("Email is required")
       .max(255, "Email must have less than 255 characters"),
     password: Yup.string()
+      .trim()
       .required("Password is required")
       .min(6, "Password must be at least 6 characters")
       .max(255, "Password must have less than 255 characters"),
     confirmPassword: Yup.string()
-    .required("Confirm password is required")
-    .oneOf(
+      .trim()
+      .required("Confirm password is required")
+      .oneOf(
         [Yup.ref("password"), null],
         "Confirm password does not match with the password."
       ),
     companyName: Yup.string()
+      .trim()
       .required("Please enter your company's name.")
       .max(255, "Company name must have less than 255 characters"),
   });
@@ -51,25 +56,34 @@ export default function SignUp() {
     },
     validationSchema: validationSchema,
     onSubmit: () => {
-      if (formik.values.password != formik.values.confirmPassword) {
+      const trimmedValues = {
+        ...formik.values,
+        email: formik.values.email.trim(),
+        name: formik.values.name.trim(),
+        password: formik.values.password.trim(),
+        confirmPassword: formik.values.confirmPassword.trim(),
+        companyName: formik.values.companyName.trim(),
+      };
+  
+      if (trimmedValues.password !== trimmedValues.confirmPassword) {
         notification.error({
-          className:"notificationError",
-          message:"Error",
+          className: "notificationError",
+          message: "Error",
           placement: "bottomRight",
           description: "Confirm password does not match with the password.",
         });
       } else {
         if (!captchaInfo.code && captchaInfo.captcha) {
           notification.error({
-            className:"notificationError",
-            message:"Error",
+            className: "notificationError",
+            message: "Error",
             placement: "bottomRight",
             description: "Invalid captcha",
           });
           return;
         }
         showLoader();
-        AuthenticationAPI.signup(formik.values, captchaInfo)
+        AuthenticationAPI.signup(trimmedValues, captchaInfo)
           .then(
             (result) => {
               hideLoader();

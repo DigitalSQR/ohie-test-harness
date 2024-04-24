@@ -37,11 +37,11 @@ const RegisterApplication = () => {
       errors.testRequestUrls = "Please select atleast one component";
     }
 
-    if (values.name === "") {
+    if (!values.name.trim()) {
       errors.name = "Application Name is required";
-    } else if (values.name.length < 3) {
+    } else if (values.name.trim().length < 3) {
       errors.name = "Application name must be of minimum 3 characters";
-    } else if (values.name.length > 1000) {
+    } else if (values.name.trim().length > 1000) {
       errors.name = "Application name must have less than 1000 characters.";
     }
 
@@ -53,36 +53,24 @@ const RegisterApplication = () => {
     // }
 
     values.testRequestUrls.forEach((url, index) => {
-      if (url.username === "") {
-        errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].username`
-        ] = "Username is required";
-      } else if (url.username.length > 255) {
-        errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].username`
-        ] = "Username must have less than 255 characters";
+      const componentId = modifiedComponentId(url.componentId);
+      
+      if (!url.username.trim()) {
+        errors[`testRequestUrls[${componentId}].username`] = "Username is required";
+      } else if (url.username.trim().length > 255) {
+        errors[`testRequestUrls[${componentId}].username`] = "Username must have less than 255 characters";
       }
-      if (url.password === "") {
-        errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].password`
-        ] = "Password is required";
-      } else if (url.password.length > 255) {
-        errors[
-          `testRequestUrls[${modifiedComponentId(url.componentId)}].password`
-        ] = "Password must have less than 255 characters";
+    
+      if (!url.password.trim()) {
+        errors[`testRequestUrls[${componentId}].password`] = "Password is required";
+      } else if (url.password.trim().length > 255) {
+        errors[`testRequestUrls[${componentId}].password`] = "Password must have less than 255 characters";
       }
-      if (url.fhirApiBaseUrl === "") {
-        errors[
-          `testRequestUrls[${modifiedComponentId(
-            url.componentId
-          )}].fhirApiBaseUrl`
-        ] = "fhirApiBaseUrl is required";
-      } else if (url.fhirApiBaseUrl.length > 255) {
-        errors[
-          `testRequestUrls[${modifiedComponentId(
-            url.componentId
-          )}].fhirApiBaseUrl`
-        ] = "fhirApiBaseUrl must have less than 255 characters";
+
+      if (!url.fhirApiBaseUrl.trim()) {
+        errors[`testRequestUrls[${componentId}].fhirApiBaseUrl`] = "fhirApiBaseUrl is required";
+      } else if (url.fhirApiBaseUrl.trim().length > 255) {
+        errors[`testRequestUrls[${componentId}].fhirApiBaseUrl`] = "fhirApiBaseUrl must have less than 255 characters";
       }
       if (url.websiteUIBaseUrl.length > 255) {
         errors[
