@@ -35,6 +35,9 @@ public class ExceptionController {
     @Value("${exception.stack-trace.enabled}")
     private Boolean isStackTraceEnabled;
 
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String maxFileSize;
+
     @Autowired
     public void setEnvironment(Environment environment) {
         this.environment = environment;
@@ -105,7 +108,7 @@ public class ExceptionController {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<Object> handleMaxSizeException(MaxUploadSizeExceededException ex) {
         ValidationResultInfo error = new ValidationResultInfo();
-        error.setMessage("File size exceeds the maximum limit of 2MB");
+        error.setMessage("File size exceeds the maximum limit of "+maxFileSize);
         error.setLevel(ErrorLevel.ERROR);
         error.setElement("file");
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);

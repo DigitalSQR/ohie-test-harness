@@ -8,7 +8,7 @@ import java.util.Set;
 
 public enum TestcaseResultEntityDocumentTypes implements EntityDocumentTypeEnum {
 
-    TESTCASE_RESULT_EVIDENCE("document.type.testcaseresult.evidence", Set.of(FileType.IMAGE_JPEG, FileType.IMAGE_PNG, FileType.APPLICATION_PDF), DocumentServiceConstants.ALLOWED_ACTIVE_MULTI_RECORD);
+    TESTCASE_RESULT_EVIDENCE("document.type.testcaseresult.evidence", Set.of(FileType.IMAGE_JPEG, FileType.IMAGE_PNG, FileType.APPLICATION_PDF, FileType.QUICKTIMEVIDEO, FileType.MP4), DocumentServiceConstants.ALLOWED_ACTIVE_MULTI_RECORD);
 
     private final String key;
 
