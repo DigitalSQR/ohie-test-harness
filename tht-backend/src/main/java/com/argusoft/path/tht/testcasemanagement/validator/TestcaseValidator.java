@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.validator;
 
+import com.argusoft.path.tht.fileservice.constant.TestcaseEntityDocumentTypes;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
@@ -239,6 +240,8 @@ public class TestcaseValidator {
         //check for description
         ValidationUtils
                 .validateRequired(testcaseEntity.getDescription(), "description", errors);
+
+        ValidationUtils.validateFileType(zipFileForAutomationTest, TestcaseEntityDocumentTypes.TESTCASE_TESTSUITE_AUTOMATION_ZIP.getAllowedFileTypes(), errors);
     }
 
     //validate not update

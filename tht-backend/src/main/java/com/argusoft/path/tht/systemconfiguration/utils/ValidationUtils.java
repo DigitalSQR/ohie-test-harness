@@ -1,17 +1,24 @@
 package com.argusoft.path.tht.systemconfiguration.utils;
 
+import com.argusoft.path.tht.fileservice.constant.FileType;
+import com.argusoft.path.tht.fileservice.service.FileService;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidFileTypeException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -161,6 +168,22 @@ public final class ValidationUtils {
             }
         }
     }
+
+    public static void validateFileType(MultipartFile zipMultipartFile, Set<FileType> fileTypes, List<ValidationResultInfo> errors){
+        if(zipMultipartFile!=null){
+            try {
+                FileService.validateFileType(zipMultipartFile, fileTypes);
+            } catch (InvalidFileTypeException | InvalidParameterException | OperationFailedException e) {
+                if(e instanceof InvalidFileTypeException){
+                    errors.add(new ValidationResultInfo("zipFile",ErrorLevel.ERROR, ((InvalidFileTypeException) e).getMessage()));
+                }
+                else {
+                    errors.add(new ValidationResultInfo("zipFile",ErrorLevel.ERROR, "error validating testsuite zip file type."));
+                }
+            }
+        }
+    }
+
 
     /**
      * Validation method for pattern match.
