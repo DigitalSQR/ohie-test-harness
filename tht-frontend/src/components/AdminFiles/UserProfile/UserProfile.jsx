@@ -111,14 +111,15 @@ export default function UserProfile () {
   // Function to validate form input values.
   const validate = (values) => {
     const errors = {};
-    if (values?.name?.length === 0) {
+    if (!values.name?.trim()) {
       errors.name = "Please enter your name.";
-    } else if (values?.name?.length > 1000) {
-      errors.password = "Password must have less than 1000 characters.";
+    } else if (values.name.trim().length > 1000) {
+      errors.name = "Name must have less than 1000 characters.";
     }
-    if (values?.companyName?.length == 0) {
+  
+    if (!values.companyName?.trim()) {
       errors.companyName = "Please enter your company's name.";
-    } else if (values?.companyName?.length > 255) {
+    } else if (values.companyName.trim().length > 255) {
       errors.companyName = "Company name must have less than 255 characters.";
     }
     return errors;
@@ -202,10 +203,16 @@ export default function UserProfile () {
     validate: validate,
     onSubmit: (values) => {
       showLoader();
+      const trimmedValues = {
+        ...values,
+        name: values.name.trim(),
+        companyName: values.companyName.trim(),
+      };
+  
       const body = {
         ...userDetails,
-        name: values.name,
-        companyName: values.companyName,
+        name: trimmedValues.name,
+        companyName: trimmedValues.companyName,
       };
       UserAPI.UpdateExistingUser(body)
         .then((response) => {

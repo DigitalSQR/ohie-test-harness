@@ -65,26 +65,29 @@ export default function Login() {
 
   const validate = (values) => {
     const errors = {};
-
-    if (values.username.length == 0) {
+  
+    const trimmedUsername = values.username.trim();
+    const trimmedPassword = values.password.trim();
+  
+    if (!trimmedUsername) {
       errors.username = "Please enter your email.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.username.trim())) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedUsername)) {
       errors.username = "Please enter a valid email address";
-    }else if(values.username.length > 255){
-      errors.username = "Email must have less than 255 characters."
+    } else if (trimmedUsername.length > 255) {
+      errors.username = "Email must have less than 255 characters.";
     }
-
-    if (values.password.length == 0) {
+  
+    if (!trimmedPassword) {
       errors.password = "Please enter password.";
-    }else if(values.password.length < 6) {
-      errors.password = "Password must be of minimum 6 characters"
-    }else if(values.password.length > 255) {
-      errors.password = "Password must have less than 255 characters."
+    } else if (trimmedPassword.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    } else if (trimmedPassword.length > 255) {
+      errors.password = "Password must have less than 255 characters.";
     }
-
-
+  
     return errors;
   };
+  
 
   const getCaptcha=(code,captcha)=>{
       setCaptchaInfo({

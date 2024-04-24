@@ -153,6 +153,9 @@
  
     height:calc(100vh - 336px) ;
     overflow-y:auto;
+    overflow-x:hidden;
+    scrollbar-width: thin;
+
   }
   .question-list{
     background: #f4f8fa;
