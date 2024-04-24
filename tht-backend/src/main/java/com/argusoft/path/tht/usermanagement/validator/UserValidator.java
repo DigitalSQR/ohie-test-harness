@@ -398,7 +398,7 @@ public class UserValidator {
 
     public static void validateChangeState(UserEntity userEntity, UserService userService, List<ValidationResultInfo> errors, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
-        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))){
+        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE)){
             UserValidator.rejectionMessageValidation(userEntity, errors);
         }
 
