@@ -5,6 +5,9 @@ export const NotificationAPI = {
     return api.request({
       url: `notification`,
       method: "GET",
+      params: {
+        state: "notification.status.unread",
+      },
     });
   },
   updateNotificationState: function (notificationId, changeState) {

@@ -210,18 +210,30 @@ export default function Header({ headerContent, isSidebarOpen }) {
                   <div className="notification-count">{unreadCount}</div>
                 )}
               </div>
-              <ul className="dropdown-menu notification-menu  mt-2" style={{ maxHeight: "90vh", overflowY: "auto" }}>
-                <h5 className="notification-header  p-3"><i class="bi bi-bell me-1 fw-bold"></i>Notifications <span style={{fontSize:"12px",fontWeight:"bold",float:"right",textDecoration:"underline"}}> Archive All Notifications</span></h5>
+              <ul
+                className="dropdown-menu notification-menu  mt-2"
+                style={{ maxHeight: "90vh", overflowY: "auto" }}
+              >
+                <h5 className="notification-header  p-3">
+                  <i class="bi bi-bell me-1 fw-bold"></i>Notifications
+                  {unreadCount > 0 && (
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        float: "right",
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                      }}
+                      onClick={bulkArchiveNotifications}
+                    >
+                      {" "}
+                      Archive All Notifications
+                    </span>
+                  )}
+                </h5>
                 {notifications && notifications.length > 0 && (
                   <>
-                    {/* {unreadCount > 0 && (
-                      <button
-                        className="archive-all-notifications-btn"
-                        onClick={bulkArchiveNotifications}
-                      >
-                        Archive All Notifications
-                      </button>
-                    )} */}
                     {notifications.map((notification, index) => {
                       const formattedDateTime = moment(
                         notification.meta.createdAt
