@@ -343,9 +343,8 @@ const Assessee = () => {
                             {" "}
                             {user.state === "user.status.active" && (
                               <Fragment>
-                                <i className="bi bi-ban text-warning font-size-16"></i>
                                 <span
-                                  className="cursor-pointer text-warning font-size-12 fw-bold ps-1"
+                                  className="cursor-pointer"
                                   onClick={() => {
                                     setIsReasonModalOpen(true);
                                     setCurrentAssesseeId(user.id);
@@ -353,8 +352,10 @@ const Assessee = () => {
                                     setNewState("inactive");
                                   }}
                                 >
-                                  
-                                  DISABLE
+                                  <i className="bi bi-ban text-warning font-size-16"></i>
+                                  <span className="text-warning font-size-12 fw-bold ps-1">
+                                    DISABLE
+                                  </span>
                                 </span>
                               </Fragment>
                             )}

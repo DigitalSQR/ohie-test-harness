@@ -185,7 +185,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
   };
 
   return (
-    <div id="header" style={{ cursor: "pointer" }}>
+    <div id="header">
       <header>
         <div className="d-flex align-items-center justify-content-between heading">
           <h5
