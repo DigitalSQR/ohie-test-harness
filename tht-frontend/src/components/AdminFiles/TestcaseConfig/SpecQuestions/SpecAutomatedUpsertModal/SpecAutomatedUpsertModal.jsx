@@ -4,6 +4,7 @@ import { Modal, notification } from "antd";
 import { ErrorMessage, Field, Form, Formik, setIn } from "formik";
 import * as Yup from "yup";
 import "./SpecAutomatedUpsertModal.scss";
+import { useLoader } from "../../../../loader/LoaderContext";
 
 export default function SpecAutomatedUpsertModal(props) {
   const {
@@ -20,6 +21,9 @@ export default function SpecAutomatedUpsertModal(props) {
     name: "",
     description: ""
   });
+
+  const { showLoader, hideLoader } = useLoader();
+
 
   const [uploadedZipFile, setUploadedZipFile] = useState();
   const [currentTestCaseId,setCurrentTestCaseId] = useState();
@@ -48,6 +52,7 @@ export default function SpecAutomatedUpsertModal(props) {
       const data = currentAutomatedTestcase;
       data.name = values.name;
       data.zipFile = uploadedZipFile;
+      showLoader();
       TestCaseAPI.updateTestCase(data).then((res)=>{
         notification.success({
           message: "Success",
@@ -63,7 +68,9 @@ export default function SpecAutomatedUpsertModal(props) {
         fetchAutomatedTestCases();
         setCurrentTestCaseId();
       }).catch(()=>{})
+      hideLoader();
     }else{
+      showLoader();
     TestCaseAPI.createTestCase(data)
       .then((res) => {
         notification.success({
@@ -80,6 +87,8 @@ export default function SpecAutomatedUpsertModal(props) {
         fetchAutomatedTestCases();
       })
       .catch(() => {});
+      hideLoader();
+
     }
   };
 
@@ -120,7 +129,7 @@ export default function SpecAutomatedUpsertModal(props) {
         destroyOnClose={true}
         footer={null}
       >
-        <h5>Create Automated TestCase</h5>
+        <h5>{isEditMode ? "Update Automated TestCase" : "Create Automated TestCase"}</h5>
         <Formik
           enableReinitialize={true}
           initialValues={initialValues}
@@ -206,8 +215,8 @@ export default function SpecAutomatedUpsertModal(props) {
                     <button
                       type="submit"
                       className="btn btn-primary btn-blue btn-submit py-1 font-size-10"
-                      disabled={(!isValid || !dirty) && !uploadedZipFile}
-                    >
+                      disabled={(isEditMode && ((!isValid || !dirty) && !uploadedZipFile)) || (!isEditMode && (!isValid || !dirty || !uploadedZipFile))}
+                      >
                       {isEditMode ? "Update" : "Submit"}
                     </button>
                   </div>

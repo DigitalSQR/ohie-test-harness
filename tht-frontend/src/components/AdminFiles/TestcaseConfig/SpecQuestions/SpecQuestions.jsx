@@ -5,6 +5,10 @@ import { SpecificationAPI } from "../../../../api/SpecificationAPI";
 import { ComponentAPI } from "../../../../api/ComponentAPI";
 import { useLoader } from "../../../loader/LoaderContext";
 import { Breadcrumb, Empty } from "antd";
+import sortedUp from "../../../../styles/images/sort-up.png";
+import sortedDown from "../../../../styles/images/sort-down.png";
+import unsorted from "../../../../styles/images/unsorted.png";
+
 import {
   EditFilled,
   LeftOutlined,
@@ -30,6 +34,7 @@ import {
 import { TestResultAPI } from "../../../../api/TestResultAPI";
 import SpecAutomatedUpsertModal from "./SpecAutomatedUpsertModal/SpecAutomatedUpsertModal";
 import { fileTypeIcon } from "../../../../utils/utils";
+import { Pagination } from "@mui/material";
 
 export default function ManualTestCases() {
   const navigate = useNavigate();
@@ -49,7 +54,43 @@ export default function ManualTestCases() {
   const [currentAutomatedTestcase, setCurrentAutomatedTestcase] = useState();
   const [automatedTestcases, setAutomatedTestCases] = useState();
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
+
+  const obj = {
+    name: "desc",
+    rank: "asc",
+  };
+  const [sortFieldName, setSortFieldName] = useState("rank");
+  const [sortDirection, setSortDirection] = useState(obj);
+
+  const renderSortIcon = (fieldName) => {
+    if (sortFieldName === fieldName) {
+      return (
+        <img
+          className="cursor-pointer"
+          style={{ width: "8px" }}
+          src={sortDirection[fieldName] === "asc" ? sortedUp : sortedDown}
+        ></img>
+      );
+    }
+    return (
+      <img
+        className="cursor-pointer"
+        style={{ width: "10px" }}
+        src={unsorted}
+      />
+    );
+  };
+  const handleSort = (sortFieldName) => {
+    setSortFieldName(sortFieldName);
+    const newSortDirection = { ...obj };
+    newSortDirection[sortFieldName] =
+      sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
+    setSortDirection(newSortDirection);
+    fetchAutomatedTestCases(sortFieldName, newSortDirection,currentPage);
+  };
   const items = [
     {
       key: "1",
@@ -62,46 +103,59 @@ export default function ManualTestCases() {
   ];
   const onChange = (key) => {
     setActiveTab(key);
-    fetchData(key === "1");
+    if (key === "1") {
+      fetchData(key === "1");
+    }
   };
 
-  const fetchAutomatedTestCases = () => {
+  const fetchAutomatedTestCases = (newFieldName, newsortDirection,page) => {
     const params = {
       specificationId: specificationId,
       manual: false,
       testcaseRunEnvironment: "testcase.run.environment.eu.testbed",
+      sort: `${newFieldName ? newFieldName : sortFieldName},${
+        newsortDirection
+          ? newsortDirection[newFieldName]
+          : sortDirection[sortFieldName]
+      }`,
+      size : 5
     };
+    if(totalPages > 1){
+      params.page = page ? page - 1 : currentPage - 1
+    }
     TestCaseAPI.getTestCasesBySpecificationId(params)
       .then((res) => {
         setAutomatedTestCases(res.content);
+        setTotalPages(res.totalPages);
+
       })
       .catch(() => {});
   };
 
   const fetchUploadedZipFiles = () => {
     setUploadedFiles([]);
-    if(automatedTestcases){
-     automatedTestcases.forEach((question,index)=>{
-      DocumentAPI.getDocumentsByRefObjUriAndRefId(
-        RefObjUriConstants.TESTCASE_REFOBJURI,
-        question.id,
-        DOCUMENT_STATE_ACTIVE
-      ).then((res)=>{
-        setUploadedFiles((prev)=>{
-          if(res.content.length !== 0){
-          return [...prev,res.content[0]]
-          }
-        })
-      })
-    })}
-  
+    if (automatedTestcases) {
+      automatedTestcases.forEach((question, index) => {
+        DocumentAPI.getDocumentsByRefObjUriAndRefId(
+          RefObjUriConstants.TESTCASE_REFOBJURI,
+          question.id,
+          DOCUMENT_STATE_ACTIVE
+        ).then((res) => {
+          setUploadedFiles((prev) => {
+            if (res.content.length !== 0) {
+              return [...prev, res.content[0]];
+            }
+          });
+        });
+      });
+    }
   };
 
-  useEffect(()=>{
-    if(!!automatedTestcases){
-    fetchUploadedZipFiles();
+  useEffect(() => {
+    if (!!automatedTestcases) {
+      fetchUploadedZipFiles();
     }
-  },[automatedTestcases])
+  }, [automatedTestcases]);
 
   useEffect(() => {
     fetchData(true);
@@ -190,6 +244,7 @@ export default function ManualTestCases() {
   };
 
   useEffect(() => {
+    if(activeKey === 1){
     let key;
     if (activeKey) {
       key = activeKey - 1;
@@ -248,9 +303,14 @@ export default function ManualTestCases() {
           });
       }
     }
+  }
   }, [activeKey, questions]); // Run this effect whenever activeKey changes
 
-  const changeTestCaseState = (testcaseId, state) => {
+  useEffect(() => {
+    console.log(activeKey);
+  }, [activeKey]);
+
+  const changeTestCaseState = (testcaseId, state, isAutomated) => {
     const newState =
       state === "testcase.status.active"
         ? "testcase.status.inactive"
@@ -263,7 +323,7 @@ export default function ManualTestCases() {
         okText: "Save",
         cancelText: "Cancel",
         onOk() {
-          handleStateChange(newState);
+          handleStateChange(newState, isAutomated);
         },
       });
     };
@@ -272,15 +332,18 @@ export default function ManualTestCases() {
       TestCaseAPI.changeState(testcaseId, newState)
         .then((res) => {
           hideLoader();
-
-          setQuestions((prevQuestions) => {
-            const updatedQuestions = prevQuestions?.map((question) =>
-              question.id === testcaseId
-                ? { ...question, testcase: res.data }
-                : question
-            );
-            return updatedQuestions;
-          });
+          if (isAutomated) {
+            fetchAutomatedTestCases();
+          } else {
+            setQuestions((prevQuestions) => {
+              const updatedQuestions = prevQuestions?.map((question) =>
+                question.id === testcaseId
+                  ? { ...question, testcase: res.data }
+                  : question
+              );
+              return updatedQuestions;
+            });
+          }
 
           fetchData();
         })
@@ -306,20 +369,36 @@ export default function ManualTestCases() {
     DocumentAPI.downloadDocument(zipFile.id, zipFile.name).catch((err) => {});
   };
 
-  useEffect(()=>{console.log(uploadedFiles)},[uploadedFiles])
+  useEffect(() => {
+    console.log(uploadedFiles);
+  }, [uploadedFiles]);
 
+  const handleChangePage = (event,newPage) => {
+    console.log(newPage);
+    setCurrentPage(newPage);
+    fetchAutomatedTestCases(sortFieldName,sortDirection,newPage)
+  };
   return (
     <div id="SpecQuestions">
       <div id="wrapper">
-      <Breadcrumb className="custom-breadcrumb">
-        <Breadcrumb.Item><Link to="/testcase-config" className="breadcrumb-item">Components</Link></Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <Link to={`/testcase-config/component-specification/${componentDetails?.id}`} className="breadcrumb-item">
-            {componentDetails?.name}
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item className="breadcrumb-item">Testcase Configuration</Breadcrumb.Item>
-      </Breadcrumb>
+        <Breadcrumb className="custom-breadcrumb">
+          <Breadcrumb.Item>
+            <Link to="/testcase-config" className="breadcrumb-item">
+              Components
+            </Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link
+              to={`/testcase-config/component-specification/${componentDetails?.id}`}
+              className="breadcrumb-item"
+            >
+              {componentDetails?.name}
+            </Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item className="breadcrumb-item">
+            Testcase Configuration
+          </Breadcrumb.Item>
+        </Breadcrumb>
 
         <div className="d-flex justify-content-between align-items-center">
           <Tabs
@@ -346,8 +425,10 @@ export default function ManualTestCases() {
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
-                onClick={() => {setIsAutomatedModalOpen(true)
-                setCurrentAutomatedTestcase();}}
+                onClick={() => {
+                  setIsAutomatedModalOpen(true);
+                  setCurrentAutomatedTestcase();
+                }}
               >
                 <i className="bi bi-plus"></i>
                 Create Automated Testcase
@@ -369,7 +450,7 @@ export default function ManualTestCases() {
               <div className="row">
                 <div className="col-12 col-md-8 offset-md-2"></div>
                 <Tabs
-                  defaultActiveKey="2"
+                  defaultActiveKey="1"
                   tabPosition="top"
                   className="questions-tabs mt-3"
                   activeKey={activeKey}
@@ -542,59 +623,95 @@ export default function ManualTestCases() {
 
         {activeTab === "2" && (
           <div className="table-responsive">
+ {automatedTestcases.length !== 0 ?
+
             <table className=" data-table capitalize-words">
               <thead>
                 <tr>
-                  <th style={{ width: "35%" }}>TestCase</th>
-                  <th style={{ width: "20%" }}>Rank</th>
-                  <th style={{ width: "25%" }}>Zip File</th>
-                  <th style={{ width: "20%" }}>Actions</th>
+                  <th style={{ width: "35%" }}>
+                    TestCase
+                    <span
+                      className="ps-1"
+                      onClick={() => {
+                        handleSort("name");
+                      }}
+                    >
+                      {renderSortIcon("name")}
+                    </span>
+                  </th>
+                  <th style={{ width: "10%" }}>
+                    Rank
+                    <span
+                      className="ps-1"
+                      onClick={() => {
+                        handleSort("rank");
+                      }}
+                    >
+                      {renderSortIcon("rank")}
+                    </span>
+                  </th>
+                  <th style={{ width: "30%" }}>Zip File</th>
+                  <th style={{ width: "25%" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {!!automatedTestcases &&
-                  automatedTestcases.map((testcase) => {
+                  {automatedTestcases.map((testcase) => {
                     return (
                       <tr>
                         <td>{testcase.name}</td>
                         <td>{testcase.rank}</td>
-                          {!!uploadedFiles ? uploadedFiles?.filter((files)=>files.refId === testcase?.id)
-                          .map((files)=>(
-                      
+                        {!!uploadedFiles ? (
+                          uploadedFiles
+                            ?.filter((files) => files.refId === testcase?.id)
+                            .map((files) => (
+                              <td>
+                                <div
+                                  className="doc-badge"
+                                  type="button"
+                                  key={files.id}
+                                >
+                                  <img src={fileTypeIcon(files.fileType)} />
+                                  <span>{files.name}</span>
+                                  <span
+                                    type="button"
+                                    title="Download File"
+                                    className="mx-2 font-size-14"
+                                    onClick={() => downloadFile(files)}
+                                  >
+                                    <i className="bi bi-cloud-download"></i>
+                                  </span>
+                                </div>
+                              </td>
+                            ))
+                        ) : (
+                          <td></td>
+                        )}
+
                         <td>
-
-                            <div
-                            className="doc-badge"
-                            type="button"
-                            key={files.id}
+                          <span
+                            className="cursor-pointer text-blue  fw-bold"
+                            onClick={() => {
+                              editHandler(testcase);
+                            }}
                           >
-                            <img
-                              src={fileTypeIcon(files.fileType)}
-                            />
-                            <span>
-                            {files.name}
-                           </span>
-                            <span
-                              type="button"
-                              title="Download File"
-                              className="mx-2 font-size-14"
-                              onClick={() => downloadFile(files)}
-                            >
-                              <i className="bi bi-cloud-download"></i>
-                            </span>
-                          </div>
-                        </td>
-                        
-                        )) : <td></td>}
-
-                        <td
-                          onClick={() => {
-                            editHandler(testcase);
-                          }}
-                        >
-                          <span>
                             <i class="bi bi-pencil-square"></i>
                             EDIT{" "}
+                          </span>
+                          <span style={{ paddingLeft: "1rem" }}>
+                            <Switch
+                              onChange={() =>
+                                changeTestCaseState(
+                                  testcase?.id,
+                                  testcase?.state,
+                                  true
+                                )
+                              }
+                              checked={
+                                testcase?.state === "testcase.status.active"
+                              }
+                              checkedChildren="ACTIVE"
+                              unCheckedChildren="INACTIVE"
+                            />
                           </span>
                         </td>
                       </tr>
@@ -602,6 +719,23 @@ export default function ManualTestCases() {
                   })}
               </tbody>
             </table>
+            :(<Empty description="There are no Automated Testcases for this specification"
+            imageStyle={{
+              height: 200, // Adjust the height of the image
+            }}
+            />
+            )
+}
+{ totalPages > 1 && 
+      <Pagination 
+      className="pagination-ui" 
+      count={totalPages}
+      page={currentPage}
+      variant="outlined"
+      shape="rounded"
+      onChange={handleChangePage}
+      />
+  }
           </div>
         )}
 
@@ -625,6 +759,7 @@ export default function ManualTestCases() {
           ></SpecAutomatedUpsertModal>
         </div>
       </div>
+      
     </div>
   );
 }

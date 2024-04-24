@@ -535,6 +535,25 @@
   .custom-breadcrumb .breadcrumb-item {
     text-decoration: none;
   } 
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  .text-blue {
+    color: #009fc8 !important;
+  }
+
+  .pagination-ui {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .ant-empty.ant-empty-image{
+    width: 100%;
+    height: 100%;
+    }
 }
 
 .cst-btn-group .btn:first-of-type{
