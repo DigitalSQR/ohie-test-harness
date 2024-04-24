@@ -59,7 +59,7 @@ spring:
             redirect-uri: ${base-url}/api/login/oauth2/code/google
   servlet:
     multipart:
-      max-file-size: 2MB
+      max-file-size: 10MB
 
 server:
   servlet:

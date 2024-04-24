@@ -5,6 +5,7 @@
 import { notification } from "antd";
 import img_icon from "../styles/images/img.png";
 import pdf_icon from "../styles/images/pdf.png";
+import video_icon from "../styles/images/video-icon.png";
 import moment from "moment";
 import {
   ROLE_ID_ADMIN,
@@ -49,6 +50,10 @@ export const fileTypeIcon = (fileType) => {
       return img_icon;
     case "image/jpeg":
       return img_icon;
+    case "video/quicktime":
+      return video_icon;
+    case "video/mp4":
+      return video_icon;
   }
 };
 

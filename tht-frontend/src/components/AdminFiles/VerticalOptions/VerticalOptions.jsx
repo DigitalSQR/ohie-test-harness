@@ -452,8 +452,8 @@ export default function VerticalOptions(props) {
 
   const renderTooltip = (props) => (
     <Tooltip id={testcaseResultInfo.id} {...props}>
-      Accepted file types: PDFs and images only.
-      <br /> Maximum file size: 2MB.
+      Accepted file types: PDFs, images and MP4 videos only.
+      <br /> Maximum file size: 10MB.
     </Tooltip>
   );
 
