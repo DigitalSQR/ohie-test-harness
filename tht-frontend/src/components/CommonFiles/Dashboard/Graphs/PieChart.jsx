@@ -31,10 +31,64 @@ const PieChart = (props) => {
           breakpoint: 480,
           options: {
             chart: {
-              width: 600,
+              width: 300,
             },
             legend: {
               position: "bottom",
+              offsetY: 10, // Offset the legend from the bottom
+              horizontalAlign: "left", // Center the legend horizontally
+              floating: false, // Allow the legend to occupy space within the chart area
+              onItemClick: {
+                toggleDataSeries: false // Disable toggling of data series on legend click
+              },
+              fontSize: 12, 
+            },
+          },
+        },
+        {
+          breakpoint: 620,
+          options: {
+            chart: {
+              width: 400,
+            },
+            legend: {
+              position: "bottom",
+              offsetY: 10, // Offset the legend from the bottom
+              horizontalAlign: "left", // Center the legend horizontally
+              floating: false, // Allow the legend to occupy space within the chart area
+              onItemClick: {
+                toggleDataSeries: false // Disable toggling of data series on legend click
+              },
+              fontSize: 12, 
+            },
+          },
+        },
+        {
+          breakpoint: 1400,
+          options: {
+            chart: {
+              width: 500,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+        {
+          breakpoint: 2090,
+          options: {
+            chart: {
+              width: 400,
+            },
+            legend: {
+              position: "bottom",
+              offsetY: 10, // Offset the legend from the bottom
+              horizontalAlign: "left", // Center the legend horizontally
+              floating: false, // Allow the legend to occupy space within the chart area
+              onItemClick: {
+                toggleDataSeries: false // Disable toggling of data series on legend click
+              },
+              fontSize: 11, 
             },
           },
         },
