@@ -12,6 +12,7 @@ import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.mock.UserServiceMockImpl;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -33,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     ContextInfo contextInfo;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     UserServiceMockImpl userServiceMock;
@@ -233,6 +237,8 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
         //change the state of user
         UserEntity changeState = this.userService.changeState("user.01", "For Testing", UserServiceConstants.USER_STATUS_INACTIVE, contextInfo);
         assertEquals(UserServiceConstants.USER_STATUS_INACTIVE, changeState.getState());
+
+        userRepository.deleteById("user.07");
 
         //change state of admin if only one is present
         Assert.assertThrows(DataValidationErrorException.class, () -> {

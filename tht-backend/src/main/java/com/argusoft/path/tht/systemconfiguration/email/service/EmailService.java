@@ -186,5 +186,16 @@ public class EmailService {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
         }
     }
+    public void adminOrTesterAccountCreatedMessage(String to, String username){
+        String subject = "Admin/Tester Creation Completed";
+        String templateFileName = "templates/admin-tester-created.html";
+        String htmlContent = null;
+        try{
+            htmlContent = readHtmlFile(templateFileName, username, null);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
+        } catch (IOException e) {
+            LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
+        }
+    }
 
 }

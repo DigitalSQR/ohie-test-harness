@@ -115,6 +115,10 @@ message-configuration:
     reactivate:
       mail: true
       notification: false
+    admin-tester:
+      create:
+        mail: true
+        notification: true
   test-request:
     create:
       mail: true

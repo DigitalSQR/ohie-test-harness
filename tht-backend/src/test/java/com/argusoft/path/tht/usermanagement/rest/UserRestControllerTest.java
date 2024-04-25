@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.usermanagement.rest;
 
 import com.argusoft.path.tht.TestingHarnessToolRestTestConfiguration;
+import com.argusoft.path.tht.notification.mock.NotificationServiceMockImpl;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.*;
@@ -38,7 +40,8 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
     UserServiceMockImpl userServiceMock;
 
     @Autowired
-    UserService userService;
+    NotificationServiceMockImpl notificationServiceMock;
+
 
     @BeforeEach
     @Override
@@ -52,7 +55,7 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
 
     @AfterEach
     void after() {
-        userServiceMock.clear();
+        notificationServiceMock.clear();
     }
 
 
@@ -252,6 +255,7 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
     }
 
     @Test
+    @Transactional
     void testCreateUser(){
         UserInfo userInfo = new UserInfo();
         userInfo.setId("user.11");
