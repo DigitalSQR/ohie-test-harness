@@ -238,7 +238,7 @@ public class UserServiceServiceImpl implements UserService {
         if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))){
             userEntity.setMessage(message);
         } else {
-            userEntity.setMessage(null);
+            userEntity.setMessage("'Inactivating from the testing harness tool. If you have any concerns, please contact the Admin.'");
         }
 
         UserValidator.validateChangeState(userEntity, this, errors, stateKey, contextInfo);
