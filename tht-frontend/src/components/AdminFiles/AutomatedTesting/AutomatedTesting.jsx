@@ -40,7 +40,7 @@ export default function AutomatedTesting() {
   const [stopLoader, setStopLoader] = useState(false);
   const [stopAndResetLoader, setStopAndResetLoader] = useState(false);
   const [finishedTestcaseCount, setFinishedTestcaseCount] = useState(0);
-  const [resultFlag, setResultFlag] = useState(false);
+  // const [resultFlag, setResultFlag] = useState(false);
 
   const [data, setData] = useState([]);
   const { stompClient, webSocketConnect, webSocketDisconnect } =
@@ -258,7 +258,7 @@ export default function AutomatedTesting() {
       stompClient.subscribe(destination, (msg) => {
         const parsedTestcaseResult = JSON.parse(msg.body);
         if (!!parsedTestcaseResult) {
-          setResultFlag(true);
+          // setResultFlag(true);
           setTestcaseRequestResult(parsedTestcaseResult);
         }
       });
@@ -387,11 +387,11 @@ export default function AutomatedTesting() {
                           <button
                             className="btn small btn-sm mt-0 px-2 btn-success abtn"
                             onClick={() => handleStartTesting()}
-                            disabled={!resultFlag}
+                            // disabled={!resultFlag}
                           >
                             <PlayCircleOutlined />
                             <span className="m-1">Start</span>
-                            {!resultFlag && <Spin size="small" />}
+                            {/* {!resultFlag && <Spin size="small" />} */}
                           </button>
                         </>
                       )}
