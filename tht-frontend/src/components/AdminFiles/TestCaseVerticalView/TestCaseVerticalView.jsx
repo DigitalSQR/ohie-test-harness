@@ -16,14 +16,10 @@ export default function TestCaseVerticalView(props) {
     <div className="vertical-layout">
       <div className="question-header">
         <div className="row">
-        <div className="col-md-9 col-12">
+        <div className="col-12">
           <h2>Question</h2>
         </div>
-
-        <div className="col-md-3 col-12 d-md-flex d-none ">
-          <h2 className="border-left">Reference</h2>
-        </div>
-        </div>
+      </div>
       </div>
       <TestcaseVertical
         currentTestcaseIndex={currentTestcaseIndex}
