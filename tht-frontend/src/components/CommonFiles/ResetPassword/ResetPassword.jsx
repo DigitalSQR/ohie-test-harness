@@ -38,8 +38,7 @@ export default function ResetPassword() {
           notification.success({
             className:"notificationSuccess",
             placement: "top",
-            message:"Success",
-            description: "Password has been reset successfully!",
+            message: "Password has been reset successfully!",
           });
           navigate("/dashboard");
         })

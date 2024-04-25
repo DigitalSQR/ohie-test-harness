@@ -201,8 +201,7 @@ const Applications = () => {
           errors.forEach((error, i) => {
             notification.error({
               className: "notificationError",
-              message: "Error",
-              description: error,
+              message: error,
               placement: "bottomRight",
             });
           });
@@ -248,8 +247,7 @@ const Applications = () => {
                   notification.success({
                     className: "notificationSuccess",
                     placement: "top",
-                    message: "Success",
-                    description: `Application testing request has been ${
+                    message: `Application testing request has been ${
                       updatedState === "test.request.status.rejected"
                         ? "rejected"
                         : "accepted"
@@ -605,8 +603,7 @@ const Applications = () => {
             if (!reasonForRejection) {
               notification.error({
                 className: "notificationError",
-                message: "Error",
-                description: "Please provide a reason for disapproval.",
+                message: "Please provide a reason for disapproval.",
                 placement: "bottomRight",
               });
             } else {

@@ -73,8 +73,7 @@ export default function EditQuestion() {
         } else {
           notification.warning({
             className:"notificationWarning",
-						message:"Warning",
-            description: "There are currently no options available for a question. Please add some options.",
+						message: "There are currently no options available for a question. Please add some options.",
             placement: "bottomRight",
           });
         }
@@ -161,8 +160,7 @@ export default function EditQuestion() {
         notification.success({
           className:"notificationSuccess",
           placement: "top",
-          message:"Success",
-          description: "Document removed successfully!",
+          message:"Document removed successfully!",
         });
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
@@ -200,8 +198,7 @@ export default function EditQuestion() {
       if (!isImage) {
         notification.error({
           className:"notificationError",
-          message:"Error",
-          description: "Only JPEG and PNG Files are allowed.",
+          message:"Only JPEG and PNG Files are allowed.",
           placement: "bottomRight",
         });
         return false;
@@ -278,8 +275,7 @@ export default function EditQuestion() {
           notification.success({
             className:"notificationSuccess",
             placement: "top",
-            message:"Success",
-            description: "Testcase question updated successfully!",
+            message:"Testcase question updated successfully!",
           });
         })
         .catch((error) => {
@@ -339,8 +335,7 @@ export default function EditQuestion() {
         notification.success({
           className:"notificationSuccess",
           placement: "top",
-          message:"Success",
-          description: "Testcase option updated successfully!",
+          message:"Testcase option updated successfully!",
         });
       })
       .catch((error) => {});
@@ -374,8 +369,7 @@ export default function EditQuestion() {
           notification.success({
             className:"notificationSuccess",
             placement: "top",
-            message:"Success",
-            description: `Option has been marked as ${newState==='testcase.option.status.active' ? 'active' : 'inactive'} successfully!`,
+            message:`Option has been marked as ${newState==='testcase.option.status.active' ? 'active' : 'inactive'} successfully!`,
           });
         })
         .catch((error) => {});

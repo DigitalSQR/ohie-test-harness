@@ -44,8 +44,7 @@ const CompanyModal = () => {
         notification.success({
           className: "notificationSuccess",
           placement: "top",
-          message: "Success",
-          description: `Company name has been updated successfully!`,
+          message: `Company name has been updated successfully!`,
         });
       })
       .catch((error) => {});

@@ -88,8 +88,7 @@ const AddAdminUser = ({
         notification.success({
           className:"notificationSuccess",
           placement: "top",
-          message: "Success",
-          description: `User added successfully!`,
+          message: "User added successfully!",
         });
         setIsModalOpen(false);
         resetForm(); 

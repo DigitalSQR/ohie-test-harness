@@ -37,8 +37,7 @@ const UpsertModal = ({
         notification.success({
           className:"notificationSuccess",
           placement: "top",
-          message:"Success",
-          description: "Testcase created successfully!",
+          message: "Testcase created successfully!",
         });
 
         fetchData();

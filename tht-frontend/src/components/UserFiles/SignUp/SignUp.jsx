@@ -68,17 +68,15 @@ export default function SignUp() {
       if (trimmedValues.password !== trimmedValues.confirmPassword) {
         notification.error({
           className: "notificationError",
-          message: "Error",
+          message: "Confirm password does not match with the password.",
           placement: "bottomRight",
-          description: "Confirm password does not match with the password.",
         });
       } else {
         if (!captchaInfo.code && captchaInfo.captcha) {
           notification.error({
             className: "notificationError",
-            message: "Error",
+            message: "Invalid captcha",
             placement: "bottomRight",
-            description: "Invalid captcha",
           });
           return;
         }

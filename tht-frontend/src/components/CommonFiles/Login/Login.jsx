@@ -107,9 +107,8 @@ export default function Login() {
       if (!captchaInfo.code && captchaInfo.captcha) {
         notification.error({
           className:"notificationError",
-          message:"Error",
+          message: "Invalid captcha",
           placement: "bottomRight",
-          description: "Invalid captcha",
         });
         return;
       }

@@ -163,8 +163,7 @@ const TestingRequests = () => {
               notification.success({
                 className: "notificationSuccess",
                 placement: "top",
-                message: "Success",
-                description: "Status updated successfully!",
+                message: "Status updated successfully!",
               });
               testRequests[index] = res;
               setTestRequests(testRequests);

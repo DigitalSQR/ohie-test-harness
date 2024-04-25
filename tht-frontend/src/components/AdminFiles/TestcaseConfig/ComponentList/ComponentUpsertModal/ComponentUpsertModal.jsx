@@ -37,8 +37,7 @@ const UpsertModal = ({
           notification.success({
             className:"notificationSuccess",
             placement: "top",
-            message:"Success",
-            description: "Component created successfully!",
+            message:"Component created successfully!",
           });
 
           refreshAllComponents();
@@ -59,8 +58,7 @@ const UpsertModal = ({
           notification.success({
             className:"notificationSuccess",
             placement: "top",
-            message:"Success",
-            description: "Component updated successfully!",
+            message:"Component updated successfully!",
           });
           refreshAllComponents();
           setIsModalOpen(false);

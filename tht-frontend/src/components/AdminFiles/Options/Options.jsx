@@ -42,8 +42,7 @@ export default function Options(props) {
 				hideLoader();
 				notification.error({
 					className:"notificationError",
-					message:"Error",
-					description: "Oops! something went wrong ,No answer found!",
+					message: "Oops! something went wrong ,No answer found!",
 					placement: "bottomRight",
 				});
 			}
@@ -72,8 +71,7 @@ export default function Options(props) {
 				hideLoader();
 				notification.error({
 					className:"notificationError",
-					message:"Error",
-					description: "Oops! something went wrong ,No Result Related Data found!",
+					message: "Oops! something went wrong ,No Result Related Data found!",
 					placement: "bottomRight",
 				});
 			}
@@ -114,8 +112,7 @@ export default function Options(props) {
 		}else{
 			notification.error({
 				className:"notificationError",
-				message:"Error",
-				description: "There is something wrong in filtering result relation info for testOptionId",
+				message: "There is something wrong in filtering result relation info for testOptionId",
 				placement: "bottomRight",
 			});
 		}

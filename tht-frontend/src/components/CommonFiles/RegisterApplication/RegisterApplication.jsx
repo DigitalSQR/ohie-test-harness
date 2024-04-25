@@ -112,8 +112,7 @@ const RegisterApplication = () => {
                   notification.success({
                     className: "notificationSuccess",
                     placement: "top",
-                    message: "Success",
-                    description: "Test Request Updated Successfully.",
+                    message: "Test Request Updated Successfully.",
                   });
                   hideLoader();
                   navigate("/testing-requests");
@@ -123,9 +122,8 @@ const RegisterApplication = () => {
               res.forEach((err) => {
                 notification.error({
                   className: "notificationError",
-                  message: "Error",
+                  message: err.message,
                   placement: "bottomRight",
-                  description: err.message,
                 });
               });
               hideLoader();
@@ -142,8 +140,7 @@ const RegisterApplication = () => {
                   notification.success({
                     className: "notificationSuccess",
                     placement: "top",
-                    message: "Success",
-                    description: `Your application testing request has been successfully created and sent to admin for approval.`,
+                    message: `Your application testing request has been successfully created and sent to admin for approval.`,
                   });
                   hideLoader();
                   navigate("/testing-requests");
@@ -155,9 +152,8 @@ const RegisterApplication = () => {
               res.forEach((err) => {
                 notification.error({
                   className: "notificationError",
-                  message: "Error",
+                  message: err.message,
                   placement: "bottomRight",
-                  description: err.message,
                 });
               });
               hideLoader();
