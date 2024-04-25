@@ -94,16 +94,14 @@ api.interceptors.response.use(
     }else if(response.status >= 500){
       notification.error({
         className:"notificationError",
-        message:"Error",
-        description: "Oops! Something went wrong. Please try again",
+        message:"Oops! Something went wrong. Please try again",
         placement: "bottomRight",
       });
     }else if(response.status == 404){
       console.log(response);
       notification.error({
         className:"notificationError",
-        message:"Error",        
-        description: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
+        message: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),   
         placement: "bottomRight",
       });
     }else if(response.status >= 400){
@@ -111,16 +109,14 @@ api.interceptors.response.use(
         response.data.forEach((error, index) => {
           notification.error({
             className:"notificationError",
-            message:"Error",
-            description: error.message ,
+            message: error.message ,
             placement: "bottomRight",
           });
         })        
       }else {
         notification.error({
           className:"notificationError",
-          message:"Error",
-          description: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
+          message: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
           placement: "bottomRight",
         });
       }

@@ -67,9 +67,8 @@ const Captcha = (props) => {
         } catch (error) {
             notification.error({
                 className:"notificationError",
-                message:"Error",
+                message: "Something went wrong while fetching captcha",
                 placement: "bottomRight",
-                description: "Something went wrong while fetching captcha",
             });
         }
     };

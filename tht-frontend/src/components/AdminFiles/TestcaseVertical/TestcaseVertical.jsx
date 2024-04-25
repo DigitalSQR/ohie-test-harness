@@ -93,8 +93,7 @@ export default function TestcaseVertical(props) {
   }else {
     notification.error({
       className:"notificationError",
-      message:"Error",
-      description:"One of your notes exceeds the notes limitation. Please check your notes.",
+      message: "One of your notes exceeds the notes limitation. Please check your notes.",
       placement:"bottomRight"
     })
   }
@@ -151,8 +150,7 @@ export default function TestcaseVertical(props) {
           } else {
             notification.error({
               className: "notificationError",
-              message: "Error",
-              description: "Oops! something wrong ,No question found!",
+              message: "Oops! something wrong ,No question found!",
               placement: "bottomRight",
             });
           }
@@ -254,8 +252,7 @@ export default function TestcaseVertical(props) {
         notification.success({
           className: "notificationSuccess",
           placement: "top",
-          message: "Success",
-          description: `Attachment added successfully!`,
+          message: `Attachment added successfully!`,
         });
       })
       .catch((error) => {});

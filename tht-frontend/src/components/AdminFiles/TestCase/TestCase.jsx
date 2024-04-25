@@ -86,8 +86,7 @@ export default function TestCase(props) {
 		if (!selectedOptions || selectedOptions.length == 0) {
 			notification.error({
 				className: "notificationError",
-				message: "Error",
-				description: "No answers selected",
+				message: "No answers selected",
 				placement: "bottomRight",
 			});
 		} else {
@@ -152,8 +151,7 @@ export default function TestCase(props) {
 						notification.success({
 							className: "notificationSuccess",
 							placement: "top",
-							message: "Success",
-							description: `Notes saved successfully!`,
+							message: "Notes saved successfully!",
 						});
 						resolve(); // Resolve the promise when the operation is successful
 					})
@@ -163,8 +161,7 @@ export default function TestCase(props) {
 				if (showNotification) {
 					notification.warning({
 						className: "notificationWarning",
-						message: "Warning",
-						description: "No changes detected in notes. Click the close button if you don't wish to make any changes.",
+						message: "No changes detected in notes. Click the close button if you don't wish to make any changes.",
 						placement: "bottomRight",
 					});
 				}
@@ -214,8 +211,7 @@ export default function TestCase(props) {
 				} else {
 					notification.error({
 						className: "notificationError",
-						message: "Error",
-						description: "Oops! something wrong ,No question found!",
+						message: "Oops! something wrong ,No question found!",
 						placement: "bottomRight",
 					});
 				}
@@ -362,8 +358,7 @@ export default function TestCase(props) {
 				notification.success({
 					className: "notificationSuccess",
 					placement: "top",
-					message: "Success",
-					description: `Attachment added successfully!`,
+					message: "Attachment added successfully!",
 				});
 			}).catch((error) => {
 
@@ -379,8 +374,7 @@ export default function TestCase(props) {
 						notification.success({
 							className: "notificationSuccess",
 							placement: "top",
-							message: "Success",
-							description: "Attachment removed successfully!",
+							message: "Attachment removed successfully!",
 						});
 						setUploadedFiles((prev) => {
 							return prev.filter((doc) => doc.id !== file.id);

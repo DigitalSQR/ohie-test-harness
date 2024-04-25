@@ -70,8 +70,7 @@ export const stateSerializer = (input) => {
   } else {
     notification.error({
       className:"notificationError",
-      message:"Error",
-      description: "The state is neither an array nor a string",
+      message: "The state is neither an array nor a string",
       placement: "bottomRight",
     });
   }

@@ -112,8 +112,7 @@ const UpdateAdminUser = ({
         notification.success({
           className:"notificationSuccess",
           placement: "top",
-          message:"Success",
-          description: `Profile has been updated successfully!`,
+          message:"Profile has been updated successfully!",
         });
         setIsModalOpen(false);
         resetForm(); 

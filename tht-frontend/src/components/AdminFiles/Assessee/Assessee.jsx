@@ -161,8 +161,7 @@ const Assessee = () => {
         notification.success({
           className: "notificationSuccess",
           placement: "top",
-          message: "Success",
-          description: `Assessee ${
+          message:  `Assessee ${
             newState === "active" || newState === "inactive" ? "" : "request "
           }has been ${
             newState === "active"
@@ -457,8 +456,7 @@ const Assessee = () => {
           if (!reasonForRejection) {
             notification.error({
               className: "notificationError",
-              message: "Error",
-              description: "Please provide a reason for disapproval.",
+              message: "Please provide a reason for disapproval.",
               placement: "bottomRight",
             });
           } else {

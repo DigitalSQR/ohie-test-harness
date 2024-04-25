@@ -55,8 +55,8 @@ export default function SpecAutomatedUpsertModal(props) {
       showLoader();
       TestCaseAPI.updateTestCase(data).then((res)=>{
         notification.success({
-          message: "Success",
-          description: "Automated TestCase Updated successfully",
+          className:"notificationSuccess",
+          message: "Automated TestCase Updated successfully",
           placement: "top",
         });
         setIsAutomatedModalOpen(false);
@@ -74,8 +74,8 @@ export default function SpecAutomatedUpsertModal(props) {
     TestCaseAPI.createTestCase(data)
       .then((res) => {
         notification.success({
-          message: "Success",
-          description: "Automated TestCase Sucessfully created",
+          className:"notificationSuccess",
+          message: "Automated TestCase Sucessfully created",
           placement: "top",
         });
         setIsAutomatedModalOpen(false);

@@ -38,8 +38,7 @@ export default function ForgotPassword() {
         notification.success({
           className:"notificationSuccess",
           placement: "top",
-          message:"Success",
-          description: `${data?.message}`,
+          message:`${data?.message}`,
         });
         hideLoader();
         navigate("/login");

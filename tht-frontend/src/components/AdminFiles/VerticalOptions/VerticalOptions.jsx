@@ -142,8 +142,7 @@ export default function VerticalOptions(props) {
             notification.success({
               className: "notificationSuccess",
               placement: "top",
-              message: "Success",
-              description: `Notes saved successfully!`,
+              message: `Notes saved successfully!`,
             });
             resolve(); // Resolve the promise when the operation is successful
           })
@@ -152,8 +151,7 @@ export default function VerticalOptions(props) {
         if (showNotification) {
           notification.warning({
             className: "notificationWarning",
-            message: "Warning",
-            description: "No changes detected in notes. Click the close button if you don't wish to make any changes.",
+            message: "No changes detected in notes. Click the close button if you don't wish to make any changes.",
             placement: "bottomRight",
           });
         }
@@ -191,8 +189,7 @@ export default function VerticalOptions(props) {
           hideLoader();
           notification.error({
             className: "notificationError",
-            message: "Error",
-            description: "Oops! something went wrong ,No answer found!",
+            message: "Oops! something went wrong ,No answer found!",
             placement: "bottomRight",
           });
         }
@@ -228,9 +225,7 @@ export default function VerticalOptions(props) {
           hideLoader();
           notification.error({
             className: "notificationError",
-            message: "Error",
-            description:
-              "Oops! something went wrong ,No Result Related Data found!",
+            message: "Oops! something went wrong ,No Result Related Data found!",
             placement: "bottomRight",
           });
         }
@@ -332,9 +327,7 @@ export default function VerticalOptions(props) {
     } else {
       notification.error({
         className: "notificationError",
-        message: "Error",
-        description:
-          "There is something wrong in filtering result relation info for testOptionId",
+        message: "There is something wrong in filtering result relation info for testOptionId",
         placement: "bottomRight",
       });
     }
@@ -408,8 +401,7 @@ export default function VerticalOptions(props) {
             notification.success({
               className: "notificationSuccess",
               placement: "top",
-              message: "Success",
-              description: "Attachment removed successfully!",
+              message: "Attachment removed successfully!",
             });
             setUploadedFiles((prev) => {
               return prev.filter((doc) => doc.id !== file.id);
@@ -488,8 +480,7 @@ export default function VerticalOptions(props) {
         notification.success({
           className: "notificationSuccess",
           placement: "top",
-          message: "Success",
-          description: `Attachment added successfully!`,
+          message: `Attachment added successfully!`,
         });
       })
       .catch((error) => {});

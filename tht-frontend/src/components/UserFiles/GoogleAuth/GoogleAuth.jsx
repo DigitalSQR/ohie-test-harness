@@ -38,9 +38,8 @@ export default function GoogleAuth() {
 			navigate("/login");
 			notification.error({
 				className:"notificationError",
-				message:"Error",
+				message: `${result.message}`,
 				placement:"bottomRight",
-				description: `${result.message}`,
 			});
 		} else {
 			hideLoader();

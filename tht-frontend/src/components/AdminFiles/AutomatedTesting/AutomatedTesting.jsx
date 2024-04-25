@@ -68,8 +68,7 @@ export default function AutomatedTesting() {
         notification.success({
           className: "notificationSuccess",
           placement: "top",
-          message: "Success",
-          description: "Test results have been reset successfully!",
+          message: "Test results have been reset successfully!",
         });
       })
       .catch((error) => {});
@@ -93,8 +92,7 @@ export default function AutomatedTesting() {
         notification.success({
           className: "notificationSuccess",
           placement: "top",
-          message: "Success",
-          description: `Testing has been stopped ${
+          message: `Testing has been stopped ${
             reset ? "and reset" : ""
           } successfully! Please allow some time for processing.`,
         });
@@ -156,8 +154,7 @@ export default function AutomatedTesting() {
         notification.success({
           className: "notificationSuccess",
           placement: "top",
-          message: "Success",
-          description: message,
+          message: message
         });
       })
       .catch((error) => {});

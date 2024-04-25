@@ -162,8 +162,7 @@ export default function ChooseTest() {
         notification.success({
           className: "notificationSuccess",
           placement: "top",
-          message: "Success",
-          description: "Testing has been started successfully!",
+          message: "Testing has been started successfully!",
         });
         if (!!manual) {
           navigate(`/manual-testing/${testRequestId}`);
@@ -241,8 +240,7 @@ export default function ChooseTest() {
           notification.success({
             className: "notificationSuccess",
             placement: "top",
-            message:"Success",
-            description: "Verification submitted successfully!",
+            message:"Verification submitted successfully!",
           });
           const newTab = window.open(`/application-report/${testRequestId}`, '_blank');
           newTab.focus();      
