@@ -28,9 +28,6 @@ public class TestcaseServiceImplTest extends TestingHarnessToolTestConfiguration
     private SpecificationService specificationService;
 
     @Autowired
-    private TestcaseOptionService testcaseOptionService;
-
-    @Autowired
     private TestcaseServiceMockImpl testcaseServiceMock;
 
     @Autowired

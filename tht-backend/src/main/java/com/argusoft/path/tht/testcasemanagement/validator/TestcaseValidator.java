@@ -139,7 +139,7 @@ public class TestcaseValidator {
     }
 
     private static void validateTestcaseNameForAlphaNumeric(String testcaseEntityName, List<ValidationResultInfo> errors) {
-        if(testcaseEntityName.contains("~")){
+        if(StringUtils.hasLength(testcaseEntityName) && testcaseEntityName.contains("~")){
             errors.add(new ValidationResultInfo("name",
                     ErrorLevel.ERROR,
                             "The name must not include the character '~'"));

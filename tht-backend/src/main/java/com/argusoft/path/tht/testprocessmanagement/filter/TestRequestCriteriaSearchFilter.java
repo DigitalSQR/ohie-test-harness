@@ -77,6 +77,7 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
 
         if (StringUtils.hasLength(getPrimaryId())) {
             predicates.add(criteriaBuilder.equal(getTestRequestEntityRoot().get("id"), getPrimaryId()));
+            return predicates;
         }
 
         if (StringUtils.hasLength(getName())) {

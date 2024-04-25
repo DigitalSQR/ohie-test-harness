@@ -44,6 +44,19 @@ public class TestRequestUrlEntity {
 
     }
 
+    @Override
+    public String toString() {
+        return "TestRequestUrlEntity{" +
+                "testRequestId='" + testRequestId + '\'' +
+                ", component=" + component +
+                ", fhirApiBaseUrl='" + fhirApiBaseUrl + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", fhirVersion='" + fhirVersion + '\'' +
+                ", websiteUIBaseUrl='" + websiteUIBaseUrl + '\'' +
+                '}';
+    }
+
     public TestRequestUrlEntity(TestRequestUrlEntity testRequestUrlEntity) {
         this.setTestRequestId(testRequestUrlEntity.getTestRequestId());
         if (testRequestUrlEntity.getComponent() != null) {

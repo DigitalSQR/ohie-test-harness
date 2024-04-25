@@ -186,7 +186,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
-    public TestcaseResultEntity updateTestcaseResult(TestcaseResultEntity testcaseResultEntity,
+        public TestcaseResultEntity updateTestcaseResult(TestcaseResultEntity testcaseResultEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,

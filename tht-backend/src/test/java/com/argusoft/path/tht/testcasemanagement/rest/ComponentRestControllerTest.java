@@ -2,11 +2,10 @@ package com.argusoft.path.tht.testcasemanagement.rest;
 
 import com.argusoft.path.tht.TestingHarnessToolRestTestConfiguration;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.mock.ComponentServiceMockImpl;
+import com.argusoft.path.tht.testcasemanagement.mock.TestcaseServiceMockImpl;
 import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.OK;
@@ -30,20 +28,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class ComponentRestControllerTest extends TestingHarnessToolRestTestConfiguration {
 
+
     @Autowired
-    ComponentServiceMockImpl componentServiceMockImpl;
+    TestcaseServiceMockImpl testcaseServiceMock;
 
     @Autowired
     WebTestClient webTestClient;
-
-    @Autowired
-    ComponentService componentService;
 
     @BeforeEach
     @Override
     public void init() {
         super.init();
-        componentServiceMockImpl.init();
+        testcaseServiceMock.init();
 
         super.login("noreplytestharnesstool@gmail.com",
                 "password",
@@ -53,7 +49,7 @@ class ComponentRestControllerTest extends TestingHarnessToolRestTestConfiguratio
 
     @AfterEach
     void after() {
-        componentServiceMockImpl.clear();
+        testcaseServiceMock.clear();
 
     }
 
@@ -225,7 +221,7 @@ class ComponentRestControllerTest extends TestingHarnessToolRestTestConfiguratio
                 .expectStatus()
                 .isEqualTo(OK)
                 .expectBody()
-                .jsonPath("$.content.length()").isEqualTo("3");
+                .jsonPath("$.content.length()").isEqualTo("4");
     }
 
     @Test

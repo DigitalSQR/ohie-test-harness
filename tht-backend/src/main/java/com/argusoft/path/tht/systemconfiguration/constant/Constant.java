@@ -44,6 +44,16 @@ public final class Constant {
             true,
             Arrays.asList(new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_ADMIN))
     );
+    public static final ContextInfo ASSESSE_USER_CONTEXT = new ContextInfo(
+            "assessee@yopmail.com",
+            "user.01",
+            "password",
+            true,
+            true,
+            true,
+            true,
+            Arrays.asList(new SimpleGrantedAuthority(UserServiceConstants.ROLE_ID_ASSESSEE))
+    );
 
     private Constant() {
     }

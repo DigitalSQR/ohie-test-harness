@@ -2,14 +2,10 @@ package com.argusoft.path.tht.testcasemanagement.rest;
 
 import com.argusoft.path.tht.TestingHarnessToolRestTestConfiguration;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DataValidationErrorException;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.mock.TestcaseOptionServiceMockImpl;
 import com.argusoft.path.tht.testcasemanagement.mock.TestcaseServiceMockImpl;
-import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseOptionInfo;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
@@ -37,17 +33,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class TestcaseOptionRestControllerTest extends TestingHarnessToolRestTestConfiguration {
 
-    @Autowired
-    TestcaseServiceMockImpl testcaseServiceMock;
 
     @Autowired
     TestcaseOptionServiceMockImpl testcaseOptionServiceMock;
-
-    @Autowired
-    TestcaseService testcaseService;
-
-    @Autowired
-    TestcaseOptionService testcaseOptionService;
 
     @Autowired
     WebTestClient webTestClient;
@@ -167,7 +155,7 @@ public class TestcaseOptionRestControllerTest extends TestingHarnessToolRestTest
                 .expectStatus()
                 .isEqualTo(OK)
                 .expectBody()
-                .jsonPath("$.content.length()").isEqualTo("2");
+                .jsonPath("$.content.length()").isEqualTo("3");
     }
 
 

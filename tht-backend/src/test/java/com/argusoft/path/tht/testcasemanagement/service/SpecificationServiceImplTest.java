@@ -154,7 +154,6 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
         SpecificationEntity specificationEntity2 = new SpecificationEntity();
         specificationEntity2.setId("specification.999");
         specificationEntity2.setName("Updated name");
-
         assertThrows(DataValidationErrorException.class, () -> {
             specificationService.updateSpecification(specificationEntity2, contextInfo);
         });
