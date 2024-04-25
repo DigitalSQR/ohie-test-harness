@@ -410,7 +410,7 @@ export default function Dashboard() {
                 </div>
               }
               <div className="row mt-3">
-                <div className="col-12">
+                <div className="col-xxl-4 ">
                   <div className="card p-3">
                     <PieChart
                       title={"Application Requests By Status"}
@@ -419,9 +419,8 @@ export default function Dashboard() {
                     />
                   </div>
                 </div>
-              </div>
-              <div className="row mt-3 tabCard">
-                <div className="card p-3">
+              <div className="col-xxl-8 mt-sm-3 mt-xxl-0">
+                <div className="card p-3" style={{ height: "100%" }}>
                   <div
                     className="d-flex justify-content-left"
                     style={{ fontWeight: 600, fontSize: "13px" }}
@@ -429,7 +428,7 @@ export default function Dashboard() {
                     {" "}
                     <p>Top Compliance By Component</p>
                   </div>
-                  <Tabs defaultActiveKey="1" type="card">
+                  <Tabs defaultActiveKey="1">
                     {componentComplianceData?.map((x, index) => (
                       <TabPane
                         tab={
@@ -439,6 +438,7 @@ export default function Dashboard() {
                             maxWidth: "130px", 
                             whiteSpace: "pre-wrap", 
                             lineHeight: "1.2",
+                            color: "#009fc8"
                           }}
                           >
                             {x.component}
@@ -465,6 +465,7 @@ export default function Dashboard() {
                       </TabPane>
                     )}
                   </Tabs>
+                </div>
                 </div>
               </div>
             </div>
