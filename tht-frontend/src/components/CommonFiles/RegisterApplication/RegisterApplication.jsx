@@ -2,11 +2,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import "./_registrationApplication.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
-import { UserAPI } from "../../../api/UserAPI.js";
 import { ComponentAPI } from "../../../api/ComponentAPI.js";
 import { useLoader } from "../../loader/LoaderContext.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
-import { notification } from "antd";
+import { notification, Empty } from "antd";
 import { TestRequestStateConstants } from "../../../constants/test_requests_constants.js";
 import {
   CREATE_VALIDATION,
@@ -33,10 +32,6 @@ const RegisterApplication = () => {
   const validate = (values) => {
     const errors = {};
 
-    if (values.testRequestUrls.length === 0) {
-      errors.testRequestUrls = "Please select atleast one component";
-    }
-
     if (!values.name.trim()) {
       errors.name = "Application Name is required";
     } else if (values.name.trim().length < 3) {
@@ -54,23 +49,29 @@ const RegisterApplication = () => {
 
     values.testRequestUrls.forEach((url, index) => {
       const componentId = modifiedComponentId(url.componentId);
-      
+
       if (!url.username.trim()) {
-        errors[`testRequestUrls[${componentId}].username`] = "Username is required";
+        errors[`testRequestUrls[${componentId}].username`] =
+          "Username is required";
       } else if (url.username.trim().length > 255) {
-        errors[`testRequestUrls[${componentId}].username`] = "Username must have less than 255 characters";
+        errors[`testRequestUrls[${componentId}].username`] =
+          "Username must have less than 255 characters";
       }
-    
+
       if (!url.password.trim()) {
-        errors[`testRequestUrls[${componentId}].password`] = "Password is required";
+        errors[`testRequestUrls[${componentId}].password`] =
+          "Password is required";
       } else if (url.password.trim().length > 255) {
-        errors[`testRequestUrls[${componentId}].password`] = "Password must have less than 255 characters";
+        errors[`testRequestUrls[${componentId}].password`] =
+          "Password must have less than 255 characters";
       }
 
       if (!url.fhirApiBaseUrl.trim()) {
-        errors[`testRequestUrls[${componentId}].fhirApiBaseUrl`] = "fhirApiBaseUrl is required";
+        errors[`testRequestUrls[${componentId}].fhirApiBaseUrl`] =
+          "fhirApiBaseUrl is required";
       } else if (url.fhirApiBaseUrl.trim().length > 255) {
-        errors[`testRequestUrls[${componentId}].fhirApiBaseUrl`] = "fhirApiBaseUrl must have less than 255 characters";
+        errors[`testRequestUrls[${componentId}].fhirApiBaseUrl`] =
+          "fhirApiBaseUrl must have less than 255 characters";
       }
       if (url.websiteUIBaseUrl.length > 255) {
         errors[
@@ -255,40 +256,44 @@ const RegisterApplication = () => {
 
   return (
     <div id="registerApplication">
-      <div id="wrapper">
-        <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
-          <div className="form-bg-white">
-            <span className="heading-line-up">Test Request Details</span>
+      {components?.length > 0 ? (
+        <div id="wrapper">
+          <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
+            <div className="form-bg-white">
+              <span className="heading-line-up">Test Request Details</span>
 
-            <div className="row">
-              <div className="col-12">
-                <div className="custom-input mb-3">
-                  <label htmlFor="name" className="form-label">
-                    Application Name<span style={{ color: "red" }}>*</span>
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    className={`form-control ${
-                      formik.touched.name && formik.errors.name
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    placeholder="Application Name"
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    autoComplete="off"
-                    required
-                  />
-                  {formik.touched.name && formik.errors.name && (
-                    <div className="error-message">{formik.errors.name}</div>
-                  )}
+              <div className="row">
+                <div className="col-12">
+                  <div className="custom-input mb-3">
+                    <label htmlFor="name" className="form-label">
+                      Application Name<span style={{ color: "red" }}>*</span>
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      className={`form-control ${
+                        formik.touched.name && formik.errors.name
+                          ? "is-invalid"
+                          : ""
+                      }`}
+                      placeholder="Application Name"
+                      value={formik.values.name}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      autoComplete="off"
+                      required
+                    />
+                    {formik.touched.name && formik.errors.name && (
+                      <div className="error-message">{formik.errors.name}</div>
+                    )}
+                    <p className="compError">
+                      Atleast one component has to be selected*
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          {/*  <div className="row">
+              {/*  <div className="row">
               <div className="col-12">
                 <div className="custom-input mb-3">
                   <label htmlFor="description" className="form-label">
@@ -320,152 +325,192 @@ const RegisterApplication = () => {
               </div>
             </div>
            */}
-           {formik.errors.testRequestUrls ? (
-            <div className="error-message">
-              {formik.errors.testRequestUrls}
-            </div>
-          ) : null}
-            {components.map((component, index) => {
-              const isChecked = formik.values.testRequestUrls.some(
-                (selectedComponent) =>
-                  selectedComponent.componentId === component.id
-              );
-              return (
-                <Fragment key={index}>
-                  <div className="row mt-2">
-                    <div className="col-12">
-                      <div className="field-box d-flex align-items-center">
-                        <input
-                          id={index}
-                          checked={isChecked}
-                          type="checkbox"
-                          className="field-checkbox component-checkbox"
-                          name="component"
-                          onChange={(e) => {
-                            onComponentSelected(index, e);
-                          }}
-                          autoComplete="off"
-                        />
-                        <label
-                          htmlFor={index}
-                          className="form-label m-0 ms-2 align-middle d-block w-100 cursor-pointer"
-                        >
-                          {component.name}
-                        </label>
+              {formik.errors.testRequestUrls ? (
+                <div className="error-message">
+                  {formik.errors.testRequestUrls}
+                </div>
+              ) : null}
+              {components.map((component, index) => {
+                const isChecked = formik.values.testRequestUrls.some(
+                  (selectedComponent) =>
+                    selectedComponent.componentId === component.id
+                );
+                return (
+                  <Fragment key={index}>
+                    <div className="row mt-2">
+                      <div className="col-12">
+                        <div className="field-box d-flex align-items-center">
+                          <input
+                            id={index}
+                            checked={isChecked}
+                            type="checkbox"
+                            className="field-checkbox component-checkbox"
+                            name="component"
+                            onChange={(e) => {
+                              onComponentSelected(index, e);
+                            }}
+                            autoComplete="off"
+                          />
+                          <label
+                            htmlFor={index}
+                            className="form-label m-0 ms-2 align-middle d-block w-100 cursor-pointer"
+                          >
+                            {component.name}
+                          </label>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {formik.values.testRequestUrls.map((url, index) => {
-                    return (
-                      <Fragment key={index}>
-                        {url.componentId == component.id ? (
-                          <div className="form-bg-white mt-3">
-                            <span className="heading-line-up font-size-16 bg-white">
-                              {component.name} Details
-                            </span>
-                            <div className="row">
-                              <div className="col-12">
-                                {" "}
-                                <label
-                                  htmlFor="username"
-                                  className="form-label"
-                                >
+                    {formik.values.testRequestUrls.map((url, index) => {
+                      return (
+                        <Fragment key={index}>
+                          {url.componentId == component.id ? (
+                            <div className="form-bg-white mt-3">
+                              <span className="heading-line-up font-size-16 bg-white">
+                                {component.name} Details
+                              </span>
+                              <div className="row">
+                                <div className="col-12">
                                   {" "}
-                                  Credentials
-                                  <span style={{ color: "red" }}>*</span>
-                                  <Popover
-                                    placement="topLeft"
-                                    title={
-                                      <div style={{ maxWidth: '450px', fontWeight: 'normal' }}>
-                                        <p>
-                                          Please provide the username and
-                                          password that testers will use to log
-                                          in to your application/website.
-                                        </p>  
-                                        <p>
-                                          {" "}
-                                          These credentials will also be
-                                          utilized by the system to execute test
-                                          scripts for testing purposes.
-                                        </p>
-                                      </div>
-                                    }
+                                  <label
+                                    htmlFor="username"
+                                    className="form-label"
                                   >
-                                    <InfoCircleOutlined
-                                      style={{
-                                        marginLeft: "0.5rem",
-                                        marginTop: "0.7rem",
-                                      }}
+                                    {" "}
+                                    Credentials
+                                    <span style={{ color: "red" }}>*</span>
+                                    <Popover
+                                      placement="topLeft"
+                                      title={
+                                        <div
+                                          style={{
+                                            maxWidth: "450px",
+                                            fontWeight: "normal",
+                                          }}
+                                        >
+                                          <p>
+                                            Please provide the username and
+                                            password that testers will use to
+                                            log in to your application/website.
+                                          </p>
+                                          <p>
+                                            {" "}
+                                            These credentials will also be
+                                            utilized by the system to execute
+                                            test scripts for testing purposes.
+                                          </p>
+                                        </div>
+                                      }
+                                    >
+                                      <InfoCircleOutlined
+                                        style={{
+                                          marginLeft: "0.5rem",
+                                          marginTop: "0.7rem",
+                                        }}
+                                      />
+                                    </Popover>
+                                  </label>
+                                </div>
+                                <div className="col-sm-6 col-12">
+                                  <div className="custom-input mb-3">
+                                    <input
+                                      id={
+                                        "testRequestUrls[" +
+                                        index +
+                                        "].username"
+                                      }
+                                      name={
+                                        "testRequestUrls[" +
+                                        index +
+                                        "].username"
+                                      }
+                                      type="text"
+                                      className={`form-control ${
+                                        touched?.[
+                                          modifiedComponentId(url.componentId)
+                                        ]?.username &&
+                                        formik.errors[
+                                          "testRequestUrls[" +
+                                            modifiedComponentId(
+                                              url.componentId
+                                            ) +
+                                            "].username"
+                                        ]
+                                          ? "is-invalid"
+                                          : ""
+                                      }`}
+                                      placeholder="Username"
+                                      value={
+                                        formik.values.testRequestUrls[index]
+                                          .username
+                                      }
+                                      onChange={formik.handleChange}
+                                      onBlur={() =>
+                                        handleBlur("username", url.componentId)
+                                      }
+                                      autoComplete="off"
                                     />
-                                  </Popover>
-                                </label>
-                              </div>
-                              <div className="col-sm-6 col-12">
-                                <div className="custom-input mb-3">
-                                  <input
-                                    id={
-                                      "testRequestUrls[" + index + "].username"
-                                    }
-                                    name={
-                                      "testRequestUrls[" + index + "].username"
-                                    }
-                                    type="text"
-                                    className={`form-control ${
-                                      touched?.[
-                                        modifiedComponentId(url.componentId)
-                                      ]?.username &&
+                                    {touched?.[
+                                      modifiedComponentId(url.componentId)
+                                    ]?.username &&
                                       formik.errors[
                                         "testRequestUrls[" +
                                           modifiedComponentId(url.componentId) +
                                           "].username"
-                                      ]
-                                        ? "is-invalid"
-                                        : ""
-                                    }`}
-                                    placeholder="Username"
-                                    value={
-                                      formik.values.testRequestUrls[index]
-                                        .username
-                                    }
-                                    onChange={formik.handleChange}
-                                    onBlur={() =>
-                                      handleBlur("username", url.componentId)
-                                    }
-                                    autoComplete="off"
-                                  />
-                                  {touched?.[
-                                    modifiedComponentId(url.componentId)
-                                  ]?.username &&
-                                    formik.errors[
-                                      "testRequestUrls[" +
-                                        modifiedComponentId(url.componentId) +
-                                        "].username"
-                                    ] && (
-                                      <div className="error-message">
-                                        {
-                                          formik.errors[
-                                            "testRequestUrls[" +
-                                              modifiedComponentId(
-                                                url.componentId
-                                              ) +
-                                              "].username"
-                                          ]
-                                        }
-                                      </div>
-                                    )}
+                                      ] && (
+                                        <div className="error-message">
+                                          {
+                                            formik.errors[
+                                              "testRequestUrls[" +
+                                                modifiedComponentId(
+                                                  url.componentId
+                                                ) +
+                                                "].username"
+                                            ]
+                                          }
+                                        </div>
+                                      )}
+                                  </div>
                                 </div>
-                              </div>
-                              <div className=" custom-input col-sm-6 col-12">
-                                <div className=" input-group position-relative z-0">
-                                  <input
-                                    id={
-                                      "testRequestUrls[" + index + "].password"
-                                    }
-                                    name={
-                                      "testRequestUrls[" + index + "].password"
-                                    }
-                                    type={showPassword ? "text" : "password"}
-                                    className={`form-control ${
+                                <div className=" custom-input col-sm-6 col-12">
+                                  <div className=" input-group position-relative z-0">
+                                    <input
+                                      id={
+                                        "testRequestUrls[" +
+                                        index +
+                                        "].password"
+                                      }
+                                      name={
+                                        "testRequestUrls[" +
+                                        index +
+                                        "].password"
+                                      }
+                                      type={showPassword ? "text" : "password"}
+                                      className={`form-control ${
+                                        touched?.[
+                                          modifiedComponentId(url.componentId)
+                                        ]?.password &&
+                                        formik.errors[
+                                          "testRequestUrls[" +
+                                            modifiedComponentId(
+                                              url.componentId
+                                            ) +
+                                            "].password"
+                                        ]
+                                          ? "is-invalid"
+                                          : ""
+                                      }`}
+                                      placeholder="Password"
+                                      value={
+                                        formik.values.testRequestUrls[index]
+                                          .password
+                                      }
+                                      onChange={formik.handleChange}
+                                      onBlur={() =>
+                                        handleBlur("password", url.componentId)
+                                      }
+                                      autoComplete="off"
+                                    />
+                                    {!(
                                       touched?.[
                                         modifiedComponentId(url.componentId)
                                       ]?.password &&
@@ -474,150 +519,100 @@ const RegisterApplication = () => {
                                           modifiedComponentId(url.componentId) +
                                           "].password"
                                       ]
-                                        ? "is-invalid"
-                                        : ""
-                                    }`}
-                                    placeholder="Password"
-                                    value={
-                                      formik.values.testRequestUrls[index]
-                                        .password
-                                    }
-                                    onChange={formik.handleChange}
-                                    onBlur={() =>
-                                      handleBlur("password", url.componentId)
-                                    }
-                                    autoComplete="off"
-                                  />
-                                  {!(
-                                    touched?.[
+                                    ) && (
+                                      <button
+                                        className="btn btn-outline-secondary color"
+                                        type="button"
+                                        onClick={() => {
+                                          setShowPassword(!showPassword);
+                                        }}
+                                      >
+                                        <i
+                                          className={`bi ${
+                                            showPassword
+                                              ? "bi-eye-slash"
+                                              : "bi-eye"
+                                          }`}
+                                        ></i>
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div>
+                                    {touched?.[
                                       modifiedComponentId(url.componentId)
                                     ]?.password &&
-                                    formik.errors[
-                                      "testRequestUrls[" +
-                                        modifiedComponentId(url.componentId) +
-                                        "].password"
-                                    ]
-                                  ) && (
-                                    <button
-                                      className="btn btn-outline-secondary color"
-                                      type="button"
-                                      onClick={() => {
-                                        setShowPassword(!showPassword);
-                                      }}
-                                    >
-                                      <i
-                                        className={`bi ${
-                                          showPassword
-                                            ? "bi-eye-slash"
-                                            : "bi-eye"
-                                        }`}
-                                      ></i>
-                                    </button>
-                                  )}
-                                </div>
-                                <div>
-                                  {touched?.[
-                                    modifiedComponentId(url.componentId)
-                                  ]?.password &&
-                                    formik.errors[
-                                      "testRequestUrls[" +
-                                        modifiedComponentId(url.componentId) +
-                                        "].password"
-                                    ] && (
-                                      <div className="error-message">
-                                        {
-                                          formik.errors[
-                                            "testRequestUrls[" +
-                                              url.componentId.replace(
-                                                /\./g,
-                                                ""
-                                              ) +
-                                              "].password"
-                                          ]
-                                        }
-                                      </div>
-                                    )}
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="row">
-                              <div className="col-12 ">
-                                <div className="custom-input">
-                                  <label
-                                    htmlFor="fhirApiBaseUrl"
-                                    className="form-label"
-                                  >
-                                    Website/UI URL:{" "}
-                                    <Popover
-                                      placement="topLeft"
-                                      title={
-                                        <div style={{ maxWidth: '450px', fontWeight: 'normal' }}>
-                                          {" "}
-                                          Please provide link to your
-                                          application/ website. Make sure the
-                                          URL is accurate and includes the
-                                          correct protocol (e.g., http:// or
-                                          https://).
-                                        </div>
-                                      }
-                                    >
-                                      <InfoCircleOutlined
-                                        style={{
-                                          marginLeft: "0.5rem",
-                                          marginTop: "0.7rem",
-                                        }}
-                                      />
-                                    </Popover>
-                                  </label>
-                                  <input
-                                    id={
-                                      "testRequestUrls[" +
-                                      index +
-                                      "].websiteUIBaseUrl"
-                                    }
-                                    name={
-                                      "testRequestUrls[" +
-                                      index +
-                                      "].websiteUIBaseUrl"
-                                    }
-                                    type="text"
-                                    className={`form-control ${
-                                      touched?.[
-                                        modifiedComponentId(url.componentId)
-                                      ]?.websiteUIBaseUrl &&
                                       formik.errors[
                                         "testRequestUrls[" +
                                           modifiedComponentId(url.componentId) +
-                                          "].websiteUIBaseUrl"
-                                      ]
-                                        ? "is-invalid"
-                                        : ""
-                                    }`}
-                                    placeholder="../website-ui-base-url/"
-                                    value={
-                                      formik.values.testRequestUrls[index]
-                                        .websiteUIBaseUrl
-                                    }
-                                    onChange={formik.handleChange}
-                                    onBlur={() =>
-                                      handleBlur(
-                                        "websiteUIBaseUrl",
-                                        url.componentId
-                                      )
-                                    }
-                                    autoComplete="off"
-                                  />
+                                          "].password"
+                                      ] && (
+                                        <div className="error-message">
+                                          {
+                                            formik.errors[
+                                              "testRequestUrls[" +
+                                                url.componentId.replace(
+                                                  /\./g,
+                                                  ""
+                                                ) +
+                                                "].password"
+                                            ]
+                                          }
+                                        </div>
+                                      )}
+                                  </div>
                                 </div>
-                                {touched?.[modifiedComponentId(url.componentId)]
-                                  ?.fhirApiBaseUrl &&
-                                  formik.errors[
-                                    "testRequestUrls[" +
-                                      modifiedComponentId(url.componentId) +
-                                      "].websiteUIBaseUrl"
-                                  ] && (
-                                    <div className="error-message">
-                                      {
+                              </div>
+
+                              <div className="row">
+                                <div className="col-12 ">
+                                  <div className="custom-input">
+                                    <label
+                                      htmlFor="fhirApiBaseUrl"
+                                      className="form-label"
+                                    >
+                                      Website/UI URL:{" "}
+                                      <Popover
+                                        placement="topLeft"
+                                        title={
+                                          <div
+                                            style={{
+                                              maxWidth: "450px",
+                                              fontWeight: "normal",
+                                            }}
+                                          >
+                                            {" "}
+                                            Please provide link to your
+                                            application/ website. Make sure the
+                                            URL is accurate and includes the
+                                            correct protocol (e.g., http:// or
+                                            https://).
+                                          </div>
+                                        }
+                                      >
+                                        <InfoCircleOutlined
+                                          style={{
+                                            marginLeft: "0.5rem",
+                                            marginTop: "0.7rem",
+                                          }}
+                                        />
+                                      </Popover>
+                                    </label>
+                                    <input
+                                      id={
+                                        "testRequestUrls[" +
+                                        index +
+                                        "].websiteUIBaseUrl"
+                                      }
+                                      name={
+                                        "testRequestUrls[" +
+                                        index +
+                                        "].websiteUIBaseUrl"
+                                      }
+                                      type="text"
+                                      className={`form-control ${
+                                        touched?.[
+                                          modifiedComponentId(url.componentId)
+                                        ]?.websiteUIBaseUrl &&
                                         formik.errors[
                                           "testRequestUrls[" +
                                             modifiedComponentId(
@@ -625,87 +620,130 @@ const RegisterApplication = () => {
                                             ) +
                                             "].websiteUIBaseUrl"
                                         ]
+                                          ? "is-invalid"
+                                          : ""
+                                      }`}
+                                      placeholder="../website-ui-base-url/"
+                                      value={
+                                        formik.values.testRequestUrls[index]
+                                          .websiteUIBaseUrl
                                       }
-                                    </div>
-                                  )}
-                              </div>
-                              <div className="col-12 mt-3">
-                                <div className="custom-input">
-                                  <label
-                                    htmlFor="fhirApiBaseUrl"
-                                    className="form-label"
-                                  >
-                                    FHIR API Base URL:{" "}
-                                    <span style={{ color: "red" }}>*</span>
-                                    <Popover
-                                      placement="topLeft"
-                                      title={
-                                        <div style={{ maxWidth: '450px', fontWeight: 'normal' }}>
-                                          {" "}
-                                          Please provide the base URL of the
-                                          FHIR API endpoint. This URL will be
-                                          used to execute testing on the
-                                          specified API. Make sure to include
-                                          the correct protocol (e.g., http:// or
-                                          https://) and endpoint path.
-                                        </div>
+                                      onChange={formik.handleChange}
+                                      onBlur={() =>
+                                        handleBlur(
+                                          "websiteUIBaseUrl",
+                                          url.componentId
+                                        )
                                       }
-                                    >
-                                      <InfoCircleOutlined
-                                        style={{
-                                          marginLeft: "0.5rem",
-                                          marginTop: "0.7rem",
-                                        }}
-                                      />
-                                    </Popover>
-                                  </label>
-                                  <input
-                                    id={
+                                      autoComplete="off"
+                                    />
+                                  </div>
+                                  {touched?.[
+                                    modifiedComponentId(url.componentId)
+                                  ]?.fhirApiBaseUrl &&
+                                    formik.errors[
                                       "testRequestUrls[" +
-                                      index +
-                                      "].fhirApiBaseUrl"
-                                    }
-                                    name={
-                                      "testRequestUrls[" +
-                                      index +
-                                      "].fhirApiBaseUrl"
-                                    }
-                                    type="text"
-                                    className={`form-control ${
-                                      touched?.[
-                                        modifiedComponentId(url.componentId)
-                                      ]?.fhirApiBaseUrl &&
-                                      formik.errors[
-                                        "testRequestUrls[" +
-                                          modifiedComponentId(url.componentId) +
-                                          "].fhirApiBaseUrl"
-                                      ]
-                                        ? "is-invalid"
-                                        : ""
-                                    }`}
-                                    placeholder="../base-url/"
-                                    value={
-                                      formik.values.testRequestUrls[index]
-                                        .fhirApiBaseUrl
-                                    }
-                                    onChange={formik.handleChange}
-                                    onBlur={() =>
-                                      handleBlur(
-                                        "fhirApiBaseUrl",
-                                        url.componentId
-                                      )
-                                    }
-                                    autoComplete="off"
-                                  />
+                                        modifiedComponentId(url.componentId) +
+                                        "].websiteUIBaseUrl"
+                                    ] && (
+                                      <div className="error-message">
+                                        {
+                                          formik.errors[
+                                            "testRequestUrls[" +
+                                              modifiedComponentId(
+                                                url.componentId
+                                              ) +
+                                              "].websiteUIBaseUrl"
+                                          ]
+                                        }
+                                      </div>
+                                    )}
                                 </div>
-                                {touched?.[modifiedComponentId(url.componentId)]
-                                  ?.fhirApiBaseUrl &&
-                                  formik.errors[
-                                    "testRequestUrls[" +
-                                      modifiedComponentId(url.componentId) +
-                                      "].fhirApiBaseUrl"
-                                  ] && (
-                                    <div className="error-message">
+                                <div className="col-12 mt-3">
+                                  <div className="custom-input">
+                                    <label
+                                      htmlFor="fhirApiBaseUrl"
+                                      className="form-label"
+                                    >
+                                      FHIR API Base URL:{" "}
+                                      <span style={{ color: "red" }}>*</span>
+                                      <Popover
+                                        placement="topLeft"
+                                        title={
+                                          <div
+                                            style={{
+                                              maxWidth: "450px",
+                                              fontWeight: "normal",
+                                            }}
+                                          >
+                                            {" "}
+                                            Please provide the base URL of the
+                                            FHIR API endpoint. This URL will be
+                                            used to execute testing on the
+                                            specified API. Make sure to include
+                                            the correct protocol (e.g., http://
+                                            or https://) and endpoint path.
+                                          </div>
+                                        }
+                                      >
+                                        <InfoCircleOutlined
+                                          style={{
+                                            marginLeft: "0.5rem",
+                                            marginTop: "0.7rem",
+                                          }}
+                                        />
+                                      </Popover>
+                                    </label>
+                                    <input
+                                      id={
+                                        "testRequestUrls[" +
+                                        index +
+                                        "].fhirApiBaseUrl"
+                                      }
+                                      name={
+                                        "testRequestUrls[" +
+                                        index +
+                                        "].fhirApiBaseUrl"
+                                      }
+                                      type="text"
+                                      className={`form-control ${
+                                        touched?.[
+                                          modifiedComponentId(url.componentId)
+                                        ]?.fhirApiBaseUrl &&
+                                        formik.errors[
+                                          "testRequestUrls[" +
+                                            modifiedComponentId(
+                                              url.componentId
+                                            ) +
+                                            "].fhirApiBaseUrl"
+                                        ]
+                                          ? "is-invalid"
+                                          : ""
+                                      }`}
+                                      placeholder="../base-url/"
+                                      value={
+                                        formik.values.testRequestUrls[index]
+                                          .fhirApiBaseUrl
+                                      }
+                                      onChange={formik.handleChange}
+                                      onBlur={() =>
+                                        handleBlur(
+                                          "fhirApiBaseUrl",
+                                          url.componentId
+                                        )
+                                      }
+                                      autoComplete="off"
+                                    />
+                                  </div>
+                                  {touched?.[
+                                    modifiedComponentId(url.componentId)
+                                  ]?.fhirApiBaseUrl &&
+                                    formik.errors[
+                                      "testRequestUrls[" +
+                                        modifiedComponentId(url.componentId) +
+                                        "].fhirApiBaseUrl"
+                                    ] && (
+                                      <div className="error-message">
                                       {
                                         formik.errors[
                                           "testRequestUrls[" +
@@ -734,7 +772,7 @@ const RegisterApplication = () => {
             <button
               className="btn btn-primary btn-white mx-2"
               onClick={() => {
-                navigate("/dashboard");
+                navigate("/testing-requests");
               }}
             >
               Cancel
@@ -750,6 +788,13 @@ const RegisterApplication = () => {
           </div>
         </div>
       </div>
+      ) : (
+        <div id="wrapper">
+          <Empty description="No Components Available for Testing" width="400"  className="py-5" imageStyle={{
+                  height: 200, // Adjust the height of the image
+                }}/>
+        </div>
+      )}
     </div>
   );
 };
