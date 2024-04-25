@@ -268,96 +268,94 @@ export default function ChooseTest() {
             Select the type to start verifying application with OpenHIE.{" "}
           </p>
           <div className="d-flex flex-wrap">
+            {!!testcaseResults && totalAllManual !==0 
+            && 
             <div className="testing-grid">
-              <div className="icon-box">
-                <img src={functional_logo} />
-              </div>
-              <div className="text-box">
-                <h6 className="">Manual Verification</h6>
-                <p className="mb-0">
-                  If you need more info, please check out{" "}
-                  <span className="fixed-button">
-                    <a
-                      className="text-blue"
-                      data-bs-toggle="offcanvas"
-                      href="#manualTesting"
-                      aria-controls="manualTesting"
-                    >
-                      Guideline.
-                    </a>
-                  </span>
-                  <div
-                    className="offcanvas offcanvas-end"
-                    tabIndex="-1"
-                    id="manualTesting"
-                    aria-labelledby="manualTestingLabel"
-                  >
-                    <div id="mySidebar" class="sidebar-right">
-                      <VerificationGuidelines title="Manual Verification Guidelines" guidelines={ManualVerificationGuidelines}/>
-                    </div>
-                  </div>
-                </p>
-                {totalManualTestcaseResults == 0 && (
-                  <button
-                    className="btn btn-primary btn-sm mt-4 "
-                    onClick={() => {
-                      handleStartTesting(true, null);
-                    }}
-                  >
-                    Start Verification
-                  </button>
-                )}
-                {totalManualTestcaseResults != 0 && (
-                  <Fragment>
-                    <Progress
-                      percent={Math.floor(
-                        (totalFinishedManual /
-                          (!!totalFinishedManual
-                            ? totalAllManual
-                            : totalManualTestcaseResults)) *
-                        100
-                      )}
-                      format={() => {
-                        if (
-                          Math.floor(
-                            (totalFinishedManual /
-                              (!!totalFinishedManual
-                                ? totalAllManual
-                                : totalManualTestcaseResults)) *
-                            100
-                          ) === 100
-                        ) {
-                          return <CheckCircleFilled color="#52C41A" />;
-                        } else {
-                          return (
-                            <span>
-                              {totalFinishedManual}/
-                              {!!totalFinishedManual
-                                ? totalAllManual
-                                : totalManualTestcaseResults}
-                            </span>
-                          );
-                        }
-                      }}
-                    />
-                    <Button
-                      onClick={() => navigate(`/manual-testing/${testRequestId}`)}
-                    >
-                      {
-                        totalAllManual === totalFinishedManual ?
-                          "Modify" :
-                          "Resume"
-                      }
-                    </Button>
-                  </Fragment>
-                )}
-
-                {/* <div className="progress-bar-line"> */}
-                {/* <div className="progress-fill"></div> */}
-                {/* <div className="progress-value">20%</div>  */}
-                {/* </div> */}
-              </div>
+            <div className="icon-box">
+              <img src={functional_logo} />
             </div>
+            <div className="text-box">
+              <h6 className="">Manual Verification</h6>
+              <p className="mb-0">
+                If you need more info, please check out{" "}
+                <span className="fixed-button">
+                  <a
+                    className="text-blue"
+                    data-bs-toggle="offcanvas"
+                    href="#manualTesting"
+                    aria-controls="manualTesting"
+                  >
+                    Guideline.
+                  </a>
+                </span>
+                <div
+                  className="offcanvas offcanvas-end"
+                  tabIndex="-1"
+                  id="manualTesting"
+                  aria-labelledby="manualTestingLabel"
+                >
+                  <div id="mySidebar" class="sidebar-right">
+                    <VerificationGuidelines title="Manual Verification Guidelines" guidelines={ManualVerificationGuidelines}/>
+                  </div>
+                </div>
+              </p>
+              {totalManualTestcaseResults == 0 && (
+                <button
+                  className="btn btn-primary btn-sm mt-4 "
+                  onClick={() => {
+                    handleStartTesting(true, null);
+                  }}
+                >
+                  Start Verification
+                </button>
+              )}
+              {totalManualTestcaseResults != 0 && (
+                <Fragment>
+                  <Progress
+                    percent={Math.floor(
+                      (totalFinishedManual /
+                        (!!totalFinishedManual
+                          ? totalAllManual
+                          : totalManualTestcaseResults)) *
+                      100
+                    )}
+                    format={() => {
+                      if (
+                        Math.floor(
+                          (totalFinishedManual /
+                            (!!totalFinishedManual
+                              ? totalAllManual
+                              : totalManualTestcaseResults)) *
+                          100
+                        ) === 100
+                      ) {
+                        return <CheckCircleFilled color="#52C41A" />;
+                      } else {
+                        return (
+                          <span>
+                            {totalFinishedManual}/
+                            {!!totalFinishedManual
+                              ? totalAllManual
+                              : totalManualTestcaseResults}
+                          </span>
+                        );
+                      }
+                    }}
+                  />
+                  <Button
+                    onClick={() => navigate(`/manual-testing/${testRequestId}`)}
+                  >
+                    {
+                      totalAllManual === totalFinishedManual ?
+                        "Modify" :
+                        "Resume"
+                    }
+                  </Button>
+                </Fragment>
+              )}
+            </div>
+          </div>}
+           {!!testcaseResults && totalAllAutomated !== 0 && 
             <div className="testing-grid">
               <div className="icon-box">
                 <img src={workflow_logo} />
@@ -479,6 +477,7 @@ export default function ChooseTest() {
                 {/* <div className="progress-bar-line"></div> */}
               </div>
             </div>
+            }
           </div>
         </div>
           {!!submitButtonFlag && totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?

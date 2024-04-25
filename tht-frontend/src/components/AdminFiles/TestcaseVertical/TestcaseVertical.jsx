@@ -76,8 +76,9 @@ export default function TestcaseVertical(props) {
           if(optionsArray.length == 0){
             selectNextSpecification();
           }else{
-          TestResultAPI.saveOptions(optionsArray);
-          selectNextSpecification();
+          TestResultAPI.saveOptions(optionsArray).then((res)=>{
+            selectNextSpecification();
+          })
           }
         }
       })
@@ -86,8 +87,8 @@ export default function TestcaseVertical(props) {
       if(optionsArray.length == 0){
         selectNextSpecification();
       }else{
-      TestResultAPI.saveOptions(optionsArray);
-      selectNextSpecification();
+        TestResultAPI.saveOptions(optionsArray).then((res)=>{
+          selectNextSpecification();})
       }
     }
   }else {
