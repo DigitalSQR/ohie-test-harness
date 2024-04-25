@@ -96,6 +96,12 @@ public class UserServiceServiceImpl implements UserService {
     @Value("${message-configuration.account.reactivate.notification}")
     private boolean accountReactivateNotification;
 
+    @Value("${message-configuration.account.admin-tester.create.mail}")
+    private boolean adminTesterCreateMail;
+
+    @Value("${message-configuration.account.admin-tester.create.notification}")
+    private boolean adminTesterCreateNotification;
+
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -284,6 +290,8 @@ public class UserServiceServiceImpl implements UserService {
             messageAssesseeIfAccountInactive(userEntity, message, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_INACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
             messageAssesseeIfAccountReactivated(userEntity, contextInfo);
+        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)){
+            messageTesterOrAdminIfAccountCreated(userEntity, contextInfo);
         }
     }
 
@@ -572,6 +580,17 @@ public class UserServiceServiceImpl implements UserService {
             NotificationEntity notificationEntity = new NotificationEntity("Your Account has been Re-Activated", userEntity);
             applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
+    }
+
+    private void messageTesterOrAdminIfAccountCreated(UserEntity userEntity, ContextInfo contextInfo) {
+        if (adminTesterCreateMail) {
+            emailService.adminOrTesterAccountCreatedMessage(userEntity.getEmail(), userEntity.getName());
+        }
+        if (adminTesterCreateNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Congratulations. Your account has been created!", userEntity);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+
     }
 
 }

@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.usermanagement.mock;
 
+import com.argusoft.path.tht.notification.mock.NotificationServiceMockImpl;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.dto.UserInfo;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
@@ -23,6 +24,9 @@ public class UserServiceMockImpl {
 
     @Autowired
     TokenVerificationRepository tokenVerificationRepository;
+
+    @Autowired
+    NotificationServiceMockImpl notificationServiceMock;
 
     public void init() {
         createUser("user.01", "Dummy User1", "dummyuser1@testmail.com", "$2a$10$9Z2hq91BCBxqodRc82UedO.BaxXch2U6nmtyz2KkHmTZhlDTbjjWe",UserServiceConstants.ROLE_ID_ASSESSEE);

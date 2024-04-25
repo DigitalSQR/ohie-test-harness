@@ -135,6 +135,10 @@ message-configuration:
     reactivate:
       mail: true
       notification: true
+    admin-tester:
+      create:
+        mail: true
+        notification: true
   test-request:
     create:
       mail: true
@@ -148,6 +152,7 @@ message-configuration:
     finish:
       mail: true
       notification: true
+
 
 testbed:
   testsuite-management:
