@@ -19,6 +19,8 @@ import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import { store } from "../../../store/store";
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { Popover } from "antd";
 
 /**
  * Assessee Component:
@@ -332,11 +334,21 @@ const Assessee = () => {
                         <td className="toLowerCase-words">{user.email}</td>
                         <td>{formattedDate}</td>
                         <td>
+                          <Fragment>
                           <span
                             className={"status " + userBadgeClasses[user.state]}
                           >
                             {currentStatus.toLowerCase()}
                           </span>
+                          {
+                            user.state === "user.status.inactive" && 
+                          <Popover
+                                title={<div>{user?.message}</div>}
+                              >
+                                <InfoCircleOutlined style={{marginLeft:"0.5rem", marginTop:"0.7rem"}}/>
+                              </Popover>
+                          }
+                          </Fragment>
                         </td>
                         {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && (
                           <td className=" no-wrap">

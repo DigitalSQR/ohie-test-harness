@@ -59,7 +59,7 @@ export default function ResetPassword() {
             <div className="col-12">
               <div className="custom-input  mb-3 input-group" style={{}}>
                 <label htmlFor="oldPassword" className="form-label input-group ">
-                  <b>Old Password (Empty for Google Login)</b>
+                  <b>Old Password (Empty for Google Registration)</b>
                 </label>
                 <input
                   type={showOldPassword ? "text" : "password"}
