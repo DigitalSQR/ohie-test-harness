@@ -283,9 +283,13 @@ const RegisterApplication = () => {
                     {formik.touched.name && formik.errors.name && (
                       <div className="error-message">{formik.errors.name}</div>
                     )}
-                    <p className="compError">
-                      Atleast one component has to be selected*
-                    </p>
+                    {formik.values.testRequestUrls.every(
+                      (url) => url.componentId === null
+                    ) && (
+                      <p className="compError">
+                        At least one component has to be selected*
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
