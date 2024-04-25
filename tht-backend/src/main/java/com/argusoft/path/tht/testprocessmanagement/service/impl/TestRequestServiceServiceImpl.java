@@ -73,7 +73,7 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Service
-public class TestRequestServiceServiceImpl implements TestRequestService {
+public class    TestRequestServiceServiceImpl implements TestRequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestRequestServiceServiceImpl.class);
 
@@ -391,6 +391,10 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throw new InvalidParameterException("TestRequestId is missing");
         }
         TestRequestCriteriaSearchFilter testRequestCriteriaSearchFilter = new TestRequestCriteriaSearchFilter(testRequestId);
+        Optional<TestRequestEntity> testRequestEntityOptional = testRequestRepository.findById(testRequestId);
+        if(!testRequestEntityOptional.isPresent()) {
+            new DoesNotExistException("TestRequest does not found with id : " + testRequestId);
+        }
         List<TestRequestEntity> testRequestEntities = this.searchTestRequests(testRequestCriteriaSearchFilter, contextInfo);
         return testRequestEntities.stream()
                 .findFirst()
@@ -1140,8 +1144,20 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         // Compliance Rate
 
 
-        int complianceForComplianceRate = testRequestResults.stream().mapToInt(TestcaseResultEntity::getCompliant).sum();
-        int nonComplianceForComplianceRate = testRequestResults.stream().mapToInt(TestcaseResultEntity::getNonCompliant).sum();
+        int complianceForComplianceRate = testRequestResults.stream().mapToInt(testcaseResultEntity -> {
+            try {
+                return testcaseResultEntity.getCompliant();
+            } catch(Exception e) {
+                return 0;
+            }
+        }).sum();
+        int nonComplianceForComplianceRate = testRequestResults.stream().mapToInt(testcaseResultEntity -> {
+            try {
+                return testcaseResultEntity.getNonCompliant();
+            } catch(Exception e) {
+                return 0;
+            }
+        }).sum();
 
         if((complianceForComplianceRate+nonComplianceForComplianceRate)!=0){
             graphInfo.setComplianceRate(((float) complianceForComplianceRate /(complianceForComplianceRate + nonComplianceForComplianceRate))*100.0F);
@@ -1237,10 +1253,24 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
 
             CompliantApplication compliantApplication = new CompliantApplication();
 
+            int compliantApplicationCompliant, compliantApplicationNonCompliant;
+
+            try {
+                compliantApplicationCompliant = topFiveTestRequestsResult.get(i).getCompliant();
+            } catch(Exception e) {
+                compliantApplicationCompliant = 0;
+            }
+
+            try {
+                compliantApplicationNonCompliant = topFiveTestRequestsResult.get(i).getNonCompliant();
+            } catch(Exception e) {
+                compliantApplicationNonCompliant = 0;
+            }
+
             compliantApplication.setApplicationName(topFiveTestRequestsResult.get(i).getName());
-            compliantApplication.setTestcasesPassed(topFiveTestRequestsResult.get(i).getCompliant());
+            compliantApplication.setTestcasesPassed(compliantApplicationCompliant);
             compliantApplication.setRank(i+1);
-            compliantApplication.setTotalTestcases(topFiveTestRequestsResult.get(i).getCompliant() + topFiveTestRequestsResult.get(i).getNonCompliant());
+            compliantApplication.setTotalTestcases(compliantApplicationCompliant + compliantApplicationNonCompliant);
 
             // Search for Component Testcase Results of the current application of the loop
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();

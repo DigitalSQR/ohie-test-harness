@@ -4,11 +4,8 @@ import com.argusoft.path.tht.TestingHarnessToolRestTestConfiguration;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.mock.SpecificationServiceMockImpl;
 import com.argusoft.path.tht.testcasemanagement.mock.TestcaseServiceMockImpl;
 import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
-import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
@@ -16,7 +13,10 @@ import com.github.fge.jsonpatch.diff.JsonDiff;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import java.io.IOException;
@@ -31,17 +31,9 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 public class TestcaseRestControllerTest extends TestingHarnessToolRestTestConfiguration {
 
-    @Autowired
-    SpecificationServiceMockImpl specificationServiceMockImpl;
 
     @Autowired
     TestcaseServiceMockImpl testcaseServiceMock;
-
-    @Autowired
-    TestcaseService testcaseService;
-
-    @Autowired
-    SpecificationService specificationService;
 
     @Autowired
     WebTestClient webTestClient;
@@ -98,7 +90,7 @@ public class TestcaseRestControllerTest extends TestingHarnessToolRestTestConfig
 
 
     @Test
-    void testUpdateTestcase() {
+    void testUpdateTestcase() throws IOException {
         TestcaseInfo testcaseInfo = this.webTestClient
                 .get()
                 .uri("/testcase/{testcaseId}", "testcase.03")
@@ -116,16 +108,23 @@ public class TestcaseRestControllerTest extends TestingHarnessToolRestTestConfig
         testcaseInfo.setName("Testcase 1");
         testcaseInfo.setSpecificationId("specification.07");
 
+        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+        parts.add("name","Testcase 1");
+        parts.add("specificationId", "specification.07");
+        parts.add("manual", testcaseInfo.getManual());
+        parts.add("rank",testcaseInfo.getRank());
+        parts.add("description", testcaseInfo.getDescription());
+        parts.add("state", testcaseInfo.getState());
+
+
         TestcaseInfo updatedTestcase = this.webTestClient
                 .put()
                 .uri("/testcase")
-                .body(BodyInserters.fromValue(testcaseInfo))
-                .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .header(ACCEPT, APPLICATION_JSON_VALUE)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + super.tokenMap.get("access_token"))
+                .body(BodyInserters.fromMultipartData(parts))
                 .exchange()
-                .expectStatus()
-                .isEqualTo(OK)
+                .expectStatus().isOk()
                 .expectBody(TestcaseInfo.class)
                 .returnResult()
                 .getResponseBody();
@@ -166,7 +165,7 @@ public class TestcaseRestControllerTest extends TestingHarnessToolRestTestConfig
                 .expectStatus()
                 .isEqualTo(OK)
                 .expectBody()
-                .jsonPath("$.content.length()").isEqualTo("3");
+                .jsonPath("$.content.length()").isEqualTo("4");
     }
 
 

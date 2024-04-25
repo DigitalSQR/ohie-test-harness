@@ -2,7 +2,6 @@ package com.argusoft.path.tht.testcasemanagement.service;
 
 import com.argusoft.path.tht.TestingHarnessToolTestConfiguration;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
-import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
@@ -54,15 +53,12 @@ class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
         // Set context info
         contextInfo = new ContextInfo();
         contextInfo.setCurrentDate(new Date());
-        componentServiceMockImpl.init();
-//        specificationServiceMock.init();
-//        testcaseServiceMock.init();
-
+        testcaseServiceMock.init();
     }
 
     @AfterEach
     void after() {
-        componentServiceMockImpl.clear();
+        testcaseServiceMock.clear();
     }
 
     @Test
@@ -343,12 +339,12 @@ class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
 
         //Testcase 5: validate wrong refobj uri
         List<TestcaseValidationResultInfo> validateRefobjuri = this.componentService.validateTestCaseConfiguration("", "no.uri", contextInfo);
-        assertEquals(7, validateRefobjuri.size());
+        assertEquals(8, validateRefobjuri.size());
 
         //Testcase 6: validate inactive specification
         testcaseEntity.setState("testcase.status.inactive");
         List<TestcaseValidationResultInfo> validateInactiveSpecification = this.componentService.validateTestCaseConfiguration("com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo", "component.02", contextInfo);
-        assertEquals(7, validateRefobjuri.size());
+        assertEquals(8, validateRefobjuri.size());
 
 
     }

@@ -96,4 +96,11 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     private void changesBeforeSaveTestRequest() {
         this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));
     }
+
+    @Override
+    public String toString() {
+        return "TestRequestEntity{" +
+                "id=" + getId() +
+                '}';
+    }
 }

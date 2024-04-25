@@ -3,14 +3,9 @@ package com.argusoft.path.tht.testcasemanagement.rest;
 import com.argusoft.path.tht.TestingHarnessToolRestTestConfiguration;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
-import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.mock.ComponentServiceMockImpl;
-import com.argusoft.path.tht.testcasemanagement.mock.SpecificationServiceMockImpl;
-import com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo;
+import com.argusoft.path.tht.testcasemanagement.mock.TestcaseServiceMockImpl;
 import com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo;
-import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,27 +26,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 class SpecificationRestControllerTest extends TestingHarnessToolRestTestConfiguration {
 
-    @Autowired
-    ComponentServiceMockImpl componentServiceMockImpl;
 
     @Autowired
-    SpecificationServiceMockImpl specificationServiceMockImpl;
+    TestcaseServiceMockImpl testcaseServiceMock;
 
     @Autowired
     WebTestClient webTestClient;
-
-    @Autowired
-    ComponentService componentService;
-
-    @Autowired
-    SpecificationService specificationService;
-
 
     @BeforeEach
     @Override
     public void init() {
         super.init();
-        specificationServiceMockImpl.init();
+        testcaseServiceMock.init();
 
         super.login("noreplytestharnesstool@gmail.com",
                 "password",
@@ -61,7 +47,7 @@ class SpecificationRestControllerTest extends TestingHarnessToolRestTestConfigur
 
     @AfterEach
     void after() {
-        specificationServiceMockImpl.clear();
+        testcaseServiceMock.clear();
     }
 
     @Test

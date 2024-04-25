@@ -1,7 +1,6 @@
 package com.argusoft.path.tht.usermanagement.rest;
 
 import com.argusoft.path.tht.TestingHarnessToolRestTestConfiguration;
-import com.argusoft.path.tht.notification.mock.NotificationServiceMockImpl;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -60,9 +59,9 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
     @Test
     void registerAssess(){
         UserInfo userInfo = new UserInfo();
-        userInfo.setId("user.06");
-        userInfo.setName("Dummy User6");
-        userInfo.setEmail("dummyuser6@testmail.com");
+        userInfo.setId("user.10");
+        userInfo.setName("Dummy User10");
+        userInfo.setEmail("dummyuser10@testmail.com");
         userInfo.setPassword("password");
 
 
@@ -80,7 +79,7 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
                 .returnResult()
                 .getResponseBody();
 
-        assertEquals("user.06", createUser.getId());
+        assertEquals("user.10", createUser.getId());
     }
 
 
@@ -255,9 +254,9 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
     @Test
     void testCreateUser(){
         UserInfo userInfo = new UserInfo();
-        userInfo.setId("user.07");
-        userInfo.setName("Dummy User7");
-        userInfo.setEmail("dummyuser7@testmail.com");
+        userInfo.setId("user.11");
+        userInfo.setName("Dummy User11");
+        userInfo.setEmail("dummyuser11@testmail.com");
         userInfo.setPassword("password");
         Set<String> roleIds = new HashSet<>();
         RoleInfo roleInfo = new RoleInfo();
@@ -278,7 +277,7 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
                 .returnResult()
                 .getResponseBody();
 
-        assertEquals("user.07", createUser.getId());
+        assertEquals("user.11", createUser.getId());
     }
 
     @Test
@@ -357,7 +356,7 @@ public class UserRestControllerTest extends TestingHarnessToolRestTestConfigurat
                 .expectStatus()
                 .isEqualTo(OK)
                 .expectBody()
-                .jsonPath("$.content.length()").isEqualTo("6");
+                .jsonPath("$.content.length()").isEqualTo("9");
     }
 
 

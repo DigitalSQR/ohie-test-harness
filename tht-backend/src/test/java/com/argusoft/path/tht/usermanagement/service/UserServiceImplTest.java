@@ -6,6 +6,7 @@ import com.argusoft.path.tht.systemconfiguration.constant.Module;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.mock.ComponentServiceMockImpl;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.mock.UserServiceMockImpl;
@@ -39,11 +40,16 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
     @Autowired
     UserService userService;
 
+    @Autowired
+    ComponentServiceMockImpl componentServiceMock;
+
+
     @BeforeEach
     @Override
     public void init() {
         super.init();
         userServiceMock.init();
+        componentServiceMock.init();
         contextInfo = new ContextInfo();
     }
 
@@ -54,6 +60,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
+    @Transactional
     void testRegisterAssessee() throws InvalidParameterException, DoesNotExistException, MessagingException, DataValidationErrorException, OperationFailedException, IOException {
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail("dummymail1@testmail.com");
@@ -72,12 +79,13 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
+    @Transactional
     void testCreateUser() throws InvalidParameterException, DoesNotExistException, MessagingException, DataValidationErrorException, OperationFailedException, IOException {
         //testcase 1: create new user
         UserEntity userEntity = new UserEntity();
         userEntity.setId("user.001");
         userEntity.setName("dummy user");
-        userEntity.setEmail("dummyuser8@testmail.com");
+        userEntity.setEmail("dummyuser10@testmail.com");
         userEntity.setPassword("password");
         userEntity.setState(UserServiceConstants.USER_STATUS_ACTIVE);
         RoleEntity roleEntity = new RoleEntity();
@@ -86,7 +94,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
         userEntity.getRoles().add(roleEntity);
 
         UserEntity createUser = this.userService.createUser(userEntity, contextInfo);
-        assertEquals("dummyuser8@testmail.com", createUser.getEmail());
+        assertEquals("dummyuser10@testmail.com", createUser.getEmail());
 
         //testcase 2 : create with same email
         Assert.assertThrows(DataValidationErrorException.class, () -> {
@@ -96,7 +104,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
         //testcase 3: when contextinfo has OAUTH2 Module
         UserEntity userEntity3 = new UserEntity();
         userEntity3.setName("dummy user");
-        userEntity3.setEmail("dummyuser9@testmail.com");
+        userEntity3.setEmail("dummyuser11@testmail.com");
         userEntity3.setPassword("password");
         userEntity3.setState(UserServiceConstants.USER_STATUS_ACTIVE);
         roleEntity.setId(UserServiceConstants.ROLE_ID_TESTER);
@@ -132,6 +140,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
+    @Transactional
     void testGetRoleById(){
         assertThrows(InvalidParameterException.class, () -> {
             userService.getRoleById(null, contextInfo);
@@ -140,6 +149,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
+    @Transactional
     void testGetUserByEmail() throws InvalidParameterException, DoesNotExistException {
         //when email is null
         assertThrows(DoesNotExistException.class, () -> {
@@ -153,6 +163,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
+    @Transactional
     void testGetUserById() throws InvalidParameterException, DoesNotExistException {
         //when id is null
         assertThrows(InvalidParameterException.class, () -> {
@@ -162,13 +173,18 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
         //when id is present
         UserEntity findById = this.userService.getUserById("user.01", contextInfo);
         assertEquals("user.01", findById.getId());
+
+        assertThrows(DoesNotExistException.class, () -> {
+            userService.getUserById("user.11", contextInfo);
+        });
     }
 
     @Test
+    @Transactional
     void testGetUsersByRole() throws InvalidParameterException, DoesNotExistException {
         //check for super user
         List<UserEntity> usersList = this.userService.getUsersByRole("role.admin", contextInfo);
-        assertEquals(1, usersList.size());
+        assertEquals(2, usersList.size());
 
         //check when no user is present for role tester
         assertThrows(DoesNotExistException.class, () -> {
@@ -204,6 +220,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
+    @Transactional
     void testLogOut() throws OperationFailedException {
         Boolean isLogOut = this.userService.logout(contextInfo);
         assertEquals(Boolean.FALSE, isLogOut);
@@ -214,7 +231,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
     @Transactional
     void testChangeState() throws InvalidParameterException, DoesNotExistException, MessagingException, DataValidationErrorException, OperationFailedException, IOException, VersionMismatchException {
         //change the state of user
-        UserEntity changeState = this.userService.changeState("user.03", "For Testing", UserServiceConstants.USER_STATUS_INACTIVE, contextInfo);
+        UserEntity changeState = this.userService.changeState("user.01", "For Testing", UserServiceConstants.USER_STATUS_INACTIVE, contextInfo);
         assertEquals(UserServiceConstants.USER_STATUS_INACTIVE, changeState.getState());
 
         //change state of admin if only one is present
@@ -225,17 +242,20 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
     }
 
     @Test
+    @Transactional
     void testCreateForgotPasswordAndSendEmail(){
         this.userService.createForgotPasswordRequestAndSendEmail("dummyuser2@testmail.com", contextInfo);
     }
 
     @Test
+    @Transactional
     void testResendVerification(){
         this.userService.resendVerification("dummyuser2@testmail.com", contextInfo);
     }
 
 
     @Test
+    @Transactional
     void testSendMailToUserOnChangeState() throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
         UserEntity userEntity = this.userService.getUserById("user.01", contextInfo);
         //from approval pending to active
@@ -259,6 +279,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
+    @Transactional
     void testValidateUser() throws InvalidParameterException, OperationFailedException, DoesNotExistException {
         //validate if user already present
         UserEntity userEntity = this.userService.getUserById("user.01", contextInfo);
@@ -275,6 +296,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
+    @Transactional
     void testSearchRoles() throws InvalidParameterException {
         Pageable pageable = PageRequest.of(0, 10);
         Page<RoleEntity> result = this.userService.getRoles(pageable, contextInfo);
@@ -325,6 +347,7 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
 
     @Test
+    @Transactional
     void testSearchRolesWithPage() throws InvalidParameterException, OperationFailedException {
         RoleSearchCriteriaFilter roleSearchCriteriaFilter = new RoleSearchCriteriaFilter();
         roleSearchCriteriaFilter.setName("Admin");

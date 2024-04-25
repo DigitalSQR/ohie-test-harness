@@ -35,6 +35,7 @@ public class SpecificationServiceMockImpl {
         createSpecification("specification.09", "Test 9", "Specification 9", 1, "specification.status.active", "component.05", true, true, userId);
         createSpecification("specification.10", "Spec 10", "Spec 10", 1, "specification.status.draft", "component.04", true, true, userId);
         createSpecification("specification.11", "Spec 11", "Spec 11", 12, "specification.status.draft", "component.05", true, true, userId);
+        createSpecification("specification.12", "Spec 12", "Spec 12", 13, "specification.status.active", "component.08", true, true, userId);
     }
 
     public SpecificationEntity createSpecification(String specificationId, String name, String description, int rank, String state, String componentId, Boolean functional, Boolean required, String userId) {

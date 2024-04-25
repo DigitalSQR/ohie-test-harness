@@ -301,15 +301,15 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         return compliant;
     }
 
-    public void setCompliant(int compliant) {
+    public void setCompliant(Integer compliant) {
         this.compliant = compliant;
     }
 
-    public int getNonCompliant() {
+    public Integer getNonCompliant() {
         return nonCompliant;
     }
 
-    public void setNonCompliant(int nonCompliant) {
+    public void setNonCompliant(Integer nonCompliant) {
         this.nonCompliant = nonCompliant;
     }
 

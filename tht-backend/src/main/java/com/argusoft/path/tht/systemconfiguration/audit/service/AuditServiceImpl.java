@@ -76,7 +76,7 @@ public class AuditServiceImpl implements AuditService {
             return auditQuery.addOrder(AuditEntity.revisionType().desc()).getResultList();
 
         } catch (Exception ex) {
-            LOGGER.error("{}{}", ValidateConstant.EXCEPTION, AuditServiceImpl.class.getSimpleName());
+            LOGGER.error("{}{}{}", ValidateConstant.EXCEPTION, AuditServiceImpl.class.getSimpleName(), ex);
             throw new InvalidParameterException("Invalid parameter value provided");
         }
     }
