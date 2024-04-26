@@ -78,7 +78,11 @@ export default function TestcaseResultRow({
         );
       case TestcaseResultStateConstants.TESTCASE_RESULT_STATUS_INPROGRESS:
         return (
-          <div className="spinner-border spinner-border-sm" role="status"></div>
+          <div
+            className="spinner-border spinner-border-sm"
+            role="status"
+            style={{ marginRight: "0.5rem" }}
+          ></div>
         );
       default:
         return null;
