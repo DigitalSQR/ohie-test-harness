@@ -1,35 +1,79 @@
-#dashboard{
-    #wrapper {
-        transition: 0.5s;
-        margin-left: 230px;
-        padding: 90px 30px;
-        position: relative;
-        min-height: calc(100vh - 64px);
-        @media (max-width: 767.98px) {
-          margin-left: 40px;
-        }
-      }
+#dashboard {
+  #wrapper {
+    transition: 0.5s;
+    margin-left: 230px;
+    padding: 90px 30px;
+    position: relative;
+    min-height: calc(100vh - 64px);
 
-      .dropdown-container {
-        position: relative;
-      }
-      
-      .dropdown-container select {
-        position: absolute;
-        right: 0; /* Align to the right */
-        z-index: 1; /* Ensure the dropdown appears above the graph */
-        width: auto; /* Set width to auto to fit content */
-        padding: 5px; /* Add padding for better appearance */
-        border: 1px solid #ccc; /* Add border for better appearance */
-        border-radius: 4px; /* Add border radius for better appearance */
-        background-color: white; /* Add background color for better appearance */
-        cursor: pointer; /* Change cursor to pointer when hovering over the dropdown */
-      }
-      .tabCard{
-        padding: 0 12px;
-      } 
+    @media (max-width: 767.98px) {
+      margin-left: 40px;
+    }
+  }
 
-      #chart .apexcharts-slices {
-        cursor: pointer;
+  .dropdown-container {
+    position: relative;
+  }
+
+  .dropdown-container select {
+    position: absolute;
+    right: 0;
+    /* Align to the right */
+    z-index: 1;
+    /* Ensure the dropdown appears above the graph */
+    width: auto;
+    /* Set width to auto to fit content */
+    padding: 5px;
+    /* Add padding for better appearance */
+    border: 1px solid #ccc;
+    /* Add border for better appearance */
+    border-radius: 4px;
+    /* Add border radius for better appearance */
+    background-color: white;
+    /* Add background color for better appearance */
+    cursor: pointer;
+    /* Change cursor to pointer when hovering over the dropdown */
+  }
+
+  .tabCard {
+    padding: 0 12px;
+  }
+
+  #chart .apexcharts-slices {
+    cursor: pointer;
+  }
+}
+
+.ant-tabs-tab-btn {
+  div {
+    max-width: 90px !important;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+}
+
+.ant-tabs-nav-list {
+  div:nth-child(3) {
+    .ant-tabs-tab-btn {
+      div {
+        max-width: 180px !important;
       }
+    }
+  }
+  div:nth-child(4) {
+    .ant-tabs-tab-btn {
+      div {
+        max-width: 130px !important;
+      }
+    }
+  }
+  div:nth-child(5) {
+    .ant-tabs-tab-btn {
+      div {
+        max-width: 130px !important;
+      }
+    }
+  }
 }

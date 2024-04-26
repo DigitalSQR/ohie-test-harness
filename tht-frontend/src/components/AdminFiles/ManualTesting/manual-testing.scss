@@ -303,6 +303,7 @@
   .testing-grid {
     margin-top: 20px;
     margin-right: 30px;
+    background: #fff;
     display: flex;
     padding: 8px 20px;
     width: 360px;
@@ -316,6 +317,7 @@
   .testing-grid:hover {
     background: #fff;
     cursor: pointer;
+    box-shadow: 0px 0px 42px rgb(226 229 233);
   }
 
   .testing-grid .icon-box {
@@ -416,7 +418,7 @@
   }
 
   .round-span-success {
-    background-color: green !important;
+    background-color: #009fc8 !important;
     border: none;
     color: white;
   }
@@ -465,15 +467,17 @@
   }
 
   .manual-testing-sidemenu {
-    padding: 0px;
+    padding: 0px 16px;
 
     .accordion-item {
-      border-radius: 0px;
+      border-radius: 6px;
 
       .accordion-button {
         border-top-left-radius: 0px;
         border-top-right-radius: 0px;
         padding: 8px 16px;
+        background: #edf4f7;
+        border-radius: 6px;
       }
     }
 
@@ -484,6 +488,7 @@
 
   .question-item {
     border-bottom: 1px solid #f2f2f2;
+    padding: 8px 0px;
   }
 
   .question-header {
@@ -579,5 +584,12 @@
 .vertical-tab-wrapper {
   .ant-tabs-nav {
     height: calc(100vh - 294px);
+  }
+}
+
+.save-btn-for-now{
+
+  .bi-floppy,.bi-x-lg,.bi-pencil-square{
+    font-size: 15px;
   }
 }

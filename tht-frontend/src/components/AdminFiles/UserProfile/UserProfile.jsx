@@ -323,7 +323,7 @@ export default function UserProfile () {
                     height: "25%",
                     overflow: "hidden",
                     marginBottom: "8px",
-                    borderRadius: "2rem",
+                    borderRadius: "50%",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.lastChild.style.opacity = 1;
@@ -338,7 +338,7 @@ export default function UserProfile () {
                       width: "100%",
                       height: "100%",
                       objectFit: "contain",
-                      borderRadius: "2rem",
+                      borderRadius: "50%",
                     }}
                   />
                   <div
@@ -360,7 +360,7 @@ export default function UserProfile () {
                       <Fragment>
                         <span
                           onClick={handlePreview}
-                          className="bi bi-eye-fill"
+                          className="bi bi-eye"
                           style={{
                             fontSize: "2em",
                             color: "white",
@@ -371,7 +371,7 @@ export default function UserProfile () {
 
                         <span
                           onClick={handleRemove}
-                          className="bi bi-trash-fill"
+                          className="bi bi-trash"
                           style={{ fontSize: "2em", color: "white",cursor: "pointer" }}
                         />
                       </Fragment>

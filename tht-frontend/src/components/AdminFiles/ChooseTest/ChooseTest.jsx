@@ -301,7 +301,7 @@ export default function ChooseTest() {
               </p>
               {totalManualTestcaseResults == 0 && (
                 <button
-                  className="btn btn-primary btn-sm mt-4 "
+                  className="btn btn-primary  btn-sm mt-4 "
                   onClick={() => {
                     handleStartTesting(true, null);
                   }}
@@ -342,7 +342,7 @@ export default function ChooseTest() {
                       }
                     }}
                   />
-                  <Button
+                  <Button className="btn start-test-button mt-2"
                     onClick={() => navigate(`/manual-testing/${testRequestId}`)}
                   >
                     {
@@ -465,7 +465,7 @@ export default function ChooseTest() {
                           : "active"
                       }
                     />
-                    <Button
+                    <Button className="btn start-test-button"
                       onClick={() =>
                         navigate(`/automated-testing/${testRequestId}`)
                       }

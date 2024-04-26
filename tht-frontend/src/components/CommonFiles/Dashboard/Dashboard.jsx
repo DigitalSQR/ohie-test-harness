@@ -423,7 +423,7 @@ export default function Dashboard() {
                 <div className="card p-3" style={{ height: "100%" }}>
                   <div
                     className="d-flex justify-content-left"
-                    style={{ fontWeight: 600, fontSize: "13px" }}
+                    style={{ fontWeight: 600, fontSize: "14px" }}
                   >
                     {" "}
                     <p>Top Compliance By Component</p>

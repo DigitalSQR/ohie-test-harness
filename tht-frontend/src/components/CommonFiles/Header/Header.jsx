@@ -195,7 +195,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
           >
             {headerContent}
           </h5>
-          <div className="d-flex">
+          <div className="d-flex align-items-center">
             <div className="dropdown">
               <div
                 className="user-dropdown"
