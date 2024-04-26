@@ -22,14 +22,14 @@ import VerticalOptions from "../VerticalOptions/VerticalOptions";
 
 export default function TestcaseVertical(props) {
   const {
-    isLastQuestion,
     currentTestcase,
     currentSpecification,
     selectTestcase,
     selectNextTestcase,
     currentTestcaseIndex,
     refreshCurrentTestcase,
-    selectNextSpecification
+    selectNextSpecification,
+    isLastSpecification
 
   } = props;
   const { showLoader, hideLoader } = useLoader();
@@ -109,6 +109,7 @@ export default function TestcaseVertical(props) {
       .catch((error) => {});
   };
 
+  
 
   const saveTestcaseResultWithNote = async (value,testcaseResultInfo) => {    
       var notePatch = [
@@ -306,8 +307,8 @@ export default function TestcaseVertical(props) {
         <div className="col-12 pe-0 text-end">
           <button className="cst-btn-group btn btn-blue save-and-next" onClick={handleSaveandNext}>
 
-          {!!isLastQuestion()
-                      ? "Save"
+          {isLastSpecification()
+                      ? optionsArray.length == 0 ? "Next" : "Save"
                       : optionsArray.length == 0 
                       ? "Next" : "Save and Next"
           }

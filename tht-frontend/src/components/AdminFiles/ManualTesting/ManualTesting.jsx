@@ -236,6 +236,13 @@ export default function ManualTesting() {
     );
   };
 
+ const isLastSpecification = () => {
+    return(
+      currentComponentIndex === testcaseResults.length - 1 
+      && currentSpecificationIndex == testcaseResults[currentComponentIndex].childTestcaseResults.length - 1
+    )
+  }
+
   // This function is responsible for selecting the specification tab. The Tester is displayed the first unfinished 
   // specification which saves time and makes the process of testing efficient. 
   const selectSpecification = (specificationIndex, componentIndex) => {
@@ -528,30 +535,7 @@ export default function ManualTesting() {
                       )}
                     </span>
                   }
-                >
-                  {/* Supplying data to both the question formats, if needed in the future */}
-                  {/* {isHorizontal ? (
-                    <TestCase
-                      currentTestcaseIndex={currentTestcaseIndex}
-                      currentTestcase={currentTestcase}
-                      currentSpecification={currentSpecification}
-                      selectTestcase={selectTestcase}
-                      selectNextTestcase={selectNextTestcase}
-                      refreshCurrentTestcase={refreshCurrentTestcase}
-                      isLastQuestion={isLastQuestion}
-                    ></TestCase>
-                  ) :
-                    <TestCaseVerticalView 
-                    currentTestcaseIndex={currentTestcaseIndex}
-                    currentTestcase={currentTestcase}
-                    currentSpecification={currentSpecification}
-                    selectTestcase={selectTestcase}
-                    selectNextTestcase={selectNextTestcase}
-                    refreshCurrentTestcase={refreshCurrentTestcase}
-                    isLastQuestion={isLastQuestion}
-                    selectNextSpecification={selectNextSpecification}
-                    ></TestCaseVerticalView>
-                  } */}
+                >                  
                       <TestCaseVerticalView 
                     currentTestcaseIndex={currentTestcaseIndex}
                     currentTestcase={currentTestcase}
@@ -559,8 +543,8 @@ export default function ManualTesting() {
                     selectTestcase={selectTestcase}
                     selectNextTestcase={selectNextTestcase}
                     refreshCurrentTestcase={refreshCurrentTestcase}
-                    isLastQuestion={isLastQuestion}
                     selectNextSpecification={selectNextSpecification}
+                    isLastSpecification={isLastSpecification}
                     ></TestCaseVerticalView>
                 </Item>
               ))}

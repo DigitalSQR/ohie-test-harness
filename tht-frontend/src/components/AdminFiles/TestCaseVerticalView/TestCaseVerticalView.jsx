@@ -8,8 +8,8 @@ export default function TestCaseVerticalView(props) {
     selectTestcase,
     selectNextTestcase,
     refreshCurrentTestcase,
-    isLastQuestion,
-    selectNextSpecification
+    selectNextSpecification,
+    isLastSpecification
   } = props;
   console.log(currentSpecification);
   return (
@@ -28,9 +28,8 @@ export default function TestCaseVerticalView(props) {
         selectTestcase={selectTestcase}
         selectNextTestcase={selectNextTestcase}
         refreshCurrentTestcase={refreshCurrentTestcase}
-        isLastQuestion={isLastQuestion}
         selectNextSpecification={selectNextSpecification}
-
+        isLastSpecification={isLastSpecification}
       ></TestcaseVertical>
     </div>
   );
