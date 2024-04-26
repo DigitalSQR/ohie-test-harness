@@ -434,8 +434,8 @@ export default function AutomatedTesting() {
                                 expandedIndexes.includes(
                                   `${component?.id}-${index}`
                                 )
-                                  ? "expanded"
-                                  : ""
+                                  ? ""
+                                  : "expanded"
                               }`}
                               id={`index-${index}`}
                             >
@@ -473,8 +473,8 @@ export default function AutomatedTesting() {
                                         expandedSpecIndexes.includes(
                                           `${specification?.id}-${specIndex}`
                                         )
-                                          ? "expanded"
-                                          : ""
+                                          ? ""
+                                          : "expanded"
                                       }`}
                                     >
                                       <li className="sub-list fail-detail">

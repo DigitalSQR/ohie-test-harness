@@ -504,13 +504,14 @@
       display: flex;
       align-items: center;
       &::after {
-        content: "\F286";
+        content: "\F282";
         font-family: bootstrap-icons !important;
         margin-left: 3px;
       }
       &.active {
         &::after {
-          content: "\F282";
+          content: "\F286";
+         
         }
       }
     }
