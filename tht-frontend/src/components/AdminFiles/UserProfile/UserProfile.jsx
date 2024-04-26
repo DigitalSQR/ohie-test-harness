@@ -228,7 +228,7 @@ export default function UserProfile () {
       });
     } else {
       // If no unsaved changes, navigate back
-      navigate(-1);
+      setPreviewOpen(false)
       formik.resetForm();
     }
   };
