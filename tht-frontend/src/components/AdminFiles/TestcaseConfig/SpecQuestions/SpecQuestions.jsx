@@ -244,7 +244,7 @@ export default function ManualTestCases() {
   };
 
   useEffect(() => {
-    if(activeKey === 1){
+    if(activeKey === "1"){
     let key;
     if (activeKey) {
       key = activeKey - 1;
