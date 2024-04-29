@@ -326,9 +326,13 @@ export default function ComponentList() {
             refreshAllComponents={refreshAllComponents}
           />
         </div>
+        <div className="row mt-4">
+          <div className="col-md-6 text-end">
+
+        
         {totalPages > 1 && (
           <Pagination
-            className="pagination-ui"
+            className="pagination-ui mt-0 justify-content-end"
             count={totalPages}
             page={currentPage}
             onChange={handleChangePage}
@@ -336,9 +340,10 @@ export default function ComponentList() {
             shape="rounded"
           />
         )}
-        <div className="d-flex justify-content-end">
+          </div>
+        <div className="col-md-6 text-end justify-content-end ">
         {totalElements > 10 && (
-          <div className="page-size-selector mt-4">
+          <div className="page-size-selector ms-auto">
             <select
               className="form-select custom-select custom-select-sm"
               aria-label="Default select example"
@@ -370,6 +375,7 @@ export default function ComponentList() {
             </select>
           </div>
         )}
+        </div>
         </div>
       </div>
     </div>
