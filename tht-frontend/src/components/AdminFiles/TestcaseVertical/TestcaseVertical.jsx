@@ -9,6 +9,7 @@ import { DocumentAPI } from "../../../api/DocumentAPI";
 import { TestResultRelationAPI } from "../../../api/TestResultRelationAPI";
 import { fileTypeIcon } from "../../../utils/utils";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
+import {useBlocker} from 'react-router-dom';
 import {
   DOCUMENT_STATE_ACTIVE,
   DOCUMENT_STATE_INACTIVE,
@@ -25,11 +26,15 @@ export default function TestcaseVertical(props) {
     currentTestcase,
     currentSpecification,
     selectTestcase,
-    selectNextTestcase,
+    selectNextTestcase, 
     currentTestcaseIndex,
     refreshCurrentTestcase,
     selectNextSpecification,
-    isLastSpecification
+    isLastSpecification,
+    optionsArray,
+    setOptionsArray,
+    unsavedNotes,
+    setUnSavedNotes,
 
   } = props;
   const { showLoader, hideLoader } = useLoader();
@@ -46,8 +51,33 @@ export default function TestcaseVertical(props) {
   const [initialNoteMessage, setInitialNoteMessage] = useState();
   const [showNote, setShowNote] = useState(false);
   const [isModified, setIsModified] = useState(true);
-  const [optionsArray,setOptionsArray] = useState([]);
-  const [unsavedNotes,setUnSavedNotes] = useState([]);
+  // const [optionsArray,setOptionsArray] = useState([]);
+  // const [unsavedNotes,setUnSavedNotes] = useState([]);
+
+  const blocker = useBlocker(({currentLocation, nextLocation})=>
+    optionsArray.length !== 0 || unsavedNotes.length !== 0 
+  );
+
+const dynamicDescription = () => {
+if(unsavedNotes.length !== 0 && optionsArray.length !== 0 ){
+  return "You have unsaved notes and answers in your specification. Please save them before proceeding."
+}else if(unsavedNotes.length !== 0){
+  return "You have unsaved notes in your specification. Please save them before before proceeding."
+}else{
+  return "You have unsaved answers in your specification. Please save them before proceeding."
+}
+}
+
+  useEffect(()=>{
+    if(blocker.state === "blocked"){
+      notification.warning({
+        className:"notificationWarning",
+        message:"Error",
+        description:dynamicDescription(),
+        placement:"bottomRight"
+      })
+    }
+  },[blocker])
   useEffect(() => {
     getCurrentTestcaseResultById(currentTestcase.id);
   }, [currentTestcase]);
@@ -77,6 +107,7 @@ export default function TestcaseVertical(props) {
             selectNextSpecification();
           }else{
           TestResultAPI.saveOptions(optionsArray).then((res)=>{
+            setOptionsArray([]);
             selectNextSpecification();
           })
           }
@@ -88,6 +119,7 @@ export default function TestcaseVertical(props) {
         selectNextSpecification();
       }else{
         TestResultAPI.saveOptions(optionsArray).then((res)=>{
+          setOptionsArray([]);
           selectNextSpecification();})
       }
     }

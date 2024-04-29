@@ -53,6 +53,8 @@ export default function ManualTesting() {
   const { Item } = Tabs;
   const [testcaseName, setTestCaseName] = useState();
   const navigate = useNavigate();
+  const [optionsArray,setOptionsArray] = useState([]);
+  const [unsavedNotes,setUnSavedNotes] = useState([]);
   const openComponentIndex = -1;
 
   // This function fetches data for the test-request, sorts data according to the hierarchy, i.e. component,
@@ -199,6 +201,16 @@ export default function ManualTesting() {
 
       });
   };
+
+  const dynamicDescription = () => {
+    if(unsavedNotes.length !== 0 && optionsArray.length !== 0 ){
+      return "You have unsaved notes and answers in your specification. Please save them before proceeding."
+    }else if(unsavedNotes.length !== 0){
+      return "You have unsaved notes in your specification. Please save them before before proceeding."
+    }else{
+      return "You have unsaved answers in your specification. Please save them before proceeding."
+    }
+    }
 
   // This function is used to navigate between components in the select dropdown. The first unfinished component
   // is displayed to the tester. This saves time and testing becomes efficient. This function also 
@@ -409,7 +421,18 @@ export default function ManualTesting() {
                 <b>Component</b>
               </span>
               <Select
-                onChange={selectComponent}
+                onChange={(index)=>{
+                  if(unsavedNotes.length === 0 && optionsArray.length === 0){
+
+                  selectComponent(index)
+                }else{
+                  notification.warning({
+                    className:"notificationWarning",
+                    message:"Warning",
+                    description:dynamicDescription(),
+                    placement:"bottomRight"
+                  })
+                }}}
                 className="select"
                 value={{
                   label: (
@@ -520,7 +543,16 @@ export default function ManualTesting() {
               tabPosition={isTop ? 'top' : 'left'}
               activeKey={currentSpecificationIndex.toString()}
               onChange={(val) => {
+                if((unsavedNotes.length === 0 && optionsArray.length === 0)){
                 selectSpecification(val, currentComponentIndex);
+                }else{
+                  notification.warning({
+                    className:"notificationWarning",
+                    message:"Warning",
+                    description:dynamicDescription(),
+                    placement:"bottomRight"
+                  })
+                }
               }}
             >
               {testcaseResults[currentComponentIndex].childTestcaseResults.map((specification, index) => (
@@ -545,6 +577,10 @@ export default function ManualTesting() {
                     refreshCurrentTestcase={refreshCurrentTestcase}
                     selectNextSpecification={selectNextSpecification}
                     isLastSpecification={isLastSpecification}
+                    optionsArray={optionsArray}
+                    setOptionsArray={setOptionsArray}
+                    unsavedNotes={unsavedNotes}
+                    setUnSavedNotes={setUnSavedNotes}
                     ></TestCaseVerticalView>
                 </Item>
               ))}
