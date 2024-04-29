@@ -9,7 +9,11 @@ export default function TestCaseVerticalView(props) {
     selectNextTestcase,
     refreshCurrentTestcase,
     selectNextSpecification,
-    isLastSpecification
+    isLastSpecification,
+    optionsArray,
+    setOptionsArray,
+    unsavedNotes,
+    setUnSavedNotes
   } = props;
   console.log(currentSpecification);
   return (
@@ -30,6 +34,10 @@ export default function TestCaseVerticalView(props) {
         refreshCurrentTestcase={refreshCurrentTestcase}
         selectNextSpecification={selectNextSpecification}
         isLastSpecification={isLastSpecification}
+        optionsArray={optionsArray}
+        setOptionsArray={setOptionsArray}
+        unsavedNotes={unsavedNotes}
+        setUnSavedNotes={setUnSavedNotes}
       ></TestcaseVertical>
     </div>
   );
