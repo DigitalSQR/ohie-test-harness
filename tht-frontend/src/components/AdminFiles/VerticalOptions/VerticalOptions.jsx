@@ -296,6 +296,19 @@ export default function VerticalOptions(props) {
   };
 
   useEffect(() => {
+    window.addEventListener("beforeunload", () => {
+      dispatch(set_blocker("unblocked"));
+      dispatch(set_dynamic_description(""));
+    });
+    return () => {
+      window.removeEventListener("beforeunload", () => {
+        dispatch(set_blocker("unblocked"));
+        dispatch(set_dynamic_description(""));
+      });
+    };
+  }, []);
+
+  useEffect(() => {
     if (options.length > 0 && testResultRelationInfos.length > 0) {
       options.forEach((option) => {
         let isSelected = isOptionSelected(option.id);
@@ -309,8 +322,6 @@ export default function VerticalOptions(props) {
 
   useEffect(() => {
     setSelectedOptions(currentOptions);
-    dispatch(set_blocker('blocked'))
-    dispatch(set_dynamic_description(dynamicDescription()))
   }, [currentOptions]);
 
   const handleChange = (e) => {
@@ -324,6 +335,9 @@ export default function VerticalOptions(props) {
       let selectedVals = getSelectedCheckboxValuesByName();
       setCurrentOptions(selectedVals);
     }
+
+    dispatch(set_blocker('blocked'))
+    dispatch(set_dynamic_description(dynamicDescription()))
   };
 
   const isOptionSelected = (testcaseOptionId) => {
