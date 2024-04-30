@@ -326,6 +326,7 @@ export default function TestcaseVertical(props) {
                         index={index}
                         setUnSavedNotes={setUnSavedNotes}
                         dynamicDescription={dynamicDescription}
+                        optionsArray={optionsArray}
                       ></VerticalOptions>
                   </div>
                 )}
