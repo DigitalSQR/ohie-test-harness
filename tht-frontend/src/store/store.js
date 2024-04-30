@@ -6,6 +6,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import thunk from "redux-thunk";
 import UserInfoReducer from "../reducers/UserInfoReducer";
 import HomeReducer from "../reducers/homeReducer";
+import blockreducer from "../reducers/blockedReducer";
 
 const persistConfig = {
   key: "root",
@@ -17,6 +18,7 @@ export const rootReducers = combineReducers({
   authSlice: authreducers,
   userInfoSlice: UserInfoReducer,
   homeSlice: HomeReducer,
+  blockSlice: blockreducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducers);
 

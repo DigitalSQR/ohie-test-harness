@@ -17,6 +17,8 @@ import {
 import { fileTypeIcon } from "../../../utils/utils";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import { useDispatch } from "react-redux";
+import { set_blocker, set_dynamic_description } from "../../../reducers/blockedReducer";
 
 
 /* 
@@ -42,7 +44,8 @@ export default function VerticalOptions(props) {
     setIsModified,
     fileId,
     index,
-    setUnSavedNotes
+    setUnSavedNotes,
+    dynamicDescription
   } = props;
   const [options, setOptions] = useState([]);
   const [currentOptions, setCurrentOptions] = useState([]);
@@ -55,6 +58,7 @@ export default function VerticalOptions(props) {
   const [editMode, setEditMode] = useState(false);
   const [noteMessage, setNoteMessage] = useState("");
   const [questionAndDocument, setQuestionAndDocument] = useState([]);
+  const dispatch = useDispatch();
 
   const handleOnChangeForNote = (e,testcaseResultInfo,index) => {
     const value = e.target.value;
@@ -62,6 +66,8 @@ export default function VerticalOptions(props) {
     
     setUnSavedNotes((prev)=>{
       const intentedIndex = prev.findIndex(notes=>notes?.key === index);
+      dispatch(set_blocker('blocked'))
+      dispatch(set_dynamic_description(dynamicDescription()))
       if (intentedIndex !== -1) {
         const updatedNotes = [...prev]; 
         updatedNotes[intentedIndex] = {
@@ -303,6 +309,8 @@ export default function VerticalOptions(props) {
 
   useEffect(() => {
     setSelectedOptions(currentOptions);
+    dispatch(set_blocker('blocked'))
+    dispatch(set_dynamic_description(dynamicDescription()))
   }, [currentOptions]);
 
   const handleChange = (e) => {
@@ -493,6 +501,8 @@ export default function VerticalOptions(props) {
   }, [files]);
 
   const handleSaveNote = async (index) => {
+    dispatch(set_blocker('unblocked'))
+    dispatch(set_dynamic_description(''))
     await saveTestcaseResultWithNote(index);
   };
 
