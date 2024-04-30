@@ -45,7 +45,8 @@ export default function VerticalOptions(props) {
     fileId,
     index,
     setUnSavedNotes,
-    dynamicDescription
+    dynamicDescription,
+    optionsArray
   } = props;
   const [options, setOptions] = useState([]);
   const [currentOptions, setCurrentOptions] = useState([]);
@@ -515,8 +516,10 @@ export default function VerticalOptions(props) {
   }, [files]);
 
   const handleSaveNote = async (index) => {
-    dispatch(set_blocker('unblocked'))
-    dispatch(set_dynamic_description(''))
+    if(optionsArray.length === 0){
+      dispatch(set_blocker('unblocked'))
+      dispatch(set_dynamic_description(''))
+    }
     await saveTestcaseResultWithNote(index);
   };
 
