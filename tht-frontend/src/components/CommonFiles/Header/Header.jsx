@@ -57,6 +57,9 @@ export default function Header({ headerContent, isSidebarOpen }) {
 
   //useState for the unread notification count
   const [unreadCount, setUnreadCount] = useState();
+  const blocker = useSelector((state) => state.blockSlice.isBlocked)
+  const blockerDesc = useSelector((state) => state.blockSlice.dynamicDescription)
+
 
   const { stompClient, webSocketConnect, webSocketDisconnect } =
     WebSocketService();
@@ -283,17 +286,37 @@ export default function Header({ headerContent, isSidebarOpen }) {
               </div>
               <ul className="dropdown-menu">
                 <li
-                  onClick={() => {
+                onClick={() => {
+                  if(blocker === 'blocked' && blockerDesc !== '') {
+                    notification.warning({
+                      className:"notificationWarning",
+                      message:"Error",
+                      description:blockerDesc,
+                      placement:"bottomRight"
+                    })
+                    return;
+                  } else {
+                    // Navigate to user profile
                     navigate("/user-profile");
-                  }}
+                  }
+                }}
                 >
                   <a className="dropdown-item">Update Profile</a>
                 </li>
                 <li
                   onClick={() => {
+                    if(blocker === 'blocked' && blockerDesc !== '') {
+                      notification.warning({
+                        className:"notificationWarning",
+                        message:"Error",
+                        description:blockerDesc,
+                        placement:"bottomRight"
+                      })
+                      return;
+                    } else {
                     navigate("/login");
                     dispatch(log_out());
-                  }}
+                  }}}
                 >
                   <a className="dropdown-item" href="#">
                     Log Out

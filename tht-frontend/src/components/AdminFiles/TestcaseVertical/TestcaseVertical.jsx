@@ -20,6 +20,8 @@ import {
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import VerticalOptions from "../VerticalOptions/VerticalOptions";
+import { useDispatch } from "react-redux";
+import { set_blocker, set_dynamic_description } from "../../../reducers/blockedReducer";
 
 export default function TestcaseVertical(props) {
   const {
@@ -35,7 +37,7 @@ export default function TestcaseVertical(props) {
     setOptionsArray,
     unsavedNotes,
     setUnSavedNotes,
-
+    dynamicDescription
   } = props;
   const { showLoader, hideLoader } = useLoader();
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -51,22 +53,13 @@ export default function TestcaseVertical(props) {
   const [initialNoteMessage, setInitialNoteMessage] = useState();
   const [showNote, setShowNote] = useState(false);
   const [isModified, setIsModified] = useState(true);
+  const dispatch = useDispatch()
   // const [optionsArray,setOptionsArray] = useState([]);
   // const [unsavedNotes,setUnSavedNotes] = useState([]);
 
   const blocker = useBlocker(({currentLocation, nextLocation})=>
     optionsArray.length !== 0 || unsavedNotes.length !== 0 
   );
-
-const dynamicDescription = () => {
-if(unsavedNotes.length !== 0 && optionsArray.length !== 0 ){
-  return "You have unsaved notes and answers in your specification. Please save them before proceeding."
-}else if(unsavedNotes.length !== 0){
-  return "You have unsaved notes in your specification. Please save them before before proceeding."
-}else{
-  return "You have unsaved answers in your specification. Please save them before proceeding."
-}
-}
 
   useEffect(()=>{
     if(blocker.state === "blocked"){
@@ -76,6 +69,11 @@ if(unsavedNotes.length !== 0 && optionsArray.length !== 0 ){
         description:dynamicDescription(),
         placement:"bottomRight"
       })
+      dispatch(set_blocker('blocked'))
+      dispatch(set_dynamic_description(dynamicDescription()))
+    } else {
+      dispatch(set_blocker('unblocked'))
+      dispatch(set_dynamic_description(''))
     }
   },[blocker])
   useEffect(() => {
@@ -327,6 +325,7 @@ if(unsavedNotes.length !== 0 && optionsArray.length !== 0 ){
                         fileId={testcaseResult.id}
                         index={index}
                         setUnSavedNotes={setUnSavedNotes}
+                        dynamicDescription={dynamicDescription}
                       ></VerticalOptions>
                   </div>
                 )}

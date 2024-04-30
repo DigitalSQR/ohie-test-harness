@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import "./_sidebar.scss";
 import logo from "../../../styles/images/logo-white.png";
 import { Fragment, useEffect, useState } from "react";
@@ -7,12 +7,16 @@ import { USER_ROLES } from "../../../constants/role_constants";
 import { store } from "../../../store/store";
 import { set_header } from "../../../reducers/homeReducer";
 import { useCurrentRoute } from "../../../routes/routes";
+import { set_blocker } from "../../../reducers/blockedReducer";
+import { notification } from "antd";
 export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeMenuItem, setActiveMenuItem] = useState();
   const [user, setUser] = useState();
+  const blocker = useSelector((state) => state.blockSlice.isBlocked)
+  const blockerDesc = useSelector((state) => state.blockSlice.dynamicDescription)
   /*
    * This is to expand/shrink the wrapper when the side menu bar is toogled
    * To Do: Refactor the structure in such a way that margins are removed from the pages
@@ -27,6 +31,15 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
   };
 
   const handleMenuItemClick = (path) => {
+    if(blocker === 'blocked' && blockerDesc !== '') {
+      notification.warning({
+        className:"notificationWarning",
+        message:"Error",
+        description:blockerDesc,
+        placement:"bottomRight"
+      })
+      return;
+    } 
     setActiveMenuItem(path);
     navigate(path);
   };

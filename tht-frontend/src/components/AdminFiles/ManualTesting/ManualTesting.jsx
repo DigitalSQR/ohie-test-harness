@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { log_out } from "../../../reducers/authReducer";
 import { Fragment, useEffect, useState } from "react";
 import { TestResultAPI } from "../../../api/TestResultAPI";
@@ -56,6 +56,7 @@ export default function ManualTesting() {
   const [optionsArray,setOptionsArray] = useState([]);
   const [unsavedNotes,setUnSavedNotes] = useState([]);
   const openComponentIndex = -1;
+  const blocker = useSelector((state) => state.blockSlice.isBlocked)
 
   // This function fetches data for the test-request, sorts data according to the hierarchy, i.e. component,
   // specification  and it's respective testcases.
@@ -305,12 +306,21 @@ export default function ManualTesting() {
   // This function is used to dynamically navigate to the desired testcase in the accordion which is made for easy 
   // navigation through all the testcases.
   const selectParticularTestCase = (componentIndex, specificationIndex, testcaseIndex) => {
-    selectComponent(componentIndex);
-    selectSpecification(specificationIndex, componentIndex);
-    if(isHorizontal){
-      selectTestcase(testcaseIndex, specificationIndex, componentIndex);
+    if((component !== componentIndex || test !== specificationIndex) && blocker === 'blocked'){
+      notification.warning({
+        className:"notificationWarning",
+        message:"Warning",
+        description:dynamicDescription(),
+        placement:"bottomRight"
+      })
       return;
     }
+    selectComponent(componentIndex);
+    selectSpecification(specificationIndex, componentIndex);
+    // if(isHorizontal){
+    //   selectTestcase(testcaseIndex, specificationIndex, componentIndex);
+    //   return;
+    // }
     
     if (component !== componentIndex || test !== specificationIndex) {
       setTimeout(() => {
@@ -581,6 +591,7 @@ export default function ManualTesting() {
                     setOptionsArray={setOptionsArray}
                     unsavedNotes={unsavedNotes}
                     setUnSavedNotes={setUnSavedNotes}
+                    dynamicDescription={dynamicDescription}
                     ></TestCaseVerticalView>
                 </Item>
               ))}
