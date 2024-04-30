@@ -58,9 +58,8 @@ export default function VerticalOptions(props) {
 
   const handleOnChangeForNote = (e,testcaseResultInfo,index) => {
     const value = e.target.value;
-    if(value.length <= 2001){
     setNoteMessage(value);
-    }
+    
     setUnSavedNotes((prev)=>{
       const intentedIndex = prev.findIndex(notes=>notes?.key === index);
       if (intentedIndex !== -1) {
@@ -80,6 +79,7 @@ export default function VerticalOptions(props) {
     
       
     })
+  
   };
 
   const handleCancelNoteButtonClick = () => {

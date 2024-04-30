@@ -69,7 +69,7 @@ const ApplicationReport = () => {
     const element = document.getElementById("reportprint");
   
     const pdfConfig = {
-      margin: [13, 5, 2, 5], // Top, Left, Bottom, Right
+      margin: [13, 5, 10, 5], // Top, Left, Bottom, Right
       filename: `${testRequest?.name}_report.pdf`,
       image: { type: "jpeg", quality: 1.0 },
       html2canvas: { scale: 3, letterRendering: true },
@@ -87,8 +87,8 @@ const ApplicationReport = () => {
       .toPdf()
       .get("pdf")
       .then(function (pdf) {
-        console.log("PDF generated successfully.");
-  
+        pdf.filename = pdfConfig.filename;
+
         var totalPages = pdf.internal.getNumberOfPages();
         for (let i = 1; i <= totalPages; i++) {
           pdf.setPage(i);
@@ -125,10 +125,10 @@ const ApplicationReport = () => {
           pdf.text(
             "Page " + i + " of " + totalPages,
             pdf.internal.pageSize.getWidth() / 2.3,
-            pdf.internal.pageSize.getHeight() - 10
+            pdf.internal.pageSize.getHeight() - 3
           );
         }
-        pdf.save(); // Save the PDF after all modifications
+        pdf.save(pdfConfig.filename); // Save the PDF after all modifications
       })
       .catch(function (error) {
         console.error("Error generating PDF:", error);
