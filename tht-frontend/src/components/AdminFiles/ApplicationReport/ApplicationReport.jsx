@@ -105,7 +105,7 @@ const ApplicationReport = () => {
                     pdf.setFont("helvetica", "bold").setFontSize(12).setTextColor('black'); // White color for header text
                     const headerTextLeft = `Assessee : ${user?.name}`; // Assessee name
                     const headerTextCenter = `Application: ${testRequest?.name}`; // Application name
-                    const headerTextRight = `Company: ${user?.name}`; // Company name
+                    const headerTextRight = `Company: ${user?.companyName}`; // Company name
                     
                     // Calculate the width of each header text
                     const headerTextWidthCenter = pdf.getStringUnitWidth(headerTextCenter) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
