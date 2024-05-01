@@ -69,71 +69,74 @@ const ApplicationReport = () => {
     const element = document.getElementById("reportprint");
   
     const pdfConfig = {
-      margin: [13, 5, 10, 5], // Top, Left, Bottom, Right
-      filename: `${testRequest?.name}_report.pdf`,
-      image: { type: "jpeg", quality: 1.0 },
-      html2canvas: { scale: 3, letterRendering: true },
-      jsPDF: {
-        unit: "mm",
-        format: "a3",
-        orientation: "portrait",
-        compress: true,
-      },
+        margin: [13, 5, 10, 5], // Top, Left, Bottom, Right
+        filename: `${testRequest?.name}_report.pdf`,
+        image: { type: "jpeg", quality: 1.0 },
+        html2canvas: { scale: 3, letterRendering: true },
+        jsPDF: {
+            unit: "mm",
+            format: "a3",
+            orientation: "portrait",
+            compress: true,
+        },
     };
   
     html2pdf()
-      .from(element)
-      .set(pdfConfig)
-      .toPdf()
-      .get("pdf")
-      .then(function (pdf) {
-        pdf.filename = pdfConfig.filename;
+        .from(element)
+        .set(pdfConfig)
+        .toPdf()
+        .get("pdf")
+        .then(function (pdf) {
+            pdf.filename = pdfConfig.filename;
 
-        var totalPages = pdf.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-          pdf.setPage(i);
-          
-  
-          // Add header text to all pages except the first one
-          if (i > 1) {
+            var totalPages = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                pdf.setPage(i);
 
-          // Draw header strip
-          pdf.setFillColor("#E3F2FD"); // Light blue shade
-          pdf.rect(0, 0, pdf.internal.pageSize.getWidth(), 10, "F");
-            pdf.setFont("helvetica", "bold").setFontSize(12).setTextColor('black'); // White color for header text
-            const headerTextLeft = `Assessee : ${user?.name}`; // Assessee name
-            const headerTextCenter = `Application: ${testRequest?.name}`; // Application name (replace [Your Application Name])
-            const headerTextRight = `Company: ${user?.name}`; // Company name (replace [Your Company Name])
-            
-            // Calculate the width of each header text
-            const headerTextWidthCenter = pdf.getStringUnitWidth(headerTextCenter) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-            const headerTextWidthRight = pdf.getStringUnitWidth(headerTextRight) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+                // Add header text to all pages except the first one
+                if (i > 1) {
+                    // Draw header strip
+                    pdf.setFillColor("#f6f9fc"); // White shade
+                    pdf.rect(0, 0, pdf.internal.pageSize.getWidth(), 10, "F");
+                    
+                    pdf.setDrawColor("#F0F0F0"); // Very light black color (RGB 50, 50, 50)
+                    pdf.line(5, 10, pdf.internal.pageSize.getWidth() - 5, 10); // Draw a very light black line at the bottom of the header rectangle
+
+                    pdf.setFont("helvetica", "bold").setFontSize(12).setTextColor('black'); // White color for header text
+                    const headerTextLeft = `Assessee : ${user?.name}`; // Assessee name
+                    const headerTextCenter = `Application: ${testRequest?.name}`; // Application name
+                    const headerTextRight = `Company: ${user?.name}`; // Company name
+                    
+                    // Calculate the width of each header text
+                    const headerTextWidthCenter = pdf.getStringUnitWidth(headerTextCenter) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+                    const headerTextWidthRight = pdf.getStringUnitWidth(headerTextRight) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
   
-            // Calculate the positions for each header text
-            const marginLeft = 5;
-            const marginTop = 6; // Adjust the margin to position the text within the header strip
-            const marginRight = pdf.internal.pageSize.getWidth() - headerTextWidthRight - 5;
+                    // Calculate the positions for each header text
+                    const marginLeft = 5;
+                    const marginTop = 6; // Adjust the margin to position the text within the header strip
+                    const marginRight = pdf.internal.pageSize.getWidth() - headerTextWidthRight - 5;
   
-            // Add header text
-            pdf.text(headerTextLeft, marginLeft, marginTop);
-            pdf.text(headerTextCenter, (pdf.internal.pageSize.getWidth() - headerTextWidthCenter) / 2, marginTop);
-            pdf.text(headerTextRight, marginRight, marginTop);
-          }
+                    // Add header text
+                    pdf.text(headerTextLeft, marginLeft, marginTop);
+                    pdf.text(headerTextCenter, (pdf.internal.pageSize.getWidth() - headerTextWidthCenter) / 2, marginTop);
+                    pdf.text(headerTextRight, marginRight, marginTop);
+                }
   
-          // Add page number text
-          pdf.setFont("helvetica").setFontSize(10).setTextColor(100);
-          pdf.text(
-            "Page " + i + " of " + totalPages,
-            pdf.internal.pageSize.getWidth() / 2.3,
-            pdf.internal.pageSize.getHeight() - 3
-          );
-        }
-        pdf.save(pdfConfig.filename); // Save the PDF after all modifications
-      })
-      .catch(function (error) {
-        console.error("Error generating PDF:", error);
-      });
-  };
+                // Add page number text
+                pdf.setFont("helvetica").setFontSize(10).setTextColor(100);
+                pdf.text(
+                    "Page " + i + " of " + totalPages,
+                    pdf.internal.pageSize.getWidth() / 2.3,
+                    pdf.internal.pageSize.getHeight() - 3
+                );
+            }
+            pdf.save(pdfConfig.filename); // Save the PDF after all modifications
+        })
+        .catch(function (error) {
+            console.error("Error generating PDF:", error);
+        });
+};
+
 
   //Function to fetch all grades
   const fetchAllGrades = () => {
