@@ -2,7 +2,7 @@ import React from "react";
 import guidelineImage from "../../../../styles/images/guideline.png";
 const VerificationGuidelines = (props) => {
   return (
-    <div>
+    <div style={{ cursor: "auto"}}>
       <div class="p-3">
         <h3>{props.title}</h3>
         <button
