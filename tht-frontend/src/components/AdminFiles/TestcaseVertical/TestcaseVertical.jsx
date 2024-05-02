@@ -105,8 +105,9 @@ export default function TestcaseVertical(props) {
             selectNextSpecification();
           }else{
           TestResultAPI.saveOptions(optionsArray).then((res)=>{
-            setOptionsArray([]);
-            selectNextSpecification();
+            setOptionsArray([], ()=>{
+              selectNextSpecification()
+            })
           })
           }
         }
@@ -117,8 +118,10 @@ export default function TestcaseVertical(props) {
         selectNextSpecification();
       }else{
         TestResultAPI.saveOptions(optionsArray).then((res)=>{
-          setOptionsArray([]);
-          selectNextSpecification();})
+          setOptionsArray([], ()=>{
+            selectNextSpecification()
+          })
+        }) 
       }
     }
   }else {
