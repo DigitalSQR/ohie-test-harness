@@ -36,8 +36,8 @@ const RegisterApplication = () => {
       errors.name = "Application Name is required";
     } else if (values.name.trim().length < 3) {
       errors.name = "Application name must be of minimum 3 characters";
-    } else if (values.name.trim().length > 1000) {
-      errors.name = "Application name must have less than 1000 characters.";
+    } else if (values.name.trim().length > 50) {
+      errors.name = "Application name must have less than 50 characters.";
     }
 
     // if (values.description === "") {
