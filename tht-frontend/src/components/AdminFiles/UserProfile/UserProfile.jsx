@@ -210,6 +210,11 @@ export default function UserProfile () {
     return false;
   };
 
+  // Function to handle cancel in modal
+  const handleCancelModal = () => {
+    setPreviewOpen(false)
+  };
+  
   // Function to handle cancel button click
   const handleCancel = () => {
     if (unsavedChanges || uploadedFlag) {
@@ -228,7 +233,7 @@ export default function UserProfile () {
       });
     } else {
       // If no unsaved changes, navigate back
-      setPreviewOpen(false)
+      navigate(-1);
       formik.resetForm();
     }
   };
@@ -403,7 +408,7 @@ export default function UserProfile () {
                 open={previewOpen}
                 title={previewTitle}
                 footer={null}
-                onCancel={handleCancel}
+                onCancel={handleCancelModal}
               >
                 <img
                   alt="example"
