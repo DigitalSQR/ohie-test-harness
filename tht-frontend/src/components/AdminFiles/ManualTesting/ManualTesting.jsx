@@ -16,7 +16,7 @@ import TestcaseVertical from "../TestcaseVertical/TestcaseVertical";
 import WebSocketService from "../../../api/WebSocketService";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useLoader } from "../../loader/LoaderContext";
-import { set_blocker } from "../../../reducers/blockedReducer";
+import { set_blocker, set_dynamic_description } from "../../../reducers/blockedReducer";
 import { CAccordion, CAccordionItem, CAccordionHeader, CAccordionBody } from '@coreui/react';
 
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
@@ -384,6 +384,7 @@ export default function ManualTesting() {
   const selectNextComponent = () => {
     if (currentComponentIndex === testcaseResults.length - 1) {
       dispatch(set_blocker('unblocked'))
+      dispatch(set_dynamic_description(""))
       navigate(`/choose-test/${testRequestId}`);
     } else {
       selectComponent(currentComponentIndex + 1);
