@@ -57,9 +57,12 @@ export default function TestcaseVertical(props) {
   // const [optionsArray,setOptionsArray] = useState([]);
   // const [unsavedNotes,setUnSavedNotes] = useState([]);
 
-  const blocker = useBlocker(({currentLocation, nextLocation})=>
-    optionsArray.length !== 0 || unsavedNotes.length !== 0 
-  );
+  const blocker = useBlocker(({currentLocation, nextLocation})=>{
+    if(isLastSpecification()) {
+      return false;
+    }
+    return optionsArray.length !== 0 || unsavedNotes.length !== 0 ;
+  });
 
   useEffect(()=>{
     if(blocker.state === "blocked"){
@@ -118,9 +121,8 @@ export default function TestcaseVertical(props) {
         selectNextSpecification();
       }else{
         TestResultAPI.saveOptions(optionsArray).then((res)=>{
-          setOptionsArray([], ()=>{
-            selectNextSpecification()
-          })
+          setOptionsArray([] )
+          selectNextSpecification()
         }) 
       }
     }
