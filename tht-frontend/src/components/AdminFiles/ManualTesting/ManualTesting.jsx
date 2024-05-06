@@ -415,14 +415,40 @@ export default function ManualTesting() {
       <div id="wrapper" className="stepper-wrapper">
       <Breadcrumb className="mb-3 custom-breadcrumb">
       <Breadcrumb.Item>
+      {unsavedNotes.length === 0 && optionsArray.length === 0 ? (
         <Link to="/applications" className="breadcrumb-item">
           Applications
         </Link>
+      ) : (
+        <span className="breadcrumb-item" onClick={() => {
+          notification.warning({
+            className:"notificationWarning",
+            message:"Warning",
+            description:dynamicDescription(),
+            placement:"bottomRight"
+          })
+        }}>
+          Applications
+        </span>
+      )}
       </Breadcrumb.Item>
       <Breadcrumb.Item>
+      {unsavedNotes.length === 0 && optionsArray.length === 0 ? (
         <Link to={`/choose-test/${testRequestId}`} className="breadcrumb-item">
           {testcaseName}
         </Link>
+      ) : (
+        <span className="breadcrumb-item" onClick={() => {
+          notification.warning({
+            className:"notificationWarning",
+            message:"Warning",
+            description:dynamicDescription(),
+            placement:"bottomRight"
+          })
+        }}>
+          {testcaseName}
+        </span>
+      )}
       </Breadcrumb.Item>
       <Breadcrumb.Item className="breadcrumb-item">Manual Verification</Breadcrumb.Item>
     </Breadcrumb>
