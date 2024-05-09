@@ -72,13 +72,19 @@ export default function TestcaseVertical(props) {
         description:dynamicDescription(),
         placement:"bottomRight"
       })
-      dispatch(set_blocker('blocked'))
-      dispatch(set_dynamic_description(dynamicDescription()))
-    } else {
-      dispatch(set_blocker('unblocked'))
-      dispatch(set_dynamic_description(''))
     }
   },[blocker])
+
+  useEffect(()=>{
+    if(optionsArray.length===0){
+      dispatch(set_blocker('unblocked'))
+      dispatch(set_dynamic_description(''))
+    }else{
+      dispatch(set_blocker('blocked'))
+      dispatch(set_dynamic_description(dynamicDescription()))
+    }
+  },[optionsArray])
+
   useEffect(() => {
     getCurrentTestcaseResultById(currentTestcase.id);
   }, [currentTestcase]);
