@@ -36,8 +36,9 @@ export default function UpdatePassword() {
           .then((response) => {
             var data = response.data;
             notification.success({
-              placement: "bottomRight",
-              description: `${data?.message}`,
+              className:"notificationSuccess",
+              placement: "top",
+              message: `${data?.message}`,
             });
             hideLoader();
             navigate("/login");
@@ -48,8 +49,9 @@ export default function UpdatePassword() {
       } else {
         clearPasswords();
         notification.error({
+          className:"notificationError",
+          message: `Confirm password does not match with the password.`,
           placement: "bottomRight",
-          description: `Confirm password does not match with the password.`,
         });
       }
     },

@@ -1,5 +1,7 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
+import com.argusoft.path.tht.notificationmanagement.event.NotificationCreationEvent;
+import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
 import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
@@ -13,10 +15,10 @@ import com.argusoft.path.tht.usermanagement.service.TokenVerificationService;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -31,6 +33,22 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     private TokenVerificationRepository tokenVerificationRepository;
     private UserService userService;
     private EmailService emailService;
+    ApplicationEventPublisher applicationEventPublisher;
+
+    @Value("${message-configuration.account.verify-email.mail}")
+    private boolean accountVerifyEmailMail;
+
+    @Value("${message-configuration.account.verify-email.notification}")
+    private boolean accountVerifyEmailNotification;
+
+    @Value("${message-configuration.account.forgot-password.mail}")
+    private boolean accountForgotPasswordMail;
+
+    @Value("${message-configuration.account.forgot-password.notification}")
+    private boolean accountForgotPasswordNotification;
+
+    @Value("${base-url}")
+    private String baseUrl;
 
     private static void checkForValidTokenTypeWithVerifyingInEnum(String tokenType) throws InvalidParameterException {
         boolean validEnum = TokenTypeEnum.isValidKey(tokenType);
@@ -52,6 +70,11 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
     @Autowired
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
+    }
+
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -122,10 +145,10 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
             } else if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType()) && (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(userByEmail.getState()))) {
                     if (userByEmail.getRoles().stream().anyMatch(roleEntity -> roleEntity.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))) {
                         userByEmail.setState(UserServiceConstants.USER_STATUS_APPROVAL_PENDING);
-                        userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userByEmail, contextInfo);
+                        userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING,null, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userByEmail, contextInfo);
                     } else {
                         userByEmail.setState(UserServiceConstants.USER_STATUS_ACTIVE);
-                        userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_ACTIVE, userByEmail, contextInfo);
+                        userService.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING,null, UserServiceConstants.USER_STATUS_ACTIVE, userByEmail, contextInfo);
                     }
                     userService.updateUser(userByEmail, contextInfo);
 
@@ -139,7 +162,7 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
                                                                            String tokenType,
                                                                            ContextInfo contextInfo) throws DoesNotExistException,
             InvalidParameterException,
-            OperationFailedException, MessagingException, IOException {
+            OperationFailedException, DataValidationErrorException {
 
         checkForValidTokenTypeWithVerifyingInEnum(tokenType);
         UserEntity userById = getUserByIdAndVerifyForEmailExistense(userId, contextInfo);
@@ -166,11 +189,31 @@ public class TokenVerificationServiceImpl implements TokenVerificationService {
         String emailIdBase64 = new String(Base64.encodeBase64(userById.getEmail().getBytes()));
 
         if (TokenTypeEnum.VERIFICATION.getKey().equals(tokenVerification.getType())) {
-            emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+            messageVerifyEmail(userById, contextInfo, baseUrl+"/email/verify/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         } else if (TokenTypeEnum.FORGOT_PASSWORD.getKey().equals(tokenVerification.getType())) {
-            emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), "https://tht.argusoft.com/reset/cred/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
+            messageIfForgotPassword(userById, contextInfo, baseUrl+"/reset/cred/" + emailIdBase64 + "/" + encodedBase64TokenVerificationId);
         }
         return tokenVerification;
+    }
+
+    private void messageVerifyEmail(UserEntity userById, ContextInfo contextInfo, String link) {
+        if (accountVerifyEmailMail) {
+            emailService.verifyEmailMessage(userById.getEmail(), userById.getName(), link);
+        }
+        if (accountVerifyEmailNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Please verify your account by clicking on link sent on your mailId", userById);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+    }
+
+    private void messageIfForgotPassword(UserEntity userById, ContextInfo contextInfo, String link) {
+        if (accountForgotPasswordMail) {
+            emailService.forgotPasswordMessage(userById.getEmail(), userById.getName(), link);
+        }
+        if (accountForgotPasswordNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("A password rest link has been sent on your email id", userById);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
     }
 
     private UserEntity getUserByIdAndVerifyForEmailExistense(String userId, ContextInfo contextInfo) throws DoesNotExistException, OperationFailedException, InvalidParameterException {

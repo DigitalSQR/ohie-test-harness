@@ -17,6 +17,8 @@ export default function ForgotPassword() {
       errors.enteredEmail = "Please enter your registered email";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.enteredEmail.trim())) {
       errors.enteredEmail = "Please enter a valid email address";
+    }else if(values.enteredEmail.length > 255){
+      errors.enteredEmail = "Email must have less than 255 characters."
     }
     return errors;
   };
@@ -34,8 +36,9 @@ export default function ForgotPassword() {
       .then((response) => {
         var data = response.data;
         notification.success({
-          placement: "bottomRight",
-          description: `${data?.message}`,
+          className:"notificationSuccess",
+          placement: "top",
+          message:`${data?.message}`,
         });
         hideLoader();
         navigate("/login");

@@ -48,6 +48,13 @@ public class UserInfo extends IdStateMetaInfo {
             required = true)
     private Set<String> roleIds;
 
+    @ApiModelProperty(notes = "The rejection message for model",
+            allowEmptyValue = false,
+            example = "Rejected",
+            dataType = "String",
+            required = true)
+    private String message;
+
     public String getEmail() {
         return email;
     }
@@ -89,5 +96,13 @@ public class UserInfo extends IdStateMetaInfo {
 
     public void setRoleIds(Set<String> roleIds) {
         this.roleIds = roleIds;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

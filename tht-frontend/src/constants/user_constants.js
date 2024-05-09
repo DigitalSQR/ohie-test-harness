@@ -6,10 +6,10 @@ export const userStateConstantNames = {
 };
 
 export const userBadgeClasses = {
-  "user.status.active": "badges-green-dark",
-  "user.status.approval.pending": "badges-orange",
-  "user.status.verification.pending": "badges-orange",
-  "user.status.inactive": "badges-red",
+  "user.status.active": "badges-green-dark bg-success",
+  "user.status.approval.pending": "badges-orange bg-warning",
+  "user.status.verification.pending": "badges-orange bg-warning",
+  "user.status.inactive": "badges-red bg-danger",
 };
 
 export const userStatusActionLabels = [

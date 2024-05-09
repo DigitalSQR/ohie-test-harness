@@ -33,6 +33,7 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This userServiceRestController maps end points with standard service.
@@ -141,12 +142,13 @@ public class UserRestController {
             VersionMismatchException {
         ValidationResultInfo validationResultInfo = new ValidationResultInfo();
         userService.updatePasswordWithVerificationToken(updatePasswordInfo, contextInfo);
-        validationResultInfo.setMessage("Password Updated Successfully!");
+        validationResultInfo.setMessage("Password has been updated successfully!");
         validationResultInfo.setLevel(ErrorLevel.OK);
         return validationResultInfo;
     }
 
     @GetMapping("/forgot/password")
+    @Transactional(rollbackFor = Exception.class)
     public ValidationResultInfo forgotPasswordRequest(@RequestParam("userEmail") String userEmail,
                                                       @RequestAttribute(name = "contextInfo") ContextInfo contextInfo) {
         userService.createForgotPasswordRequestAndSendEmail(userEmail, contextInfo);
@@ -225,14 +227,16 @@ public class UserRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PatchMapping("/state/{userId}/{changeState}")
+    @PatchMapping(value = "/state/{userId}/{changeState}")
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public UserInfo updateUserState(@PathVariable("userId") String userId,
                                     @PathVariable("changeState") String changeState,
+                                    @RequestBody(required = false) Map<String, String> requestMap,
                                     @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
-        UserEntity userEntity = userService.changeState(userId, changeState, contextInfo);
+        String message = requestMap!=null ? requestMap.get("message") : null;
+        UserEntity userEntity = userService.changeState(userId, message, changeState, contextInfo);
         return userMapper.modelToDto(userEntity);
     }
 

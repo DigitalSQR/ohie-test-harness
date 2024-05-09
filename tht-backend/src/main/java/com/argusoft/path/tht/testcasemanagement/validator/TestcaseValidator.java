@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.validator;
 
+import com.argusoft.path.tht.fileservice.constant.TestcaseEntityDocumentTypes;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
@@ -11,6 +12,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
@@ -19,10 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class TestcaseValidator {
 
@@ -31,10 +36,11 @@ public class TestcaseValidator {
     private TestcaseValidator() {
     }
 
-    public static void validateCreateUpdateTestCase(String validationTypeKey, TestcaseEntity testcaseEntity, TestcaseService testcaseService, SpecificationService specificationService, ApplicationContext applicationContext, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
+    public static void validateCreateUpdateTestCase(String validationTypeKey, TestcaseEntity testcaseEntity, MultipartFile zipFileForAutomationTest, TestcaseService testcaseService, SpecificationService specificationService, ApplicationContext applicationContext, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
         List<ValidationResultInfo> validationResultEntities
                 = validateTestCase(validationTypeKey,
                 testcaseEntity,
+                zipFileForAutomationTest,
                 testcaseService,
                 specificationService,
                 applicationContext,
@@ -50,6 +56,7 @@ public class TestcaseValidator {
 
     public static List<ValidationResultInfo> validateTestCase(String validationTypeKey,
                                                               TestcaseEntity testcaseEntity,
+                                                              MultipartFile zipFileForAutomationTest,
                                                               TestcaseService testcaseService,
                                                               SpecificationService specificationService,
                                                               ApplicationContext applicationContext,
@@ -64,7 +71,7 @@ public class TestcaseValidator {
         trimTestcase(testcaseEntity);
 
         // check Common Required
-        validateCommonRequired(testcaseEntity, errors);
+        validateCommonRequired(testcaseEntity, zipFileForAutomationTest ,errors);
 
         // check Common ForeignKey
         validateCommonForeignKey(testcaseEntity, errors, specificationService, contextInfo);
@@ -95,7 +102,7 @@ public class TestcaseValidator {
                 }
                 break;
             case Constant.CREATE_VALIDATION:
-                validateCreateTestcase(errors, testcaseEntity, testcaseService, contextInfo);
+                validateCreateTestcase(errors, zipFileForAutomationTest,testcaseEntity, testcaseService, contextInfo);
                 break;
             default:
                 LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestcaseValidator.class.getSimpleName());
@@ -108,8 +115,14 @@ public class TestcaseValidator {
         // For :Name
         validateTestcaseEntityName(testcaseEntity,
                 errors);
+
+        // For :Name Regex
+        validateTestcaseNameForAlphaNumeric(testcaseEntity.getName(), errors);
         // For :BeanName
         validateTestcaseEntityBeanName(testcaseEntity, applicationContext,
+                errors);
+        // For :testSuitId
+        validateTestcaseEntityTestSuitId(testcaseEntity, applicationContext,
                 errors);
         // For :Order
         validateTestcaseEntityOrder(testcaseEntity,
@@ -123,6 +136,14 @@ public class TestcaseValidator {
 
         return errors;
 
+    }
+
+    private static void validateTestcaseNameForAlphaNumeric(String testcaseEntityName, List<ValidationResultInfo> errors) {
+        if(StringUtils.hasLength(testcaseEntityName) && testcaseEntityName.contains("~")){
+            errors.add(new ValidationResultInfo("name",
+                    ErrorLevel.ERROR,
+                            "The name must not include the character '~'"));
+        }
     }
 
     //validate update
@@ -152,6 +173,7 @@ public class TestcaseValidator {
     //validate create
     private static void validateCreateTestcase(
             List<ValidationResultInfo> errors,
+            MultipartFile zipFileForAutomationTest,
             TestcaseEntity testcaseEntity,
             TestcaseService testcaseService,
             ContextInfo contextInfo) {
@@ -166,22 +188,44 @@ public class TestcaseValidator {
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
+        }
+
+        if(TestcaseServiceConstants.TESTCASE_RUN_ENVIRONMENT_EU_TESTBED.equals(testcaseEntity.getTestcaseRunEnvironment()) &&
+                zipFileForAutomationTest == null){
+                errors.add(new ValidationResultInfo("testSuiteZip",
+                        ErrorLevel.ERROR,
+                        "Zip file for test suite " + ValidateConstant.MUST_PROVIDED));
         }
     }
 
     //Validate Required
     private static void validateCommonRequired(TestcaseEntity testcaseEntity,
+                                               MultipartFile zipFileForAutomationTest,
                                                List<ValidationResultInfo> errors) {
         //check for specification
         ValidationUtils
                 .validateRequired(testcaseEntity.getSpecification(), "specification", errors);
 
-        if (!Objects.equals(Boolean.TRUE, testcaseEntity.getManual())) {
-            ValidationUtils.validateRequired(testcaseEntity.getBeanName(), "beanName", errors);
-        } else {
+        if(Boolean.FALSE.equals(testcaseEntity.getManual())){
+            //check for rank
+            ValidationUtils
+                    .validateRequired(testcaseEntity.getTestcaseRunEnvironment(), "testcaseRunEnvironment", errors);
+
+            if(testcaseEntity.getTestcaseRunEnvironment()!=null
+                    && !TestcaseServiceConstants.TESTCASE_RUN_ENVIRONMENTS.contains(testcaseEntity.getTestcaseRunEnvironment())){
+                errors.add(new ValidationResultInfo("testcaseRunEnvironment",
+                        ErrorLevel.ERROR,
+                        "provided environment "+testcaseEntity.getTestcaseRunEnvironment()+" is out of expected scenario"));
+            }
+            else{
+                if(TestcaseServiceConstants.TESTCASE_RUN_ENVIRONMENT_JAVA_THT.equals(testcaseEntity.getTestcaseRunEnvironment())){
+                    ValidationUtils.validateRequired(testcaseEntity.getBeanName(), "beanName", errors);
+                }
+            }
+        }
+        else {
             ValidationUtils.validateRequired(testcaseEntity.getManual(), "manual", errors);
         }
         //check for rank
@@ -196,6 +240,8 @@ public class TestcaseValidator {
         //check for description
         ValidationUtils
                 .validateRequired(testcaseEntity.getDescription(), "description", errors);
+
+        ValidationUtils.validateFileType(zipFileForAutomationTest, TestcaseEntityDocumentTypes.TESTCASE_TESTSUITE_AUTOMATION_ZIP.getAllowedFileTypes(), errors);
     }
 
     //validate not update
@@ -204,6 +250,8 @@ public class TestcaseValidator {
                                              TestcaseEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testcaseEntity.getState(), originalEntity.getState(), "state", errors);
+        ValidationUtils.validateNotUpdatable(testcaseEntity.getTestSuiteId(), originalEntity.getTestSuiteId(), "testSuiteId", errors);
+        ValidationUtils.validateNotUpdatable(testcaseEntity.getSutActorApiKey(), originalEntity.getSutActorApiKey(), "sutActorApiKey", errors);
     }
 
     //Validation For :Id
@@ -242,7 +290,7 @@ public class TestcaseValidator {
         ValidationUtils.validateLength(testcaseEntity.getFailureMessage(),
                 "failureMessage",
                 0,
-                1000,
+                2000,
                 errors);
     }
 
@@ -257,6 +305,29 @@ public class TestcaseValidator {
                 "beanName",
                 0,
                 255,
+                errors);
+        try {
+            applicationContext.getBean(testcaseEntity.getBeanName());
+        } catch (Exception e) {
+            LOGGER.error(ValidateConstant.EXCEPTION + TestcaseValidator.class.getSimpleName(), e);
+            errors
+                    .add(new ValidationResultInfo("beanName",
+                            ErrorLevel.ERROR,
+                            "beanName doesn't exist with " + testcaseEntity.getBeanName()));
+        }
+    }
+
+    //Validation For :TestSuitId
+    private static void validateTestcaseEntityTestSuitId(TestcaseEntity testcaseEntity,
+                                                       ApplicationContext applicationContext,
+                                                       List<ValidationResultInfo> errors) {
+        if (!StringUtils.hasLength(testcaseEntity.getBeanName())) {
+            return;
+        }
+        ValidationUtils.validateLength(testcaseEntity.getBeanName(),
+                "testSuitId",
+                0,
+                1300,
                 errors);
         try {
             applicationContext.getBean(testcaseEntity.getBeanName());

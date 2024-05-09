@@ -1,0 +1,13 @@
+{
+    "resourceType" : "Organization",
+    "name" : "Better Health Clinic",
+    "telecom" : [ {
+      "system" : "phone",
+      "value" : "111-222-111",
+      "use" : "mobile"
+    } ],
+    "address" : [ {
+      "city" : "Ahembdabad",
+      "country" : "India"
+    } ]
+  }

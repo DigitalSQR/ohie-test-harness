@@ -74,19 +74,13 @@ export const TestResultAPI = {
 			return response.data;
 		
 	},
-	saveOptions: async function (testcaseResultId, selectedTestcaseOptionIds) {
-		
-			const params = {};
-			if(selectedTestcaseOptionIds && selectedTestcaseOptionIds.length > 0){
-				params.selectedTestcaseOptionId = selectedTestcaseOptionIds;
-			}
+	saveOptions: async function (data) {
+	
+			
 			const response = await api.request({
-				url: `testcase-result/submit/${testcaseResultId}`,
-				method: "PATCH",
-				params,
-				paramsSerializer: params => {
-				  return paramSerialize(params);
-				}
+				url: `testcase-result/submit`,
+				method: "PATCH",	
+				data:data
 			});
 			return response.data;
 		

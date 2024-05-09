@@ -66,8 +66,9 @@ const Captcha = (props) => {
             setbase64Image(response.data.image);
         } catch (error) {
             notification.error({
+                className:"notificationError",
+                message: "Something went wrong while fetching captcha",
                 placement: "bottomRight",
-                description: "Something went wrong while fetching captcha",
             });
         }
     };

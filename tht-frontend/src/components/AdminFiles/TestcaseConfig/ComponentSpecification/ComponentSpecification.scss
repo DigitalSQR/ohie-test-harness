@@ -182,9 +182,12 @@
 
   .page-size-selector{
     width: 100px;
-    margin-left: 960px;
+    // margin-left: 960px;
   }
-
+  .custom-breadcrumb .breadcrumb-item {
+    // font-size: 16px;
+        text-decoration: none;
+      } 
 
   // .ant-tabs-nav-wrap {
   //   margin-bottom: -32px; /* Adjust this value to reduce space below tabs */

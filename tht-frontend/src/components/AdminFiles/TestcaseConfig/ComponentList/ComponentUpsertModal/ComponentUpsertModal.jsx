@@ -35,8 +35,9 @@ const UpsertModal = ({
       ComponentAPI.createComponent(values)
         .then(() => {
           notification.success({
-            placement: "bottomRight",
-            message: "Component Created Successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Component created successfully!",
           });
 
           refreshAllComponents();
@@ -55,8 +56,9 @@ const UpsertModal = ({
       ComponentAPI.updateComponent(data)
         .then(() => {
           notification.success({
-            placement: "bottomRight",
-            message: "Component Updated Successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Component updated successfully!",
           });
           refreshAllComponents();
           setIsModalOpen(false);
@@ -136,7 +138,6 @@ const UpsertModal = ({
                   <div className="custom-input mb-3">
                     <label htmlFor="email" className="form-label">
                       Description
-                      <span className="text-danger">*</span>
                     </label>
                     <Field
                       as="textarea"

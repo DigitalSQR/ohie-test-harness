@@ -2,12 +2,10 @@ package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,6 +18,8 @@ import java.util.stream.Collectors;
 @Entity
 @Audited
 @Table(name = "component")
+//@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ComponentEntity extends IdStateNameMetaEntity {
 
     @Column(name = "rank")
@@ -27,6 +27,7 @@ public class ComponentEntity extends IdStateNameMetaEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "component", cascade = {})
+//    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<SpecificationEntity> specifications;
 
     public ComponentEntity() {
@@ -57,6 +58,16 @@ public class ComponentEntity extends IdStateNameMetaEntity {
             specifications = new HashSet<>();
         }
         return specifications;
+    }
+
+    @Override
+    public String toString() {
+        return "ComponentEntity{" +
+                "id=" + this.getId() +
+                ", name=" + this.getName() +
+                ", rank=" + rank +
+                ", specifications=" + specifications +
+                '}';
     }
 
     public void setSpecifications(Set<SpecificationEntity> specifications) {

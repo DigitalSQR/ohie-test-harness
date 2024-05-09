@@ -26,7 +26,7 @@ export default function ResetPassword() {
   };
   const formik = useFormik({
     initialValues: {
-      oldPassword: "",
+      oldPassword: null,
       newPassword: "",
       confirmPassword: "",
     },
@@ -36,8 +36,9 @@ export default function ResetPassword() {
       UserAPI.resetPassword(reqBody)
         .then((response) => {
           notification.success({
-            description: "Password changed successfully",
-            placement: "bottomRight",
+            className:"notificationSuccess",
+            placement: "top",
+            message: "Password has been reset successfully!",
           });
           navigate("/dashboard");
         })
@@ -57,7 +58,7 @@ export default function ResetPassword() {
             <div className="col-12">
               <div className="custom-input  mb-3 input-group" style={{}}>
                 <label htmlFor="oldPassword" className="form-label input-group ">
-                  <b>Old Password (Empty for Google Login)</b>
+                  <b>Old Password (Empty for Google Registration)</b>
                 </label>
                 <input
                   type={showOldPassword ? "text" : "password"}

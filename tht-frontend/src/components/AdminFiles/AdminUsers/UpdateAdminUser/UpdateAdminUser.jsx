@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
 import "./updateadminuser.scss";
-import { notification } from "antd";
+import { Modal, notification } from "antd";
 import { AdminUserAPI } from "../../../../api/AdminUserAPI";
-import { useLocation } from "react-router-dom";
 import { useLoader } from "../../../loader/LoaderContext";
 
 import CustomSelect from "../CustomSelect";
 import { ROLE_ID_ADMIN, ROLE_ID_TESTER } from "../../../../constants/role_constants";
 
 //Component that provides the functionality to update the user details
-const UpdateAdminUser = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const userId = new URLSearchParams(location.search).get("userId");
+const UpdateAdminUser = ({
+  isModalOpen,
+  setIsModalOpen,
+  userId,
+  setUserId,
+  refreshAllComponents
+}) => {
   const [meta, setMeta] = useState();
   const roles = [
     {
@@ -43,8 +44,21 @@ const UpdateAdminUser = () => {
     roleIds: formData.roleIds,
   };
   
+  //Function to handle cancelling a admin user modal
+  const handleCancel = () => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      roleIds: [],
+    });
+    setIsModalOpen(false);
+    setUserId(null);
+  };
+
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required")
+      .trim()
       .max(1000, "Name must have less than 1000 characters"),
     email: Yup.string()
       .email("Invalid email address")
@@ -55,7 +69,7 @@ const UpdateAdminUser = () => {
 
   //UseEffect to fetch user Details when the component mounts to prefill the form with current user details
   useEffect(() => {
-    if (userId) {
+    if (isModalOpen && userId) {
       AdminUserAPI.fetchUserDetails(userId)
         .then((userData) => {
           setState(userData.state);
@@ -70,14 +84,23 @@ const UpdateAdminUser = () => {
           
         });
     }
-  }, [userId]);
+  }, [isModalOpen, userId]);
 
   //Function to Submit the form with updated user details
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, {resetForm}) => {
     showLoader();
+    const trimmedValues = {};
+    Object.keys(values).forEach(key => {
+        if (typeof values[key] === 'string') {
+            trimmedValues[key] = values[key].trim();
+        } else {
+            trimmedValues[key] = values[key];
+        }
+    });
+
     const body = {
-      ...values,
-      roleIds: values.roleIds.map((role) => role),
+      ...trimmedValues,
+      roleIds: trimmedValues.roleIds.map((role) => role),
       id: userId,
       state: state,
       meta: meta,
@@ -87,10 +110,13 @@ const UpdateAdminUser = () => {
       .then((response) => {
         hideLoader();
         notification.success({
-          placement: "bottomRight",
-          description: `User Updated Successfully`,
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Profile has been updated successfully!",
         });
-        navigate("/user-management");
+        setIsModalOpen(false);
+        resetForm(); 
+        refreshAllComponents();
       })
       .catch((response) => {
         hideLoader();       
@@ -98,11 +124,11 @@ const UpdateAdminUser = () => {
   };
 
   return (
-    <div id="updateAdminUser">
-      <div id="wrapper">
-        <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
-          <div className="form-bg-white">
-            <span className="heading-line-up">Update User Details</span>
+    <Modal open={isModalOpen} closable={false} keyboard={false} footer={null}>
+      <div id="updateAdminUser">
+            <h4 className="mb-4">
+             Update User Detail
+            </h4>
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
@@ -166,7 +192,7 @@ const UpdateAdminUser = () => {
                             <span className="text-danger">*</span>
                           </label>
                           <Field
-                            className={`custom-select ${
+                            className={`custom-select user-role-select ${
                               touched.roleIds && errors.roleIds
                                 ? "is-invalid"
                                 : ""
@@ -185,16 +211,17 @@ const UpdateAdminUser = () => {
                     </div>
                     <div className="my-4 text-end">
                       <button
+                        type="button"
                         className="btn btn-primary btn-white"
                         onClick={() => {
-                          navigate("/user-management");
+                          handleCancel();
                         }}
                       >
                         Cancel
                       </button>
                       <button
                         style={{ marginLeft: "1rem" }}
-                        className="btn btn-primary btn-blue btn-submit"
+                        className="btn btn-primary btn-blue btn-submit py-1"
                         type="submit"
                         disabled={!isValid || !dirty}
                       >
@@ -206,9 +233,7 @@ const UpdateAdminUser = () => {
               }}
             </Formik>
           </div>
-        </div>
-      </div>
-    </div>
+        </Modal>
   );
 };
 

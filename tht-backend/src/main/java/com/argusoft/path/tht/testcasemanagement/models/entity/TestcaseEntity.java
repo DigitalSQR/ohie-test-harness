@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -13,6 +14,8 @@ import javax.persistence.*;
 @Entity
 @Audited
 @Table(name = "testcase")
+//@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TestcaseEntity extends IdStateNameMetaEntity {
 
     @Column(name = "rank")
@@ -24,15 +27,26 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     @Column(name = "bean_name")
     private String beanName;
 
-    @Column(name = "failure_message", length = 1000)
+    @Column(name = "failure_message", length = 2000)
     private String failureMessage;
 
     @Column(name = "question_type")
     private String questionType;
 
+    @Column(name = "test_case_run_environment")
+    private String testcaseRunEnvironment;
+
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "specification_id")
+//    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private SpecificationEntity specification;
+
+    @Column(name = "test_suite_id", length = 1300)
+    private String testSuiteId;
+
+    @Column(name = "sut_actor_api_key")
+    private String sutActorApiKey;
+
 
     public TestcaseEntity() {
     }
@@ -42,6 +56,11 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
         this.setRank(testcaseEntity.getRank());
         this.setManual(testcaseEntity.getManual());
         this.setBeanName(testcaseEntity.getBeanName());
+        this.setTestcaseRunEnvironment(testcaseEntity.getTestcaseRunEnvironment());
+        this.setFailureMessage(testcaseEntity.getFailureMessage());
+        this.setTestSuiteId(testcaseEntity.getTestSuiteId());
+        this.setSutActorApiKey(testcaseEntity.getSutActorApiKey());
+        this.setQuestionType(testcaseEntity.getQuestionType());
         if (testcaseEntity.getSpecification() != null) {
             this.setSpecification(new SpecificationEntity(testcaseEntity.getSpecification().getId()));
         }
@@ -97,5 +116,29 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
 
     public void setFailureMessage(String failureMessage) {
         this.failureMessage = failureMessage;
+    }
+
+    public String getTestcaseRunEnvironment() {
+        return testcaseRunEnvironment;
+    }
+
+    public void setTestcaseRunEnvironment(String testcaseRunEnvironment) {
+        this.testcaseRunEnvironment = testcaseRunEnvironment;
+    }
+
+    public String getSutActorApiKey() {
+        return sutActorApiKey;
+    }
+
+    public void setSutActorApiKey(String sutActorApiKey) {
+        this.sutActorApiKey = sutActorApiKey;
+    }
+
+    public String getTestSuiteId() {
+        return testSuiteId;
+    }
+
+    public void setTestSuiteId(String testSuiteId) {
+        this.testSuiteId = testSuiteId;
     }
 }

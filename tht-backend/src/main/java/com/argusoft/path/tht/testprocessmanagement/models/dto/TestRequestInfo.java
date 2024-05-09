@@ -35,6 +35,13 @@ public class TestRequestInfo extends IdStateNameMetaInfo {
             required = true)
     private Set<TestRequestUrlInfo> testRequestUrls;
 
+    @ApiModelProperty(notes = "The rejection message of the testRequest",
+            allowEmptyValue = true,
+            example = "Not a valid request",
+            dataType = "String",
+            required = false)
+    private String message;
+
     public Set<TestRequestUrlInfo> getTestRequestUrls() {
         if (testRequestUrls == null) {
             testRequestUrls = new HashSet<>();
@@ -62,4 +69,11 @@ public class TestRequestInfo extends IdStateNameMetaInfo {
         this.approverId = approverId;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

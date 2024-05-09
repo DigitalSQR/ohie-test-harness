@@ -1,0 +1,57 @@
+{
+    "resourceType": "ConceptMap",
+    "url": "http://example.org/conceptmaps",
+    "version": "1.0",
+    "name": "Example Concept Map",
+    "title": "Example Concept Map",
+    "status": "active",
+    "date": "2024-04-08",
+    "publisher": "Organization Name",
+    "contact": [
+      {
+        "name": "John Doe",
+        "telecom": [
+          {
+            "system": "email",
+            "value": "john.doe@example.org"
+          }
+        ]
+      }
+    ],
+    "description": "An example concept map demonstrating mapping between different code systems.",
+    "sourceUri": "http://example.org/codesystem/source",
+    "targetUri": "http://example.org/codesystem/target",
+    "group": [
+      {
+        "source": "http://example.org/codesystem/source",
+        "target": "http://example.org/codesystem/target",
+        "element": [
+          {
+            "code": "A",
+            "display": "Concept A",
+            "target": [
+              {
+                "code": "X",
+                "display": "Concept X"
+              },
+              {
+                "code": "Y",
+                "display": "Concept Y"
+              }
+            ]
+          },
+          {
+            "code": "B",
+            "display": "Concept B",
+            "target": [
+              {
+                "code": "Z",
+                "display": "Concept Z"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

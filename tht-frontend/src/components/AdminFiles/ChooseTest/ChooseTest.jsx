@@ -1,20 +1,27 @@
 import workflow_logo from "../../../styles/images/workflow-testing.png";
 import functional_logo from "../../../styles/images/functional-testing.png";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./choose-test.scss";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import { Fragment, useEffect, useState } from "react";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
-import { notification, Progress, Button } from "antd";
+import { notification, Progress, Button, Breadcrumb } from "antd";
 import { CheckCircleFilled, SyncOutlined } from "@ant-design/icons";
-
+import { Spin } from "antd";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
 import { handleErrorResponse } from "../../../utils/utils";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import WebSocketService from "../../../api/WebSocketService";
+import VerificationGuidelines from "./Verification-Guidelines/VerificationGuidelines";
+import { AutomatedVerificationGuidelines, ManualVerificationGuidelines } from "../../../constants/guidelines_constants";
+import {  TestRequestStateConstants } from "../../../constants/test_requests_constants";
+/* 
+  Choose Test page
 
+  The tester can decide on whether to start the manual testing or the automate testcases from here.
+*/
 export default function ChooseTest() {
   const { testRequestId } = useParams();
   const { TESTCASE_REFOBJURI, TESTREQUEST_REFOBJURI } = RefObjUriConstants;
@@ -27,10 +34,18 @@ export default function ChooseTest() {
   const [totalAllAutomated, setTotalAllAutomated] = useState(0);
   const [totalInprogressAutomated, setTotalInprogressAutomated] = useState(0);
   const [testcaseResults, setTestCaseResults] = useState([]);
+  const [submitButtonFlag, setSubmitButtonFlag]=useState(false);
+  const [resultFlag, setResultFlag]=useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
 
+  /* 
+  This useEffect fetches all the testcases, both manual and automated.
+  And based on the data recieved, the progress is tracked.
+  This helps the tester in knowing the number of completed and remaining testcases.
+  Also initiates the web socket connection to keep track of any automated testcases already running.
+  */
   useEffect(() => {
     var totalManual = 0;
     var totalFinishedManual = 0;
@@ -112,6 +127,7 @@ export default function ChooseTest() {
     }
   }, [testcaseResults]);
 
+  // This function keeps real-time track of the progress for the testcases.
   const loadProgress = () => {
     const params = {
       testRequestId: testRequestId,
@@ -120,12 +136,15 @@ export default function ChooseTest() {
     TestResultAPI.fetchCasesForProgressBar(params)
       .then((res) => {
         setTestCaseResults(res.data.content);
+        setSubmitButtonFlag(true);
+        setResultFlag(true);
       })
       .catch((error) => {
 
       });
   };
 
+    // This function initiates testcases for both manual and automates testing.
   const handleStartTesting = (manual, automated) => {
     const params = {
       testRequestId,
@@ -140,36 +159,40 @@ export default function ChooseTest() {
     }
     TestResultAPI.startTests(params)
       .then((response) => {
+        notification.success({
+          className: "notificationSuccess",
+          placement: "top",
+          message: "Testing has been started successfully!",
+        });
         if (!!manual) {
           navigate(`/manual-testing/${testRequestId}`);
-          notification.success({
-            description: "Verification Process has been Started Successfully",
-            placement: "bottomRight",
-          });
+        }
+        if (!!automated) {
+          navigate(`/automated-testing/${testRequestId}`);
         }
         loadProgress();
       }).catch((error) => {
 
       });
-    if (!!automated) {
-      notification.success({
-        description: "Verification Process has been Started Successfully",
-        placement: "bottomRight",
-      });
-      navigate(`/automated-testing/${testRequestId}`);
-    }
   };
 
+  // This function fetches details regarding testcase.
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
+        if(res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED){
+          navigate("/applications")
+        }
+        else{
         setTestCaseName(res.name);
         dispatch(set_header(res.name));
+        }
       }).catch((error) => {
 
       });
   };
 
+  // This useEffect keeps tracks of testcases being completed behind the scenes, and updates the UI.
   useEffect(() => {
     if (stompClient && stompClient.connected) {
       testcaseResults.forEach((testcaseResult, index) => {
@@ -197,6 +220,8 @@ export default function ChooseTest() {
     }
   }, [stompClient]);
 
+  // Default useEffect which fetches progress, fetches testcaseInfo. 
+  // Also Disconnects the web-socket connection once the component is unmounted. 
   useEffect(() => {
     loadProgress();
     testCaseInfo();
@@ -206,117 +231,131 @@ export default function ChooseTest() {
     };
   }, []);
 
+  // This function is responsible for finishing a test-request. 
+  // Once this function is called, the choose-page will no longer be available. 
+  // Report is generated only after this function is called.
   const submitHandler=()=>{
     TestRequestAPI.changeState(testRequestId, "test.request.status.finished")
         .then((res) => {
           notification.success({
-            placement: "bottomRight",
-            message: "Verification submitted successfully!",
+            className: "notificationSuccess",
+            placement: "top",
+            message:"Verification submitted successfully!",
           });
           const newTab = window.open(`/application-report/${testRequestId}`, '_blank');
           newTab.focus();      
           navigate(`/applications`);
+
         })
         .catch((err) => {       
-          notification.error({
-            placement: "bottomRight",
-            message: "Something went wrong!",
-          });
         }); 
   }
   return (
     <div id="chooseTest">
       <div id="wrapper">
         <div className="col-12 pt-3">
-          <div className="bcca-breadcrumb">
-            <div className="bcca-breadcrumb-item">{testcaseName}</div>
-            <div
-              className="bcca-breadcrumb-item"
-              onClick={() => {
-                navigate(`/applications`);
-              }}
-            >
+          <Breadcrumb className="custom-breadcrumb">
+          <Breadcrumb.Item>
+            <Link to="/applications" className="breadcrumb-item">
               Applications
-            </div>
-          </div>
-          <h5>Choose Verification Type</h5>
+            </Link>
+          </Breadcrumb.Item>
+            <Breadcrumb.Item className="breadcrumb-item">{testcaseName}</Breadcrumb.Item>
+          </Breadcrumb>
+          <hr className="hr-light"/>
+          <h5 className="mt-3">Choose Verification Type</h5>
           <p className="text-gray">
             Select the type to start verifying application with OpenHIE.{" "}
           </p>
           <div className="d-flex flex-wrap">
+            {!!testcaseResults && totalAllManual !==0 
+            && 
             <div className="testing-grid">
-              <div className="icon-box">
-                <img src={functional_logo} />
-              </div>
-              <div className="text-box">
-                <h6 className="">Manual Verification</h6>
-                <p className="mb-0">
-                  If you need more info, please check out{" "}
-                  <a className="text-blue" href="#">
+            <div className="icon-box">
+              <img src={functional_logo} />
+            </div>
+            <div className="text-box">
+              <h6 className="">Manual Verification</h6>
+              <p className="mb-0">
+                If you need more info, please check out{" "}
+                <span className="fixed-button">
+                  <a
+                    className="text-blue"
+                    data-bs-toggle="offcanvas"
+                    href="#manualTesting"
+                    aria-controls="manualTesting"
+                  >
                     Guideline.
                   </a>
-                </p>
-                {totalManualTestcaseResults == 0 && (
-                  <button
-                    className="btn btn-primary btn-sm mt-4 "
-                    onClick={() => {
-                      handleStartTesting(true, null);
-                    }}
-                  >
-                    Start Verification
-                  </button>
-                )}
-                {totalManualTestcaseResults != 0 && (
-                  <Fragment>
-                    <Progress
-                      percent={Math.floor(
-                        (totalFinishedManual /
-                          (!!totalFinishedManual
-                            ? totalAllManual
-                            : totalManualTestcaseResults)) *
-                        100
-                      )}
-                      format={() => {
-                        if (
-                          Math.floor(
-                            (totalFinishedManual /
-                              (!!totalFinishedManual
-                                ? totalAllManual
-                                : totalManualTestcaseResults)) *
-                            100
-                          ) === 100
-                        ) {
-                          return <CheckCircleFilled color="#52C41A" />;
-                        } else {
-                          return (
-                            <span>
-                              {totalFinishedManual}/
-                              {!!totalFinishedManual
-                                ? totalAllManual
-                                : totalManualTestcaseResults}
-                            </span>
-                          );
-                        }
-                      }}
-                    />
-                    <Button
-                      onClick={() => navigate(`/manual-testing/${testRequestId}`)}
-                    >
-                      {
-                        totalAllManual === totalFinishedManual ?
-                          "Modify" :
-                          "Resume"
+                </span>
+                <div
+                  className="offcanvas offcanvas-end"
+                  tabIndex="-1"
+                  id="manualTesting"
+                  aria-labelledby="manualTestingLabel"
+                >
+                  <div id="mySidebar" class="sidebar-right">
+                    <VerificationGuidelines title="Manual Verification Guidelines" guidelines={ManualVerificationGuidelines}/>
+                  </div>
+                </div>
+              </p>
+              {totalManualTestcaseResults == 0 && (
+                <button
+                  className="btn btn-primary  btn-sm mt-4 "
+                  onClick={() => {
+                    handleStartTesting(true, null);
+                  }}
+                >
+                  Start Verification
+                </button>
+              )}
+              {totalManualTestcaseResults != 0 && (
+                <Fragment>
+                  <Progress
+                    percent={Math.floor(
+                      (totalFinishedManual /
+                        (!!totalFinishedManual
+                          ? totalAllManual
+                          : totalManualTestcaseResults)) *
+                      100
+                    )}
+                    format={() => {
+                      if (
+                        Math.floor(
+                          (totalFinishedManual /
+                            (!!totalFinishedManual
+                              ? totalAllManual
+                              : totalManualTestcaseResults)) *
+                          100
+                        ) === 100
+                      ) {
+                        return <CheckCircleFilled color="#52C41A" />;
+                      } else {
+                        return (
+                          <span>
+                            {totalFinishedManual}/
+                            {!!totalFinishedManual
+                              ? totalAllManual
+                              : totalManualTestcaseResults}
+                          </span>
+                        );
                       }
-                    </Button>
-                  </Fragment>
-                )}
-
-                {/* <div className="progress-bar-line"> */}
-                {/* <div className="progress-fill"></div> */}
-                {/* <div className="progress-value">20%</div>  */}
-                {/* </div> */}
-              </div>
+                    }}
+                  />
+                  <Button className="btn start-test-button mt-2"
+                    onClick={() => navigate(`/manual-testing/${testRequestId}`)}
+                  >
+                    {
+                      totalAllManual === totalFinishedManual ?
+                        "Modify" :
+                        "Resume"
+                    }
+                  </Button>
+                </Fragment>
+              )}
             </div>
+          </div>}
+           {!!testcaseResults && totalAllAutomated !== 0 && 
             <div className="testing-grid">
               <div className="icon-box">
                 <img src={workflow_logo} />
@@ -325,9 +364,26 @@ export default function ChooseTest() {
                 <h6 className="">Automated Verification</h6>
                 <p className="mb-0">
                   If you need more info, please check out{" "}
-                  <a className="text-blue" href="#">
-                    Guideline.
-                  </a>
+                  <span className="fixed-button">
+                    <a
+                      className="text-blue"
+                      data-bs-toggle="offcanvas"
+                      href="#automatedTesting"
+                      aria-controls="automatedTesting"
+                    >
+                      Guideline.
+                    </a>
+                  </span>
+                  <div
+                    className="offcanvas offcanvas-end"
+                    tabIndex="-1"
+                    id="automatedTesting"
+                    aria-labelledby="automatedTestingLabel"
+                  >
+                    <div id="mySidebar" class="sidebar-right">
+                     <VerificationGuidelines title="Automated Verification Guidelines" guidelines={AutomatedVerificationGuidelines}/>
+                    </div>
+                  </div>
                 </p>
                 {totalAutomatedTestcaseResults == 0 && (
                   <button
@@ -335,8 +391,10 @@ export default function ChooseTest() {
                     onClick={() => {
                       handleStartTesting(null, true);
                     }}
+                    disabled={!resultFlag}
                   >
                     Start Verification
+                    {!resultFlag && <Spin size="small"/>}
                   </button>
                 )}
 
@@ -407,7 +465,7 @@ export default function ChooseTest() {
                           : "active"
                       }
                     />
-                    <Button
+                    <Button className="btn start-test-button"
                       onClick={() =>
                         navigate(`/automated-testing/${testRequestId}`)
                       }
@@ -419,9 +477,10 @@ export default function ChooseTest() {
                 {/* <div className="progress-bar-line"></div> */}
               </div>
             </div>
+            }
           </div>
         </div>
-          {totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
+          {!!submitButtonFlag && totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
           <div className="message-grid">
             <p>Verification has been successfully completed. Please click the button below to submit the results.</p>
             <button className="submit-btn cst-btn-group btn" onClick={submitHandler}>Submit</button>

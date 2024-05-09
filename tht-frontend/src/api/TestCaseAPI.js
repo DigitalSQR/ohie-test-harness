@@ -1,12 +1,17 @@
+import { objectToFormData } from "../utils/utils";
 import api from "./configs/axiosConfigs";
 export const TestCaseAPI = {
 
   createTestCase: function (data) {
+    const formData=new FormData();
+    Object.keys(data).forEach((key)=>{
+      formData.append(key, data[key]);
+    })
     return api
       .request({
         url: `/testcase`,
         method: "POST",
-        data,
+        data:formData
       })
       .then((response) => response.data);
   },
@@ -60,5 +65,16 @@ export const TestCaseAPI = {
 		});
 		
 		return response.data;
+  },
+  updateTestCase: function (data) {
+    const formData = objectToFormData(data);
+    return api
+      .request({
+        url: `/testcase`,
+        method: "PUT",
+        data:formData
+      })
+      .then((response) => response.data);
   }
+  
 };

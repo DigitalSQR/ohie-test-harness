@@ -91,28 +91,32 @@ api.interceptors.response.use(
       }).catch((error) => {       
         return Promise.reject(error);
       });
-    }else if(response.status > 500){
+    }else if(response.status >= 500){
       notification.error({
-        description: "Oops! Something went wrong",
+        className:"notificationError",
+        message:"Oops! Something went wrong. Please try again",
         placement: "bottomRight",
       });
     }else if(response.status == 404){
       console.log(response);
       notification.error({
-        description: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
+        className:"notificationError",
+        message: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),   
         placement: "bottomRight",
       });
     }else if(response.status >= 400){
       if(response.data.length && response.data.length > 0){
         response.data.forEach((error, index) => {
           notification.error({
-            description: error.message ,
+            className:"notificationError",
+            message: error.message ,
             placement: "bottomRight",
           });
         })        
       }else {
         notification.error({
-          description: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
+          className:"notificationError",
+          message: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),
           placement: "bottomRight",
         });
       }

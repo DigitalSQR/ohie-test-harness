@@ -1,0 +1,16 @@
+#validateConfig {
+  #wrapper {
+    transition: 0.5s;
+    margin-left: 230px;
+    padding: 90px 30px;
+    position: relative;
+    min-height: calc(100vh - 64px);
+    @media (max-width: 767.98px) {
+      margin-left: 40px;
+    }
+  }
+
+  .custom-breadcrumb .breadcrumb-item {
+    text-decoration: none;
+  }
+}

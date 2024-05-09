@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
 import "./assessee.scss";
 import { UserAPI } from "../../../api/UserAPI";
-import { Empty, notification } from "antd";
+import { Empty, Modal, notification } from "antd";
+import moment from 'moment'
 import { Pagination } from "@mui/material";
 import {
   userBadgeClasses,
@@ -18,6 +19,8 @@ import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import { store } from "../../../store/store";
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { Popover } from "antd";
 
 /**
  * Assessee Component:
@@ -48,8 +51,13 @@ const Assessee = () => {
   const [sortFieldName, setSortFieldName] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [reasonForRejection, setReasonForRejection] = useState();
+  const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
+  const [currentAssesseeId, setCurrentAssesseeId] = useState();
+  const [currentIndex, setCurrentIndex] = useState();
+  const [newState, setNewState] = useState();
 
-   //This is the default table header width according to tester/role.
+  //This is the default table header width according to tester/role.
   const [thPercentage, setThPercentage] = useState({
     name: "19%",
     email: "25%",
@@ -65,8 +73,7 @@ const Assessee = () => {
     sortFieldName,
     sortDirection,
     currentPage,
-    pageSize,
-    
+    pageSize
   ) => {
     showLoader();
 
@@ -88,19 +95,18 @@ const Assessee = () => {
       });
   };
 
-
   //useEffect that is used to set the user role and change with column width to certain values if the user role is admin
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserRoles(userInfo.roleIds);
 
     //table header width values for admin role
-    if (userInfo.roleIds.includes(ROLE_ID_ADMIN)) { 
+    if (userInfo.roleIds.includes(ROLE_ID_ADMIN)) {
       setThPercentage((prevState) => ({
         ...prevState,
         name: "15%",
-        email: "20%",
-        requestedDate: "10%",
+        email: "18%",
+        requestedDate: "18%",
         company: "15%",
         status: "15%",
         action: "25%",
@@ -108,7 +114,7 @@ const Assessee = () => {
     }
   }, []);
 
-    //Function to handle the sorting functionality based upon a certain field name
+  //Function to handle the sorting functionality based upon a certain field name
   const handleSort = (newSortFieldName) => {
     setSortFieldName(newSortFieldName);
     const newSortDirection = { ...obj };
@@ -123,7 +129,7 @@ const Assessee = () => {
     );
   };
 
-    //Function to toggle between the sort icons depending upon whether the current sort direction is ascending or descending
+  //Function to toggle between the sort icons depending upon whether the current sort direction is ascending or descending
   const renderSortIcon = (fieldName) => {
     if (sortFieldName === fieldName) {
       return (
@@ -146,12 +152,28 @@ const Assessee = () => {
   //Function to change the state of the assessee from active to inactive and vice verca
   const changeState = (userId, state, newState, index) => {
     showLoader();
-    UserAPI.changeState(userId, state)
+    UserAPI.changeState(userId, state, reasonForRejection)
       .then((res) => {
+        setIsReasonModalOpen(false);
+        setReasonForRejection();
+        setNewState();
         hideLoader();
         notification.success({
-          description: `Request has been ${newState}`,
-          placement: "bottom-left",
+          className: "notificationSuccess",
+          placement: "top",
+          message:  `Assessee ${
+            newState === "active" || newState === "inactive" ? "" : "request "
+          }has been ${
+            newState === "active"
+              ? "marked as active"
+              : newState === "inactive"
+              ? "marked as inactive"
+              : newState === "approve"
+              ? "accepted"
+              : newState === "reject"
+              ? "rejected"
+              : ""
+          } successfully!`,
         });
         availableUsers[index] = res.data;
         setAvailableUsers(availableUsers);
@@ -161,7 +183,7 @@ const Assessee = () => {
       });
   };
 
-    //Function to handle the page change in pagination
+  //Function to handle the page change in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
     fetchUserByState(
@@ -226,11 +248,21 @@ const Assessee = () => {
                   <th style={{ width: thPercentage.name }}>
                     NAME
                     <span
-                      className="ps-1"
+                      className="ps-1 "
                       href="#"
                       onClick={() => handleSort("name")}
                     >
                       {renderSortIcon("name")}
+                    </span>
+                  </th>
+                  <th style={{ width: thPercentage.company }}>
+                    Company
+                    <span
+                      className="ps-1"
+                      href="# "
+                      onClick={() => handleSort("companyName")}
+                    >
+                      {renderSortIcon("companyName")}
                     </span>
                   </th>
                   <th style={{ width: thPercentage.email }}>
@@ -244,23 +276,13 @@ const Assessee = () => {
                     </span>
                   </th>
                   <th style={{ width: thPercentage.requestedDate }}>
-                    requested date
+                    request date
                     <span
                       className="ps-1"
                       href="# "
                       onClick={() => handleSort("createdAt")}
                     >
                       {renderSortIcon("createdAt")}
-                    </span>
-                  </th>
-                  <th style={{ width: thPercentage.company }}>
-                    Company
-                    <span
-                      className="ps-1"
-                      href="# "
-                      onClick={() => handleSort("companyName")}
-                    >
-                      {renderSortIcon("companyName")}
                     </span>
                   </th>
                   <th style={{ width: thPercentage.status }}>
@@ -290,38 +312,42 @@ const Assessee = () => {
               <tbody>
                 {availableUsers.length === 0 ? (
                   <tr>
-                    <td className="text-center" colSpan="6">
+                    <td className="text-center " colSpan="6">
                       <Empty description="No Record Found." />
                     </td>
                   </tr>
                 ) : null}
                 {availableUsers.map((user, index) => {
-                  const formattedDate = new Date(
-                    user.meta.createdAt
-                  ).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  });
+                  const formattedDate = moment(user.meta.createdAt).format("Do MMMM, YYYY");
+
                   let currentStatus = userStateConstantNames[user.state];
                   return (
                     <Fragment key={user.id}>
                       <tr>
-                        <td>{user.name}</td>
-                        <td className="toLowerCase-words">{user.email}</td>
-                        <td>{formattedDate}</td>
+                        <td className="fw-bold">{user.name}</td>
                         {user.companyName ? (
-                          <td>{user.companyName}</td>
+                          <td className="fw-bold">{user.companyName}</td>
                         ) : (
                           <td>&ndash;</td>
                         )}
-
+                        <td className="toLowerCase-words">{user.email}</td>
+                        <td>{formattedDate}</td>
                         <td>
+                          <Fragment>
                           <span
                             className={"status " + userBadgeClasses[user.state]}
                           >
-                            {currentStatus.toUpperCase()}
+                            {currentStatus.toLowerCase()}
                           </span>
+                          {
+                            user.state === "user.status.inactive" && 
+                          <Popover
+                                title={<div>{user?.message}</div>}
+                              >
+                                <InfoCircleOutlined style={{marginLeft:"0.5rem", marginTop:"0.7rem"}}/>
+                              </Popover>
+                          }
+                          </Fragment>
                         </td>
                         {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && (
                           <td className=" no-wrap">
@@ -331,68 +357,67 @@ const Assessee = () => {
                                 <span
                                   className="cursor-pointer"
                                   onClick={() => {
-                                    changeState(
-                                      user.id,
-                                      "user.status.inactive",
-                                      "DISABLE",
-                                      index
-                                    );
+                                    setIsReasonModalOpen(true);
+                                    setCurrentAssesseeId(user.id);
+                                    setCurrentIndex(index);
+                                    setNewState("inactive");
                                   }}
                                 >
-                                  <i className="bi bi-ban-fill text-red font-size-16"></i>{" "}
-                                  DISABLE
+                                  <i className="bi bi-ban text-warning font-size-16"></i>
+                                  <span className="text-warning font-size-12 fw-bold ps-1">
+                                    DISABLE
+                                  </span>
                                 </span>
                               </Fragment>
                             )}
                             {user.state === "user.status.approval.pending" && (
                               <Fragment>
                                 <span
-                                  className="cursor-pointer"
+                                  className="cursor-pointer text-success font-size-12 fw-bold"
                                   onClick={() => {
                                     changeState(
                                       user.id,
                                       "user.status.active",
-                                      "APPROVE",
+                                      "approve",
                                       index
                                     );
                                   }}
                                 >
-                                  <span>
-                                    <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
-                                    APPROVE{" "}
+                                  <i className="bi bi-check-circle-fill  font-size-16"></i>
+                                  <span className="ps-1">
+                                    
+                                    APPROVE
                                   </span>
                                 </span>
-                                &nbsp;
+                               
                                 <span
-                                  className="ps-3 cursor-pointer"
+                                  className="ps-3 cursor-pointer text-danger font-size-12 fw-bold"
                                   onClick={() => {
-                                    changeState(
-                                      user.id,
-                                      "user.status.inactive",
-                                      "REJECT",
-                                      index
-                                    );
+                                    setIsReasonModalOpen(true);
+                                    setCurrentAssesseeId(user.id);
+                                    setCurrentIndex(index);
+                                    setNewState("reject");
                                   }}
                                 >
-                                  <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                                  REJECT{" "}
+                                  <i className="bi bi-x-circle-fill  font-size-16"></i>{" "}
+                                  DECLINE{" "}
                                 </span>
                               </Fragment>
                             )}
                             {user.state === "user.status.inactive" && (
                               <span
-                                className="cursor-pointer"
+                                className="cursor-pointer text-success font-size-12 fw-bold"
                                 onClick={() => {
                                   changeState(
                                     user.id,
                                     "user.status.active",
-                                    "Active",
+                                    "active",
                                     index
                                   );
                                 }}
                               >
                                 <span>
-                                  <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
+                                  <i className="bi bi-check-circle-fill text-success font-size-16"></i>{" "}
                                   ENABLE
                                 </span>
                               </span>
@@ -418,6 +443,53 @@ const Assessee = () => {
           />
         )}
       </div>
+      <Modal
+        open={isReasonModalOpen}
+        onCancel={() => {
+          setIsReasonModalOpen(false);
+          setReasonForRejection();
+          setCurrentAssesseeId();
+          setCurrentIndex();
+          setNewState();
+        }}
+        onOk={() => {
+          if (!reasonForRejection) {
+            notification.error({
+              className: "notificationError",
+              message: "Please provide a reason for disapproval.",
+              placement: "bottomRight",
+            });
+          } else {
+            changeState(
+              currentAssesseeId,
+              "user.status.inactive",
+              newState,
+              currentIndex
+            );
+          }
+        }}
+        destroyOnClose={true}
+      >
+        <div className="custom-input mb-3">
+          <label htmlFor="reason" className="form-label">
+            <b>
+              {" "}
+              {newState === "reject"
+                ? "Please provide a reason for Disapproval."
+                : "Please provide a reason for Disabling."}
+            </b>
+          </label>
+          <input
+            id="reason"
+            className="form-control"
+            type="text"
+            value={reasonForRejection}
+            onChange={(e) => {
+              setReasonForRejection(e.target.value);
+            }}
+          ></input>
+        </div>
+      </Modal>
     </div>
   );
 };

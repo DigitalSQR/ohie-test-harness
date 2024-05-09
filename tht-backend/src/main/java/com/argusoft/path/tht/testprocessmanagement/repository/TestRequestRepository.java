@@ -1,5 +1,6 @@
 package com.argusoft.path.tht.testprocessmanagement.repository;
 
+import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,5 +28,10 @@ public interface TestRequestRepository
     @Query("SELECT DISTINCT entity FROM TestRequestEntity entity \n"
             + " WHERE entity.id IN (:ids)")
     public List<TestRequestEntity> findTestRequestsByIds(@Param("ids") List<String> ids);
+
+    @Query("SELECT e FROM TestRequestEntity e WHERE e.updatedAt >= :sevenMonthsAgo")
+    List<TestRequestEntity> findRecordsUpdatedLastSevenMonths(@Param("sevenMonthsAgo") Date sevenMonthsAgo);
+
+
 
 }

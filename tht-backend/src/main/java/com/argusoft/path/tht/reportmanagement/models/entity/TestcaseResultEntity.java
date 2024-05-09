@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.reportmanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.hibernate.envers.Audited;
@@ -41,9 +42,16 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "message", length = 2000)
     private String message;
 
+    @Column(name = "failure_message", length = 2000)
+    private String failureMessage;
+
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "test_request_id", updatable = false)
     private TestRequestEntity testRequest;
+
+    @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "test_case_id", updatable = false)
+    private TestcaseEntity testcase;
 
     @Column(name = "has_system_error")
     private Boolean hasSystemError;
@@ -72,8 +80,17 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
     @Column(name = "duration")
     private Long duration;
 
-    @Transient
+    @Column(name = "grade")
     private String grade;
+
+    @Column(name = "compliant", nullable = true, columnDefinition = "INT DEFAULT 0")
+    private int compliant;
+    @Column(name = "non_compliant", nullable = true, columnDefinition = "INT DEFAULT 0")
+    private int nonCompliant;
+
+    @Column(name = "test_session_id")
+    private String testSessionId;
+
 
     public TestcaseResultEntity() {
     }
@@ -84,6 +101,7 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         this.setRefObjUri(testcaseResultEntity.getRefObjUri());
         this.setRefId(testcaseResultEntity.getRefId());
         this.setMessage(testcaseResultEntity.getMessage());
+        this.setFailureMessage(testcaseResultEntity.getFailureMessage());
         this.setHasSystemError(testcaseResultEntity.getHasSystemError());
         this.setDuration(testcaseResultEntity.getDuration());
         this.setGrade(testcaseResultEntity.getGrade());
@@ -94,6 +112,11 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         this.setRecommended(testcaseResultEntity.getRecommended());
         this.setWorkflow(testcaseResultEntity.getWorkflow());
         this.setFunctional(testcaseResultEntity.getFunctional());
+        this.setGrade(testcaseResultEntity.getGrade());
+        this.setCompliant(testcaseResultEntity.getCompliant());
+        this.setNonCompliant(testcaseResultEntity.getNonCompliant());
+        this.setTestSessionId(testcaseResultEntity.getTestSessionId());
+        this.setTestcase(testcaseResultEntity.getTestcase());
 
         if (testcaseResultEntity.getTester() != null) {
             this.setTester(new UserEntity(testcaseResultEntity.getTester().getId()));
@@ -103,6 +126,9 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         }
         if (testcaseResultEntity.getTestRequest() != null) {
             this.setTestRequest(new TestRequestEntity(testcaseResultEntity.getTestRequest().getId()));
+        }
+        if(testcaseResultEntity.getTestcase() !=null ){
+            this.setTestcase(new TestcaseEntity(testcaseResultEntity.getTestcase().getId()));
         }
     }
 
@@ -254,6 +280,47 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
         this.testcaseResultAttributesEntities = testcaseResultAttributesEntities;
     }
 
+
+    public String getTestSessionId() {
+        return testSessionId;
+    }
+
+    public void setTestSessionId(String testSessionId) {
+        this.testSessionId = testSessionId;
+    }
+
+    public TestcaseEntity getTestcase() {
+        return testcase;
+    }
+
+    public void setTestcase(TestcaseEntity testcase) {
+        this.testcase = testcase;
+    }
+
+    public int getCompliant() {
+        return compliant;
+    }
+
+    public void setCompliant(Integer compliant) {
+        this.compliant = compliant;
+    }
+
+    public Integer getNonCompliant() {
+        return nonCompliant;
+    }
+
+    public void setNonCompliant(Integer nonCompliant) {
+        this.nonCompliant = nonCompliant;
+    }
+
+    public String getFailureMessage() {
+        return failureMessage;
+    }
+
+    public void setFailureMessage(String failureMessage) {
+        this.failureMessage = failureMessage;
+    }
+
     @Override
     public String toString() {
         return "TestcaseResultEntity{"
@@ -262,6 +329,7 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
                 + ", refObjUri='" + refObjUri + '\''
                 + ", refId='" + refId + '\''
                 + ", message='" + message + '\''
+                + ", failureMessage='" + failureMessage + '\''
                 + ", hasSystemError=" + hasSystemError
                 + ", isManual=" + isManual
                 + ", isRequired=" + isRequired
@@ -271,7 +339,10 @@ public class TestcaseResultEntity extends IdStateNameMetaEntity {
                 + ", isFunctional=" + isFunctional
                 + ", isSuccess=" + isSuccess
                 + ", duration=" + duration
-                + ", grade='" + grade + '\''
+                + ", testSessionId=" + testSessionId
+                + ", grade='" + grade
+                + ", compliant='" + compliant
+                + ", nonCompliant='" + nonCompliant + '\''
                 + '}';
     }
 

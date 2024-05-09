@@ -9,6 +9,11 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseMapper;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.request.StartRequest;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.response.StartResponse;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.request.StatusRequest;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.response.StatusResponse;
+import com.argusoft.path.tht.testcasemanagement.testbed.services.TestSessionManagementRestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,12 +27,15 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This TestcaseServiceRestController maps end points with standard service.
@@ -41,6 +49,9 @@ public class TestcaseRestController {
 
     private TestcaseService testcaseService;
     private TestcaseMapper testcaseMapper;
+
+    @Autowired
+    private TestSessionManagementRestService testSessionManagementRestService;
 
     @Autowired
     public void setTestcaseService(TestcaseService testcaseService) {
@@ -63,18 +74,19 @@ public class TestcaseRestController {
             @ApiResponse(code = 401, message = "You are not authorized to create the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
-    @PostMapping("")
+    @PostMapping(value = "",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public TestcaseInfo createTestcase(
-            @RequestBody TestcaseInfo testcaseInfo,
+            @ModelAttribute TestcaseInfo testcaseInfo,
+            @ModelAttribute("zipFile") MultipartFile zipFile,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
 
         TestcaseEntity testcaseEntity = testcaseMapper.dtoToModel(testcaseInfo);
-        testcaseEntity = testcaseService.createTestcase(testcaseEntity, contextInfo);
+        testcaseEntity = testcaseService.createTestcase(testcaseEntity, zipFile ,contextInfo);
         return testcaseMapper.modelToDto(testcaseEntity);
 
     }
@@ -91,20 +103,21 @@ public class TestcaseRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
 
     })
-    @PutMapping("")
+    @PutMapping(value = "",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin')")
     public TestcaseInfo updateTestcase(
-            @RequestBody TestcaseInfo testcaseInfo,
+            @ModelAttribute TestcaseInfo testcaseInfo,
+            @ModelAttribute(value = "zipFile") MultipartFile zipFile,
             @RequestAttribute(name = "contextInfo") ContextInfo contextInfo)
             throws
             OperationFailedException,
             InvalidParameterException,
             VersionMismatchException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
 
         TestcaseEntity testcaseEntity = testcaseMapper.dtoToModel(testcaseInfo);
-        testcaseEntity = testcaseService.updateTestcase(testcaseEntity, contextInfo);
+        testcaseEntity = testcaseService.updateTestcase(testcaseEntity, zipFile ,contextInfo);
         return testcaseMapper.modelToDto(testcaseEntity);
     }
 
@@ -170,12 +183,13 @@ public class TestcaseRestController {
             @RequestParam(name = "validationTypeKey",
                     required = true) String validationTypeKey,
             @RequestBody(required = true) TestcaseInfo testcaseInfo,
+            @ModelAttribute("zipFile") MultipartFile zipFile,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
         TestcaseEntity testcaseEntity = testcaseMapper.dtoToModel(testcaseInfo);
         return testcaseService
-                .validateTestcase(validationTypeKey, testcaseEntity, contextInfo);
+                .validateTestcase(validationTypeKey, zipFile ,testcaseEntity ,contextInfo);
     }
 
     @ApiOperation(value = "To change status of Testcase", response = TestcaseEntity.class)
@@ -235,7 +249,7 @@ public class TestcaseRestController {
 
         // update and return
         TestcaseEntity entity = testcaseMapper.dtoToModel(testcasePatched);
-        entity = testcaseService.updateTestcase(entity, contextInfo);
+        entity = testcaseService.updateTestcase(entity, null,contextInfo);
         return testcaseMapper.modelToDto(entity);
     }
 
@@ -260,4 +274,17 @@ public class TestcaseRestController {
         Collection<String> strings = TestcaseServiceConstants.TESTCASE_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
     }
+
+
+    //TODO - the demo focused code - TEST BED
+   /* @PostMapping("/start/testsuite")
+    public StartResponse startRequest(@RequestBody StartRequest startRequest, @RequestAttribute("contextInfo") ContextInfo contextInfo) throws OperationFailedException {
+        return testSessionManagementRestService.startTestSession(startRequest,contextInfo);
+    }
+
+    @PostMapping("/status/testsuite")
+    public StatusResponse startRequest(@RequestBody StatusRequest statusRequest, @RequestAttribute("contextInfo") ContextInfo contextInfo) throws OperationFailedException {
+        return testSessionManagementRestService.statusTestSession(statusRequest, contextInfo);
+    }
+*/
 }

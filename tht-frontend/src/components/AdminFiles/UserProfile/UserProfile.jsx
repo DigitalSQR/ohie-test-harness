@@ -60,6 +60,9 @@ export default function UserProfile () {
   // Selector to retrieve the user ID from the Redux store.
   const userID = useSelector((store) => store.userInfoSlice.id);
 
+  // State to track if there are unsaved changes in the form
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+
   // Function to handle profile picture upload
   const handleUpload = () => {
 
@@ -111,18 +114,36 @@ export default function UserProfile () {
   // Function to validate form input values.
   const validate = (values) => {
     const errors = {};
-    if (values?.name?.length === 0) {
+    if (!values.name?.trim()) {
       errors.name = "Please enter your name.";
-    } else if (values?.name?.length > 1000) {
-      errors.password = "Password must have less than 1000 characters.";
+    } else if (values.name.trim().length > 1000) {
+      errors.name = "Name must have less than 1000 characters.";
     }
-    if (values?.companyName?.length == 0) {
+  
+    if (!values.companyName?.trim()) {
       errors.companyName = "Please enter your company's name.";
-    } else if (values?.companyName?.length > 255) {
+    } else if (values.companyName.trim().length > 255) {
       errors.companyName = "Company name must have less than 255 characters.";
     }
     return errors;
   };
+
+  // Function to handle beforeunload event
+  const handleBeforeUnload = (event) => {
+    event.preventDefault();
+    event.returnValue = "";
+    return "You have unsaved changes. Are you sure you want to leave this page?";
+  };
+
+  // useEffect hook to track unsavedChanges state
+  useEffect(() => {
+    if (unsavedChanges) {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    } 
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [unsavedChanges]);
 
   // useEffect hook used to update the header title, fetch user data, and display profile picture on component mount.
   useEffect(() => {
@@ -189,7 +210,33 @@ export default function UserProfile () {
     return false;
   };
 
-  const handleCancel = () => setPreviewOpen(false);
+  // Function to handle cancel in modal
+  const handleCancelModal = () => {
+    setPreviewOpen(false)
+  };
+  
+  // Function to handle cancel button click
+  const handleCancel = () => {
+    if (unsavedChanges || uploadedFlag) {
+      Modal.confirm({
+        title: "Discard Changes",
+        content: "Are you sure you want to discard changes?",
+        okText: "Yes",
+        cancelText: "Cancel",
+        onOk() {
+          // Reset form and navigate back
+          navigate(-1);
+          formik.resetForm();
+          setUnsavedChanges(false);
+          setUploadedFlag(false);
+        },
+      });
+    } else {
+      // If no unsaved changes, navigate back
+      navigate(-1);
+      formik.resetForm();
+    }
+  };
 
   // Formik hook to manage form state, validation, and submission.
   const formik = useFormik({
@@ -201,17 +248,26 @@ export default function UserProfile () {
     },
     validate: validate,
     onSubmit: (values) => {
+      setUnsavedChanges(false);
+      setUploadedFlag(false);
       showLoader();
+      const trimmedValues = {
+        ...values,
+        name: values.name.trim(),
+        companyName: values.companyName.trim(),
+      };
+  
       const body = {
         ...userDetails,
-        name: values.name,
-        companyName: values.companyName,
+        name: trimmedValues.name,
+        companyName: trimmedValues.companyName,
       };
       UserAPI.UpdateExistingUser(body)
         .then((response) => {
           notification.success({
-            placement: "bottomRight",
-            description: `User Updated Successfully`,
+            className:"notificationSuccess",
+            placement: "top",
+            message: `Profile has been updated successfully!`,
           });
           dispatch(userinfo_success(body));
           handleUpload();
@@ -225,9 +281,15 @@ export default function UserProfile () {
     },
   });
 
+  // Function to handle changes in form fields
+  const handleFormChange = () => {
+    setUnsavedChanges(true);
+  };
+
   // Function to handle the selection of a new profile picture.
   const handlePictureSelect = (e) => {
     setUploadedFlag(true);
+    setUnsavedChanges(true); 
     setProfilePicture(() => {
       const currentImage = {
         file: e.file,
@@ -266,7 +328,7 @@ export default function UserProfile () {
                     height: "25%",
                     overflow: "hidden",
                     marginBottom: "8px",
-                    borderRadius: "2rem",
+                    borderRadius: "50%",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.lastChild.style.opacity = 1;
@@ -281,7 +343,7 @@ export default function UserProfile () {
                       width: "100%",
                       height: "100%",
                       objectFit: "contain",
-                      borderRadius: "2rem",
+                      borderRadius: "50%",
                     }}
                   />
                   <div
@@ -303,7 +365,7 @@ export default function UserProfile () {
                       <Fragment>
                         <span
                           onClick={handlePreview}
-                          className="bi bi-eye-fill"
+                          className="bi bi-eye"
                           style={{
                             fontSize: "2em",
                             color: "white",
@@ -314,7 +376,7 @@ export default function UserProfile () {
 
                         <span
                           onClick={handleRemove}
-                          className="bi bi-trash-fill"
+                          className="bi bi-trash"
                           style={{ fontSize: "2em", color: "white",cursor: "pointer" }}
                         />
                       </Fragment>
@@ -346,7 +408,7 @@ export default function UserProfile () {
                 open={previewOpen}
                 title={previewTitle}
                 footer={null}
-                onCancel={handleCancel}
+                onCancel={handleCancelModal}
               >
                 <img
                   alt="example"
@@ -372,7 +434,11 @@ export default function UserProfile () {
                     placeholder="Your Name"
                     name="name"
                     value={formik.values.name}
-                    onChange={formik.handleChange}
+                    onChange={(event) => {
+                      formik.handleChange(event); 
+                      handleFormChange(); 
+                    }}
+
                     onBlur={formik.handleBlur}
                   />
                   {formik.touched.name && formik.errors.name && (
@@ -461,10 +527,7 @@ export default function UserProfile () {
               </button>
               <button
                 className="btn btn-primary btn-white font-size-14"
-                onClick={() => {
-                  navigate(-1);
-                  formik.resetForm();
-                }}
+                onClick={handleCancel}
               >
                 Cancel
               </button>

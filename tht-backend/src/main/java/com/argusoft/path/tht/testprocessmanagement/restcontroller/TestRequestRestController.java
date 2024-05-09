@@ -6,7 +6,9 @@ import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.GraphInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestViewInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.mapper.TestRequestMapper;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -250,9 +253,11 @@ public class TestRequestRestController {
     @Transactional(rollbackFor = Exception.class)
     public List<ValidationResultInfo> validateTestRequestState(@PathVariable("testRequestId") String testRequestId,
                                                                @PathVariable("changeState") String changeState,
+                                                               @RequestBody(required = false) Map<String, String> requestMap,
                                                                @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws InvalidParameterException, OperationFailedException {
-        return testRequestService.validateChangeState(testRequestId, changeState, contextInfo);
+        String message = requestMap!=null ? requestMap.get("message") : null;
+        return testRequestService.validateChangeState(testRequestId, message, changeState, contextInfo);
     }
 
     @ApiOperation(value = "To change status of TestRequest", response = DocumentInfo.class)
@@ -266,9 +271,11 @@ public class TestRequestRestController {
     @Transactional(rollbackFor = Exception.class)
     public TestRequestInfo updateTestRequestState(@PathVariable("testRequestId") String testRequestId,
                                                   @PathVariable("changeState") String changeState,
+                                                  @RequestBody(required = false) Map<String, String> requestMap,
                                                   @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
-        TestRequestEntity testRequestEntity = testRequestService.changeState(testRequestId, changeState, contextInfo);
+        String message = requestMap!=null ? requestMap.get("message") : null;
+        TestRequestEntity testRequestEntity = testRequestService.changeState(testRequestId,message, changeState, contextInfo);
         return testRequestMapper.modelToDto(testRequestEntity);
     }
 
@@ -284,5 +291,31 @@ public class TestRequestRestController {
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
         Collection<String> strings = TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
+    }
+
+    @ApiOperation(value = "Retrieves all application status as a list.", response = TestRequestViewInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved status"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+
+    @GetMapping("/applications-stats")
+    public List<TestRequestViewInfo> getApplicationsStats(@RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        return testRequestService.getApplicationsStats(contextInfo);
+    }
+
+    @ApiOperation(value = "Retrieves Graph Info for dashboard", response = GraphInfo.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved Graph Info"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+
+    @GetMapping("/dashboard")
+    public GraphInfo getDashBoard(@RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+        return testRequestService.getDashboard(contextInfo);
     }
 }

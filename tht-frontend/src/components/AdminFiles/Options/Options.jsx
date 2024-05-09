@@ -7,6 +7,18 @@ import { TestResultRelationAPI } from "../../../api/TestResultRelationAPI";
 import { Button, notification } from "antd";
 import { ManualQuestionTypeConstants } from "../../../constants/testcase_constants";
 
+/* 
+	Options Component.
+
+	This component displays all the options present for a particular testcase.
+
+	Props:-
+		1. testcaseResultInfo:- Details of the concerned parent Testcase question.
+		2. setSelectedOption:- Function responsible for defining the selected option.
+		3. currentQuestion:- Details regarding current question, which defines the question being single/multi select. 
+		4. testcaseOptionId:- The unique identifier for the particular question.
+		5. setIsModified:- The flag which indicates if any changes have been made in an question.
+*/
 export default function Options(props) {
 	const { refId, testcaseResultInfo ,setSelectedOptions, currentQuestion ,testcaseOptionId ,setIsModified} = props;
 	const [options, setOptions] = useState([]);
@@ -15,6 +27,7 @@ export default function Options(props) {
 	const { showLoader, hideLoader } = useLoader();
 	const inputRef = useRef(new Array());
 
+	// This useEffect fetches all the concerned options for a specific testcase.
 	useEffect(() => {
 		showLoader();
 		TestResultRelationAPI.getTestcaseResultRelatedObject(
@@ -28,6 +41,7 @@ export default function Options(props) {
 			} else {
 				hideLoader();
 				notification.error({
+					className:"notificationError",
 					message: "Oops! something went wrong ,No answer found!",
 					placement: "bottomRight",
 				});
@@ -36,6 +50,9 @@ export default function Options(props) {
 			hideLoader();
 		});
 	}, []);
+
+	// This useEffect updates the selected option and checks whether there have been any change in the previous 
+	// answers.
 	useEffect(()=>{
 		const selectedOption = testResultRelationInfos.filter(item => item.selected).map(item => item.refId);
 		setIsModified(JSON.stringify(selectedOption) !== JSON.stringify(currentOptions));
@@ -53,6 +70,7 @@ export default function Options(props) {
 			} else {
 				hideLoader();
 				notification.error({
+					className:"notificationError",
 					message: "Oops! something went wrong ,No Result Related Data found!",
 					placement: "bottomRight",
 				});
@@ -93,6 +111,7 @@ export default function Options(props) {
 			return testResultRelationInfo[0].selected;
 		}else{
 			notification.error({
+				className:"notificationError",
 				message: "There is something wrong in filtering result relation info for testOptionId",
 				placement: "bottomRight",
 			});
@@ -119,7 +138,7 @@ export default function Options(props) {
 		<div id="options">
 		<div className="custom-multiselect field-checkbox">
 			{options && options.map((option, index) => (
-				<div className="field-box" key={option.id}>
+				<div className={currentOptions.includes(option.id) ? "field-box option-selected" : "field-box"} key={option.id}>
 					<div className="option-item">
 						<input
 							key={option.id}

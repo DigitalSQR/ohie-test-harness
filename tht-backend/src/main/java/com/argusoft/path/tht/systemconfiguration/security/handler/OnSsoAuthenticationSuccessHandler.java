@@ -153,14 +153,14 @@ public class OnSsoAuthenticationSuccessHandler implements AuthenticationSuccessH
                 response.sendRedirect(s);
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, loggedInUser.getState())) {
                 Map<String, Object> responseMap = new HashMap<>();
-                responseMap.put("message", "Email verification is pending. A verification email has been dispatched.");
+                responseMap.put("message", "Your email address has not been verified yet. Please verify your email before logging in.");
 
                 userService.resendVerification(oauth2User.<String>getAttribute("email"), Constant.SUPER_USER_CONTEXT);
                 String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
                 response.sendRedirect(s);
             } else if (Objects.equals(UserServiceConstants.USER_STATUS_APPROVAL_PENDING, loggedInUser.getState())) {
                 Map<String, Object> responseMap = new HashMap<>();
-                responseMap.put("message", "Admin approval pending. Confirmation email upon approval or rejection within 7 days.");
+                responseMap.put("message", "Your registration request is currently under review. Please wait for approval before logging in.");
 
                 String s = appendParamsToUrl(successCallbackEndUrl, responseMap);
                 response.sendRedirect(s);

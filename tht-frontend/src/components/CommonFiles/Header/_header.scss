@@ -19,24 +19,28 @@
     width: 100%;
   }
 
-  .pd-left-240{
+  .pd-left-240 {
     padding-left: 230px;
   }
+
   @media (max-width: 568px) {
     header {
       padding: 0 12px;
       justify-content: space-between;
     }
   }
+
   @media (max-width: 767.98px) {
     header h5 {
       display: none;
     }
   }
+
   header .user-dropdown {
     cursor: pointer;
     padding-left: 40px;
   }
+
   header .user-dropdown .user-pic {
     width: 32px;
     position: absolute;
@@ -45,44 +49,54 @@
     border-radius: 50%;
     overflow: hidden;
   }
+
   header .user-dropdown .user-pic img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+
   header .user-dropdown span {
     display: block;
     line-height: 16px;
   }
+
   @media (max-width: 991px) {
     header .user-dropdown span {
       line-height: 14px;
     }
   }
+
   header .user-dropdown .user-name {
     font-weight: 600;
   }
+
   header .user-dropdown .user-name i {
     padding-left: 4px;
   }
+
   @media (max-width: 991px) {
     header .user-dropdown .user-name {
       font-size: 12px;
     }
   }
+
   header .bell-icon {
     font-size: 20px;
     padding-right: 6px;
     cursor: pointer;
   }
+
   @media (max-width: 767.98px) {
     header .bell-icon {
       display: none;
     }
   }
+
   header .bell-icon i {
     padding-right: 16px;
   }
+
   .marginLeft {
     margin-left: 30px;
   }
@@ -90,8 +104,8 @@
   .transition {
     transition: 0.5s;
   }
-  
-  ul li a{
+
+  ul li a {
     cursor: pointer;
   }
 
@@ -99,18 +113,122 @@
     padding: 0px;
     border-color: #ccdade;
   }
+
   .dropdown-menu .dropdown-item {
     font-size: 14px;
     padding: 6px 10px;
+
   }
+
   .dropdown-menu .dropdown-item:active {
     background: #009fc8;
   }
-  
+
   .dropdown-item:hover,
   .dropdown-item:focus {
-    color: #1e2125;
-    background-color: #e9ecef;
+    color: #fff;
+    background-color: #009fc8;
   }
-  
-}
+
+  .notification-count {
+    position: absolute;
+    top: -0px;
+    /* Adjust this value to move the circle up */
+    transform: translate(50%, -50%);
+    /* Center the circle */
+    background-color: #dd0000;
+    /* Set your desired color */
+    border-radius: 50%;
+    width: 24px;
+    /* Set your desired width and height for the circle */
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    /* Set the color of the number */
+    font-size: 12px;
+    /* Set the font size of the number */
+    font-weight: 600;
+  }
+
+  .notification-menu {
+    width: 25rem;
+    min-height: 20rem;
+    li{
+      font-size: 13px;
+      font-weight: 500;
+    }
+  }
+
+  .notification-item {
+    padding: 10px 14px 8px 14px;
+    color: #4f6072;
+    line-height: 16px;
+    font-weight: 700;
+    
+    border-bottom: 1px solid #d7e0e3;
+    font-weight: normal;
+    position: relative;
+    padding-right: 54px;
+    &:last-of-type{
+      border-bottom: none;
+    }
+    &:hover{
+      background: #f5f7f7;
+      color: #000;
+      // font-weight: 600;
+      .time-stamp{
+        font-size: 11px;
+        padding-top: 8px;
+        font-weight: normal;
+      }
+    }
+    .time-stamp{
+      font-size: 11px;
+      padding-top: 8px;
+      color: #97a4af;
+      font-weight: normal;
+    }
+    .delete-icon{
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #eaeff1;
+      color: #2d4046;
+      text-align: center;
+      line-height: 36px;
+      .anticon-delete{
+        color: #9eb1b9;
+      }
+    }
+  }
+
+  .notification-header {
+    padding: 12px;
+    margin-bottom: 0;
+    background-color: #00000008;
+    // border-bottom: 5px solid rgba(0, 0, 0, .125);
+    font-size:16px;
+    // margin-bottom: 2rem;
+  }
+
+  .dropdown-menu li {
+    &:first-child {
+      .dropdown-item {
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+      }
+    }
+      &:last-child {
+        .dropdown-item {
+          border-bottom-left-radius: 6px;
+          border-bottom-right-radius: 6px;
+        }
+      }
+    }
+  }

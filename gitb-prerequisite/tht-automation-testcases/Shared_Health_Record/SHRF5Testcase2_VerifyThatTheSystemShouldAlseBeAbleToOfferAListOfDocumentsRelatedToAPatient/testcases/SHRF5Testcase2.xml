@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase id="verify_system_should_be_able_to_offer_a_list_of_document_related_to_patient" xmlns="http://www.gitb.com/tdl/v1/" xmlns:gitb="http://www.gitb.com/core/v1/">
+    <metadata>
+		<gitb:name>Verify system should be able to offer a list of document related to patient</gitb:name>
+		<gitb:type>CONFORMANCE</gitb:type>
+		<gitb:version>1.0</gitb:version>
+		<gitb:description>Test case to Verify system should be able to offer a list of document related to patient</gitb:description>
+	</metadata>
+    <imports>
+        <!-- read data from the JSON stores in name as json string-->
+        <artifact type="binary" encoding="UTF-8" name="patientToCreateInJsonString">/SHRF5Testcase2_VerifyThatTheSystemShouldAlseBeAbleToOfferAListOfDocumentsRelatedToAPatient/resources/PatientToCreate.json</artifact>
+        <artifact type="binary" encoding="UTF-8" name="practitionerToCreateInJsonString">/SHRF5Testcase2_VerifyThatTheSystemShouldAlseBeAbleToOfferAListOfDocumentsRelatedToAPatient/resources/PractitionerToCreate.json</artifact>
+        <artifact type="binary" encoding="UTF-8" name="organizationToCreateInJsonString">/SHRF5Testcase2_VerifyThatTheSystemShouldAlseBeAbleToOfferAListOfDocumentsRelatedToAPatient/resources/OrganizationToCreate.json</artifact>
+        <artifact type="binary" encoding="UTF-8" name="admissionNoteToCreateInJsonString">/SHRF5Testcase2_VerifyThatTheSystemShouldAlseBeAbleToOfferAListOfDocumentsRelatedToAPatient/resources/AdmissionNoteToCreate.json</artifact>
+        <artifact type="binary" encoding="UTF-8" name="operativeNoteToCreateInJsonString">/SHRF5Testcase2_VerifyThatTheSystemShouldAlseBeAbleToOfferAListOfDocumentsRelatedToAPatient/resources/OperativeNoteToCreate.json</artifact>
+        <artifact type="binary" encoding="UTF-8" name="progressNoteToCreateInJsonString">/SHRF5Testcase2_VerifyThatTheSystemShouldAlseBeAbleToOfferAListOfDocumentsRelatedToAPatient/resources/ProgressNoteToCreate.json</artifact>
+        <artifact type="binary" encoding="UTF-8" name="dischargeSummaryToCreateInJsonString">/SHRF5Testcase2_VerifyThatTheSystemShouldAlseBeAbleToOfferAListOfDocumentsRelatedToAPatient/resources/DischargeSummaryToCreate.json</artifact>
+    </imports>
+    <variables>
+        <var name="componentURI" type="string"/>
+        <var name="username" type="string"/>
+        <var name="password" type="string"/>
+    </variables>
+    <actors>
+		<gitb:actor id="ITB" name="ITB" role="SUT"/>
+		<gitb:actor id="FhirHandler" name="FhirHandlers" role="SIMULATED"/>
+	</actors>
+    <steps stopOnError="true">
+
+        <!--
+            assign will stores value in variable, and it can be used as $variable_name
+
+            right now ITB doesn't support parsing JsonString as map/array
+            but it has specific type anyContent which works as map
+            and we can do stuff like $variable_name{$property_name_1}{0}{$property_name_2}
+
+            Detailed document : https://www.itb.ec.europa.eu/docs/tdl/latest/expressions/index.html#referring-to-variables
+        -->
+        <assign to="resourceType" type="string">'Patient'</assign>
+
+
+        <!-- 
+            send operation execute send method of handler (Which is written in JavaCode)
+            send operation's response will get stored in id 
+
+
+            Right now we have following custom handlers with following inputs:
+            1. $DOMAIN{jsonStringConverterServiceAddress} - converts anyContent <-> jsonString
+                1.body
+                    - required 
+                    - body which needs to be converted anyContent <-> jsonString                
+                2.bodyType
+                    - optional
+                    - default value = anyContent
+                    - possible value = jsonString, anyContent
+                    - convert body to opposite type.
+            Response 
+                - Structure $send_id{convertedBody}
+
+            2. $DOMAIN{fhirContextServiceAddress} - make operations for the FHIR
+                1.fhirServerBaseUrl
+                    - required
+                    - base URL of FHIR Server
+                2.fhirVersion
+                    - optional
+                    - default value = R4
+                    - possible value = DSTU2, DSTU3, STU3, R4, R4B, R5, Partial version strings (e.g. "3.0")
+                3.connectTimeout
+                    - optional
+                    - deafault value = 60000 (in milliseconds)
+                    - Sets the connect timeout, in milliseconds. This is the amount of time that the initial connection attempt network operation may block without failing.
+                4.socketTimeout
+                    - optional
+                    - deafault value = 60000 (in milliseconds)
+                    - Sets the socket timeout, in milliseconds. This is the SO_TIMEOUT time, which is the amount of time that a read/write network operation may block without failing.
+                5.userName
+                    - optional
+                    - username for the basic username/password based authentication/authorization
+                6.password
+                    - optional
+                    - password for the basic username/password based authentication/authorization
+                7.token
+                    - optional
+                    - token for the bearer token based authentication/authorization
+                8.responseType
+                    - optional
+                    - default value = anyContent
+                    - possible value = jsonString, anyContent
+                9.operationType
+                    - required
+                    - possible value = create, update, delete, search, getById, getHistoryById
+                    
+                extra parameters depending on operation:
+                create/update:
+                    1.bodyType
+                        - optional
+                        - default value = anyContent
+                        - possible value = jsonString, anyContent
+                    2.body
+                        -required
+                        -resource data which needs to be created/update
+                search:
+                    1.fhirResourceType
+                        - required
+                        - possible value = Patient, etc.
+                        - ResourceType of FHIR resource which needs to be fetched
+                    2.parameters
+                        -required
+                        -parameters as query parameters for filter
+                getById/delete/getHistoryById:
+                    1.fhirResourceType
+                        - required
+                        - possible value = Patient, etc.
+                        - ResourceType of FHIR resource for which we're making operation
+                    2.fhirResourceId
+                        - required
+                        - ID of FHIR resource for which we're making operation
+            Response Structure 
+                - $send_id{request}{endpoint}
+                - $send_id{request}{body}
+                - $send_id{response}{status}
+                - $send_id{response}{body}
+
+            3. $DOMAIN{apiCallServiceAddress} - make any kind of calls
+                1.httpMethod
+                    - required
+                    - possible value = GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+                    - Http Method Types
+                2.url
+                    - required
+                    - url for the Http Request
+                3.mediaType
+                    -optional
+                    -deafult value = application/json, etc
+                    -mediaType for the Http Call
+                3.body
+                    -optional
+                    -request body for the Http Call
+                4.header
+                    -optional
+                    -header parameters for the Http Call
+                5.responseType
+                    - optional
+                    - default value = anyContent
+                    - possible value = jsonString, anyContent
+            Response Structure 
+                - $send_id{request}{endpoint}
+                - $send_id{request}{body}
+                - $send_id{response}{status}
+                - $send_id{response}{body}
+        -->
+
+        <!-- Convert patient data -->
+
+        <send id="patientToCreate" desc="Convert patientToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$patientToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Patient Data'</log>
+        <log>$patientToCreate</log>
+
+        <send id="createdPatient" desc="Create Patient in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$patientToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Patient Data'</log>
+        <log>$createdPatient</log>
+
+        <!--
+            verify data
+        -->
+        <verify id="verifyCreatePatient" handler="StringValidator" desc="Check that patient got created successfully or not with correct data.">
+            <input name="actualstring">$createdPatient{response}{body}{birthDate}</input>
+            <input name="expectedstring">'1970-01-01'</input>
+        </verify>
+
+        <!-- Convert practitioner data -->
+
+        <send id="practitionerToCreate" desc="Convert practitionerToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$practitionerToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Practitioner Data'</log>
+        <log>$practitionerToCreate</log>
+
+        <send id="createdPractitioner" desc="Create Practitioner in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$practitionerToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Practitioner Data'</log>
+        <log>$createdPractitioner</log>
+
+        <!--
+            verify data
+        -->
+        <verify id="verifyCreatePractitioner" handler="StringValidator" desc="Check that practitioner got created successfully or not with correct data.">
+            <input name="actualstring">$createdPractitioner{response}{body}{birthDate}</input>
+            <input name="expectedstring">'1970-02-02'</input>
+        </verify>
+
+        <!-- Convert Organization data -->
+
+        <send id="organizationToCreate" desc="Convert patientToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$organizationToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Organization Data'</log>
+        <log>$organizationToCreate</log>
+
+        <send id="createdOrganization" desc="Create Organization in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$organizationToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Organization Data'</log>
+        <log>$createdOrganization</log>
+
+        <!--
+            verify data
+        -->
+        <verify id="verifyCreateOrganization" handler="StringValidator" desc="Check that organization got created successfully or not with correct data.">
+            <input name="actualstring">$createdOrganization{response}{body}{name}</input>
+            <input name="expectedstring">'Health System Inc.'</input>
+        </verify>
+
+        <!-- Convert Admission Note data -->
+
+        <send id="admissionNoteToCreate" desc="Convert admissionNoteToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$admissionNoteToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <assign to="admissionNoteToCreate{convertedBody}{subject}{reference}">'Patient/'||$createdPatient{response}{body}{id}</assign>
+        <assign to="admissionNoteToCreate{convertedBody}{customdian}{reference}">'Organization/'||$createdOrganization{response}{body}{id}</assign>
+        <assign to="admissionNoteToCreate{convertedBody}{author}{0}{reference}">'Practitioner/'||$createdPractitioner{response}{body}{id}</assign>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Admission Note Data'</log>
+        <log>$admissionNoteToCreate</log>
+
+        <send id="createdAdmissionNote" desc="Create Admission Note in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$admissionNoteToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Admission Note Data'</log>
+        <log>$createdAdmissionNote</log>
+
+        <!--
+            verify data
+        -->
+        <verify id="verifyCreateAdmissionNote" handler="StringValidator" desc="Check that admissionNote got created successfully or not with correct data.">
+            <input name="actualstring">$createdAdmissionNote{response}{body}{type}{coding}{0}{display}</input>
+            <input name="expectedstring">'Admission note'</input>
+        </verify>
+
+        <!-- Convert Operative Note data -->
+
+        <send id="operativeNoteToCreate" desc="Convert operativeNoteToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$operativeNoteToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <assign to="operativeNoteToCreate{convertedBody}{subject}{reference}">'Patient/'||$createdPatient{response}{body}{id}</assign>
+        <assign to="operativeNoteToCreate{convertedBody}{customdian}{reference}">'Organization/'||$createdOrganization{response}{body}{id}</assign>
+        <assign to="operativeNoteToCreate{convertedBody}{author}{0}{reference}">'Practitioner/'||$createdPractitioner{response}{body}{id}</assign>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Operative Note Data'</log>
+        <log>$operativeNoteToCreate</log>
+
+        <send id="createdOperativeNote" desc="Create Operative Note in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$operativeNoteToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created OperativeNote Data'</log>
+        <log>$createdOperativeNote</log>
+
+        <!--
+            verify data
+        -->
+        <verify id="verifyCreateOperativeNote" handler="StringValidator" desc="Check that operativeNote got created successfully or not with correct data.">
+            <input name="actualstring">$createdOperativeNote{response}{body}{type}{coding}{0}{display}</input>
+            <input name="expectedstring">'Operative note'</input>
+        </verify>
+
+        <!-- Convert Progress Note data -->
+
+        <send id="progressNoteToCreate" desc="Convert progressNoteToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$progressNoteToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <assign to="progressNoteToCreate{convertedBody}{subject}{reference}">'Patient/'||$createdPatient{response}{body}{id}</assign>
+        <assign to="progressNoteToCreate{convertedBody}{customdian}{reference}">'Organization/'||$createdOrganization{response}{body}{id}</assign>
+        <assign to="progressNoteToCreate{convertedBody}{author}{0}{reference}">'Practitioner/'||$createdPractitioner{response}{body}{id}</assign>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Progress Note Data'</log>
+        <log>$progressNoteToCreate</log>
+
+        <send id="createdProgressNote" desc="Create Progress Note in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$progressNoteToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Progress Note Data'</log>
+        <log>$createdProgressNote</log>
+
+        <!--
+            verify data
+        -->
+        <verify id="verifyCreateProgressNote" handler="StringValidator" desc="Check that progressNote got created successfully or not with correct data.">
+            <input name="actualstring">$createdProgressNote{response}{body}{type}{coding}{0}{display}</input>
+            <input name="expectedstring">'Progress note'</input>
+        </verify>
+
+        <!-- Convert Discharge Summary data -->
+
+        <send id="dischargeSummaryToCreate" desc="Convert progressNoteToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$dischargeSummaryToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <assign to="dischargeSummaryToCreate{convertedBody}{subject}{reference}">'Patient/'||$createdPatient{response}{body}{id}</assign>
+        <assign to="dischargeSummaryToCreate{convertedBody}{customdian}{reference}">'Organization/'||$createdOrganization{response}{body}{id}</assign>
+        <assign to="dischargeSummaryToCreate{convertedBody}{author}{0}{reference}">'Practitioner/'||$createdPractitioner{response}{body}{id}</assign>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Discharge Summary Data'</log>
+        <log>$dischargeSummaryToCreate</log>
+
+        <send id="createdDischargeSummary" desc="Create Discharge Summary in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$dischargeSummaryToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Discharge Summary Data'</log>
+        <log>$createdDischargeSummary</log>
+
+        <!--
+            verify data
+        -->
+        <verify id="verifyCreateDischargeSummary" handler="StringValidator" desc="Check that DischargeSummary got created successfully or not with correct data.">
+            <input name="actualstring">$createdDischargeSummary{response}{body}{type}{coding}{0}{display}</input>
+            <input name="expectedstring">'Discharge summary'</input>
+        </verify>
+
+        <!-- Search for Composition -->
+
+        <send id="searchedComposition" desc="search same composition from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"search"</input>
+            <input name="fhirResourceType">'Composition'</input>
+            <input name="parameters">'patient=' || $createdPatient{response}{body}{id}</input>
+        </send>
+
+        <log>'Searched Composition Data'</log>
+        <log>$searchedComposition</log>
+
+        <process id="searchedCompositionLinkSize" handler="CollectionUtils">
+            <operation>size</operation>
+            <input name="map">$searchedComposition{response}{body}{link}</input>
+        </process>
+
+        <verify id="verifyCompositionLinkSize" handler="NumberValidator" desc="Check that searched composition has only 1 link size">
+            <input name="actualnumber">$searchedCompositionLinkSize{output}</input>
+            <input name="expectednumber">'1'</input>
+        </verify>
+
+        <verify id="verifyCompositionTotalSize" handler="NumberValidator" desc="Check that searched composition has 4 entries">
+            <input name="actualnumber">$searchedComposition{response}{body}{total}</input>
+            <input name="expectednumber">'4'</input>
+        </verify>
+
+        <foreach desc="Iterate list" counter="index" start="0" end="$searchedComposition{response}{body}{total}">
+            <do>
+                <verify id="verifySearchedCompositionEntryResourceType" handler="StringValidator" desc="Check that searched composition entry has correct composition resource type.">
+                    <input name="actualstring">$searchedComposition{response}{body}{entry}{$index}{resource}{resourceType}</input>
+                    <input name="expectedstring">'Composition'</input>
+                </verify>
+
+                <assign to="verifyCompositionTitle">'false'</assign>
+                
+                <if desc="check if composition title is correct">
+                    <cond>$searchedComposition{response}{body}{entry}{$index}{resource}{title} = 'Admission Note'</cond>
+                    <then>
+                        <assign to="verifyCompositionTitle">'true'</assign>
+                    </then>
+                </if>
+                <if desc="check if composition title is correct">
+                    <cond>$searchedComposition{response}{body}{entry}{$index}{resource}{title} = 'Operative Note'</cond>
+                    <then>
+                        <assign to="verifyCompositionTitle">'true'</assign>
+                    </then>
+                </if>
+                <if desc="check if composition title is correct">
+                    <cond>$searchedComposition{response}{body}{entry}{$index}{resource}{title} = 'Progress Note'</cond>
+                    <then>
+                        <assign to="verifyCompositionTitle">'true'</assign>
+                    </then>
+                </if>
+                <if desc="check if composition title is correct">
+                    <cond>$searchedComposition{response}{body}{entry}{$index}{resource}{title} = 'Discharge Summary'</cond>
+                    <then>
+                        <assign to="verifyCompositionTitle">'true'</assign>
+                    </then>
+                </if>
+
+                <verify id="verifySearchedCompositionEntrytitle" handler="StringValidator" desc="Check that searched composition entry has correct Title.">
+                    <input name="actualstring">$verifyCompositionTitle</input>
+                    <input name="expectedstring">'true'</input>
+                </verify>
+
+                <verify id="verifySearchedCompositionEntrySubjectReference" handler="StringValidator" desc="Check that searched composition entry has correct subject reference.">
+                    <input name="actualstring">$searchedComposition{response}{body}{entry}{$index}{resource}{subject}{reference}</input>
+                    <input name="expectedstring">'Patient/'||$createdPatient{response}{body}{id}</input>
+                </verify>
+
+                <verify id="verifySearchedCompositionEntryAuthorReference" handler="StringValidator" desc="Check that searched composition entry has correct author reference.">
+                    <input name="actualstring">$searchedComposition{response}{body}{entry}{$index}{resource}{author}{0}{reference}</input>
+                    <input name="expectedstring">'Practitioner/'||$createdPractitioner{response}{body}{id}</input>
+                </verify>
+                
+            </do>
+        </foreach>
+
+    </steps>
+
+    <output>
+        <success>
+            <default>"Test case completed successfully."</default>
+        </success>
+        <failure>
+            <case>
+                <cond>$STEP_STATUS{verifyCreatePatient} = 'ERROR'</cond>
+                <message>"Patient Creation Failed"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyCreatePractitioner} = 'ERROR'</cond>
+                <message>"Practitioner Creation Failed"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyCreateOrganization} = 'ERROR'</cond>
+                <message>"Organization Creation Failed"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyCreateAdmissionNote} = 'ERROR'</cond>
+                <message>"Admission Note Creation Failed"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyCreateOperativeNote} = 'ERROR'</cond>
+                <message>"Operative Note Creation Failed"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyCreateProgressNote} = 'ERROR'</cond>
+                <message>"Progress Note Creation Failed"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyCreateDischargeSummary} = 'ERROR'</cond>
+                <message>"Discharge Summary Creation Failed"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyCompositionLinkSize} = 'ERROR'</cond>
+                <message>"Searched Composition Link size is not as expected"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyCompositionTotalSize} = 'ERROR'</cond>
+                <message>"Searched Composition entry size is not as expected"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedCompositionEntryResourceType} = 'ERROR'</cond>
+                <message>"Searched Composition entry does not have correct resource type"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedCompositionEntrytitle} = 'ERROR'</cond>
+                <message>"Searched Composition entry does not have correct title"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedCompositionEntrySubjectReference} = 'ERROR'</cond>
+                <message>"Searched Composition Entry does not have correct subject refrence"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifySearchedCompositionEntryAuthorReference} = 'ERROR'</cond>
+                <message>"Searched Composition entry does not have correct author reference"</message>
+            </case>
+            <default>"Test case failed."</default>
+        </failure>
+    </output>  
+</testcase>

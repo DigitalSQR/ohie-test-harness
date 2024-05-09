@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase id="tswf8_translate_code_operation" xmlns="http://www.gitb.com/tdl/v1/" xmlns:gitb="http://www.gitb.com/core/v1/">
+    <metadata>
+		<gitb:name>Translate Code</gitb:name>
+		<gitb:type>CONFORMANCE</gitb:type>
+		<gitb:version>1.0</gitb:version>
+		<gitb:description>Test case to perform translate operation</gitb:description>
+	</metadata>
+    <imports>
+        <!-- read data from the JSON stores in name as json string-->
+        <artifact type="binary" encoding="UTF-8" name="conceptMapToCreateInJsonString">/TSWF8_TranslateCode/resources/ConceptMapToCreate.json</artifact>
+    </imports>
+    <variables>
+        <var name="componentURI" type="string"/>
+        <var name="username" type="string"/>
+        <var name="password" type="string"/>
+    </variables>
+    <actors>
+		<gitb:actor id="ITB" name="ITB" role="SUT"/>
+		<gitb:actor id="FhirHandler" name="FhirHandlers" role="SIMULATED"/>
+	</actors>
+    <steps stopOnError="true">
+        <!-- assigning value -->
+        <assign to="resourceType" type="string">'ConceptMap'</assign>
+
+        <send id="conceptMapToCreate" desc="Convert conceptMap jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$conceptMapToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!-- Add log -->
+        <log>'Converted ConceptMap Data'</log>
+        <log>$conceptMapToCreate</log>
+
+        <!-- Create ConceptMap -->
+        <send id="createdConceptMap" desc="Create ConceptMap in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$conceptMapToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created ConceptMap Data'</log>
+        <log>$createdConceptMap</log>
+
+        <!--
+            verify conceptMap creation
+        -->
+        <verify id="verifyConceptMapCreation" handler="StringValidator" desc="Check conceptMap got created successfully or not with correct data.">
+            <input name="actualstring">$createdConceptMap{response}{body}{date}</input>
+            <input name="expectedstring">'2024-04-23'</input>
+        </verify>
+
+        <!-- Perform $translate operation -->
+        <send id="translateResult" desc="Perform $translate operation" from="ITB" to="FhirHandler" handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="httpMethod">POST</input>
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="fhirResourceType">$resourceType</input>
+            <input name="operationType">"translate"</input>
+            <input name="parameters.url">$createdConceptMap{response}{body}{url}</input>
+            <input name="parameters.system">'http://terminology.hl7.org/CodeSystem/v3-ActCode'</input>
+            <input name="parameters.code">'ACT'</input>
+        </send>
+
+        <log>'ConceptMap Translate Data'</log>
+        <log>$translateResult</log>
+
+        <!--
+            verify if code present in a conceptMap or not
+        -->
+        <verify id="verifyTranslateResult" handler="StringValidator" desc="verify $translate operation">
+            <input name="actualstring">$translateResult{response}{body}{parameter}{2}{part}{1}{valueCoding}{code}</input>
+            <input name="expectedstring">'AL'</input>
+        </verify>
+
+        <!-- delete conceptMap -->
+        <send id="deleteConceptMap" desc="delete conceptMap from the FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"delete"</input>
+            <input name="fhirResourceType">$resourceType</input>
+            <input name="fhirResourceId">$createdConceptMap{response}{body}{id}</input>
+        </send>
+     
+        <log>'Delete ConceptMap Response'</log>
+        <log>$deleteConceptMap</log>
+
+    </steps>
+
+    <output>
+        <success>
+            <default>"Test case completed successfully."</default>
+        </success>
+        <failure>
+           <case>
+                <cond>$STEP_STATUS{conceptMapToCreate} = 'ERROR'</cond>
+                <message>"Failed to convert first conceptMap type (jsonString to anyContent)."</message>
+            </case>     
+            <case>
+                <cond>$STEP_STATUS{createdConceptMap} = 'ERROR'</cond>
+                <message>"Failed to create first conceptMap"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyConceptMapCreation} = 'ERROR'</cond>
+                <message>"Failed to verify conceptMap creation"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{translateResult} = 'ERROR'</cond>
+                <message>"Failed to perform $translate operation"</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyTranslateResult} = 'ERROR'</cond>
+                <message>"Invalid result for the $translate operation"</message>
+            </case>   
+            <case>
+                <cond>$STEP_STATUS{deleteConceptMap} = 'ERROR'</cond>
+                <message>"Failed to delete conceptMap"</message>
+            </case>                 
+            <default>"Test case failed. Please check the failed step's report for more information and the test log."</default> 
+        </failure>
+    </output>  
+</testcase>

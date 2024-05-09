@@ -4,6 +4,8 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.GraphInfo;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestViewInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -176,12 +178,13 @@ public interface TestRequestService {
      *
      * @param testRequestId id of the testRequest
      * @param stateKey      expected statekey
+     * @param message       message for rejection
      * @param contextInfo   ContextInfo
      * @return DocumentEntity
-     * @throws DoesNotExistException        when document does not exists for that id
+     * @throws DoesNotExistException        when document does not exist for that id
      * @throws DataValidationErrorException when validation fails
      */
-    public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+    public TestRequestEntity changeState(String testRequestId, String message, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
 
     /**
      * Validates a TestRequest statechange.
@@ -194,7 +197,20 @@ public interface TestRequestService {
      * @throws InvalidParameterException TestRequestInfo or contextInfo is not valid
      * @throws OperationFailedException  unable to complete request
      */
-    public List<ValidationResultInfo> validateChangeState(String testRequestId, String stateKey, ContextInfo contextInfo)
+    public List<ValidationResultInfo> validateChangeState(String testRequestId, String message, String stateKey, ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException;
+
+
+    public List<TestRequestViewInfo> getApplicationsStats(ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, RuntimeException;
+
+    /**
+     *
+     * @param contextInfo   information containing the principalId and locale
+     *      *               information about the caller of service operation
+     * @return DTO containing dashboard data
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException unable to complete request
+     */
+    public GraphInfo getDashboard(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException;
 }

@@ -47,10 +47,10 @@ public class CaptchaValidation {
 
         if (!expiryTime.before(currentTime)) {
             if (!code.equals(userCode)) {
-                errors.add(new ValidationResultInfo("code", ErrorLevel.ERROR, "Invalid captcha."));
+                errors.add(new ValidationResultInfo("code", ErrorLevel.ERROR, "Invalid CAPTCHA."));
             }
         } else {
-            errors.add(new ValidationResultInfo("code", ErrorLevel.ERROR, "Captcha expired."));
+            errors.add(new ValidationResultInfo("code", ErrorLevel.ERROR, "CAPTCHA expired."));
         }
     }
 

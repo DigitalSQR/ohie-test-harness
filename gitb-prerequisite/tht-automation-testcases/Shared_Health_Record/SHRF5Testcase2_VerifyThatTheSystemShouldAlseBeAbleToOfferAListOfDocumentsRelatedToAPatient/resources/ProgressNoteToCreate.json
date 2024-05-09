@@ -1,0 +1,33 @@
+{
+    "resourceType" : "Composition",
+    "status" : "final",
+    "type" : {
+      "coding" : [ {
+        "system" : "http://loinc.org",
+        "code" : "11506-3",
+        "display" : "Progress note"
+      } ]
+    },
+    "subject" : {
+      "reference" : "Patient/1234"
+    },
+    "date" : "2024-04-10T11:53:40+05:30",
+    "author" : [ {
+      "reference" : "Practitioner/8912"
+    } ],
+    "title" : "Progress Note",
+    "custodian" : {
+      "reference" : "Organization/4567",
+      "display" : "Good Health Clinic"
+    },
+    "section" : [ {
+      "title" : "Daily Progress Notes",
+      "code" : {
+        "text" : "Daily Progress Notes"
+      },
+      "text" : {
+        "status" : "generated",
+        "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\">On day 2 of hospitalization, the patient's condition remained stable</div>"
+      }
+    } ]
+  }

@@ -18,8 +18,9 @@ export default function CongratulationsPage() {
       .then((response) => {
         var data = response.data;
         notification.success({
-          placement: "bottomRight",
-          description: `${data?.message}`,
+          className:"notificationSuccess",
+          placement: "top",
+          message: `${data?.message}`,
         });
         hideLoader();
         navigate("/login");
@@ -97,7 +98,7 @@ export default function CongratulationsPage() {
                   </>
                 )}
                 <button
-                  className="btn btn-primary btn-blue w-100 my-4"
+                  className="btn btn-primary btn-blue w-100 my-4 py-3"
                   onClick={() => navigate("/login")}
                 >
                   LOGIN

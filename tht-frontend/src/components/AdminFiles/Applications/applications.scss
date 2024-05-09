@@ -34,6 +34,7 @@
     font-size: 18px;
     font-weight: 600;
     border-color: #009fc8;
+    border-radius: 4px;
   }
   .btn-blue:hover {
     background: #1991b1;
@@ -58,6 +59,7 @@
     color: #51516d;
     font-weight: 600;
     border-color: #ccdade;
+    border-radius: 4px;
   }
   .btn-white:hover {
     background: #1991b1;
@@ -68,8 +70,16 @@
   }
   .btn-white:focus {
     box-shadow: none;
-    background: #fff;
-    color: #51516d;
+    background: #1991b1;
+    border-color: #1991b1;
+    color: #fff;
+    border-color: #ccdade;
+  }
+  .btn-white:focus {
+    box-shadow: none;
+    background: #1991b1;
+    border-color: #1991b1;
+    color: #fff;
     border-color: #ccdade;
   }
 
@@ -306,7 +316,9 @@
       background: #F0F6FB !important; /* Background for even rows */
 }
   .status{
-    width:68% !important;
+    // width:68% !important;
+    padding: 0px 16px;
+    font-weight: 500;
   }
 
   .pagination-ui {
@@ -330,5 +342,11 @@
   }
   .font-size-16 {
     font-size: 16px;
+  }
+ 
+  .approval-action-button{
+    .bi-arrow-down-circle-fill,.bi-arrow-up-circle-fill{
+      color: #6c8091;
+    }
   }
 }

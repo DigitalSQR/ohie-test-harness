@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from "react";
-import "./_table.scss";
 import "./applications.scss";
 import sortIcon from "../../../styles/images/sort-icon.png";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +25,9 @@ import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
 import UserIdNameEmailConnector from "../../connectors/UserIdNameEmailConnector/UserIdNameEmailConnector";
-
+import { Popover } from "antd";
+import moment from "moment";
+import { InfoCircleOutlined } from "@ant-design/icons";
 /**
  * Applications Component:
  * This component displays a table of applications with options to filter, sort, and update their statuses.
@@ -56,6 +57,11 @@ const Applications = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [userRole, setUserRole] = useState([]);
   const { showLoader, hideLoader } = useLoader();
+  const [reasonForRejection, setReasonForRejection] = useState();
+  const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
+  const [currentTestRequestId, setCurrentTestRequestId] = useState();
+  const [currentIndex, setCurrentIndex] = useState();
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const pageSize = 10;
@@ -64,7 +70,7 @@ const Applications = () => {
   useEffect(() => {
     dispatch(set_header("Applications"));
     var state = filterState;
-      getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
+    getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
   }, [filterState]);
 
   //useEffect to set the user role
@@ -74,7 +80,7 @@ const Applications = () => {
         setUserRole(res.roleIds);
       })
       .catch((error) => {});
-  },[]);
+  }, []);
 
   //Function to get all the test requests varying with the different state we want to fetch
   const getAllTestRequests = (
@@ -93,6 +99,7 @@ const Applications = () => {
     )
       .then((res) => {
         hideLoader();
+
         setTestRequests(res.content);
         setTotalPages(res.totalPages);
       })
@@ -100,7 +107,7 @@ const Applications = () => {
         hideLoader();
       });
   };
-  
+
   //Function to toggle between the visibility of the password i.e. to either show or hide the password
   const togglePasswordVisibility = (testUrl) => {
     if (testUrl.showPass) {
@@ -130,7 +137,7 @@ const Applications = () => {
     setSortFieldName(sortFieldName);
     const newSortDirection = { ...obj };
     newSortDirection[sortFieldName] =
-    sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
+      sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
     getAllTestRequests(
       filterState,
@@ -146,18 +153,20 @@ const Applications = () => {
       return (
         <img
           className="cursor-pointer"
-          style={{width:"8px"}}
-          src={
-            sortDirection[fieldName] === "asc"
-              ? sortedUp
-              : sortedDown
-          }
+          style={{ width: "8px" }}
+          src={sortDirection[fieldName] === "asc" ? sortedUp : sortedDown}
         ></img>
       );
     }
-    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
+    return (
+      <img
+        className="cursor-pointer"
+        style={{ width: "10px" }}
+        src={unsorted}
+      />
+    );
   };
-  
+
   //Function to handle the page change in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
@@ -172,64 +181,99 @@ const Applications = () => {
   //Function that handles whether the test request is to approved or rejected by the admin
   const changeState = (testRequestId, updatedState, index, proceedAnyways) => {
     showLoader();
-    TestRequestAPI.validateChangeState(testRequestId, updatedState)
-    .then((validationResults) => {
-      let warnings = [];
-      let errors = [];
-      for(let validationResult of validationResults) {
-        if(validationResult.level === "WARN") {
-          warnings.push(validationResult.message);
-        } else if(validationResult.level === "ERROR") {
-          errors.push(validationResult.message);
-        } 
-      }
-      if(!!errors.length) {
-        hideLoader();
-        errors.forEach((error, i) => {
-          notification.error({
-            description: error,
-            placement: "bottomRight",
-          });
-        })
-      } else if(!!warnings.length && !proceedAnyways) {
-        hideLoader();
-        Modal.confirm({
-          title: "Test Request Status Update",
-          content: (
-            <div>
-              <p><strong>Please review the following warnings:</strong></p>
-              <ul style={{ paddingLeft: 20 }}>
-                {warnings.map((warning, i) => (
-                  <li key={index}>{warning}</li>
-                ))}
-              </ul>
-            </div>
-          ),
-          okText: "Procced Anyway",
-          cancelText: "Cancel",
-          width: 600,
-          onOk() {
-            changeState(testRequestId, updatedState, index, true);
-          },
-        }); 
-      } else {
-        TestRequestAPI.changeState(testRequestId, updatedState)
-        .then((res) => {
-          notification.success({
-            placement: "bottomRight",
-            message: "Status updated successfully!",
-          });
-          testRequests[index] = res;
-          setTestRequests(testRequests);
+    TestRequestAPI.validateChangeState(
+      testRequestId,
+      updatedState,
+      reasonForRejection
+    )
+      .then((validationResults) => {
+        let warnings = [];
+        let errors = [];
+        for (let validationResult of validationResults) {
+          if (validationResult.level === "WARN") {
+            warnings.push(validationResult.message);
+          } else if (validationResult.level === "ERROR") {
+            errors.push(validationResult.message);
+          }
+        }
+        if (!!errors.length) {
           hideLoader();
-        })
-        .catch((err) => {       
+          errors.forEach((error, i) => {
+            notification.error({
+              className: "notificationError",
+              message: error,
+              placement: "bottomRight",
+            });
+          });
+        } else if (!!warnings.length && !proceedAnyways) {
           hideLoader();
-        }); 
-      }
-    }).catch((err) => {       
-      hideLoader();
-    });
+          Modal.confirm({
+            title: "Test Request Status Update",
+            content: (
+              <div>
+                <p>
+                  <strong>Please review the following warnings:</strong>
+                </p>
+                <ul style={{ paddingLeft: 20 }}>
+                  {warnings.map((warning, i) => (
+                    <li key={index}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
+            ),
+            okText: "Procced Anyway",
+            cancelText: "Cancel",
+            width: 600,
+            onOk() {
+              changeState(testRequestId, updatedState, index, true);
+            },
+          });
+        } else {
+          Modal.confirm({
+            title: "Confirmation",
+            content: `Are you sure you want to change the status of this application testing request to ${
+              updatedState === "test.request.status.rejected"
+                ? "rejected"
+                : "accepted"
+            }?`,
+            onOk() {
+              showLoader();
+              TestRequestAPI.changeState(
+                testRequestId,
+                updatedState,
+                reasonForRejection
+              )
+                .then((res) => {
+                  notification.success({
+                    className: "notificationSuccess",
+                    placement: "top",
+                    message: `Application testing request has been ${
+                      updatedState === "test.request.status.rejected"
+                        ? "rejected"
+                        : "accepted"
+                    } successfully!`,
+                  });
+                  const updatedTestRequests = [...testRequests];
+                  updatedTestRequests[index] = res;
+                  setTestRequests(updatedTestRequests);
+                  hideLoader();
+                })
+                .catch((err) => {
+                  hideLoader();
+                })
+                .finally(() => {
+                  hideLoader(); // Ensure that hideLoader is always called after the operation
+                });
+            },
+          });
+        }
+      })
+      .catch((err) => {
+        hideLoader();
+      })
+      .finally(() => {
+        hideLoader();
+      });
   };
 
   return (
@@ -266,7 +310,7 @@ const Applications = () => {
             <table className=" data-table capitalize-words">
               <thead>
                 <tr>
-                  <th style={{width:"15%"}}>
+                  <th style={{ width: "12%" }}>
                     APPLICATION NAME{" "}
                     <span
                       className="ps-1"
@@ -276,8 +320,11 @@ const Applications = () => {
                       {renderSortIcon("name")}
                     </span>
                   </th>
-                  <th style={{width:"15%"}}>
-                    DATE OF APPLICATION
+                  <th style={{ width: "12%" }}>Assessee</th>
+                  <th style={{ width: "12%" }}>Company</th>
+                  <th style={{ width: "16%" }}>EMAIL ID</th>
+                  <th style={{ width: "15%" }}>
+                    REQUEST DATE
                     <span
                       className="ps-1"
                       href="#"
@@ -286,9 +333,7 @@ const Applications = () => {
                       {renderSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th style={{width:"15%"}}>Assessee</th>
-                  <th style={{width:"20%"}}>EMAIL ID</th>
-                  <th style={{width:"15%"}}>
+                  <th style={{ width: "15%" }}>
                     STATUS
                     <span
                       className="ps-1"
@@ -298,7 +343,7 @@ const Applications = () => {
                       {renderSortIcon("state")}
                     </span>
                   </th>
-                  <th style={{width:"20%"}}>
+                  <th style={{ width: "20%" }}>
                     ACTIONS
                     <span
                       className="ps-1"
@@ -308,139 +353,171 @@ const Applications = () => {
                       {renderSortIcon("default")}
                     </span>
                   </th>
+                  <th style={{ width: "1%" }}></th>
                 </tr>
               </thead>
               <tbody>
                 {testRequests.length === 0 ? (
                   <>
                     <tr>
-                      <td className="text-center" colSpan={6}>
+                      <td className="text-center" colSpan={8}>
                         <Empty description="No Record Found." />
                       </td>
                     </tr>
                   </>
                 ) : null}
-                {testRequests?.map((testRequest,index) => (
-                  <>
-                  <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
-                    <td>{testRequest.name}</td>
-                    {/* <td>
+                {testRequests?.map((testRequest, index) => {
+                  const formattedDate = moment(testRequest.meta.createdAt).format("Do MMMM, YYYY");
+                  return (
+                    <React.Fragment key={testRequest.id}>
+                    <tr
+                      className={index % 2 == 0 ? "even" : "odd"}
+                      key={testRequest.id}
+                    >
+                      <td className="fw-bold">{testRequest.name}</td>
+                      {/* <td>
                       {testRequest.productName !== ""
                         ? testRequest.productName
                         : "-"}
                     </td> */}
-                    <td>{formatDate(testRequest.meta.createdAt)}</td>            
                         <UserIdNameEmailConnector
+                          className="fw-bold"
                           isLink={true}
                           userId={testRequest.assesseeId}
                         />
-                      
-                    <td>
-                      {testRequest.state !== "test.request.status.finished" ? (
-                        <Fragment>
-                          <span
-                            className={`status badge ${
-                              StateBadgeClasses[testRequest.state]
-                            }`}
-                          >
-                            {TestRequestStateConstantNames[testRequest.state]}
-                          </span>
-                        </Fragment>
-                      ) : (
-                        <Fragment>
-                          <span
-                            className={`status badge ${
-                              StateBadgeClasses[testRequest.state]
-                            }`}
-                          >
-                            {TestRequestStateConstantNames[testRequest.state]}
-                          </span>
-                        </Fragment>
-                      )}
-                    </td>
-                    <td className=" no-wrap text-left">
-                    {userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
-                        testRequest.state ==
-                          TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
-                          <>
-                            <span
-                            className="cursor-pointer"
+                        <td>{formattedDate}</td>
+                        <td>
+                          {testRequest?.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED ? (
+                            <Fragment>
+                              <span
+                                className={`status badge ${
+                                  StateBadgeClasses[testRequest.state]
+                                }`}
+                              >
+                                {TestRequestStateConstantNames[
+                                  testRequest.state
+                                ].toLowerCase()}
+                              </span>
+                            </Fragment>
+                          ) : (
+                            <Fragment>
+                              <span
+                                className={`status badge ${
+                                  StateBadgeClasses[testRequest.state]
+                                }`}
+                              >
+                                {TestRequestStateConstantNames[
+                                  testRequest.state
+                                ].toLowerCase()}
+                              </span>
+                              <Popover
+                                title={<div>{testRequest?.message}</div>}
+                              >
+                                <InfoCircleOutlined style={{marginLeft:"0.5rem", marginTop:"0.7rem"}}/>
+                              </Popover>
+                            </Fragment>
+                          )}
+                        </td>
+                        <td className=" no-wrap text-left">
+                          {userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+                          testRequest.state ==
+                            TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
+                            <div className="">
+                            <div class="row">
+                            <div class="col-lg-6 col-md-12">
+                              <div class="d-flex flex-column flex-md-row">
+                                <div
+                                  class="cursor-pointer text-success d-flex align-items-center font-size-12 fw-bold"
+                                  onClick={() => {
+                                    changeState(
+                                      testRequest.id,
+                                      TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED,
+                                      index
+                                    );
+                                  }}
+                                >
+                                  <i class="bi bi-check-circle-fill text-success font-size-16"></i>
+                                  <span className="ps-1"> 
+                                    ACCEPT</span>
+                                </div>
+                                <div
+                                  class="cursor-pointer ps-md-3 text-danger font-size-12 fw-bold mt-2 mt-md-0 ml-lg-3 d-flex align-items-center"
+                                  onClick={() => {
+                                    setCurrentTestRequestId(testRequest.id);
+                                    setCurrentIndex(index);
+                                    setIsReasonModalOpen(true);
+                                  }}
+                                >
+                                  <i class="bi bi-x-circle-fill text-danger font-size-16"></i>
+                                  <span className="ps-1">
+                                  DECLINE</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                            </div>
+                          ) : null}
+                        {testRequest.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING &&
+                        testRequest.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED &&
+                        testRequest.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
+                          userRole.includes("role.tester") ||
+                          userRole.includes("role.admin") ? (
+                            <button
+                              className="cursor-pointer glossy-button glossy-button--green d-flex align-items-center"
                               onClick={() => {
-                                changeState(
-                                  testRequest.id,
-                                  TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED,
-                                  index
-                                );
+                                navigate(`/choose-test/${testRequest.id}`);
                               }}
                             >
-                            <i className="bi bi-check-circle-fill text-green-50 font-size-16"></i>{" "}
-                              APPROVE{" "}
-                            </span>
-                            <span
-                              className="cursor-pointer ps-3"
-                              onClick={() => {
-                                changeState(
-                                  testRequest.id,
-                                  TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED,
-                                  index
-                                );
-                              }}
-                            >
-                              <i className="bi bi-x-circle-fill text-red font-size-16"></i>{" "}
-                                REJECT{" "}
-                            </span>
-                          </>
-                        ) : null}
-                      {testRequest.state !== TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
-                        userRole.includes("role.tester") ||
-                        userRole.includes("role.admin") ? (
-                          <span 
-                            className="cursor-pointer"
-                            onClick={() => {
-                              navigate(`/choose-test/${testRequest.id}`);
-                            }}
-                          >
-                            {" "}
-                            <i
-                              className={
-                                StateClasses[testRequest.state]?.iconClass
-                              }
-                            ></i>{" "}
-                            {StateClasses[testRequest.state]?.btnText?.toUpperCase()}
-                          </span>
+                              {" "}
+                              <i
+                                className={
+                                  StateClasses[testRequest.state]?.iconClass
+                                }
+                              ></i>{" "}
+                              {StateClasses[
+                                testRequest.state
+                              ]?.btnText?.toUpperCase()}
+                            </button>
+                          ) : (
+                            <></>
+                          )
                         ) : (
-                          <></>
-                        )
-                      ) : (
-                        <span
-                        className="cursor-pointer"
-                          onClick={() => viewReport(testRequest.id)}
-                        >
-                          <i className="bi bi-file-text text-green-50 font-size-16"></i>{" "}
+                          testRequest.state ===
+                            TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED && (
+                            <button
+                              className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
+                              onClick={() => viewReport(testRequest.id)}
+                            >
+                              <i className="bi bi-file-text font-size-16"></i>{" "}
                               REPORT{" "}
-                        </span>
-                      )}
-                      <span
+                            </button>
+                          )
+                        )}
+                        </td>
+                        <td>
+                        <span
                           onClick={() => toggleRow(testRequest.id)}
                           type="button"
                           className="approval-action-button float-end my-auto display"
                         >
                           {testRequest.class === "show" ? (
-                            <i className="bi bi-chevron-double-down"></i>
+                            <i className="bi bi-arrow-up-circle-fill fs-5"></i>
                           ) : (
-                            <i className="bi bi-chevron-double-right"></i>
+                            <i className="bi bi-arrow-down-circle-fill fs-5"></i>
                           )}
                         </span>
+                        
                     </td>
                   </tr>
                   <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
-                      <td colSpan="5" className="hiddenRow m-0 field-box">
-                        <div
-                          
-                          id="Accordion"
-                        >
-                          <div className="mx-5 my-3">
-                            <table className="data-table capitialize-words">
+                      <td colSpan="8" className="hiddenRow m-0 p-0 field-box">
+                        <div id="Accordion" className="p-3 table-accordion-bg">
+                            <table className="data-table-inner capitialize-words">
                               <thead>
                                 <tr>
                                   <th style={{width:'20%'}}>Component</th>
@@ -448,6 +525,7 @@ const Applications = () => {
                                   <th style={{width:'20%'}}>Website/UI Base Url</th>
                                   <th style={{width:'20%'}}>Username</th>
                                   <th style={{width:'20%'}}>Password</th>
+                                  <th></th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -455,21 +533,30 @@ const Applications = () => {
                                   testRequest.testRequestUrls.map(
                                     (testUrls) => (
                                       <tr id={testUrls.componentId} key={testUrls.componentId}>
-                                        <td>
+                                        <td className="fw-bold">
                                           <ComponentIdConnector
                                             componentId={testUrls.componentId}
                                           ></ComponentIdConnector>
                                         </td>
-                                        <td className="no-capitalization">{testUrls.fhirApiBaseUrl }</td>
-                                        <td className="no-capitalization">{testUrls.websiteUIBaseUrl}</td>
-                                        <td className = "toLowerCase-words">{testUrls.username}</td>
-                                        <td className = "toLowerCase-words" key={testRequest.id}>
+                                        <td className="no-capitalization">
+                                          {testUrls.fhirApiBaseUrl}
+                                        </td>
+                                        <td className="no-capitalization">
+                                          {testUrls.websiteUIBaseUrl}
+                                        </td>
+                                        <td className="toLowerCase-words">
+                                          {testUrls.username}
+                                        </td>
+                                        <td
+                                          className="toLowerCase-words"
+                                          key={testRequest.id}
+                                        >
                                           {testUrls.showPass
                                             ? testUrls.password
                                             : "*********"}
                                         </td>
                                         <td>
-                                        <i
+                                          <i
                                             className={`bi ${
                                               testUrls.showPass
                                                 ? "bi-eye-fill"
@@ -487,11 +574,11 @@ const Applications = () => {
                               </tbody>
                             </table>
                           </div>
-                        </div>
                       </td>
                     </tr>
-                    </>
-                ))}
+                   </React.Fragment>
+                  )
+                })}
               </tbody>
             </table>
           </div>
@@ -506,6 +593,46 @@ const Applications = () => {
             shape="rounded"
           />
         )}
+        <Modal
+          open={isReasonModalOpen}
+          onCancel={() => {
+            setIsReasonModalOpen(false);
+            setReasonForRejection();
+          }}
+          onOk={() => {
+            if (!reasonForRejection) {
+              notification.error({
+                className: "notificationError",
+                message: "Please provide a reason for disapproval.",
+                placement: "bottomRight",
+              });
+            } else {
+              changeState(
+                currentTestRequestId,
+                TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED,
+                currentIndex
+              );
+              setIsReasonModalOpen(false);
+              setReasonForRejection();
+            }
+          }}
+          destroyOnClose={true}
+        >
+          <div className="custom-input mb-3">
+            <label htmlFor="reason" className="form-label">
+              <b>Please provide a reason for Disabling this Test request.</b>
+            </label>
+            <input
+              id="reason"
+              className="form-control"
+              type="text"
+              value={reasonForRejection}
+              onChange={(e) => {
+                setReasonForRejection(e.target.value);
+              }}
+            ></input>
+          </div>
+        </Modal>{" "}
       </div>
     </div>
   );

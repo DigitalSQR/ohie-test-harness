@@ -11,9 +11,19 @@
     }
   }
 
+  button {
+    z-index: 1;
+    position: relative;
+  }
+
+  .compError{
+    color:red;
+    margin-top: 1rem;
+  }
+
   .custom-input input {
     height: 50px;
-    border-radius: 5px;
+    // border-radius: 5px;
     border: 1px solid #ccdade;
     font-size: 14px;
     font-weight: 400;
@@ -82,28 +92,6 @@
       }
     }
   }
-  .form-bg-white {
-    background: $color-white;
-    border: 1px solid $color-light;
-    border-radius: 5px;
-    padding: 30px;
-
-    .heading-line-up {
-      display: inline-block;
-      padding: 6px;
-      padding-bottom: 0px;
-      background: $color-gray-20;
-      font-size: 20px;
-      font-weight: 600;
-      position: relative;
-      top: -42px;
-      line-height: 12px;
-
-      @media (max-width: 991px) {
-        font-size: 16px;
-      }
-    }
-  }
 
   .color {
     border-color: #ccdade;
@@ -113,11 +101,16 @@
   }
   .field-box {
     border-radius: 6px;
-    background: #f0f3f5;
-    padding: 10px 15px;
-    padding-bottom: 15px;
-    margin-bottom: 10px;
+    background: #f1f7fb;
+    padding-left:10px;
+     
+    // padding-bottom: 15px;
+    // margin-bottom: 10px;
     // width: 49%;
+    label{
+      padding: 10px ;
+      padding-left: 0px;
+    }
   }
   .field-checkbox input[type="checkbox"] {
     display: none;
@@ -159,4 +152,5 @@
     margin-top: 10px !important;
     margin-bottom: 0px !important;
   }
+
 }

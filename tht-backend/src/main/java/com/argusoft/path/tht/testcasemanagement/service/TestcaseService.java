@@ -7,8 +7,10 @@ import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFil
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This interface provides contract for Testcase API.
@@ -31,10 +33,11 @@ public interface TestcaseService {
      * @throws OperationFailedException     unable to complete request
      */
     public TestcaseEntity createTestcase(TestcaseEntity testcaseEntity,
+                                         MultipartFile zipFileForAutomationTest,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException;
+            DataValidationErrorException, DoesNotExistException;
 
     /**
      * Updates an existing Testcase.
@@ -51,11 +54,12 @@ public interface TestcaseService {
      *                                      was attempted on an out of date version
      */
     public TestcaseEntity updateTestcase(TestcaseEntity testcaseEntity,
+                                         MultipartFile zipFileForAutomationTest,
                                          ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException,
-            InvalidParameterException;
+            InvalidParameterException, DoesNotExistException;
 
     /**
      * Retrieves a list of Testcases corresponding to the given Testcase
@@ -108,6 +112,7 @@ public interface TestcaseService {
      * @throws OperationFailedException  unable to complete request
      */
     public List<ValidationResultInfo> validateTestcase(String validationTypeKey,
+                                                       MultipartFile zipFileForAutomationTest,
                                                        TestcaseEntity testcaseEntity,
                                                        ContextInfo contextInfo)
             throws InvalidParameterException,

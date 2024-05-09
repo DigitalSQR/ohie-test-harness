@@ -3,7 +3,7 @@ import { TestResultAPI } from "../../../api/TestResultAPI";
 import Options from "../Options/Options";
 import { Pagination, PaginationItem } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
-import { Button, notification, Modal, Carousel, Image } from "antd";
+import { Button, notification, Modal, Carousel, Image, Popconfirm } from "antd";
 import { EditOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "./testcase.scss";
 import { DocumentAPI } from "../../../api/DocumentAPI";
@@ -11,76 +11,82 @@ import { TestResultRelationAPI } from "../../../api/TestResultRelationAPI";
 import { fileTypeIcon } from "../../../utils/utils";
 import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import {
-	DOCUMENT_STATE_ACTIVE,
-	DOCUMENT_STATE_INACTIVE,
-	DOCUMENT_TYPE_FOR_USER,
-	DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS,
-	DOCUMENT_TYPE_FOR_TEST_CASES
+  DOCUMENT_STATE_ACTIVE,
+  DOCUMENT_STATE_INACTIVE,
+  DOCUMENT_TYPE_FOR_USER,
+  DOCUMENT_TYPE_FOR_TEST_CASE_RESULTS,
+  DOCUMENT_TYPE_FOR_TEST_CASES,
 } from "../../../constants/document_constants";
 import question_img_logo from "../../../styles/images/question-img.png";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 export default function TestCase(props) {
-	const {
-		isLastQuestion,
-		currentTestcase,
-		currentSpecification,
-		selectTestcase,
-		selectNextTestcase,
-		currentTestcaseIndex,
-		refreshCurrentTestcase
-	} = props;
-	const { showLoader, hideLoader } = useLoader();
-	const [selectedOptions, setSelectedOptions] = useState([]);
-	const [files, setFiles] = useState([]);
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const [uploadQuestion, setUploadedQuestion] = useState({});
-	const fileInputRef = useRef(null);
-	const [currentQuestion, setCurrentQuestion] = useState({});
-	const [questionAndDocument, setQuestionAndDocument] = useState([]);
-	const [noteMessage, setNoteMessage] = useState();
-	const [testcaseResult, setTestcaseResult] = useState();
-	const [editMode, setEditMode] = useState(false);
-	const [initialNoteMessage, setInitialNoteMessage] = useState();
-	const [showNote, setShowNote] = useState(false);
-	const [isModified, setIsModified] = useState(true);
-	const handlePageChange = (event, page) => {
-		let isSame = isMessageSame();
-		// Ask for confirmation
-		if (!isSame && !window.confirm("Continuing will discard unsaved note changes. Are you sure?")) {
-			// If user cancels, do nothing
-			return;
-		}
+  const {
+    isLastQuestion,
+    currentTestcase,
+    currentSpecification,
+    selectTestcase,
+    selectNextTestcase,
+    currentTestcaseIndex,
+    refreshCurrentTestcase,
+  } = props;
+  const { showLoader, hideLoader } = useLoader();
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploadQuestion, setUploadedQuestion] = useState({});
+  const fileInputRef = useRef(null);
+  const [currentQuestion, setCurrentQuestion] = useState({});
+  const [questionAndDocument, setQuestionAndDocument] = useState([]);
+  const [noteMessage, setNoteMessage] = useState();
+  const [testcaseResult, setTestcaseResult] = useState();
+  const [editMode, setEditMode] = useState(false);
+  const [initialNoteMessage, setInitialNoteMessage] = useState();
+  const [showNote, setShowNote] = useState(false);
+  const [isModified, setIsModified] = useState(true);
+  const handlePageChange = (event, page) => {
+	console.log(currentSpecification);
+    let isSame = isMessageSame();
+    // Ask for confirmation
+    if (
+      !isSame &&
+      !window.confirm(
+        "Continuing will discard unsaved note changes. Are you sure?"
+      )
+    ) {
+      // If user cancels, do nothing
+      return;
+    }
 
-		showLoader();
-		selectTestcase(page - 1);
-		setSelectedOptions([]);
-		setNoteMessage();
-		setInitialNoteMessage();
-		setEditMode(false);
-		hideLoader();
-	};
+    showLoader();
+    selectTestcase(page - 1);
+    setSelectedOptions([]);
+    setNoteMessage();
+    setInitialNoteMessage();
+    setEditMode(false);
+    hideLoader();
+  };
 
-	useEffect(() => {
-		getCurrentTestcaseResultById(currentTestcase.id);
-	}, [currentTestcase]);
+  useEffect(() => {
+    getCurrentTestcaseResultById(currentTestcase.id);
+  }, [currentTestcase.id]);
 
-	const submitOptions = () => {
-		TestResultAPI.saveOptions(testcaseResult.id, selectedOptions)
-			.then((res) => {
-				refreshCurrentTestcase(res);
-				selectNextTestcase();
-			})
-			.catch((error) => {
-
-			});
-	}
+  const submitOptions = () => {
+	const data=[{testcaseResultId:testcaseResult.id,selectedTestcaseOptionIds:selectedOptions}]
+    TestResultAPI.saveOptions(data)
+      .then((res) => {
+        refreshCurrentTestcase(res[0]);
+        selectNextTestcase();
+      })
+      .catch((error) => {});
+  };
 
 	const handleSaveandNext = () => {
 		if (!selectedOptions || selectedOptions.length == 0) {
 			notification.error({
-				description: "No answers selected",
+				className: "notificationError",
+				message: "No answers selected",
 				placement: "bottomRight",
 			});
 		} else {
@@ -113,23 +119,24 @@ export default function TestCase(props) {
 		}
 	};
 
-	const getCurrentTestcaseResultById = (testcaseResultId) => {
-		TestResultAPI.getTestCaseResultById(testcaseResultId)
-			.then((res) => {
-				setTestcaseResult(res)
-			}).catch((error) => {
+  const getCurrentTestcaseResultById = (testcaseResultId) => {
+    TestResultAPI.getTestCaseResultById(testcaseResultId)
+      .then((res) => {
+        setTestcaseResult(res);
+      })
+      .catch((error) => {});
+  };
 
-			});
-	}
+  const showNoteDiv = () => {
+    if (!noteMessage) {
+      setEditMode(true);
+    }
+    setShowNote(!showNote);
+  };
 
-
-	const showNoteDiv = () => {
-		setShowNote(!showNote);
-	};
-
-	const handleSaveNote = async () => {
-		await saveTestcaseResultWithNote();
-	}
+  const handleSaveNote = async () => {
+    await saveTestcaseResultWithNote();
+  };
 
 	const saveTestcaseResultWithNote = (showNotification = true) => {
 		return new Promise((resolve, reject) => {
@@ -142,8 +149,9 @@ export default function TestCase(props) {
 						setInitialNoteMessage(res.message);
 						setEditMode(false);
 						notification.success({
-							message: `Note Updated Successfully!`,
-							placement: "bottomRight",
+							className: "notificationSuccess",
+							placement: "top",
+							message: "Notes saved successfully!",
 						});
 						resolve(); // Resolve the promise when the operation is successful
 					})
@@ -152,7 +160,8 @@ export default function TestCase(props) {
 			} else {
 				if (showNotification) {
 					notification.warning({
-						message: "No Changes detected to save in note!",
+						className: "notificationWarning",
+						message: "No changes detected in notes. Click the close button if you don't wish to make any changes.",
 						placement: "bottomRight",
 					});
 				}
@@ -162,24 +171,24 @@ export default function TestCase(props) {
 	};
 
 
-	const handleOnChangeForNote = (e) => {
-		setNoteMessage(e.target.value);
-	}
+  const handleOnChangeForNote = (e) => {
+    setNoteMessage(e.target.value);
+  };
 
-	useEffect(() => {
-		if (testcaseResult) {
-			DocumentAPI.getDocumentsByRefObjUriAndRefId(
-				RefObjUriConstants.TESTCASE_RESULT_REFOBJURI,
-				testcaseResult.id,
-				DOCUMENT_STATE_ACTIVE
-			)
-				.then((res) => {
-					setUploadedFiles(res.content);
-				}).catch((error) => {
-
-				});
-		}
-	}, [testcaseResult]);
+  useEffect(() => {
+    if (testcaseResult) {
+      DocumentAPI.getDocumentsByRefObjUriAndRefId(
+        RefObjUriConstants.TESTCASE_RESULT_REFOBJURI,
+        testcaseResult.id,
+        DOCUMENT_STATE_ACTIVE
+      )
+        .then((res) => {
+          setUploadedFiles(res.content);
+		  console.log(res);
+        })
+        .catch((error) => {});
+    }
+  }, [testcaseResult]);
 
 	useEffect(() => {
 		setShowNote(false);
@@ -197,108 +206,135 @@ export default function TestCase(props) {
 				RefObjUriConstants.TESTCASE_REFOBJURI
 			).then((res) => {
 				if (res && res.length > 0) {
-					
+
 					setCurrentQuestion(res[0]);
 				} else {
 					notification.error({
+						className: "notificationError",
 						message: "Oops! something wrong ,No question found!",
 						placement: "bottomRight",
 					});
 				}
 			}).catch((error) => {
-				
+
 			}).finally(() => {
 				hideLoader();
 			});
 		}
 	}, [testcaseResult]);
 
-	const handleEditNoteButtonClick = () => {
-		setEditMode(true);
-	};
+  const handleEditNoteButtonClick = () => {
+    setEditMode(true);
+  };
 
-	const handleCancelNoteButtonClick = () => {
-		let isSame = isMessageSame();
-		// Ask for confirmation
-		if (!isSame && !window.confirm("Are you sure you want to cancel? Any unsaved changes will be lost.")) {
-			// If user cancels, do nothing
-			return;
-		}
+  const handleCancelNoteButtonClick = () => {
+    let isSame = isMessageSame();
+    // Ask for confirmation
+    if (!isSame) {
+      Modal.confirm({
+        content:
+          "Are you sure you want to cancel? Any unsaved changes will be lost.",
+        onCancel() {
+          return;
+        },
+        onOk() {
+          setNoteMessage(initialNoteMessage);
+          setEditMode(false);
+        }
+      });
+    }else{
 		setNoteMessage(initialNoteMessage);
 		setEditMode(false);
-	};
-
-	const isMessageSame = () => {
-		return noteMessage?.trim() === initialNoteMessage?.trim();
 	}
 
-	useEffect(() => {
-		getQuestionImagesIfNotExists();
-	}, [currentQuestion]);
+  };
 
-	const getQuestionImagesIfNotExists = () => {
-		if (currentQuestion && currentQuestion.id && (questionAndDocument.filter((questionItem) => questionItem.key === currentQuestion.id) <= 0)) {
+  const isMessageSame = () => {
+    return noteMessage?.trim() === initialNoteMessage?.trim();
+  };
 
-			TestResultRelationAPI.getTestcaseResultRelatedObject(
-				testcaseResult.id,
-				RefObjUriConstants.DOCUMENT_REFOBJURI
-			).then(async (res) => {
-				if (res && res.length > 0) {
-					const updatedFiles = await Promise.all(res
-						.filter((item) => DOCUMENT_TYPE_FOR_TEST_CASES.DOCUMENT_TYPE_QUESTION === item?.documentType)
-						.map(async (relatedDoc) => {
-							try {
-								const base64Image = await DocumentAPI.base64Document(relatedDoc.id);
-								return {
-									name: relatedDoc.name,
-									status: 'done',
-									url: base64Image,
-									documentId: relatedDoc.id
-								};
-							} catch (error) {
-								return {
-									name: relatedDoc.name,
-									status: 'error',
-									url: null
-								};
-							}
-						}));
+  useEffect(() => {
+    getQuestionImagesIfNotExists();
+  }, [currentQuestion]);
 
-					let item = {};
-					item.key = currentQuestion.id
-					item.files = updatedFiles;
+  const getQuestionImagesIfNotExists = () => {
+    if (
+      currentQuestion &&
+      currentQuestion.id &&
+      questionAndDocument.filter(
+        (questionItem) => questionItem.key === currentQuestion.id
+      ) <= 0
+    ) {
+      TestResultRelationAPI.getTestcaseResultRelatedObject(
+        testcaseResult.id,
+        RefObjUriConstants.DOCUMENT_REFOBJURI
+      )
+        .then(async (res) => {
+          if (res && res.length > 0) {
+            const updatedFiles = await Promise.all(
+              res
+                .filter(
+                  (item) =>
+                    DOCUMENT_TYPE_FOR_TEST_CASES.DOCUMENT_TYPE_QUESTION ===
+                    item?.documentType
+                )
+                .map(async (relatedDoc) => {
+                  try {
+                    const base64Image = await DocumentAPI.base64Document(
+                      relatedDoc.id
+                    );
+                    return {
+                      name: relatedDoc.name,
+                      status: "done",
+                      url: base64Image,
+                      documentId: relatedDoc.id,
+                    };
+                  } catch (error) {
+                    return {
+                      name: relatedDoc.name,
+                      status: "error",
+                      url: null,
+                    };
+                  }
+                })
+            );
 
-					const updatedQuestions = [...questionAndDocument];
-					updatedQuestions.push(item);
-					setQuestionAndDocument(updatedQuestions);
-				}
-			}).catch((error) => {
+            let item = {};
+            item.key = currentQuestion.id;
+            item.files = updatedFiles;
 
-			});
-		}
-	}
+            const updatedQuestions = [...questionAndDocument];
+            updatedQuestions.push(item);
+            setQuestionAndDocument(updatedQuestions);
+          }
+        })
+        .catch((error) => {});
+    }
+  };
 
-	const addAttachment = () => {
-		var file = document.getElementById("my-file");
-		if (file) file.click();
-	};
+  const addAttachment = () => {
+    var file = document.getElementById("my-file");
+    if (file) file.click();
+  };
 
-	const addFiles = (event, question, index) => {
-		event.preventDefault();
-		setFiles([...event.target.files]);
-		setUploadedQuestion({
-			...question,
-			index,
-		});
-	};
+  const addFiles = (event, question, index) => {
+	console.log(question);
+    event.preventDefault();
+	console.log("uploaded files ",event.target.value);
+    setFiles([...event.target.files]);
+    setUploadedQuestion({
+      ...question,
+      index,
+    });
+  };
 
-	useEffect(() => {
-		if (files.length > 0) {
-			files.forEach((file) => {
-				uploadDocuments(file, uploadQuestion, uploadQuestion.index);
-			});
-		}
-	}, [uploadQuestion]);
+  useEffect(() => {
+    if (files.length > 0) {
+      files.forEach((file) => {
+        uploadDocuments(file, uploadQuestion, uploadQuestion.index);
+      });
+    }
+  }, [uploadQuestion]);
 
 	const uploadDocuments = (file, question, index) => {
 		const formData = new FormData();
@@ -320,8 +356,9 @@ export default function TestCase(props) {
 				newFiles.splice(index, 1);
 				setFiles(newFiles);
 				notification.success({
-					message: `Document Uploaded!`,
-					placement: "bottomRight",
+					className: "notificationSuccess",
+					placement: "top",
+					message: "Attachment added successfully!",
 				});
 			}).catch((error) => {
 
@@ -335,8 +372,9 @@ export default function TestCase(props) {
 				DocumentAPI.changeDocumentState(file.id, DOCUMENT_STATE_INACTIVE)
 					.then((res) => {
 						notification.success({
-							message: "Document Removed",
-							placement: "bottomRight",
+							className: "notificationSuccess",
+							placement: "top",
+							message: "Attachment removed successfully!",
 						});
 						setUploadedFiles((prev) => {
 							return prev.filter((doc) => doc.id !== file.id);
@@ -355,23 +393,21 @@ export default function TestCase(props) {
 		}
 	};
 
-	useEffect(() => {
-		if (files.length == 0 && fileInputRef.current) {
-			fileInputRef.current.value = "";
-		}
-	}, [files]);
+  useEffect(() => {
+    if (files.length == 0 && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [files]);
 
-	const downloadFile = (file) => {
-		DocumentAPI.downloadDocument(file.id, file.name).catch((err) => {
-		});
-	};
+  const downloadFile = (file) => {
+    DocumentAPI.downloadDocument(file.id, file.name).catch((err) => {});
+  };
 
-	useEffect(() => {
-	}, [uploadedFiles]);
+  useEffect(() => {}, [uploadedFiles]);
 
 	const renderTooltip = (props) => (
 		<Tooltip id="button-tooltip" {...props}>
-			Accepted file types: PDFs and images only.<br/> Maximum file size: 2MB.
+			Accepted file types: PDFs and images only.<br /> Maximum file size: 2MB.
 		</Tooltip>
 	);
 	function getStatusColor(page, type) {
@@ -392,14 +428,14 @@ export default function TestCase(props) {
 		return style;
 	}
 
-	return (
-		<div id="testCase">
-			<div className="col-12 non-fuctional-requirement">
-				<div className="container">
-					<div className="row heading">
-						<div className="col-md-9 col-12 p-0">
-							<h2>Question</h2>
-						</div>
+  return (
+    <div id="testCase">
+      <div className="col-12 non-fuctional-requirement">
+        <div className="container-fluid">
+          <div className="row heading">
+            <div className="col-md-9 col-12 p-0">
+              <h2>Question</h2>
+            </div>
 
 						<div className="col-md-3 col-12 d-md-flex d-none p-0">
 							<h2 className="border-left">Reference</h2>
@@ -409,15 +445,20 @@ export default function TestCase(props) {
 						testcaseResult &&
 						<div className="row question-box" key={testcaseResult.id}>
 							{/* <div className="col-md-9 col-12 p-0 question">  for the image space*/}
+							<div className="col-12 question-list">
+								<div className="col-9">
 
+									<h2>
+										<b>
+											{(currentTestcaseIndex + 1) +
+												". "}
+											{currentQuestion ? currentQuestion.name : " "}
+										</b>
+									</h2>
+								</div>
+							</div>
 							<div className="col-md-9 col-12 p-0 question">
-								<h2>
-									<b>
-										{(currentTestcaseIndex+1)+
-											". "}
-										{currentQuestion ? currentQuestion.name : " "}
-									</b>
-								</h2>
+
 								<Options
 
 									refId={testcaseResult.refId}
@@ -461,7 +502,7 @@ export default function TestCase(props) {
 									))}
 								</div>
 								{showNote && <div className="text-end m-3 position-relative" id="note-textarea">
-									<textarea className="form-control note-text-area" rows="3" disabled={!editMode} value={noteMessage} onChange={handleOnChangeForNote}></textarea>
+									<textarea className="form-control note-text-area" rows="3" disabled={!editMode} value={noteMessage || ""} onChange={handleOnChangeForNote}></textarea>
 									<div className="note-text-area-button-group">
 										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Cancel" onClick={handleCancelNoteButtonClick}><i className="bi bi-x-lg"></i></span>}
 										{editMode && <span role="button" className="save-btn-for-now fw-bold mx-1" title="Save Note" onClick={handleSaveNote}><i className="bi bi-floppy"></i></span>}
@@ -508,64 +549,80 @@ export default function TestCase(props) {
 											onClick={showNoteDiv}
 										>
 											<i className="bi bi-chat-right-text"></i>
-											{showNote ? 'Hide Note' : 'Show Note'}
+											{/* {showNote ? 'Hide Note' : 'Show Note'} */}
+											{
+												noteMessage ? showNote ? "Hide Note" : "Show Note" : showNote ? "Hide Note" : "Add Note"
+											}
 										</button>
 									</div>
 								</div>
+					
 
-								<div className="text-end mb-3">
-									<button
-										disabled={!testcaseResult.testcaseOptionId && !selectedOptions.length}
-										className="cst-btn-group btn btn-blue save-and-next"
-										onClick={() => {
-											handleSaveandNext();
-										}}
-									>
-										{!!isLastQuestion()
-											? "Save"
-											: selectedOptions.length ? !isModified ? "Next" : "Save and Next" : "Save and Next"}
-									</button>
-								</div>
-								{/* Photos upload code above */}
-							</div>
-							<div className="col-md-3 col-12 p-0">
-								<div className=" p-2 pt-5 q-img">
-									<>
-										<Image.PreviewGroup>
-											<Carousel infinite={false} arrows={true} prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />}>
-												{questionAndDocument.length > 0 && (
-													questionAndDocument.find((q) => q.key === currentQuestion.id)?.files.map((item) => (
-														<div key={item.id}>
-															<h3 className="testcase-carousel-background">
-																<Image width={200}
-																	src={item.url} />
-															</h3>
-														</div>
-													))
-												)}
-											</Carousel>
-										</Image.PreviewGroup>
-									</>
-								</div>
-							</div>
-						</div>
-					}
-				</div>
-			</div>
-			<div className="display">
-				<Pagination
-					className="pagination"
-					count={currentSpecification.childTestcaseResults.length}
-					page={currentTestcaseIndex + 1}
-					onChange={handlePageChange}
-					renderItem={(item) => (
-						<PaginationItem
-							{...item}
-							style={getStatusColor(item.page - 1, item.type)}
-						/>
-					)}
-				/>
-			</div>
-		</div>
-	);
+                <div className="text-end mb-3">
+                  <button
+                    disabled={
+                      !testcaseResult.testcaseOptionId &&
+                      !selectedOptions.length
+                    }
+                    className="cst-btn-group btn btn-blue save-and-next"
+                    onClick={() => {
+                      handleSaveandNext();
+                    }}
+                  >
+                    {!!isLastQuestion()
+                      ? "Save"
+                      : selectedOptions.length
+                      ? !isModified
+                        ? "Next"
+                        : "Save and Next"
+                      : "Save and Next"}
+                  </button>
+                </div>
+                {/* Photos upload code above */}
+              </div>
+              <div className="col-md-3 col-12 p-0">
+                <div className=" p-2 pt-5 q-img">
+                  <>
+                    <Image.PreviewGroup>
+                      <Carousel
+                        infinite={false}
+                        arrows={true}
+                        prevArrow={<LeftOutlined />}
+                        nextArrow={<RightOutlined />}
+                      >
+                        {questionAndDocument.length > 0 &&
+                          questionAndDocument
+                            .find((q) => q.key === currentQuestion.id)
+                            ?.files.map((item) => (
+                              <div key={item.id}>
+                                <h3 className="testcase-carousel-background">
+                                  <Image width={200} src={item.url} />
+                                </h3>
+                              </div>
+                            ))}
+                      </Carousel>
+                    </Image.PreviewGroup>
+                  </>
+                </div>
+              </div>
+            </div>
+}
+        </div>
+      </div>
+      <div className="display">
+        <Pagination
+          className="pagination"
+          count={currentSpecification.childTestcaseResults.length}
+          page={currentTestcaseIndex + 1}
+          onChange={handlePageChange}
+          renderItem={(item) => (
+            <PaginationItem
+              {...item}
+              style={getStatusColor(item.page - 1, item.type)}
+            />
+          )}
+        />
+      </div>
+    </div>
+  );
 }

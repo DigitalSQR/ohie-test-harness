@@ -1,0 +1,36 @@
+{
+    "resourceType": "ValueSet",
+    "id": "example-valueset",
+    "url": "http://example.com/valueset/example/vs-103",
+    "identifier": [
+      {
+        "system": "http://example.com/identifiers",
+        "value": "example-valueset-identifier"
+      }
+    ],
+    "version": "1.0.0",
+    "name": "Example ValueSet",
+    "title": "Example ValueSet Title",
+    "status": "active",
+    "publisher": "Healthcare Standards Organization",
+    "compose": {
+      "include": [
+        {
+          "system": "http://example.com/codesystem/example-codesystem",
+          "concept": [
+            {
+              "code": "12345",
+              "display": "Blood Pressure",
+              "definition": "A measurement of the force of blood against the walls of the arteries."
+            },
+            {
+              "code": "67890",
+              "display": "Heart Rate",
+              "definition": "The number of times the heart beats per minute."
+            }
+          ]
+        }
+      ]
+    }
+  }
+  

@@ -17,26 +17,31 @@ export default function SignUp() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const [enterPressed,setEnterPressed]=useState(false);
   const validationSchema = Yup.object({
     name: Yup.string()
+      .trim()
       .required("Name is required")
       .max(1000, "Name must have less than 1000 characters"),
     email: Yup.string()
+      .trim()
       .email("Invalid email address")
       .required("Email is required")
       .max(255, "Email must have less than 255 characters"),
     password: Yup.string()
+      .trim()
       .required("Password is required")
       .min(6, "Password must be at least 6 characters")
       .max(255, "Password must have less than 255 characters"),
     confirmPassword: Yup.string()
-    .required("Confirm password is required")
-    .oneOf(
+      .trim()
+      .required("Confirm password is required")
+      .oneOf(
         [Yup.ref("password"), null],
         "Confirm password does not match with the password."
       ),
     companyName: Yup.string()
+      .trim()
       .required("Please enter your company's name.")
       .max(255, "Company name must have less than 255 characters"),
   });
@@ -51,21 +56,32 @@ export default function SignUp() {
     },
     validationSchema: validationSchema,
     onSubmit: () => {
-      if (formik.values.password != formik.values.confirmPassword) {
+      const trimmedValues = {
+        ...formik.values,
+        email: formik.values.email.trim(),
+        name: formik.values.name.trim(),
+        password: formik.values.password.trim(),
+        confirmPassword: formik.values.confirmPassword.trim(),
+        companyName: formik.values.companyName.trim(),
+      };
+  
+      if (trimmedValues.password !== trimmedValues.confirmPassword) {
         notification.error({
+          className: "notificationError",
+          message: "Confirm password does not match with the password.",
           placement: "bottomRight",
-          description: "Confirm password does not match with the password.",
         });
       } else {
         if (!captchaInfo.code && captchaInfo.captcha) {
           notification.error({
+            className: "notificationError",
+            message: "Invalid captcha",
             placement: "bottomRight",
-            description: "Invalid captcha",
           });
           return;
         }
         showLoader();
-        AuthenticationAPI.signup(formik.values, captchaInfo)
+        AuthenticationAPI.signup(trimmedValues, captchaInfo)
           .then(
             (result) => {
               hideLoader();
@@ -86,6 +102,14 @@ export default function SignUp() {
         captcha: captcha
       });
   }
+
+  const handleConfirmPasswordKeyDown = (event) => {
+    if (event.key === "Enter") {
+      setEnterPressed(true); // Set state to indicate Enter key was pressed
+      formik.validateField("confirmPassword"); // Trigger validation for confirmPassword field
+    }
+  };
+
   const { showLoader, hideLoader } = useLoader();
 
   const ClickHandler = () => {
@@ -112,7 +136,7 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div className="col-md-6 col-12 col-sm-12">
+          <div className="col-md-6 col-12 col-sm-12 d-flex align-items-center">
             <div className="login-form-bg pt-5">
               <div className="text-center">
                 <img src={openhie_logo} />
@@ -291,6 +315,7 @@ export default function SignUp() {
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
                       value={formik.values.confirmPassword}    
+                      onKeyDown={handleConfirmPasswordKeyDown}
                       autoComplete="off"
                     />
                     <button
@@ -307,7 +332,7 @@ export default function SignUp() {
                       ></i>
                     </button>
                     </div>
-                    {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                    {(formik.touched.confirmPassword || enterPressed ) && formik.errors.confirmPassword && (
                       <div className="text-danger">
                         {formik.errors.confirmPassword}
                       </div>

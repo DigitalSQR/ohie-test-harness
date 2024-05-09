@@ -2,6 +2,7 @@ package com.argusoft.path.tht.reportmanagement.restcontroller;
 
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultAnswerInfo;
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
@@ -10,6 +11,9 @@ import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.request.StartRequest;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.request.StatusRequest;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.response.StatusResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +35,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This TestcaseResultServiceRestController maps end points with standard
@@ -141,26 +144,25 @@ public class TestcaseResultRestController {
      *
      * @return
      */
-    @ApiOperation(value = "Submit manual TestcaseResults", response = Page.class)
+    @ApiOperation(value = "Submit manual TestcaseResults", response = List.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully Submitted TestcaseResult"),
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
-    @PatchMapping("/submit/{testcaseResultId}")
+
+    @PatchMapping("/submit")
     @Transactional(rollbackFor = Exception.class)
     @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
-    public TestcaseResultInfo submitTestcaseResult(
-            @PathVariable("testcaseResultId") String testcaseResultId,
-            @RequestParam(value = "selectedTestcaseOptionId", required = true) Set<String> selectedTestcaseOptionIds,
+    public List<TestcaseResultInfo> submitTestcaseResult(
+            @RequestBody List<TestcaseResultAnswerInfo> testcaseResultAnswerInfos,
             @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
-        TestcaseResultEntity testcaseResultEntity = testcaseResultService
+        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService
                 .submitTestcaseResult(
-                        testcaseResultId,
-                        selectedTestcaseOptionIds,
+                        testcaseResultAnswerInfos,
                         contextInfo);
-        return testcaseResultMapper.modelToDto(testcaseResultEntity);
+        return testcaseResultMapper.modelToDto(testcaseResultEntities);
     }
 
     @ApiOperation(value = "Patch Update For TestcaseResultEntity", response = TestcaseResultInfo.class)
@@ -362,6 +364,11 @@ public class TestcaseResultRestController {
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
         Collection<String> strings = TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
+    }
+
+    @GetMapping("/start-test-case/{testSuiteId}")
+    public StatusResponse startTestcaseAndStatusResponse(@PathVariable(value = "testSuiteId") String testSuiteId, @RequestAttribute("contextInfo") ContextInfo contextInfo) throws Exception {
+        return testcaseResultService.startTestcaseAndStatusResponse(testSuiteId, contextInfo);
     }
 
 }

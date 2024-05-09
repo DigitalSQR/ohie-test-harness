@@ -23,6 +23,7 @@
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
     "jspdf": "^2.5.1",
+    "moment": "^2.30.1",
     "popper.js": "^1.16.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
@@ -32,7 +33,8 @@
     "react-dropzone": "^14.2.3",
     "react-google-recaptcha": "^3.1.0",
     "react-redux": "^8.1.2",
-    "react-router-dom": "^6.16.0",
+    "react-router": "^6.23.0",
+    "react-router-dom": "^6.23.0",
     "react-scripts": "5.0.1",
     "react-select": "^5.8.0",
     "redux": "^4.2.1",
@@ -46,9 +48,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:dev": "env-cmd -f ./.env.development npm run-script build",
+    "build:testbed": "env-cmd -f ./.env.testbed npm run-script build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "set PORT=3000 & serve -s build"
+    "deploy": "serve -l 3000 -s build",
+    "devdeploy": "serve -l 3001 -s build",
+    "testbeddeploy": "serve -l 3002 -s build"
   },
   "eslintConfig": {
     "extends": [

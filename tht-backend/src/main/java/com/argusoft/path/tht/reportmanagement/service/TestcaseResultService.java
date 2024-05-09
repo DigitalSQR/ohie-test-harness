@@ -1,10 +1,14 @@
 package com.argusoft.path.tht.reportmanagement.service;
 
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultAnswerInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.request.StatusRequest;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.response.StatusResponse;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -73,8 +77,7 @@ public interface TestcaseResultService {
      * @throws VersionMismatchException     optimistic locking failure or the action
      *                                      was attempted on an out of date version
      */
-    public TestcaseResultEntity submitTestcaseResult(String testcaseResultId,
-                                                     Set<String> selectedTestcaseOptionIds,
+    public List<TestcaseResultEntity> submitTestcaseResult(List<TestcaseResultAnswerInfo> testcaseResultAnswerInfos,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             VersionMismatchException,
@@ -238,4 +241,12 @@ public interface TestcaseResultService {
      * @return classes name
      */
     public List<String> getSubClassesNameForTestCase();
+
+    public StatusResponse startTestcaseAndStatusResponse(String testSuiteId, ContextInfo contextInfo) throws Exception;
+
+    public List<TestcaseResultEntity> findTopFiveTestRequestsResult();
+
+    public List<TestcaseResultEntity> findBestOfEachComponent(List<ComponentEntity> allComponents);
+
+    public List<Object[]> findBestFiveTestcaseResultPerComponent(String componentId);
 }

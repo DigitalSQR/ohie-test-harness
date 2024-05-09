@@ -4,10 +4,15 @@ import com.argusoft.path.tht.fileservice.constant.DocumentServiceConstants;
 import com.argusoft.path.tht.fileservice.filter.DocumentCriteriaSearchFilter;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
+import com.argusoft.path.tht.notificationmanagement.event.NotificationCreationEvent;
+import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
+import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultViewInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
+import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
 import com.argusoft.path.tht.reportmanagement.service.TestResultRelationService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
@@ -15,7 +20,9 @@ import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
+import com.argusoft.path.tht.systemconfiguration.models.dto.MetaInfo;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
+import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonUtil;
@@ -36,17 +43,21 @@ import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.util.TestcaseExecutioner;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.*;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
 import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.testprocessmanagement.validator.TestRequestValidator;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
+import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -62,9 +73,11 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Service
-public class TestRequestServiceServiceImpl implements TestRequestService {
+public class    TestRequestServiceServiceImpl implements TestRequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestRequestServiceServiceImpl.class);
+
+    private TestcaseResultRepository testcaseResultRepository;
 
     private TestRequestRepository testRequestRepository;
 
@@ -87,6 +100,42 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     private DocumentService documentService;
 
     private EmailService emailService;
+
+    ApplicationEventPublisher applicationEventPublisher;
+
+    @Value("${base-url}")
+    private String baseUrl;
+
+    @Value("${message-configuration.test-request.create.mail}")
+    private boolean testRequestCreateMail;
+
+    @Value("${message-configuration.test-request.create.notification}")
+    private boolean testRequestCreateNotification;
+
+    @Value("${message-configuration.test-request.accept.mail}")
+    private boolean testRequestAcceptMail;
+
+    @Value("${message-configuration.test-request.accept.notification}")
+    private boolean testRequestAcceptNotification;
+
+    @Value("${message-configuration.test-request.reject.mail}")
+    private boolean testRequestRejectMail;
+
+    @Value("${message-configuration.test-request.reject.notification}")
+    private boolean testRequestRejectNotification;
+
+    @Value("${message-configuration.test-request.finish.mail}")
+    private boolean testRequestFinishMail;
+
+    @Value("${message-configuration.test-request.finish.notification}")
+    private boolean testRequestFinishNotification;
+    private GradeEvaluator gradeEvaluator;
+
+
+    @Autowired
+    public void setTestcaseResultRepository(TestcaseResultRepository testcaseResultRepository) {
+        this.testcaseResultRepository = testcaseResultRepository;
+    }
 
     @Autowired
     public void setTestRequestRepository(TestRequestRepository testRequestRepository) {
@@ -141,6 +190,16 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     @Autowired
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
+    }
+
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    @Autowired
+    public void setGradeEvaluator(GradeEvaluator gradeEvaluator) {
+        this.gradeEvaluator = gradeEvaluator;
     }
 
     @Override
@@ -255,11 +314,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                 componentService,
                 contextInfo);
 
-        //Fetch all admins
-        List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
-
-        //Notify each admin that a test request is created
-        admins.forEach(admin -> emailService.testRequestCreatedMessage(admin.getEmail(), admin.getName(), contextInfo.getEmail()));
+        messageAdminsIfTestRequestCreated(contextInfo);
 
         //Create state change API to make this as Accepted or Rejected
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
@@ -336,6 +391,10 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             throw new InvalidParameterException("TestRequestId is missing");
         }
         TestRequestCriteriaSearchFilter testRequestCriteriaSearchFilter = new TestRequestCriteriaSearchFilter(testRequestId);
+        Optional<TestRequestEntity> testRequestEntityOptional = testRequestRepository.findById(testRequestId);
+        if(!testRequestEntityOptional.isPresent()) {
+            new DoesNotExistException("TestRequest does not found with id : " + testRequestId);
+        }
         List<TestRequestEntity> testRequestEntities = this.searchTestRequests(testRequestCriteriaSearchFilter, contextInfo);
         return testRequestEntities.stream()
                 .findFirst()
@@ -360,10 +419,15 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Override
-    public List<ValidationResultInfo> validateChangeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    public List<ValidationResultInfo> validateChangeState(String testRequestId, String message, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         List<ValidationResultInfo> errors = new ArrayList<>();
         try {
             TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
+            if(stateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)){
+                testRequestEntity.setMessage(message);
+            } else {
+                testRequestEntity.setMessage(null);
+            }
             TestRequestValidator.validateChangeState(testRequestEntity, stateKey, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
             CommonStateChangeValidator.validateStateChangeByMap(TestRequestServiceConstants.TEST_REQUEST_STATUS, TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, testRequestEntity.getState(), stateKey, errors);
         } catch (DoesNotExistException ex) {
@@ -376,11 +440,124 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Override
-    public TestRequestEntity changeState(String testRequestId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
+    public List<TestRequestViewInfo> getApplicationsStats(ContextInfo contextInfo) throws OperationFailedException, InvalidParameterException, RuntimeException{
+
+        //Fetch all test requests
+        List<TestRequestEntity> testRequestEntities = testRequestRepository.findAll();
+
+        List<TestRequestViewInfo> testRequestViewInfos = new ArrayList<>();
+
+        //Add TestRequestViewInfo for every test request entity found
+        testRequestEntities.forEach(testRequestEntity -> {
+
+            //TestRequestInfo Model to DTO
+            TestRequestViewInfo testRequestViewInfo = new TestRequestViewInfo();
+            testRequestViewInfo.setId(testRequestEntity.getId());
+            testRequestViewInfo.setState(testRequestEntity.getState());
+            testRequestViewInfo.setName(testRequestEntity.getName());
+            testRequestViewInfo.setAssesseeName(testRequestEntity.getAssessee().getName());
+            testRequestViewInfo.setAssesseeEmail(testRequestEntity.getAssessee().getEmail());
+            MetaInfo meta = new MetaInfo();
+            meta.setCreatedAt(testRequestEntity.getCreatedAt());
+            meta.setUpdatedAt(testRequestEntity.getUpdatedAt());
+            meta.setCreatedBy(testRequestEntity.getCreatedBy());
+            meta.setUpdatedBy(testRequestEntity.getUpdatedBy());
+            meta.setVersion(testRequestEntity.getVersion());
+            testRequestViewInfo.setMeta(meta);
+
+            //Search for all testcases on this test request
+            TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+            testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestEntity.getId());
+            testcaseResultCriteriaSearchFilter.setRefObjUri(ComponentServiceConstants.COMPONENT_REF_OBJ_URI);
+            List<TestcaseResultEntity> testcaseResultEntities;
+
+            try {
+                testcaseResultEntities = testcaseResultService.searchTestcaseResults(
+                        testcaseResultCriteriaSearchFilter,
+                        contextInfo);
+            } catch (OperationFailedException | InvalidParameterException e) {
+                throw new RuntimeException(e);
+            }
+
+            List<ComponentEntity> components = testRequestEntity.getTestRequestUrls().stream().map(TestRequestUrlEntity::getComponent).collect(Collectors.toList());
+
+
+
+            List<TestcaseResultViewInfo> testResultOfComponents = new ArrayList<>();
+
+            testcaseResultEntities
+                    .forEach(componentResult -> {
+
+//                        components = components.stream()
+//                                                .filter(componentEntity -> !(componentEntity.getId().equals(componentResult.getId())))
+//                                                .collect(Collectors.toList());
+
+                        components.removeIf(componentEntity -> componentEntity.getId().equals(componentResult.getRefId()));
+
+                        TestcaseResultViewInfo componentResultViewInfo = new TestcaseResultViewInfo();
+                        componentResultViewInfo.setComponentId(componentResult.getId());
+                        componentResultViewInfo.setComponentName(componentResult.getName());
+                        String testRequestState = testRequestEntity.getState();
+                        if(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(testRequestState) || TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(testRequestState) || TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(testRequestState)){
+                            componentResultViewInfo.setTestcaseResultState(componentResult.getState());
+                        }
+                        if(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(testRequestState)){
+                            componentResultViewInfo.setSuccess(componentResult.getSuccess());
+                            componentResultViewInfo.setGrade(componentResult.getGrade());
+                        }
+                        testResultOfComponents.add(componentResultViewInfo);
+                    });
+            //add components to testResultOfComponents
+            for(ComponentEntity component: components){
+                TestcaseResultViewInfo inactiveComponent = new TestcaseResultViewInfo();
+                inactiveComponent.setComponentId(component.getId());
+                inactiveComponent.setComponentName(component.getName());
+
+
+                testResultOfComponents.add(inactiveComponent);
+            }
+
+            testRequestViewInfo.setTestResultOfComponents(testResultOfComponents);
+
+            //Search for all testcases on this test request
+            testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+            testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestEntity.getId());
+            testcaseResultCriteriaSearchFilter.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+            List<TestcaseResultEntity> testRequestTestcaseResultEntity;
+
+            try {
+                testRequestTestcaseResultEntity = testcaseResultService.searchTestcaseResults(
+                        testcaseResultCriteriaSearchFilter,
+                        contextInfo);
+            } catch (OperationFailedException | InvalidParameterException e) {
+                throw new RuntimeException(e);
+            }
+
+            if(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(testRequestEntity.getState())){
+                TestcaseResultEntity testRequestTestcaseResult =testRequestTestcaseResultEntity.stream().filter(testcaseResultEntity -> testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)).findFirst().get();
+                testRequestViewInfo.setSuccess(testRequestTestcaseResult.getSuccess());
+                testRequestViewInfo.setGrade(testRequestTestcaseResult.getGrade());
+            }
+
+            testRequestViewInfos.add(testRequestViewInfo);
+        });
+
+        return testRequestViewInfos;
+    }
+
+    @Override
+    public TestRequestEntity changeState(String testRequestId, String message, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException {
 
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
+
+
+        if(stateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)){
+            testRequestEntity.setMessage(message);
+        } else {
+            testRequestEntity.setMessage(null);
+        }
 
         defaultValueChangeState(testRequestEntity, stateKey, contextInfo);
 
@@ -391,72 +568,32 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         String oldState = testRequestEntity.getState();
 
         testRequestEntity.setState(stateKey);
+
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
 
         UserEntity requestingUser = testRequestEntity.getAssessee();
 
-        sendMailToTheUserOnChangeState(oldState, stateKey, requestingUser, testRequestEntity.getName());
-
+        sendMailToTheUserOnChangeState(oldState,  message, stateKey, requestingUser, testRequestEntity.getName(), testRequestId, contextInfo);
 
         changeStateCallback(testRequestEntity, contextInfo);
         return testRequestEntity;
     }
 
-    private void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity requestingUser, String testRequestName) {
+    private void sendMailToTheUserOnChangeState(String oldState, String message, String newState, UserEntity requestingUser, String testRequestName, String testRequestId, ContextInfo contextInfo) {
         if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(newState)) {
-            //Send Email to assessee if their test request is accepted by admin
-            emailService.testRequestAcceptedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+            messageAssesseeIfTestRequestAccepted(requestingUser, testRequestName, contextInfo);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED.equals(newState)) {
-            //Send Email to assessee if their test request is rejected
-            emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+            messageAssesseeIfTestRequestRejected(requestingUser, message, testRequestName, contextInfo);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(newState)) {
-            //Send Email to assessee if their test request is finished
-            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+            messageAssesseeIfTestRequestFinished(requestingUser, testRequestName, baseUrl + "/application-report/" + testRequestId, contextInfo);
         }
-    }
-
-    private void validateChangeStateForAccepted(TestRequestEntity testRequestEntity, String nextState) throws DataValidationErrorException {
-        if (TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextState)) {
-
-            Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();
-
-            if (testRequestUrls.isEmpty()) {
-                throwValidationException("Components not found to test", "component");
-            }
-
-            List<ComponentEntity> componentListToTest = testRequestUrls.stream()
-                    .map(TestRequestUrlEntity::getComponent)
-                    .toList();
-
-            if (componentListToTest.stream().noneMatch(componentEntity -> ComponentServiceConstants.COMPONENT_STATUS_ACTIVE.equals(componentEntity.getState()))) {
-                throwValidationException("No active component(s) found to start testing", "component");
-            }
-
-            for (ComponentEntity componentEntity : componentListToTest) {
-                if (componentEntity.getSpecifications().stream().noneMatch(specificationEntity -> SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE.equals(specificationEntity.getState()))) {
-                    throwValidationException("No active specifications found for component named " + componentEntity.getName() + ", can't start testing for this request.", "specification");
-                }
-
-                for (SpecificationEntity specification : componentEntity.getSpecifications()) {
-                    if (specification.getTestcases().stream().noneMatch(testcaseEntity -> TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE.equals(testcaseEntity.getState()))) {
-                        throwValidationException("No active testcases found for specification named " + specification.getName() + ", can't start testing for this request.", "specification");
-                    }
-                }
-            }
-        }
-    }
-
-    private void throwValidationException(String message, String element) throws DataValidationErrorException {
-        ValidationResultInfo validationResultInfo = new ValidationResultInfo();
-        validationResultInfo.setMessage(message);
-        validationResultInfo.setLevel(ErrorLevel.ERROR);
-        validationResultInfo.setElement(element);
-        throw new DataValidationErrorException(message, Collections.singletonList(validationResultInfo));
     }
 
     private void changeStateCallback(TestRequestEntity testRequestEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
         if (testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)) {
             createDraftTestcaseResultsByTestRequestAndProcessKey(testRequestEntity, contextInfo);
+        } else if (testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED)) {
+            updateIsSuccessAndGradeForReport(testRequestEntity, contextInfo);
         }
     }
 
@@ -531,7 +668,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                     isFunctional,
                     isWorkflow,
                     null,
-                    contextInfo);
+                    null, contextInfo);
             counter++;
 
             for (ComponentEntity componentEntity : activeComponents) {
@@ -581,7 +718,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                             isFunctional,
                             isWorkflow,
                             testRequestTestcaseResult.getId(),
-                            contextInfo);
+                            null, contextInfo);
                     counter++;
 
                     for (SpecificationEntity specificationEntity : activeSpecifications) {
@@ -615,7 +752,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                     isFunctional,
                                     isWorkflow,
                                     componentTestcaseResult.getId(),
-                                    contextInfo);
+                                    null, contextInfo);
                             counter++;
                             for (TestcaseEntity testcaseEntity : filteredTestcases) {
                                 TestcaseResultEntity testcaseResult = createDraftTestCaseResultIfNotExists(
@@ -631,7 +768,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                         isFunctional,
                                         isWorkflow,
                                         specificationTestcaseResult.getId(),
-                                        contextInfo);
+                                        testcaseEntity, contextInfo);
 
 
                                 // create TestResultRelation For Manual
@@ -646,21 +783,175 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
     }
 
+    private void updateIsSuccessAndGradeForReport(TestRequestEntity testRequestEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+
+        TestcaseResultCriteriaSearchFilter testcaseResultCriteriaSearchFilter = new TestcaseResultCriteriaSearchFilter();
+        testcaseResultCriteriaSearchFilter.setTestRequestId(testRequestEntity.getId());
+
+        List<TestcaseResultEntity> testcaseResultEntities = testcaseResultService.searchTestcaseResults(
+                testcaseResultCriteriaSearchFilter,
+                contextInfo);
+
+        TestcaseResultEntity testcaseResult = testcaseResultEntities.stream().filter(testcaseResultEntity -> testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)).findFirst().get();
+
+        recalculateTestcaseResultEntity(testcaseResult, testcaseResultEntities, contextInfo);
+    }   
+
+    private void recalculateTestcaseResultEntity(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities, ContextInfo contextInfo) {
+        if (testcaseResultEntity.getRefObjUri().equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI)) {
+            //FOR SPECIFICATION
+            //set success
+            List<TestcaseResultEntity> filteredTestcaseResults = getFilteredChileTestcaseResultsForTestResult(testcaseResultEntity, testcaseResultEntities);
+            testcaseResultEntity.setSuccess(filteredTestcaseResults.stream().allMatch(testcaseResultEntity1 ->
+                    testcaseResultEntity1.getState()
+                            .equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)
+                            || Boolean.TRUE.equals(testcaseResultEntity1.getSuccess())));
+            //set duration
+            Long duration = 0L;
+            for (TestcaseResultEntity tcr : filteredTestcaseResults) {
+                if (tcr.getDuration() != null) {
+                    duration = duration + tcr.getDuration();
+                }
+            }
+            testcaseResultEntity.setDuration(duration);
+            //Set message
+            List<String> failedTestcaseResultName = filteredTestcaseResults.stream().filter(tcre -> tcre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) && !tcre.getSuccess()).map(IdStateNameMetaEntity::getName).toList();
+            String message;
+            if (failedTestcaseResultName.isEmpty()) {
+                message = "Passed";
+            } else {
+                message = getMessage("Specification <b>", testcaseResultEntity, "</b> has been failed due to failing following testcase failure: ", failedTestcaseResultName);
+            }
+            testcaseResultEntity.setMessage(message);
+
+            //Set compliance of specification
+            int compliance = GradeEvaluator.getComplianceForSpecification(filteredTestcaseResults);
+            testcaseResultEntity.setCompliant(compliance);
+            testcaseResultEntity.setNonCompliant(filteredTestcaseResults.size()-compliance);
+
+        } else if (testcaseResultEntity.getRefObjUri().equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
+            //FOR COMPONENT
+            //update specifications
+            List<TestcaseResultEntity> filteredTestcaseResults = getFilteredChileTestcaseResultsForTestResult(testcaseResultEntity, testcaseResultEntities);
+            for(TestcaseResultEntity testcaseResult: filteredTestcaseResults) {
+                recalculateTestcaseResultEntity(testcaseResult, testcaseResultEntities, contextInfo);
+            }
+            //set success
+            testcaseResultEntity.setSuccess(filteredTestcaseResults.stream().allMatch(testcaseResultEntity1 ->
+                    !testcaseResultEntity1.getRequired() || Boolean.TRUE.equals(testcaseResultEntity1.getSuccess())));
+            //set duration
+            Long duration = 0L;
+            for (TestcaseResultEntity tcr : filteredTestcaseResults) {
+                if (tcr.getDuration() != null) {
+                    duration = duration + tcr.getDuration();
+                }
+            }
+            testcaseResultEntity.setDuration(duration);
+            //set message
+            List<String> failedTestcaseResultName = filteredTestcaseResults.stream().filter(tcre -> tcre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) && !tcre.getSuccess()).map(IdStateNameMetaEntity::getName).toList();
+            String message;
+            if (failedTestcaseResultName.isEmpty()) {
+                message = "Passed";
+            } else {
+                message = getMessage("Component <b>", testcaseResultEntity, "</b> has been failed due to failing following specification failure: ", failedTestcaseResultName);
+            }
+            testcaseResultEntity.setMessage(message);
+
+            //Set Compliance of component
+            testcaseResultEntity.setCompliant(GradeEvaluator.getCompliance(filteredTestcaseResults));
+            testcaseResultEntity.setNonCompliant(GradeEvaluator.getNonCompliance(filteredTestcaseResults));
+
+
+            //set grade
+            testcaseResultEntity.setGrade(gradeEvaluator.evaluate(
+                    filteredTestcaseResults.stream().filter(tcre -> !tcre.getRequired())
+                            .collect(Collectors.toList()),
+                    contextInfo)
+            );
+        } else if (testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)) {
+            //FOR TestRequest
+            //update components
+            List<TestcaseResultEntity> filteredTestcaseResults = getFilteredChileTestcaseResultsForTestResult(testcaseResultEntity, testcaseResultEntities);
+            for(TestcaseResultEntity testcaseResult: filteredTestcaseResults) {
+                recalculateTestcaseResultEntity(testcaseResult, testcaseResultEntities, contextInfo);
+            }
+            //set success
+            testcaseResultEntity.setSuccess(filteredTestcaseResults.stream().allMatch(testcaseResultEntity1 ->
+                    !testcaseResultEntity1.getRequired() || Boolean.TRUE.equals(testcaseResultEntity1.getSuccess())));
+            //set duration
+            Long duration = 0L;
+            for (TestcaseResultEntity tcr : filteredTestcaseResults) {
+                if (tcr.getDuration() != null) {
+                    duration = duration + tcr.getDuration();
+                }
+            }
+            testcaseResultEntity.setDuration(duration);
+            //set message
+            List<String> failedTestcaseResultName = filteredTestcaseResults.stream().filter(tcre -> tcre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) && !tcre.getSuccess()).map(IdStateNameMetaEntity::getName).toList();
+            String message;
+            if (failedTestcaseResultName.isEmpty()) {
+                message = "Passed";
+            } else {
+                message = getMessage("Test Request <b>", testcaseResultEntity, "</b> has been failed due to failing following component failure: ", failedTestcaseResultName);
+            }
+            testcaseResultEntity.setMessage(message);
+
+            //Set Compliance of Test Request
+            if(testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)){
+                testcaseResultEntity.setCompliant(GradeEvaluator.getCompliance(filteredTestcaseResults));
+                testcaseResultEntity.setNonCompliant(GradeEvaluator.getNonCompliance(filteredTestcaseResults));
+            }
+
+            //set grade
+            testcaseResultEntity.setGrade(gradeEvaluator.evaluate(
+                    testcaseResultEntities.stream().filter(tcre -> tcre.getRefObjUri().equals(SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI) && !tcre.getRequired())
+                            .collect(Collectors.toList()),
+                    contextInfo)
+            );
+        }
+    }
+
+    private static List<TestcaseResultEntity> getFilteredChileTestcaseResultsForTestResult(TestcaseResultEntity testcaseResultEntity, List<TestcaseResultEntity> testcaseResultEntities) {
+        return testcaseResultEntities.stream()
+                .filter(tcre -> {
+                    return tcre.getParentTestcaseResult() != null
+                            && tcre.getParentTestcaseResult().getId().equals(testcaseResultEntity.getId());
+                }).collect(Collectors.toList());
+    }
+
     private void createTestResultRelationsForManualTestcase(TestcaseEntity testcaseEntity, TestcaseResultEntity testcaseResult, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
 
-        if (Boolean.TRUE.equals(testcaseEntity.getManual())) {
+        // create for testcase
+        TestResultRelationEntity testResultRelationEntity = createTestResultRelationEntity(
+                TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
+                testcaseEntity.getId(),
+                testcaseEntity.getVersion(),
+                testcaseResult
+        );
 
-            // create for question
-            TestResultRelationEntity testResultRelationEntity = createTestResultRelationEntity(
-                    TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
-                    testcaseEntity.getId(),
-                    testcaseEntity.getVersion(),
+        testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+
+        // create for documents related to question
+        DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
+        documentCriteriaSearchFilter.setRefObjUri(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
+        documentCriteriaSearchFilter.setRefId(testcaseEntity.getId());
+        documentCriteriaSearchFilter.setState(Collections.singletonList(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE));
+
+        List<DocumentEntity> documentEntities = documentService.searchDocument(documentCriteriaSearchFilter, contextInfo);
+
+        for (DocumentEntity documentEntity : documentEntities) {
+            testResultRelationEntity = createTestResultRelationEntity(
+                    DocumentServiceConstants.DOCUMENT_REF_OBJ_URI,
+                    documentEntity.getId(),
+                    documentEntity.getVersion(),
                     testcaseResult
             );
 
             testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
+        }
 
 
+        if (Boolean.TRUE.equals(testcaseEntity.getManual())) {
             // create for options
             TestcaseOptionCriteriaSearchFilter testcaseOptionCriteriaSearchFilter = new TestcaseOptionCriteriaSearchFilter();
             testcaseOptionCriteriaSearchFilter.setTestcaseId(testcaseEntity.getId());
@@ -673,25 +964,6 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                         TestcaseOptionServiceConstants.TESTCASE_OPTION_REF_OBJ_URI,
                         testcaseOptionEntity.getId(),
                         testcaseOptionEntity.getVersion(),
-                        testcaseResult
-                );
-
-                testResultRelationService.createTestcaseResult(testResultRelationEntity, contextInfo);
-            }
-
-            // create for documents related to question
-            DocumentCriteriaSearchFilter documentCriteriaSearchFilter = new DocumentCriteriaSearchFilter();
-            documentCriteriaSearchFilter.setRefObjUri(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI);
-            documentCriteriaSearchFilter.setRefId(testcaseEntity.getId());
-            documentCriteriaSearchFilter.setState(Collections.singletonList(DocumentServiceConstants.DOCUMENT_STATUS_ACTIVE));
-
-            List<DocumentEntity> documentEntities = documentService.searchDocument(documentCriteriaSearchFilter, contextInfo);
-
-            for (DocumentEntity documentEntity : documentEntities) {
-                testResultRelationEntity = createTestResultRelationEntity(
-                        DocumentServiceConstants.DOCUMENT_REF_OBJ_URI,
-                        documentEntity.getId(),
-                        documentEntity.getVersion(),
                         testcaseResult
                 );
 
@@ -729,7 +1001,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
                                                                       Boolean isFunctional,
                                                                       Boolean isWorkflow,
                                                                       String parentTestcaseResultId,
-                                                                      ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
+                                                                      TestcaseEntity testcaseEntity, ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException, VersionMismatchException {
 
         TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
         searchFilter.setRefObjUri(refObjUri);
@@ -754,6 +1026,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         TestRequestEntity testRequestEntity = new TestRequestEntity();
         testRequestEntity.setId(testRequestId);
         testcaseResultEntity.setTestRequest(testRequestEntity);
+        testcaseResultEntity.setTestcase(testcaseEntity);
 
         testcaseResultEntity.setRank(counter);
         testcaseResultEntity.setName(name);
@@ -787,4 +1060,478 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             testRequestEntity.setApprover(userService.getPrincipalUser(contextInfo));
         }
     }
+
+    private void messageAdminsIfTestRequestCreated(ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+        //Notify each admin that a test request is created
+        List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
+        for (UserEntity admin : admins) {
+            if (testRequestCreateMail) {
+                emailService.testRequestCreatedMessage(admin.getEmail(), admin.getName(), contextInfo.getEmail());
+            }
+            if (testRequestCreateNotification) {
+                NotificationEntity notificationEntity = new NotificationEntity("A new Test Request has been created by "+contextInfo.getEmail(), admin);
+                applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+            }
+        }
+    }
+
+    private void messageAssesseeIfTestRequestAccepted(UserEntity requestingUser, String testRequestName, ContextInfo contextInfo) {
+        if(testRequestAcceptMail) {
+            emailService.testRequestAcceptedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName);
+        }
+        if(testRequestAcceptNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been accepted.",requestingUser);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+    }
+
+    private void messageAssesseeIfTestRequestRejected(UserEntity requestingUser, String message, String testRequestName, ContextInfo contextInfo) {
+        if(testRequestRejectMail) {
+            emailService.testRequestRejectedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName, message);
+        }
+        if(testRequestRejectNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been rejected.\nRejection Message : "+message,requestingUser);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+    }
+
+    private void messageAssesseeIfTestRequestFinished(UserEntity requestingUser, String testRequestName, String reportLink, ContextInfo contextInfo) {
+        if(testRequestFinishMail) {
+            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName, reportLink);
+        }
+        if(testRequestFinishNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been finished.",requestingUser);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+    }
+    private static String getMessage(String x, TestcaseResultEntity testcaseResultEntity, String x1, List<String> failedSpecificationTestcaseResultName) {
+        StringBuilder message = new StringBuilder(x + testcaseResultEntity.getName() + x1);
+        for (int i = 0; i < (failedSpecificationTestcaseResultName.size() - 1); i++) {
+            message.append(" <b>").append(failedSpecificationTestcaseResultName.get(i)).append("<b>,");
+        }
+        if (failedSpecificationTestcaseResultName.size() > 1) {
+            message.append(" and ");
+        }
+
+        message.append("<b>").append(failedSpecificationTestcaseResultName.get(failedSpecificationTestcaseResultName.size() - 1)).append("<b>");
+
+        return message.toString();
+    }
+
+    @Override
+    public GraphInfo getDashboard(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+
+        GraphInfo graphInfo = new GraphInfo();
+
+
+        // Search for all test Request Results
+        TestcaseResultCriteriaSearchFilter searchFilterForAllTestRequests = new TestcaseResultCriteriaSearchFilter();
+        searchFilterForAllTestRequests.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+        List<TestcaseResultEntity> testRequestResults = testcaseResultService.searchTestcaseResults(searchFilterForAllTestRequests, contextInfo);
+
+
+        // Total Number of Applications
+
+
+        graphInfo.setTotalApplications(testRequestResults.size());
+
+
+        // Total number of assessees registered
+
+        UserSearchCriteriaFilter searchCriteriaFilter = new UserSearchCriteriaFilter();
+        graphInfo.setAssesseeRegistered(userService.searchUsers(searchCriteriaFilter, contextInfo).stream().filter(userEntity -> userEntity.getRoles().stream().anyMatch(roleEntity -> roleEntity.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))).filter(userEntity -> userEntity.getState().equals(UserServiceConstants.USER_STATUS_ACTIVE)).toList().size());
+
+        // Compliance Rate
+
+
+        int complianceForComplianceRate = testRequestResults.stream().mapToInt(testcaseResultEntity -> {
+            try {
+                return testcaseResultEntity.getCompliant();
+            } catch(Exception e) {
+                return 0;
+            }
+        }).sum();
+        int nonComplianceForComplianceRate = testRequestResults.stream().mapToInt(testcaseResultEntity -> {
+            try {
+                return testcaseResultEntity.getNonCompliant();
+            } catch(Exception e) {
+                return 0;
+            }
+        }).sum();
+
+        if((complianceForComplianceRate+nonComplianceForComplianceRate)!=0){
+            graphInfo.setComplianceRate(((float) complianceForComplianceRate /(complianceForComplianceRate + nonComplianceForComplianceRate))*100.0F);
+        } else {
+            graphInfo.setComplianceRate(0);
+        }
+
+
+
+
+        // Testing Rate
+
+
+
+        if(!testRequestResults.isEmpty()){
+            graphInfo.setTestingRate((((float)testRequestResults
+                    .stream()
+                    .filter(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) || testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP) ).toList().size())
+                    /
+                    (testRequestResults.size())*100.0F));
+        } else {
+            graphInfo.setTestingRate(0);
+        }
+
+
+
+
+        // Set ApplicationRequestsByMonth
+
+
+
+        Optional<Date> maxDate = testRequestResults.stream().max(Comparator.comparing(TestcaseResultEntity::getUpdatedAt)).map(TestcaseResultEntity::getUpdatedAt);
+
+        Optional<Date> minDate = testRequestResults.stream().min(Comparator.comparing(TestcaseResultEntity::getUpdatedAt)).map(TestcaseResultEntity::getUpdatedAt);
+
+        int max=-1;
+        int min=0;
+
+        if(minDate.isPresent() && maxDate.isPresent()){
+            min = minDate.get().getYear();
+            max = maxDate.get().getYear();
+        }
+
+        List<ApplicationRequests> applicationRequests = new ArrayList<>();
+        for(int year = max; year >=min; year--){
+            int finalYear = year;
+            List<TestcaseResultEntity> yearlyTestRequestResults = testRequestResults.stream().filter(testcaseResultEntity -> testcaseResultEntity.getUpdatedAt().getYear() == finalYear).toList();
+
+            List<ApplicationRequestDataByMonth> applicationRequestDataByMonthList = new ArrayList<>();
+
+            for(int month = 1 ; month <= 12 ; month++){
+                int finalMonth = month;
+                List<TestcaseResultEntity> monthlyTestRequestResults = yearlyTestRequestResults.stream().filter(testcaseResultEntity -> (testcaseResultEntity.getUpdatedAt().getMonth()+1) == finalMonth).toList();
+
+                ApplicationRequestDataByMonth applicationRequestDataByMonth = new ApplicationRequestDataByMonth();
+
+                applicationRequestDataByMonth.setMonth(month);
+                int compliant = monthlyTestRequestResults.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
+                applicationRequestDataByMonth.setCompliant(compliant);
+                applicationRequestDataByMonth.setNonCompliant(monthlyTestRequestResults.size() - compliant);
+
+                applicationRequestDataByMonthList.add(applicationRequestDataByMonth);
+            }
+            ApplicationRequests applicationRequest = new ApplicationRequests();
+            applicationRequest.setYear(year+1900);
+
+            applicationRequest.setApplicationRequestDataByMonthList(applicationRequestDataByMonthList);
+
+            applicationRequests.add(applicationRequest);
+
+        }
+
+        graphInfo.setApplicationRequestsByMonth(applicationRequests);
+
+
+
+        // Compliant Application
+
+
+
+        // Store returnable data of compliant application
+        List<CompliantApplication> compliantApplications = new ArrayList<>();
+
+        // Get Top five test Request Results according to compliant/non-compliant ratio
+        List<TestcaseResultEntity> topFiveTestRequestsResult = testcaseResultService.findTopFiveTestRequestsResult();
+
+
+        // Get Components using ids using ref ids from the component testcase result list
+        List<ComponentEntity> allComponentEntities = componentService.findAll();
+
+        // Calculate and set compliant applications in compliant applications list
+        for(int i = 0 ; i < topFiveTestRequestsResult.size() ; i++){
+
+            CompliantApplication compliantApplication = new CompliantApplication();
+
+            int compliantApplicationCompliant, compliantApplicationNonCompliant;
+
+            try {
+                compliantApplicationCompliant = topFiveTestRequestsResult.get(i).getCompliant();
+            } catch(Exception e) {
+                compliantApplicationCompliant = 0;
+            }
+
+            try {
+                compliantApplicationNonCompliant = topFiveTestRequestsResult.get(i).getNonCompliant();
+            } catch(Exception e) {
+                compliantApplicationNonCompliant = 0;
+            }
+
+            compliantApplication.setApplicationName(topFiveTestRequestsResult.get(i).getName());
+            compliantApplication.setTestcasesPassed(compliantApplicationCompliant);
+            compliantApplication.setRank(i+1);
+            compliantApplication.setTotalTestcases(compliantApplicationCompliant + compliantApplicationNonCompliant);
+
+            // Search for Component Testcase Results of the current application of the loop
+            TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+            searchFilter.setParentTestcaseResultId(topFiveTestRequestsResult.get(i).getId());
+
+            List<TestcaseResultEntity> componentResults = testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
+
+            /* QUESTION : Database call to get all components and then use java logic to match component OR Call database each time to get specific component */
+
+            List<ComponentEntity> componentEntities = allComponentEntities.stream().filter(componentEntity -> componentResults.stream().anyMatch(testcaseResultEntity -> testcaseResultEntity.getRefId().equals(componentEntity.getId()))).toList();
+
+            /* QUESTION : Which Rank to be used?? */
+            List<Component> components = getComponents(componentEntities, componentResults);
+
+            compliantApplication.setComponents(components);
+
+            compliantApplications.add(compliantApplication);
+
+        }
+
+        // Set Compliant Application List to returnable Graph Info variable
+        graphInfo.setCompliantApplications(compliantApplications);
+
+
+
+        //PIE CHART
+
+
+
+        // Find All test requests
+        List<TestRequestEntity> allTestRequests = testRequestRepository.findAll();
+
+        Map<String,Integer> pieChart = new HashMap<>();
+
+        // Put counts of each status of test requests in the pieChart variable
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)).toList().size());
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING)).toList().size());
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED)).toList().size());
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED)).toList().size());
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)).toList().size());
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)).toList().size());
+
+        // Set pieChart values to returnable Graph Info variable
+        graphInfo.setPieChart(pieChart);
+
+
+
+
+        //AWARD GRAPH
+
+
+
+
+        List<AwardGraph> awardGraphs = new ArrayList<>();
+
+
+        List<ComponentEntity> allComponents = componentService.findAll();
+
+        for(ComponentEntity componentEntity : allComponents){
+
+            List<Object[]> bestFiveTestcaseResultPerComponent = this.findBestFiveTestcaseResultPerComponent(componentEntity.getId());
+
+            List<AwardApplication> awardApplicationList = new ArrayList<>();
+
+            AwardGraph awardGraph = new AwardGraph();
+
+            awardGraph.setComponentName(componentEntity.getName());
+
+            if(bestFiveTestcaseResultPerComponent.isEmpty()){
+
+
+                awardGraph.setAwardApplicationList(new ArrayList<AwardApplication>());
+
+
+            } else {
+
+
+                for(Object[] testcaseResultPerComponent : bestFiveTestcaseResultPerComponent){
+                    AwardApplication awardApplication = new AwardApplication();
+
+                    awardApplication.setPassedTestcases((int)testcaseResultPerComponent[0]);
+                    awardApplication.setTotalTestcases((int) testcaseResultPerComponent[0] + (int) testcaseResultPerComponent[1]);
+                    awardApplication.setAppName(((TestRequestEntity)testcaseResultPerComponent[2]).getName());
+
+                    awardApplicationList.add(awardApplication);
+                }
+                Comparator<AwardApplication> comparator = Comparator.comparing(
+                        awardApplication -> {
+                            if(awardApplication.getTotalTestcases()!=0){
+                                return (awardApplication.getPassedTestcases() / awardApplication.getTotalTestcases());
+                            } else {
+                                return awardApplication.getPassedTestcases();
+                            }
+                        });
+
+                awardApplicationList.sort(comparator.reversed());
+
+                awardGraph.setAwardApplicationList(awardApplicationList);
+
+
+            }
+
+
+            awardGraphs.add(awardGraph);
+
+        }
+
+        Comparator<AwardGraph> comparator = Comparator.comparing(
+                awardGraph -> {
+                    if(Boolean.FALSE.equals(awardGraph.getAwardApplicationList().isEmpty())){
+                        if(awardGraph.getAwardApplicationList().get(0).getTotalTestcases()!=0){
+                            return (awardGraph.getAwardApplicationList().get(0).getPassedTestcases()/awardGraph.getAwardApplicationList().get(0).getTotalTestcases());
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        return 0;
+                    }
+
+                });
+
+        awardGraphs.sort(comparator.reversed());
+
+        for(AwardGraph awardGraph : awardGraphs){
+
+            awardGraph.setComponentRank(awardGraphs.indexOf(awardGraph)+1);
+        }
+
+        graphInfo.setAwardGraph(awardGraphs);
+
+
+
+
+
+
+
+//        // Set max size of the repository call request
+//        Pageable pageable = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "compliant"));
+//
+//        List<ComponentEntity> allComponents = componentService.findAll();
+//
+//        // Call the repository method
+//        List<TestcaseResultEntity> bestOfEachComponent = testcaseResultService.findBestOfEachComponent(allComponents);
+//
+//        // Set data in awardGraph variable
+//        for( TestcaseResultEntity  testcaseResultEntity : bestOfEachComponent){
+//
+//            AwardGraph awardGraph = new AwardGraph();
+//
+//            awardGraph.setComponentName(testcaseResultEntity.getName());
+//            awardGraph.setPassedTestcases(testcaseResultEntity.getCompliant());
+//            awardGraph.setTotalTestcases(testcaseResultEntity.getCompliant() + testcaseResultEntity.getNonCompliant());
+//
+//            awardGraph.setComponentRank(bestOfEachComponent.indexOf(testcaseResultEntity)+1);
+//            if(testcaseResultEntity.getTestRequest()!=null){
+//                awardGraph.setAppName(testcaseResultEntity.getTestRequest().getName());
+//            }
+//
+//
+//
+//            awardGraphs.add(awardGraph);
+//
+//        }
+//
+//        // Set awardGraph values in the returnable Graph Info variable
+//        graphInfo.setAwardGraph(awardGraphs);
+//
+
+
+
+        //Percentage Cumulative Graph
+
+
+
+        List<PercentageCumulativeGraph> percentageCumulativeGraphs = new ArrayList<>();
+
+        // Find all components
+        List<ComponentEntity> componentEntities = componentService.findAll();
+
+        List<Object[]> filteredComponentsResults = testcaseResultRepository.nameComplianceAndNonCompliance(ComponentServiceConstants.COMPONENT_REF_OBJ_URI, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
+
+        for(Object[] componentResult: filteredComponentsResults){
+            PercentageCumulativeGraph percentageCumulativeGraph = new PercentageCumulativeGraph();
+
+            percentageCumulativeGraph.setCompliantTestRequests((Long)componentResult[0]);
+            percentageCumulativeGraph.setTotalTestRequests((Long)componentResult[1] + (Long)componentResult[0]);
+            percentageCumulativeGraph.setComponentName(String.valueOf(componentResult[2]));
+            componentEntities = componentEntities.stream().filter(componentEntity -> !(componentEntity.getName().equals(String.valueOf(componentResult[2])))).collect(Collectors.toList());
+
+            percentageCumulativeGraphs.add(percentageCumulativeGraph);
+        }
+        for(ComponentEntity component : componentEntities){
+            PercentageCumulativeGraph percentageCumulativeGraph = new PercentageCumulativeGraph();
+
+            percentageCumulativeGraph.setComponentName(component.getName());
+            percentageCumulativeGraph.setTotalTestRequests(0L);
+            percentageCumulativeGraph.setCompliantTestRequests(0L);
+
+            percentageCumulativeGraphs.add(percentageCumulativeGraph);
+        }
+
+        // Sort percentageCumulativeGraph using percentage of compliant test Requests
+        percentageCumulativeGraphs.sort(Comparator.comparing(percentageCumulativeGraph -> {
+            if(percentageCumulativeGraph.getTotalTestRequests()!=0){
+                return percentageCumulativeGraph.getCompliantTestRequests() / percentageCumulativeGraph.getTotalTestRequests();
+            } else {
+                return percentageCumulativeGraph.getCompliantTestRequests();
+            }
+        }));
+
+            // Set component rank based in List index as list is sorted
+        for( int i = 0 ; i < percentageCumulativeGraphs.size() ; i++ ){
+            percentageCumulativeGraphs.get(i).setComponentRank( i + 1 );
+        }
+
+        // Set percentageCumulativeGraph in returnable Graph Info variable
+        graphInfo.setPercentageCumulativeGraph(percentageCumulativeGraphs);
+
+        // Return Graph Info
+        return graphInfo;
+    }
+
+    private static List<Component> getComponents(List<ComponentEntity> componentEntities, List<TestcaseResultEntity> componentResults) {
+        List<Component> components = new ArrayList<>();
+        for(int j = 0; j < componentEntities.size() ; j++){
+
+            Component component = new Component();
+            component.setComponentRank(componentEntities.get(j).getRank());
+            component.setComponentName(componentEntities.get(j).getName());
+            component.setTestcasesPassed(componentResults.get(j).getCompliant());
+            component.setTotalTestcases(componentResults.get(j).getCompliant() + componentResults.get(j).getNonCompliant());
+
+            components.add(component);
+        }
+        return components;
+    }
+
+    private List<TestcaseResultEntity> findTestcaseResultsUpdatedLastSevenMonths(){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -6); // Subtract 7 months from the current date
+        calendar.set(Calendar.DAY_OF_MONTH, 1); // Set date of start as 1
+
+        Date sevenMonthsAgo = calendar.getTime();
+        return testcaseResultRepository.findRecordsUpdatedLastSevenMonths(sevenMonthsAgo);
+
+    }
+    private List<TestcaseResultEntity> findTestcaseResultsUpdatedLastSevenYears(){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, -6); // Subtract 7 years from the current date
+        calendar.set(Calendar.DAY_OF_YEAR, 1);
+
+        Date sevenYearsAgo = calendar.getTime();
+        return testcaseResultRepository.findRecordsUpdatedLastSevenMonths(sevenYearsAgo);
+
+    }
+    private List<Object[]> findBestFiveTestcaseResultPerComponent(String componentId){
+        return testcaseResultService.findBestFiveTestcaseResultPerComponent(componentId);
+    }
+
+
+
 }

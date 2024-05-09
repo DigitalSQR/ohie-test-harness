@@ -1,5 +1,7 @@
 package com.argusoft.path.tht.usermanagement.service.impl;
 
+import com.argusoft.path.tht.notificationmanagement.event.NotificationCreationEvent;
+import com.argusoft.path.tht.notificationmanagement.models.entity.NotificationEntity;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
 import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.Module;
@@ -8,6 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.security.service.AuthenticationService;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonUtil;
 import com.argusoft.path.tht.systemconfiguration.utils.EncryptDecrypt;
@@ -29,6 +32,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -55,10 +60,47 @@ public class UserServiceServiceImpl implements UserService {
     UserRepository userRepository;
     RoleRepository roleRepository;
     TokenStore tokenStore;
+    AuthenticationService authenticationService;
     UserService userService;
+    ApplicationEventPublisher applicationEventPublisher;
     private TokenVerificationService tokenVerificationService;
-    private DefaultTokenServices defaultTokenServices;
     private EmailService emailService;
+
+    @Value("${message-configuration.account.approve.mail}")
+    private boolean accountApproveMail;
+
+    @Value("${message-configuration.account.approve.notification}")
+    private boolean accountApproveNotification;
+
+    @Value("${message-configuration.account.reject.mail}")
+    private boolean accountRejectMail;
+
+    @Value("${message-configuration.account.reject.notification}")
+    private boolean accountRejectNotification;
+
+    @Value("${message-configuration.account.deactivate.mail}")
+    private boolean accountDeactivateMail;
+
+    @Value("${message-configuration.account.deactivate.notification}")
+    private boolean accountDeactivateNotification;
+
+    @Value("${message-configuration.account.approval-pending.mail}")
+    private boolean accountApprovalPendingMail;
+
+    @Value("${message-configuration.account.approval-pending.notification}")
+    private boolean accountApprovalPendingNotification;
+
+    @Value("${message-configuration.account.reactivate.mail}")
+    private boolean accountReactivateMail;
+
+    @Value("${message-configuration.account.reactivate.notification}")
+    private boolean accountReactivateNotification;
+
+    @Value("${message-configuration.account.admin-tester.create.mail}")
+    private boolean adminTesterCreateMail;
+
+    @Value("${message-configuration.account.admin-tester.create.notification}")
+    private boolean adminTesterCreateNotification;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
@@ -76,8 +118,8 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Autowired
-    public void setDefaultTokenServices(DefaultTokenServices defaultTokenServices) {
-        this.defaultTokenServices = defaultTokenServices;
+    public void setAuthenticationService(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
 
     @Autowired
@@ -95,20 +137,25 @@ public class UserServiceServiceImpl implements UserService {
         this.emailService = emailService;
     }
 
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
+
     /**
      * {@inheritdoc}
      */
     @Override
     public Boolean logout(ContextInfo contextInfo)
             throws OperationFailedException {
-        return defaultTokenServices.revokeToken(contextInfo.getAccessToken());
+        return authenticationService.revokeToken(contextInfo.getAccessToken());
     }
 
     @Override
     public UserEntity getUserByEmail(String email, ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException {
         if (!StringUtils.hasLength(email)) {
-            throw new DoesNotExistException("User does not found with email : " + email);
+            throw new DoesNotExistException("No user found with this email: " + email);
         }
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
         userSearchCriteriaFilter.setEmail(email);
@@ -121,6 +168,12 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public UserEntity registerAssessee(UserEntity userEntity, ContextInfo contextInfo)
             throws DoesNotExistException, OperationFailedException, InvalidParameterException, DataValidationErrorException, MessagingException, IOException {
+
+        if (userEntity == null) {
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
+            throw new InvalidParameterException("userEntity is missing");
+        }
+
         defaultValueRegisterAssessee(userEntity);
         userEntity = this.createUser(userEntity, contextInfo);
         return userEntity;
@@ -182,11 +235,17 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity changeState(String userId, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
+    public UserEntity changeState(String userId, String message, String stateKey, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException, MessagingException, IOException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         UserEntity userEntity = this.getUserById(userId, contextInfo);
         String oldState = userEntity.getState();
+
+        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))){
+            userEntity.setMessage(message);
+        } else {
+            userEntity.setMessage("'Inactivating from the testing harness tool. If you have any concerns, please contact the Admin.'");
+        }
 
         UserValidator.validateChangeState(userEntity, this, errors, stateKey, contextInfo);
 
@@ -194,9 +253,11 @@ public class UserServiceServiceImpl implements UserService {
 
         userEntity.setState(stateKey);
 
+
+
         userEntity = this.updateUser(userEntity, contextInfo);
 
-        sendMailToTheUserOnChangeState(oldState, userEntity.getState(), userEntity, contextInfo);
+        sendMailToTheUserOnChangeState(oldState, userEntity.getMessage(), userEntity.getState(), userEntity, contextInfo);
 
         if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE)) {
             revokeAccessTokenOnStateChange(UserServiceConstants.CLIENT_ID, userEntity.getId());
@@ -216,27 +277,22 @@ public class UserServiceServiceImpl implements UserService {
 
         }
     }
-    @Override
-    public void sendMailToTheUserOnChangeState(String oldState, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
-        if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
-            //message assessee if their account is approved by admin
-            emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
-        } else if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
-            //message assessee if their account is rejected by admin
-            emailService.accountRejectedMessage(userEntity.getEmail(), userEntity.getName());
-        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(newState)) {
-            //Fetch all admins
-            List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
 
-            //Message all admins stating approval pending
-            admins.forEach(admin -> emailService.verifiedAndWaitingForAdminApproval(admin.getEmail(), admin.getName(), userEntity.getEmail()));
+    @Override
+    public void sendMailToTheUserOnChangeState(String oldState, String message, String newState, UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
+            messageAssesseeIfAccountApproved(userEntity, contextInfo);
+        } else if (UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
+            messageAssesseeIfAccountRejected(userEntity, message, contextInfo);
+        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_APPROVAL_PENDING.equals(newState)) {
+            messageAdminsIfApprovalPending(userEntity, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_ACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_INACTIVE.equals(newState)) {
-            emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName());
-        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
-            emailService.welcomeToTestingHarnessTool(userEntity.getEmail(), userEntity.getName());
+            messageAssesseeIfAccountInactive(userEntity, message, contextInfo);
         } else if (UserServiceConstants.USER_STATUS_INACTIVE.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)) {
-        emailService.accountActiveMessage(userEntity.getEmail(), userEntity.getName());
-    }
+            messageAssesseeIfAccountReactivated(userEntity, contextInfo);
+        } else if (UserServiceConstants.USER_STATUS_VERIFICATION_PENDING.equals(oldState) && UserServiceConstants.USER_STATUS_ACTIVE.equals(newState)){
+            messageTesterOrAdminIfAccountCreated(userEntity, contextInfo);
+        }
     }
 
     /**
@@ -251,6 +307,11 @@ public class UserServiceServiceImpl implements UserService {
             InvalidParameterException,
             DataValidationErrorException,
             DoesNotExistException, MessagingException, IOException {
+
+        if (userEntity == null) {
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
+            throw new InvalidParameterException("userEntity is missing");
+        }
 
         if (contextInfo.getModule() == Module.OAUTH2) {
             //If method get called on google Oauth2 login then verification of email is not needed.
@@ -271,9 +332,9 @@ public class UserServiceServiceImpl implements UserService {
         if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_VERIFICATION_PENDING)) {
             tokenVerificationService.generateTokenForUserAndSendEmailForType(userEntity.getId(), TokenTypeEnum.VERIFICATION.getKey(), contextInfo);
         } else if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_APPROVAL_PENDING)) {
-            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userEntity, contextInfo);
+            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING,null, UserServiceConstants.USER_STATUS_APPROVAL_PENDING, userEntity, contextInfo);
         } else if (Objects.equals(userEntity.getState(), UserServiceConstants.USER_STATUS_ACTIVE)) {
-            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING, UserServiceConstants.USER_STATUS_ACTIVE, userEntity, contextInfo);
+            this.sendMailToTheUserOnChangeState(UserServiceConstants.USER_STATUS_VERIFICATION_PENDING,null, UserServiceConstants.USER_STATUS_ACTIVE, userEntity, contextInfo);
         }
         return userEntity;
     }
@@ -289,6 +350,12 @@ public class UserServiceServiceImpl implements UserService {
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException, InvalidParameterException {
+
+        if (userEntity == null) {
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
+            throw new InvalidParameterException("userEntity is missing");
+        }
+
         UserValidator.validateCreateUpdateUser(this, Constant.UPDATE_VALIDATION, userEntity, contextInfo);
         if (contextInfo.getModule() == Module.RESET_PASSWORD || contextInfo.getModule() == Module.FORGOT_PASSWORD) {
             userEntity.setPassword(EncryptDecrypt.hashString(userEntity.getPassword()));
@@ -354,6 +421,11 @@ public class UserServiceServiceImpl implements UserService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException {
+
+        if (userEntity == null) {
+            LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, UserServiceServiceImpl.class.getSimpleName());
+            throw new InvalidParameterException("userEntity is missing");
+        }
 
         return UserValidator.validateUser(this,
                 validationTypeKey,
@@ -442,7 +514,7 @@ public class UserServiceServiceImpl implements UserService {
     public void revokeAccessTokenOnStateChange(String clientId, String userName) {
         Collection<OAuth2AccessToken> accessToken = tokenStore.findTokensByClientIdAndUserName(clientId, userName);
         for (OAuth2AccessToken oAuth2AccessToken : accessToken) {
-            defaultTokenServices.revokeToken(oAuth2AccessToken.getValue());
+            authenticationService.revokeToken(oAuth2AccessToken.getValue());
         }
     }
 
@@ -454,6 +526,71 @@ public class UserServiceServiceImpl implements UserService {
         return Optional.ofNullable(userEntities)
                 .filter(list -> !list.isEmpty())
                 .orElseThrow(() -> new DoesNotExistException("No user found with role : " + role));
+    }
+
+    private void messageAssesseeIfAccountApproved(UserEntity userEntity, ContextInfo contextInfo) {
+        if (accountApproveMail) {
+            emailService.accountApprovedMessage(userEntity.getEmail(), userEntity.getName());
+        }
+        if (accountApproveNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your account has been approved, you can start testing.", userEntity);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+    }
+
+    private void messageAssesseeIfAccountRejected(UserEntity userEntity, String message, ContextInfo contextInfo) {
+        if (accountRejectMail) {
+            emailService.accountRejectedMessage(userEntity.getEmail(), userEntity.getName(), message);
+        }
+        if (accountRejectNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your account has been rejected", userEntity);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+    }
+
+    private void messageAssesseeIfAccountInactive(UserEntity userEntity, String message, ContextInfo contextInfo) {
+        if (accountDeactivateMail) {
+            emailService.accountInactiveMessage(userEntity.getEmail(), userEntity.getName(), message);
+        }
+        if (accountDeactivateNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your account has been deactivated!", userEntity);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+    }
+
+    private void messageAdminsIfApprovalPending(UserEntity userEntity, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
+        //Message all admins stating approval pending
+        List<UserEntity> admins = userService.getUsersByRole("role.admin", contextInfo);
+        for (UserEntity admin : admins) {
+            if (accountApprovalPendingMail) {
+                emailService.verifiedAndWaitingForAdminApproval(admin.getEmail(), admin.getName(), userEntity.getEmail());
+            }
+            if (accountApprovalPendingNotification) {
+                NotificationEntity notificationEntity = new NotificationEntity("New Account has been created by "+userEntity.getEmail()+", Awaiting approval", admin);
+                applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+            }
+        }
+    }
+
+    private void messageAssesseeIfAccountReactivated(UserEntity userEntity, ContextInfo contextInfo) {
+        if (accountReactivateMail) {
+            emailService.accountActiveMessage(userEntity.getEmail(), userEntity.getName());
+        }
+        if (accountReactivateNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Account has been Re-Activated", userEntity);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+    }
+
+    private void messageTesterOrAdminIfAccountCreated(UserEntity userEntity, ContextInfo contextInfo) {
+        if (adminTesterCreateMail) {
+            emailService.adminOrTesterAccountCreatedMessage(userEntity.getEmail(), userEntity.getName());
+        }
+        if (adminTesterCreateNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Congratulations. Your account has been created!", userEntity);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+
     }
 
 }

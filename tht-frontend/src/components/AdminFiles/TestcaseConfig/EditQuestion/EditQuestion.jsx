@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Switch, notification, Modal } from "antd";
+import { Link, useParams } from "react-router-dom";
+import { Switch, notification, Modal, Breadcrumb } from "antd";
 import "./EditQuestion.scss";
 import { TestCaseOptionsAPI } from "../../../../api/TestCaseOptionsAPI";
 import { useLoader } from "../../../loader/LoaderContext";
@@ -25,7 +25,6 @@ export default function EditQuestion() {
   const { testcaseId } = useParams();
   const [currentTestcase, setCurrentTestcase] = useState({});
   const [currentAccordionIndex, setCurrentAccordionIndex] = useState(null);
-  const navigate = useNavigate();
   const { showLoader, hideLoader } = useLoader();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedQuestion, setEditedQuestion] = useState("");
@@ -63,10 +62,6 @@ export default function EditQuestion() {
         setInitialQuestionType(res.questionType);
       })
       .catch((error) => {
-        notification.error({
-          message: "Error Loading question!",
-          placement: "bottomRight",
-        });
       });
 
     TestCaseOptionsAPI.getTestCaseOptionsByTestcaseId(testcaseId)
@@ -77,16 +72,13 @@ export default function EditQuestion() {
           setEditedTestcaseOptions(res.content);
         } else {
           notification.warning({
-            message: "Options for this question are not available. Please add some.",
+            className:"notificationWarning",
+						message: "There are currently no options available for a question. Please add some options.",
             placement: "bottomRight",
           });
         }
       })
       .catch((error) => {
-        notification.error({
-          message: "Error Loading options!",
-          placement: "bottomRight",
-        });
       });
 
     DocumentAPI.getDocumentsByRefObjUriAndRefId(
@@ -123,11 +115,6 @@ export default function EditQuestion() {
         setFileList(updatedFiles);
       })
       .catch((err) => {
-        console.log(err);
-        notification.error({
-          message: "Error Loading Files!",
-          placement: "bottomRight",
-        });
       });
   };
 
@@ -171,8 +158,9 @@ export default function EditQuestion() {
     DocumentAPI.changeDocumentState(file.documentId, DOCUMENT_STATE_INACTIVE)
       .then((res) => {
         notification.success({
-          message: "Document Removed",
-          placement: "bottomRight",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Document removed successfully!",
         });
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
@@ -180,11 +168,6 @@ export default function EditQuestion() {
         setFileList(newFileList);
       })
       .catch((err) => {
-        let msg = err.response.data?.message || err.response.data[0].message;
-        notification.error({
-          message: `${msg}`,
-          placement: "bottomRight",
-        });
       });
   };
 
@@ -214,7 +197,8 @@ export default function EditQuestion() {
 
       if (!isImage) {
         notification.error({
-          message: "Only JPEG and PNG Files are allowed.",
+          className:"notificationError",
+          message:"Only JPEG and PNG Files are allowed.",
           placement: "bottomRight",
         });
         return false;
@@ -289,16 +273,12 @@ export default function EditQuestion() {
           setInitialQuestionType(res.questionType);
           setChangesMade(false);
           notification.success({
-            placement: "bottomRight",
-            message: "Question updated successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:"Testcase question updated successfully!",
           });
         })
         .catch((error) => {
-          console.error("Error saving question:", error);
-          notification.error({
-            placement: "bottomRight",
-            message: "Failed to save question",
-          });
         });
     } finally {
       hideLoader();
@@ -353,8 +333,9 @@ export default function EditQuestion() {
         setInitialTestcaseOptions(updatedOptions);
         setEditedTestcaseOptions(updatedOptions);
         notification.success({
-          placement: "bottomRight",
-          message: "Option saved successfully",
+          className:"notificationSuccess",
+          placement: "top",
+          message:"Testcase option updated successfully!",
         });
       })
       .catch((error) => {});
@@ -386,8 +367,9 @@ export default function EditQuestion() {
           setInitialTestcaseOptions(updatedOptions);
           setEditedTestcaseOptions(updatedOptions);
           notification.success({
-            placement: "bottomRight",
-            message: "State Changed successfully",
+            className:"notificationSuccess",
+            placement: "top",
+            message:`Option has been marked as ${newState==='testcase.option.status.active' ? 'active' : 'inactive'} successfully!`,
           });
         })
         .catch((error) => {});
@@ -404,33 +386,24 @@ export default function EditQuestion() {
 
   return (
     currentTestcase && (
+      <div id="editQuestion">
       <div id="wrapper">
-        <div className="bcca-breadcrumb">
-          <div className="bcca-breadcrumb-item">Question</div>
-          <div
-            className="bcca-breadcrumb-item"
-            onClick={() => navigate(`/testcase-config/manual-testcases/${specification?.id}`)}
-          >
-            {specification?.name} - Testcase Configuration
-          </div>
-          <div
-            className="bcca-breadcrumb-item"
-            onClick={() =>
-              navigate(`/testcase-config/component-specification/${component?.id}`)
-            }
-          >
-            {" "}
-            {component?.name}{" "}
-          </div>
-          <div
-            className="bcca-breadcrumb-item"
-            onClick={() => {
-              navigate("/testcase-config");
-            }}
-          >
-            Components
-          </div>
-        </div>
+        <Breadcrumb className="custom-breadcrumb">
+          <Breadcrumb.Item><Link to="/testcase-config" className="breadcrumb-item">Components</Link></Breadcrumb.Item>
+          <Breadcrumb.Item>
+            <Link to={`/testcase-config/component-specification/${component?.id}`} className="breadcrumb-item">
+              {component?.name}
+            </Link>
+          </Breadcrumb.Item>
+
+          
+          <Breadcrumb.Item>
+          <Link to={`/testcase-config/manual-testcases/${specification?.id}`} className="breadcrumb-item">
+          {specification?.name} - Testcase Configuration
+          </Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item className="breadcrumb-item">Question</Breadcrumb.Item>
+        </Breadcrumb>
         <div className="col-12 my-4">
           <div className="card">
             <div className="card-header">Manage Question</div>
@@ -649,6 +622,7 @@ export default function EditQuestion() {
           testcaseId={testcaseId}
           fetchData={fetchData}
         />
+      </div>
       </div>
     )
   );

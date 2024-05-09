@@ -1,0 +1,54 @@
+{
+  "resourceType" : "HealthcareService",
+  "contained" : [ {
+    "resourceType" : "Location",
+    "id" : "1",
+    "identifier" : [ {
+      "system" : "urn:oid:1.2.3.4.5",
+      "value" : "0234"
+    } ],
+    "name" : "South Wing, second floor",
+    "description" : "Second floor of the Old South Wing, formerly in use by Psychiatry",
+    "telecom" : [ {
+      "system" : "phone",
+      "value" : "2328",
+      "use" : "mobile"
+    }, {
+      "system" : "email",
+      "value" : "second wing admissions",
+      "use" : "home"
+    } ],
+    "address" : {
+      "city" : "Den Burg",
+      "postalCode" : "9105 PZ",
+      "country" : "NLD"
+    }
+  } ],
+  "identifier" : [ {
+    "system" : "urn:oid:1.2.3.4.5",
+    "value" : "1111"
+  } ],
+  "specialty" : [ {
+    "coding" : [ {
+      "code" : "Cardiology"
+    } ]
+  }, {
+    "coding" : [ {
+      "code" : "Dermatology"
+    } ]
+  } ],
+  "location" : [ {
+    "reference" : "#1"
+  } ],
+  "name" : "Consulting psychologists and/or psychology services",
+  "comment" : "Providing Specialist psychology services to the greater Den Burg area, many years of experience dealing with PTSD ",
+  "telecom" : [ {
+    "system" : "phone",
+    "value" : "555-555-5555",
+    "use" : "mobile"
+  }, {
+    "system" : "email",
+    "value" : "directaddress@example.com",
+    "use" : "home"
+  } ]
+}

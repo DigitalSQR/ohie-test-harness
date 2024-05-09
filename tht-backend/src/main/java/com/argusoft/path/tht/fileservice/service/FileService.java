@@ -9,6 +9,7 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.I
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
+import org.apache.tika.io.TikaInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class FileService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
 
-    static String resourceFolder;
+    private static String resourceFolder;
 
     private FileService(){
 
@@ -96,7 +97,8 @@ public class FileService {
 
     public static String detectInputStreamTypeWithTika(InputStream inputStream) throws IOException {
         Tika tika = new Tika();
-        return tika.detect(inputStream);
+        TikaInputStream tikaInputStream = TikaInputStream.get(inputStream);
+        return tika.detect(tikaInputStream);
     }
 
     public static boolean validateFileType(MultipartFile file, Set<FileType> validateAgainstTypes) throws InvalidFileTypeException, InvalidParameterException, OperationFailedException {
@@ -111,7 +113,7 @@ public class FileService {
                 return true;
             }
             LOGGER.error("{}{}", ValidateConstant.INVALID_FILE_TYPE_EXCEPTION, FileService.class.getSimpleName());
-            throw new InvalidFileTypeException("Invalid file type, only allowed file types are : " + (validateAgainstTypes.stream().map(FileType::getName).collect(Collectors.joining(", "))));
+            throw new InvalidFileTypeException("Invalid file type, only allowed file types are : " + (validateAgainstTypes.stream().map(FileType::getName).distinct().collect(Collectors.joining(", "))));
         } catch (IOException e) {
             LOGGER.error("{}{}", ValidateConstant.IO_EXCEPTION, FileService.class.getSimpleName(), e);
             throw new OperationFailedException("File type validation failed due to an I/O error: " + e.getMessage());
@@ -130,7 +132,7 @@ public class FileService {
     }
 
     @Value("${tht-file.location}")
-    public static void setResourceFolder(String value) {
+    public void setResourceFolder(String value) {
         resourceFolder = value;
     }
 

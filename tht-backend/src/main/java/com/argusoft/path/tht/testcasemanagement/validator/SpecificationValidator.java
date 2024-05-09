@@ -198,7 +198,6 @@ public class SpecificationValidator {
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + SpecificationValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
         }

@@ -116,7 +116,6 @@ public class TestResultRelationValidator {
                                 ErrorLevel.ERROR,
                                 "The id supplied to the create already exists"));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error("{}{}", ValidateConstant.DOES_NOT_EXIST_EXCEPTION, TestResultRelationValidator.class.getSimpleName());
                 // This is ok because created id should be unique
             }
         }
@@ -130,7 +129,7 @@ public class TestResultRelationValidator {
             String fieldName = "meta.version";
             errors.add(new ValidationResultInfo(fieldName,
                     ErrorLevel.ERROR,
-                    fieldName + " must be provided"));
+                    fieldName + " is required."));
         } // check meta version id
         else if (!testResultRelationEntity.getVersion()
                 .equals(originalEntity.getVersion())) {

@@ -65,26 +65,29 @@ export default function Login() {
 
   const validate = (values) => {
     const errors = {};
-
-    if (values.username.length == 0) {
+  
+    const trimmedUsername = values.username.trim();
+    const trimmedPassword = values.password.trim();
+  
+    if (!trimmedUsername) {
       errors.username = "Please enter your email.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.username.trim())) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedUsername)) {
       errors.username = "Please enter a valid email address";
-    }else if(values.username.length > 255){
-      errors.email = "Username must have less than 255 characters."
+    } else if (trimmedUsername.length > 255) {
+      errors.username = "Email must have less than 255 characters.";
     }
-
-    if (values.password.length == 0) {
+  
+    if (!trimmedPassword) {
       errors.password = "Please enter password.";
-    }else if(values.password.length < 6) {
-      errors.password = "Password must be of minimum 6 characters"
-    }else if(values.password.length > 255) {
-      errors.password = "Password must have less than 255 characters."
+    } else if (trimmedPassword.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    } else if (trimmedPassword.length > 255) {
+      errors.password = "Password must have less than 255 characters.";
     }
-
-
+  
     return errors;
   };
+  
 
   const getCaptcha=(code,captcha)=>{
       setCaptchaInfo({
@@ -103,8 +106,9 @@ export default function Login() {
     onSubmit: async () => {
       if (!captchaInfo.code && captchaInfo.captcha) {
         notification.error({
+          className:"notificationError",
+          message: "Invalid captcha",
           placement: "bottomRight",
-          description: "Invalid captcha",
         });
         return;
       }
@@ -141,17 +145,18 @@ export default function Login() {
           <div className="col-md-6 col-12 col-sm-12 p-0">
             <div className="login-bg">
               <div className="col-10 col-md-11 col-lg-10 col-xl-8 col-xxl-6">
-                <h1>Testing Harness Test Automation</h1>
-                <p className="font-size-16 mt-3">
-                  Experience streamlined OpenHIE standards compliance verification
-                  for healthcare websites. Our tool ensures precision,
-                  simplifies complexities, and empowers your projects.
+                <h1>Testing Harness Tool</h1>
+                <p className="font-size-16 mt-4 text-align">
+                  Testing Harness Tool (THT) is your gateway to ensuring the quality and compliance of your healthcare applications against OpenHIE standards.Upon successful testing, THT issues compliance certificates, validating your application's adherence to established benchmarks.
+                </p>
+                <p className="font-size-16 mt-3 text-align">
+                  Log in now to access THT's comprehensive testing capabilities and contribute to the advancement of healthcare application quality and compliance.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="col-md-6 col-12 col-sm-12">
+          <div className="col-md-6 col-12 col-sm-12 d-flex align-items-center">
             <div className="login-form-bg pt-5">
               <div className="text-center">
                 <img src={openhie_logo} />
@@ -173,7 +178,7 @@ export default function Login() {
                     </span>
                     <input
                       type="text"
-                      className={"form-control border-start-0 ps-0"}
+                      className={"form-control border-start-rounded-0 rounded-end"}
                       name="username"
                       id="exampleFormControlInput1"
                       autoComplete="on"
@@ -206,7 +211,7 @@ export default function Login() {
                     </span>
                     <input
                       type={showPassword ? "text" : "password"}
-                      className="form-control border-start-0 ps-0"
+                      className="form-control "
                       name="password"
                       id="exampleFormControlInput2"
                       autoComplete="off"
@@ -249,11 +254,12 @@ export default function Login() {
                   </label>
                   <a
                     href=""
+                    className="text-blue"
                     onClick={() => {
                       navigate("/forgotpassword");
                     }}
                   >
-                    Forgot Password
+                    Forgot Password?
                   </a>
                 </div>
 
@@ -268,9 +274,12 @@ export default function Login() {
                   </button>
                   <h6 className="m-2 align">OR</h6>
                   <h4 className="align">
-                    <a href="/api/oauth2/authorization/google">
+                    <a
+                      href="/api/oauth2/authorization/google"
+                      className="login-google"
+                    >
                       <img src={GoogleLoginIcon} />
-                      {/* Login with Google */}
+                      Login with Google
                     </a>
                   </h4>
                 </div>
@@ -278,7 +287,7 @@ export default function Login() {
                   <a
                     href=""
                     onClick={redirectToSignUp}
-                    className="font-weight-500 ps-2 text-blue"
+                    className="font-weight-500 ps-2 pt-4 d-block text-blue"
                   >
                     Click Here to Register{" "}
                   </a>

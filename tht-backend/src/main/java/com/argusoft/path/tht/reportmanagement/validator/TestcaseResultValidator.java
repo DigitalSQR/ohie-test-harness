@@ -151,6 +151,9 @@ public class TestcaseResultValidator {
         // For :Message
         validateTestcaseResultEntityMessage(testcaseResultEntity,
                 errors);
+        // For :FailureMessage
+        validateTestcaseResultEntityFailureMessage(testcaseResultEntity,
+                errors);
 
         return errors;
     }
@@ -271,7 +274,7 @@ public class TestcaseResultValidator {
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
+//                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestcaseResultValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
         }
@@ -403,6 +406,16 @@ public class TestcaseResultValidator {
                 errors);
     }
 
+    //Validation For :FailureMessage
+    private static void validateTestcaseResultEntityFailureMessage(TestcaseResultEntity testcaseResultEntity,
+                                                            List<ValidationResultInfo> errors) {
+        ValidationUtils.validateLength(testcaseResultEntity.getFailureMessage(),
+                "failureMessage",
+                0,
+                2000,
+                errors);
+    }
+
     //trim all TestcaseResult field
     private static void trimTestcaseResult(TestcaseResultEntity testcaseResultEntity) {
         if (testcaseResultEntity.getId() != null) {
@@ -416,6 +429,9 @@ public class TestcaseResultValidator {
         }
         if (testcaseResultEntity.getMessage() != null) {
             testcaseResultEntity.setMessage(testcaseResultEntity.getMessage().trim());
+        }
+        if (testcaseResultEntity.getFailureMessage() != null) {
+            testcaseResultEntity.setFailureMessage(testcaseResultEntity.getFailureMessage().trim());
         }
         if (testcaseResultEntity.getRefObjUri() != null) {
             testcaseResultEntity.setRefObjUri(testcaseResultEntity.getRefObjUri().trim());
@@ -432,6 +448,15 @@ public class TestcaseResultValidator {
             TestResultRelationService testResultRelationService,
             ContextInfo contextInfo) {
         List<ValidationResultInfo> errors = new ArrayList<>();
+
+        if(selectedTestcaseOptionIds == null || selectedTestcaseOptionIds.isEmpty() ){
+            String fieldName = "selectedTestcaseOptionIds";
+            errors.add(
+                    new ValidationResultInfo(fieldName,
+                            ErrorLevel.ERROR,
+                            "The selectedTestcaseOptionIds is required."));
+            return errors;
+        }
         try {
             testcaseResultService
                     .getTestcaseResultById(testcaseResultId,

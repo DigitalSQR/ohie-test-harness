@@ -97,7 +97,7 @@ public interface TokenVerificationService {
      * @throws MessagingException        unable to send mail
      * @throws IOException               unalbe to perform IO operation
      */
-    public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId, String type, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException, MessagingException, IOException;
+    public TokenVerificationEntity generateTokenForUserAndSendEmailForType(String userId, String type, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, OperationFailedException, MessagingException, IOException, DataValidationErrorException;
 
     /**
      * Update token verification data

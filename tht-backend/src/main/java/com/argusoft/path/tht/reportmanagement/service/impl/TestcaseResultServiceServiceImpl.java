@@ -5,6 +5,7 @@ import com.argusoft.path.tht.reportmanagement.evaluator.GradeEvaluator;
 import com.argusoft.path.tht.reportmanagement.event.TestcaseResultStateChangedEvent;
 import com.argusoft.path.tht.reportmanagement.filter.TestResultRelationCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
+import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultAnswerInfo;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
@@ -24,11 +25,17 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.response.StartResponse;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.response.StatusResponse;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.TestCase;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
+import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.TestSessionStarter;
+import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.VerifyTestcaseSessionStatusAndUpdateAccordingly;
+import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.callback.impl.StatusCallbackLoggerHandler;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
@@ -37,17 +44,17 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestClientException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -67,6 +74,14 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     private UserService userService;
     private GradeEvaluator gradeEvaluator;
     private AuditService auditService;
+
+    @Value("${testbed.actor-api}")
+    private String testbedActorApiKey;
+
+    private TestSessionStarter testSessionStarter;
+    private StatusCallbackLoggerHandler statusCallback;
+
+    private VerifyTestcaseSessionStatusAndUpdateAccordingly verifyTestcaseSessionStatusAndUpdateAccordingly;
     private TestResultRelationService testResultRelationService;
 
     private static String getMessage(String x, TestcaseResultEntity testcaseResultEntity, String x1, List<String> failedSpecificationTestcaseResultName) {
@@ -171,7 +186,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
      * @return
      */
     @Override
-    public TestcaseResultEntity updateTestcaseResult(TestcaseResultEntity testcaseResultEntity,
+        public TestcaseResultEntity updateTestcaseResult(TestcaseResultEntity testcaseResultEntity,
                                                      ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
@@ -198,8 +213,15 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
     @Override
-    public TestcaseResultEntity submitTestcaseResult(String testcaseResultId, Set<String> selectedTestcaseOptionIds, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
+    public List<TestcaseResultEntity> submitTestcaseResult(List<TestcaseResultAnswerInfo> testcaseResultAnswerInfos, ContextInfo contextInfo) throws OperationFailedException, VersionMismatchException, DataValidationErrorException, InvalidParameterException, DoesNotExistException {
+        List<TestcaseResultEntity> resultEntities = new ArrayList<>();
+        for(TestcaseResultAnswerInfo testcaseResultAnswerInfo : testcaseResultAnswerInfos){
+            resultEntities.add(submitTestcaseResult(testcaseResultAnswerInfo.getTestcaseResultId(), testcaseResultAnswerInfo.getSelectedTestcaseOptionIds(), contextInfo));
+        }
+        return  resultEntities;
+    }
 
+    private TestcaseResultEntity submitTestcaseResult (String testcaseResultId, Set<String> selectedTestcaseOptionIds, ContextInfo contextInfo ) throws DataValidationErrorException, InvalidParameterException, DoesNotExistException, OperationFailedException, VersionMismatchException {
         TestcaseResultValidator.validateSubmitTestcaseResult(
                 testcaseResultId,
                 selectedTestcaseOptionIds,
@@ -361,10 +383,24 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
 
         if (!stateKey.equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
             testcaseResultEntity.setMessage(null);
+            testcaseResultEntity.setFailureMessage(null);
             testcaseResultEntity.setHasSystemError(Boolean.FALSE);
             testcaseResultEntity.setSuccess(Boolean.FALSE);
-            testcaseResultEntity.setSuccess(Boolean.FALSE);
             testcaseResultEntity.setDuration(null);
+        } else {
+            if(TestcaseServiceConstants.TESTCASE_REF_OBJ_URI.equals(testcaseResultEntity.getRefObjUri()) && !Boolean.TRUE.equals(testcaseResultEntity.getSuccess())) {
+                List<Object> testResultRelationEntitiesFromAuditMapping = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(testcaseResultId, TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, contextInfo);
+                Optional<TestcaseEntity> testcaseEntityOptional = testResultRelationEntitiesFromAuditMapping.stream().findFirst().map(TestcaseEntity.class::cast);
+
+                if(testcaseEntityOptional.isEmpty()){
+                    LOGGER.error("Testcase not found in testcase result relation for testcaseResultId ->"+testcaseResultId);
+                    throw new DoesNotExistException("Testcase not found in testcase result relation for testcaseResultId ->"+testcaseResultId);
+                }
+
+                TestcaseEntity testcase = testcaseEntityOptional.get();
+
+                testcaseResultEntity.setFailureMessage(testcase.getFailureMessage());
+            }
         }
 
         testcaseResultEntity.setState(stateKey);
@@ -409,10 +445,10 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED)) {
-                testRequestService.changeState(testRequestEntity.getId(), TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED, contextInfo);
+                testRequestService.changeState(testRequestEntity.getId(), null, TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED, contextInfo);
             }
         } else if (!testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)) {
-            testRequestService.changeState(testRequestEntity.getId(), TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, contextInfo);
+            testRequestService.changeState(testRequestEntity.getId(), null, TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, contextInfo);
         }
     }
 
@@ -454,17 +490,13 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP)) {
-                testcaseResultEntity.setSuccess(Boolean.TRUE);
-                updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP, contextInfo);
             }
         } else if (testcaseResultEntities.stream()
                 .allMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)
                         || tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP))) {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED)) {
-                updateTestcaseResult(testcaseResultEntity, contextInfo);
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, contextInfo);
-                updateTestcaseResult(testcaseResultEntity, contextInfo);
             }
         } else if (testcaseResultEntities.stream()
                 .anyMatch(tre -> tre.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS))) {
@@ -476,10 +508,8 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING)) {
                 changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_PENDING, contextInfo);
             }
-        } else {
-            if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT)) {
-                changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
-            }
+        } else if (!testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT)) {
+            changeState(testcaseResultEntity.getId(), TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_DRAFT, contextInfo);
         }
     }
 
@@ -533,7 +563,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             Boolean isFunctional,
             ContextInfo contextInfo)
             throws
-            InvalidParameterException, OperationFailedException {
+            InvalidParameterException, OperationFailedException, DoesNotExistException {
         if (!StringUtils.hasLength(testRequestId)) {
             throw new InvalidParameterException("TestcaseRequestId is missing");
         }
@@ -563,6 +593,17 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         return classNames;
     }
 
+    @Override
+    public StatusResponse startTestcaseAndStatusResponse(String  testSuiteId, ContextInfo contextInfo) throws Exception {
+        try {
+            StartResponse process = testSessionStarter.process(testSuiteId, testbedActorApiKey, contextInfo);
+            verifyTestcaseSessionStatusAndUpdateAccordingly.process(process.getCreatedSessions().get(0).getSession(), statusCallback, contextInfo);
+            return statusCallback.getStatusResponse();
+        }catch (RestClientException e){
+            throw new OperationFailedException("Rest Client error : "+ e.getMessage(),e);
+        }
+    }
+
     private RecursiveTestcaseResults fetchTestcaseResultStatusByInputs(
             Boolean isManual,
             Boolean isAutomated,
@@ -571,7 +612,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             Boolean isWorkflow,
             Boolean isFunctional,
             TestcaseResultEntity testcaseResultEntity,
-            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DoesNotExistException {
 
         if (StringUtils.hasLength(testcaseResultEntity.getId())) {
             testcaseResultEntity = new TestcaseResultEntity(testcaseResultEntity);
@@ -591,6 +632,9 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         testcaseResultCriteriaSearchFilter.setWorkflow(isWorkflow);
 
         List<TestcaseResultEntity> testcaseResultEntities = this.searchTestcaseResults(testcaseResultCriteriaSearchFilter, Constant.FULL_PAGE_SORT_BY_RANK, contextInfo).getContent().stream().map(testcaseResultEntity1 -> new TestcaseResultEntity(testcaseResultEntity1)).collect(Collectors.toList());
+        if(testcaseResultEntities.isEmpty()){
+            return new RecursiveTestcaseResults(new ArrayList<>(), testcaseResultEntity);
+        }
 
         if (!StringUtils.hasLength(testcaseResultEntity.getId())) {
             testcaseResultEntity = new TestcaseResultEntity(testcaseResultEntities.get(0));
@@ -632,6 +676,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                     message = getMessage("Specification <b>", testcaseResultEntity, "</b> has been failed due to failing following testcase failure: ", failedTestcaseResultName);
                 }
                 testcaseResultEntity.setMessage(message);
+
             }
 
         } else if (testcaseResultEntity.getRefObjUri().equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
@@ -704,6 +749,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                     message = getMessage("TestRequest <b>", testcaseResultEntity, "</b> has been failed due to failing following component failure: ", failedComponentTestcaseResultName);
                 }
                 testcaseResultEntity.setMessage(message);
+
             }
         }
 
@@ -721,8 +767,15 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
                                     .collect(Collectors.toList()),
                             contextInfo)
                     );
-                } else {
+                    testcaseResultEntity.setCompliant(GradeEvaluator.getCompliance(filteredTestcaseResults));
+                    testcaseResultEntity.setNonCompliant(GradeEvaluator.getNonCompliance(filteredTestcaseResults));
+                } else if (testcaseResultEntity.getRefObjUri().equals(ComponentServiceConstants.COMPONENT_REF_OBJ_URI)) {
                     testcaseResultEntity.setGrade(gradeEvaluator.evaluate(filteredTestcaseResults, contextInfo));
+                }
+            } else {
+                if (testcaseResultEntity.getRefObjUri().equals(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI)){
+                    testcaseResultEntity.setCompliant(GradeEvaluator.getCompliance(filteredTestcaseResults));
+                    testcaseResultEntity.setNonCompliant(GradeEvaluator.getNonCompliance(filteredTestcaseResults));
                 }
             }
         } else if (filteredTestcaseResults.stream()
@@ -752,5 +805,75 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     private record RecursiveTestcaseResults(List<TestcaseResultEntity> testcaseResultEntities,
                                             TestcaseResultEntity testcaseResultEntity) {
 
+    }
+
+    @Override
+    public List<TestcaseResultEntity> findTopFiveTestRequestsResult(){
+        // Create a Pageable object with a page size of 5
+        Pageable pageable = PageRequest.of(0, 5);
+
+        // Call the repository method
+        Page<TestcaseResultEntity> resultPage = testcaseResultRepository.findTopFiveTestRequestsResult(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, pageable);
+
+        // Extract the content (list of entities) from the result page
+        return resultPage.getContent();
+    }
+
+    @Override
+    public List<TestcaseResultEntity> findBestOfEachComponent(List<ComponentEntity> allComponents){
+
+        List<TestcaseResultEntity> bestOfEachComponent = new ArrayList<>();
+        for(ComponentEntity component : allComponents){
+            List<TestcaseResultEntity> bestOfComponent = testcaseResultRepository.findBestOfEachComponent(component.getId());
+            TestcaseResultEntity bestCase = bestOfComponent.stream()
+                    .filter(testcaseResultEntity -> (testcaseResultEntity.getCompliant()+testcaseResultEntity.getNonCompliant())>0)
+                    .max(Comparator.comparing(testcaseResultEntity-> (testcaseResultEntity.getCompliant()/(testcaseResultEntity.getCompliant() + testcaseResultEntity.getNonCompliant()))))
+                    .orElse(new TestcaseResultEntity());
+
+            if(bestCase.getId() == null){
+                bestCase.setName(component.getName());
+                bestCase.setCompliant(0);
+                bestCase.setNonCompliant(0);
+            }
+
+            bestOfEachComponent.add(bestCase);
+        }
+        bestOfEachComponent.sort(Comparator.comparing(testcaseResultEntity -> {
+            if ((testcaseResultEntity.getCompliant() + testcaseResultEntity.getNonCompliant()) > 0) {
+                return testcaseResultEntity.getCompliant() / (testcaseResultEntity.getCompliant() + testcaseResultEntity.getNonCompliant());
+            } else {
+                return testcaseResultEntity.getCompliant();
+            }
+        }));
+
+        return bestOfEachComponent;
+
+    }
+
+    @Override
+    public List<Object[]> findBestFiveTestcaseResultPerComponent(String componentId){
+
+        Pageable pageable = PageRequest.of(0, 5);
+
+        // Call the repository method
+        Page<Object[]> resultPage = testcaseResultRepository.findBestFiveTestcaseResultPerComponent(pageable,componentId,TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
+
+
+        return resultPage.getContent();
+    }
+
+    @Autowired
+    public void setTestSessionStarter(TestSessionStarter testSessionStarter) {
+        this.testSessionStarter = testSessionStarter;
+    }
+
+    @Autowired
+    public void setVerifyTestcaseSessionStatusAndUpdateAccordingly(VerifyTestcaseSessionStatusAndUpdateAccordingly verifyTestcaseSessionStatusAndUpdateAccordingly) {
+        this.verifyTestcaseSessionStatusAndUpdateAccordingly = verifyTestcaseSessionStatusAndUpdateAccordingly;
+    }
+
+    @Autowired
+    public void setStatusCallback(StatusCallbackLoggerHandler statusCallback) {
+        this.statusCallback = statusCallback;
     }
 }

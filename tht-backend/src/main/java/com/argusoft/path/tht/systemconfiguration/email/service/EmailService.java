@@ -1,17 +1,13 @@
 package com.argusoft.path.tht.systemconfiguration.email.service;
 
 import com.argusoft.path.tht.systemconfiguration.constant.MessageConstant;
+import com.argusoft.path.tht.systemconfiguration.email.event.EmailEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -26,99 +22,85 @@ public class EmailService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
-    private final MessageService messageService;
+    ApplicationEventPublisher applicationEventPublisher;
 
-    public EmailService(MessageService messageService) {
-        this.messageService = messageService;
+    @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
-
-
     public void verifyEmailMessage(String to, String username, String link) {
-        String subject = "Verify your email id";
+        String subject = "Verify Your Email for Testing Harness Tool";
         String templateFileName = "templates/verification-email.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, link);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
     public void forgotPasswordMessage(String to, String username, String link) {
-        String subject = "Reset your password";
+        String subject = "Reset Your Password";
         String templateFileName = "templates/reset-password-email.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, link);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
     public void accountApprovedMessage(String to, String username) {
-        String subject = "Account approval";
+        String subject = "Account Approved: Welcome to Testing Harness Tool (THT)!";
         String templateFileName = "templates/account-approval-email.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
-
     }
 
-    public void accountRejectedMessage(String to, String username) {
-        String subject = "Account Rejection";
+    public void accountRejectedMessage(String to, String username, String message) {
+        String subject = "Registration Request Declined ";
         String templateFileName = "templates/account-rejection-email.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
-            messageService.sendMessage(to, subject, htmlContent);
+            htmlContent = htmlContent.replace("${message}", message);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
-
     }
 
-    public void accountInactiveMessage(String to, String username) {
-        String subject = "Account Deactivated";
+    public void accountInactiveMessage(String to, String username, String message) {
+        String subject = "Account Disabled";
         String templateFileName = "templates/account-inactive-email.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
-            messageService.sendMessage(to, subject, htmlContent);
+            htmlContent = htmlContent.replace("${message}", message);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
-
     }
+
     public void accountActiveMessage(String to, String username) {
-        String subject = "Account Re-activated";
+        String subject = "Account Enabled ";
         String templateFileName = "templates/account-active-email.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.APPROVED_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.APPROVED_MESSAGING_EXCEPTION_LOG, e);
         }
-
     }
 
     public void testRequestCreatedMessage(String to, String username, String currentEmail) {
@@ -128,11 +110,9 @@ public class EmailService {
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.TEST_REQUEST_CREATE_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.TEST_REQUEST_CREATE_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
@@ -160,70 +140,62 @@ public class EmailService {
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${currentEmail}", currentEmail);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
     public void testRequestAcceptedMessage(String to, String username, String testRequestName) {
-        String subject = "Test Request Accepted";
+        String subject = "Application Testing Request Accepted";
         String templateFileName = "templates/test-request-accepted.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${name}", testRequestName);
-            messageService.sendMessage(to, subject, htmlContent);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
-    public void testRequestRejectedMessage(String to, String username, String testRequestName) {
-        String subject = "Test Request Rejected";
+    public void testRequestRejectedMessage(String to, String username, String testRequestName, String message) {
+        String subject = "Application Testing Request Accepted";
         String templateFileName = "templates/test-request-rejected.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${name}", testRequestName);
-            messageService.sendMessage(to, subject, htmlContent);
+            htmlContent = htmlContent.replace("${message}", message);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
         }
     }
 
-    public void testRequestFinishedMessage(String to, String username, String testRequestName) {
-        String subject = "Test Request Finished";
+    public void testRequestFinishedMessage(String to, String username, String testRequestName, String reportLink) {
+        String subject = "Application Testing Request Completed";
         String templateFileName = "templates/test-request-finished.html";
         String htmlContent = null;
         try {
             htmlContent = readHtmlFile(templateFileName, username, null);
             htmlContent = htmlContent.replace("${name}", testRequestName);
-            messageService.sendMessage(to, subject, htmlContent);
+            htmlContent = htmlContent.replace("${link}", reportLink);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
         } catch (IOException e) {
             LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WAITING_MESSAGING_EXCEPTION_LOG, e);
+        }
+    }
+    public void adminOrTesterAccountCreatedMessage(String to, String username){
+        String subject = "Admin/Tester Creation Completed";
+        String templateFileName = "templates/admin-tester-created.html";
+        String htmlContent = null;
+        try{
+            htmlContent = readHtmlFile(templateFileName, username, null);
+            applicationEventPublisher.publishEvent(new EmailEvent(to, subject, htmlContent));
+        } catch (IOException e) {
+            LOGGER.error(MessageConstant.WAITING_IOEXCEPTION_LOG, e);
         }
     }
 
-    public void welcomeToTestingHarnessTool(String to, String username){
-        String subject = "Welcome Message";
-        String templateFileName = "templates/welcome-message.html";
-        String htmlContent = null;
-        try {
-            htmlContent = readHtmlFile(templateFileName, username, null);
-            messageService.sendMessage(to, subject, htmlContent);
-        } catch (IOException e) {
-            LOGGER.error(MessageConstant.WELCOME_IOEXCEPTION_LOG, e);
-        } catch (MessagingException e) {
-            LOGGER.error(MessageConstant.WELCOME_MESSAGING_EXCEPTION_LOG, e);
-        }
-    }
 }

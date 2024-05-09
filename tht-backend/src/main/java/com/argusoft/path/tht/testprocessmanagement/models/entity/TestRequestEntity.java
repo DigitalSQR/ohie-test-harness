@@ -31,11 +31,17 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     private Set<TestRequestUrlEntity> testRequestUrls;
 
+    @Column(name = "message")
+    private String message;
+
     public TestRequestEntity() {
     }
 
     public TestRequestEntity(TestRequestEntity testRequestEntity) {
         super(testRequestEntity);
+
+        testRequestEntity.setMessage(testRequestEntity.getMessage());
+
         if (testRequestEntity.getAssessee() != null) {
             this.setAssessee(new UserEntity(testRequestEntity.getAssessee().getId()));
         }
@@ -45,6 +51,14 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
         if (testRequestEntity.getTestRequestUrls() != null) {
             this.setTestRequestUrls(testRequestEntity.getTestRequestUrls().stream().map(TestRequestUrlEntity::new).collect(Collectors.toSet()));
         }
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public TestRequestEntity(String id) {
@@ -81,5 +95,12 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @PrePersist
     private void changesBeforeSaveTestRequest() {
         this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));
+    }
+
+    @Override
+    public String toString() {
+        return "TestRequestEntity{" +
+                "id=" + getId() +
+                '}';
     }
 }

@@ -1,6 +1,7 @@
 package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -13,6 +14,8 @@ import javax.persistence.*;
 @Entity
 @Audited
 @Table(name = "testcase_option")
+//@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TestcaseOptionEntity extends IdStateNameMetaEntity {
 
     @Column(name = "rank")
@@ -23,6 +26,7 @@ public class TestcaseOptionEntity extends IdStateNameMetaEntity {
 
     @ManyToOne(cascade = {}, fetch = FetchType.LAZY)
     @JoinColumn(name = "testcase_id")
+//    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private TestcaseEntity testcase;
 
     public TestcaseOptionEntity(TestcaseOptionEntity testcaseOptionEntity) {

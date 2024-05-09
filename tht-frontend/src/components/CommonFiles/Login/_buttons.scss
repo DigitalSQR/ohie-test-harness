@@ -5,12 +5,14 @@
   transition: all 0.5s;
   padding: 15px 30px;
   text-align: center;
+  color: #fff;
   font-size: 18px;
   font-weight: 700;
   border-color: $color-blue;
-  &:hover {
-    background: $color-blue-80;
-    border-color: $color-blue-80;
+  &:hover,&:focus,&:active {
+    background: $color-blue-80 !important;;
+    border-color: $color-blue-80 !important;;
+    color: #fff;
   }
 
   text-transform: uppercase;
@@ -23,13 +25,14 @@
   padding: 15px 30px;
   text-align: center;
   font-size: 18px;
-  color: #51516d;
+  color: #1991b1;
   font-weight: 600;
-  border-color: #ccdade;
+  border-color: #1991b1;
 }
 .btn-white:hover {
-  background: #1991b1;
+  background: #fff;
   border-color: #1991b1;
+  color: #1991b1;
 }
 .btn-white i {
   padding-right: 6px;
@@ -37,8 +40,10 @@
 .btn-white:focus {
   box-shadow: none;
   background: #fff;
-  color: #51516d;
-  border-color: #ccdade;
+  color: #1991b1;
+  border-color: #1991b1;
+  background: #fff;
+  border-color: #1991b1;
 }
 
 .btn-submit {

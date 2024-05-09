@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase id="crf3_verify_inbound_outbound_transactions_operation" xmlns="http://www.gitb.com/tdl/v1/" xmlns:gitb="http://www.gitb.com/core/v1/">
+    <metadata>
+		<gitb:name>Inbound/Outbound Transactions Operation</gitb:name>
+		<gitb:type>CONFORMANCE</gitb:type>
+		<gitb:version>1.0</gitb:version>
+		<gitb:description>Test case to verify the system should support the ability to track and monitor inbound/outbound transactions.</gitb:description>
+	</metadata>
+    <imports>
+        <!-- read data from the JSON stores in name as json string-->
+        <artifact type="binary" encoding="UTF-8" name="patientToCreateInJsonString">/CRF3_VerifyInboundOutboundTransactions/resources/PatientToCreate.json</artifact>
+    </imports>
+    <variables>
+        <var name="componentURI" type="string"/>
+        <var name="username" type="string"/>
+        <var name="password" type="string"/>
+    </variables>
+    <actors>
+		<gitb:actor id="ITB" name="ITB" role="SUT"/>
+		<gitb:actor id="FhirHandler" name="FhirHandlers" role="SIMULATED"/>
+	</actors>
+    <steps stopOnError="true">
+
+       
+        <assign to="resourceType" type="string">'Patient'</assign>
+
+
+        <!--
+        	Creating Patient-->
+
+        <send id="patientToCreate" desc="Convert patientToCreate jsonString => anyContent" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{jsonStringConverterServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$patientToCreateInJsonString</input>
+            <input name="bodyType">"jsonString"</input>
+        </send>
+
+        <!--
+            Add log
+        -->
+        <log>'Converted Patient Data'</log>
+        <log>$patientToCreate</log>
+
+        <send id="createdPatient" desc="Create Patient in FHIR server" from="ITB" to="FhirHandler"
+                handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"create"</input>
+            <input name="body">$patientToCreate{convertedBody}</input>
+        </send>
+
+        <log>'Created Patient Data'</log>
+        <log>$createdPatient</log>
+
+        <!--
+            verify data Patient created or not
+        -->
+        <verify id="verifyCreatedPatient" handler="StringValidator" desc="Check that patient got created successfully or not with correct data.">
+            <input name="actualstring">$createdPatient{response}{body}{birthDate}</input>
+            <input name="expectedstring">'1970-01-01'</input>
+        </verify>
+
+
+        <!--
+            Searching for AuditEvent related to the created Patient
+        -->
+        <send id="auditEventSearch" desc="Search for audit events for create" from="ITB" to="FhirHandler" handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"search"</input>
+            <input name="fhirResourceType">"AuditEvent"</input>
+            <input name="parameters">"patient=$patientId&amp;action=C"</input>
+        </send>
+
+        <log>'Audit Event Bundle'</log>
+        <log>$auditEventSearch</log>
+
+        <!-- <process id="auditEventSearchSize" handler="CollectionUtils">
+            <operation>size</operation>
+            <input name="map">$auditEventSearch{response}{body}{link}</input>
+        </process>
+        <log>"size="||$auditEventSearchSize{output}</log> -->
+
+        <!--
+            verify for the inbound transaction
+        -->
+        <verify id="verifyInbound" handler="StringValidator" desc="Check for the presence of inbound transaction">
+            <input name="actualstring">$auditEventSearch{response}{body}{total}</input>
+            <input name="expectedstring">1</input>
+        </verify>
+    
+        <!--
+            Searching for AuditEvent related to the created Patient
+        -->
+        <send id="auditEventRead" desc="Search for audit events for read" from="ITB" to="FhirHandler" handler="$DOMAIN{fhirContextServiceAddress}">
+            <input name="fhirServerBaseUrl">$componentURI</input>
+            <input name="username">$username</input>
+            <input name="password">$password</input>
+            <input name="operationType">"search"</input>
+            <input name="fhirResourceType">"AuditEvent"</input>
+            <input name="parameters">"patient=$patientId&amp;action=R"</input>
+        </send>
+
+        <log>'Audit Event Bundle'</log>
+        <log>$auditEventRead</log>
+
+        <!--
+            verify for the outbound transaction
+        -->
+        <verify id="verifyOutbound" handler="StringValidator" desc="Check for the presence of outbound transaction">
+            <input name="actualstring">$auditEventRead{response}{body}{total}</input>
+            <input name="expectedstring">1</input>
+        </verify>
+
+    </steps>
+
+    <output>
+        <success>
+            <default>"Test case completed successfully."</default>
+        </success>
+        <failure>
+            <case>
+                <cond>$STEP_STATUS{verifyCreatedPatient} = 'ERROR'</cond>
+                <message>"Failed to create patient."</message>
+            </case>
+            <case>
+                <cond>$STEP_STATUS{verifyInbound} = 'ERROR'</cond>
+                <message>"Failed due to non presence of inbound transaction."</message>
+            </case>   
+            <case>
+                <cond>$STEP_STATUS{verifyOutbound} = 'ERROR'</cond>
+                <message>"Failed due to non presence of outbound transaction."</message>
+            </case>                
+            <default>"Test case failed. Please check the failed step's report for more information and the test log."</default>
+        </failure>
+    </output>  
+</testcase>

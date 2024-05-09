@@ -19,10 +19,11 @@ public class ComponentServiceMockImpl {
 
     public void init() {
         createComponent("component.02", "Component 2", "Component 2", 1, "component.status.active");
-        createComponent("component.04", "Component 4", "Component 4", 1, "component.status.active");
+        createComponent("component.04", "Component 4", "Component 4", 0, "component.status.active");
         createComponent("component.05", "Compo-Test 5", "Compo-Test 5", 1, "component.status.active");
         createComponent("component.06", "Compo-Test 6", "Compo-Test 6", 1, "component.status.inactive");
-        createComponent("component.07", "Component 7", "Component 7", 1, "component.status.draft");
+        createComponent("component.07", "Component 7", "Component 7", 12, "component.status.draft");
+        createComponent("component.08", "Component 8", "Component 8", 13, "component.status.active");
     }
 
     public ComponentInfo createComponent(String id, String name, String description, int rank, String state) {

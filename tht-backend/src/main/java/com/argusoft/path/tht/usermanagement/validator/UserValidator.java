@@ -132,7 +132,7 @@ public class UserValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "Given User with same Email already exists."));
+                                "An account with this email already exists. Please use a different email address."));
             }
 
         }
@@ -283,7 +283,6 @@ public class UserValidator {
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + UserValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
         }
@@ -305,7 +304,7 @@ public class UserValidator {
         ValidationUtils.validatePattern(userEntity.getName(),
                 "name",
                 Constant.ALLOWED_CHARS_IN_NAMES,
-                "Only alphanumeric and " + Constant.ALLOWED_CHARS_IN_NAMES + " are allowed.",
+                "Given name is invalid. Only alphanumeric characters and the following special characters are allowed: @ # ( ) . , ' - * / & space _.",
                 errors);
         ValidationUtils.validateLength(userEntity.getName(),
                 "name",
@@ -369,7 +368,7 @@ public class UserValidator {
         if (userList.size() == 1) {
             ValidationResultInfo validationResultInfo = new ValidationResultInfo();
             validationResultInfo.setLevel(ErrorLevel.ERROR);
-            validationResultInfo.setMessage("Can't remove/disable admin if there are no other admin available.");
+            validationResultInfo.setMessage("Changing the status or role of the only active admin is not allowed. Please ensure there is at least one active admin account at all times.");
             validationResultInfo.setElement("state/role");
             errors.add(validationResultInfo);
         }
@@ -383,16 +382,31 @@ public class UserValidator {
             errors.add(new ValidationResultInfo("Old password", ErrorLevel.ERROR, "Old password is incorrect."));
         }
         if (Objects.equals(oldPassword, newPassword)) {
-            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR, "Old password can not be usable as new password."));
+            errors.add(new ValidationResultInfo("New password", ErrorLevel.ERROR, "Your new password cannot be the same as your old password. Please choose a different one."));
+        }
+    }
+
+    public static void rejectionMessageValidation(UserEntity userEntity, List<ValidationResultInfo> errors){
+        if(userEntity.getMessage()==null){
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("Rejection Message is not provided");
+            validationResultInfo.setElement("message");
+            errors.add(validationResultInfo);
         }
     }
 
     public static void validateChangeState(UserEntity userEntity, UserService userService, List<ValidationResultInfo> errors, String stateKey, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
 
+        if(stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))){
+            UserValidator.rejectionMessageValidation(userEntity, errors);
+        }
+
         //validate for one admin should active all time
         if (stateKey.equals(UserServiceConstants.USER_STATUS_INACTIVE) && userEntity.getRoles().stream().anyMatch(role -> role.getId().equals(UserServiceConstants.ROLE_ID_ADMIN))) {
             UserValidator.oneAdminShouldActiveValidation(userService, errors, contextInfo);
         }
+
     }
 
 }

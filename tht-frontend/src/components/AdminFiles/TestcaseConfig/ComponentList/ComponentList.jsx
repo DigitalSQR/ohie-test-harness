@@ -30,6 +30,7 @@ export default function ComponentList() {
   const [filterState, setFilterState] = useState("");
   const [componentId, setComponentId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [totalElements, setTotalElements] = useState();
   const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
 
@@ -98,6 +99,7 @@ export default function ComponentList() {
       .then((res) => {
         hideLoader();
         setComponents(res.content);
+        setTotalElements(res.totalElements);
         setTotalPages(res.totalPages);
       })
       .catch((err) => {
@@ -264,7 +266,7 @@ export default function ComponentList() {
                                 <i className="bi bi-list" style={(sortFieldName == 'rank')? {} : {cursor: 'not-allowed'}} title={(sortFieldName == 'rank')? "" : "Sort by rank to enable drag and drop rank modification."}>
                                 </i>                              
                               </td> */}
-                              <td>{component.name}</td>
+                              <td className="fw-bold">{component.name}</td>
                               <td>
                                 <Switch
                                   checked={component.state === "component.status.active"}
@@ -276,23 +278,23 @@ export default function ComponentList() {
                               <td>{component.rank}</td>
                               <td>
                                 <span
-                                  className="cursor-pointer"
+                                  className="cursor-pointer font-size-12 text-blue fw-bold"
                                   onClick={() => {
                                     setComponentId(component.id);
                                     setIsModalOpen(true);
                                   }}
                                 >
-                                  <i className="bi bi-pencil-square font-size-16 text-green-50"></i>{" "}
+                                  <i className="bi bi-pencil-square font-size-16 "></i>{" "}
                                   EDIT
                                 </span>
                                 &nbsp;
                                 <span
-                                  className="cursor-pointer ps-2"
+                                  className="cursor-pointer ps-2 font-size-12 text-blue fw-bold"
                                   onClick={() =>
                                     navigate(`/testcase-config/component-specification/${component.id}`)
                                   }
                                 >
-                                  <i className="bi bi-eye font-size-16 text-blue-50"></i>{" "}
+                                  <i className="bi bi-eye font-size-16  "></i>{" "}
                                   SPECIFICATIONS
                                 </span>
                               </td>
@@ -324,9 +326,13 @@ export default function ComponentList() {
             refreshAllComponents={refreshAllComponents}
           />
         </div>
+        <div className="row mt-4">
+          <div className="col-md-6 text-end">
+
+        
         {totalPages > 1 && (
           <Pagination
-            className="pagination-ui"
+            className="pagination-ui mt-0 justify-content-end"
             count={totalPages}
             page={currentPage}
             onChange={handleChangePage}
@@ -334,7 +340,10 @@ export default function ComponentList() {
             shape="rounded"
           />
         )}
-         <div className="page-size-selector mt-4">
+          </div>
+        <div className="col-md-6 text-end justify-content-end ">
+        {totalElements > 10 && (
+          <div className="page-size-selector ms-auto">
             <select
               className="form-select custom-select custom-select-sm"
               aria-label="Default select example"
@@ -342,14 +351,32 @@ export default function ComponentList() {
               onChange={(e) => {
                 setPageSize(e.target.value);
                 setCurrentPage(1);
+                getAllComponents(
+                  sortFieldName,
+                  sortDirection[sortFieldName],
+                  1,
+                  e.target.value,
+                  filterState
+                );
               }}
             >
-            <option value="10" key="10">10</option>
-            <option value="20" key="20">20</option> 
-            <option value="30" key="30">30</option> 
-            <option value="" key="all">All</option> 
+              <option value="10" key="10">
+                10
+              </option>
+              <option value="20" key="20">
+                20
+              </option>
+              <option value="30" key="30">
+                30
+              </option>
+              <option value="" key="all">
+                All
+              </option>
             </select>
           </div>
+        )}
+        </div>
+        </div>
       </div>
     </div>
   );

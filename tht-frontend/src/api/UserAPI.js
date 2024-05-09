@@ -20,14 +20,15 @@ export const UserAPI = {
       return response.data;
    
   },
-  changeState: async function (userId, state) {
-   
-      const response = await api.request({
-        url: `/user/state/${userId}/${state}`,
-        method: "PATCH",
-      });
-      return response;
-   
+  changeState: async function (userId, state, message) {
+    const response = await api.request({
+      url: `/user/state/${userId}/${state}`,
+      method: "PATCH",
+      data: {
+        message: message ? message : null,
+      },
+    });
+    return response;
   },
   getUserByState: async function (
     sortFieldName,

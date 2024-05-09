@@ -189,9 +189,7 @@
   .text-green-50 {
     color: $color-green-40;
   }
-  .text-red {
-    color: $color-red;
-  }
+
 
   .pagination-ui {
     display: flex;
@@ -200,7 +198,9 @@
   }
 
   .status{
-    width:75%;
+    // width:75%;
+    padding:0px 16px;
+    font-weight: 600;
   }
 
   .font-size-16{

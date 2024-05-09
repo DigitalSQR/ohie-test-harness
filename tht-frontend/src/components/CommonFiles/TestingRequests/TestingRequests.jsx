@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import "./testingRequest.scss";
-import "./_table.scss";
 import {
-  TestRequestStateLabels,
   TestRequestStateConstants,
   TestRequestStateConstantNames,
   StateBadgeClasses,
+  TestRequestActionStateLabels,
 } from "../../../constants/test_requests_constants.js";
 import { USER_ROLES } from "../../../constants/role_constants.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
@@ -13,16 +12,18 @@ import { useLoader } from "../../loader/LoaderContext.js";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
 import { notification, Modal, Empty } from "antd";
 import { formatDate } from "../../../utils/utils.js";
-import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.jsx";
 import { useNavigate } from "react-router-dom";
 import { store } from "../../../store/store.js";
 import { Pagination } from "@mui/material";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Popover } from "antd";
+import moment from "moment";
 const TestingRequests = () => {
   const testRequestStates = [
-    ...TestRequestStateLabels,
+    ...TestRequestActionStateLabels,
     { label: "All", value: "" },
   ];
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,7 +46,7 @@ const TestingRequests = () => {
     setCurrentPage(newPage);
     fetchTestRequests(filterState, sortFieldName, sortDirection, newPage);
   };
-    const fetchTestRequests = (
+  const fetchTestRequests = (
     filterState,
     sortFieldName,
     sortDirection,
@@ -62,9 +63,9 @@ const TestingRequests = () => {
       .then((res) => {
         hideLoader();
         setTestRequests(res.content);
-                setTotalPages(res.totalPages);
+        setTotalPages(res.totalPages);
       })
-      .catch((err) => { 
+      .catch((err) => {
         hideLoader();
       });
   };
@@ -96,78 +97,86 @@ const TestingRequests = () => {
       return (
         <img
           className="cursor-pointer"
-          style={{width:"8px"}}
-          src={
-            sortDirection[fieldName] === "asc"
-              ? sortedUp
-              : sortedDown
-          }
+          style={{ width: "8px" }}
+          src={sortDirection[fieldName] === "asc" ? sortedUp : sortedDown}
         ></img>
       );
     }
-    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
+    return (
+      <img
+        className="cursor-pointer"
+        style={{ width: "10px" }}
+        src={unsorted}
+      />
+    );
   };
 
   const changeState = (testRequestId, updatedState, index, proceedAnyways) => {
     showLoader();
     TestRequestAPI.validateChangeState(testRequestId, updatedState)
-    .then((validationResults) => {
-      let warnings = [];
-      let errors = [];
-      for(let validationResult of validationResults) {
-        if(validationResult.level === "WARN") {
-          warnings.push(validationResult.message);
-        } else if(validationResult.level === "ERROR") {
-          errors.push(validationResult.message);
-        } 
-      }
-      if(!!errors.length) {
-        hideLoader();
-        errors.forEach((error, i) => {
-          notification.error({
-            description: error,
-            placement: "bottomRight",
-          });
-        })
-      } else if(!!warnings.length && !proceedAnyways) {
-        hideLoader();
-        Modal.confirm({
-          title: "Test Request Status Update",
-          content: (
-            <div>
-              <p><strong>Please review the following warnings:</strong></p>
-              <ul style={{ paddingLeft: 20 }}>
-                {warnings.map((warning, i) => (
-                  <li key={index}>{warning}</li>
-                ))}
-              </ul>
-            </div>
-          ),
-          okText: "Procced Anyway",
-          cancelText: "Cancel",
-          width: 600,
-          onOk() {
-            changeState(testRequestId, updatedState, index, true);
-          },
-        }); 
-      } else {
-        TestRequestAPI.changeState(testRequestId, updatedState)
-        .then((res) => {
-          notification.success({
-            placement: "bottomRight",
-            message: "Status updated successfully!",
-          });
-          testRequests[index] = res;
-          setTestRequests(testRequests);
+      .then((validationResults) => {
+        let warnings = [];
+        let errors = [];
+        for (let validationResult of validationResults) {
+          if (validationResult.level === "WARN") {
+            warnings.push(validationResult.message);
+          } else if (validationResult.level === "ERROR") {
+            errors.push(validationResult.message);
+          }
+        }
+        if (!!errors.length) {
           hideLoader();
-        })
-        .catch((err) => {       
+          errors.forEach((error, i) => {
+            notification.error({
+              className: "notificationError",
+              message: "Error",
+              description: error,
+              placement: "bottomRight",
+            });
+          });
+        } else if (!!warnings.length && !proceedAnyways) {
           hideLoader();
-        }); 
-      }
-    }).catch((err) => {       
-      hideLoader();
-    });
+          Modal.confirm({
+            title: "Test Request Status Update",
+            content: (
+              <div>
+                <p>
+                  <strong>Please review the following warnings:</strong>
+                </p>
+                <ul style={{ paddingLeft: 20 }}>
+                  {warnings.map((warning, i) => (
+                    <li key={index}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
+            ),
+            okText: "Procced Anyway",
+            cancelText: "Cancel",
+            width: 600,
+            onOk() {
+              changeState(testRequestId, updatedState, index, true);
+            },
+          });
+        } else {
+          TestRequestAPI.changeState(testRequestId, updatedState)
+            .then((res) => {
+              notification.success({
+                className: "notificationSuccess",
+                placement: "top",
+                message: "Status updated successfully!",
+              });
+              testRequests[index] = res;
+              setTestRequests(testRequests);
+              hideLoader();
+            })
+            .catch((err) => {
+              hideLoader();
+            });
+        }
+      })
+      .catch((err) => {
+        hideLoader();
+      });
   };
 
   const toggleRow = (trid) => {
@@ -214,31 +223,31 @@ const TestingRequests = () => {
                 </div>
               </div>
             </div>
-            
+
             {userRoles.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
-            <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
-              <div className="d-flex align-items-baseline justify-content-end">
-                <button
-                  onClick={() => {
-                    navigate("/register-application");
-                  }}
-                  type="button"
-                  className="btn btn-sm btn-outline-secondary menu-like-item"
-                >
-                  <i className="bi bi-plus"></i>
-                  Register Test Request
-                </button>
+              <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
+                <div className="d-flex align-items-baseline justify-content-end">
+                  <button
+                    onClick={() => {
+                      navigate("/register-application");
+                    }}
+                    type="button"
+                    className="btn btn-sm btn-outline-secondary menu-like-item d-flex align-items-center py-0"
+                  >
+                    <i className="bi bi-plus fs-3"></i>
+                    Register Test Request
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
           </div>
 
           <div className="table-responsive">
             <table className="data-table capitalize-words">
               <thead>
                 <tr>
-                  <th className="app-name-columnapp-name-column">
-                  APPLICATION NAME
+                  <th className="app-name-column">
+                    APPLICATION NAME
                     <span
                       className="ps-1"
                       href="#"
@@ -248,7 +257,7 @@ const TestingRequests = () => {
                     </span>
                   </th>
                   <th className="date-column">
-                    DATE OF APPLICATION{" "}
+                    REQUEST DATE{" "}
                     <span
                       className="ps-1"
                       href="#"
@@ -257,52 +266,84 @@ const TestingRequests = () => {
                       {renderSortIcon("createdAt")}
                     </span>
                   </th>
-                  <th className="assessee-column">Assessee</th>
+
                   <th className="status-column">STATUS</th>
                   <th className="actions-column">
                     <span
                       className={
-                        userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) ? "mx-2" : undefined
+                        userRoles.includes(USER_ROLES.ROLE_ID_ADMIN)
+                          ? "mx-2"
+                          : undefined
                       }
                     >
                       Actions
                       <span
-                      className="ps-1"
-                      href="#"
-                      onClick={() => handleSort("default")}
-                    >
-                      {renderSortIcon("default")}
-                    </span>
+                        className="ps-1"
+                        href="#"
+                        onClick={() => handleSort("default")}
+                      >
+                        {renderSortIcon("default")}
+                      </span>
                     </span>
                   </th>
+                  <th className="empty"></th>
                 </tr>
               </thead>
               <tbody>
                 {testRequests.length === 0 ? (
                   <>
                     <tr>
-                      <td className="text-center" colSpan={7}>
+                      <td className="text-center" colSpan={12}>
                         <Empty description="No Record Found." />
                       </td>
                     </tr>
                   </>
                 ) : null}
-                {testRequests.map((testRequest,index) => (
-                  <>
-                    <tr className={index%2==0 ? 'even' : 'odd'} key={testRequest.id}>
-                      <td>{testRequest.name}</td>
-                      <td>{formatDate(testRequest.meta.updatedAt)}</td>
-                      <td>
-                        <UserIdConnector
-                          isLink={true}
-                          userId={testRequest.assesseeId}
-                        />
-                      </td>
-                      <td>
-                        <span className={"status "+ StateBadgeClasses[testRequest.state]}>
-                          {TestRequestStateConstantNames[testRequest.state]}
-                        </span>
-                      </td>
+                {testRequests.map((testRequest, index) => {
+                  const formattedDate = moment(
+                    testRequest.meta.createdAt
+                  ).format("Do MMMM, YYYY");
+                  return (
+                    <Fragment key={testRequest.id}>
+                      <tr
+                        className={index % 2 == 0 ? "even" : "odd"}
+                        key={testRequest.id}
+                      >
+                        <td className="fw-bold">{testRequest.name}</td>
+                        <td>{formattedDate}</td>
+                        <td>
+                          {testRequest?.state !==
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED ? (
+                            <Fragment>
+                              <span
+                                className={`status badge ${
+                                  StateBadgeClasses[testRequest.state]
+                                }`}
+                              >
+                                {TestRequestStateConstantNames[
+                                  testRequest.state
+                                ].toLowerCase()}
+                              </span>
+                            </Fragment>
+                          ) : (
+                            <Fragment>
+                              <span
+                                className={`status badge ${
+                                  StateBadgeClasses[testRequest.state]
+                                }`}
+                              >
+                                {TestRequestStateConstantNames[
+                                  testRequest.state
+                                ].toLowerCase()}
+                              </span>
+                              <Popover
+                                title={<div>{testRequest?.message}</div>}
+                              >
+                                <InfoCircleOutlined style={{marginLeft:"0.5rem", marginTop:"0.7rem"}}/>
+                              </Popover>
+                            </Fragment>
+                          )}
+                        </td>
                       <td className=" no-wrap text-left">
                         {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) &&
                         testRequest.state ==
@@ -340,86 +381,116 @@ const TestingRequests = () => {
                           testRequest.state ==
                           TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED 
                           && 
-                          <span
-                              className="cursor-pointer"
+                          <button
+                              className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
                               onClick={() => {navigate(`/application-report/${testRequest.id}`)}}
                             >
                               <i className="bi bi-file-text text-green-50 font-size-16"></i>{" "}
                               REPORT{" "}
-                          </span>
+                          </button>
                         }
-                        <span
-                          onClick={() => toggleRow(testRequest.id)}
-                          type="button"
-                          className="approval-action-button float-end my-auto display"
-                        >
-                          {testRequest.class === "show" ? (
-                            <i className="bi bi-chevron-double-down"></i>
-                          ) : (
-                            <i className="bi bi-chevron-double-right"></i>
+                           {testRequest.state ===
+                            TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING && (
+                            <span
+                              className="cursor-pointer font-size-12 text-blue fw-bold"
+                              onClick={() => {
+                                navigate(
+                                  `/register-application/${testRequest.id}`
+                                );
+                              }}
+                            >
+                              <i className="bi bi-pencil-square font-size-16 "></i>{" "}
+                              EDIT
+                            </span>
                           )}
-                        </span>
-                      </td>
-                    </tr>
-                    <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
-                      <td colSpan="5" className="hiddenRow m-0 field-box">
-                        <div
-                          
-                          id="Accordion"
-                        >
-                          <div className="mx-5 my-3">
-                            <table className="data-table capitialize-words">
+                        </td>
+                        <td>
+                          <span
+                            onClick={() => toggleRow(testRequest.id)}
+                            type="button"
+                            className="approval-action-button float-end my-auto display"
+                          >
+                            {testRequest.class === "show" ? (
+                              <i className="bi bi-arrow-up-circle-fill fs-5"></i>
+                            ) : (
+                              <i className="bi bi-arrow-down-circle-fill fs-5"></i>
+                            )}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr
+                        className={"collapse " + testRequest.class}
+                        key={"collapseable--" + testRequest.id}
+                      >
+                      <td colSpan="8" className="hiddenRow m-0 p-0 field-box">
+                        <div id="Accordion" className="p-3 table-accordion-bg">
+                            <table className="data-table-inner capitialize-words">
                               <thead>
-                                <tr>
-                                  <th style={{width:'20%'}}>Component</th>
-                                  <th style={{width:'20%'}}>Fhir Api Base Url</th>
-                                  <th style={{width:'20%'}}>Website/UI Base Url</th>
-                                  <th style={{width:'20%'}}>Username</th>
-                                  <th style={{width:'20%'}}>Password</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {testRequest.testRequestUrls.length > 0 &&
-                                  testRequest.testRequestUrls.map(
-                                    (testUrls) => (
-                                      <tr id={testUrls.componentId} key={testUrls.componentId}>
-                                        <td>
-                                          <ComponentIdConnector
-                                            componentId={testUrls.componentId}
-                                          ></ComponentIdConnector>
-                                        </td>
-                                        <td className="no-capitalization">{testUrls.fhirApiBaseUrl }</td>
-                                        <td className="no-capitalization">{testUrls.websiteUIBaseUrl}</td>
-                                        <td className = "toLowerCase-words">{testUrls.username}</td>
-                                        <td className = "toLowerCase-words" key={testRequest.id}>
-                                          {testUrls.showPass
-                                            ? testUrls.password
-                                            : "*********"}
-                                        </td>
-                                        <td>
-                                        <i
-                                            className={`bi ${
-                                              testUrls.showPass
-                                                ? "bi-eye-fill"
-                                                : "bi-eye-slash-fill"
-                                            } padding-icon`}
-                                            key={testUrls.componentId}
-                                            onClick={() =>
-                                              togglePasswordVisibility(testUrls)
-                                            }
-                                          ></i>{" "}
-                                        </td>
-                                      </tr>
-                                    )
-                                  )}
-                              </tbody>
-                            </table>
+                                  <tr>
+                                    <th style={{width:'20%'}}>Component</th>
+                                    <th style={{width:'20%'}}>Fhir Api Base Url</th>
+                                    <th style={{width:'20%'}}>Website/UI Base Url</th>
+                                    <th style={{width:'20%'}}>Username</th>
+                                    <th style={{width:'20%'}}>Password</th>
+                                    <th></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {testRequest.testRequestUrls.length > 0 &&
+                                    testRequest.testRequestUrls.map(
+                                      (testUrls) => (
+                                        <tr
+                                          id={testUrls.componentId}
+                                          key={testUrls.componentId}
+                                        >
+                                          <td className="fw-bold">
+                                            <ComponentIdConnector
+                                              componentId={testUrls.componentId}
+                                            ></ComponentIdConnector>
+                                          </td>
+                                          <td className="no-capitalization">  
+                                            {testUrls.fhirApiBaseUrl}
+                                          </td>
+                                          <td className="no-capitalization">
+                                            {testUrls.websiteUIBaseUrl}
+                                          </td>
+                                          <td className="toLowerCase-words">
+                                            {testUrls.username}
+                                          </td>
+                                          <td
+                                            className="toLowerCase-words"
+                                            key={testRequest.id}
+                                          >
+                                            {testUrls.showPass
+                                              ? testUrls.password
+                                              : "*********"}
+                                          </td>
+                                          <td>
+                                            <i
+                                              className={`bi ${
+                                                testUrls.showPass
+                                                  ? "bi-eye-fill"
+                                                  : "bi-eye-slash-fill"
+                                              } padding-icon`}
+                                              key={testUrls.componentId}
+                                              onClick={() =>
+                                                togglePasswordVisibility(
+                                                  testUrls
+                                                )
+                                              }
+                                            ></i>{" "}
+                                          </td>
+                                        </tr>
+                                      )
+                                    )}
+                                </tbody>
+                              </table>
                           </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </>
-                ))}
+                        </td>
+                      </tr>
+                    </Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>

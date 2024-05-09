@@ -63,6 +63,11 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
     )
     private Integer maxRank;
 
+    @ApiParam(
+            value = "test suite id from the zip file"
+    )
+    private String testSuiteId;
+
     private Root<TestcaseEntity> testcaseEntityRoot;
 
     private Join<TestcaseEntity, SpecificationEntity> testcaseEntitySpecificationEntityJoin;
@@ -109,6 +114,10 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
         if (getMaxRank() != null) {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(getTestcaseEntityRoot().get("rank"), getMaxRank()));
+        }
+
+        if(getTestSuiteId() != null){
+            predicates.add(criteriaBuilder.equal(getTestcaseEntityRoot().get("testSuiteId"), getTestSuiteId()));
         }
 
 
@@ -174,6 +183,14 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
     public void setQuestionType(String questionType) {
         this.questionType = questionType;
+    }
+
+    public String getTestSuiteId() {
+        return testSuiteId;
+    }
+
+    public void setTestSuiteId(String testSuiteId) {
+        this.testSuiteId = testSuiteId;
     }
 
     private Root<TestcaseEntity> getTestcaseEntityRoot() {

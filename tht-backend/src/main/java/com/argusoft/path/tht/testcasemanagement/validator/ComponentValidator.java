@@ -190,7 +190,6 @@ public class ComponentValidator {
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + ComponentValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
         }
@@ -373,7 +372,7 @@ public class ComponentValidator {
                             ErrorLevel.ERROR,
                             ComponentServiceConstants.COMPONENT_REF_OBJ_URI,
                             componentEntity.getName(),
-                            "There are no active components for this specification.",
+                            "There are no active specifications available for this component.",
                             false));
         } else {
             errors.add(
@@ -409,7 +408,7 @@ public class ComponentValidator {
                             ErrorLevel.ERROR,
                             SpecificationServiceConstants.SPECIFICATION_REF_OBJ_URI,
                             specificationEntity.getName(),
-                            "There are no active testcases for this specification.",
+                            "There are no active testcases available for this specification.",
                             false));
         } else {
             errors.add(
@@ -457,7 +456,7 @@ public class ComponentValidator {
                             ErrorLevel.ERROR,
                             TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
                             testcaseEntity.getName(),
-                            "There are no active options available for the Testcase.",
+                            "There are no active options available for this testcase question.",
                             true));
         } else if (testcaseOptionEntities.stream().noneMatch(TestcaseOptionEntity::getSuccess)) {
             errors.add(
@@ -465,7 +464,7 @@ public class ComponentValidator {
                             ErrorLevel.ERROR,
                             TestcaseServiceConstants.TESTCASE_REF_OBJ_URI,
                             testcaseEntity.getName(),
-                            "The Testcase lacks any active options containing the correct answer, with all options being incorrect.",
+                            "There is no active option containing the correct answer for this testcase question. All available active options are marked as incorrect.",
                             false));
         } else {
             errors.add(

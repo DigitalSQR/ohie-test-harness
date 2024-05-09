@@ -1,9 +1,8 @@
 import { React, useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
 import "./addadminuser.scss";
-import { notification } from "antd";
+import { Modal, notification } from "antd";
 import { AdminUserAPI } from "../../../../api/AdminUserAPI";
 import { useLoader } from "../../../loader/LoaderContext";
 import CustomSelect from "../CustomSelect";
@@ -13,8 +12,11 @@ import {
 } from "../../../../constants/role_constants";
 
 //Component that provides the functionality to add a new user along with the provision to  assign certain roles from "tester" and "admin"
-const AddAdminUser = () => {
-  const navigate = useNavigate();
+const AddAdminUser = ({
+  isModalOpen,
+  setIsModalOpen,
+  refreshAllComponents
+}) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { showLoader, hideLoader } = useLoader();
@@ -28,15 +30,28 @@ const AddAdminUser = () => {
       value: ROLE_ID_TESTER,
     }
   ];
-  const initialValues = {
+  const [initialValues, setInitialValues] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
     roleIds: [],
+  });
+
+  //Function to handle cancelling a admin user modal
+  const handleCancel = () => {
+    setInitialValues({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      roleIds: [],
+    });
+    setIsModalOpen(false);
   };
   const validationSchema = Yup.object({
     name: Yup.string()
+      .trim()
       .required("Name is required")
       .max(1000, "Name must have less than 1000 characters"),
     email: Yup.string()
@@ -44,11 +59,13 @@ const AddAdminUser = () => {
       .required("Email is required")
       .max(255, "Email must have less than 255 characters"),
     password: Yup.string()
+      .trim()
       .required("Password is required")
       .min(6, "Password must be of minimum 6 characters")
       .max(15, "Password must have less than 15 characters"),
     roleIds: Yup.array().min(1, "Role is required"),
     confirmPassword: Yup.string()
+      .trim()
       .required("Confirm password is required").oneOf(
       [Yup.ref("password"), null],
       "Confirm password does not match with the password."
@@ -56,18 +73,26 @@ const AddAdminUser = () => {
   });
 
   //Function to submit the details of the new users
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     showLoader();
-    const { confirmPassword, ...body } = values;
+
+    const trimmedValues = Object.fromEntries(
+      Object.entries(values).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
+    );
+
+    const { confirmPassword, ...body } = trimmedValues;
     body.roleIds = body.roleIds.map((role) => role);
     AdminUserAPI.addUser(body)
       .then((response) => {
         hideLoader();
         notification.success({
-          placement: "bottomRight",
-          description: `User Added Successfully`,
+          className:"notificationSuccess",
+          placement: "top",
+          message: "User added successfully!",
         });
-        navigate("/user-management");
+        setIsModalOpen(false);
+        resetForm(); 
+        refreshAllComponents();
       })
       .catch((error) => {
         hideLoader();
@@ -82,17 +107,18 @@ const AddAdminUser = () => {
   };
 
   return (
-    <div id="addAdminUser">
-      <div id="wrapper">
-        <div className="col-lg-9 col-xl-7 col-xxl-5 col-md-11 mx-auto pt-5">
-          <div className="form-bg-white">
-            <span className="heading-line-up">User Registration</span>
+    <Modal open={isModalOpen} closable={false} keyboard={false} footer={null}>
+      <div id="addAdminUser">
+        <h4 className="mb-4">
+          Create User
+        </h4>
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
+              enableReinitialize
             >
-              {({ errors, touched }) => (
+              {({ errors, touched, resetForm }) => (
                 <Form>
                   <div className="row">
                     <div className="col-12">
@@ -118,7 +144,6 @@ const AddAdminUser = () => {
                       </div>
                     </div>
                   </div>
-
                   <div className="row">
                     <div className="col-12">
                       <div className="custom-input mb-3">
@@ -233,7 +258,7 @@ const AddAdminUser = () => {
                           <span className="text-danger">*</span>
                         </label>
                         <Field
-                          className={`custom-select ${
+                          className={`custom-select user-role-select ${
                             touched.roleIds && errors.roleIds
                               ? "is-invalid"
                               : ""
@@ -255,16 +280,18 @@ const AddAdminUser = () => {
 
                   <div className="my-4 text-end">
                     <button
-                      className="btn btn-primary btn-white py-2"
+                      className="btn btn-primary btn-white"
+                      type="button"
                       onClick={() => {
-                        navigate("/user-management");
+                        resetForm();
+                        handleCancel();
                       }}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="btn btn-primary btn-blue py-2"
+                      className="btn btn-primary btn-blue py-1"
                       disabled={hasValues(errors) || !hasValues(touched)}
                       style={{ marginLeft: "1rem" }}
                     >
@@ -274,10 +301,7 @@ const AddAdminUser = () => {
                 </Form>
               )}
             </Formik>
-          </div>
-        </div>
-      </div>
-    </div>
+          </div>  </Modal>
   );
 };
 

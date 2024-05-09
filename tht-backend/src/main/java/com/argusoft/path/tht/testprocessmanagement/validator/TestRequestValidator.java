@@ -31,6 +31,7 @@ import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
+import com.argusoft.path.tht.usermanagement.validator.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +173,7 @@ public class TestRequestValidator {
                 errors.add(
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
-                                "Process for the requested input doesn't have active testcaseResults."));
+                                "Process for the requested input doesn't have any or active testcaseResults."));
             }
         } else if (validationTypeKey.equals(Constant.STOP_PROCESS_VALIDATION)) {
 
@@ -202,6 +203,9 @@ public class TestRequestValidator {
 
         // check Common ForeignKey
         validateCommonForeignKey(testRequestEntity, errors, userService, componentService, contextInfo);
+
+        //check for assessee company name
+        validateAssesseeCompany(testRequestEntity, errors);
 
         switch (validationTypeKey) {
             case Constant.UPDATE_VALIDATION:
@@ -333,6 +337,8 @@ public class TestRequestValidator {
         }
         // check not updatable fields
         validateNotUpdatable(errors, testRequestEntity, originalEntity);
+        // check original state it can be only pending/rejected
+        validateState(errors,originalEntity);
     }
 
     //validate not update
@@ -341,6 +347,19 @@ public class TestRequestValidator {
                                              TestRequestEntity originalEntity) {
         // state can't be updated
         ValidationUtils.validateNotUpdatable(testRequestEntity.getState(), originalEntity.getState(), "state", errors);
+    }
+    private static void validateState(List<ValidationResultInfo> errors,
+                                      TestRequestEntity originalEntity)
+    {
+        if(!originalEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING)&&
+                !originalEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)
+                )
+        {
+            String fieldName = originalEntity.getState();
+            errors.add(new ValidationResultInfo(fieldName,
+                    ErrorLevel.ERROR,
+                    "TestRequest is not updatable"));
+        }
     }
 
     //validate create
@@ -360,7 +379,6 @@ public class TestRequestValidator {
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + "create" + ValidateConstant.ALREADY_EXIST));
             } catch (DoesNotExistException | InvalidParameterException ex) {
-                LOGGER.error(ValidateConstant.DOES_NOT_EXIST_EXCEPTION + TestRequestValidator.class.getSimpleName(), ex);
                 // This is ok because created id should be unique
             }
         }
@@ -378,7 +396,6 @@ public class TestRequestValidator {
 
         //check at least one component/testRequestUrl required
         Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
-        ValidationUtils.validateRequired(urlEntitySet, "test request url", errors);
 
         //loop to check email and password not null in testrequest url
         for (TestRequestUrlEntity entity : urlEntitySet) {
@@ -426,6 +443,8 @@ public class TestRequestValidator {
     private static void validateTestRequestEntityTestRequestUrl(TestRequestEntity testRequestEntity,
                                                                 List<ValidationResultInfo> errors) {
         Set<TestRequestUrlEntity> urlEntitySet = testRequestEntity.getTestRequestUrls();
+        ValidationUtils.validateCollectionSize(urlEntitySet, "testRequestUrl", 1, null, errors);
+
         //loop to check length of email , password, baseUrl in testrequest url
         for (TestRequestUrlEntity entity : urlEntitySet) {
             //check for username
@@ -490,6 +509,18 @@ public class TestRequestValidator {
         });
     }
 
+    public static void rejectionMessageValidation(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors){
+        if(testRequestEntity.getMessage()==null){
+            ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+
+            validationResultInfo.setLevel(ErrorLevel.ERROR);
+            validationResultInfo.setMessage("Rejection Message is not provided");
+            validationResultInfo.setElement("Message");
+
+            errors.add(validationResultInfo);
+        }
+    }
+
     public static void validateChangeState(TestRequestEntity testRequestEntity,
                                            String nextStateKey,
                                            ComponentService componentService,
@@ -498,6 +529,11 @@ public class TestRequestValidator {
                                            TestcaseOptionService testcaseOptionService,
                                            List<ValidationResultInfo> errors,
                                            ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+
+        if(nextStateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)){
+            TestRequestValidator.rejectionMessageValidation(testRequestEntity, errors);
+        }
+
         if (TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED.equals(nextStateKey)) {
 
             Set<TestRequestUrlEntity> testRequestUrls = testRequestEntity.getTestRequestUrls();
@@ -574,5 +610,11 @@ public class TestRequestValidator {
     @Autowired
     public void setRefObjectUriAndRefIdValidator(RefObjectUriAndRefIdValidator refObjectUriAndRefIdValidatorIdValidator) {
         TestRequestValidator.refObjectUriAndRefIdValidator = refObjectUriAndRefIdValidatorIdValidator;
+    }
+
+    public static void validateAssesseeCompany(TestRequestEntity testRequestEntity, List<ValidationResultInfo> errors){
+        if(testRequestEntity.getAssessee() != null) {
+            ValidationUtils.validateRequired(testRequestEntity.getAssessee().getCompanyName(), "assessee's company name", errors);
+        }
     }
 }

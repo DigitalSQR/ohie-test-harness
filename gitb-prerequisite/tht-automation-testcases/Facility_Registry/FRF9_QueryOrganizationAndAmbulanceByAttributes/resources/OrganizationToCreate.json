@@ -1,0 +1,13 @@
+{
+  "resourceType" : "Organization",
+  "name" : "Richard Hospital",
+  "telecom" : [ {
+    "system" : "phone",
+    "value" : "+41-543-73",
+    "use" : "mobile"
+  } ],
+  "address" : [ {
+    "city" : "Stockholm City",
+    "country" : "Sweden"
+  } ]
+}

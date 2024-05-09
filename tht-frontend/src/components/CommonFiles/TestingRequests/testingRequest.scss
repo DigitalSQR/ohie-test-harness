@@ -56,7 +56,7 @@
     background: #ff8a65;
     color: #fff;
     border-radius: 4px;
-    padding: 0px 0px;
+    padding: 0px 12px;
     text-align: center;
     font-size: 12px;
     font-weight: 700;
@@ -68,7 +68,7 @@
     background: #00adff;
     color: #fff;
     border-radius: 4px;
-    padding: 0px 0px;
+    padding: 0px 12px;
     text-align: center;
     font-size: 12px;
     font-weight: 700;
@@ -94,23 +94,26 @@
   }
 
   .app-name-column {
-    width: 20%;
+    width: 15%;
   }
-
+  
   .date-column {
     width: 20%;
   }
 
-  .assessee-column {
+  .status-column {
+    width: 18%;
+  }
+
+  .status {
+    padding: 0px 16px;
+    font-weight: 500;
+  }
+  .actions-column {
     width: 20%;
   }
-
-  .status-column {
-    width: 15%;
-  }
-
-  .actions-column {
-    width: 25%;
+  .empty{
+    width: 1%;
   }
 
   .custom-select {
@@ -137,7 +140,7 @@
     color: #FF6666;
   }
   .status{
-    width:75% !important;
+    // width:75% !important;
   }
 
   .pagination-ui {

@@ -20,10 +20,10 @@ public class TestcaseResultAttributesEntity extends IdEntity {
     @JoinColumn(name = "testcaseResultId")
     private TestcaseResultEntity testcaseResultEntity;
 
-    @Column(name = "Key")
+    @Column(name = "attribute_key")
     private String key;
 
-    @Column(name = "Value")
+    @Column(name = "attribute_value")
     private String value;
 
     public String getKey() {
