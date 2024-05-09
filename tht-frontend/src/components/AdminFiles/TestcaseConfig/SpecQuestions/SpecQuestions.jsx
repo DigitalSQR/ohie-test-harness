@@ -181,7 +181,7 @@ export default function ManualTestCases() {
     navigate(`/testcase-config/edit-question/${question.id}`);
   };
 
-  const fetchData = async (isManual) => {
+  const fetchData = async (isManual = true) => {
     try {
       showLoader();
       const params = {};
@@ -244,73 +244,72 @@ export default function ManualTestCases() {
   };
 
   useEffect(() => {
-    if(activeKey === "1"){
-    let key;
-    if (activeKey) {
-      key = activeKey - 1;
-    }
-    if (
-      !!questions &&
-      questions.length > 0 &&
-      questionAndDocument.filter(
-        (questionItem) => questionItem.key === questions[key].id
-      ) <= 0
-    ) {
-      setQuestionFetched(false);
-      let question = questions[key];
-      if (!!question) {
-        DocumentAPI.getDocumentsByRefObjUriAndRefId(
-          RefObjUriConstants.TESTCASE_REFOBJURI,
-          question.id,
-          DOCUMENT_STATE_ACTIVE
-        )
-          .then(async (res) => {
-            const updatedFiles = await Promise.all(
-              res.content.map(async (relatedDoc) => {
-                try {
-                  const base64Image = await DocumentAPI.base64Document(
-                    relatedDoc.id,
-                    relatedDoc.name
-                  );
-                  return {
-                    name: relatedDoc.name,
-                    status: "done",
-                    url: base64Image,
-                    documentId: relatedDoc.id,
-                  };
-                } catch (error) {
-                  console.error(error);
-                  return {
-                    name: relatedDoc.name,
-                    status: "error",
-                    url: null,
-                  };
-                }
+    if(activeTab === '1'){
+      if(activeKey === "1"){
+        let key;
+        if (activeKey) {
+          key = activeKey - 1;
+        }
+        if (
+          !!questions &&
+          questions.length > 0 &&
+          questionAndDocument.filter(
+            (questionItem) => questionItem.key === questions[key].id
+          ) <= 0
+        ) {
+          setQuestionFetched(false);
+          let question = questions[key];
+          if (!!question) {
+            DocumentAPI.getDocumentsByRefObjUriAndRefId(
+              RefObjUriConstants.TESTCASE_REFOBJURI,
+              question.id,
+              DOCUMENT_STATE_ACTIVE
+            )
+              .then(async (res) => {
+                const updatedFiles = await Promise.all(
+                  res.content.map(async (relatedDoc) => {
+                    try {
+                      const base64Image = await DocumentAPI.base64Document(
+                        relatedDoc.id,
+                        relatedDoc.name
+                      );
+                      return {
+                        name: relatedDoc.name,
+                        status: "done",
+                        url: base64Image,
+                        documentId: relatedDoc.id,
+                      };
+                    } catch (error) {
+                      console.log('cuiesgcbivkebrygvsinehb')
+                      console.error(error);
+                      return {
+                        name: relatedDoc.name,
+                        status: "error",
+                        url: null,
+                      };
+                    }
+                  })
+                );
+    
+                let item = {};
+                item.key = question.id;
+                item.files = updatedFiles;
+    
+                const updatedQuestions = [...questionAndDocument];
+                updatedQuestions.push(item);
+                setQuestionAndDocument(updatedQuestions);
               })
-            );
-
-            let item = {};
-            item.key = question.id;
-            item.files = updatedFiles;
-
-            const updatedQuestions = [...questionAndDocument];
-            updatedQuestions.push(item);
-            setQuestionAndDocument(updatedQuestions);
-          })
-          .catch((err) => {})
-          .finally(() => {
-            setQuestionFetched(true);
-          });
-      }
-    }
-  }
+              .catch((err) => {})
+              .finally(() => {
+                setQuestionFetched(true);
+              });
+          }
+        }
+        }
+    } 
   }, [activeKey, questions]); // Run this effect whenever activeKey changes
 
-  useEffect(() => {
-    console.log(activeKey);
-  }, [activeKey]);
-
-  const changeTestCaseState = (testcaseId, state, isAutomated) => {
+  const changeTestCaseState = (testcaseId, state, isAutomated = false) => {
     const newState =
       state === "testcase.status.active"
         ? "testcase.status.inactive"
@@ -345,7 +344,7 @@ export default function ManualTestCases() {
             });
           }
 
-          fetchData();
+          fetchData(!isAutomated);
         })
         .catch((error) => {
           throw error;
@@ -480,7 +479,7 @@ export default function ManualTestCases() {
                             >
                               <h2>
                                 <b>
-                                  {question.rank}. {question.question}
+                                  {index+1}. {question.question}
                                 </b>
                               </h2>
 
