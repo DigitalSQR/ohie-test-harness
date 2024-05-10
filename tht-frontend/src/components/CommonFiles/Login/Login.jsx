@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import "./login.scss";
 // import "./_buttons.scss";
 import openhie_logo from "../../../styles/images/logo.png";
+import argusoft_logo from "../../../styles/images/argusoft-logo.png";
 import { useNavigate } from "react-router-dom";
 import {
   login_success,
@@ -156,7 +157,7 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="col-md-6 col-12 col-sm-12 d-flex align-items-center">
+          <div className="col-md-6 col-12 col-sm-12 d-flex align-items-center position-relative">
             <div className="login-form-bg pt-5">
               <div className="text-center">
                 <img src={openhie_logo} />
@@ -263,7 +264,7 @@ export default function Login() {
                   </a>
                 </div>
 
-                <div className="my-4">
+                <div className="mt-4">
                   <button
                     disabled={!(formik.isValid && formik.dirty)}
                     type="submit"
@@ -287,12 +288,17 @@ export default function Login() {
                   <a
                     href=""
                     onClick={redirectToSignUp}
-                    className="font-weight-500 ps-2 pt-4 d-block text-blue"
+                    className="font-weight-500 ps-2 pt-2 d-block text-blue"
                   >
                     Click Here to Register{" "}
                   </a>
                 </div>
               </div>
+                <div className="text-center mt-auto pb-2 position-absolute start-0 end-0 bottom-0">
+                  <a href="https://www.argusoft.com/" target="_blank">
+                    <img src={argusoft_logo} alt="Argusoft Logo" />
+                  </a>
+                </div>
             </div>
           </div>
         </div>

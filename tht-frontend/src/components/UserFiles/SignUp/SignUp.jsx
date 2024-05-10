@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import argusoft_logo from "../../../styles/images/argusoft-logo.png";
 import openhie_logo from "../../../styles/images/logo.png";
 import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 import { notification } from "antd";
@@ -136,13 +137,12 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div className="col-md-6 col-12 col-sm-12 d-flex align-items-center">
-            <div className="login-form-bg pt-5">
+          <div className="col-md-6 col-12 col-sm-12 d-flex align-items-center position-relative">
+            <div className="login-form-bg pt-5" style={{ minHeight: "100vh" }}>
               <div className="text-center">
                 <img src={openhie_logo} />
               </div>
               <h4 className="my-4">Sign Up</h4>
-              <div>
                 <form onSubmit={formik.handleSubmit}>
                 <div className="custom-input mb-3">
                   <label
@@ -358,7 +358,11 @@ export default function SignUp() {
                     SIGN IN
                   </a>
                 </div>
-              </div>
+                  <div className="text-center mt-auto pb-2 position-absolute start-0 end-0 bottom-0">
+                    <a href="https://www.argusoft.com/" target="_blank">
+                      <img src={argusoft_logo} alt="Argusoft Logo" />
+                    </a>
+                  </div>
             </div>
           </div>
         </div>
