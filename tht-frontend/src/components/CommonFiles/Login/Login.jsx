@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import "./login.scss";
 // import "./_buttons.scss";
 import openhie_logo from "../../../styles/images/logo.png";
-import argusoft_logo from "../../../styles/images/argusoft-logo.png";
+import argusoft_logo from "../../../styles/images/argusoft-logo-outer.png";
 import { useNavigate } from "react-router-dom";
 import {
   login_success,

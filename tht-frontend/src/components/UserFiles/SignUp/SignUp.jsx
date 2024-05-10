@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import argusoft_logo from "../../../styles/images/argusoft-logo.png";
+import argusoft_logo from "../../../styles/images/argusoft-logo-outer.png";
 import openhie_logo from "../../../styles/images/logo.png";
 import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 import { notification } from "antd";
@@ -348,7 +348,7 @@ export default function SignUp() {
                   </button>
                 </div>
                 </form>
-                <div className="text-center mb-5">
+                <div className="text-center mb-5 bottom-margin-btn" >
                   Already have an account?{" "}
                   <a
                     onMouseDown={ClickHandler}

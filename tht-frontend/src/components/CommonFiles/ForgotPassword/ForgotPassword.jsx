@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 import { useLoader } from "../../loader/LoaderContext";
 import openhie_logo from "../../../styles/images/logo.png";
+import argusoft_logo from "../../../styles/images/argusoft-logo-outer.png";
 import { notification } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
@@ -69,7 +70,7 @@ export default function ForgotPassword() {
             </div>
           </div>
 
-          <div className="col-md-6 col-12 col-sm-12">
+          <div className="col-md-6 col-12 col-sm-12 position-relative">
             <div className="login-form-bg pt-5 mt-5">
               <div className="text-center">
                 <img src={openhie_logo} />
@@ -123,6 +124,13 @@ export default function ForgotPassword() {
                     <span id="loader"></span>
                   </a>
               </div>
+            </div>
+            <div>
+                <div className="text-center mt-auto pb-2 position-absolute start-0 end-0 bottom-0">
+                  <a href="https://www.argusoft.com/" target="_blank">
+                    <img src={argusoft_logo} alt="Argusoft Logo" />
+                  </a>
+                </div>
             </div>
           </div>
         </div>
