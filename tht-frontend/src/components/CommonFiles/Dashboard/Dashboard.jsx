@@ -263,7 +263,7 @@ export default function Dashboard() {
                     {role === "ADMIN" && (
                       <>
                         <p>
-                          As a THT Admin, you hold the key to managing the application testing process. Your responsibilities include configuring and modifying test cases, evaluating new assessee registration request, evaluating new application testing requests, and monitoring progress to ensure alignment with OpenHIE Architecture and WHO SMART Guidelines.
+                          As a THT Admin, you hold the key to managing the application testing process. Your responsibilities include configuring and modifying test cases, evaluating new assessee registration request, evaluating new application testing requests, and monitoring progress to ensure alignment with OpenHIE Architecture.
                         </p>
                         <p>
                           Please note that your dashboard will initially appear empty as there is no data available for analysis. As you configure test cases and evaluate testing requests, data will populate the dashboard, enabling you to monitor progress and get insights regarding application testing.
