@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { AdminUserAPI } from "../../../api/AdminUserAPI";
 import "./admin-user.scss";
@@ -13,6 +14,7 @@ import { Switch } from "antd";
 import {
   ROLE_ID_ADMIN,
   ROLE_ID_TESTER,
+  ROLE_ID_SUPERADMIN
 } from "../../../constants/role_constants";
 import AddAdminUser from "./AddAdminUsers/AddAdminUser";
 import UpdateAdminUser from "./UpdateAdminUser/UpdateAdminUser";
@@ -80,6 +82,15 @@ const AdminUsers = () => {
       sortFieldName,
       sortDirection[sortFieldName]
     ).then((data) => {
+      // removing user if role is superadmin
+      const filteredData = data.content.filter(
+        (user) =>
+          !user?.roleIds.includes(ROLE_ID_SUPERADMIN)
+      );
+      data.content = filteredData;
+      return data;
+      
+    }).then((data) => {
       hideLoader();
       const activeUsers = data.content.filter(
         (user) =>
