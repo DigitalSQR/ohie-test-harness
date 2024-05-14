@@ -521,7 +521,7 @@ public class UserServiceServiceImpl implements UserService {
     @Override
     public List<UserEntity> getUsersByRole(String role, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException {
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
-        userSearchCriteriaFilter.setRole(role);
+        userSearchCriteriaFilter.setRole(Collections.singletonList(role));
         List<UserEntity> userEntities = this.searchUsers(userSearchCriteriaFilter, contextInfo);
         return Optional.ofNullable(userEntities)
                 .filter(list -> !list.isEmpty())

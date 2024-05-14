@@ -361,7 +361,7 @@ public class UserValidator {
     //validate one admin should active all time
     public static void oneAdminShouldActiveValidation(UserService userService, List<ValidationResultInfo> errors, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         UserSearchCriteriaFilter userSearchCriteriaFilter = new UserSearchCriteriaFilter();
-        userSearchCriteriaFilter.setRole(UserServiceConstants.ROLE_ID_ADMIN);
+        userSearchCriteriaFilter.setRole(Collections.singletonList(UserServiceConstants.ROLE_ID_ADMIN));
         userSearchCriteriaFilter.setState(Collections.singletonList(UserServiceConstants.USER_STATUS_ACTIVE));
         List<UserEntity> userList = userService.searchUsers(userSearchCriteriaFilter, contextInfo);
 

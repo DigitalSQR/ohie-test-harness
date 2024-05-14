@@ -92,11 +92,7 @@ const AdminUsers = () => {
       
     }).then((data) => {
       hideLoader();
-      const activeUsers = data.content.filter(
-        (user) =>
-          user?.roleIds.includes(ROLE_ID_ADMIN) ||
-          user?.roleIds.includes(ROLE_ID_TESTER)
-      );
+      const activeUsers = data.content;
       setUsers(activeUsers);
     });
   };
