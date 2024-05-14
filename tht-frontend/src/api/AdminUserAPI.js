@@ -54,11 +54,17 @@ export const AdminUserAPI = {
    
   },
 
-  fetchAllUsers: async function (sortFieldName="createdAt", sortDirection="desc") {
+  fetchAllUsers: async function (sortFieldName="createdAt", sortDirection="desc", pageNumber, pageSize) {
       const role=[ROLE_ID_ADMIN, ROLE_ID_TESTER];
       const params={};
       if (!!sortFieldName) {
         params.sort = `${sortFieldName},${sortDirection}`;
+      }
+      if(!!pageNumber){
+        params.page=pageNumber-1;
+      }
+      if(!!pageSize){
+        params.size=pageSize
       }
       params.role=role;
       const response = await api.request({

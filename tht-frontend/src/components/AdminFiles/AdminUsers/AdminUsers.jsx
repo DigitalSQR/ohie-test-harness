@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import { AdminUserAPI } from "../../../api/AdminUserAPI";
 import "./admin-user.scss";
 import { Modal } from "antd";
 import { useLoader } from "../../loader/LoaderContext";
+import { Pagination } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import { store } from "../../../store/store";
@@ -14,7 +14,7 @@ import { Switch } from "antd";
 import {
   ROLE_ID_ADMIN,
   ROLE_ID_TESTER,
-  ROLE_ID_SUPERADMIN
+  ROLE_ID_SUPERADMIN,
 } from "../../../constants/role_constants";
 import AddAdminUser from "./AddAdminUsers/AddAdminUser";
 import UpdateAdminUser from "./UpdateAdminUser/UpdateAdminUser";
@@ -29,6 +29,11 @@ const AdminUsers = () => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
   const [isEditUserModalOpen, setIsEditUserModalOpen] = useState(false);
   const [userId, setUserId] = useState();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 10;
+
   const [deleteUserId, setDeleteUserId] = useState();
   const [userInfo, setUserInfo] = useState();
   const dispatch = useDispatch();
@@ -49,7 +54,7 @@ const AdminUsers = () => {
     showLoader();
     AdminUserAPI.updateUserState(deleteUserId, changeState)
       .then(() => {
-        getAllUsers(sortFieldName, sortDirection);
+        getAllUsers(sortFieldName, sortDirection, currentPage);
         hideLoader();
         setIsModalOpen(false);
         setDeleteUserId(null);
@@ -59,6 +64,11 @@ const AdminUsers = () => {
         setIsModalOpen(false);
       });
     hideLoader();
+  };
+
+  const handleChangePage = ( event, newPage) => {
+    setCurrentPage(newPage);
+    getAllUsers(sortFieldName, sortDirection, newPage)
   };
 
   //Function to close the user state inactivation confirmation modal
@@ -72,29 +82,22 @@ const AdminUsers = () => {
     const userInfo = store.getState().userInfoSlice;
     setUserInfo(userInfo);
     dispatch(set_header("User Management"));
-    getAllUsers(sortFieldName, sortDirection);
+    getAllUsers(sortFieldName, sortDirection, currentPage);
   }, []);
 
   //Function to get all the users that have role of either Admin or Tester to display in the component
-  const getAllUsers = (sortFieldName, sortDirection) => {
+  const getAllUsers = (sortFieldName, sortDirection, currentPage) => {
     showLoader();
-    AdminUserAPI.fetchAllUsers(
-      sortFieldName,
-      sortDirection[sortFieldName]
-    ).then((data) => {
+    AdminUserAPI.fetchAllUsers(sortFieldName, sortDirection[sortFieldName], currentPage, pageSize)
+    .then((data) => {
       // removing user if role is superadmin
       const filteredData = data.content.filter(
-        (user) =>
-          !user?.roleIds.includes(ROLE_ID_SUPERADMIN)
+        (user) => !user?.roleIds.includes(ROLE_ID_SUPERADMIN)
       );
-      data.content = filteredData;
-      return data;
-      
-    }).then((data) => {
+      setUsers(filteredData);
+      setTotalPages(data.totalPages);
       hideLoader();
-      const activeUsers = data.content;
-      setUsers(activeUsers);
-    });
+      })
   };
 
   
@@ -110,7 +113,7 @@ const AdminUsers = () => {
   
   //Function to refresh all components on editing and submitting of Admin user modal
   const refreshAllComponents = () => {
-    getAllUsers(sortFieldName, sortDirection);
+    getAllUsers(sortFieldName, sortDirection, currentPage);
   };
 
   //Function to toggle between the user state
@@ -134,7 +137,7 @@ const AdminUsers = () => {
     newSortDirection[sortFieldName] =
       sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
-    getAllUsers(sortFieldName, newSortDirection);
+    getAllUsers(sortFieldName, newSortDirection, currentPage);
   };
 
   //Function that toggles between the sort icons corresponding to ascending or descending order
@@ -266,7 +269,18 @@ const AdminUsers = () => {
         setUserId={setUserId}
         refreshAllComponents={refreshAllComponents}
         />
+        {totalPages > 1 && (
+        <Pagination
+          className="pagination-ui"
+          count={totalPages}
+          page={currentPage}
+          onChange={handleChangePage}
+          variant="outlined"
+          shape="rounded"
+        />
+      )}
       </div>
+
     </div>
   );
 };
