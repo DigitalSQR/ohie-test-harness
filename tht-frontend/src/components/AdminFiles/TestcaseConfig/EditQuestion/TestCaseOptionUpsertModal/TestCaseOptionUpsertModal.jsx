@@ -145,6 +145,7 @@ const UpsertModal = ({
               </div>
               <div className="my-4 text-end">
                 <button
+                id="testcaseOptionUpsert-cancel"
                   type="button"
                   className="btn btn-primary btn-white py-1 font-size-10 mx-3"
                   onClick={handleCancel}

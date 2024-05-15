@@ -155,12 +155,13 @@ export default function UpdatePassword() {
                 disabled={!(formik.isValid && formik.dirty && passwordMatch)}
                   onClick={formik.handleSubmit}
                   className="btn btn-primary"
+                  id="#UpdatePassword-1"
                 >
                   <span>Continue</span>
                   <span id="loader"></span>
                 </button>
                 <button
-                  id="submitButton"
+                  id="submitButton #UpdatePassword-2"
                   onClick={backToLogin}
                   className=" mx-2 btn btn-primary"
                 >

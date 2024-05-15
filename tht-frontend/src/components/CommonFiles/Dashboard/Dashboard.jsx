@@ -305,6 +305,7 @@ export default function Dashboard() {
                       <div className="my-4">
                         <button
                           className="btn btn-primary mt-2 theme-blue-color"
+                          id="#Dashboard-1"
                           onClick={() => navigate("/register-application")}
                         >
                           <i className="bi bi-pencil-square"></i> Register Test

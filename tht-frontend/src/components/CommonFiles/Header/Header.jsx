@@ -221,6 +221,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
                   <i class="bi bi-bell me-1 fw-bold"></i>Notifications
                   {unreadCount > 0 && (
                     <span
+                      id="#Header-1"
                       style={{
                         fontSize: "12px",
                         fontWeight: "bold",
@@ -251,6 +252,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
                           <div>{notification.message}</div>
                           <div className="delete-icon">
                             <DeleteOutlined
+                              id={`#Header-${index}`}
                               onClick={(event) =>
                                 handleDeleteNotification(notification.id, event)
                               }
@@ -286,6 +288,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
               </div>
               <ul className="dropdown-menu">
                 <li
+                    id="#Header-3"
                 onClick={() => {
                   if(blocker === 'blocked' && blockerDesc !== '') {
                     notification.warning({
@@ -304,6 +307,7 @@ export default function Header({ headerContent, isSidebarOpen }) {
                   <a className="dropdown-item">Update Profile</a>
                 </li>
                 <li
+                    id="#Header-4"
                   onClick={() => {
                     if(blocker === 'blocked' && blockerDesc !== '') {
                       notification.warning({

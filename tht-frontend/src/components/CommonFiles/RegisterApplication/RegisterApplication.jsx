@@ -521,6 +521,7 @@ const RegisterApplication = () => {
                                       ]
                                     ) && (
                                       <button
+                                        id="#RegisterApplication-3"
                                         className="btn btn-outline-secondary color"
                                         type="button"
                                         onClick={() => {
@@ -771,6 +772,7 @@ const RegisterApplication = () => {
           <div className="text-end">
             <button
               className="btn btn-primary btn-white mx-2"
+              id="#RegisterApplication-1"
               onClick={() => {
                 navigate("/testing-requests");
               }}
@@ -778,6 +780,7 @@ const RegisterApplication = () => {
               Cancel
             </button>
             <button
+              id="#RegisterApplication-2"
               disabled={!(formik.isValid && formik.dirty)}
               type="button"
               onClick={formik.handleSubmit}

@@ -228,6 +228,7 @@ const TestingRequests = () => {
               <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
                 <div className="d-flex align-items-baseline justify-content-end">
                   <button
+                    id="#TestingRequests-1"
                     onClick={() => {
                       navigate("/register-application");
                     }}
@@ -252,6 +253,7 @@ const TestingRequests = () => {
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("name")}
+                      id="#TestingRequests-2"
                     >
                       {renderSortIcon("name")}
                     </span>
@@ -262,6 +264,7 @@ const TestingRequests = () => {
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("createdAt")}
+                      id="#TestingRequests-3"
                     >
                       {renderSortIcon("createdAt")}
                     </span>
@@ -281,6 +284,7 @@ const TestingRequests = () => {
                         className="ps-1"
                         href="#"
                         onClick={() => handleSort("default")}
+                        id="#TestingRequests-4"
                       >
                         {renderSortIcon("default")}
                       </span>
@@ -350,6 +354,7 @@ const TestingRequests = () => {
                           TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
                           <>
                             <span
+                             id={`TestingRequests-${index}-5`}
                             className="cursor-pointer"
                               onClick={() => {
                                 changeState(
@@ -364,6 +369,7 @@ const TestingRequests = () => {
                             </span>
                             <span
                               className="cursor-pointer ps-3"
+                              id={`TestingRequests-${index}-6`}
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
@@ -382,6 +388,7 @@ const TestingRequests = () => {
                           TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED 
                           && 
                           <button
+                          id={`TestingRequests-${index}-7`}
                               className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
                               onClick={() => {navigate(`/application-report/${testRequest.id}`)}}
                             >
@@ -392,6 +399,7 @@ const TestingRequests = () => {
                            {testRequest.state ===
                             TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING && (
                             <span
+                            id={`TestingRequests-${index}-8`}
                               className="cursor-pointer font-size-12 text-blue fw-bold"
                               onClick={() => {
                                 navigate(
@@ -406,6 +414,7 @@ const TestingRequests = () => {
                         </td>
                         <td>
                           <span
+                           id={`TestingRequests-${index}-9`}
                             onClick={() => toggleRow(testRequest.id)}
                             type="button"
                             className="approval-action-button float-end my-auto display"
@@ -467,6 +476,7 @@ const TestingRequests = () => {
                                           </td>
                                           <td>
                                             <i
+                                             id={`TestingRequests-${index}-10`}
                                               className={`bi ${
                                                 testUrls.showPass
                                                   ? "bi-eye-fill"

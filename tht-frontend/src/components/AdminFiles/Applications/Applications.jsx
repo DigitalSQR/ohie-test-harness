@@ -313,6 +313,7 @@ const Applications = () => {
                   <th style={{ width: "12%" }}>
                     APPLICATION NAME{" "}
                     <span
+                      id="applications-sortByName"
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("name")}
@@ -326,6 +327,7 @@ const Applications = () => {
                   <th style={{ width: "15%" }}>
                     REQUEST DATE
                     <span
+                      id="applications-sortBycreatedAt"
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("createdAt")}
@@ -338,6 +340,7 @@ const Applications = () => {
                     <span
                       className="ps-1"
                       href="#"
+                      id="applications-sortBystate"
                       onClick={() => handleSort("state")}
                     >
                       {renderSortIcon("state")}
@@ -348,6 +351,7 @@ const Applications = () => {
                     <span
                       className="ps-1"
                       href="#"
+                      id="applications-sortByactions"
                       onClick={() => handleSort("default")}
                     >
                       {renderSortIcon("default")}
@@ -429,6 +433,7 @@ const Applications = () => {
                               <div class="d-flex flex-column flex-md-row">
                                 <div
                                   class="cursor-pointer text-success d-flex align-items-center font-size-12 fw-bold"
+                                  id={`applications-acceptTestRequest-${index}`}
                                   onClick={() => {
                                     changeState(
                                       testRequest.id,
@@ -442,6 +447,7 @@ const Applications = () => {
                                     ACCEPT</span>
                                 </div>
                                 <div
+                                  id={`applications-declineTestRequest-${index}`}
                                   class="cursor-pointer ps-md-3 text-danger font-size-12 fw-bold mt-2 mt-md-0 ml-lg-3 d-flex align-items-center"
                                   onClick={() => {
                                     setCurrentTestRequestId(testRequest.id);
@@ -468,6 +474,7 @@ const Applications = () => {
                           userRole.includes("role.tester") ||
                           userRole.includes("role.admin") ? (
                             <button
+                            id={`applications-actions-${index}`}
                               className="cursor-pointer glossy-button glossy-button--green d-flex align-items-center"
                               onClick={() => {
                                 navigate(`/choose-test/${testRequest.id}`);
@@ -490,6 +497,7 @@ const Applications = () => {
                           testRequest.state ===
                             TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED && (
                             <button
+                            id={`applications-viewReport-${index}`}
                               className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
                               onClick={() => viewReport(testRequest.id)}
                             >
@@ -501,6 +509,7 @@ const Applications = () => {
                         </td>
                         <td>
                         <span
+                          id={`toggleRow-${index}`}
                           onClick={() => toggleRow(testRequest.id)}
                           type="button"
                           className="approval-action-button float-end my-auto display"
@@ -557,6 +566,7 @@ const Applications = () => {
                                         </td>
                                         <td>
                                           <i
+                                            id={`togglePassword-${testUrls.id}`}
                                             className={`bi ${
                                               testUrls.showPass
                                                 ? "bi-eye-fill"

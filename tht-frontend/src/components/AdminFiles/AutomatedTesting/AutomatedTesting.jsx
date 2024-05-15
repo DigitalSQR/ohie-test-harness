@@ -315,7 +315,7 @@ export default function AutomatedTesting() {
                   Automated Verification
                 </Breadcrumb.Item>
               </Breadcrumb>
-              {
+              
                 <div className="d-flex gap-2">
                   <>
                     {" "}
@@ -324,6 +324,7 @@ export default function AutomatedTesting() {
                       <>
                         <div>
                           <button
+                          id="automatedTesting-stopAndReset"
                             className={`btn small btn-sm mt-0 btn-danger px-4 abtn`}
                             onClick={() => handleInterruptButton(true)}
                             disabled={stopAndResetLoader || stopLoader}
@@ -336,6 +337,7 @@ export default function AutomatedTesting() {
                         </div>
                         <div>
                           <button
+                          id="automatedTesting-Stop"
                             className="btn small btn-sm mt-0 btn-danger px-2 abtn"
                             onClick={() => handleInterruptButton(false)}
                             disabled={stopAndResetLoader || stopLoader}
@@ -355,6 +357,7 @@ export default function AutomatedTesting() {
                         !!finishedTestcaseCount)) && (
                       <>
                         <button
+                        id="automatedTesting-Reset"
                           className={`btn small btn-sm mt-0 btn-primary px-4 abtn`}
                           style={{ backgroundColor: "#009fc8" }}
                           onClick={() => handleResetButton()}
@@ -369,6 +372,7 @@ export default function AutomatedTesting() {
                       !!finishedTestcaseCount && (
                         <>
                           <button
+                          id="automatedTesting-Resume"
                             className={`btn small btn-sm mt-0 btn-success px-4 abtn`}
                             onClick={() => handleStartTesting(true)}
                           >
@@ -382,6 +386,7 @@ export default function AutomatedTesting() {
                       !finishedTestcaseCount && (
                         <>
                           <button
+                          id="automatedTesting-Start"
                             className="btn small btn-sm mt-0 px-2 btn-success abtn"
                             onClick={() => handleStartTesting()}
                             // disabled={!resultFlag}
@@ -394,7 +399,7 @@ export default function AutomatedTesting() {
                       )}
                   </>
                 </div>
-              }
+              
             </div>
             <div class="col-12 test-wrapper">
               <div class=" d-flex justify-content-between width-90">
@@ -412,6 +417,7 @@ export default function AutomatedTesting() {
                   data.map((component, index) => (
                     <li className="ac-list-item" key={index}>
                       <h3
+                        
                         onClick={() =>
                           toggleComponentAccordian(component?.id, index)
                         }
@@ -444,7 +450,9 @@ export default function AutomatedTesting() {
                                   className="collapse-sublist1 d-flex align-items-center width-100"
                                   id={`spec-${specification?.id}`}
                                 >
-                                  <div className="subtitle-box d-flex align-items-center width-100"   onClick={() =>
+                                  <div className="subtitle-box d-flex align-items-center width-100"
+                                  id={`automatedTesting-toggleSpecification-${specIndex}`}
+                                  onClick={() =>
                                         toggleSpecificationAccordian(
                                           specification?.id,
                                           specIndex

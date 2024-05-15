@@ -248,6 +248,7 @@ const Assessee = () => {
                   <th style={{ width: thPercentage.name }}>
                     NAME
                     <span
+                      id="assessee-sortByName"
                       className="ps-1 "
                       href="#"
                       onClick={() => handleSort("name")}
@@ -258,6 +259,7 @@ const Assessee = () => {
                   <th style={{ width: thPercentage.company }}>
                     Company
                     <span
+                      id="assessee-sortBycompanyName"
                       className="ps-1"
                       href="# "
                       onClick={() => handleSort("companyName")}
@@ -268,6 +270,7 @@ const Assessee = () => {
                   <th style={{ width: thPercentage.email }}>
                     Email
                     <span
+                    id="assessee-sortByEmail"
                       className="ps-1"
                       href="# "
                       onClick={() => handleSort("email")}
@@ -278,6 +281,7 @@ const Assessee = () => {
                   <th style={{ width: thPercentage.requestedDate }}>
                     request date
                     <span
+                      id="assessee-sortBycreatedAt"
                       className="ps-1"
                       href="# "
                       onClick={() => handleSort("createdAt")}
@@ -288,6 +292,7 @@ const Assessee = () => {
                   <th style={{ width: thPercentage.status }}>
                     Status
                     <span
+                    id="assessee-sortByState"
                       className="ps-1"
                       href="# "
                       onClick={() => handleSort("state")}
@@ -299,6 +304,7 @@ const Assessee = () => {
                     <th style={{ width: thPercentage.action }}>
                       ACTIONS
                       <span
+                      id="assessee-sortByActions"
                         className="ps-1"
                         href="# "
                         onClick={() => handleSort("default")}
@@ -355,6 +361,7 @@ const Assessee = () => {
                             {user.state === "user.status.active" && (
                               <Fragment>
                                 <span
+                                  id={`assessee-disable-${index}`}
                                   className="cursor-pointer"
                                   onClick={() => {
                                     setIsReasonModalOpen(true);
@@ -374,6 +381,7 @@ const Assessee = () => {
                               <Fragment>
                                 <span
                                   className="cursor-pointer text-success font-size-12 fw-bold"
+                                  id={`assessee-approve-${index}`}
                                   onClick={() => {
                                     changeState(
                                       user.id,
@@ -392,6 +400,7 @@ const Assessee = () => {
                                
                                 <span
                                   className="ps-3 cursor-pointer text-danger font-size-12 fw-bold"
+                                  id={`assessee-decline-${index}`}
                                   onClick={() => {
                                     setIsReasonModalOpen(true);
                                     setCurrentAssesseeId(user.id);
@@ -406,6 +415,7 @@ const Assessee = () => {
                             )}
                             {user.state === "user.status.inactive" && (
                               <span
+                              id={`assessee-enable-${index}`}
                                 className="cursor-pointer text-success font-size-12 fw-bold"
                                 onClick={() => {
                                   changeState(

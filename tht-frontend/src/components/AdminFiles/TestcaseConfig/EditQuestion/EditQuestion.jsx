@@ -462,6 +462,7 @@ export default function EditQuestion() {
                     </div>
                   </div>
                   <button
+                  id={`editQuestion-saveChanges`}
                     disabled={!changesMade}
                     onClick={handleSaveQuestion}
                     type="button"
@@ -521,6 +522,7 @@ export default function EditQuestion() {
             <div>
               <button
                 type="button"
+                id={`editQuestion-addOption`}
                 className="btn btn-sm btn-outline-secondary menu-like-item"
                 onClick={() => setIsModalOpen(true)}
               >
@@ -584,6 +586,7 @@ export default function EditQuestion() {
                         <div className="row">
                           <div className="col-auto">
                             <button
+                            id={`editQuestion-updateOption`}
                               className="btn btn-sm btn-primary mt-3"
                               disabled={!changesMadeToEditOption}
                               onClick={() => handleSaveOption(index)}

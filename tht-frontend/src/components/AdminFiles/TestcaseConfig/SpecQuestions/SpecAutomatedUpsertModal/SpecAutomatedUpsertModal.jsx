@@ -38,7 +38,6 @@ export default function SpecAutomatedUpsertModal(props) {
   const handleSubmit = (values) => {
   
     const data = {
-      // zipFile: uploadedZipFile,
       name: values.name,
       specificationId: specificationId,
       description: "",
@@ -70,6 +69,7 @@ export default function SpecAutomatedUpsertModal(props) {
       }).catch(()=>{})
       hideLoader();
     }else{
+      console.log("reached here");
       showLoader();
     TestCaseAPI.createTestCase(data)
       .then((res) => {
@@ -101,7 +101,6 @@ export default function SpecAutomatedUpsertModal(props) {
   });
 
   useEffect(() => {
-    console.log(currentAutomatedTestcase);
     if (currentAutomatedTestcase) {
       setCurrentTestCaseId(currentAutomatedTestcase.id);
       setInitialValue({
@@ -161,6 +160,7 @@ export default function SpecAutomatedUpsertModal(props) {
                     <div>
                       {uploadedZipFile.name}
                       <span
+                      id="specAutomatedUpserModal-removeZipFile"
                         type="button"
                         title="Remove File"
                         className="mx-2 font-size-14"
@@ -187,6 +187,7 @@ export default function SpecAutomatedUpsertModal(props) {
                       ></input>
                       <label htmlFor="fileInput">
                         <button
+                          id="specAutomatedUpserModal-update/uploadZipFile"
                           variant="success"
                           type="button"
                           className="btn cst-btn-default"
@@ -205,6 +206,7 @@ export default function SpecAutomatedUpsertModal(props) {
                   )}
                   <div className="my-4 text-end">
                     <button
+                      id="specAutomatedUpserModal-cancel"
                       type="button"
                       className="btn btn-primary btn-white py-1 font-size-10 mx-3"
                       onClick={handleCancel}

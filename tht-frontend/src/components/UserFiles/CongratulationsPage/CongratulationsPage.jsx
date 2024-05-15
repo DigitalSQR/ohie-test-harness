@@ -76,7 +76,7 @@ export default function CongratulationsPage() {
                       We will process the request as soon as the account is verified.
                     </p>
                     <p>
-                      <a className="text-blue fw-bold cursor-pointer" onClick={resendVerification}>
+                      <a className="text-blue fw-bold cursor-pointer" onClick={resendVerification} id="#CongratulationsPage-1">
                         RESEND
                       </a>{" "}
                       Verification link.
@@ -100,6 +100,7 @@ export default function CongratulationsPage() {
                 <button
                   className="btn btn-primary btn-blue w-100 my-4 py-3"
                   onClick={() => navigate("/login")}
+                  id="#CongratulationsPage-2"
                 >
                   LOGIN
                 </button>
