@@ -70,7 +70,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
         className={isSidebarOpen ? "sidebar-wrapper" : "sidebar-wrapper shrink"}
         id="mySidenav"
       >
-        <div className="close-sidemenu-icon" onClick={toggleSidebar}>
+        <div className="close-sidemenu-icon" onClick={toggleSidebar} id="#Sidebar-1">
           <i className="bi bi-filter-left"></i>
         </div>
         <div className="logo-white">
@@ -79,6 +79,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
         <ul className="side-menu">
           <li>
             <a
+            id="#Sidebar-2"
               className={
                 activeMenuItem === "/dashboard"
                   ? "active menu-like-item"
@@ -101,6 +102,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
             <>
               <li>
                 <a
+                id="#Sidebar-3"
                   className={
                     activeMenuItem === "/assessee"
                       ? "active menu-like-item"
@@ -122,6 +124,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
             
               <li>
                 <a
+                id="#Sidebar-4"
                   className={
                     ["/applications", "/choose-test","/manual-testing","/automated-testing"].some(item => activeMenuItem.includes(item))
                       ? "active menu-like-item"
@@ -142,6 +145,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
                 <li>
                   <a
+                  id="#Sidebar-5"
                     className={
                       ["/testcase-config", "/validate-config"].some(item => activeMenuItem.includes(item))
                         ? "active menu-like-item"
@@ -163,6 +167,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
                 <li>
                   <a
+                  id="#Sidebar-6"
                     className={
                       ["/user-management", "/create-user"].some(item => activeMenuItem.includes(item))
                         ? "active menu-like-item"
@@ -188,6 +193,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 {" "}
                 <li>
                   <a
+                  id="#Sidebar-7"
                     className={
                       ["/testing-requests", "/register-application"].some(item => activeMenuItem.includes(item))
                         ? "active menu-like-item"

@@ -213,6 +213,7 @@ const UpdateAdminUser = ({
                       <button
                         type="button"
                         className="btn btn-primary btn-white"
+                        id="updateAdminUser-cancel"
                         onClick={() => {
                           handleCancel();
                         }}

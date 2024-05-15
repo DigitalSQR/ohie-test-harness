@@ -585,6 +585,7 @@ export default function VerticalOptions(props) {
                       autoComplete="off"
                     />
                     <label
+                      id={`VerticalOptions-1-${index}`}
                       onClick={(e) => onLabelClick(e, index)}
                       className={
                         currentQuestion.questionType ===
@@ -606,6 +607,7 @@ export default function VerticalOptions(props) {
                 <img src={fileTypeIcon(file.fileType)} />
                 <span> {file.name} </span>
                 <span
+                  id={`VerticalOptions-2-${file.id}`}
                   type="button"
                   title="Download File"
                   className="mx-2 font-size-14"
@@ -614,6 +616,7 @@ export default function VerticalOptions(props) {
                   <i className="bi bi-cloud-download"></i>
                 </span>
                 <span
+                 id={`VerticalOptions-3-${file.id}`}
                   type="button"
                   title="Remove File"
                   className="mx-2 font-size-14"
@@ -638,6 +641,7 @@ export default function VerticalOptions(props) {
               <div className="note-text-area-button-group">
                 {editMode && (
                   <span
+                    id="#VerticalOptions-4-handleCancelNoteButtonClcik"
                     role="button"
                     className="save-btn-for-now fw-bold mx-1"
                     title="Cancel"
@@ -648,6 +652,7 @@ export default function VerticalOptions(props) {
                 )}
                 {editMode && noteMessage?.length <= 2000 && (
                   <span
+                    id="#VerticalOptions-5"
                     role="button"
                     className="save-btn-for-now fw-bold mx-1"
                     title="Save Note"
@@ -658,6 +663,7 @@ export default function VerticalOptions(props) {
                 )}
                 {!editMode && (
                   <span
+                    id="#VerticalOptions-6"
                     role="button"
                     className="save-btn-for-now fw-bold mx-1"
                     title="Edit Note"
@@ -687,6 +693,7 @@ export default function VerticalOptions(props) {
                 className="visibility"
               ></input>
               <button
+                id="#VerticalOptions-7"
                 variant="success"
                 type="button"
                 className="btn cst-btn-default"
@@ -703,6 +710,7 @@ export default function VerticalOptions(props) {
                             </OverlayTrigger>
               </button>
               <button
+                id="#VerticalOptions-8"
                 type="button"
                 className="btn cst-btn-default"
                 onClick={showNoteDiv}

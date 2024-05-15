@@ -1,3 +1,5 @@
+import { ROLE_ID_ADMIN, ROLE_ID_TESTER } from "../constants/role_constants";
+import { paramSerialize } from "../utils/utils";
 import api from "./configs/axiosConfigs";
 
 export const AdminUserAPI = {
@@ -52,13 +54,25 @@ export const AdminUserAPI = {
    
   },
 
-  fetchAllUsers: async function (sortFieldName="createdAt", sortDirection="desc") {
-    
+  fetchAllUsers: async function (sortFieldName="createdAt", sortDirection="desc", pageNumber, pageSize) {
+      const role=[ROLE_ID_ADMIN, ROLE_ID_TESTER];
+      const params={};
+      if (!!sortFieldName) {
+        params.sort = `${sortFieldName},${sortDirection}`;
+      }
+      if(!!pageNumber){
+        params.page=pageNumber-1;
+      }
+      if(!!pageSize){
+        params.size=pageSize
+      }
+      params.role=role;
       const response = await api.request({
         url: `/user`,
         method: "GET",
-        params: {
-          sort: `${sortFieldName},${sortDirection}`,
+        params,
+        paramsSerializer: (params) => {
+          return paramSerialize(params);
         },
       });
       return response.data;
