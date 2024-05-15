@@ -83,7 +83,7 @@ const Captcha = (props) => {
                         </label>
                         <div className="mb-3">
                             <img src={`data:image/png;base64, ${base64Image}`} alt="Captcha Image" />
-                            <button className="reload-icon" onClick={reloadCaptcha}>
+                            <button className="reload-icon" onClick={reloadCaptcha} id="#Captcha-1">
                                 <img src={reloadCaptchaIcon} alt="reload captcha" />
                             </button>
                         </div>

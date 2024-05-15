@@ -364,6 +364,7 @@ export default function UserProfile () {
                     {profilePicture && (
                       <Fragment>
                         <span
+                          id="#UserProfile-1"
                           onClick={handlePreview}
                           className="bi bi-eye"
                           style={{
@@ -375,6 +376,7 @@ export default function UserProfile () {
                         />
 
                         <span
+                           id="#UserProfile-2"
                           onClick={handleRemove}
                           className="bi bi-trash"
                           style={{ fontSize: "2em", color: "white",cursor: "pointer" }}
@@ -516,6 +518,7 @@ export default function UserProfile () {
               style={{ display: "flex", justifyContent: "flex-end" }}
             >
               <button
+                 id="#UserProfile-3"
                 className="btn btn-primary btn-white font-size-11 reset-button"
                 style={{ marginRight: "auto" }}
                 onClick={() => {
@@ -526,12 +529,14 @@ export default function UserProfile () {
                 Reset Password
               </button>
               <button
+                 id="#UserProfile-4"
                 className="btn btn-primary btn-white font-size-14"
                 onClick={handleCancel}
               >
                 Cancel
               </button>
               <button
+                 id="#UserProfile-5"
                 disabled={!((formik.isValid && formik.dirty) || uploadedFlag)}
                 onClick={formik.handleSubmit}
                 className="btn btn-primary btn-blue btn-submit  font-size-14"

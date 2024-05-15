@@ -190,6 +190,7 @@ const AddAdminUser = ({
                           <button
                             className="btn btn-outline-secondary login"
                             type="button"
+                            id="addAdminUser-forgotPassword"
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             <i
@@ -230,6 +231,7 @@ const AddAdminUser = ({
                           <button
                             className="btn btn-outline-secondary login"
                             type="button"
+                            id="addAdminUser-confirmPassword"
                             onClick={() =>
                               setShowConfirmPassword(!showConfirmPassword)
                             }
@@ -282,6 +284,7 @@ const AddAdminUser = ({
                     <button
                       className="btn btn-primary btn-white"
                       type="button"
+                      id="addAdminUser-resetForm"
                       onClick={() => {
                         resetForm();
                         handleCancel();

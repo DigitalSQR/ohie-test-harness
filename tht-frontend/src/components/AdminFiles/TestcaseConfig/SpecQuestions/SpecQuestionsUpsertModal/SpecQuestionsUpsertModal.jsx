@@ -123,6 +123,7 @@ const UpsertModal = ({
                   type="button"
                   className="btn btn-primary btn-white py-1 font-size-10 mx-3"
                   onClick={handleCancel}
+                  id="#SpecQUestionsUpsertModal-1"
                 >
                   Cancel
                 </button>

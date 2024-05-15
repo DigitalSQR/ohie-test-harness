@@ -72,6 +72,7 @@ export default function ResetPassword() {
                   onBlur={formik.handleBlur}
                 />
                 <button
+                  id="#ResetPassword-1"
                   className=" btn btn-outline-secondary color"
                   type="button"
                   onClick={() => setShowOldPassword(!showOldPassword)}
@@ -103,6 +104,7 @@ export default function ResetPassword() {
                   onBlur={formik.handleBlur}
                 />
                 <button
+                   id="#ResetPassword-2"
                   className="btn btn-outline-secondary color"
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
@@ -139,6 +141,7 @@ export default function ResetPassword() {
                   onBlur={formik.handleBlur}
                 />
                 <button
+                   id="#ResetPassword-3"
                   className="btn btn-outline-secondary color"
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -161,6 +164,7 @@ export default function ResetPassword() {
           </div>
           <div className="my-4 text-end">
             <button
+               id="#ResetPassword-4"
               className="btn btn-primary btn-white font-size-14"
               style={{marginRight:"1rem"}}
               onClick={() => {
@@ -171,6 +175,7 @@ export default function ResetPassword() {
               Cancel
             </button>
             <button
+               id="#ResetPassword-5"
               disabled={!(formik.isValid && formik.dirty)}
               onClick={formik.handleSubmit}
               className="btn btn-primary btn-blue btn-submit font-size-14"

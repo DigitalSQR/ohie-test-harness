@@ -225,6 +225,7 @@ export default function Login() {
                       onKeyDown={handleKeyPress}
                     />
                     <button
+                      id="#Login-1"
                       className="btn btn-outline-secondary login"
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
@@ -254,6 +255,7 @@ export default function Login() {
                     <span className="checkmark"></span>
                   </label>
                   <a
+                    id="#Login-2"
                     href=""
                     className="text-blue"
                     onClick={() => {
@@ -266,6 +268,7 @@ export default function Login() {
 
                 <div className="mt-4">
                   <button
+                    id="#Login-3"
                     disabled={!(formik.isValid && formik.dirty)}
                     type="submit"
                     onClick={formik.handleSubmit}
@@ -286,6 +289,7 @@ export default function Login() {
                 </div>
                 <div className="text-center mb-3">
                   <a
+                     id="#Login-4"
                     href=""
                     onClick={redirectToSignUp}
                     className="font-weight-500 ps-2 pt-2 d-block text-blue"

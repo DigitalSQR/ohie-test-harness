@@ -301,6 +301,7 @@ export default function ChooseTest() {
               </p>
               {totalManualTestcaseResults == 0 && (
                 <button
+                  id="chooseTest-manualVerification"
                   className="btn btn-primary  btn-sm mt-4 "
                   onClick={() => {
                     handleStartTesting(true, null);
@@ -343,6 +344,7 @@ export default function ChooseTest() {
                     }}
                   />
                   <Button className="btn start-test-button mt-2"
+                    id="chooseTest-resumeManualVerification"
                     onClick={() => navigate(`/manual-testing/${testRequestId}`)}
                   >
                     {
@@ -387,6 +389,7 @@ export default function ChooseTest() {
                 </p>
                 {totalAutomatedTestcaseResults == 0 && (
                   <button
+                  id="chooseTest-startAutomatedVerification"
                     className="btn btn-primary small btn-sm mt-4 "
                     onClick={() => {
                       handleStartTesting(null, true);
@@ -466,6 +469,7 @@ export default function ChooseTest() {
                       }
                     />
                     <Button className="btn start-test-button"
+                    id="chooseTest-resumeAutomatedVerification"
                       onClick={() =>
                         navigate(`/automated-testing/${testRequestId}`)
                       }
@@ -483,7 +487,7 @@ export default function ChooseTest() {
           {!!submitButtonFlag && totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
           <div className="message-grid">
             <p>Verification has been successfully completed. Please click the button below to submit the results.</p>
-            <button className="submit-btn cst-btn-group btn" onClick={submitHandler}>Submit</button>
+            <button className="submit-btn cst-btn-group btn" id="chooseTest-Submit" onClick={submitHandler}>Submit</button>
           </div>  
           :
           <></>}

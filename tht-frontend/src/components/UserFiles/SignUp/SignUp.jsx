@@ -277,6 +277,7 @@ export default function SignUp() {
                       className="btn btn-outline-secondary signup-password"
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      id="#signup-1"
                     >
                       <i
                         className={`bi ${
@@ -321,6 +322,7 @@ export default function SignUp() {
                     <button
                       className="btn btn-outline-secondary signup-password"
                       type="button"
+                      id="#signup-2"
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }

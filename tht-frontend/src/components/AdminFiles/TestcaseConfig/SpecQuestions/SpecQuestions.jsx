@@ -411,6 +411,7 @@ export default function ManualTestCases() {
             <div>
               <button
                 type="button"
+                id="specQuestions-createManualTestcase"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
                 onClick={() => setIsModalOpen(true)}
               >
@@ -424,6 +425,7 @@ export default function ManualTestCases() {
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
+                id="specQuestions-createAutomatedTestcase"
                 onClick={() => {
                   setIsAutomatedModalOpen(true);
                   setCurrentAutomatedTestcase();
@@ -542,6 +544,7 @@ export default function ManualTestCases() {
                                 </span>
 
                                 <button
+                                id={`specQuestions-editQuestion-${index}`}
                                   onClick={() => handleUpdate(question)}
                                   type="button"
                                   className="cursor-pointer btn btn-outline-success rounded-0"
@@ -630,6 +633,7 @@ export default function ManualTestCases() {
                   <th style={{ width: "35%" }}>
                     TestCase
                     <span
+                    id="specQuestions-sortAutomatedByName"
                       className="ps-1"
                       onClick={() => {
                         handleSort("name");
@@ -642,6 +646,7 @@ export default function ManualTestCases() {
                     Rank
                     <span
                       className="ps-1"
+                      id="specQuestions-sortAutomatedByRank"
                       onClick={() => {
                         handleSort("rank");
                       }}
@@ -654,7 +659,7 @@ export default function ManualTestCases() {
                 </tr>
               </thead>
               <tbody>
-                  {automatedTestcases.map((testcase) => {
+                  {automatedTestcases.map((testcase,index) => {
                     return (
                       <tr>
                         <td>{testcase.name}</td>
@@ -672,6 +677,7 @@ export default function ManualTestCases() {
                                   <img src={fileTypeIcon(files.fileType)} />
                                   <span>{files.name}</span>
                                   <span
+                                  id={`specQuestions-downloadFile-${index}`}
                                     type="button"
                                     title="Download File"
                                     className="mx-2 font-size-14"
@@ -689,6 +695,7 @@ export default function ManualTestCases() {
                         <td>
                           <span
                             className="cursor-pointer text-blue  fw-bold"
+                            id={`specQuestions-editAutomatedTestCase-${index}`}
                             onClick={() => {
                               editHandler(testcase);
                             }}

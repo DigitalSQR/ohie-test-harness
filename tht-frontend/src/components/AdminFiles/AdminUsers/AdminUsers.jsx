@@ -167,6 +167,7 @@ const AdminUsers = () => {
             <div className="col-auto ml-auto">
               <button
                 onClick={handleCreateUser}
+                id="adminUser-createUser"
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
               >
@@ -183,6 +184,7 @@ const AdminUsers = () => {
                   <th style={{width:"25%"}}>
                     NAME
                     <span
+                    id="adminUsers-sortByName"
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("name")}
@@ -193,6 +195,7 @@ const AdminUsers = () => {
                   <th style={{width:"20%"}}>
                     EMAIL
                     <span
+                    id="adminUsers-sortByEmail"
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("email")}
@@ -206,7 +209,7 @@ const AdminUsers = () => {
                 </tr>
               </thead>
               <tbody>
-                {users?.map((user) => (
+                {users?.map((user,index) => (
                   <tr key={user.id}>
                     <td className="fw-bold">{user.name}</td>
                     <td className = "toLowerCase-words">{user.email}</td>
@@ -234,6 +237,7 @@ const AdminUsers = () => {
                     </td>
                     <td className="action-icons-container">
                       <span className="cursor-pointer font-size-12 text-blue fw-bold"
+                        id={`adminUsers-editButton-${index}`}
                         onClick={() => {
                           handleEditUser()
                           setUserId(user.id);
