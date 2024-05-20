@@ -124,6 +124,8 @@ export default function ComponentList() {
 
     const confirmStateChange = () => {
       Modal.confirm({
+        cancelButtonProps:{id:"componentList-deactivateComponent-cancelButton"},
+        okButtonProps:{id:"componentList-deactivateComponent-okButton"},
         title: "State Change",
         content: "Are you sure about changing state to Inactive ?",
         okText: "Save",
@@ -275,6 +277,7 @@ export default function ComponentList() {
                               <td className="fw-bold">{component.name}</td>
                               <td>
                                 <Switch
+                                  id="componentList-switch-componentStatus"
                                   checked={component.state === "component.status.active"}
                                   onChange={() => changeComponentState(component.id, component.state)}
                                   checkedChildren="ACTIVE"

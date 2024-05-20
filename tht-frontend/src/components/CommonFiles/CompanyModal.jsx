@@ -62,7 +62,7 @@ const CompanyModal = () => {
               <input
                 type="text"
                 className="form-control"
-                id="companyName"
+                id="CompnayModal-companyName"
                 placeholder="Company Name"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}

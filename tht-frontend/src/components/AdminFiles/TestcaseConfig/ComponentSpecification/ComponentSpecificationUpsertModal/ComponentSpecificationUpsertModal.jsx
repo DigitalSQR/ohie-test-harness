@@ -121,7 +121,7 @@ const UpsertModal = ({
   }, [isModalOpen, specificationId]);
   return (
     <div>
-      <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
+      <Modal open={isModalOpen} onCancel={handleCancel} footer={null} closable={false}>
         <h4 className="mb-4">
           {!!updateResponse ? "Update Specification" : "Create Specification"}
         </h4>
@@ -187,13 +187,13 @@ const UpsertModal = ({
                   <div role="group" aria-labelledby="functionalRadioGroup">
                     <div>
                       <label className="compSpecRadioButton">
-                        <Field type="radio" name="functional" value="true" />
+                        <Field type="radio" name="functional"  value="true"  id="compSpecUpsertModal-functional" />
                         <span className="ms-2">Functional</span>
                       </label>
                     </div>
                     <div>
-                      <label className="compSpecRadioButton">
-                        <Field type="radio" name="functional" value="false" />
+                      <label className="compSpecRadioButton" >
+                        <Field type="radio" name="workflow" value="false" id="compSpecUpsertModal-workflow" />
                         <span className="ms-2">Workflow</span>
                       </label>
                     </div>
@@ -207,13 +207,13 @@ const UpsertModal = ({
                   <div role="group" aria-labelledby="requiredRadioGroup">
                     <div>
                       <label className="compSpecRadioButton">
-                        <Field type="radio" name="required" value="true" />
+                        <Field type="radio" name="required" value="true" id="compSpecUpsertModal-required"/>
                         <span className="ms-2">Required</span>
                       </label>
                     </div>
                     <div>
                       <label className="compSpecRadioButton">
-                        <Field type="radio" name="required" value="false" />
+                        <Field type="radio" name="required" value="false"  id="compSpecUpsertModal-recommended"/>
                         <span className="ms-2">Recommended</span>
                       </label>
                     </div>
@@ -232,6 +232,7 @@ const UpsertModal = ({
                 </button>
 
                 <button
+                id="compSpecUpsertModal-submit"
                   type="submit"
                   className="btn btn-primary btn-blue btn-submit py-1 font-size-10"
                   disabled={!isValid || !dirty}

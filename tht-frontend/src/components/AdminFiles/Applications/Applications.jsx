@@ -13,7 +13,7 @@ import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
 import { Empty, notification, Modal } from "antd";
 import { formatDate } from "../../../utils/utils.js";
 import UserIdEmailConnector from "../../connectors/UserIdEmailConnector/UserIdEmailConnector.js";
-import { Pagination } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer.jsx";
@@ -227,9 +227,16 @@ const Applications = () => {
             onOk() {
               changeState(testRequestId, updatedState, index, true);
             },
+            cancelButtonProps:{id:"applications-warning-cancelButton"},
+            okButtonProps:{id:"applications-warning-okButton"}
+            
           });
         } else {
           Modal.confirm({
+            cancelButtonProps:{id:`applications-${ updatedState === "test.request.status.rejected"
+                ? "reject" : "accept"}-cancelButton`},
+            okButtonProps:{id:`applications-${ updatedState === "test.request.status.rejected"
+            ? "reject" : "accept"}-okButton`},
             title: "Confirmation",
             content: `Are you sure you want to change the status of this application testing request to ${
               updatedState === "test.request.status.rejected"
@@ -292,9 +299,11 @@ const Applications = () => {
                     value={filterState}
                     className="form-select custom-select custom-select-sm"
                     aria-label="Default select example"
+                    id="applications-searchByStatus"
                   >
                     {testRequestStates.map((testRequestState) => (
                       <option
+                      id={`application-status-${testRequestState.label}`}
                         value={testRequestState.value}
                         key={testRequestState.value}
                       >
@@ -540,7 +549,7 @@ const Applications = () => {
                               <tbody>
                                 {testRequest.testRequestUrls.length > 0 &&
                                   testRequest.testRequestUrls.map(
-                                    (testUrls) => (
+                                    (testUrls,index) => (
                                       <tr id={testUrls.componentId} key={testUrls.componentId}>
                                         <td className="fw-bold">
                                           <ComponentIdConnector
@@ -566,7 +575,7 @@ const Applications = () => {
                                         </td>
                                         <td>
                                           <i
-                                            id={`togglePassword-${testUrls.id}`}
+                                            id={`togglePassword-${index}`}
                                             className={`bi ${
                                               testUrls.showPass
                                                 ? "bi-eye-fill"
@@ -601,14 +610,48 @@ const Applications = () => {
             onChange={handleChangePage}
             variant="outlined"
             shape="rounded"
+            renderItem={(item) => {
+              if (item.type === 'page') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`Applications-page-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, item.page)}
+                  />
+                );
+              } else if (item.type === 'previous') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Applications-previous-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage - 1)}
+                  />
+                );
+              } else if (item.type === 'next') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Applications-next-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              }
+              return null;
+            }}
           />
         )}
         <Modal
+        closable={false}
           open={isReasonModalOpen}
           onCancel={() => {
             setIsReasonModalOpen(false);
             setReasonForRejection();
           }}
+          cancelButtonProps={{id:"applications-disable-cancelButton"}}
+          okButtonProps={{id:"applications-disable-okButton"}}
           onOk={() => {
             if (!reasonForRejection) {
               notification.error({

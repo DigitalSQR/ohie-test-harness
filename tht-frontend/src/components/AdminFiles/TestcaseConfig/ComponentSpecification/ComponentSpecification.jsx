@@ -129,6 +129,8 @@ export default function ComponentSpecification() {
 
     const confirmStateChange = () => {
       Modal.confirm({
+        cancelButtonProps:{id:"componentSpecification-cancel-inactiveButton"},
+        okButtonProps:{id:"componentSpecification-Ok-inactiveButton"},
         title: "State Change",
         content: "Are you sure about changing state to Inactive ?",
         okText: "Save",
@@ -206,7 +208,7 @@ export default function ComponentSpecification() {
         <div className="mb-3">
           <div className="d-flex justify-content-between align-items-center">
           <Breadcrumb className="custom-breadcrumb">
-            <Breadcrumb.Item><Link to="/testcase-config" className="breadcrumb-item">Components</Link></Breadcrumb.Item>
+            <Breadcrumb.Item><Link to="/testcase-config" className="breadcrumb-item" id="componentSpecification-navToComponents">Components</Link></Breadcrumb.Item>
             <Breadcrumb.Item className="breadcrumb-item">{componentDetails?.name}</Breadcrumb.Item>
           </Breadcrumb>
           
@@ -306,6 +308,7 @@ export default function ComponentSpecification() {
                       </td>
                       <td>
                       <Switch
+                        id={`componentList-toggle-componentStatus-${index}`}
                           checked={
                             specification?.state ===
                             "specification.status.active"

@@ -256,7 +256,7 @@ export default function ChooseTest() {
         <div className="col-12 pt-3">
           <Breadcrumb className="custom-breadcrumb">
           <Breadcrumb.Item>
-            <Link to="/applications" className="breadcrumb-item">
+            <Link to="/applications" className="breadcrumb-item" id="chooseTest-navtoApplications">
               Applications
             </Link>
           </Breadcrumb.Item>

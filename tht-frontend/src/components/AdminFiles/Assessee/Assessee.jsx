@@ -3,7 +3,7 @@ import "./assessee.scss";
 import { UserAPI } from "../../../api/UserAPI";
 import { Empty, Modal, notification } from "antd";
 import moment from 'moment'
-import { Pagination } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import {
   userBadgeClasses,
   userStateConstantNames,
@@ -450,10 +450,44 @@ const Assessee = () => {
             onChange={handleChangePage}
             variant="outlined"
             shape="rounded"
+            renderItem={(item) => {
+              if (item.type === 'page') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`Assessee-page-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, item.page)}
+                  />
+                );
+              } else if (item.type === 'previous') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Assessee-previous-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage - 1)}
+                  />
+                );
+              } else if (item.type === 'next') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Assessee-next-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              }
+              return null;
+            }}
           />
         )}
       </div>
       <Modal
+        okButtonProps={{id:"assessee-disable-okButton"}}
+        cancelButtonProps={{id:"assessee-disable-cancelButton"}}
+        closable={false}
         open={isReasonModalOpen}
         onCancel={() => {
           setIsReasonModalOpen(false);

@@ -3,7 +3,7 @@ import { AdminUserAPI } from "../../../api/AdminUserAPI";
 import "./admin-user.scss";
 import { Modal } from "antd";
 import { useLoader } from "../../loader/LoaderContext";
-import { Pagination } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
 import { store } from "../../../store/store";
@@ -231,6 +231,7 @@ const AdminUsers = () => {
                             }
                             checkedChildren="ACTIVE"
                             unCheckedChildren="INACTIVE"
+                            id={`adminUsers-switch-status-${index}`}
                           />
                         </span>
                       )}
@@ -254,10 +255,13 @@ const AdminUsers = () => {
           </div>
         </div>
         <Modal
+          closable={false}
           title="Inactivation Confirmation"
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
+          okButtonProps={{id:"adminUsers-ok-inactiveButton"}}
+          cancelButtonProps={{id:"adminUsers-cancel-inactiveButton"}}
         >
           <p>Are you sure you want to inactive the user?</p>
         </Modal>
@@ -275,12 +279,44 @@ const AdminUsers = () => {
         />
         {totalPages > 1 && (
         <Pagination
+          id="adminUsers-pagination"
           className="pagination-ui"
           count={totalPages}
           page={currentPage}
           onChange={handleChangePage}
           variant="outlined"
           shape="rounded"
+          renderItem={(item) => {
+            if (item.type === 'page') {
+              return (
+                <PaginationItem
+                  {...item}
+                  id={`Adminusers-page-${item.page}`}
+                  component="button"
+                  onClick={() => handleChangePage(null, item.page)}
+                />
+              );
+            } else if (item.type === 'previous') {
+              return (
+                <PaginationItem
+                  {...item}
+                  id="AdminUsers-previous-page-button"
+                  component="button"
+                  onClick={() => handleChangePage(null, currentPage - 1)}
+                />
+              );
+            } else if (item.type === 'next') {
+              return (
+                <PaginationItem
+                  {...item}
+                  id="AdminUsers-next-page-button"
+                  component="button"
+                  onClick={() => handleChangePage(null, currentPage + 1)}
+                />
+              );
+            }
+            return null;
+          }}
         />
       )}
       </div>

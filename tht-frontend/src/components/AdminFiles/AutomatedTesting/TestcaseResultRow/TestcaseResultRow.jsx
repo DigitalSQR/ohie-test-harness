@@ -122,7 +122,7 @@ export default function TestcaseResultRow({
           testcaseResultType ===
             "testcase" && (
               <a
-                id={`error-${testcaseResult?.id}`}
+                id={`failure-reason-${testcaseResultItem.refId}`}
                 className={`detail-link`}
                 onClick={() =>
                   toggleTestCaseErrorAccordian(testcaseResult?.id, caseIndex)

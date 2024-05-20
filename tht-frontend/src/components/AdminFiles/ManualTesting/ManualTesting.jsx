@@ -463,6 +463,7 @@ export default function ManualTesting() {
                 <b>Component</b>
               </span>
               <Select
+              id="manualTesting-chooseComponent"
                 onChange={(index)=>{
                   if(unsavedNotes.length === 0 && optionsArray.length === 0){
 
@@ -492,7 +493,7 @@ export default function ManualTesting() {
                 style={{ width: '200px' }}
               >
                 {testcaseResults.map((components, index) => (
-                  <Select.Option key={components.id} value={index}>
+                  <Select.Option key={components.id} value={index}  id={`manualTesting-chooseComponent-${index}`}>
                     <span>
                       {components.name}
                       {components?.state === "testcase.result.status.finished" && (
@@ -532,7 +533,7 @@ export default function ManualTesting() {
               </div>
             </div>
 
-            <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close" id="manualTesting-accordion-closeButton"></button>
           </div>
           <div className="offcanvas-body manual-testing-sidemenu">
             <CAccordion activeItemKey={openComponentIndex}>
@@ -540,7 +541,7 @@ export default function ManualTesting() {
               {testcaseResults.map((component, outerIndex) => (
                 <div key={outerIndex}>
                   <CAccordionItem itemKey={outerIndex} key={outerIndex}>
-                    <CAccordionHeader className="component-header">
+                    <CAccordionHeader className="component-header" id={`toggle-navBar-component-${outerIndex}`} >
                       {component.name}
                       {component.state === "testcase.result.status.finished" && (
                         <>&nbsp;<i style={{ color: "green" }} className="bi bi-check-circle-fill"></i></>
@@ -600,10 +601,11 @@ export default function ManualTesting() {
             >
               {testcaseResults[currentComponentIndex].childTestcaseResults.map((specification, index) => (
                 <Item
+                  
                   key={index}
                   value={specification.id}
                   tab={
-                    <span style={{ display: "flex", alignItems:"center" }}>
+                    <span style={{ display: "flex", alignItems:"center" }} id={`manualTesting-selectComponent-${index}`}>
                       {specification.name}
                       {specification?.state === "testcase.result.status.finished" && (
                         <>&nbsp;<i style={{ lineHeight:"16px" }} className="bi bi-check2-all fs-4 completed-questions"></i></>
@@ -638,7 +640,7 @@ export default function ManualTesting() {
 
    
         <div className="fixed-button">
-          <button data-bs-toggle="offcanvas" href="#manualTesting" aria-controls="manualTesting">Status: {finishedTestCasesCount} of {totalTestCasesCount}</button>
+          <button data-bs-toggle="offcanvas" href="#manualTesting" aria-controls="manualTesting" id="manualTesting-navBar-toggleButton">Status: {finishedTestCasesCount} of {totalTestCasesCount}</button>
         </div>
      
     </div>

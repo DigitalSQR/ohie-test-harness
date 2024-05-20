@@ -215,6 +215,7 @@ export default function SpecAutomatedUpsertModal(props) {
                     </button>
 
                     <button
+                      id="specAutomatedUpserModal-submit"
                       type="submit"
                       className="btn btn-primary btn-blue btn-submit py-1 font-size-10"
                       disabled={(isEditMode && ((!isValid || !dirty) && !uploadedZipFile)) || (!isEditMode && (!isValid || !dirty || !uploadedZipFile))}

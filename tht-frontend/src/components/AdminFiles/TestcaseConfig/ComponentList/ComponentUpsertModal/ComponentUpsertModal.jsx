@@ -102,7 +102,8 @@ const UpsertModal = ({
   }, [isModalOpen, componentId]);
   return (
     <div>
-      <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
+      <Modal open={isModalOpen} onCancel={handleCancel} footer={null} closable={false} 
+      cancelButtonProps={{id:`componentUpsertModal-cancelButton`}}>
         <h4 className="mb-4">
           {!!updateResponse ? "Update Component" : "Create Component"}
         </h4>
@@ -170,6 +171,7 @@ const UpsertModal = ({
                 </button>
 
                 <button
+                id="componentUpsertModal-submitButton"
                   type="submit"
                   className={`btn btn-primary btn-blue btn-submit py-1 mx-2 font-size-10`}
                   disabled={!isValid || !dirty}

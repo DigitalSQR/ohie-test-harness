@@ -382,7 +382,7 @@ export default function ManualTestCases() {
       <div id="wrapper">
         <Breadcrumb className="custom-breadcrumb">
           <Breadcrumb.Item>
-            <Link to="/testcase-config" className="breadcrumb-item">
+            <Link to="/testcase-config" className="breadcrumb-item" id="specQuestions-navToTestCaseConfig">
               Components
             </Link>
           </Breadcrumb.Item>
@@ -390,6 +390,7 @@ export default function ManualTestCases() {
             <Link
               to={`/testcase-config/component-specification/${componentDetails?.id}`}
               className="breadcrumb-item"
+              id={`specQuestions-navToComponent-${componentDetails?.name}`}
             >
               {componentDetails?.name}
             </Link>
@@ -528,6 +529,7 @@ export default function ManualTestCases() {
                               >
                                 <span className="me-2">
                                   <Switch
+                                  id={`specQuestions-manualTestcaseState-toggleButton-${index}`}
                                     checked={
                                       question?.testcase?.state ===
                                       "testcase.status.active"
@@ -705,6 +707,7 @@ export default function ManualTestCases() {
                           </span>
                           <span style={{ paddingLeft: "1rem" }}>
                             <Switch
+                            id={`specQuestions-automatedTestcaseState-toggleButton-${index}`}
                               onChange={() =>
                                 changeTestCaseState(
                                   testcase?.id,

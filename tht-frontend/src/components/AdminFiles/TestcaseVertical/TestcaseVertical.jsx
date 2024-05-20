@@ -348,7 +348,7 @@ export default function TestcaseVertical(props) {
       )}
       <div className="row">
         <div className="col-12 pe-0 text-end">
-          <button className="cst-btn-group btn btn-blue save-and-next" onClick={handleSaveandNext} id="#TestcaseVertical-1">
+          <button className="cst-btn-group btn btn-blue save-and-next" onClick={handleSaveandNext} id="#TestcaseVertical-handleSaveAndNext">
 
           {isLastSpecification()
                       ? optionsArray.length == 0 ? "Next" : "Save"

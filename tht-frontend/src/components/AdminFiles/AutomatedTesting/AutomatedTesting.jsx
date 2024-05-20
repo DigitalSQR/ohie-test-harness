@@ -299,12 +299,13 @@ export default function AutomatedTesting() {
             <div className="d-flex justify-content-between">
               <Breadcrumb className="custom-breadcrumb mb-3">
                 <Breadcrumb.Item>
-                  <Link to="/applications" className="breadcrumb-item">
+                  <Link to="/applications" className="breadcrumb-item" id="automatedTesting-navToApplicationd">
                     Applications
                   </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
                   <Link
+                  id="automatedTesting-navToChooseTest"
                     to={`/choose-test/${testRequestId}`}
                     className="breadcrumb-item"
                   >
@@ -421,7 +422,7 @@ export default function AutomatedTesting() {
                         onClick={() =>
                           toggleComponentAccordian(component?.id, index)
                         }
-                        id={`header-${component?.id}`}
+                        id={`automatedTesting-toggleComponent-${index}`}
                       >
                         {component?.name}{" "}
                         <TestcaseResultRow

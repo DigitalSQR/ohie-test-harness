@@ -64,7 +64,7 @@ export default function ResetPassword() {
                   type={showOldPassword ? "text" : "password"}
                   className="form-control input-group"
                   style={{ borderRadius: "6px 0px 0px 6px" }}
-                  id="oldPassword"
+                  id="ResetPassword-oldPassword"
                   placeholder="Old Password"
                   name="oldPassword"
                   value={formik.values.oldPassword}
@@ -72,7 +72,7 @@ export default function ResetPassword() {
                   onBlur={formik.handleBlur}
                 />
                 <button
-                  id="#ResetPassword-1"
+                  id="#ResetPassword-showOldPassword"
                   className=" btn btn-outline-secondary color"
                   type="button"
                   onClick={() => setShowOldPassword(!showOldPassword)}
@@ -96,7 +96,7 @@ export default function ResetPassword() {
                   type={showNewPassword ? "text" : "password"}
                   className="form-control"
                   style={{ borderRadius: "6px 0px 0px 6px" }}
-                  id="newPassword"
+                  id="ResetPassword-newPassword"
                   placeholder="New Password"
                   name="newPassword"
                   value={formik.values.newPassword}
@@ -104,7 +104,7 @@ export default function ResetPassword() {
                   onBlur={formik.handleBlur}
                 />
                 <button
-                   id="#ResetPassword-2"
+                   id="#ResetPassword-showPassword"
                   className="btn btn-outline-secondary color"
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
@@ -133,7 +133,7 @@ export default function ResetPassword() {
                   type={showConfirmPassword ? "text" : "password"}
                   className="form-control"
                   style={{ borderRadius: "6px 0px 0px 6px" }}
-                  id="confirmPassword"
+                  id="ResetPassword-confirmPassword"
                   placeholder="Confirm New Password"
                   name="confirmPassword"
                   value={formik.values.confirmPassword}
@@ -141,7 +141,7 @@ export default function ResetPassword() {
                   onBlur={formik.handleBlur}
                 />
                 <button
-                   id="#ResetPassword-3"
+                   id="#ResetPassword-showConfirmPassword"
                   className="btn btn-outline-secondary color"
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -164,7 +164,7 @@ export default function ResetPassword() {
           </div>
           <div className="my-4 text-end">
             <button
-               id="#ResetPassword-4"
+               id="#ResetPassword-cancel"
               className="btn btn-primary btn-white font-size-14"
               style={{marginRight:"1rem"}}
               onClick={() => {
@@ -175,7 +175,7 @@ export default function ResetPassword() {
               Cancel
             </button>
             <button
-               id="#ResetPassword-5"
+               id="#ResetPassword-Reset"
               disabled={!(formik.isValid && formik.dirty)}
               onClick={formik.handleSubmit}
               className="btn btn-primary btn-blue btn-submit font-size-14"

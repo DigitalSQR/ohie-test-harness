@@ -173,6 +173,8 @@ export default function EditQuestion() {
 
   const confirmDocumentChangeToInactive = (file) => {
     Modal.confirm({
+      okButtonProps:{id:`editQuestion-deactivateFile-okButton`},
+      cancelButtonProps:{id:`editQuestion-deactivateFile-cancelButton`},
       title: "Delete Image",
       content: "Are you sure about deleting this image ?",
       okText: "Yes",
@@ -349,6 +351,8 @@ export default function EditQuestion() {
 
     const confirmStateChange = () => {
       Modal.confirm({
+        okButtonProps:{id:`editQuestion-deactivateOption-okButton`},
+        cancelButtonProps:{id:`editQuestion-deactivateOption-okButton`},
         title: "State Change",
         content: "Are you sure about changing state to Inactive ?",
         okText: "Save",
@@ -389,16 +393,16 @@ export default function EditQuestion() {
       <div id="editQuestion">
       <div id="wrapper">
         <Breadcrumb className="custom-breadcrumb">
-          <Breadcrumb.Item><Link to="/testcase-config" className="breadcrumb-item">Components</Link></Breadcrumb.Item>
+          <Breadcrumb.Item><Link id="editQuestion-navToTestcaseConfig" to="/testcase-config" className="breadcrumb-item">Components</Link></Breadcrumb.Item>
           <Breadcrumb.Item>
-            <Link to={`/testcase-config/component-specification/${component?.id}`} className="breadcrumb-item">
+            <Link id={`editQuestion-navTo-component-${component?.name}`} to={`/testcase-config/component-specification/${component?.id}`} className="breadcrumb-item">
               {component?.name}
             </Link>
           </Breadcrumb.Item>
 
           
           <Breadcrumb.Item>
-          <Link to={`/testcase-config/manual-testcases/${specification?.id}`} className="breadcrumb-item">
+          <Link id={`editQuestion-navToTestCases-for-${specification?.name}`} to={`/testcase-config/manual-testcases/${specification?.id}`} className="breadcrumb-item">
           {specification?.name} - Testcase Configuration
           </Link>
           </Breadcrumb.Item>
@@ -430,7 +434,7 @@ export default function EditQuestion() {
                         className="form-check-input"
                         type="radio"
                         name="questionType"
-                        id="multiSelect"
+                        id="editQuestion-multiSelect"
                         value={ManualQuestionTypeConstants.MULTI_SELECT}
                         checked={editedQuestionType === "MULTI_SELECT"}
                         onChange={(e) =>
@@ -445,7 +449,7 @@ export default function EditQuestion() {
                       <input
                         className="form-check-input"
                         type="radio"
-                        name="questionType"
+                        name="editQuestion-questionType"
                         id="singleSelect"
                         value={ManualQuestionTypeConstants.SINGLE_SELECT}
                         checked={editedQuestionType === "SINGLE_SELECT" || !editedQuestionType}
@@ -462,7 +466,7 @@ export default function EditQuestion() {
                     </div>
                   </div>
                   <button
-                  id={`editQuestion-saveChanges`}
+                  id={`editQuestion-updateQuestion`}
                     disabled={!changesMade}
                     onClick={handleSaveQuestion}
                     type="button"
@@ -485,6 +489,7 @@ export default function EditQuestion() {
                           fileList={fileList}
                         >
                           <button
+                            id="editQuestion-uploadImageForOption"
                             style={{
                               border: 0,
                               background: "none",
@@ -499,6 +504,7 @@ export default function EditQuestion() {
                         </Upload>
                       </div>
                       <Modal
+                      cancelButtonProps={{id:"editQuestion-previewImage-cancelButton"}}
                         open={previewOpen}
                         title={previewTitle}
                         footer={null}
@@ -545,7 +551,7 @@ export default function EditQuestion() {
                 {editedTestcaseOptions.map((option, index) => (
                   <div key={index}>
                     <Accordion.Item eventKey={index.toString()}>
-                      <Accordion.Header>
+                      <Accordion.Header id={`editQuestion-detailsAboutOption-${index}`}>
                         {initialTestcaseOptions[index].success ? (
                           <i className="bi bi-check-circle-fill me-2 text-success"></i>
                         ) : (
@@ -586,7 +592,7 @@ export default function EditQuestion() {
                         <div className="row">
                           <div className="col-auto">
                             <button
-                            id={`editQuestion-updateOption`}
+                            id={`editQuestion-updateOption-${index}`}
                               className="btn btn-sm btn-primary mt-3"
                               disabled={!changesMadeToEditOption}
                               onClick={() => handleSaveOption(index)}
@@ -598,6 +604,7 @@ export default function EditQuestion() {
                             <div className="mt-3">
                               <span >
                                 <Switch
+                                  id={`editQuestion-switchOption-${index}`}
                                   onChange={() => changeOptionState(index)}
                                   checked={
                                     option?.state ===
