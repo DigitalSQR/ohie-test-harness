@@ -32,7 +32,7 @@ const UpsertModal = ({
   });
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    if (Object.values(initialValues).some((value) => !value)) {
+    if (!specificationId) {
       SpecificationAPI.createSpecification({
         ...values,
         componentId,
@@ -59,6 +59,15 @@ const UpsertModal = ({
       };
       SpecificationAPI.updateSpecification(data)
         .then(() => {
+          setInitialValues({
+            name: "",
+            description: "",
+            functional: "true",
+            required: "true",
+          });
+          setUpdateResponse(null);
+          setIsModalOpen(false);
+          setSpecificationId(null);
           notification.success({
             className:"notificationSuccess",
             placement: "top",

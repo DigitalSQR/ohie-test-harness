@@ -30,7 +30,7 @@ const UpsertModal = ({
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
     console.log(values);
-    if (Object.values(initialValues).some((value) => !value.trim())) {
+    if (!componentId) {
       //create component
       ComponentAPI.createComponent(values)
         .then(() => {
@@ -55,13 +55,16 @@ const UpsertModal = ({
       };
       ComponentAPI.updateComponent(data)
         .then(() => {
+          setInitialValues({ name: "", description: "" });
+          setUpdateResponse(null);
+          setIsModalOpen(false);
+          setComponentId(null);
           notification.success({
             className:"notificationSuccess",
             placement: "top",
             message:"Component updated successfully!",
           });
           refreshAllComponents();
-          setIsModalOpen(false);
         })
         .catch((error) => {});
     }
