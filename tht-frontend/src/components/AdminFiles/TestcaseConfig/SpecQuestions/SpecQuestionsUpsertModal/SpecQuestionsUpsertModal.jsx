@@ -60,7 +60,8 @@ const UpsertModal = ({
 
   return (
     <div>
-      <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
+      <Modal     cancelButtonProps={{id:"specQuestionsUpsertModal-cancelButton"}}
+          okButtonProps={{id:"specQuestionsUpsertModal-okButton"}} open={isModalOpen} onCancel={handleCancel} footer={null}>
         <h4 className="mb-4">Create Testcase</h4>
         <Formik
           initialValues={initialValues}
@@ -123,12 +124,13 @@ const UpsertModal = ({
                   type="button"
                   className="btn btn-primary btn-white py-1 font-size-10 mx-3"
                   onClick={handleCancel}
-                  id="#SpecQUestionsUpsertModal-cancel"
+                  id="#SpecQuestionsUpsertModal-cancel"
                 >
                   Cancel
                 </button>
 
                 <button
+                  id="#SpecQuestionsUpsertModal-submit"
                   type="submit"
                   className="btn btn-primary btn-blue btn-submit py-1 font-size-10"
                   disabled={!isValid || !dirty}

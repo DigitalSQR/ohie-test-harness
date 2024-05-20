@@ -123,6 +123,8 @@ export default function SpecAutomatedUpsertModal(props) {
   return (
     <Fragment>
       <Modal
+          cancelButtonProps={{id:"SpecAutomatedUpsertModal-cancelButton"}}
+          okButtonProps={{id:"SpecAutomatedUpsertModal-okButton"}}
         open={isAutomatedModalOpen}
         onCancel={handleCancel}
         destroyOnClose={true}

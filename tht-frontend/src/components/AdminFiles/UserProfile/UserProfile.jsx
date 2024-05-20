@@ -192,6 +192,8 @@ export default function UserProfile () {
   // Function to handle the removal of the profile picture.
   const handleRemove = () => {
     Modal.confirm({
+      okButtonProps:{id:`editProfile-deletingImage-okButton`},
+      cancelButtonProps:{id:`editProfile-deletingImage-cancelButton`},
       title: "Delete Image",
       content: "Are you sure about deleting this image ?",
       okText: "Yes",
@@ -219,6 +221,8 @@ export default function UserProfile () {
   const handleCancel = () => {
     if (unsavedChanges || uploadedFlag) {
       Modal.confirm({
+        okButtonProps:{id:`UserProfile-discardChanges-okButton`},
+        cancelButtonProps:{id:`UserProfile-discardChanges-cancelButton`},
         title: "Discard Changes",
         content: "Are you sure you want to discard changes?",
         okText: "Yes",
@@ -408,6 +412,8 @@ export default function UserProfile () {
                 )}
               </div>
               <Modal
+                  cancelButtonProps={{id:"previewImage-cancelButton"}}
+          okButtonProps={{id:"previewImage-okButton"}}
                 open={previewOpen}
                 title={previewTitle}
                 footer={null}

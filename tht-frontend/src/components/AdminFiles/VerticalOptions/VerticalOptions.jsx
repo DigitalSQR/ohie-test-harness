@@ -94,6 +94,8 @@ export default function VerticalOptions(props) {
     // Ask for confirmation
     if (!isSame) {
       Modal.confirm({
+        okButtonProps:{id:`editQuestion-unsavedChanges-okButton`},
+        cancelButtonProps:{id:`editQuestion-unsavedChanges-cancelButton`},
         content:
           "Are you sure you want to cancel? Any unsaved changes will be lost.",
         onCancel() {
@@ -694,7 +696,7 @@ export default function VerticalOptions(props) {
                 className="visibility"
               ></input>
               <button
-                id="#VerticalOptions-addAttachment"
+                id={`#VerticalOptions-addAttachment-${index}`}
                 variant="success"
                 type="button"
                 className="btn cst-btn-default"
@@ -711,7 +713,7 @@ export default function VerticalOptions(props) {
                             </OverlayTrigger>
               </button>
               <button
-                id="#VerticalOptions-showNoteDiv"
+                  id={`#VerticalOptions-showNoteDiv-${index}`}
                 type="button"
                 className="btn cst-btn-default"
                 onClick={showNoteDiv}

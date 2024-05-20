@@ -102,7 +102,8 @@ const UpsertModal = ({
   }, [isModalOpen, componentId]);
   return (
     <div>
-      <Modal open={isModalOpen} onCancel={handleCancel} footer={null} closable={false} 
+      <Modal  open={isModalOpen} onCancel={handleCancel} footer={null} closable={false} 
+          okButtonProps={{id:"componentUpsertModal-okButton"}}
       cancelButtonProps={{id:`componentUpsertModal-cancelButton`}}>
         <h4 className="mb-4">
           {!!updateResponse ? "Update Component" : "Create Component"}

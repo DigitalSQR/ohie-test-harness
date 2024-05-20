@@ -52,7 +52,8 @@ const CompanyModal = () => {
 
   return (
     <div>
-      <Modal open={!userInfo?.companyName && userInfo?.roleIds[0] === "role.assessee"} footer={null} closable={false}>
+      <Modal  cancelButtonProps={{id:"addCompanyName-cancelButton"}}
+          okButtonProps={{id:"addCompanyName-okButton"}} open={!userInfo?.companyName && userInfo?.roleIds[0] === "role.assessee"} footer={null} closable={false}>
         <div id="updateCompanyName">
           <h6>
             Please add your company name first to dive into the application.

@@ -64,7 +64,8 @@ const UpsertModal = ({
 
   return (
     <div>
-      <Modal open={isModalOpen} onCancel={handleCancel} footer={null} closable={false}>
+      <Modal      cancelButtonProps={{id:"testcaseOptionUpsertModal-cancelButton"}}
+          okButtonProps={{id:"testcaseOptionUpsertModal-okButton"}} open={isModalOpen} onCancel={handleCancel} footer={null} closable={false}>
         <h4 className="mb-4">Add Option</h4>
         <Formik
           initialValues={initialValues}

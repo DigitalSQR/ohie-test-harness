@@ -14,7 +14,7 @@ import { notification, Modal, Empty } from "antd";
 import { formatDate } from "../../../utils/utils.js";
 import { useNavigate } from "react-router-dom";
 import { store } from "../../../store/store.js";
-import { Pagination } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
@@ -137,6 +137,8 @@ const TestingRequests = () => {
         } else if (!!warnings.length && !proceedAnyways) {
           hideLoader();
           Modal.confirm({
+            okButtonProps:{id:`editQuestion-testRequestStatusUpdate-okButton`},
+            cancelButtonProps:{id:`editQuestion-testRequestStatusUpdate-cancelButton`},
             title: "Test Request Status Update",
             content: (
               <div>
@@ -516,6 +518,37 @@ const TestingRequests = () => {
             onChange={handleChangePage}
             variant="outlined"
             shape="rounded"
+            renderItem={(item) => {
+              if (item.type === 'page') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`Applications-page-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, item.page)}
+                  />
+                );
+              } else if (item.type === 'previous') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`Applications-previous-page-button-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage - 1)}
+                  />
+                );
+              } else if (item.type === 'next') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`Applications-next-page-button-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              }
+              return null;
+            }}
           />
         )}
       </div>

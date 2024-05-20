@@ -103,6 +103,8 @@ export default function TestcaseVertical(props) {
         title:"Warning!",
         content:`You have unsaved notes in testcases ${testcaseNos} . Do you wish to save and proceed?`,
         okText:"Save and Proceed",
+        okButtonProps:{id:`testcaseVertical-unsavedNotes-okButton`},
+        cancelButtonProps:{id:`testcaseVertical-unsavedNotes-cancelButton`},
         onOk:async()=>{
           showLoader();
           for (const notes of unsavedNotes) {

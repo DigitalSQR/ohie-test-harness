@@ -121,7 +121,8 @@ const UpsertModal = ({
   }, [isModalOpen, specificationId]);
   return (
     <div>
-      <Modal open={isModalOpen} onCancel={handleCancel} footer={null} closable={false}>
+      <Modal  cancelButtonProps={{id:"componentSpecificationUpsertModal-cancelButton"}}
+          okButtonProps={{id:"componentSpecificationUpsertModal-okButton"}} open={isModalOpen} onCancel={handleCancel} footer={null} closable={false}>
         <h4 className="mb-4">
           {!!updateResponse ? "Update Specification" : "Create Specification"}
         </h4>

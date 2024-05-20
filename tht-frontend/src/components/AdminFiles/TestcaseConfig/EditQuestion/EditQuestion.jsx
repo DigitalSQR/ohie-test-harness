@@ -352,7 +352,7 @@ export default function EditQuestion() {
     const confirmStateChange = () => {
       Modal.confirm({
         okButtonProps:{id:`editQuestion-deactivateOption-okButton`},
-        cancelButtonProps:{id:`editQuestion-deactivateOption-okButton`},
+        cancelButtonProps:{id:`editQuestion-deactivateOption-cancelButton`},
         title: "State Change",
         content: "Are you sure about changing state to Inactive ?",
         okText: "Save",

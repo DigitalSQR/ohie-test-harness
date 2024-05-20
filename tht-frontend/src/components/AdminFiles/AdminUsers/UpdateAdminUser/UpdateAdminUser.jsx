@@ -124,7 +124,8 @@ const UpdateAdminUser = ({
   };
 
   return (
-    <Modal open={isModalOpen} closable={false} keyboard={false} footer={null}>
+    <Modal     cancelButtonProps={{id:"updateAdminUser-cancelButton"}}
+    okButtonProps={{id:"updateAdminUser-okButton"}}  open={isModalOpen} closable={false} keyboard={false} footer={null}>
       <div id="updateAdminUser">
             <h4 className="mb-4">
              Update User Detail

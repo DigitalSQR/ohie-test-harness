@@ -317,6 +317,8 @@ export default function ManualTestCases() {
 
     const confirmStateChange = () => {
       Modal.confirm({
+        okButtonProps:{id:`specQuestions-handleStateChange-okButton`},
+        cancelButtonProps:{id:`specQuestions-handleStateChange-CancelButton`},
         title: "State Change",
         content: "Are you sure about changing state to Inactive ?",
         okText: "Save",
