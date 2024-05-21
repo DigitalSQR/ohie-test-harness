@@ -3,7 +3,7 @@ FROM maven:3.9.2-amazoncorretto-17 AS builder
 
 WORKDIR /app
 COPY . /app
-RUN mvn clean install -DskipTests=true
+RUN mvn clean install -Dmaven.test.skip=true
 
 # Stage 2: Run application
 FROM eclipse-temurin:17-jre-jammy
