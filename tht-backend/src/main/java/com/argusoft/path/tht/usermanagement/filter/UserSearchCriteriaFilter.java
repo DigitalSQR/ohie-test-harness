@@ -1,7 +1,6 @@
 package com.argusoft.path.tht.usermanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
@@ -13,7 +12,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +47,27 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
             value = "role of the user"
     )
     private List<String> role;
+
+    @ApiParam(
+            value = "company name of the user"
+    )
+    private String companyName;
+
+    @ApiParam(
+            value = "state name of the user"
+    )
+    private String stateName;
+
+    @ApiParam(
+            value = "role name of the user"
+    )
+    private String roleName;
+    @ApiParam(
+            value = "requested date of the user"
+    )
+    private String requestDate;
+
+
 
     private Root<UserEntity> userEntityRoot;
 
@@ -106,6 +129,43 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         return predicates;
     }
 
+    @Override
+    protected List<Predicate> buildLikePredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) throws ParseException {
+        setUserEntityRoot(root);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (StringUtils.hasLength(getName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
+        }
+
+        if (StringUtils.hasLength(getCompanyName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("companyName")), "%" + companyName.toLowerCase() + "%"));
+        }
+
+        if (getRequestDate() != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            formatter.setLenient(false);
+            predicates.add(criteriaBuilder.equal(
+                    criteriaBuilder.function("DATE_TRUNC", Date.class, criteriaBuilder.literal("day"), getUserEntityRoot().get("createdAt")),
+                    formatter.parse(getRequestDate())
+            ));
+        }
+
+        if (StringUtils.hasLength(getStateName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("state")),  "%" + stateName.toLowerCase() + "%"));
+        }
+
+        if (StringUtils.hasLength(getRoleName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoleEntityJoin().get("name")),  "%" + roleName.toLowerCase() + "%"));
+        }
+
+        if (StringUtils.hasLength(getEmail())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("email")), "%" + email.toLowerCase() + "%"));
+        }
+
+        return predicates;
+    }
+
     public String getName() {
         return name;
     }
@@ -140,6 +200,38 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
 
     public void setRole(List<String> role) {
         this.role = role;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getRequestDate() {
+        return requestDate;
+    }
+
+    public void setRequestDate(String requestDate) {
+        this.requestDate = requestDate;
     }
 
     private Root<UserEntity> getUserEntityRoot() {

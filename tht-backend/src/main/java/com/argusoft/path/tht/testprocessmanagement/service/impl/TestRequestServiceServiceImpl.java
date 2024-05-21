@@ -365,6 +365,22 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
         return testRequestRepository.findAll(testRequestEntitySpecification, CommonUtil.getPageable(pageable));
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public Page<TestRequestEntity> searchLikeTestRequests(
+            TestRequestCriteriaSearchFilter testRequestSearchFilter,
+            Pageable pageable,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
+
+        Specification<TestRequestEntity> testRequestEntitySpecification = testRequestSearchFilter.buildLikeSpecification(pageable, contextInfo);
+        return testRequestRepository.findAll(testRequestEntitySpecification, CommonUtil.getPageable(pageable));
+    }
+
 
     @Override
     public List<TestRequestEntity> searchTestRequests(

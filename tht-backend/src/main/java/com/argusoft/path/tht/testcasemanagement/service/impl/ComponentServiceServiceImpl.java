@@ -147,6 +147,22 @@ public class ComponentServiceServiceImpl implements ComponentService {
         return this.componentRepository.findAll(componentEntitySpecification);
     }
 
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public Page<ComponentEntity> searchLikeComponents(
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
+            Pageable pageable,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
+        Specification<ComponentEntity> componentEntitySpecification = componentCriteriaSearchFilter.buildLikeSpecification(contextInfo);
+        return this.componentRepository.findAll(componentEntitySpecification, pageable);
+    }
+
     /**
      * {@inheritdoc}
      *

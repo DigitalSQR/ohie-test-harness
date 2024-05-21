@@ -1,7 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
@@ -68,6 +67,11 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
     )
     private String testSuiteId;
 
+    @ApiParam(
+            value = "rank of the test case"
+    )
+    private Integer rank;
+
     private Root<TestcaseEntity> testcaseEntityRoot;
 
     private Join<TestcaseEntity, SpecificationEntity> testcaseEntitySpecificationEntityJoin;
@@ -120,6 +124,22 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
             predicates.add(criteriaBuilder.equal(getTestcaseEntityRoot().get("testSuiteId"), getTestSuiteId()));
         }
 
+
+        return predicates;
+    }
+
+    @Override
+    protected List<Predicate> buildLikePredicates(Root<TestcaseEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        setTestcaseEntityRoot(root);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (StringUtils.hasLength(getName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestcaseEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
+        }
+
+        if (getRank() != null) {
+            predicates.add(criteriaBuilder.like(getTestcaseEntityRoot().get("rank").as(String.class), "%"+ rank + "%"));
+        }
 
         return predicates;
     }
@@ -191,6 +211,14 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
 
     public void setTestSuiteId(String testSuiteId) {
         this.testSuiteId = testSuiteId;
+    }
+
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
     }
 
     private Root<TestcaseEntity> getTestcaseEntityRoot() {

@@ -466,6 +466,21 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         return this.testcaseRepository.findAll(testcaseEntitySpecification, pageable);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public Page<TestcaseEntity> searchLikeTestcases(
+            TestcaseCriteriaSearchFilter testcaseSearchFilter,
+            Pageable pageable,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
+        Specification<TestcaseEntity> testcaseEntitySpecification = testcaseSearchFilter.buildLikeSpecification(contextInfo);
+        return this.testcaseRepository.findAll(testcaseEntitySpecification, pageable);
+    }
+
     @Override
     public List<TestcaseEntity> searchTestcases(
             TestcaseCriteriaSearchFilter testcaseSearchFilter,

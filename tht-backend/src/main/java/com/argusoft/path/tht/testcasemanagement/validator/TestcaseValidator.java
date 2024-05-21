@@ -384,6 +384,8 @@ public class TestcaseValidator {
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
+            } catch (OperationFailedException e) {
+                throw new RuntimeException(e);
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.argusoft.path.tht.testcasemanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import io.swagger.annotations.ApiParam;
@@ -34,6 +33,11 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
     private List<String> state;
 
     @ApiParam(
+            value = "state name of the component"
+    )
+    private String stateName;
+
+    @ApiParam(
             value = "min rank of the component"
     )
     private Integer minRank;
@@ -42,6 +46,11 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
             value = "max rank of the component"
     )
     private Integer maxRank;
+
+    @ApiParam(
+            value = "rank of the component"
+    )
+    private Integer rank;
 
     private Root<ComponentEntity> componentEntityRoot;
 
@@ -80,6 +89,28 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
         return predicates;
     }
 
+
+    @Override
+    protected List<Predicate> buildLikePredicates(Root<ComponentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        setComponentEntityRoot(root);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (StringUtils.hasLength(getName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getComponentEntityRoot().get("name")),  "%" + name.toLowerCase() + "%"));
+        }
+
+        if (StringUtils.hasLength(getStateName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getComponentEntityRoot().get("state")),  "%" + stateName.toLowerCase() + "%"));
+        }
+
+        if (getRank() != null) {
+            predicates.add(criteriaBuilder.like(getComponentEntityRoot().get("rank").as(String.class), "%"+ rank + "%"));
+        }
+
+        return predicates;
+    }
+
+
     public String getName() {
         return name;
     }
@@ -114,6 +145,22 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
 
     public void setMaxRank(Integer maxRank) {
         this.maxRank = maxRank;
+    }
+
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
     }
 
     private Root<ComponentEntity> getComponentEntityRoot() {

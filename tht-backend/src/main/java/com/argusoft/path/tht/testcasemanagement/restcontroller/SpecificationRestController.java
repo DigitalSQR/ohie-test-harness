@@ -125,6 +125,30 @@ public class SpecificationRestController {
         return specificationMapper.pageEntityToDto(specificationEntities);
     }
 
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @ApiOperation(value = "View a page of available filtered Specifications", response = Page.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved page"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/search")
+    public Page<SpecificationInfo> searchLikeSpecifications(
+            SpecificationCriteriaSearchFilter specificationSearchFilter,
+            Pageable pageable,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException {
+        Page<SpecificationEntity> specificationEntities = specificationService.searchLikeSpecifications(specificationSearchFilter, pageable, contextInfo);
+        return specificationMapper.pageEntityToDto(specificationEntities);
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -142,7 +166,7 @@ public class SpecificationRestController {
             @PathVariable("specificationId") String specificationId,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
-            InvalidParameterException {
+            InvalidParameterException, OperationFailedException {
 
         SpecificationEntity specificationById = specificationService.getSpecificationById(specificationId, contextInfo);
         return specificationMapper.modelToDto(specificationById);

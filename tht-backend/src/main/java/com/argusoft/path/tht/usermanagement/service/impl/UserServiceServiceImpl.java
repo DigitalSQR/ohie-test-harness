@@ -380,6 +380,22 @@ public class UserServiceServiceImpl implements UserService {
         return this.userRepository.findAll(userEntitySpecification, CommonUtil.getPageable(pageable));
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public Page<UserEntity> searchLikeUsers(
+            UserSearchCriteriaFilter userSearchFilter,
+            Pageable pageable,
+            ContextInfo contextInfo)
+            throws
+            InvalidParameterException {
+        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildLikeSpecification(pageable, contextInfo);
+        return this.userRepository.findAll(userEntitySpecification, CommonUtil.getPageable(pageable));
+    }
+
     @Override
     public List<UserEntity> searchUsers(
             UserSearchCriteriaFilter userSearchFilter,

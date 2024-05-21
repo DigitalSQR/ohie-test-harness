@@ -56,6 +56,11 @@ public class NotificationCriteriaSearchFilter extends AbstractCriteriaSearchFilt
         return predicates;
     }
 
+    @Override
+    protected List<Predicate> buildLikePredicates(Root<NotificationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        return null;
+    }
+
     public List<String> getState() {
         return state;
     }

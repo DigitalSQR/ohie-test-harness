@@ -76,6 +76,25 @@ public interface TestRequestService {
             throws OperationFailedException,
             InvalidParameterException, DoesNotExistException;
 
+    /**
+     * Retrieves a list of TestRequests corresponding to the given TestRequest Name.The
+     * returned list may be in any order with unique set.
+     *
+     * @param testRequestSearchFilter
+     * @param pageable                Contains Index number of the Page, Max size of the single
+     *                                page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo             information containing the principalId and locale
+     *                                information about the caller of service operation
+     * @return a list of TestRequest name start with given TestRequestName found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     */
+    public Page<TestRequestEntity> searchLikeTestRequests(TestRequestCriteriaSearchFilter testRequestSearchFilter,
+                                                      Pageable pageable,
+                                                      ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException, DoesNotExistException;
+
 
     /**
      * Retrieves a list of TestRequests corresponding to the given TestRequest Name.The

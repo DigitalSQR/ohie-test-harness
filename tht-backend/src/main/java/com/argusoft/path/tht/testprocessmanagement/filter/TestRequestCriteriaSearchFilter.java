@@ -1,7 +1,6 @@
 package com.argusoft.path.tht.testprocessmanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
@@ -13,7 +12,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +33,21 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
             value = "name of the testRequest"
     )
     private String name;
+
+    @ApiParam(
+            value = "company name of the testRequest"
+    )
+    private String companyName;
+
+    @ApiParam(
+            value = "email of the testRequest"
+    )
+    private String email;
+
+    @ApiParam(
+            value = "request date of the testRequest"
+    )
+    private String requestDate;
     @ApiParam(
             value = "state of the testRequest"
     )
@@ -39,6 +56,16 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
             value = "assesseeId of the testRequest"
     )
     private String assesseeId;
+
+    @ApiParam(
+            value = "assesseeName of the testRequest"
+    )
+    private String assesseeName;
+
+    @ApiParam(
+            value = "stateName of the testRequest"
+    )
+    private String stateName;
 
     public TestRequestCriteriaSearchFilter(String id) {
         this.id = id;
@@ -92,6 +119,43 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     }
 
     @Override
+    protected List<Predicate> buildLikePredicates(Root<TestRequestEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) throws ParseException {
+        this.setTestRequestEntityRoot(root);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (StringUtils.hasLength(getAssesseeName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityUserEntityJoin().get("name")), "%" + assesseeName.toLowerCase() + "%"));
+        }
+
+        if (StringUtils.hasLength(getName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
+        }
+
+        if (StringUtils.hasLength(getStateName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityRoot().get("state")),  "%" + stateName.toLowerCase() + "%"));
+        }
+
+        if (StringUtils.hasLength(getEmail())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityUserEntityJoin().get("email")), "%" + email.toLowerCase() + "%"));
+        }
+
+        if (StringUtils.hasLength(getCompanyName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityUserEntityJoin().get("companyName")), "%" + companyName.toLowerCase() + "%"));
+        }
+
+        if (getRequestDate() != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            formatter.setLenient(false);
+            predicates.add(criteriaBuilder.equal(
+                    criteriaBuilder.function("DATE_TRUNC", Date.class, criteriaBuilder.literal("day"), getTestRequestEntityRoot().get("createdAt")),
+                    formatter.parse(getRequestDate())
+            ));
+        }
+        return predicates;
+    }
+
+    @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<TestRequestEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
 
         List<Predicate> predicates = new ArrayList<>();
@@ -132,8 +196,48 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
         this.assesseeId = assesseeId;
     }
 
+    public String getAssesseeName() {
+        return assesseeName;
+    }
+
+    public void setAssesseeName(String assesseeName) {
+        this.assesseeName = assesseeName;
+    }
+
     public String getPrimaryId() {
         return id;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getRequestDate() {
+        return requestDate;
+    }
+
+    public void setRequestDate(String requestDate) {
+        this.requestDate = requestDate;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
     }
 
     private Root<TestRequestEntity> getTestRequestEntityRoot() {

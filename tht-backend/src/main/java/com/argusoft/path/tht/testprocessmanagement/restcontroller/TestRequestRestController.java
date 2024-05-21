@@ -137,6 +137,30 @@ public class TestRequestRestController {
      *
      * @return
      */
+    @ApiOperation(value = "View a page of available like filtered TestRequests", response = Page.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved page"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/search")
+    public Page<TestRequestInfo> searchLikeTestRequests(
+            TestRequestCriteriaSearchFilter testRequestSearchFilter,
+            Pageable pageable,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException, DoesNotExistException {
+
+        Page<TestRequestEntity> testRequestEntities = testRequestService.searchLikeTestRequests(testRequestSearchFilter, pageable, contextInfo);
+        return testRequestMapper.pageEntityToDto(testRequestEntities);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
     @ApiOperation(value = "View available TestRequest with supplied id", response = TestRequestInfo.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved TestRequest"),
