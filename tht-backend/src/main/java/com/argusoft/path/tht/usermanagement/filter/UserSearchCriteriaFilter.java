@@ -54,15 +54,6 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     private String companyName;
 
     @ApiParam(
-            value = "state name of the user"
-    )
-    private String stateName;
-
-    @ApiParam(
-            value = "role name of the user"
-    )
-    private String roleName;
-    @ApiParam(
             value = "requested date of the user"
     )
     private String requestDate;
@@ -151,12 +142,12 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
             ));
         }
 
-        if (StringUtils.hasLength(getStateName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoot().get("state")),  "%" + stateName.toLowerCase() + "%"));
+        if (!CollectionUtils.isEmpty(getState())) {
+            predicates.add(criteriaBuilder.in(getUserEntityRoot().get("state")).value(getState()));
         }
 
-        if (StringUtils.hasLength(getRoleName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getUserEntityRoleEntityJoin().get("name")),  "%" + roleName.toLowerCase() + "%"));
+        if (!CollectionUtils.isEmpty(getRole())) {
+            predicates.add(criteriaBuilder.in(this.getUserEntityRoleEntityJoin().get("id")).value(getRole()));
         }
 
         if (StringUtils.hasLength(getEmail())) {
@@ -208,22 +199,6 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
-    }
-
-    public String getStateName() {
-        return stateName;
-    }
-
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
     }
 
     public String getRequestDate() {

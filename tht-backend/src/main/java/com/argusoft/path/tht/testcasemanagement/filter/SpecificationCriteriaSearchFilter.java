@@ -41,7 +41,7 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     @ApiParam(
             value = "specification type of the specification"
     )
-    private String specificationType;
+    private List<Boolean> specificationType;
 
     @ApiParam(
             value = "isManual of the testcase"
@@ -65,14 +65,9 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     private Integer rank;
 
     @ApiParam(
-            value = "mandate of the specification"
+            value = "isRequired of the specification"
     )
-    private String mandate;
-
-    @ApiParam(
-            value = "stateName of the specification"
-    )
-    private String stateName;
+    private List<Boolean> isRequired;
 
 
     private Root<SpecificationEntity> specificationEntityRoot;
@@ -144,44 +139,20 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getSpecificationEntityRoot().get("name")),  "%" + name.toLowerCase() + "%"));
         }
 
-        if (StringUtils.hasLength(getStateName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getSpecificationEntityRoot().get("state")),  "%" + stateName.toLowerCase() + "%"));
+        if (!CollectionUtils.isEmpty(getState())) {
+            predicates.add(criteriaBuilder.in(this.getSpecificationEntityRoot().get("state")).value(getState()));
         }
 
         if (getRank() != null) {
             predicates.add(criteriaBuilder.like(getSpecificationEntityRoot().get("rank").as(String.class), "%"+ rank + "%"));
         }
 
-        Predicate functionalPredicate = null;
-        Predicate workflowPredicate = null;
-
-        if (StringUtils.hasLength(getSpecificationType())) {
-            functionalPredicate = criteriaBuilder.equal(getSpecificationEntityRoot().get("isFunctional"), SpecificationServiceConstants.FUNCTIONAL.contains(getSpecificationType().toLowerCase()));
-            workflowPredicate = criteriaBuilder.notEqual(getSpecificationEntityRoot().get("isFunctional"), SpecificationServiceConstants.WORKFLOW.contains(getSpecificationType().toLowerCase()));
+        if(!CollectionUtils.isEmpty(getSpecificationType())) {
+            predicates.add(criteriaBuilder.in(getSpecificationEntityRoot().get("isFunctional")).value(getSpecificationType()));
         }
 
-        if (functionalPredicate != null || workflowPredicate != null) {
-            Predicate orPredicate = functionalPredicate != null && workflowPredicate != null
-                    ? criteriaBuilder.or(functionalPredicate, workflowPredicate)
-                    : functionalPredicate != null ? functionalPredicate
-                    : workflowPredicate;
-            predicates.add(orPredicate);
-        }
-
-        Predicate requiredPredicate = null;
-        Predicate recommendedPredicate = null;
-
-        if (StringUtils.hasLength(mandate)) {
-            requiredPredicate = criteriaBuilder.equal(getSpecificationEntityRoot().get("isRequired"), SpecificationServiceConstants.REQUIRED.contains(getMandate().toLowerCase()));
-            recommendedPredicate = criteriaBuilder.notEqual(getSpecificationEntityRoot().get("isRequired"), SpecificationServiceConstants.RECOMMENDED.contains(getMandate().toLowerCase()));
-        }
-
-        if (requiredPredicate != null || recommendedPredicate != null) {
-            Predicate orPredicate = requiredPredicate != null && recommendedPredicate != null
-                    ? criteriaBuilder.or(requiredPredicate, recommendedPredicate)
-                    : requiredPredicate != null ? requiredPredicate
-                    : recommendedPredicate;
-            predicates.add(orPredicate);
+        if(!CollectionUtils.isEmpty(getRequired())) {
+            predicates.add(criteriaBuilder.in(getSpecificationEntityRoot().get("isRequired")).value(getRequired()));
         }
 
         return predicates;
@@ -250,27 +221,19 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
         this.rank = rank;
     }
 
-    public String getMandate() {
-        return mandate;
+    public List<Boolean> getRequired() {
+        return isRequired;
     }
 
-    public void setMandate(String mandate) {
-        this.mandate = mandate;
+    public void setRequired(List<Boolean> isRequired) {
+        this.isRequired = isRequired;
     }
 
-    public String getStateName() {
-        return stateName;
-    }
-
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
-    }
-
-    public String getSpecificationType() {
+    public List<Boolean> getSpecificationType() {
         return specificationType;
     }
 
-    public void setSpecificationType(String specificationType) {
+    public void setSpecificationType(List<Boolean> specificationType) {
         this.specificationType = specificationType;
     }
 

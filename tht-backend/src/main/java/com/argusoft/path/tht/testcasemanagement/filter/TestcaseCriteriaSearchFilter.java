@@ -141,6 +141,10 @@ public class TestcaseCriteriaSearchFilter extends AbstractCriteriaSearchFilter<T
             predicates.add(criteriaBuilder.like(getTestcaseEntityRoot().get("rank").as(String.class), "%"+ rank + "%"));
         }
 
+        if (!CollectionUtils.isEmpty(getState())) {
+            predicates.add(criteriaBuilder.in(getTestcaseEntityRoot().get("state")).value(getState()));
+        }
+
         return predicates;
     }
 

@@ -33,11 +33,6 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
     private List<String> state;
 
     @ApiParam(
-            value = "state name of the component"
-    )
-    private String stateName;
-
-    @ApiParam(
             value = "min rank of the component"
     )
     private Integer minRank;
@@ -99,8 +94,8 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getComponentEntityRoot().get("name")),  "%" + name.toLowerCase() + "%"));
         }
 
-        if (StringUtils.hasLength(getStateName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getComponentEntityRoot().get("state")),  "%" + stateName.toLowerCase() + "%"));
+        if (!CollectionUtils.isEmpty(getState())) {
+            predicates.add(criteriaBuilder.in(getComponentEntityRoot().get("state")).value(getState()));
         }
 
         if (getRank() != null) {
@@ -153,14 +148,6 @@ public class ComponentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<
 
     public void setRank(Integer rank) {
         this.rank = rank;
-    }
-
-    public String getStateName() {
-        return stateName;
-    }
-
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
     }
 
     private Root<ComponentEntity> getComponentEntityRoot() {

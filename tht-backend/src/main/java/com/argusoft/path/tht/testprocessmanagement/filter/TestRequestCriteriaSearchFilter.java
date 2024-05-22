@@ -62,11 +62,6 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
     )
     private String assesseeName;
 
-    @ApiParam(
-            value = "stateName of the testRequest"
-    )
-    private String stateName;
-
     public TestRequestCriteriaSearchFilter(String id) {
         this.id = id;
     }
@@ -132,8 +127,8 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
             predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityRoot().get("name")), "%" + name.toLowerCase() + "%"));
         }
 
-        if (StringUtils.hasLength(getStateName())) {
-            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getTestRequestEntityRoot().get("state")),  "%" + stateName.toLowerCase() + "%"));
+        if (!CollectionUtils.isEmpty(getState())) {
+            predicates.add(criteriaBuilder.in(getTestRequestEntityRoot().get("state")).value(getState()));
         }
 
         if (StringUtils.hasLength(getEmail())) {
@@ -230,14 +225,6 @@ public class TestRequestCriteriaSearchFilter extends AbstractCriteriaSearchFilte
 
     public void setRequestDate(String requestDate) {
         this.requestDate = requestDate;
-    }
-
-    public String getStateName() {
-        return stateName;
-    }
-
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
     }
 
     private Root<TestRequestEntity> getTestRequestEntityRoot() {
