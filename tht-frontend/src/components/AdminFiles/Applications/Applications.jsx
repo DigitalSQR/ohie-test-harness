@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
 import "./applications.scss";
-import sortIcon from "../../../styles/images/sort-icon.png";
 import { useNavigate } from "react-router-dom";
 import {
   StateBadgeClasses,
@@ -11,23 +10,22 @@ import {
 } from "../../../constants/test_requests_constants.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
 import { Empty, notification, Modal } from "antd";
-import { formatDate } from "../../../utils/utils.js";
-import UserIdEmailConnector from "../../connectors/UserIdEmailConnector/UserIdEmailConnector.js";
 import { Pagination, PaginationItem } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer.jsx";
 import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLES } from "../../../constants/role_constants.js";
-import UserIdConnector from "../../connectors/UserIdConnector/UserIdConnector.jsx";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import ComponentIdConnector from "../../connectors/ComponentIdConnector/ComponentIdConnector.js";
+import { SearchOutlined } from "@ant-design/icons";
 import UserIdNameEmailConnector from "../../connectors/UserIdNameEmailConnector/UserIdNameEmailConnector";
 import { Popover } from "antd";
 import moment from "moment";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import { DatePicker } from "antd";
 /**
  * Applications Component:
  * This component displays a table of applications with options to filter, sort, and update their statuses.
@@ -48,7 +46,6 @@ const Applications = () => {
     state: "desc",
     default: "asc",
   };
-  const [filterState, setFilterState] = useState("");
   const [testRequests, setTestRequests] = useState([]);
   const [sortDirection, setSortDirection] = useState(obj);
   const [sortFieldName, setSortFieldName] = useState("default");
@@ -66,12 +63,34 @@ const Applications = () => {
   const dispatch = useDispatch();
   const pageSize = 10;
 
+  const [applicationSearchFilter, setApplicationSearchFilter] = useState({
+    name: "", //This is the application name
+    assesseeName: "",
+    companyName: "",
+    email: "",
+    requestDate: "",
+    state: "",
+  });
+
+  const updateFilter = (field, value) => {
+    setApplicationSearchFilter((prevFilter) => ({
+      ...prevFilter,
+      [field]: value,
+    }));
+  };
+
+  const [filterDate, setFilterDate] = useState();
+
+  const handleApplicationSearch = () => {
+    console.log(applicationSearchFilter);
+    getAllTestRequests(sortFieldName, sortDirection, currentPage);
+  };
+
   //useEffect to set the header, get all the test requests when the component loads
   useEffect(() => {
     dispatch(set_header("Applications"));
-    var state = filterState;
-    getAllTestRequests(state, sortFieldName, sortDirection, currentPage);
-  }, [filterState]);
+    getAllTestRequests(sortFieldName, sortDirection, currentPage);
+  }, []);
 
   //useEffect to set the user role
   useEffect(() => {
@@ -83,23 +102,29 @@ const Applications = () => {
   }, []);
 
   //Function to get all the test requests varying with the different state we want to fetch
-  const getAllTestRequests = (
-    filterState,
-    sortFieldName,
-    sortDirection,
-    newPage
-  ) => {
+  const getAllTestRequests = (sortFieldName, sortDirection, newPage) => {
     showLoader();
-    TestRequestAPI.getTestRequestsByState(
-      filterState,
-      sortFieldName,
-      sortDirection[sortFieldName],
-      newPage - 1,
-      pageSize
-    )
+    let params = {};
+    params.sort = `${sortFieldName},${sortDirection[sortFieldName]}`;
+    params.page = newPage - 1;
+    params.size = pageSize;
+
+    const filteredApplicationSearchFilter = Object.keys(applicationSearchFilter)
+      .filter((key) => {
+        const value = applicationSearchFilter[key];
+        return typeof value === "string" ? value.trim() !== "" : !!value;
+      })
+      .reduce((acc, key) => {
+        if (typeof applicationSearchFilter[key] === "string")
+          acc[key] = applicationSearchFilter[key].trim();
+        else acc[key] = applicationSearchFilter[key];
+        return acc;
+      }, {});
+    params = { ...params, ...filteredApplicationSearchFilter };
+
+    TestRequestAPI.getTestRequestsByFilter(params)
       .then((res) => {
         hideLoader();
-
         setTestRequests(res.content);
         setTotalPages(res.totalPages);
       })
@@ -139,12 +164,7 @@ const Applications = () => {
     newSortDirection[sortFieldName] =
       sortDirection[sortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
-    getAllTestRequests(
-      filterState,
-      sortFieldName,
-      newSortDirection,
-      currentPage
-    );
+    getAllTestRequests(sortFieldName, newSortDirection, currentPage);
   };
 
   //Function to toggle between the sort icons depending upon whether the current sort direction is ascending or descending
@@ -170,7 +190,7 @@ const Applications = () => {
   //Function to handle the page change in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
-    getAllTestRequests(filterState, sortFieldName, sortDirection, newPage);
+    getAllTestRequests(sortFieldName, sortDirection, newPage);
   };
 
   //Function that navigates us to the application report page for a given test request id
@@ -227,16 +247,25 @@ const Applications = () => {
             onOk() {
               changeState(testRequestId, updatedState, index, true);
             },
-            cancelButtonProps:{id:"applications-warning-cancelButton"},
-            okButtonProps:{id:"applications-warning-okButton"}
-            
+            cancelButtonProps: { id: "applications-warning-cancelButton" },
+            okButtonProps: { id: "applications-warning-okButton" },
           });
         } else {
           Modal.confirm({
-            cancelButtonProps:{id:`applications-${ updatedState === "test.request.status.rejected"
-                ? "reject" : "accept"}-cancelButton`},
-            okButtonProps:{id:`applications-${ updatedState === "test.request.status.rejected"
-            ? "reject" : "accept"}-okButton`},
+            cancelButtonProps: {
+              id: `applications-${
+                updatedState === "test.request.status.rejected"
+                  ? "reject"
+                  : "accept"
+              }-cancelButton`,
+            },
+            okButtonProps: {
+              id: `applications-${
+                updatedState === "test.request.status.rejected"
+                  ? "reject"
+                  : "accept"
+              }-okButton`,
+            },
             title: "Confirmation",
             content: `Are you sure you want to change the status of this application testing request to ${
               updatedState === "test.request.status.rejected"
@@ -287,34 +316,6 @@ const Applications = () => {
     <div id="applications">
       <div id="wrapper">
         <div className="col-12">
-          <div className="row mb-2 justify-content-between">
-            <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
-              <div className="d-flex align-items-baseline">
-                <span className="pe-3 text-nowrap">Status :</span>
-                <div className="mb-3">
-                  <select
-                    onChange={(e) => {
-                      setFilterState(e.target.value);
-                    }}
-                    value={filterState}
-                    className="form-select custom-select custom-select-sm"
-                    aria-label="Default select example"
-                    id="applications-searchByStatus"
-                  >
-                    {testRequestStates.map((testRequestState) => (
-                      <option
-                      id={`application-status-${testRequestState.label}`}
-                        value={testRequestState.value}
-                        key={testRequestState.value}
-                      >
-                        {testRequestState.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="table-responsive">
             <table className=" data-table capitalize-words">
               <thead>
@@ -329,10 +330,56 @@ const Applications = () => {
                     >
                       {renderSortIcon("name")}
                     </span>
+                    <div className="filter-box">
+                      <input
+                        type="text"
+                        placeholder="Search by Application"
+                        className="form-control filter-input"
+                        value={applicationSearchFilter.name}
+                        onChange={(e) => updateFilter("name", e.target.value)}
+                      />
+                    </div>
                   </th>
-                  <th style={{ width: "12%" }}>Assessee</th>
-                  <th style={{ width: "12%" }}>Company</th>
-                  <th style={{ width: "16%" }}>EMAIL ID</th>
+                  <th style={{ width: "12%" }}>
+                    Assessee{" "}
+                    <div className="filter-box">
+                      <input
+                        type="text"
+                        placeholder="Search by Assessee"
+                        className="form-control filter-input"
+                        value={applicationSearchFilter.assesseeName}
+                        onChange={(e) =>
+                          updateFilter("assesseeName", e.target.value)
+                        }
+                      />
+                    </div>
+                  </th>
+                  <th style={{ width: "12%" }}>
+                    Company{" "}
+                    <div className="filter-box">
+                      <input
+                        type="text"
+                        placeholder="Search by Company"
+                        className="form-control filter-input"
+                        value={applicationSearchFilter.companyName}
+                        onChange={(e) =>
+                          updateFilter("companyName", e.target.value)
+                        }
+                      />
+                    </div>
+                  </th>
+                  <th style={{ width: "16%" }}>
+                    EMAIL ID{" "}
+                    <div className="filter-box">
+                      <input
+                        type="text"
+                        placeholder="Search by Email"
+                        className="form-control filter-input"
+                        value={applicationSearchFilter.email}
+                        onChange={(e) => updateFilter("email", e.target.value)}
+                      />
+                    </div>
+                  </th>
                   <th style={{ width: "15%" }}>
                     REQUEST DATE
                     <span
@@ -343,6 +390,20 @@ const Applications = () => {
                     >
                       {renderSortIcon("createdAt")}
                     </span>
+                    <div className="filter-box">
+                      <DatePicker
+                        className="form-control filter-input"
+                        placeholder="Select Date"
+                        value={filterDate}
+                        onChange={(date) => {
+                          setFilterDate(date);
+                          updateFilter(
+                            "requestDate",
+                            date ? date.format("YYYY-MM-DD") : null
+                          );
+                        }}
+                      />
+                    </div>
                   </th>
                   <th style={{ width: "15%" }}>
                     STATUS
@@ -354,6 +415,26 @@ const Applications = () => {
                     >
                       {renderSortIcon("state")}
                     </span>
+                    <div className="filter-box">
+                      <select
+                        className="form-select custom-select custom-select-sm filter-input"
+                        aria-label="Default select example"
+                        value={applicationSearchFilter.state}
+                        onChange={(e) => {
+                          updateFilter("state", e.target.value);
+                        }}
+                      >
+                        {testRequestStates.map((testRequestState) => (
+                          <option
+                            id={`application-status-${testRequestState.label}`}
+                            value={testRequestState.value}
+                            key={testRequestState.value}
+                          >
+                            {testRequestState.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </th>
                   <th style={{ width: "20%" }}>
                     ACTIONS
@@ -365,6 +446,16 @@ const Applications = () => {
                     >
                       {renderSortIcon("default")}
                     </span>
+                    <div className="filter-box">
+                      <button
+                        className="search-button"
+                        onClick={handleApplicationSearch}
+                        id="handleApplicationSearch"
+                      >
+                        <SearchOutlined />
+                        Search
+                      </button>
+                    </div>
                   </th>
                   <th style={{ width: "1%" }}></th>
                 </tr>
@@ -380,15 +471,17 @@ const Applications = () => {
                   </>
                 ) : null}
                 {testRequests?.map((testRequest, index) => {
-                  const formattedDate = moment(testRequest.meta.createdAt).format("Do MMMM, YYYY");
+                  const formattedDate = moment(
+                    testRequest.meta.createdAt
+                  ).format("Do MMMM, YYYY");
                   return (
                     <React.Fragment key={testRequest.id}>
-                    <tr
-                      className={index % 2 == 0 ? "even" : "odd"}
-                      key={testRequest.id}
-                    >
-                      <td className="fw-bold">{testRequest.name}</td>
-                      {/* <td>
+                      <tr
+                        className={index % 2 == 0 ? "even" : "odd"}
+                        key={testRequest.id}
+                      >
+                        <td className="fw-bold">{testRequest.name}</td>
+                        {/* <td>
                       {testRequest.productName !== ""
                         ? testRequest.productName
                         : "-"}
@@ -427,7 +520,12 @@ const Applications = () => {
                               <Popover
                                 title={<div>{testRequest?.message}</div>}
                               >
-                                <InfoCircleOutlined style={{marginLeft:"0.5rem", marginTop:"0.7rem"}}/>
+                                <InfoCircleOutlined
+                                  style={{
+                                    marginLeft: "0.5rem",
+                                    marginTop: "0.7rem",
+                                  }}
+                                />
                               </Popover>
                             </Fragment>
                           )}
@@ -437,120 +535,129 @@ const Applications = () => {
                           testRequest.state ==
                             TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
                             <div className="">
-                            <div class="row">
-                            <div class="col-lg-6 col-md-12">
-                              <div class="d-flex flex-column flex-md-row">
-                                <div
-                                  class="cursor-pointer text-success d-flex align-items-center font-size-12 fw-bold"
-                                  id={`applications-acceptTestRequest-${index}`}
-                                  onClick={() => {
-                                    changeState(
-                                      testRequest.id,
-                                      TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED,
-                                      index
-                                    );
-                                  }}
-                                >
-                                  <i class="bi bi-check-circle-fill text-success font-size-16"></i>
-                                  <span className="ps-1"> 
-                                    ACCEPT</span>
-                                </div>
-                                <div
-                                  id={`applications-declineTestRequest-${index}`}
-                                  class="cursor-pointer ps-md-3 text-danger font-size-12 fw-bold mt-2 mt-md-0 ml-lg-3 d-flex align-items-center"
-                                  onClick={() => {
-                                    setCurrentTestRequestId(testRequest.id);
-                                    setCurrentIndex(index);
-                                    setIsReasonModalOpen(true);
-                                  }}
-                                >
-                                  <i class="bi bi-x-circle-fill text-danger font-size-16"></i>
-                                  <span className="ps-1">
-                                  DECLINE</span>
+                              <div class="row">
+                                <div class="col-lg-6 col-md-12">
+                                  <div class="d-flex flex-column flex-md-row">
+                                    <div
+                                      class="cursor-pointer text-success d-flex align-items-center font-size-12 fw-bold"
+                                      id={`applications-acceptTestRequest-${index}`}
+                                      onClick={() => {
+                                        changeState(
+                                          testRequest.id,
+                                          TestRequestStateConstants.TEST_REQUEST_STATUS_ACCEPTED,
+                                          index
+                                        );
+                                      }}
+                                    >
+                                      <i class="bi bi-check-circle-fill text-success font-size-16"></i>
+                                      <span className="ps-1">ACCEPT</span>
+                                    </div>
+                                    <div
+                                      id={`applications-declineTestRequest-${index}`}
+                                      class="cursor-pointer ps-md-3 text-danger font-size-12 fw-bold mt-2 mt-md-0 ml-lg-3 d-flex align-items-center"
+                                      onClick={() => {
+                                        setCurrentTestRequestId(testRequest.id);
+                                        setCurrentIndex(index);
+                                        setIsReasonModalOpen(true);
+                                      }}
+                                    >
+                                      <i class="bi bi-x-circle-fill text-danger font-size-16"></i>
+                                      <span className="ps-1">DECLINE</span>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          
-                            </div>
                           ) : null}
-                        {testRequest.state !==
-                          TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING &&
-                        testRequest.state !==
-                          TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED &&
-                        testRequest.state !==
-                          TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
-                          userRole.includes("role.tester") ||
-                          userRole.includes("role.admin") ? (
-                            <button
-                            id={`applications-actions-${index}`}
-                              className="cursor-pointer glossy-button glossy-button--green d-flex align-items-center"
-                              onClick={() => {
-                                navigate(`/choose-test/${testRequest.id}`);
-                              }}
-                            >
-                              {" "}
-                              <i
-                                className={
-                                  StateClasses[testRequest.state]?.iconClass
-                                }
-                              ></i>{" "}
-                              {StateClasses[
-                                testRequest.state
-                              ]?.btnText?.toUpperCase()}
-                            </button>
+                          {testRequest.state !==
+                            TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING &&
+                          testRequest.state !==
+                            TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED &&
+                          testRequest.state !==
+                            TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
+                            userRole.includes("role.tester") ||
+                            userRole.includes("role.admin") ? (
+                              <button
+                                id={`applications-actions-${index}`}
+                                className="cursor-pointer glossy-button glossy-button--green d-flex align-items-center"
+                                onClick={() => {
+                                  navigate(`/choose-test/${testRequest.id}`);
+                                }}
+                              >
+                                {" "}
+                                <i
+                                  className={
+                                    StateClasses[testRequest.state]?.iconClass
+                                  }
+                                ></i>{" "}
+                                {StateClasses[
+                                  testRequest.state
+                                ]?.btnText?.toUpperCase()}
+                              </button>
+                            ) : (
+                              <></>
+                            )
                           ) : (
-                            <></>
-                          )
-                        ) : (
-                          testRequest.state ===
-                            TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED && (
-                            <button
-                            id={`applications-viewReport-${index}`}
-                              className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
-                              onClick={() => viewReport(testRequest.id)}
-                            >
-                              <i className="bi bi-file-text font-size-16"></i>{" "}
-                              REPORT{" "}
-                            </button>
-                          )
-                        )}
+                            testRequest.state ===
+                              TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED && (
+                              <button
+                                id={`applications-viewReport-${index}`}
+                                className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
+                                onClick={() => viewReport(testRequest.id)}
+                              >
+                                <i className="bi bi-file-text font-size-16"></i>{" "}
+                                REPORT{" "}
+                              </button>
+                            )
+                          )}
                         </td>
                         <td>
-                        <span
-                          id={`toggleRow-${index}`}
-                          onClick={() => toggleRow(testRequest.id)}
-                          type="button"
-                          className="approval-action-button float-end my-auto display"
-                        >
-                          {testRequest.class === "show" ? (
-                            <i className="bi bi-arrow-up-circle-fill fs-5"></i>
-                          ) : (
-                            <i className="bi bi-arrow-down-circle-fill fs-5"></i>
-                          )}
-                        </span>
-                        
-                    </td>
-                  </tr>
-                  <tr className={"collapse " + testRequest.class} key={"collapseable--" + testRequest.id}>
-                      <td colSpan="8" className="hiddenRow m-0 p-0 field-box">
-                        <div id="Accordion" className="p-3 table-accordion-bg">
+                          <span
+                            id={`toggleRow-${index}`}
+                            onClick={() => toggleRow(testRequest.id)}
+                            type="button"
+                            className="approval-action-button float-end my-auto display"
+                          >
+                            {testRequest.class === "show" ? (
+                              <i className="bi bi-arrow-up-circle-fill fs-5"></i>
+                            ) : (
+                              <i className="bi bi-arrow-down-circle-fill fs-5"></i>
+                            )}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr
+                        className={"collapse " + testRequest.class}
+                        key={"collapseable--" + testRequest.id}
+                      >
+                        <td colSpan="8" className="hiddenRow m-0 p-0 field-box">
+                          <div
+                            id="Accordion"
+                            className="p-3 table-accordion-bg"
+                          >
                             <table className="data-table-inner capitialize-words">
                               <thead>
                                 <tr>
-                                  <th style={{width:'20%'}}>Component</th>
-                                  <th style={{width:'20%'}}>Fhir Api Base Url</th>
-                                  <th style={{width:'20%'}}>Website/UI Base Url</th>
-                                  <th style={{width:'20%'}}>Username</th>
-                                  <th style={{width:'20%'}}>Password</th>
+                                  <th style={{ width: "20%" }}>Component</th>
+                                  <th style={{ width: "20%" }}>
+                                    Fhir Api Base Url
+                                  </th>
+                                  <th style={{ width: "20%" }}>
+                                    Website/UI Base Url
+                                  </th>
+                                  <th style={{ width: "20%" }}>Username</th>
+                                  <th style={{ width: "20%" }}>Password</th>
                                   <th></th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {testRequest.testRequestUrls.length > 0 &&
                                   testRequest.testRequestUrls.map(
-                                    (testUrls,index) => (
-                                      <tr id={testUrls.componentId} key={testUrls.componentId}>
+                                    (testUrls, index) => (
+                                      <tr
+                                        id={testUrls.componentId}
+                                        key={testUrls.componentId}
+                                      >
                                         <td className="fw-bold">
                                           <ComponentIdConnector
                                             componentId={testUrls.componentId}
@@ -593,10 +700,10 @@ const Applications = () => {
                               </tbody>
                             </table>
                           </div>
-                      </td>
-                    </tr>
-                   </React.Fragment>
-                  )
+                        </td>
+                      </tr>
+                    </React.Fragment>
+                  );
                 })}
               </tbody>
             </table>
@@ -611,7 +718,7 @@ const Applications = () => {
             variant="outlined"
             shape="rounded"
             renderItem={(item) => {
-              if (item.type === 'page') {
+              if (item.type === "page") {
                 return (
                   <PaginationItem
                     {...item}
@@ -620,7 +727,7 @@ const Applications = () => {
                     onClick={() => handleChangePage(null, item.page)}
                   />
                 );
-              } else if (item.type === 'previous') {
+              } else if (item.type === "previous") {
                 return (
                   <PaginationItem
                     {...item}
@@ -629,7 +736,7 @@ const Applications = () => {
                     onClick={() => handleChangePage(null, currentPage - 1)}
                   />
                 );
-              } else if (item.type === 'next') {
+              } else if (item.type === "next") {
                 return (
                   <PaginationItem
                     {...item}
@@ -644,14 +751,14 @@ const Applications = () => {
           />
         )}
         <Modal
-        closable={false}
+          closable={false}
           open={isReasonModalOpen}
           onCancel={() => {
             setIsReasonModalOpen(false);
             setReasonForRejection();
           }}
-          cancelButtonProps={{id:"applications-disable-cancelButton"}}
-          okButtonProps={{id:"applications-disable-okButton"}}
+          cancelButtonProps={{ id: "applications-disable-cancelButton" }}
+          okButtonProps={{ id: "applications-disable-okButton" }}
           onOk={() => {
             if (!reasonForRejection) {
               notification.error({
