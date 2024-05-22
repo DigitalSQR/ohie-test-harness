@@ -123,7 +123,6 @@ const Assessee = () => {
       }, {});
     params = { ...params, ...filteredUserSearchFilter };
 
-    console.log(params);
     UserAPI.getUserByFilter(params)
       .then((res) => {
         hideLoader();
