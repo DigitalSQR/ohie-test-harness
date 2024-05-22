@@ -10,14 +10,16 @@ import { store } from "../../../store/store";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
+import { SearchOutlined } from "@ant-design/icons";
+import { Empty} from "antd";
 import { Switch } from "antd";
 import {
-  ROLE_ID_ADMIN,
-  ROLE_ID_TESTER,
   ROLE_ID_SUPERADMIN,
+  UserManagementRoleActionLabels,
 } from "../../../constants/role_constants";
 import AddAdminUser from "./AddAdminUsers/AddAdminUser";
 import UpdateAdminUser from "./UpdateAdminUser/UpdateAdminUser";
+import { UserManagementStateActionLabels } from "../../../constants/user_constants";
 /**
  * Admin Users Component:
  * This component handles the users that have either the role of a tester or admin.
@@ -43,6 +45,33 @@ const AdminUsers = () => {
   };
   const [sortDirection, setSortDirection] = useState(obj);
   const [sortFieldName, setSortFieldName] = useState("name");
+  const initialRoles = UserManagementRoleActionLabels.find(
+    (item) => item.label === "All"
+  ).value;
+
+  const initialState = UserManagementStateActionLabels.find(
+    (item) => item.label === "All"
+  ).value;
+
+  const [userSearchFilter, setUserSearchFilter] = useState({
+    name: "",
+    email: "",
+    role: initialRoles,
+    state: initialState,
+  });
+
+  const updateFilter = (field, value) => {
+    setUserSearchFilter((prevFilter) => ({
+      ...prevFilter,
+      [field]: value,
+    }));
+  };
+
+  const handleUserSearch = () => {
+    setCurrentPage(1);
+    getAllUsers(sortFieldName, sortDirection, 1);
+  };
+
   const { showLoader, hideLoader } = useLoader();
 
   //Function to handle the state change from active to inactive and vice verca
@@ -66,9 +95,9 @@ const AdminUsers = () => {
     hideLoader();
   };
 
-  const handleChangePage = ( event, newPage) => {
+  const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
-    getAllUsers(sortFieldName, sortDirection, newPage)
+    getAllUsers(sortFieldName, sortDirection, newPage);
   };
 
   //Function to close the user state inactivation confirmation modal
@@ -88,19 +117,34 @@ const AdminUsers = () => {
   //Function to get all the users that have role of either Admin or Tester to display in the component
   const getAllUsers = (sortFieldName, sortDirection, currentPage) => {
     showLoader();
-    AdminUserAPI.fetchAllUsers(sortFieldName, sortDirection[sortFieldName], currentPage, pageSize)
-    .then((data) => {
-      // removing user if role is superadmin
+    let params = {};
+    params.sort = `${sortFieldName},${sortDirection[sortFieldName]}`;
+    params.page = currentPage - 1;
+    params.size = pageSize;
+
+    const filteredUserSearchFilter = Object.keys(userSearchFilter)
+      .filter((key) => {
+        const value = userSearchFilter[key];
+        return typeof value === "string" ? value.trim() !== "" : !!value;
+      })
+      .reduce((acc, key) => {
+        if (typeof userSearchFilter[key] === "string")
+          acc[key] = userSearchFilter[key].trim();
+        else acc[key] = userSearchFilter[key];
+        return acc;
+      }, {});
+
+    params = { ...params, ...filteredUserSearchFilter };
+    AdminUserAPI.fetchAllUsers(params).then((data) => {
       const filteredData = data.content.filter(
         (user) => !user?.roleIds.includes(ROLE_ID_SUPERADMIN)
       );
       setUsers(filteredData);
       setTotalPages(data.totalPages);
       hideLoader();
-      })
+    });
   };
 
-  
   //Function to handle adding admin user modal
   const handleCreateUser = () => {
     setIsCreateUserModalOpen(true);
@@ -110,7 +154,7 @@ const AdminUsers = () => {
   const handleEditUser = () => {
     setIsEditUserModalOpen(true);
   };
-  
+
   //Function to refresh all components on editing and submitting of Admin user modal
   const refreshAllComponents = () => {
     getAllUsers(sortFieldName, sortDirection, currentPage);
@@ -122,13 +166,13 @@ const AdminUsers = () => {
   };
 
   useEffect(() => {
-    let user = users.filter(user => user.id == deleteUserId)[0];
+    let user = users.filter((user) => user.id == deleteUserId)[0];
     if (user?.state == "user.status.active") {
       setIsModalOpen(true);
     } else if (user?.state) {
       handleOk(user.state);
     }
-  }, [deleteUserId])
+  }, [deleteUserId]);
 
   //Function to sort the rows based on sortFieldName passed as the parameter
   const handleSort = (sortFieldName) => {
@@ -146,16 +190,18 @@ const AdminUsers = () => {
       return (
         <img
           className="cursor-pointer"
-          style={{width:"8px"}}
-          src={
-            sortDirection[fieldName] === "asc"
-              ? sortedUp
-              : sortedDown
-          }
+          style={{ width: "8px" }}
+          src={sortDirection[fieldName] === "asc" ? sortedUp : sortedDown}
         ></img>
       );
     }
-    return <img className="cursor-pointer" style={{width:"10px"}} src={unsorted}/>;
+    return (
+      <img
+        className="cursor-pointer"
+        style={{ width: "10px" }}
+        src={unsorted}
+      />
+    );
   };
 
   return (
@@ -181,54 +227,130 @@ const AdminUsers = () => {
             <table className="data-table capitalize-words">
               <thead>
                 <tr>
-                  <th style={{width:"25%"}}>
+                  <th style={{ width: "20%" }}>
                     NAME
                     <span
-                    id="adminUsers-sortByName"
+                      id="adminUsers-sortByName"
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("name")}
                     >
                       {renderSortIcon("name")}
                     </span>
+                    <div className="filter-box">
+                      <input
+                        type="text"
+                        placeholder="Search by Name"
+                        className="form-control filter-input"
+                        value={userSearchFilter.name}
+                        onChange={(e) => updateFilter("name", e.target.value)}
+                      />
+                    </div>
                   </th>
-                  <th style={{width:"20%"}}>
+                  <th style={{ width: "20%" }}>
                     EMAIL
                     <span
-                    id="adminUsers-sortByEmail"
+                      id="adminUsers-sortByEmail"
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("email")}
                     >
                       {renderSortIcon("email")}
                     </span>
+                    <div className="filter-box">
+                      <input
+                        type="text"
+                        placeholder="Search by Email"
+                        className="form-control filter-input"
+                        value={userSearchFilter.companyName}
+                        onChange={(e) => updateFilter("email", e.target.value)}
+                      />
+                    </div>
                   </th>
-                  <th style={{width:"25%"}}>ROLE</th>
-                  <th style={{width:"15%"}}>STATUS</th>
-                  <th style={{width:"15%"}}>ACTIONS</th>
+                  <th style={{ width: "20%" }}>
+                    ROLE{" "}
+                    <div className="filter-box">
+                      <select
+                        className="form-select custom-select custom-select-sm filter-input"
+                        aria-label="Default select example"
+                        value={userSearchFilter.role}
+                        onChange={(e) => {
+                          updateFilter("role", e.target.value);
+                        }}
+                        id="UserManagementRoleChange"
+                      >
+                        {UserManagementRoleActionLabels.map((userRole) => (
+                          <option value={userRole.value} key={userRole.value}>
+                            {userRole.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </th>
+                  <th style={{ width: "15%" }}>
+                    STATUS{" "}
+                    <div className="filter-box">
+                      <select
+                        className="form-select custom-select custom-select-sm filter-input"
+                        aria-label="Default select example"
+                        value={userSearchFilter.state}
+                        onChange={(e) => {
+                          updateFilter("state", e.target.value);
+                        }}
+                        id="UserManagementStateChange"
+                      >
+                        {UserManagementStateActionLabels.map((userState) => (
+                          <option value={userState.value} key={userState.value}>
+                            {userState.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </th>
+                  <th style={{ width: "15%" }}>
+                    ACTIONS{" "}
+                    <div className="filter-box">
+                      <button
+                        className="search-button"
+                        onClick={handleUserSearch}
+                        id="handleUserSearch"
+                      >
+                        <SearchOutlined />
+                        Search
+                      </button>
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {users?.map((user,index) => (
+                {users.length === 0 ? (
+                  <tr>
+                    <td className="text-center " colSpan="6">
+                      <Empty description="No Record Found." />
+                    </td>
+                  </tr>
+                ) : null}
+                {users?.map((user, index) => (
                   <tr key={user.id}>
                     <td className="fw-bold">{user.name}</td>
-                    <td className = "toLowerCase-words">{user.email}</td>
+                    <td className="toLowerCase-words">{user.email}</td>
                     <td>
                       {user?.roleIds.map((roleId) => (
-                        <span  className="badge text-bg-secondary me-1 font-size-12 fw-normal" key={roleId}>{roleId.replace("role.", "")}</span>
+                        <span
+                          className="badge text-bg-secondary me-1 font-size-12 fw-normal"
+                          key={roleId}
+                        >
+                          {roleId.replace("role.", "")}
+                        </span>
                       ))}
                     </td>
                     <td>
-                    {userInfo?.id !== user?.id && (
+                      {userInfo?.id !== user?.id && (
                         <span className="">
                           <Switch
-                            defaultChecked= "true"
-                            checked={
-                              user?.state === "user.status.active"
-                            }
-                            onChange={() =>
-                              handleToggleChange(user.id)
-                            }
+                            defaultChecked="true"
+                            checked={user?.state === "user.status.active"}
+                            onChange={() => handleToggleChange(user.id)}
                             checkedChildren="ACTIVE"
                             unCheckedChildren="INACTIVE"
                             id={`adminUsers-switch-status-${index}`}
@@ -237,10 +359,11 @@ const AdminUsers = () => {
                       )}
                     </td>
                     <td className="action-icons-container">
-                      <span className="cursor-pointer font-size-12 text-blue fw-bold"
+                      <span
+                        className="cursor-pointer font-size-12 text-blue fw-bold"
                         id={`adminUsers-editButton-${index}`}
                         onClick={() => {
-                          handleEditUser()
+                          handleEditUser();
                           setUserId(user.id);
                         }}
                       >
@@ -260,67 +383,66 @@ const AdminUsers = () => {
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
-          okButtonProps={{id:"adminUsers-ok-inactiveButton"}}
-          cancelButtonProps={{id:"adminUsers-cancel-inactiveButton"}}
+          okButtonProps={{ id: "adminUsers-ok-inactiveButton" }}
+          cancelButtonProps={{ id: "adminUsers-cancel-inactiveButton" }}
         >
           <p>Are you sure you want to inactive the user?</p>
         </Modal>
-        <AddAdminUser  
-        isModalOpen={isCreateUserModalOpen}
-        setIsModalOpen={setIsCreateUserModalOpen}
-        refreshAllComponents={refreshAllComponents}
+        <AddAdminUser
+          isModalOpen={isCreateUserModalOpen}
+          setIsModalOpen={setIsCreateUserModalOpen}
+          refreshAllComponents={refreshAllComponents}
         />
-        <UpdateAdminUser  
-        isModalOpen={isEditUserModalOpen}
-        setIsModalOpen={setIsEditUserModalOpen}
-        userId={userId}
-        setUserId={setUserId}
-        refreshAllComponents={refreshAllComponents}
+        <UpdateAdminUser
+          isModalOpen={isEditUserModalOpen}
+          setIsModalOpen={setIsEditUserModalOpen}
+          userId={userId}
+          setUserId={setUserId}
+          refreshAllComponents={refreshAllComponents}
         />
         {totalPages > 1 && (
-        <Pagination
-          id="adminUsers-pagination"
-          className="pagination-ui"
-          count={totalPages}
-          page={currentPage}
-          onChange={handleChangePage}
-          variant="outlined"
-          shape="rounded"
-          renderItem={(item) => {
-            if (item.type === 'page') {
-              return (
-                <PaginationItem
-                  {...item}
-                  id={`Adminusers-page-${item.page}`}
-                  component="button"
-                  onClick={() => handleChangePage(null, item.page)}
-                />
-              );
-            } else if (item.type === 'previous') {
-              return (
-                <PaginationItem
-                  {...item}
-                  id="AdminUsers-previous-page-button"
-                  component="button"
-                  onClick={() => handleChangePage(null, currentPage - 1)}
-                />
-              );
-            } else if (item.type === 'next') {
-              return (
-                <PaginationItem
-                  {...item}
-                  id="AdminUsers-next-page-button"
-                  component="button"
-                  onClick={() => handleChangePage(null, currentPage + 1)}
-                />
-              );
-            }
-            return null;
-          }}
-        />
-      )}
+          <Pagination
+            id="adminUsers-pagination"
+            className="pagination-ui"
+            count={totalPages}
+            page={currentPage}
+            onChange={handleChangePage}
+            variant="outlined"
+            shape="rounded"
+            renderItem={(item) => {
+              if (item.type === "page") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`Adminusers-page-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, item.page)}
+                  />
+                );
+              } else if (item.type === "previous") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="AdminUsers-previous-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage - 1)}
+                  />
+                );
+              } else if (item.type === "next") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="AdminUsers-next-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              }
+              return null;
+            }}
+          />
+        )}
       </div>
-
     </div>
   );
 };

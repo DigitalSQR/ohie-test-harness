@@ -89,11 +89,11 @@ const Assessee = () => {
   const [filterDate, setFilterDate] = useState();
 
   const handleUserSearch = () => {
+    setCurrentPage(1);
     fetchUserByFilter(
       sortFieldName,
       sortDirection[sortFieldName],
-      currentPage,
-      pageSize
+      1
     );
   };
 
@@ -101,7 +101,6 @@ const Assessee = () => {
     sortFieldName,
     sortDirection,
     currentPage,
-    pageSize
   ) => {
     showLoader();
 
@@ -166,7 +165,6 @@ const Assessee = () => {
       newSortFieldName,
       newSortDirection[newSortFieldName],
       currentPage,
-      pageSize
     );
   };
 
@@ -231,7 +229,6 @@ const Assessee = () => {
       sortFieldName,
       sortDirection[sortFieldName],
       newPage,
-      pageSize
     );
   };
 
@@ -241,7 +238,6 @@ const Assessee = () => {
       sortFieldName,
       sortDirection[sortFieldName],
       currentPage,
-      pageSize
     );
   }, []);
 

@@ -82,8 +82,8 @@ const Applications = () => {
   const [filterDate, setFilterDate] = useState();
 
   const handleApplicationSearch = () => {
-    console.log(applicationSearchFilter);
-    getAllTestRequests(sortFieldName, sortDirection, currentPage);
+    setCurrentPage(1);
+    getAllTestRequests(sortFieldName, sortDirection, 1);
   };
 
   //useEffect to set the header, get all the test requests when the component loads

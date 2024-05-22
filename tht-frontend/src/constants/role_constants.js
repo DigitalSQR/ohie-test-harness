@@ -16,3 +16,18 @@ export const USER_ROLE_NAMES = {
     "role.tester": "Tester",
     "role.assessee": "Assessee"
 }
+
+export const UserManagementRoleActionLabels=[
+    {
+        label:"All",
+        value:["role.tester","role.admin"]
+    },
+    {
+        label:"Tester",
+        value:"role.tester"
+    },
+    {
+        label:"Admin",
+        value:"role.admin"
+    }
+]
