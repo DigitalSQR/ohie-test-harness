@@ -266,6 +266,7 @@ export default function ComponentList() {
                           </span>{" "}
                           <div className="filter-box">
                             <input
+                              id="ComponentNameSearchFilter"
                               type="text"
                               placeholder="Search by Component"
                               className="form-control filter-input"
@@ -280,6 +281,7 @@ export default function ComponentList() {
                           Status{" "}
                           <div className="filter-box">
                             <select
+                              id="ComponentStatusSearchFilter"
                               className="form-select custom-select custom-select-sm filter-input"
                               aria-label="Default select example"
                               value={componentSearchFilter.state}
@@ -311,6 +313,7 @@ export default function ComponentList() {
                           </span>{" "}
                           <div className="filter-box">
                             <input
+                              id="ComponentRankSearchFilter"
                               type="number"
                               placeholder="Search by Rank"
                               className="form-control filter-input"
@@ -327,7 +330,7 @@ export default function ComponentList() {
                             <button
                               className="search-button"
                               onClick={handleComponentSearch}
-                              id="handleUserSearch"
+                              id="handleComponentSearch"
                             >
                               <SearchOutlined />
                               Search

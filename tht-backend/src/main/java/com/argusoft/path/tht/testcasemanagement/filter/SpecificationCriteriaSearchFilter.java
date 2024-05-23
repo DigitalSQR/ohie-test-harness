@@ -147,6 +147,10 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
             predicates.add(criteriaBuilder.like(getSpecificationEntityRoot().get("rank").as(String.class), "%"+ rank + "%"));
         }
 
+        if (getComponentId() != null) {
+            predicates.add(criteriaBuilder.equal(this.getSpecificationEntityComponentEntityJoin().get("id"), getComponentId()));
+        }
+
         if(!CollectionUtils.isEmpty(getSpecificationType())) {
             predicates.add(criteriaBuilder.in(getSpecificationEntityRoot().get("isFunctional")).value(getSpecificationType()));
         }

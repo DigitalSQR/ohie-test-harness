@@ -239,6 +239,7 @@ const AdminUsers = () => {
                     </span>
                     <div className="filter-box">
                       <input
+                        id="AdminUserNameSearchFilter"
                         type="text"
                         placeholder="Search by Name"
                         className="form-control filter-input"
@@ -259,6 +260,7 @@ const AdminUsers = () => {
                     </span>
                     <div className="filter-box">
                       <input
+                        id="AdminUserEmailSearchFilter"
                         type="text"
                         placeholder="Search by Email"
                         className="form-control filter-input"
@@ -271,13 +273,13 @@ const AdminUsers = () => {
                     ROLE{" "}
                     <div className="filter-box">
                       <select
+                        id="AdminUserRoleSearchFilter"
                         className="form-select custom-select custom-select-sm filter-input"
                         aria-label="Default select example"
                         value={userSearchFilter.role}
                         onChange={(e) => {
                           updateFilter("role", e.target.value);
                         }}
-                        id="UserManagementRoleChange"
                       >
                         {UserManagementRoleActionLabels.map((userRole) => (
                           <option value={userRole.value} key={userRole.value}>

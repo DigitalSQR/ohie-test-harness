@@ -332,6 +332,7 @@ const Applications = () => {
                     </span>
                     <div className="filter-box">
                       <input
+                        id="TestRequestNameSearchFilter"
                         type="text"
                         placeholder="Search by Application"
                         className="form-control filter-input"
@@ -344,6 +345,7 @@ const Applications = () => {
                     Assessee{" "}
                     <div className="filter-box">
                       <input
+                        id="TestRequestAssesseeNameSearchFilter"
                         type="text"
                         placeholder="Search by Assessee"
                         className="form-control filter-input"
@@ -358,6 +360,7 @@ const Applications = () => {
                     Company{" "}
                     <div className="filter-box">
                       <input
+                        id="TestRequestCompanyNameSearchFilter"
                         type="text"
                         placeholder="Search by Company"
                         className="form-control filter-input"
@@ -372,6 +375,7 @@ const Applications = () => {
                     EMAIL ID{" "}
                     <div className="filter-box">
                       <input
+                        id="TestRequestEmailSearchFilter"
                         type="text"
                         placeholder="Search by Email"
                         className="form-control filter-input"
@@ -392,6 +396,7 @@ const Applications = () => {
                     </span>
                     <div className="filter-box">
                       <DatePicker
+                        id="TestRequestDateSearchFilter"
                         className="form-control filter-input"
                         placeholder="Select Date"
                         value={filterDate}
@@ -417,6 +422,7 @@ const Applications = () => {
                     </span>
                     <div className="filter-box">
                       <select
+                        id="TestRequestStatusSearchFilter"
                         className="form-select custom-select custom-select-sm filter-input"
                         aria-label="Default select example"
                         value={applicationSearchFilter.state}

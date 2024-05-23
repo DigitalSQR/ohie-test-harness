@@ -263,6 +263,7 @@ const Assessee = () => {
                       </div>
                       <div className="filter-box">
                         <input
+                          id="AssesseeNameSearchFilter"
                           type="text"
                           placeholder="Search by Name"
                           className="form-control filter-input"
@@ -287,6 +288,7 @@ const Assessee = () => {
                       </div>
                       <div className="filter-box">
                         <input
+                          id="AssesseeCompanyNameSearchFilter"
                           type="text"
                           placeholder="Search by Company"
                           className="form-control filter-input"
@@ -313,6 +315,7 @@ const Assessee = () => {
                       </div>
                       <div className="filter-box">
                         <input
+                          id="AssesseeEmailSearchFilter"
                           type="text"
                           placeholder="Search by Email"
                           className="form-control filter-input"
@@ -339,6 +342,7 @@ const Assessee = () => {
                       </div>
                       <div className="filter-box">
                         <DatePicker
+                          id="AssesseeDateSearchFilter"
                           className="form-control filter-input"
                           placeholder="Select Date"
                           value={filterDate}
@@ -368,6 +372,7 @@ const Assessee = () => {
                       </div>
                       <div className="filter-box">
                         <select
+                          id="AssesseeStatusSearchFilter"
                           className="form-select custom-select custom-select-sm filter-input"
                           aria-label="Default select example"
                           value={userSearchFilter.state}

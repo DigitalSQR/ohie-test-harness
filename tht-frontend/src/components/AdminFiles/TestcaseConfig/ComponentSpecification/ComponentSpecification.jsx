@@ -14,7 +14,13 @@ import unsorted from "../../../../styles/images/unsorted.png";
 import sortedUp from "../../../../styles/images/sort-up.png";
 import sortedDown from "../../../../styles/images/sort-down.png";
 import { ComponentAPI } from "../../../../api/ComponentAPI";
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { SearchOutlined } from "@ant-design/icons";
+import {
+  SpecificationActionStateLabels,
+  SpecificationIsRequiredActionLabels,
+  SpecificationTypeActionLabels,
+} from "../../../../constants/specification_constants";
 
 export default function ComponentSpecification() {
   const navigate = useNavigate();
@@ -35,6 +41,39 @@ export default function ComponentSpecification() {
   const [pageSize, setPageSize] = useState(10);
   const { componentId } = useParams();
   const dispatch = useDispatch();
+
+  const initialState = SpecificationActionStateLabels.find(
+    (item) => item.label === "All"
+  ).value;
+
+  const initialSpecificationType = SpecificationTypeActionLabels.find(
+    (item) => item.label === "All"
+  ).value;
+
+  const initialSpecificationIsRequired =
+    SpecificationIsRequiredActionLabels.find(
+      (item) => item.label === "All"
+    ).value;
+
+  const [specificationSearchFilter, setSpecificationSearchFilter] = useState({
+    name: "",
+    specificationType: initialSpecificationType,
+    required: initialSpecificationIsRequired,
+    state: initialState,
+    rank: "",
+  });
+
+  const updateFilter = (field, value) => {
+    setSpecificationSearchFilter((prevFilter) => ({
+      ...prevFilter,
+      [field]: value,
+    }));
+  };
+
+  const handleSpecificationSearch = () => {
+    setCurrentPage(1);
+    fetchData(sortFieldName, sortDirection[sortFieldName], 1, pageSize);
+  };
 
   useEffect(() => {
     refreshAllSpecifications();
@@ -97,12 +136,26 @@ export default function ComponentSpecification() {
     pageSize
   ) => {
     showLoader();
-    const params = {
+    let params = {
       componentId,
     };
     params.page = currentPage - 1;
     params.size = pageSize;
     params.sort = `${sortFieldName},${sortDirection}`;
+    const filteredSpecificationSearchFilter = Object.keys(
+      specificationSearchFilter
+    )
+      .filter((key) => {
+        const value = specificationSearchFilter[key];
+        return typeof value === "string" ? value.trim() !== "" : !!value;
+      })
+      .reduce((acc, key) => {
+        if (typeof specificationSearchFilter[key] === "string")
+          acc[key] = specificationSearchFilter[key].trim();
+        else acc[key] = specificationSearchFilter[key];
+        return acc;
+      }, {});
+    params = { ...params, ...filteredSpecificationSearchFilter };
     try {
       const resp = await SpecificationAPI.getSpecificationsByComponentId(
         params
@@ -231,68 +284,187 @@ export default function ComponentSpecification() {
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId={specifications?JSON.stringify(specifications):""}>
                 {(provided) => (
-              <table className="data-table capitalize-words" {...provided.droppableProps} ref={provided.innerRef}>
-                <thead>
-                  <tr>
-                    {/* <th style={{width:'5%'}}></th> */}
-                    <th style={{width:'15%'}}>
-                      Specifications{" "}
-                      <a
-                        className="ps-1"
-                        href="#"
-                        id="componentSpecification-sortByName"
-                        onClick={() => handleSort("name")}
-                      >
-                        {renderSortIcon("name")}
-                      </a>{" "}
-                    </th>
-                    <th style={{width:'20%'}}>
-                      Specification Type
-                      <a
-                        className="ps-1"
-                        href="#"
-                        id="componentSpecification-sortByIsFunctional"
-                        onClick={() => handleSort("isFunctional")}
-                      >
-                        {renderSortIcon("isFunctional")}
-                      </a>{" "}
-                    </th>
-                    <th style={{width:'20%'}}>
-                      Required / Recommended
-                      <a
-                        className="ps-1"
-                        href="#"
-                        id="componentSpecification-sortByisRequired"
-                        onClick={() => handleSort("isRequired")}
-                      >
-                        {renderSortIcon("isRequired")}
-                      </a>{" "}
-                    </th>
-                    <th style={{width: "12%"}}>Status</th>
-                    <th style={{width: "10%"}}>Rank{" "}
-                      <a
-                        className="ps-1"
-                        href="#"
-                        id="componentSpecification-sortByRank"
-                        onClick={() => handleSort("rank")}
-                      >
-                        {renderSortIcon("rank")}
-                      </a>{" "}
-                    </th>
-                    <th style={{width:'45%'}}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {specifications && specifications.length > 0 ? (
-                  specifications.map((specification, index) => (
-                    <Draggable key={specification.id} draggableId={specification.id} index={index} isDragDisabled={true}>
-                    {(provided) => (
-                      <tr
-                        {...provided.draggableProps}
-                        ref={provided.innerRef}
-                        key={specification.name}
-                      >
-                        {/* <td {...provided.dragHandleProps}>
+                  <table
+                    className="data-table capitalize-words"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
+                    <thead>
+                      <tr>
+                        {/* <th style={{width:'5%'}}></th> */}
+                        <th style={{ width: "15%" }}>
+                          Specifications{" "}
+                          <a
+                            className="ps-1"
+                            href="#"
+                            id="componentSpecification-sortByName"
+                            onClick={() => handleSort("name")}
+                          >
+                            {renderSortIcon("name")}
+                          </a>{" "}
+                          <div className="filter-box">
+                            <input
+                              id="specificationNameSearchFilter"
+                              type="text"
+                              placeholder="Search by Specification"
+                              className="form-control filter-input"
+                              value={specificationSearchFilter.name}
+                              onChange={(e) =>
+                                updateFilter("name", e.target.value)
+                              }
+                            />
+                          </div>
+                        </th>
+                        <th style={{ width: "20%" }}>
+                          Specification Type
+                          <a
+                            className="ps-1"
+                            href="#"
+                            id="componentSpecification-sortByIsFunctional"
+                            onClick={() => handleSort("isFunctional")}
+                          >
+                            {renderSortIcon("isFunctional")}
+                          </a>{" "}
+                          <div className="filter-box">
+                            <select
+                                id="specificationTypeSearchFilter"
+                              className="form-select custom-select custom-select-sm filter-input"
+                              aria-label="Default select example"
+                              value={
+                                specificationSearchFilter.specificationType
+                              }
+                              onChange={(e) => {
+                                updateFilter(
+                                  "specificationType",
+                                  e.target.value
+                                );
+                              }}
+                            >
+                              {SpecificationTypeActionLabels.map(
+                                (specificationType) => (
+                                  <option
+                                    value={specificationType.value}
+                                    key={specificationType.value}
+                                  >
+                                    {specificationType.label}
+                                  </option>
+                                )
+                              )}
+                            </select>
+                          </div>
+                        </th>
+                        <th style={{ width: "20%" }}>
+                          Required / Recommended
+                          <a
+                            className="ps-1"
+                            href="#"
+                            id="componentSpecification-sortByisRequired"
+                            onClick={() => handleSort("isRequired")}
+                          >
+                            {renderSortIcon("isRequired")}
+                          </a>{" "}
+                          <div className="filter-box">
+                            <select
+                                id="specificationIsRequiredSearchFilter"
+                              className="form-select custom-select custom-select-sm filter-input"
+                              aria-label="Default select example"
+                              value={specificationSearchFilter.required}
+                              onChange={(e) => {
+                                updateFilter("required", e.target.value);
+                              }}
+                            >
+                              {SpecificationIsRequiredActionLabels.map(
+                                (specificationIsRequired) => (
+                                  <option
+                                    value={specificationIsRequired.value}
+                                    key={specificationIsRequired.value}
+                                  >
+                                    {specificationIsRequired.label}
+                                  </option>
+                                )
+                              )}
+                            </select>
+                          </div>
+                        </th>
+                        <th style={{ width: "12%" }}>
+                          Status{" "}
+                          <div className="filter-box">
+                            <select
+                              id="specificationStatusSearchFilter"
+                              className="form-select custom-select custom-select-sm filter-input"
+                              aria-label="Default select example"
+                              value={specificationSearchFilter.state}
+                              onChange={(e) => {
+                                updateFilter("state", e.target.value);
+                              }}
+                            >
+                              {SpecificationActionStateLabels.map(
+                                (specificationState) => (
+                                  <option
+                                    value={specificationState.value}
+                                    key={specificationState.value}
+                                  >
+                                    {specificationState.label}
+                                  </option>
+                                )
+                              )}
+                            </select>
+                          </div>
+                        </th>
+                        <th style={{ width: "10%" }}>
+                          Rank{" "}
+                          <a
+                            className="ps-1"
+                            href="#"
+                            id="componentSpecification-sortByRank"
+                            onClick={() => handleSort("rank")}
+                          >
+                            {renderSortIcon("rank")}
+                          </a>{" "}
+                          <div className="filter-box">
+                            <input
+                              id="specificationRankSearchFilter"
+                              type="number"
+                              placeholder="Search by Rank"
+                              className="form-control filter-input"
+                              value={specificationSearchFilter.rank}
+                              onChange={(e) =>
+                                updateFilter("rank", e.target.value)
+                              }
+                            />
+                          </div>
+                        </th>
+                        <th style={{ width: "45%" }}>
+                          Actions{" "}
+                          <div className="filter-box">
+                            <button
+                              className="search-button"
+                              onClick={handleSpecificationSearch}
+                              id="handleSpecificationSearch"
+                            >
+                              <SearchOutlined />
+                              Search
+                            </button>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {specifications && specifications.length > 0 ? (
+                        specifications.map((specification, index) => (
+                          <Draggable
+                            key={specification.id}
+                            draggableId={specification.id}
+                            index={index}
+                            isDragDisabled={true}
+                          >
+                            {(provided) => (
+                              <tr
+                                {...provided.draggableProps}
+                                ref={provided.innerRef}
+                                key={specification.name}
+                              >
+                                {/* <td {...provided.dragHandleProps}>
                           <i className="bi bi-list" style={(sortFieldName == 'rank')? {} : {cursor: 'not-allowed'}} title={(sortFieldName == 'rank')? "" : "Sort by rank to enable drag and drop rank modification."}></i>
                         </td> */}
                       <td className="fw-bold">{specification.name}</td>
