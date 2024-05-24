@@ -9,7 +9,7 @@ import { set_header } from "../../../../reducers/homeReducer";
 import { Pagination } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FileSearchOutlined, FileAddOutlined } from "@ant-design/icons";
+import { FileSearchOutlined, FileAddOutlined, SearchOutlined } from "@ant-design/icons";
 import unsorted from "../../../../styles/images/unsorted.png";
 import sortedUp from "../../../../styles/images/sort-up.png";
 import sortedDown from "../../../../styles/images/sort-down.png";
