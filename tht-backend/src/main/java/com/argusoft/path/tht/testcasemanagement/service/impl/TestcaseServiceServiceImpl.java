@@ -3,30 +3,49 @@ package com.argusoft.path.tht.testcasemanagement.service.impl;
 import com.argusoft.path.tht.fileservice.constant.TestcaseEntityDocumentTypes;
 import com.argusoft.path.tht.fileservice.models.entity.DocumentEntity;
 import com.argusoft.path.tht.fileservice.service.DocumentService;
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
+import com.argusoft.path.tht.systemconfiguration.constant.SearchType;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
+import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
+import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.TestcaseRepository;
+import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.conformance.create.response.ConformanceResponse;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.conformance.create.restresponse.ConformanceStatementCreateRecord;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.deploy.request.DeployRequest;
-import com.argusoft.path.tht.testcasemanagement.testbed.dto.deploy.response.*;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.deploy.response.Actor;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.deploy.response.DeployResponse;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.deploy.response.Error;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.deploy.response.Warning;
 import com.argusoft.path.tht.testcasemanagement.testbed.services.ConformanceStatementManagementRestService;
 import com.argusoft.path.tht.testcasemanagement.testbed.services.TestSuiteManagementRestService;
 import com.argusoft.path.tht.testcasemanagement.validator.TestcaseValidator;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +58,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
@@ -71,6 +91,8 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     TestcaseRepository testcaseRepository;
     private ApplicationContext applicationContext;
     private SpecificationService specificationService;
+    private ComponentService componentService;
+    private TestcaseOptionService testcaseOptionService;
     private DocumentService documentService;
 
     @Value("${testbed.specification-api}")
@@ -101,6 +123,16 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     @Autowired
     public void setDocumentService(DocumentService documentService) {
         this.documentService = documentService;
+    }
+
+    @Autowired
+    public void setComponentService(ComponentService componentService) {
+        this.componentService = componentService;
+    }
+
+    @Autowired
+    public void setTestcaseOptionService(TestcaseOptionService testcaseOptionService) {
+        this.testcaseOptionService = testcaseOptionService;
     }
 
     /**
@@ -481,6 +513,64 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         return this.testcaseRepository.findAll(testcaseEntitySpecification, pageable);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public void bulkTestcaseUpload(@ModelAttribute("file") MultipartFile file, ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException,
+            DataValidationErrorException, DoesNotExistException {
+        try {
+            // Determine the file type
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename != null && originalFilename.endsWith(".csv")) {
+                readCsvFile(file.getInputStream(), contextInfo);
+            } else if (originalFilename != null && (originalFilename.endsWith(".xlsx") || originalFilename.endsWith(".xls"))) {
+                readExcelFile(file.getInputStream(), contextInfo);
+            } else {
+                throw new OperationFailedException("Invalid file type");
+            }
+        } catch (IOException e) {
+            throw new OperationFailedException("OperationFailed while reading file", e);
+        }
+    }
+
+    private void readCsvFile(InputStream inputStream, ContextInfo contextInfo) throws IOException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        StringBuilder result = new StringBuilder();
+        try (Reader reader = new InputStreamReader(inputStream);
+             CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT)) {
+            int rowIndex = 0;
+            for (CSVRecord record : csvParser) {
+                if (rowIndex < 4) {
+                    rowIndex++;
+                    continue;
+                }
+                if(!createTestcaseConfigurationByCSVRecord(record, contextInfo)) {
+                    break;
+                }
+            }
+        }
+    }
+
+    private void readExcelFile(InputStream inputStream, ContextInfo contextInfo) throws IOException, InvalidFormatException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        Workbook workbook = new XSSFWorkbook(inputStream); // Use XSSFWorkbook for .xlsx files
+        Sheet sheet = workbook.getSheetAt(0); // Assuming the data is in the first sheet
+        int rowIndex = 0;
+        for (Row row : sheet) {
+            if (rowIndex < 4) {
+                rowIndex++;
+                continue;
+            }
+            if(!createTestcaseConfigurationByRow(row, contextInfo)) {
+                break;
+            }
+        }
+        workbook.close();
+    }
+
     @Override
     public List<TestcaseEntity> searchTestcases(
             TestcaseCriteriaSearchFilter testcaseSearchFilter,
@@ -488,6 +578,246 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             throws InvalidParameterException {
         Specification<TestcaseEntity> testcaseEntitySpecification = testcaseSearchFilter.buildSpecification(contextInfo);
         return this.testcaseRepository.findAll(testcaseEntitySpecification);
+    }
+
+    private boolean createTestcaseConfigurationByCSVRecord(CSVRecord csvRecord, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException {
+        int cellIndex = 0;
+        String reference = TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_TESTCASE;
+        ComponentEntity componentEntity = new ComponentEntity();
+        SpecificationEntity specificationEntity = new SpecificationEntity();
+        TestcaseEntity testcaseEntity = new TestcaseEntity();
+        TestcaseOptionEntity testcaseOptionEntity = new TestcaseOptionEntity();
+        String parentReference = "";
+        for (String cellValue : csvRecord) {
+            cellIndex++;
+            if (cellIndex == 1) {
+                reference = cellValue;
+                if(!StringUtils.hasLength(reference)) {
+                    return false;
+                }
+                continue;
+            }
+            if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_COMPONENT.equals(reference)) {
+                if (cellIndex == 2) {
+                    componentEntity.setName(cellValue);
+                } else if (cellIndex == 3) {
+                    componentEntity.setDescription(cellValue);
+                } else {
+                    break;
+                }
+            } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_SPECIFICATION.equals(reference)) {
+                if (cellIndex == 2) {
+                    specificationEntity.setName(cellValue);
+                } else if (cellIndex == 3) {
+                    specificationEntity.setDescription(cellValue);
+                } else if (cellIndex == 4) {
+                    specificationEntity.setFunctional(TestcaseServiceConstants.SHEET_COLUMN_FUNCTIONAL_WORKFLOW_VALUE_FUNCTIONAL.equals(cellValue));
+                } else if (cellIndex == 5) {
+                    specificationEntity.setRequired(TestcaseServiceConstants.SHEET_COLUMN_REQUIRED_RECOMMENDED_VALUE_REQUIRED.equals(cellValue));
+                } else if (cellIndex == 6) {
+                    parentReference = cellValue;
+                } else {
+                    break;
+                }
+            } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_TESTCASE.equals(reference)) {
+                if (cellIndex == 2) {
+                    testcaseEntity.setName(cellValue);
+                } else if (cellIndex == 3) {
+                    testcaseEntity.setDescription(cellValue);
+                } else if (cellIndex == 4) {
+                    testcaseEntity.setQuestionType(cellValue);
+                } else if (cellIndex == 5) {
+                    testcaseEntity.setFailureMessage(cellValue);
+                } else if (cellIndex == 6) {
+                    parentReference = cellValue;
+                } else {
+                    break;
+                }
+            } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_TESTCASE_OPTION.equals(reference)) {
+                if (cellIndex == 2) {
+                    testcaseOptionEntity.setName(cellValue);
+                } else if (cellIndex == 3) {
+                    testcaseOptionEntity.setDescription(cellValue);
+                } else if (cellIndex == 4) {
+                    testcaseOptionEntity.setSuccess("TRUE".equalsIgnoreCase(cellValue));
+                } else if (cellIndex == 5) {
+                    parentReference = cellValue;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_COMPONENT.equals(reference)) {
+            componentEntity.setState(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE);
+            componentService.createComponent(componentEntity, contextInfo);
+        } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_SPECIFICATION.equals(reference)) {
+            specificationEntity.setState(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE);
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+            if(!StringUtils.hasLength(parentReference)) {
+                throw new OperationFailedException("No component provided for the specification : " + specificationEntity.getName());
+            }
+
+            componentCriteriaSearchFilter.setName(parentReference);
+            componentCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
+            List<ComponentEntity> componentEntities = componentService.searchComponents(componentCriteriaSearchFilter, contextInfo);
+            if(componentEntities.isEmpty()) {
+                throw new OperationFailedException("No Component Found with name : " + parentReference);
+            }
+            specificationEntity.setComponent(componentEntities.get(0));
+
+            specificationService.createSpecification(specificationEntity, contextInfo);
+        } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_TESTCASE.equals(reference)) {
+            testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
+            testcaseEntity.setManual(Boolean.TRUE);
+            SpecificationCriteriaSearchFilter specificationCriteriaSearchFilter = new SpecificationCriteriaSearchFilter();
+            if(!StringUtils.hasLength(parentReference)) {
+                throw new OperationFailedException("No specification provided for the testcase : " + testcaseEntity.getName());
+            }
+
+            specificationCriteriaSearchFilter.setName(parentReference);
+            specificationCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
+            List<SpecificationEntity> specificationEntities = specificationService.searchSpecifications(specificationCriteriaSearchFilter, contextInfo);
+            if(specificationEntities.isEmpty()) {
+                throw  new OperationFailedException("No Specification found with name : " + parentReference);
+            }
+            testcaseEntity.setSpecification(specificationEntities.get(0));
+
+            this.createTestcase(testcaseEntity, null, contextInfo);
+        } else {
+            testcaseOptionEntity.setState(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_ACTIVE);
+            TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter = new TestcaseCriteriaSearchFilter();
+            if(!StringUtils.hasLength(parentReference)) {
+                throw new OperationFailedException("No testcase provided for the testcase Option : " + testcaseOptionEntity.getName());
+            }
+            testcaseCriteriaSearchFilter.setName(parentReference);
+            testcaseCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
+            List<TestcaseEntity> testcaseEntities = this.searchTestcases(testcaseCriteriaSearchFilter, contextInfo);
+            if(testcaseEntities.isEmpty()) {
+                throw new OperationFailedException("No testcase found with name: " + parentReference);
+            }
+            testcaseOptionEntity.setTestcase(testcaseEntities.get(0));
+
+            testcaseOptionService.createTestcaseOption(testcaseOptionEntity, contextInfo);
+        }
+        return true;
+    }
+
+    private boolean createTestcaseConfigurationByRow(Row row, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException {
+        int cellIndex = 0;
+        String reference = TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_TESTCASE;
+        ComponentEntity componentEntity = new ComponentEntity();
+        SpecificationEntity specificationEntity = new SpecificationEntity();
+        TestcaseEntity testcaseEntity = new TestcaseEntity();
+        TestcaseOptionEntity testcaseOptionEntity = new TestcaseOptionEntity();
+        String parentReference = "";
+        for (Cell cell : row) {
+            cellIndex++;
+            if (cellIndex == 1) {
+                reference = cell.getStringCellValue();
+                if(!StringUtils.hasLength(reference)) return false;
+                continue;
+            }
+            if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_COMPONENT.equals(reference)) {
+                if (cellIndex == 2) {
+                    componentEntity.setName(cell.getStringCellValue());
+                } else if (cellIndex == 3) {
+                    componentEntity.setDescription(cell.getStringCellValue());
+                }
+            } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_SPECIFICATION.equals(reference)) {
+                if (cellIndex == 2) {
+                    specificationEntity.setName(cell.getStringCellValue());
+                } else if (cellIndex == 3) {
+                    specificationEntity.setDescription(cell.getStringCellValue());
+                } else if (cellIndex == 4) {
+                    specificationEntity.setFunctional(TestcaseServiceConstants.SHEET_COLUMN_FUNCTIONAL_WORKFLOW_VALUE_FUNCTIONAL.equals(cell.getStringCellValue()));
+                } else if (cellIndex == 5) {
+                    specificationEntity.setRequired(TestcaseServiceConstants.SHEET_COLUMN_REQUIRED_RECOMMENDED_VALUE_REQUIRED.equals(cell.getStringCellValue()));
+                } else if (cellIndex == 6) {
+                    parentReference = cell.getStringCellValue();
+                } else {
+                    break;
+                }
+            } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_TESTCASE.equals(reference)) {
+                if (cellIndex == 2) {
+                    testcaseEntity.setName(cell.getStringCellValue());
+                } else if (cellIndex == 3) {
+                    testcaseEntity.setDescription(cell.getStringCellValue());
+                } else if (cellIndex == 4) {
+                    testcaseEntity.setQuestionType(cell.getStringCellValue());
+                } else if (cellIndex == 5) {
+                    testcaseEntity.setFailureMessage(cell.getStringCellValue());
+                } else if (cellIndex ==6){
+                    parentReference = cell.getStringCellValue();
+                } else {
+                    break;
+                }
+            } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_TESTCASE_OPTION.equals(reference)) {
+                if (cellIndex == 2) {
+                    testcaseOptionEntity.setName(cell.getStringCellValue());
+                } else if (cellIndex == 3) {
+                    testcaseOptionEntity.setDescription(cell.getStringCellValue());
+                } else if (cellIndex == 4) {
+                    testcaseOptionEntity.setSuccess("YES".equalsIgnoreCase(cell.getStringCellValue()));
+                } else if (cellIndex == 5){
+                    parentReference = cell.getStringCellValue();
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_COMPONENT.equals(reference)) {
+            componentEntity.setState(ComponentServiceConstants.COMPONENT_STATUS_ACTIVE);
+            componentService.createComponent(componentEntity, contextInfo);
+        } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_SPECIFICATION.equals(reference)) {
+            specificationEntity.setState(SpecificationServiceConstants.SPECIFICATION_STATUS_ACTIVE);
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter = new ComponentCriteriaSearchFilter();
+            if(!StringUtils.hasLength(parentReference)) {
+                throw new OperationFailedException("No component provided for the specification : " + specificationEntity.getName());
+            }
+            componentCriteriaSearchFilter.setName(parentReference);
+            componentCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
+            List<ComponentEntity> componentEntities = componentService.searchComponents(componentCriteriaSearchFilter, contextInfo);
+            if(componentEntities.isEmpty()) {
+                throw new OperationFailedException("No Component Found with name : " + parentReference);
+            }
+            specificationEntity.setComponent(componentEntities.get(0));
+
+            specificationService.createSpecification(specificationEntity, contextInfo);
+        } else if (TestcaseServiceConstants.SHEET_COLUMN_REFERENCE_TYPE_VALUE_TESTCASE.equals(reference)) {
+            testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
+            testcaseEntity.setManual(Boolean.TRUE);
+            SpecificationCriteriaSearchFilter specificationCriteriaSearchFilter = new SpecificationCriteriaSearchFilter();
+            if(!StringUtils.hasLength(parentReference)) {
+                throw new OperationFailedException("No specification provided for the testcase : " + testcaseEntity.getName());
+            }
+            specificationCriteriaSearchFilter.setName(parentReference);
+            specificationCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
+            List<SpecificationEntity> specificationEntities = specificationService.searchSpecifications(specificationCriteriaSearchFilter, contextInfo);
+            if(specificationEntities.isEmpty()) {
+                throw  new OperationFailedException("No Specification found with name : " + parentReference);
+            }
+            testcaseEntity.setSpecification(specificationEntities.get(0));
+
+            this.createTestcase(testcaseEntity, null, contextInfo);
+        } else {
+            testcaseOptionEntity.setState(TestcaseOptionServiceConstants.TESTCASE_OPTION_STATUS_ACTIVE);
+            TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter = new TestcaseCriteriaSearchFilter();
+            if(!StringUtils.hasLength(parentReference)) {
+                throw new OperationFailedException("No testcase provided for the testcase Option : " + testcaseOptionEntity.getName());
+            }
+            testcaseCriteriaSearchFilter.setName(parentReference);
+            testcaseCriteriaSearchFilter.setNameSearchType(SearchType.EXACTLY);
+            List<TestcaseEntity> testcaseEntities = this.searchTestcases(testcaseCriteriaSearchFilter, contextInfo);
+            if(testcaseEntities.isEmpty()) {
+                throw new OperationFailedException("No testcase found with name: " + parentReference);
+            }
+            testcaseOptionEntity.setTestcase(testcaseEntities.get(0));
+
+            testcaseOptionService.createTestcaseOption(testcaseOptionEntity, contextInfo);
+        }
+        return true;
     }
 
     /**

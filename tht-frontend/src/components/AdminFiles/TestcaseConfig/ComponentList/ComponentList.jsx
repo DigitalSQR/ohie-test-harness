@@ -9,12 +9,13 @@ import { set_header } from "../../../../reducers/homeReducer";
 import { Pagination } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FileSearchOutlined } from "@ant-design/icons";
+import { FileSearchOutlined, FileAddOutlined } from "@ant-design/icons";
 import unsorted from "../../../../styles/images/unsorted.png";
 import sortedUp from "../../../../styles/images/sort-up.png";
 import sortedDown from "../../../../styles/images/sort-down.png";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { SearchOutlined } from "@ant-design/icons";
+import ValidateConfigFacts from "../ValidateConfigFacts/ValidateConfigFacts.jsx";
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import BulkUploadModal from "./BulkUploadModal/BulkUploadModal";
 
 export default function ComponentList() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export default function ComponentList() {
   const { showLoader, hideLoader } = useLoader();
   const [componentId, setComponentId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bulkUploadModalOpen, setBulkUploadModalOpen]=useState(false);
   const [totalElements, setTotalElements] = useState();
   const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
@@ -229,6 +231,14 @@ export default function ComponentList() {
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary me-2"
+                id="componentList-bulkUpload"
+                onClick={() => setBulkUploadModalOpen(true)}
+              >
+               <FileAddOutlined className="me-1" /> Bulk Upload
+              </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary me-2"
                 id="componentList-navToValidateConfig"
                 onClick={() => navigate("/validate-config")}
               ><FileSearchOutlined className="me-1" />Validate Configuration</button>
@@ -412,6 +422,13 @@ export default function ComponentList() {
             setIsModalOpen={setIsModalOpen}
             componentId={componentId}
             setComponentId={setComponentId}
+            refreshAllComponents={refreshAllComponents}
+          />
+        </div>
+        <div>
+          <BulkUploadModal
+            isModalOpen={bulkUploadModalOpen}
+            setIsModalOpen={setBulkUploadModalOpen}
             refreshAllComponents={refreshAllComponents}
           />
         </div>

@@ -9,14 +9,11 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseMapper;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.request.StartRequest;
-import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.response.StartResponse;
-import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.request.StatusRequest;
-import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.response.StatusResponse;
 import com.argusoft.path.tht.testcasemanagement.testbed.services.TestSessionManagementRestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.google.common.collect.Multimap;
@@ -24,6 +21,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,9 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This TestcaseServiceRestController maps end points with standard service.
@@ -300,6 +305,11 @@ public class TestcaseRestController {
         return strings.parallelStream().toList();
     }
 
+    @PostMapping("/upload")
+    @Transactional(rollbackFor = Exception.class)
+    public void bulkTestcaseUpload(@ModelAttribute("file") MultipartFile file, @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        testcaseService.bulkTestcaseUpload(file, contextInfo);
+    }
 
     //TODO - the demo focused code - TEST BED
    /* @PostMapping("/start/testsuite")

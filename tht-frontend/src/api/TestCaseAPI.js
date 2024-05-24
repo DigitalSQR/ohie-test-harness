@@ -75,6 +75,17 @@ export const TestCaseAPI = {
         data:formData
       })
       .then((response) => response.data);
-  }
-  
+  },
+
+  bulkUpload: function (file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api
+      .request({
+        url: "/testcase/upload",
+        method: "POST",
+        data: formData,
+      })
+      .then((response) => response.data);
+  },
 };

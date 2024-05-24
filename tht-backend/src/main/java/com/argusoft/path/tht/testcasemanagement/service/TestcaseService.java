@@ -7,6 +7,7 @@ import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFil
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -186,5 +187,22 @@ public interface TestcaseService {
      *                                      was attempted on an out of date version
      */
     public TestcaseEntity changeRank(String testcaseId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
+    /**
+     * Read the file and create new testcases based on the data.
+     *
+     * @param file  file with the csv or xlsx type to import testcases
+     * @param contextInfo information containing the principalId and locale
+     *                    information about the caller of service operation
+     *
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+
+     */
+    public void bulkTestcaseUpload(MultipartFile file, ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException,
+            DataValidationErrorException, DoesNotExistException;
 
 }
