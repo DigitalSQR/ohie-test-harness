@@ -65,8 +65,7 @@ public interface TestcaseResultService {
     /**
      * Submit TestcaseResult for the manual testing.
      *
-     * @param testcaseResultId
-     * @param selectedTestcaseOptionIds
+     * @param testcaseResultAnswerInfos
      * @param contextInfo               information containing the principalId and locale
      *                                  information about the caller of service operation
      * @return TestcaseResultInfo the details of TestcaseResult just updated
@@ -249,4 +248,10 @@ public interface TestcaseResultService {
     public List<TestcaseResultEntity> findBestOfEachComponent(List<ComponentEntity> allComponents);
 
     public List<Object[]> findBestFiveTestcaseResultPerComponent(String componentId);
+
+    public List<Object[]> complianceAndNonComplianceOfAllTestRequestResults();
+
+    public List<Object[]> getFinishedSkippedAndAllTestRequestResults();
+
+    public int countTestcaseResultsOfTestRequest();
 }

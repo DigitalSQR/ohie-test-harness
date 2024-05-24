@@ -61,10 +61,15 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.sql.Time;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
@@ -1134,111 +1139,107 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
         return message.toString();
     }
 
-    @Override
-    public GraphInfo getDashboard(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
+    @Async
+    private int getAllTestRequestResults() {
 
-        GraphInfo graphInfo = new GraphInfo();
+        // Search for all test Request Results count
+        return testcaseResultService.countTestcaseResultsOfTestRequest();
 
+    }
 
-        // Search for all test Request Results
-        TestcaseResultCriteriaSearchFilter searchFilterForAllTestRequests = new TestcaseResultCriteriaSearchFilter();
-        searchFilterForAllTestRequests.setRefObjUri(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
-        List<TestcaseResultEntity> testRequestResults = testcaseResultService.searchTestcaseResults(searchFilterForAllTestRequests, contextInfo);
+    @Async
+    private int noOfAssesseesRegistered() {
 
+        return userService.searchActiveAssessees();
 
-        // Total Number of Applications
+    }
 
+    @Async
+    private float complianceRate(){
 
-        graphInfo.setTotalApplications(testRequestResults.size());
+        long now = System.currentTimeMillis();
 
+        List<Object[]> complianceAndNonCompliance = testcaseResultService.complianceAndNonComplianceOfAllTestRequestResults();
 
-        // Total number of assessees registered
+        long compliance = (long)complianceAndNonCompliance.get(0)[0];
+        long nonCompliance = (long)complianceAndNonCompliance.get(0)[1];
 
-        UserSearchCriteriaFilter searchCriteriaFilter = new UserSearchCriteriaFilter();
-        graphInfo.setAssesseeRegistered(userService.searchUsers(searchCriteriaFilter, contextInfo).stream().filter(userEntity -> userEntity.getRoles().stream().anyMatch(roleEntity -> roleEntity.getId().equals(UserServiceConstants.ROLE_ID_ASSESSEE))).filter(userEntity -> userEntity.getState().equals(UserServiceConstants.USER_STATUS_ACTIVE)).toList().size());
-
-        // Compliance Rate
-
-
-        int complianceForComplianceRate = testRequestResults.stream().mapToInt(testcaseResultEntity -> {
-            try {
-                return testcaseResultEntity.getCompliant();
-            } catch(Exception e) {
-                return 0;
-            }
-        }).sum();
-        int nonComplianceForComplianceRate = testRequestResults.stream().mapToInt(testcaseResultEntity -> {
-            try {
-                return testcaseResultEntity.getNonCompliant();
-            } catch(Exception e) {
-                return 0;
-            }
-        }).sum();
-
-        if((complianceForComplianceRate+nonComplianceForComplianceRate)!=0){
-            graphInfo.setComplianceRate(((float) complianceForComplianceRate /(complianceForComplianceRate + nonComplianceForComplianceRate))*100.0F);
+        if((compliance+nonCompliance)!=0){
+            now = System.currentTimeMillis() - now;
+            System.out.println("Testing Time For Compliance Rate : " + now);
+            return ((float) compliance /(compliance + nonCompliance))*100.0F;
         } else {
-            graphInfo.setComplianceRate(0);
+            now = System.currentTimeMillis() - now;
+            System.out.println("Testing Time For Compliance Rate : " + now);
+            return 0;
         }
 
+    }
 
+    @Async
+    private float testingRate(){
 
+        long now = System.currentTimeMillis();
 
-        // Testing Rate
+        List<Object[]> getFinishedSkippedAndAllTestRequestResults = testcaseResultService.getFinishedSkippedAndAllTestRequestResults();
 
+        long finishedAndSkippedTestRequestResults = (long) getFinishedSkippedAndAllTestRequestResults.get(0)[0];
+        long allTestRequestResults = (long)getFinishedSkippedAndAllTestRequestResults.get(0)[1];
 
+        if(allTestRequestResults != 0) {
 
-        if(!testRequestResults.isEmpty()){
-            graphInfo.setTestingRate((((float)testRequestResults
-                    .stream()
-                    .filter(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) || testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP) ).toList().size())
-                    /
-                    (testRequestResults.size())*100.0F));
-        } else {
-            graphInfo.setTestingRate(0);
+            now = System.currentTimeMillis() - now;
+            System.out.println("Testing Time For Testing Rate : " + now);
+
+            return (finishedAndSkippedTestRequestResults/(float)allTestRequestResults)*100.0F;
+        }
+        else {
+            now = System.currentTimeMillis() - now;
+            System.out.println("Testing Time For Testing Rate : " + now);
+            return 0;
         }
 
+    }
 
+    @Async
+    public List<ApplicationRequests> applicationRequestsByMonth(){
+        long now = System.currentTimeMillis();
 
+        List<Object[]> maxmindate = testcaseResultRepository.maxMinDate(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
 
-        // Set ApplicationRequestsByMonth
-
-
-
-        Optional<Date> maxDate = testRequestResults.stream().max(Comparator.comparing(TestcaseResultEntity::getUpdatedAt)).map(TestcaseResultEntity::getUpdatedAt);
-
-        Optional<Date> minDate = testRequestResults.stream().min(Comparator.comparing(TestcaseResultEntity::getUpdatedAt)).map(TestcaseResultEntity::getUpdatedAt);
+        Date maxDate = (Date) maxmindate.get(0)[0];
+        Date minDate = (Date) maxmindate.get(0)[1];
 
         int max=-1;
         int min=0;
 
-        if(minDate.isPresent() && maxDate.isPresent()){
-            min = minDate.get().getYear();
-            max = maxDate.get().getYear();
+        if(minDate!=null && maxDate!=null) {
+            min = minDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().getYear();
+            max = maxDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().getYear();
         }
 
         List<ApplicationRequests> applicationRequests = new ArrayList<>();
         for(int year = max; year >=min; year--){
-            int finalYear = year;
-            List<TestcaseResultEntity> yearlyTestRequestResults = testRequestResults.stream().filter(testcaseResultEntity -> testcaseResultEntity.getUpdatedAt().getYear() == finalYear).toList();
 
             List<ApplicationRequestDataByMonth> applicationRequestDataByMonthList = new ArrayList<>();
 
             for(int month = 1 ; month <= 12 ; month++){
-                int finalMonth = month;
-                List<TestcaseResultEntity> monthlyTestRequestResults = yearlyTestRequestResults.stream().filter(testcaseResultEntity -> (testcaseResultEntity.getUpdatedAt().getMonth()+1) == finalMonth).toList();
+
+                int monthlyTestRequestResultsCount = testcaseResultRepository.findResultsPerMonthCount(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, year,month);
 
                 ApplicationRequestDataByMonth applicationRequestDataByMonth = new ApplicationRequestDataByMonth();
 
                 applicationRequestDataByMonth.setMonth(month);
-                int compliant = monthlyTestRequestResults.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
+
+                int compliant = testcaseResultRepository.findResultsPerMonthBySuccess(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, year,month);
+
                 applicationRequestDataByMonth.setCompliant(compliant);
-                applicationRequestDataByMonth.setNonCompliant(monthlyTestRequestResults.size() - compliant);
+                applicationRequestDataByMonth.setNonCompliant(monthlyTestRequestResultsCount - compliant);
 
                 applicationRequestDataByMonthList.add(applicationRequestDataByMonth);
             }
             ApplicationRequests applicationRequest = new ApplicationRequests();
-            applicationRequest.setYear(year+1900);
+            applicationRequest.setYear(year);
 
             applicationRequest.setApplicationRequestDataByMonthList(applicationRequestDataByMonthList);
 
@@ -1246,23 +1247,21 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
 
         }
 
-        graphInfo.setApplicationRequestsByMonth(applicationRequests);
+        now = System.currentTimeMillis() - now;
+        System.out.println("Testing Time For Application Requests By Month : " + now);
+        return applicationRequests;
+    }
 
+    @Async
+    private List<CompliantApplication> compliantApplications(){
 
-
-        // Compliant Application
-
-
+        long now = System.currentTimeMillis();
 
         // Store returnable data of compliant application
         List<CompliantApplication> compliantApplications = new ArrayList<>();
 
         // Get Top five test Request Results according to compliant/non-compliant ratio
         List<TestcaseResultEntity> topFiveTestRequestsResult = testcaseResultService.findTopFiveTestRequestsResult();
-
-
-        // Get Components using ids using ref ids from the component testcase result list
-        List<ComponentEntity> allComponentEntities = componentService.findAll();
 
         // Calculate and set compliant applications in compliant applications list
         for(int i = 0 ; i < topFiveTestRequestsResult.size() ; i++){
@@ -1292,73 +1291,67 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
             TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
             searchFilter.setParentTestcaseResultId(topFiveTestRequestsResult.get(i).getId());
 
-            List<TestcaseResultEntity> componentResults = testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
-
             /* QUESTION : Database call to get all components and then use java logic to match component OR Call database each time to get specific component */
 
-            List<ComponentEntity> componentEntities = allComponentEntities.stream().filter(componentEntity -> componentResults.stream().anyMatch(testcaseResultEntity -> testcaseResultEntity.getRefId().equals(componentEntity.getId()))).toList();
+            List<Object[]> componentEntities = componentService.searchComponentPartsByTestRequest(topFiveTestRequestsResult.get(i).getTestRequest().getId());
 
             /* QUESTION : Which Rank to be used?? */
-            List<Component> components = getComponents(componentEntities, componentResults);
+            List<Component> components = getComponents(componentEntities);
 
             compliantApplication.setComponents(components);
 
             compliantApplications.add(compliantApplication);
 
         }
+        now = System.currentTimeMillis() - now;
+        System.out.println("Testing Time For Compliant Applications : " + now);
+        return compliantApplications;
+    }
 
-        // Set Compliant Application List to returnable Graph Info variable
-        graphInfo.setCompliantApplications(compliantApplications);
+    @Async
+    private Map<String, Integer> pieChart(){
 
-
-
-        //PIE CHART
-
-
-
-        // Find All test requests
-        List<TestRequestEntity> allTestRequests = testRequestRepository.findAll();
+        long now = System.currentTimeMillis();
 
         Map<String,Integer> pieChart = new HashMap<>();
 
         // Put counts of each status of test requests in the pieChart variable
-        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS)).toList().size());
-        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING)).toList().size());
-        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED)).toList().size());
-        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED)).toList().size());
-        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED)).toList().size());
-        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED, allTestRequests.stream().filter(testRequestEntity -> testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED)).toList().size());
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS));
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING));
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED));
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED));
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED));
+        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED));
 
-        // Set pieChart values to returnable Graph Info variable
-        graphInfo.setPieChart(pieChart);
+        now = System.currentTimeMillis() - now;
+        System.out.println("Testing Time For PieChart : " + now);
 
+        return pieChart;
+    }
 
+    @Async
+    private List<AwardGraph> awardGraphs(){
 
-
-        //AWARD GRAPH
-
-
-
+        long now = System.currentTimeMillis();
 
         List<AwardGraph> awardGraphs = new ArrayList<>();
 
+        List<Object[]> allComponents = componentService.findAllIdName();
 
-        List<ComponentEntity> allComponents = componentService.findAll();
+        for(Object[] componentEntity : allComponents){
 
-        for(ComponentEntity componentEntity : allComponents){
-
-            List<Object[]> bestFiveTestcaseResultPerComponent = this.findBestFiveTestcaseResultPerComponent(componentEntity.getId());
+            List<Object[]> bestFiveTestcaseResultPerComponent = this.findBestFiveTestcaseResultPerComponent((String)componentEntity[0]);
 
             List<AwardApplication> awardApplicationList = new ArrayList<>();
 
             AwardGraph awardGraph = new AwardGraph();
 
-            awardGraph.setComponentName(componentEntity.getName());
+            awardGraph.setComponentName((String)componentEntity[1]);
 
             if(bestFiveTestcaseResultPerComponent.isEmpty()){
 
 
-                awardGraph.setAwardApplicationList(new ArrayList<AwardApplication>());
+                awardGraph.setAwardApplicationList(new ArrayList<>());
 
 
             } else {
@@ -1415,7 +1408,362 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
             awardGraph.setComponentRank(awardGraphs.indexOf(awardGraph)+1);
         }
 
-        graphInfo.setAwardGraph(awardGraphs);
+        now = System.currentTimeMillis() - now;
+        System.out.println("Testing Time For Award Graphs : " + now);
+
+        return awardGraphs;
+    }
+
+    @Async
+    private List<PercentageCumulativeGraph> percentageCumulativeGraphs(){
+
+        long now = System.currentTimeMillis();
+
+        List<PercentageCumulativeGraph> percentageCumulativeGraphs = new ArrayList<>();
+
+        // Find all components
+        List<String> componentEntities = componentService.findAllName();
+
+        List<Object[]> filteredComponentsResults = testcaseResultRepository.nameComplianceAndNonCompliance(ComponentServiceConstants.COMPONENT_REF_OBJ_URI, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
+
+        for(Object[] componentResult: filteredComponentsResults){
+            PercentageCumulativeGraph percentageCumulativeGraph = new PercentageCumulativeGraph();
+
+            percentageCumulativeGraph.setCompliantTestRequests((Long)componentResult[0]);
+            percentageCumulativeGraph.setTotalTestRequests((Long)componentResult[1] + (Long)componentResult[0]);
+            percentageCumulativeGraph.setComponentName(String.valueOf(componentResult[2]));
+            componentEntities = componentEntities.stream().filter(componentEntity -> !(componentEntity.equals(String.valueOf(componentResult[2])))).collect(Collectors.toList());
+
+            percentageCumulativeGraphs.add(percentageCumulativeGraph);
+        }
+        for(String component : componentEntities){
+            PercentageCumulativeGraph percentageCumulativeGraph = new PercentageCumulativeGraph();
+
+            percentageCumulativeGraph.setComponentName(component);
+            percentageCumulativeGraph.setTotalTestRequests(0L);
+            percentageCumulativeGraph.setCompliantTestRequests(0L);
+
+            percentageCumulativeGraphs.add(percentageCumulativeGraph);
+        }
+
+        // Sort percentageCumulativeGraph using percentage of compliant test Requests
+        percentageCumulativeGraphs.sort(Comparator.comparing(percentageCumulativeGraph -> {
+            if(percentageCumulativeGraph.getTotalTestRequests()!=0){
+                return percentageCumulativeGraph.getCompliantTestRequests() / percentageCumulativeGraph.getTotalTestRequests();
+            } else {
+                return percentageCumulativeGraph.getCompliantTestRequests();
+            }
+        }));
+
+        // Set component rank based in List index as list is sorted
+        for( int i = 0 ; i < percentageCumulativeGraphs.size() ; i++ ){
+            percentageCumulativeGraphs.get(i).setComponentRank( i + 1 );
+        }
+
+        now = System.currentTimeMillis() - now;
+        System.out.println("Testing Time For Percentage Cumulative Graphs : " + now);
+
+        return percentageCumulativeGraphs;
+    }
+
+    @Override
+    public GraphInfo getDashboard(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, RuntimeException {
+
+        GraphInfo graphInfo = new GraphInfo();
+
+        // Get All Test Request Results
+
+        CompletableFuture<Integer> futureTestRequestResults = CompletableFuture.supplyAsync(this::getAllTestRequestResults);
+
+
+
+        // Total number of assessees registered
+
+        CompletableFuture<Integer> futureNoOfAssesseesRegistered = CompletableFuture.supplyAsync(this::noOfAssesseesRegistered);
+
+
+        // Compliance Rate
+
+        CompletableFuture<Float> futureComplianceRate = CompletableFuture.supplyAsync(this::complianceRate);
+
+////        int complianceForComplianceRate = testRequestResults.stream().mapToInt(testcaseResultEntity -> {
+////            try {
+////                return testcaseResultEntity.getCompliant();
+////            } catch(Exception e) {
+////                return 0;
+////            }
+////        }).sum();
+////        int nonComplianceForComplianceRate = testRequestResults.stream().mapToInt(testcaseResultEntity -> {
+////            try {
+////                return testcaseResultEntity.getNonCompliant();
+////            } catch(Exception e) {
+////                return 0;
+////            }
+////        }).sum();
+//
+//        if((complianceForComplianceRate+nonComplianceForComplianceRate)!=0){
+//            graphInfo.setComplianceRate(((float) complianceForComplianceRate /(complianceForComplianceRate + nonComplianceForComplianceRate))*100.0F);
+//        } else {
+//            graphInfo.setComplianceRate(0);
+//        }
+
+
+
+
+        // Testing Rate
+
+
+        CompletableFuture<Float> futureTestingRate = CompletableFuture.supplyAsync(this::testingRate);
+
+//        if(!testRequestResults.isEmpty()){
+//            graphInfo.setTestingRate((((float)testRequestResults
+//                    .stream()
+//                    .filter(testcaseResultEntity -> testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED) || testcaseResultEntity.getState().equals(TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP) ).toList().size())
+//                    /
+//                    (testRequestResults.size())*100.0F));
+//        } else {
+//            graphInfo.setTestingRate(0);
+//        }
+
+
+
+            // Set ApplicationRequestsByMonth
+
+
+        CompletableFuture<List<ApplicationRequests>> futureApplicationRequestsByMonth = CompletableFuture.supplyAsync(this::applicationRequestsByMonth);
+
+
+//        List<Object[]> maxmindate = testcaseResultRepository.maxMinDate(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+//
+//        Date maxDate = (Date) maxmindate.get(0)[0];
+//        Date minDate = (Date) maxmindate.get(0)[1];
+//
+////        Date maxDate = testcaseResultRepository.maxDate(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+////        Date minDate = testcaseResultRepository.minDate(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+//
+//        //Optional<Date> maxDate = testRequestResults.stream().max(Comparator.comparing(TestcaseResultEntity::getUpdatedAt)).map(TestcaseResultEntity::getUpdatedAt);
+//
+//        //Optional<Date> minDate = testRequestResults.stream().min(Comparator.comparing(TestcaseResultEntity::getUpdatedAt)).map(TestcaseResultEntity::getUpdatedAt);
+//
+//        int max=-1;
+//        int min=0;
+//
+//        //if(minDate.isPresent() && maxDate.isPresent()){
+//        if(minDate!=null && maxDate!=null) {
+//            min = minDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().getYear();
+//            max = maxDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().getYear();
+//        }
+//        //}
+//
+//        List<ApplicationRequests> applicationRequests = new ArrayList<>();
+//        for(int year = max; year >=min; year--){
+//
+//            //List<TestcaseResultEntity> yearlyTestRequestResults = testcaseResultRepository.findResultsByUpdatedAt(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, year);
+////            int finalYear = year;
+////            List<TestcaseResultEntity> yearlyTestRequestResults = testRequestResults.stream().filter(testcaseResultEntity -> testcaseResultEntity.getUpdatedAt().getYear() == finalYear).toList();
+//
+//            List<ApplicationRequestDataByMonth> applicationRequestDataByMonthList = new ArrayList<>();
+//
+//            for(int month = 1 ; month <= 12 ; month++){
+//
+//                //int finalMonth = month;
+//                //List<TestcaseResultEntity> monthlyTestRequestResults = yearlyTestRequestResults.stream().filter(testcaseResultEntity -> (testcaseResultEntity.getUpdatedAt().getMonth()+1) == finalMonth).toList();
+//                int monthlyTestRequestResultsCount = testcaseResultRepository.findResultsPerMonthCount(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, year,month);
+//
+//                ApplicationRequestDataByMonth applicationRequestDataByMonth = new ApplicationRequestDataByMonth();
+//
+//                applicationRequestDataByMonth.setMonth(month);
+//
+//                //int compliant = monthlyTestRequestResults.stream().filter(testcaseResultEntity -> Boolean.TRUE.equals(testcaseResultEntity.getSuccess())).toList().size();
+//                int compliant = testcaseResultRepository.findResultsPerMonthBySuccess(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, year,month);
+//
+//                applicationRequestDataByMonth.setCompliant(compliant);
+//                applicationRequestDataByMonth.setNonCompliant(monthlyTestRequestResultsCount - compliant);
+//
+//                applicationRequestDataByMonthList.add(applicationRequestDataByMonth);
+//            }
+//            ApplicationRequests applicationRequest = new ApplicationRequests();
+//            applicationRequest.setYear(year);
+//
+//            applicationRequest.setApplicationRequestDataByMonthList(applicationRequestDataByMonthList);
+//
+//            applicationRequests.add(applicationRequest);
+//
+//        }
+
+
+
+
+        // Compliant Application
+
+        CompletableFuture<List<CompliantApplication>> futureCompliantApplications = CompletableFuture.supplyAsync(this::compliantApplications);
+
+
+
+//        // Store returnable data of compliant application
+//        List<CompliantApplication> compliantApplications = new ArrayList<>();
+//
+//        // Get Top five test Request Results according to compliant/non-compliant ratio
+//        List<TestcaseResultEntity> topFiveTestRequestsResult = testcaseResultService.findTopFiveTestRequestsResult();
+//
+//
+//        // Get Components using ids using ref ids from the component testcase result list
+//        //List<ComponentEntity> allComponentEntities = componentService.findAll();
+//
+//        // Calculate and set compliant applications in compliant applications list
+//        for(int i = 0 ; i < topFiveTestRequestsResult.size() ; i++){
+//
+//            CompliantApplication compliantApplication = new CompliantApplication();
+//
+//            int compliantApplicationCompliant, compliantApplicationNonCompliant;
+//
+//            try {
+//                compliantApplicationCompliant = topFiveTestRequestsResult.get(i).getCompliant();
+//            } catch(Exception e) {
+//                compliantApplicationCompliant = 0;
+//            }
+//
+//            try {
+//                compliantApplicationNonCompliant = topFiveTestRequestsResult.get(i).getNonCompliant();
+//            } catch(Exception e) {
+//                compliantApplicationNonCompliant = 0;
+//            }
+//
+//            compliantApplication.setApplicationName(topFiveTestRequestsResult.get(i).getName());
+//            compliantApplication.setTestcasesPassed(compliantApplicationCompliant);
+//            compliantApplication.setRank(i+1);
+//            compliantApplication.setTotalTestcases(compliantApplicationCompliant + compliantApplicationNonCompliant);
+//
+//            // Search for Component Testcase Results of the current application of the loop
+//            TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
+//            searchFilter.setParentTestcaseResultId(topFiveTestRequestsResult.get(i).getId());
+//
+//            //List<TestcaseResultEntity> componentResults = testcaseResultService.searchTestcaseResults(searchFilter, contextInfo);
+//
+//            /* QUESTION : Database call to get all components and then use java logic to match component OR Call database each time to get specific component */
+//
+//            List<Object[]> componentEntities = componentService.searchComponentPartsByTestRequest(topFiveTestRequestsResult.get(i).getTestRequest().getId());
+//            //List<ComponentEntity> componentEntities = componentService.searchComponentsByTestRequest(topFiveTestRequestsResult.get(i).getTestRequest().getId());
+//            //List<ComponentEntity> componentEntities = allComponentEntities.stream().filter(componentEntity -> componentResults.stream().anyMatch(testcaseResultEntity -> testcaseResultEntity.getRefId().equals(componentEntity.getId()))).toList();
+//
+//            /* QUESTION : Which Rank to be used?? */
+//            List<Component> components = getComponents(componentEntities);
+//
+//            compliantApplication.setComponents(components);
+//
+//            compliantApplications.add(compliantApplication);
+//
+//        }
+
+        // Set Compliant Application List to returnable Graph Info variable
+
+
+
+
+        //PIE CHART
+
+        CompletableFuture<Map<String, Integer>> futurePieChart = CompletableFuture.supplyAsync(this::pieChart);
+
+
+//
+//        Map<String,Integer> pieChart = new HashMap<>();
+//
+//        // Put counts of each status of test requests in the pieChart variable
+//        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS));
+//        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING));
+//        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED));
+//        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_SKIPPED));
+//        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED));
+//        pieChart.put(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED, testRequestRepository.findCountByState(TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED));
+
+        // Set pieChart values to returnable Graph Info variable
+
+
+
+
+        //AWARD GRAPH
+
+        CompletableFuture<List<AwardGraph>> futureAwardGraphs = CompletableFuture.supplyAsync(this::awardGraphs);
+
+
+
+//        List<AwardGraph> awardGraphs = new ArrayList<>();
+//
+//        List<Object[]> allComponents = componentService.findAllIdName();
+//
+//        //List<ComponentEntity> allComponents = componentService.findAll();
+//
+//        for(Object[] componentEntity : allComponents){
+//
+//            List<Object[]> bestFiveTestcaseResultPerComponent = this.findBestFiveTestcaseResultPerComponent((String)componentEntity[0]);
+//
+//            List<AwardApplication> awardApplicationList = new ArrayList<>();
+//
+//            AwardGraph awardGraph = new AwardGraph();
+//
+//            awardGraph.setComponentName((String)componentEntity[1]);
+//
+//            if(bestFiveTestcaseResultPerComponent.isEmpty()){
+//
+//
+//                awardGraph.setAwardApplicationList(new ArrayList<>());
+//
+//
+//            } else {
+//
+//
+//                for(Object[] testcaseResultPerComponent : bestFiveTestcaseResultPerComponent){
+//                    AwardApplication awardApplication = new AwardApplication();
+//
+//                    awardApplication.setPassedTestcases((int)testcaseResultPerComponent[0]);
+//                    awardApplication.setTotalTestcases((int) testcaseResultPerComponent[0] + (int) testcaseResultPerComponent[1]);
+//                    awardApplication.setAppName(((TestRequestEntity)testcaseResultPerComponent[2]).getName());
+//
+//                    awardApplicationList.add(awardApplication);
+//                }
+//                Comparator<AwardApplication> comparator = Comparator.comparing(
+//                        awardApplication -> {
+//                            if(awardApplication.getTotalTestcases()!=0){
+//                                return (awardApplication.getPassedTestcases() / awardApplication.getTotalTestcases());
+//                            } else {
+//                                return awardApplication.getPassedTestcases();
+//                            }
+//                        });
+//
+//                awardApplicationList.sort(comparator.reversed());
+//
+//                awardGraph.setAwardApplicationList(awardApplicationList);
+//
+//
+//            }
+//
+//
+//            awardGraphs.add(awardGraph);
+//
+//        }
+//
+//        Comparator<AwardGraph> comparator = Comparator.comparing(
+//                awardGraph -> {
+//                    if(Boolean.FALSE.equals(awardGraph.getAwardApplicationList().isEmpty())){
+//                        if(awardGraph.getAwardApplicationList().get(0).getTotalTestcases()!=0){
+//                            return (awardGraph.getAwardApplicationList().get(0).getPassedTestcases()/awardGraph.getAwardApplicationList().get(0).getTotalTestcases());
+//                        } else {
+//                            return 0;
+//                        }
+//                    } else {
+//                        return 0;
+//                    }
+//
+//                });
+//
+//        awardGraphs.sort(comparator.reversed());
+//
+//        for(AwardGraph awardGraph : awardGraphs){
+//
+//            awardGraph.setComponentRank(awardGraphs.indexOf(awardGraph)+1);
+//        }
+
+
 
 
 
@@ -1459,95 +1807,170 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
 
         //Percentage Cumulative Graph
 
+        CompletableFuture<List<PercentageCumulativeGraph>> futurePercentageCumulativeGraph = CompletableFuture.supplyAsync(this::percentageCumulativeGraphs);
 
-
-        List<PercentageCumulativeGraph> percentageCumulativeGraphs = new ArrayList<>();
-
-        // Find all components
-        List<ComponentEntity> componentEntities = componentService.findAll();
-
-        List<Object[]> filteredComponentsResults = testcaseResultRepository.nameComplianceAndNonCompliance(ComponentServiceConstants.COMPONENT_REF_OBJ_URI, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
-
-        for(Object[] componentResult: filteredComponentsResults){
-            PercentageCumulativeGraph percentageCumulativeGraph = new PercentageCumulativeGraph();
-
-            percentageCumulativeGraph.setCompliantTestRequests((Long)componentResult[0]);
-            percentageCumulativeGraph.setTotalTestRequests((Long)componentResult[1] + (Long)componentResult[0]);
-            percentageCumulativeGraph.setComponentName(String.valueOf(componentResult[2]));
-            componentEntities = componentEntities.stream().filter(componentEntity -> !(componentEntity.getName().equals(String.valueOf(componentResult[2])))).collect(Collectors.toList());
-
-            percentageCumulativeGraphs.add(percentageCumulativeGraph);
-        }
-        for(ComponentEntity component : componentEntities){
-            PercentageCumulativeGraph percentageCumulativeGraph = new PercentageCumulativeGraph();
-
-            percentageCumulativeGraph.setComponentName(component.getName());
-            percentageCumulativeGraph.setTotalTestRequests(0L);
-            percentageCumulativeGraph.setCompliantTestRequests(0L);
-
-            percentageCumulativeGraphs.add(percentageCumulativeGraph);
-        }
-
-        // Sort percentageCumulativeGraph using percentage of compliant test Requests
-        percentageCumulativeGraphs.sort(Comparator.comparing(percentageCumulativeGraph -> {
-            if(percentageCumulativeGraph.getTotalTestRequests()!=0){
-                return percentageCumulativeGraph.getCompliantTestRequests() / percentageCumulativeGraph.getTotalTestRequests();
-            } else {
-                return percentageCumulativeGraph.getCompliantTestRequests();
-            }
-        }));
-
-            // Set component rank based in List index as list is sorted
-        for( int i = 0 ; i < percentageCumulativeGraphs.size() ; i++ ){
-            percentageCumulativeGraphs.get(i).setComponentRank( i + 1 );
-        }
+//
+//        List<PercentageCumulativeGraph> percentageCumulativeGraphs = new ArrayList<>();
+//
+//        // Find all components
+//        List<String> componentEntities = componentService.findAllName();
+//
+//        List<Object[]> filteredComponentsResults = testcaseResultRepository.nameComplianceAndNonCompliance(ComponentServiceConstants.COMPONENT_REF_OBJ_URI, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED);
+//
+//        for(Object[] componentResult: filteredComponentsResults){
+//            PercentageCumulativeGraph percentageCumulativeGraph = new PercentageCumulativeGraph();
+//
+//            percentageCumulativeGraph.setCompliantTestRequests((Long)componentResult[0]);
+//            percentageCumulativeGraph.setTotalTestRequests((Long)componentResult[1] + (Long)componentResult[0]);
+//            percentageCumulativeGraph.setComponentName(String.valueOf(componentResult[2]));
+//            componentEntities = componentEntities.stream().filter(componentEntity -> !(componentEntity.equals(String.valueOf(componentResult[2])))).collect(Collectors.toList());
+//
+//            percentageCumulativeGraphs.add(percentageCumulativeGraph);
+//        }
+//        for(String component : componentEntities){
+//            PercentageCumulativeGraph percentageCumulativeGraph = new PercentageCumulativeGraph();
+//
+//            percentageCumulativeGraph.setComponentName(component);
+//            percentageCumulativeGraph.setTotalTestRequests(0L);
+//            percentageCumulativeGraph.setCompliantTestRequests(0L);
+//
+//            percentageCumulativeGraphs.add(percentageCumulativeGraph);
+//        }
+//
+//        // Sort percentageCumulativeGraph using percentage of compliant test Requests
+//        percentageCumulativeGraphs.sort(Comparator.comparing(percentageCumulativeGraph -> {
+//            if(percentageCumulativeGraph.getTotalTestRequests()!=0){
+//                return percentageCumulativeGraph.getCompliantTestRequests() / percentageCumulativeGraph.getTotalTestRequests();
+//            } else {
+//                return percentageCumulativeGraph.getCompliantTestRequests();
+//            }
+//        }));
+//
+//            // Set component rank based in List index as list is sorted
+//        for( int i = 0 ; i < percentageCumulativeGraphs.size() ; i++ ){
+//            percentageCumulativeGraphs.get(i).setComponentRank( i + 1 );
+//        }
 
         // Set percentageCumulativeGraph in returnable Graph Info variable
+
+
+
+
+
+
+
+
+       /* // Total Number of Applications
+
+        List<TestcaseResultEntity> testRequestResults = futureTestRequestResults.join();
+
+        graphInfo.setTotalApplications(testRequestResults.size());
+
+        // Total number of assessees registered
+
+        int assesseesRegistered = futureNoOfAssesseesRegistered.join();
+
+        graphInfo.setAssesseeRegistered(assesseesRegistered);
+
+        // Compliance Rate
+
+        float complianceRate = futureComplianceRate.join();
+
+        graphInfo.setComplianceRate(complianceRate);
+
+        // Testing Rate
+
+        float testingRate = futureTestingRate.join();
+
+        graphInfo.setTestingRate(testingRate);
+
+        // Set ApplicationRequestsByMonth
+
+        List<ApplicationRequests> applicationRequests = futureApplicationRequestsByMonth.join();
+
+        graphInfo.setApplicationRequestsByMonth(applicationRequests);
+
+        // Compliant Application
+
+        List<CompliantApplication> compliantApplications = futureCompliantApplications.join();
+
+        graphInfo.setCompliantApplications(compliantApplications);
+
+        //PIE CHART
+
+        Map<String, Integer> pieChart = futurePieChart.join();
+
+        graphInfo.setPieChart(pieChart);
+
+        //AWARD GRAPH
+
+        List<AwardGraph> awardGraphs = futureAwardGraphs.join();
+
+        graphInfo.setAwardGraph(awardGraphs);
+
+        //Percentage Cumulative Graph
+
+        List<PercentageCumulativeGraph> percentageCumulativeGraphs = futurePercentageCumulativeGraph.join();
+
         graphInfo.setPercentageCumulativeGraph(percentageCumulativeGraphs);
+
+*/
+        CompletableFuture<Void> combinedFuture
+                = CompletableFuture.allOf(futureTestRequestResults, futureNoOfAssesseesRegistered, futureComplianceRate, futureTestingRate, futureApplicationRequestsByMonth, futureCompliantApplications, futurePieChart, futureAwardGraphs, futurePercentageCumulativeGraph);
+
+        try {
+            combinedFuture.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        // Extract results from futures and set them into graphInfo
+        try {
+            graphInfo.setTotalApplications(futureTestRequestResults.get());
+            graphInfo.setAssesseeRegistered(futureNoOfAssesseesRegistered.get());
+            graphInfo.setComplianceRate(futureComplianceRate.get());
+            graphInfo.setTestingRate(futureTestingRate.get());
+            graphInfo.setApplicationRequestsByMonth(futureApplicationRequestsByMonth.get());
+            graphInfo.setCompliantApplications(futureCompliantApplications.get());
+            graphInfo.setPieChart(futurePieChart.get());
+            graphInfo.setAwardGraph(futureAwardGraphs.get());
+            graphInfo.setPercentageCumulativeGraph(futurePercentageCumulativeGraph.get());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+
 
         // Return Graph Info
         return graphInfo;
     }
 
-    private static List<Component> getComponents(List<ComponentEntity> componentEntities, List<TestcaseResultEntity> componentResults) {
+    private static List<Component> getComponents(List<Object[]> componentEntities) {
         List<Component> components = new ArrayList<>();
         for(int j = 0; j < componentEntities.size() ; j++){
 
             Component component = new Component();
-            component.setComponentRank(componentEntities.get(j).getRank());
-            component.setComponentName(componentEntities.get(j).getName());
-            component.setTestcasesPassed(componentResults.get(j).getCompliant());
-            component.setTotalTestcases(componentResults.get(j).getCompliant() + componentResults.get(j).getNonCompliant());
+            component.setComponentRank((Integer)componentEntities.get(j)[0]);
+            component.setComponentName((String)componentEntities.get(j)[1]);
+            component.setTestcasesPassed((Integer)componentEntities.get(j)[2]);
+            component.setTotalTestcases((Integer)componentEntities.get(j)[2] + (Integer)componentEntities.get(j)[3
+                    ]);
 
             components.add(component);
         }
         return components;
     }
 
-    private List<TestcaseResultEntity> findTestcaseResultsUpdatedLastSevenMonths(){
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, -6); // Subtract 7 months from the current date
-        calendar.set(Calendar.DAY_OF_MONTH, 1); // Set date of start as 1
-
-        Date sevenMonthsAgo = calendar.getTime();
-        return testcaseResultRepository.findRecordsUpdatedLastSevenMonths(sevenMonthsAgo);
-
-    }
-    private List<TestcaseResultEntity> findTestcaseResultsUpdatedLastSevenYears(){
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.YEAR, -6); // Subtract 7 years from the current date
-        calendar.set(Calendar.DAY_OF_YEAR, 1);
-
-        Date sevenYearsAgo = calendar.getTime();
-        return testcaseResultRepository.findRecordsUpdatedLastSevenMonths(sevenYearsAgo);
-
-    }
     private List<Object[]> findBestFiveTestcaseResultPerComponent(String componentId){
         return testcaseResultService.findBestFiveTestcaseResultPerComponent(componentId);
     }
 
+    @Override
+    public List<String> getPendingTestRequests(){
+        return testRequestRepository.getPendingTestRequests(TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING);
+    }
 
 
 }

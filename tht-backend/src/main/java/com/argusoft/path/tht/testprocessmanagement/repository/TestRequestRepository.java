@@ -32,6 +32,10 @@ public interface TestRequestRepository
     @Query("SELECT e FROM TestRequestEntity e WHERE e.updatedAt >= :sevenMonthsAgo")
     List<TestRequestEntity> findRecordsUpdatedLastSevenMonths(@Param("sevenMonthsAgo") Date sevenMonthsAgo);
 
+    @Query("SELECT COUNT(e) FROM TestRequestEntity e WHERE e.state = :state")
+    int findCountByState(@Param("state") String state);
 
+    @Query("SELECT e.id FROM TestRequestEntity e WHERE e.state = :state")
+    List<String> getPendingTestRequests(@Param("state") String state);
 
 }

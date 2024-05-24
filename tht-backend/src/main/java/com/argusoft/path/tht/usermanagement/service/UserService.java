@@ -362,4 +362,6 @@ public interface UserService {
      * @throws DoesNotExistException
      */
     public List<UserEntity> getUsersByRole(String role, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException;
+
+    public int searchActiveAssessees();
 }

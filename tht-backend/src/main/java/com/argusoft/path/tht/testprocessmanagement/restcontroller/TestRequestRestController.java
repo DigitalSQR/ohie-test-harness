@@ -24,10 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * This TestRequestServiceRestController maps end points with standard service.
@@ -341,5 +338,14 @@ public class TestRequestRestController {
     @GetMapping("/dashboard")
     public GraphInfo getDashBoard(@RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         return testRequestService.getDashboard(contextInfo);
+    }
+
+    @GetMapping("/acceptAllRequests")
+    public void acceptTestRequest(@RequestAttribute ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        List<String> pendingTestRequestsId = testRequestService.getPendingTestRequests();
+
+        for(String pendingTestRequestId : pendingTestRequestsId){
+            updateTestRequestState(pendingTestRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, new HashMap<>(), contextInfo);
+        }
     }
 }

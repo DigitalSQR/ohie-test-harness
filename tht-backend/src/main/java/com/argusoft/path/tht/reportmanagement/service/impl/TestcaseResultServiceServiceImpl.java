@@ -876,4 +876,19 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     public void setStatusCallback(StatusCallbackLoggerHandler statusCallback) {
         this.statusCallback = statusCallback;
     }
+
+    @Override
+    public List<Object[]> complianceAndNonComplianceOfAllTestRequestResults(){
+        return testcaseResultRepository.complianceAndNonComplianceOfAllTestRequestResults(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+    }
+
+    @Override
+    public List<Object[]> getFinishedSkippedAndAllTestRequestResults(){
+        return testcaseResultRepository.getFinishedSkippedAndAllTestRequestResults(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP);
+    }
+
+    @Override
+    public int countTestcaseResultsOfTestRequest(){
+        return testcaseResultRepository.countTestcaseResultsOfTestRequest(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+    }
 }

@@ -63,7 +63,6 @@ public class TestcaseExecutioner {
 
     private TestcaseResultService testcaseResultService;
 
-    private TestRequestService testRequestService;
 
     private TestcaseResultAttributesService testcaseResultAttributesService;
 
@@ -89,10 +88,6 @@ public class TestcaseExecutioner {
         this.testcaseResultService = testcaseResultService;
     }
 
-    @Autowired
-    public void setTestRequestService(TestRequestService testRequestService) {
-        this.testRequestService = testRequestService;
-    }
 
     @Autowired
     public void setTestcaseResultAttributesService(TestcaseResultAttributesService testcaseResultAttributesService) {

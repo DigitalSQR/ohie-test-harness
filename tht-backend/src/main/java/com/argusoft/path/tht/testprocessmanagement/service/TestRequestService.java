@@ -232,4 +232,6 @@ public interface TestRequestService {
      * @throws OperationFailedException unable to complete request
      */
     public GraphInfo getDashboard(ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException;
+
+    public List<String> getPendingTestRequests();
 }

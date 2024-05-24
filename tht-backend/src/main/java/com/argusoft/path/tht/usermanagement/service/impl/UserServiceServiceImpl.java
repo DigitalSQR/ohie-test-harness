@@ -609,4 +609,22 @@ public class UserServiceServiceImpl implements UserService {
 
     }
 
+    @Override
+    public int searchActiveAssessees(){
+
+        Set<RoleEntity> roles = new HashSet<>();
+
+        RoleEntity role = roleRepository.findById(UserServiceConstants.ROLE_ID_ASSESSEE).get();
+
+        roles.add(role);
+//
+//        UserSearchCriteriaFilter searchCriteriaFilter = new UserSearchCriteriaFilter();
+//        searchCriteriaFilter.setRole(UserServiceConstants.ROLE_ID_ASSESSEE);
+//        searchCriteriaFilter.setState(new ArrayList<>(Arrays.asList(UserServiceConstants.USER_STATUS_ACTIVE)));
+
+        return userRepository.countByRolesInAndState(roles, UserServiceConstants.USER_STATUS_ACTIVE);
+
+        //return userRepository.searchActiveAssessees(roles, UserServiceConstants.USER_STATUS_ACTIVE);
+    }
+
 }

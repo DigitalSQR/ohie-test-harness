@@ -280,4 +280,24 @@ public class ComponentServiceServiceImpl implements ComponentService {
     public List<ComponentEntity> findAll(){
         return componentRepository.findAll();
     }
+
+    @Override
+    public List<ComponentEntity> searchComponentsByTestRequest(String testRequestId){
+        return componentRepository.searchComponentsByTestRequest(testRequestId, ComponentServiceConstants.COMPONENT_REF_OBJ_URI);
+    }
+
+    @Override
+    public List<Object[]> searchComponentPartsByTestRequest(String testRequestId){
+        return componentRepository.searchComponentPartsByTestRequest(testRequestId, ComponentServiceConstants.COMPONENT_REF_OBJ_URI);
+    }
+
+    @Override
+    public List<Object[]> findAllIdName(){
+        return componentRepository.findAllIdName();
+    }
+
+    @Override
+    public List<String> findAllName(){
+        return componentRepository.findAllName();
+    }
 }

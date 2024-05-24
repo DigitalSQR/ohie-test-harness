@@ -202,4 +202,12 @@ public interface ComponentService {
 
 
     public List<ComponentEntity> findAll();
+
+    public List<ComponentEntity> searchComponentsByTestRequest(String testRequestId);
+
+    public List<Object[]> searchComponentPartsByTestRequest(String testRequestId);
+
+    public List<Object[]> findAllIdName();
+
+    public List<String> findAllName();
 }
