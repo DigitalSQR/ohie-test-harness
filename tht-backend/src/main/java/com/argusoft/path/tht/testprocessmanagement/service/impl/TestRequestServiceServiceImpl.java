@@ -1161,8 +1161,13 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
 
         List<Object[]> complianceAndNonCompliance = testcaseResultService.complianceAndNonComplianceOfAllTestRequestResults();
 
-        long compliance = (long)complianceAndNonCompliance.get(0)[0];
-        long nonCompliance = (long)complianceAndNonCompliance.get(0)[1];
+        long compliance = 0;
+        long nonCompliance = 0;
+        if(complianceAndNonCompliance.get(0)[0]!=null && complianceAndNonCompliance.get(0)[1]!=null) {
+             compliance = (long) complianceAndNonCompliance.get(0)[0];
+            nonCompliance = (long) complianceAndNonCompliance.get(0)[1];
+        }
+
 
         if((compliance+nonCompliance)!=0){
             now = System.currentTimeMillis() - now;
