@@ -18,8 +18,11 @@ import { Pagination, PaginationItem } from "@mui/material";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { Popover } from "antd";
+import { DatePicker } from "antd";
+
 import moment from "moment";
 const TestingRequests = () => {
   const testRequestStates = [
@@ -44,22 +47,50 @@ const TestingRequests = () => {
   const [sortFieldName, setSortFieldName] = useState("default");
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
-    fetchTestRequests(filterState, sortFieldName, sortDirection, newPage);
+    fetchTestRequests(sortFieldName, sortDirection, newPage);
   };
-  const fetchTestRequests = (
-    filterState,
-    sortFieldName,
-    sortDirection,
-    newPage
-  ) => {
+
+  const [testRequestSearchFilter, setTestRequestSearchFilter] = useState({
+    name: "",
+    requestDate: "",
+    state: "",
+  });
+
+  const updateFilter = (field, value) => {
+    setTestRequestSearchFilter((prevFilter) => ({
+      ...prevFilter,
+      [field]: value,
+    }));
+  };
+
+  const handleTestRequestSearch = () => {
+    setCurrentPage(1);
+    fetchTestRequests(sortFieldName, sortDirection, 1);
+  };
+
+  const [filterDate, setFilterDate] = useState();
+
+  const fetchTestRequests = (sortFieldName, sortDirection, newPage) => {
+    let params = {};
+    params.page = newPage - 1;
+    params.sort = `${sortFieldName},${sortDirection[sortFieldName]}`;
+    params.size = pageSize;
+
+    const filteredTestRequestSearchFilter = Object.keys(testRequestSearchFilter)
+      .filter((key) => {
+        const value = testRequestSearchFilter[key];
+        return typeof value === "string" ? value.trim() !== "" : !!value;
+      })
+      .reduce((acc, key) => {
+        if (typeof testRequestSearchFilter[key] === "string")
+          acc[key] = testRequestSearchFilter[key].trim();
+        else acc[key] = testRequestSearchFilter[key];
+        return acc;
+      }, {});
+    params = { ...params, ...filteredTestRequestSearchFilter };
+
     showLoader();
-    TestRequestAPI.getTestRequestsByState(
-      filterState,
-      sortFieldName,
-      !!sortFieldName ? sortDirection[sortFieldName] : null,
-      newPage - 1,
-      pageSize
-    )
+    TestRequestAPI.getTestRequestsByFilter(params)
       .then((res) => {
         hideLoader();
         setTestRequests(res.content);
@@ -81,7 +112,7 @@ const TestingRequests = () => {
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserRoles(userInfo.roleIds);
-    fetchTestRequests(filterState, sortFieldName, sortDirection, currentPage);
+    fetchTestRequests(sortFieldName, sortDirection, currentPage);
   }, [filterState]);
 
   const handleSort = (field) => {
@@ -89,7 +120,7 @@ const TestingRequests = () => {
     const newSortDirection = { ...sortDirection };
     newSortDirection[field] = sortDirection[field] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
-    fetchTestRequests(filterState, field, newSortDirection, currentPage);
+    fetchTestRequests(field, newSortDirection, currentPage);
   };
 
   const renderSortIcon = (fieldName) => {
@@ -201,31 +232,7 @@ const TestingRequests = () => {
           <div className="row mb-2 justify-content-between">
             <div className="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12">
               <div className="custom-input custom-input-sm">
-                <div className="d-flex align-items-baseline">
-                  <span className="pe-3 text-nowrap ">Status :</span>
-                  <div className="mb-3">
-                    <select
-                      onChange={(e) => {
-                        setFilterState(e.target.value);
-                      }}
-                      id="TestingRequests-statusChange"
-                      value={filterState}
-                      className="form-select custom-select custom-select-sm"
-                      aria-label="Default select example"
-
-                    >
-                      {testRequestStates.map((testRequestState) => (
-                        <option
-                          value={testRequestState.value}
-                          key={testRequestState.value}
-                          id="TestingRequests-statusOptions"
-                        >
-                          {testRequestState.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                
               </div>
             </div>
 
@@ -262,6 +269,16 @@ const TestingRequests = () => {
                     >
                       {renderSortIcon("name")}
                     </span>
+                    <div className="filter-box">
+                      <input
+                        id="TestingRequestNameSearchFilter"
+                        type="text"
+                        placeholder="Search by Name"
+                        className="form-control filter-input"
+                        value={testRequestSearchFilter.name}
+                        onChange={(e) => updateFilter("name", e.target.value)}
+                      />
+                    </div>
                   </th>
                   <th className="date-column">
                     REQUEST DATE{" "}
@@ -273,9 +290,43 @@ const TestingRequests = () => {
                     >
                       {renderSortIcon("createdAt")}
                     </span>
+                    <div className="filter-box">
+                      <DatePicker
+                        id="TestRequestDateSearchFilter"
+                        className="form-control filter-input"
+                        placeholder="Select Date"
+                        value={filterDate}
+                        onChange={(date) => {
+                          setFilterDate(date);
+                          updateFilter(
+                            "requestDate",
+                            date ? date.format("YYYY-MM-DD") : null
+                          );
+                        }}
+                      />
+                    </div>
                   </th>
 
-                  <th className="status-column">STATUS</th>
+                  <th className="status-column">
+                    STATUS{" "}
+                    <div className="filter-box">
+                      <select
+                        id="TestRequestStatusSearchFilter"
+                        className="form-select custom-select custom-select-sm filter-input"
+                        aria-label="Default select example"
+                        value={testRequestSearchFilter.state}
+                        onChange={(e) => {
+                          updateFilter("state", e.target.value);
+                        }}
+                      >
+                        {testRequestStates.map((state) => (
+                          <option value={state.value} key={state.value}>
+                            {state.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </th>
                   <th className="actions-column">
                     <span
                       className={
@@ -293,6 +344,16 @@ const TestingRequests = () => {
                       >
                         {renderSortIcon("default")}
                       </span>
+                      <div className="filter-box">
+                        <button
+                          className="search-button"
+                          onClick={handleTestRequestSearch}
+                          id="handleTestRequestSearch"
+                        >
+                          <SearchOutlined />
+                          Search
+                        </button>
+                      </div>
                     </span>
                   </th>
                   <th className="empty"></th>
