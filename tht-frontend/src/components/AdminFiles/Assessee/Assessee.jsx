@@ -42,14 +42,13 @@ const Assessee = () => {
     createdAt: "desc",
     companyName: "desc",
     state: "desc",
-    default: "asc",
   };
   const [sortDirection, setSortDirection] = useState(obj);
 
   const userStates = [...userStatusActionLabels];
   const [userRoles, setUserRoles] = useState([]);
 
-  const [sortFieldName, setSortFieldName] = useState("default");
+  const [sortFieldName, setSortFieldName] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [reasonForRejection, setReasonForRejection] = useState();
