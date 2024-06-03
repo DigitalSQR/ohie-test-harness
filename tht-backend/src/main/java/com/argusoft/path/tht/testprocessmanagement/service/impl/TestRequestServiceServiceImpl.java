@@ -582,6 +582,18 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
 
         defaultValueChangeState(testRequestEntity, stateKey, contextInfo);
 
+        if(!contextInfo.isPublisher()) {
+            if(testRequestEntity.getState().equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PUBLISHED) || stateKey.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PUBLISHED)) {
+                ValidationResultInfo validationResultInfo = new ValidationResultInfo();
+                validationResultInfo.setElement("state");
+                validationResultInfo.setLevel(ErrorLevel.ERROR);
+                validationResultInfo.setMessage("Given transition "+testRequestEntity.getState()+" -> "+stateKey+" can only be performed by the publisher");
+                errors.add(validationResultInfo);
+                LOGGER.error("Given transition "+testRequestEntity.getState()+" -> "+stateKey+" can only be performed by the publisher");
+                throw new DataValidationErrorException(ValidateConstant.ERRORS, errors);
+            }
+        }
+
         TestRequestValidator.validateChangeState(testRequestEntity, stateKey, componentService, specificationService, testcaseService, testcaseOptionService, errors, contextInfo);
 
         CommonStateChangeValidator.validateStateChange(TestRequestServiceConstants.TEST_REQUEST_STATUS, TestRequestServiceConstants.TEST_REQUEST_STATUS_MAP, testRequestEntity.getState(), stateKey, errors);

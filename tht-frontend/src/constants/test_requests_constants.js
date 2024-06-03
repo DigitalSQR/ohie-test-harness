@@ -6,7 +6,8 @@ export const TestRequestStateConstants = {
     TEST_REQUEST_STATUS_ACCEPTED: "test.request.status.accepted",
     TEST_REQUEST_STATUS_REJECTED: "test.request.status.rejected",
     TEST_REQUEST_STATUS_INPROGRESS: "test.request.status.inprogress",
-    TEST_REQUEST_STATUS_FINISHED: "test.request.status.finished"
+    TEST_REQUEST_STATUS_FINISHED: "test.request.status.finished",
+    TEST_REQUEST_STATUS_PUBLISHED: "test.request.status.published"
 };
 
 export const TestRequestStateConstantNames = {
@@ -17,6 +18,7 @@ export const TestRequestStateConstantNames = {
     "test.request.status.inprogress": "Testing Started",
     "test.request.status.finished": "Testing Completed",
     "test.request.status.skipped": "Testing Skipped",
+    "test.request.status.published" :" Test Request Published"
   };
 
 export const StateBadgeClasses = {
@@ -26,15 +28,22 @@ export const StateBadgeClasses = {
     "test.request.status.rejected": "badges-orange bg-danger",
     "test.request.status.inprogress": "badges-blue bg-info",
     "test.request.status.finished": "badges-green-dark bg-success",
+    "test.request.status.published": "badges-purple dark-bg-success"
 };
 
 export const TestRequestActionStateLabels = [
-    {label: "Request Pending", value:"test.request.status.pending"},
-    {label:"Request Declined", value:"test.request.status.rejected"},
+    {label: "Request Pending",   value:"test.request.status.pending"},
+    {label:"Request Declined",   value:"test.request.status.rejected"},
     {label: "Ready For Testing", value: "test.request.status.accepted"},
-    {label: "Testing Started", value: "test.request.status.inprogress"},
+    {label: "Testing Started",    value: "test.request.status.inprogress"},
     {label: "Testing Completed", value: "test.request.status.finished"},
+    {label: "Request Published", value: "test.request.status.published"}
 ];
+
+export const TestRequestActionStateLabelsForPublisher=[
+    {label: "Request Published", value: "test.request.status.published"},
+    {label: "Testing Completed", value: "test.request.status.finished"},
+]
 
 export const StateClasses = {
     "test.request.status.accepted": {
@@ -59,5 +68,7 @@ export const stateTransitionMap = {
     'test.request.status.accepted': ['test.request.status.inprogress', 'test.request.status.finished', 'test.request.status.skipped'],
     'test.request.status.inprogress': ['test.request.status.skipped'],
     'test.request.status.skipped': ['test.request.status.accepted'],
-    'test.request.status.rejected': ['test.request.status.accepted']
+    'test.request.status.rejected': ['test.request.status.accepted'],
+    'test.request.status.published': ['test.request.status.finished'],
+    'test.request.status.finished': ['test.request.status.published']
   };

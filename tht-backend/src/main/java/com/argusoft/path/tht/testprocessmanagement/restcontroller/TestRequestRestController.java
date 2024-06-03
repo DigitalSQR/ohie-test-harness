@@ -288,7 +288,7 @@ public class TestRequestRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{testRequestId}/{changeState}")
-    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
+    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester','role.publisher')")
     @Transactional(rollbackFor = Exception.class)
     public TestRequestInfo updateTestRequestState(@PathVariable("testRequestId") String testRequestId,
                                                   @PathVariable("changeState") String changeState,

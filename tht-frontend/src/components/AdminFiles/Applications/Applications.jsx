@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import "./applications.scss";
 import { useNavigate } from "react-router-dom";
 import {
@@ -7,9 +7,10 @@ import {
   TestRequestActionStateLabels,
   TestRequestStateConstants,
   TestRequestStateConstantNames,
+  TestRequestActionStateLabelsForPublisher,
 } from "../../../constants/test_requests_constants.js";
 import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
-import { Empty, notification, Modal } from "antd";
+import { Empty, notification, Modal, Switch } from "antd";
 import { Pagination, PaginationItem } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
 import { useDispatch } from "react-redux";
@@ -34,11 +35,6 @@ import { DatePicker } from "antd";
  */
 
 const Applications = () => {
-  const testRequestStates = [
-    ...TestRequestActionStateLabels,
-    { label: "All", value: "" },
-  ];
-
   const obj = {
     name: "desc",
     productName: "desc",
@@ -61,6 +57,7 @@ const Applications = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const hasMounted = useRef(false);
   const pageSize = 10;
 
   const [applicationSearchFilter, setApplicationSearchFilter] = useState({
@@ -86,11 +83,45 @@ const Applications = () => {
     getAllTestRequests(sortFieldName, sortDirection, 1);
   };
 
-  //useEffect to set the header, get all the test requests when the component loads
-  useEffect(() => {
-    dispatch(set_header("Applications"));
-    getAllTestRequests(sortFieldName, sortDirection, currentPage);
-  }, []);
+  const [testRequestStates, setTestRequestStates] = useState([]);
+
+  const InitialiseTestRequestStates = () => {
+    if (
+      userRole.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+      (userRole.includes(USER_ROLES.ROLE_ID_TESTER) &&
+        !userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER))
+    ) {
+      setTestRequestStates([
+        ...TestRequestActionStateLabels,
+        { label: "All", value: "" },
+      ]);
+    } else if (
+      !userRole.includes(USER_ROLES.ROLE_ID_ADMIN) &&
+      !userRole.includes(USER_ROLES.ROLE_ID_TESTER) &&
+      userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER)
+    ) {
+      setTestRequestStates([
+        ...TestRequestActionStateLabelsForPublisher,
+        {
+          label: "All",
+          value: [
+            "test.request.status.finished",
+            "test.request.status.published",
+          ],
+        },
+      ]);
+    } else if (
+      userRole.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+      (userRole.includes(USER_ROLES.ROLE_ID_TESTER) &&
+        userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER))
+    ) {
+      setTestRequestStates([
+        ...TestRequestActionStateLabels,
+        { label: "Request Published", value: "test.request.status.published" },
+        { label: "All", value: "" },
+      ]);
+    }
+  };
 
   //useEffect to set the user role
   useEffect(() => {
@@ -101,6 +132,14 @@ const Applications = () => {
       .catch((error) => {});
   }, []);
 
+  useEffect(() => {
+    if (hasMounted.current) {
+      InitialiseTestRequestStates();
+      getAllTestRequests(sortFieldName, sortDirection, currentPage);
+    } else {
+      hasMounted.current = true;
+    }
+  }, [userRole]);
   //Function to get all the test requests varying with the different state we want to fetch
   const getAllTestRequests = (sortFieldName, sortDirection, newPage) => {
     showLoader();
@@ -121,6 +160,12 @@ const Applications = () => {
         return acc;
       }, {});
     params = { ...params, ...filteredApplicationSearchFilter };
+
+    if (!params.state && userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER))
+      params.state = [
+        "test.request.status.finished",
+        "test.request.status.published",
+      ];
 
     TestRequestAPI.getTestRequestsByFilter(params)
       .then((res) => {
@@ -312,6 +357,55 @@ const Applications = () => {
       });
   };
 
+  const toggleTestRequestStateForPublisher = (id, currentState, index) => {
+    let toggledState;
+    if (
+      currentState === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED
+    ) {
+      toggledState = TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED;
+    } else {
+      toggledState = TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED;
+    }
+
+    const confirmStateChange = () => {
+      Modal.confirm({
+        cancelButtonProps: {
+          id: "testRequest-UnpublishRequest-cancelButton",
+        },
+        okButtonProps: { id: "testRequest-Unpublish-onOkButton" },
+        title: "State Change",
+        content: "Are you sure about Unpublishing the report ?",
+        okText: "Save",
+        cancelText: "Cancel",
+        onOk() {
+          handleStateChange(id, toggledState, index);
+        },
+      });
+    };
+
+
+    const handleStateChange = (id, toggledState, index) => {
+      TestRequestAPI.changeState(id, toggledState)
+        .then((res) => {
+          notification.success({
+            className: "notificationSuccess",
+            placement: "top",
+            message: `Test Request State changed successfully`,
+          });
+          const updatedTestRequests = [...testRequests];
+          updatedTestRequests[index] = res;
+          setTestRequests(updatedTestRequests);
+        })
+        .catch((err) => {});
+    };
+
+    if (currentState === TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED) {
+      confirmStateChange();
+    } else {
+      handleStateChange(id, toggledState,index);
+    }
+  };
+
   return (
     <div id="applications">
       <div id="wrapper">
@@ -430,7 +524,7 @@ const Applications = () => {
                           updateFilter("state", e.target.value);
                         }}
                       >
-                        {testRequestStates.map((testRequestState) => (
+                        {testRequestStates?.map((testRequestState) => (
                           <option
                             id={`application-status-${testRequestState.label}`}
                             value={testRequestState.value}
@@ -575,47 +669,85 @@ const Applications = () => {
                               </div>
                             </div>
                           ) : null}
-                          {testRequest.state !==
-                            TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING &&
-                          testRequest.state !==
-                            TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED &&
-                          testRequest.state !==
-                            TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ? (
-                            userRole.includes("role.tester") ||
-                            userRole.includes("role.admin") ? (
-                              <button
-                                id={`applications-actions-${index}`}
-                                className="cursor-pointer glossy-button glossy-button--green d-flex align-items-center"
-                                onClick={() => {
-                                  navigate(`/choose-test/${testRequest.id}`);
-                                }}
-                              >
-                                {" "}
-                                <i
-                                  className={
-                                    StateClasses[testRequest.state]?.iconClass
-                                  }
-                                ></i>{" "}
-                                {StateClasses[
-                                  testRequest.state
-                                ]?.btnText?.toUpperCase()}
-                              </button>
+                          <div className="d-flex align-items-center">
+                            {testRequest.state !==
+                              TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING &&
+                            testRequest.state !==
+                              TestRequestStateConstants.TEST_REQUEST_STATUS_REJECTED &&
+                            testRequest.state !==
+                              TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED &&
+                            testRequest.state !==
+                              TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED ? (
+                              userRole.includes("role.tester") ||
+                              userRole.includes("role.admin") ? (
+                                <button
+                                  id={`applications-actions-${index}`}
+                                  className="cursor-pointer glossy-button glossy-button--green d-flex align-items-center"
+                                  onClick={() => {
+                                    navigate(`/choose-test/${testRequest.id}`);
+                                  }}
+                                >
+                                  {" "}
+                                  <i
+                                    className={
+                                      StateClasses[testRequest.state]?.iconClass
+                                    }
+                                  ></i>{" "}
+                                  {StateClasses[
+                                    testRequest.state
+                                  ]?.btnText?.toUpperCase()}
+                                </button>
+                              ) : (
+                                <></>
+                              )
+                            ) : (
+                              ((testRequest.state ===
+                                TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED &&
+                                userRole.some((role) =>
+                                  [
+                                    USER_ROLES.ROLE_ID_PUBLISHER,
+                                    USER_ROLES.ROLE_ID_ADMIN,
+                                    USER_ROLES.ROLE_ID_TESTER,
+                                  ].includes(role)
+                                )) ||
+                                testRequest.state ===
+                                  TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED) && (
+                                <button
+                                  id={`applications-viewReport-${index}`}
+                                  className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
+                                  onClick={() => viewReport(testRequest.id)}
+                                >
+                                  <i className="bi bi-file-text font-size-16"></i>{" "}
+                                  REPORT{" "}
+                                </button>
+                              )
+                            )}
+                            {userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER) ? (
+                              <div style={{ marginLeft: "2rem" }}>
+                                <span className="cursor-pointer text-success font-size-12 fw-bold">
+                                  <i className={`bi  font-size-16`}></i>
+                                  <Switch
+                                    id="Applications-switch-publishStatus"
+                                    checked={
+                                      testRequest?.state ===
+                                      TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED
+                                    }
+                                    onChange={() =>
+                                      toggleTestRequestStateForPublisher(
+                                        testRequest?.id,
+                                        testRequest?.state,
+                                        index
+                                      )
+                                    }
+                                    checkedChildren="UNPUBLISH"
+                                    unCheckedChildren="PUBLISH"
+                                  />
+                                </span>
+                              </div>
                             ) : (
                               <></>
-                            )
-                          ) : (
-                            testRequest.state ===
-                              TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED && (
-                              <button
-                                id={`applications-viewReport-${index}`}
-                                className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
-                                onClick={() => viewReport(testRequest.id)}
-                              >
-                                <i className="bi bi-file-text font-size-16"></i>{" "}
-                                REPORT{" "}
-                              </button>
-                            )
-                          )}
+                            )}
+                          </div>
                         </td>
                         <td>
                           <span

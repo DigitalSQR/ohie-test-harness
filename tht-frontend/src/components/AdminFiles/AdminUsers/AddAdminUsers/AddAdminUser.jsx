@@ -8,6 +8,7 @@ import { useLoader } from "../../../loader/LoaderContext";
 import CustomSelect from "../CustomSelect";
 import {
   ROLE_ID_ADMIN,
+  ROLE_ID_PUBLISHER,
   ROLE_ID_TESTER,
 } from "../../../../constants/role_constants";
 
@@ -28,6 +29,10 @@ const AddAdminUser = ({
     {
       label: "Tester",
       value: ROLE_ID_TESTER,
+    },
+    {
+      label: "Publisher",
+      value: ROLE_ID_PUBLISHER
     }
   ];
   const [initialValues, setInitialValues] = useState({

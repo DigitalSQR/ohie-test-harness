@@ -14,6 +14,7 @@ import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
 import com.argusoft.path.tht.systemconfiguration.audit.service.AuditService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -54,6 +55,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -563,9 +565,16 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             Boolean isFunctional,
             ContextInfo contextInfo)
             throws
-            InvalidParameterException, OperationFailedException, DoesNotExistException {
-        if (!StringUtils.hasLength(testRequestId)) {
+            InvalidParameterException, OperationFailedException, DoesNotExistException, AccessDeniedException {
+        if (!StringUtils.hasLength(testRequestId)){
             throw new InvalidParameterException("TestcaseRequestId is missing");
+        }
+
+        TestRequestEntity testRequest=testRequestService.getTestRequestById(testRequestId, contextInfo);
+        String testRequestState=testRequest.getState();
+
+        if(contextInfo.isAssessee() && !testRequestState.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PUBLISHED)){
+              throw  new AccessDeniedException("Report can't be accessed until it is published");
         }
 
         TestcaseResultEntity testcaseResultEntity = new TestcaseResultEntity();

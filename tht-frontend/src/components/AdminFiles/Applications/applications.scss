@@ -279,6 +279,18 @@
     line-height: 22px;
   }
 
+  .badges-purple{
+    display: inline-block;
+    background: purple;
+    color: $color-white;
+    border-radius: 4px;
+    padding: 0px 0px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+  }
+
   .badges-blue {
     display: inline-block;
     background: #00adff;

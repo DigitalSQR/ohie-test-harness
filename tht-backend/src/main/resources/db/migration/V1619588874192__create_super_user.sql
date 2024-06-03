@@ -6,7 +6,8 @@
 INSERT INTO role (id, name)
 VALUES ('role.admin', 'Admin'),
        ('role.tester', 'Tester'),
-       ('role.assessee', 'Assessee');
+       ('role.assessee', 'Assessee'),
+       ('role.publisher', 'Publisher');
 
 INSERT INTO tht_user (id,
                       email,
@@ -40,7 +41,8 @@ VALUES ('SYSTEM_USER',
 INSERT INTO role_aud (id, rev, revtype, name)
 VALUES ('role.admin', 1, 0, 'Admin'),
        ('role.tester', 1, 0, 'Tester'),
-       ('role.assessee', 1, 0, 'Assessee');
+       ('role.assessee', 1, 0, 'Assessee'),
+       ('role.publisher', 1, 0, 'Publisher');
 
 INSERT INTO tht_user_aud(id,
                          rev,

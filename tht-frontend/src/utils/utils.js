@@ -10,6 +10,7 @@ import moment from "moment";
 import {
   ROLE_ID_ADMIN,
   ROLE_ID_ASSESSEE,
+  ROLE_ID_PUBLISHER,
   ROLE_ID_TESTER,
 } from "../constants/role_constants";
 export const formatDate = (dateString) => {
@@ -81,7 +82,9 @@ export const getHighestPriorityRole = (user) => {
     return "ADMIN";
   } else if (user.roleIds.includes(ROLE_ID_TESTER)) {
     return "TESTER";
-  } else {
+  } else if(user.roleIds.includes(ROLE_ID_PUBLISHER)){
+    return "PUBLISHER";
+  }else{
     return "ASSESSEE";
   }
 };

@@ -451,7 +451,7 @@ const TestingRequests = () => {
                         ) : null}
                         {
                           testRequest.state ==
-                          TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED 
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED 
                           && 
                           <button
                           id={`TestingRequests-${index}-report`}

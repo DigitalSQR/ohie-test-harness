@@ -73,6 +73,11 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
 
     @Override
     protected void modifyCriteriaQuery(CriteriaBuilder criteriaBuilder, Root<UserEntity> root, CriteriaQuery<?> query, Pageable pageable) {
+
+        if(!CollectionUtils.isEmpty(getRole())){
+            query.distinct(true);
+        }
+
         Sort.Order order = pageable.getSort().getOrderFor("default");
         if (order == null) {
             return;

@@ -12,6 +12,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Set;
 
@@ -232,7 +233,7 @@ public interface TestcaseResultService {
             Boolean isFunctional,
             ContextInfo contextInfo)
             throws DoesNotExistException,
-            InvalidParameterException, OperationFailedException;
+            InvalidParameterException, OperationFailedException, AccessDeniedException;
 
     /**
      * Retrieves classes extending Test case class

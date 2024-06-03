@@ -97,9 +97,9 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               <span> Dashboard </span>
             </a>
           </li>
-          {(user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
-            user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)) && (
-            <>
+          <>
+            {(user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+              user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)) && (
               <li>
                 <a
                 id="#Sidebar-assessee"
@@ -120,13 +120,20 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   <span> Assessees </span>
                 </a>
               </li>
-              
-            
+            )}
+
+            {(user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+              user?.roleIds?.includes(USER_ROLES.ROLE_ID_PUBLISHER) || user?.roleIds.includes(USER_ROLES.ROLE_ID_TESTER)) && (
               <li>
                 <a
-                id="#Sidebar-applications"
+                  id="#Sidebar-applications"
                   className={
-                    ["/applications", "/choose-test","/manual-testing","/automated-testing"].some(item => activeMenuItem.includes(item))
+                    [
+                      "/applications",
+                      "/choose-test",
+                      "/manual-testing",
+                      "/automated-testing",
+                    ].some((item) => activeMenuItem.includes(item))
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
@@ -142,9 +149,10 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   <span> Applications </span>
                 </a>
               </li>
-              {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
-                <li>
-                  <a
+            )}
+            {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+              <li>
+                <a
                   id="#Sidebar-testcaseConfig"
                     className={
                       ["/testcase-config", "/validate-config"].some(item => activeMenuItem.includes(item))
@@ -168,26 +176,27 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                 <li>
                   <a
                   id="#Sidebar-UserManagement"
-                    className={
-                      ["/user-management", "/create-user"].some(item => activeMenuItem.includes(item))
-                        ? "active menu-like-item"
-                        : "menu-like-item"
-                    }
-                    onClick={() => {
-                      handleMenuItemClick("/user-management");
-                    }}
-                  >
-                    <i
-                      aria-label="User Management"
-                      title="User Management"
-                      className="bi bi-person-gear menu-left-icon"
-                    ></i>
-                    <span> User Management </span>
-                  </a>
-                </li>
-              )}
-            </>
-          )}
+                  className={
+                    ["/user-management", "/create-user"].some((item) =>
+                      activeMenuItem.includes(item)
+                    )
+                      ? "active menu-like-item"
+                      : "menu-like-item"
+                  }
+                  onClick={() => {
+                    handleMenuItemClick("/user-management");
+                  }}
+                >
+                  <i
+                    aria-label="User Management"
+                    title="User Management"
+                    className="bi bi-person-gear menu-left-icon"
+                  ></i>
+                  <span> User Management </span>
+                </a>
+              </li>
+            )}
+          </>
           {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
               <Fragment>
                 {" "}
