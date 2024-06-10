@@ -1,10 +1,11 @@
 package com.argusoft.path.tht.testcasemanagement.models.entity;
 
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateNameMetaEntity;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This model is mapped to testcase table in database.
@@ -48,6 +49,10 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
     private String sutActorApiKey;
 
 
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private List<TestcaseVariableEntity> testcaseVariables;
+
+
     public TestcaseEntity() {
     }
 
@@ -61,8 +66,12 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
         this.setTestSuiteId(testcaseEntity.getTestSuiteId());
         this.setSutActorApiKey(testcaseEntity.getSutActorApiKey());
         this.setQuestionType(testcaseEntity.getQuestionType());
+        this.setTestcaseVariables(testcaseEntity.getTestcaseVariables());
         if (testcaseEntity.getSpecification() != null) {
             this.setSpecification(new SpecificationEntity(testcaseEntity.getSpecification().getId()));
+        }
+        if (testcaseEntity.getTestcaseVariables() != null) {
+            this.setTestcaseVariables(testcaseEntity.getTestcaseVariables().stream().map(TestcaseVariableEntity::new).collect(Collectors.toList()));
         }
     }
 
@@ -140,5 +149,18 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
 
     public void setTestSuiteId(String testSuiteId) {
         this.testSuiteId = testSuiteId;
+    }
+
+    public List<TestcaseVariableEntity> getTestcaseVariables() {
+        return testcaseVariables;
+    }
+
+    public void setTestcaseVariables(List<TestcaseVariableEntity> testcaseVariables) {
+        this.testcaseVariables = testcaseVariables;
+    }
+
+    @PrePersist
+    private void changesBeforeSaveTestCase() {
+        this.getTestcaseVariables().stream().forEach(testcaseVariableEntity -> testcaseVariableEntity.setTestcaseId(this.getId()));
     }
 }

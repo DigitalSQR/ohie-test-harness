@@ -7,11 +7,9 @@ import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFil
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This interface provides contract for Testcase API.

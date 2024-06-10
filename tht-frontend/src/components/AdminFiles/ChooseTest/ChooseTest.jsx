@@ -9,7 +9,6 @@ import { notification, Progress, Button, Breadcrumb } from "antd";
 import { CheckCircleFilled, SyncOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
-import { handleErrorResponse } from "../../../utils/utils";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
@@ -17,6 +16,8 @@ import WebSocketService from "../../../api/WebSocketService";
 import VerificationGuidelines from "./Verification-Guidelines/VerificationGuidelines";
 import { AutomatedVerificationGuidelines, ManualVerificationGuidelines } from "../../../constants/guidelines_constants";
 import {  TestRequestStateConstants } from "../../../constants/test_requests_constants";
+import TesterAutomatedModal from "./TesterAutomatedModal/TesterAutomatedModal.jsx"
+import { TestcaseVariableAPI } from "../../../api/TestcaseVariableAPI.js";
 /* 
   Choose Test page
 
@@ -36,6 +37,7 @@ export default function ChooseTest() {
   const [testcaseResults, setTestCaseResults] = useState([]);
   const [submitButtonFlag, setSubmitButtonFlag]=useState(false);
   const [resultFlag, setResultFlag]=useState(false);
+  const [isTesterModalOpen, setIsTesterModalOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
@@ -191,6 +193,35 @@ export default function ChooseTest() {
 
       });
   };
+
+
+const handleOpenModal = () => {
+  TestRequestAPI.getTestRequestsById(testRequestId)
+    .then((res) => {
+      const selectedComponentsIds = res.testRequestUrls.map(testRequestUrl => testRequestUrl.componentId);
+
+      const testcaseVariablesPromises = selectedComponentsIds.map(selectedComponentId => 
+        TestcaseVariableAPI.getTestcaseVariablesByComponentId(selectedComponentId)
+      );
+
+      return Promise.all(testcaseVariablesPromises);
+    })
+    .then((allTestcaseVariables) => {
+      const tcvForTester = allTestcaseVariables.flat().filter(testcaseVariable => 
+        testcaseVariable.roleId === "role.tester"
+      );
+
+      if (tcvForTester.length > 0) {
+        setIsTesterModalOpen(true);
+      }
+      else{
+        handleStartTesting(false, true);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
 
   // This useEffect keeps tracks of testcases being completed behind the scenes, and updates the UI.
   useEffect(() => {
@@ -391,9 +422,7 @@ export default function ChooseTest() {
                   <button
                   id="chooseTest-startAutomatedVerification"
                     className="btn btn-primary small btn-sm mt-4 "
-                    onClick={() => {
-                      handleStartTesting(null, true);
-                    }}
+                    onClick={handleOpenModal}
                     disabled={!resultFlag}
                   >
                     Start Verification
@@ -491,6 +520,14 @@ export default function ChooseTest() {
           </div>  
           :
           <></>}
+        <div>
+          <TesterAutomatedModal
+            isTesterModalOpen={isTesterModalOpen}
+            setIsTesterModalOpen={setIsTesterModalOpen}
+            currentTestRequestId={testRequestId}
+            handleStartTesting={handleStartTesting}
+          ></TesterAutomatedModal>
+        </div>
       </div>
     </div>
   );

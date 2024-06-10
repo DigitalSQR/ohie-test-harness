@@ -5,7 +5,9 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,9 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @Column(name = "message")
     private String message;
 
+    @OneToMany(mappedBy = "testRequest", cascade = {CascadeType.ALL})
+    private List<TestRequestValueEntity> testRequestValues;
+
     public TestRequestEntity() {
     }
 
@@ -50,6 +55,9 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
         }
         if (testRequestEntity.getTestRequestUrls() != null) {
             this.setTestRequestUrls(testRequestEntity.getTestRequestUrls().stream().map(TestRequestUrlEntity::new).collect(Collectors.toSet()));
+        }
+        if (testRequestEntity.getTestRequestValues() != null) {
+            this.setTestRequestValues(testRequestEntity.getTestRequestValues().stream().map(TestRequestValueEntity::new).collect(Collectors.toList()));
         }
     }
 
@@ -92,10 +100,24 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
         this.testRequestUrls = testRequestUrls;
     }
 
+    public List<TestRequestValueEntity> getTestRequestValues() {
+        if(testRequestValues == null){
+            testRequestValues = new ArrayList<>();
+        }
+        return testRequestValues;
+    }
+
+    public void setTestRequestValues(List<TestRequestValueEntity> testRequestValues) {
+        this.testRequestValues = testRequestValues;
+    }
+
     @PrePersist
     private void changesBeforeSaveTestRequest() {
         this.getTestRequestUrls().stream().forEach(testRequestUrlEntity -> testRequestUrlEntity.setTestRequestId(this.getId()));
+        this.getTestRequestValues().stream().forEach(testRequestValueEntity -> testRequestValueEntity.setTestRequest(this));
     }
+
+
 
     @Override
     public String toString() {

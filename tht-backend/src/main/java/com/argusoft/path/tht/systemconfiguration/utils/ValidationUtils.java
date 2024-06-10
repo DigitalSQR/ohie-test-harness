@@ -126,7 +126,7 @@ public final class ValidationUtils {
                     errors
                             .add(new ValidationResultInfo(fieldName,
                                     ErrorLevel.ERROR,
-                                    fieldName + " must contain more than "
+                                    fieldName + " must contain equal or more than "
                                             + minValue + " items"));
                 } else if (maxValue != null && field.size() > maxValue) {
                     errors

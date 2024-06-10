@@ -3,6 +3,8 @@ package com.argusoft.path.tht.testcasemanagement.models.dto;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
+
 /**
  * This info is for Testcase DTO that contains all the Testcase model's data.
  *
@@ -72,6 +74,14 @@ public class TestcaseInfo extends IdStateNameMetaInfo {
             dataType = "String",
             required = true)
     private String sutActorApiKey;
+
+
+    @ApiModelProperty(notes = "The test case variables",
+            allowEmptyValue = false,
+            example = "[]",
+            dataType = "List<TestcaseVariablesInfo>",
+            required = true)
+    private List<TestcaseVariableInfo> testcaseVariables;
 
     public Integer getRank() {
         return rank;
@@ -143,5 +153,13 @@ public class TestcaseInfo extends IdStateNameMetaInfo {
 
     public void setSutActorApiKey(String sutActorApiKey) {
         this.sutActorApiKey = sutActorApiKey;
+    }
+
+    public List<TestcaseVariableInfo> getTestcaseVariables() {
+        return testcaseVariables;
+    }
+
+    public void setTestcaseVariables(List<TestcaseVariableInfo> testcaseVariables) {
+        this.testcaseVariables = testcaseVariables;
     }
 }

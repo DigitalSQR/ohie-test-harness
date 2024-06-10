@@ -20,6 +20,9 @@ public class TestcaseServiceConstants {
     public static final String TESTCASE_STATUS_ACTIVE = "testcase.status.active";
     public static final String TESTCASE_STATUS_INACTIVE = "testcase.status.inactive";
 
+    public static final String TESTCASE_VARIABLE_STATUS_ACTIVE = "testcase.variable.status.active";
+    public static final String TESTCASE_VARIABLE_STATUS_INACTIVE = "testcase.variable.status.inactive";
+
 
     //Testcase run environments
     public static final String TESTCASE_RUN_ENVIRONMENT_JAVA_THT = "testcase.run.environment.java.tht";

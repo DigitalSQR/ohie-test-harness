@@ -55,7 +55,7 @@ public interface TestRequestService {
             throws OperationFailedException,
             VersionMismatchException,
             DataValidationErrorException,
-            InvalidParameterException;
+            InvalidParameterException, DoesNotExistException;
 
     /**
      * Retrieves a list of TestRequests corresponding to the given TestRequest Name.The
@@ -189,7 +189,7 @@ public interface TestRequestService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException,
-            DataValidationErrorException;
+            DataValidationErrorException, DoesNotExistException;
 
 
     /**

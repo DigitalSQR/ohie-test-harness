@@ -36,4 +36,13 @@ public class HasMetaInfo implements Serializable {
         this.meta = meta;
     }
 
+    public HasMetaInfo(MetaInfo metaInfo) {
+        this.meta = metaInfo;
+    }
+
+    public HasMetaInfo() {
+
+    }
+
+
 }

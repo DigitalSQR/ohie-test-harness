@@ -98,7 +98,7 @@ public class TestRequestRestController {
             throws OperationFailedException,
             InvalidParameterException,
             VersionMismatchException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
 
         TestRequestEntity testRequestEntity = testRequestMapper.dtoToModel(testRequestInfo);
         testRequestEntity = testRequestService.updateTestRequest(testRequestEntity, contextInfo);
@@ -214,7 +214,7 @@ public class TestRequestRestController {
             @RequestParam(value = "recommended", required = false) Boolean isRecommended,
             @RequestParam(value = "workflow", required = false) Boolean isWorkflow,
             @RequestParam(value = "functional", required = false) Boolean isFunctional,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException {
         testRequestService.startTestingProcess(
                 testRequestId,
                 refObjUri,

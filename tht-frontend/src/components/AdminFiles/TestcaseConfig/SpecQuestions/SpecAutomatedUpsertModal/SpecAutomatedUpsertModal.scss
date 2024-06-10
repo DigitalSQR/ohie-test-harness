@@ -6,7 +6,6 @@
     font-size: 12px;
     font-weight: 500;
     line-height: 24px;
-    display: flex;
     align-items: center;
     // width: 150px;
     white-space: nowrap;
@@ -14,7 +13,45 @@
     padding: 4px 16px;
   }
 
+  .cst-btn-group .cst-btn-default:focus {
+    box-shadow: none;
+    border:none;
+  }
+
+  .cst-btn-group .cst-btn-default:not(:focus) {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
   .visibility {
     visibility: hidden;
     width: 0;
+  }
+  .cancel-icon {
+    height: 50px;
+    margin-top: 10px;
+    font-size: large;
+    margin-left: 30px;
+  }
+  .default-value {
+    margin-left : -15px;
+  }
+  .input-class {
+    width: 118px !important;
+  }
+  .dropdown-class {
+    width: 134px !important;
+  }
+  .scroll-container {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto;
+  }
+  .input-field {
+    margin-left: 10px;
+  }
+  .info-msg{
+    color: #817b7b;;
+    font-size:12px;
+    margin-bottom: 10px;
+    font-weight: bold;
   }

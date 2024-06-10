@@ -32,25 +32,20 @@ import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceCo
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseOptionCriteriaSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
-import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
-import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
-import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.argusoft.path.tht.testcasemanagement.models.entity.*;
+import com.argusoft.path.tht.testcasemanagement.service.*;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.util.TestcaseExecutioner;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.*;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestValueEntity;
 import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
 import com.argusoft.path.tht.testprocessmanagement.service.TestRequestService;
+import com.argusoft.path.tht.testprocessmanagement.service.TestRequestValueService;
 import com.argusoft.path.tht.testprocessmanagement.validator.TestRequestValidator;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
-import com.argusoft.path.tht.usermanagement.filter.UserSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
 import org.slf4j.Logger;
@@ -58,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -65,7 +61,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.sql.Time;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -105,6 +100,10 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
     private DocumentService documentService;
 
     private EmailService emailService;
+
+    private TestcaseVariableService testcaseVariableService;
+
+    private TestRequestValueService testRequestValueService;
 
     ApplicationEventPublisher applicationEventPublisher;
 
@@ -163,6 +162,11 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Autowired
+    public void setTestcaseVariableService(TestcaseVariableService testcaseVariableService) {
+        this.testcaseVariableService = testcaseVariableService;
+    }
+
+    @Autowired
     public void setTestcaseService(TestcaseService testcaseService) {
         this.testcaseService = testcaseService;
     }
@@ -195,6 +199,11 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
     @Autowired
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
+    }
+
+    @Autowired
+    public void setTestRequestValueService(@Lazy TestRequestValueService testRequestValueService) {
+        this.testRequestValueService = testRequestValueService;
     }
 
     @Autowired
@@ -265,7 +274,10 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
             ContextInfo contextInfo)
             throws InvalidParameterException,
             OperationFailedException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
+
+        TestRequestEntity testRequestEntity = this.getTestRequestById(testRequestId, contextInfo);
+
         TestRequestValidator.validateTestRequestStartReinitializeProcess(
                 testRequestId,
                 refObjUri,
@@ -279,6 +291,17 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
                 Constant.START_PROCESS_VALIDATION,
                 testcaseResultService,
                 contextInfo);
+
+        List<TestRequestValueEntity> testRequestValueEntities = new ArrayList<>();
+        for(TestRequestValueEntity testRequestValueEntity : testRequestEntity.getTestRequestValues()) {
+            TestcaseVariableEntity testcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testRequestValueEntity.getTestcaseVariableId(), contextInfo);
+            TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseVariableEntity.getTestcaseId(), contextInfo);
+            if((Boolean.TRUE.equals(isManual) && testcaseEntity.getManual()) || (Boolean.TRUE.equals(isAutomated) && !testcaseEntity.getManual())){
+                testRequestValueEntities.add(testRequestValueEntity);
+            }
+        }
+
+        TestRequestValidator.validateRequiredTestRequestValues(testRequestValueEntities);
 
         testcaseExecutioner.executeTestingProcess(
                 testRequestId,
@@ -336,7 +359,7 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
                                                ContextInfo contextInfo)
             throws OperationFailedException,
             InvalidParameterException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
 
         if (testRequestEntity == null) {
             LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestServiceServiceImpl.class.getSimpleName());
@@ -349,6 +372,28 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
                 userService,
                 componentService,
                 contextInfo);
+
+        List<TestRequestValueEntity> testRequestValueEntities = new ArrayList<>();
+        for(TestRequestValueEntity testRequestValueEntity : testRequestEntity.getTestRequestValues()){
+            try{
+                TestRequestValueEntity originalEntity = testRequestValueService.getTestRequestValueById(testRequestValueEntity.getId(), contextInfo);
+                originalEntity.setValue(testRequestValueEntity.getValue());
+                originalEntity.setTestRequest(testRequestValueEntity.getTestRequest());
+                originalEntity.setTestcaseVariableId(testRequestValueEntity.getTestcaseVariableId());
+                testRequestValueEntity = originalEntity;
+            }
+            catch(Exception e){
+                TestRequestValueEntity newEntity = new TestRequestValueEntity();
+                newEntity.setId(UUID.randomUUID().toString());
+                newEntity.setTestRequest(testRequestEntity);
+                newEntity.setTestcaseVariableId(testRequestValueEntity.getTestcaseVariableId());
+                newEntity.setValue(testRequestValueEntity.getValue());
+                testRequestValueEntity = newEntity;
+            }
+            testRequestValueEntities.add(testRequestValueEntity);
+        }
+
+        testRequestEntity.setTestRequestValues(testRequestValueEntities);
 
         testRequestEntity = testRequestRepository.saveAndFlush(testRequestEntity);
         return testRequestEntity;

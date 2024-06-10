@@ -16,18 +16,21 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseVariableEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.TestcaseRepository;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
+import com.argusoft.path.tht.testcasemanagement.repository.TestcaseVariableRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseVariableService;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.conformance.create.response.ConformanceResponse;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.conformance.create.restresponse.ConformanceStatementCreateRecord;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.deploy.request.DeployRequest;
@@ -89,11 +92,16 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     public static final Logger LOGGER = LoggerFactory.getLogger(TestcaseServiceServiceImpl.class);
 
     TestcaseRepository testcaseRepository;
+
+    TestcaseVariableRepository testcaseVariableRepository;
     private ApplicationContext applicationContext;
     private SpecificationService specificationService;
     private ComponentService componentService;
     private TestcaseOptionService testcaseOptionService;
     private DocumentService documentService;
+    private TestcaseService testcaseService;
+
+    private TestcaseVariableService testcaseVariableService;
 
     @Value("${testbed.specification-api}")
     private String specificationAPIKey;
@@ -108,6 +116,11 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     @Autowired
     public void setTestcaseRepository(TestcaseRepository testcaseRepository) {
         this.testcaseRepository = testcaseRepository;
+    }
+
+    @Autowired
+    public void setTestcaseVariableRepository(TestcaseVariableRepository testcaseVariableRepository) {
+        this.testcaseVariableRepository = testcaseVariableRepository;
     }
 
     @Autowired
@@ -133,6 +146,17 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     @Autowired
     public void setTestcaseOptionService(TestcaseOptionService testcaseOptionService) {
         this.testcaseOptionService = testcaseOptionService;
+    }
+
+
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService) {
+        this.testcaseService = testcaseService;
+    }
+
+    @Autowired
+    public void setTestcaseVariableService(TestcaseVariableService testcaseVariableService) {
+        this.testcaseVariableService = testcaseVariableService;
     }
 
     /**
@@ -168,7 +192,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
                     applicationContext,
                     contextInfo);
 
-            testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
+        testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
 
         if (TestcaseServiceConstants.TESTCASE_RUN_ENVIRONMENT_EU_TESTBED.equals(testcaseEntity.getTestcaseRunEnvironment())) {
             String testSuiteId = createTestSuiteId(testcaseEntity,0);
@@ -452,6 +476,26 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
                 applicationContext,
                 contextInfo);
 
+        setDefaultStateForTestcaseVariable(testcaseEntity);
+        List<TestcaseVariableEntity> testcaseVariables = new ArrayList<>();
+
+            for(TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()){
+                try{
+                    TestcaseVariableEntity originalTestcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testcaseVariableEntity.getId(), contextInfo);
+                    originalTestcaseVariableEntity.setKey(testcaseVariableEntity.getKey());
+                    originalTestcaseVariableEntity.setDefaultValue(testcaseVariableEntity.getDefaultValue());
+                    originalTestcaseVariableEntity.setRoleId(testcaseVariableEntity.getRoleId());
+                    originalTestcaseVariableEntity.setState(testcaseVariableEntity.getState());
+                    testcaseVariableEntity = originalTestcaseVariableEntity;
+                }
+                catch(Exception e){
+
+                }
+                testcaseVariables.add(testcaseVariableEntity);
+            }
+
+            testcaseEntity.setTestcaseVariables(testcaseVariables);
+
         testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
 
         if (zipFileForAutomationTest != null
@@ -481,6 +525,17 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
         }
         return testcaseEntity;
+    }
+
+    private void setDefaultStateForTestcaseVariable(TestcaseEntity testcaseEntity) {
+        for (TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()) {
+            if(testcaseVariableEntity.getTestcaseId() == null){
+                testcaseVariableEntity.setTestcaseId(testcaseEntity.getId());
+            }
+            if(testcaseVariableEntity.getState() == null) {
+               testcaseVariableEntity.setState(TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_ACTIVE);
+            }
+        }
     }
 
     /**
@@ -922,6 +977,10 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         }
         testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
 
+        for(TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()){
+            testcaseVariableEntity.setState(TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_ACTIVE);
+        }
+
         TestcaseCriteriaSearchFilter searchFilter = new TestcaseCriteriaSearchFilter();
 
         testcaseEntity.setRank(1);
@@ -936,6 +995,10 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
 
     public DocumentService getDocumentService() {
         return documentService;
+    }
+
+    public TestcaseService getTestcaseService() {
+        return testcaseService;
     }
 
     @Autowired
