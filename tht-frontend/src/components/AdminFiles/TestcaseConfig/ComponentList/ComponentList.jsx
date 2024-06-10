@@ -6,7 +6,7 @@ import { useLoader } from "../../../loader/LoaderContext";
 import ComponentUpsertModal from "./ComponentUpsertModal/ComponentUpsertModal";
 import { ComponentsActionStateLabels } from "../../../../constants/components_constants";
 import { set_header } from "../../../../reducers/homeReducer";
-import { Pagination } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FileSearchOutlined, FileAddOutlined, SearchOutlined } from "@ant-design/icons";
@@ -434,18 +434,67 @@ export default function ComponentList() {
         </div>
         <div className="row mt-4">
           <div className="col-md-6 text-end">
-
-        
-        {totalPages > 1 && (
-          <Pagination
-            className="pagination-ui mt-0 justify-content-end"
-            count={totalPages}
-            page={currentPage}
-            onChange={handleChangePage}
-            variant="outlined"
-            shape="rounded"
-          />
-        )}
+            {totalPages > 1 && (
+              <Pagination
+                className="pagination-ui mt-0 justify-content-end"
+                count={totalPages}
+                showFirstButton
+                showLastButton
+                page={currentPage}
+                onChange={handleChangePage}
+                variant="outlined"
+                shape="rounded"
+                renderItem={(item) => {
+                  if (item.type === "page") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id={`ComponentPage-page-${item.page}`}
+                        component="button"
+                        onClick={() => handleChangePage(null, item.page)}
+                      />
+                    );
+                  } else if (item.type === "previous") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id="ComponentPage-previous-page-button"
+                        component="button"
+                        onClick={() => handleChangePage(null, currentPage - 1)}
+                      />
+                    );
+                  } else if (item.type === "next") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id="ComponentPage-next-page-button"
+                        component="button"
+                        onClick={() => handleChangePage(null, currentPage + 1)}
+                      />
+                    );
+                  } else if (item.type === "first") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id="ComponentPage-first-page-button"
+                        component="button"
+                        onClick={() => handleChangePage(null, 1)}
+                      />
+                    );
+                  } else if (item.type === "last") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id="ComponentPage-last-page-button"
+                        component="button"
+                        onClick={() => handleChangePage(null, totalPages)}
+                      />
+                    );
+                  }
+                  return null;
+                }}
+              />
+            )}
           </div>
         <div className="col-md-6 text-end justify-content-end ">
         {totalElements > 10 && (

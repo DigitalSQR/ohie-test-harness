@@ -407,6 +407,8 @@ const AdminUsers = () => {
             id="adminUsers-pagination"
             className="pagination-ui"
             count={totalPages}
+            showFirstButton
+            showLastButton
             page={currentPage}
             onChange={handleChangePage}
             variant="outlined"
@@ -437,6 +439,24 @@ const AdminUsers = () => {
                     id="AdminUsers-next-page-button"
                     component="button"
                     onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              } else if (item.type === "first") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="AdminUsers-first-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, 1)}
+                  />
+                );
+              } else if (item.type === "last") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="AdminUsers-last-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, totalPages)}
                   />
                 );
               }

@@ -555,6 +555,8 @@ const Assessee = () => {
             className="pagination-ui"
             count={totalPages}
             page={currentPage}
+            showFirstButton
+            showLastButton
             onChange={handleChangePage}
             variant="outlined"
             shape="rounded"
@@ -584,6 +586,24 @@ const Assessee = () => {
                     id="Assessee-next-page-button"
                     component="button"
                     onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              } else if (item.type === "first") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Assessee-first-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, 1)}
+                  />
+                );
+              } else if (item.type === "last") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Assessee-last-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, totalPages)}
                   />
                 );
               }

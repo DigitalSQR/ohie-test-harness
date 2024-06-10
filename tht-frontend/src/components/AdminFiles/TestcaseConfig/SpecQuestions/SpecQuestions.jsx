@@ -740,6 +740,8 @@ export default function ManualTestCases() {
 { totalPages > 1 && 
       <Pagination 
       className="pagination-ui" 
+      showFirstButton
+      showLastButton
       count={totalPages}
       page={currentPage}
       variant="outlined"

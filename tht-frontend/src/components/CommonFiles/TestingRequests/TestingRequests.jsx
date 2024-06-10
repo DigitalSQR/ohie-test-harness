@@ -575,36 +575,56 @@ const TestingRequests = () => {
           <Pagination
             className="pagination-ui"
             count={totalPages}
+            showFirstButton
+            showLastButton
             page={currentPage}
             onChange={handleChangePage}
             variant="outlined"
             shape="rounded"
             renderItem={(item) => {
-              if (item.type === 'page') {
+              if (item.type === "page") {
                 return (
                   <PaginationItem
                     {...item}
-                    id={`Applications-page-${item.page}`}
+                    id={`testingRequests-page-${item.page}`}
                     component="button"
                     onClick={() => handleChangePage(null, item.page)}
                   />
                 );
-              } else if (item.type === 'previous') {
+              } else if (item.type === "previous") {
                 return (
                   <PaginationItem
                     {...item}
-                    id={`Applications-previous-page-button-${item.page}`}
+                    id={`testingRequests-previous-page-button-${item.page}`}
                     component="button"
                     onClick={() => handleChangePage(null, currentPage - 1)}
                   />
                 );
-              } else if (item.type === 'next') {
+              } else if (item.type === "next") {
                 return (
                   <PaginationItem
                     {...item}
-                    id={`Applications-next-page-button-${item.page}`}
+                    id={`testingRequests-next-page-button-${item.page}`}
                     component="button"
                     onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              } else if (item.type === "first") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="testingRequests-first-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, 1)}
+                  />
+                );
+              } else if (item.type === "last") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="testingRequests-last-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, totalPages)}
                   />
                 );
               }

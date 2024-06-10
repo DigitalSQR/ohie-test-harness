@@ -8,7 +8,7 @@ import { Switch, Modal, Empty, Breadcrumb } from "antd";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../../reducers/homeReducer";
 import { useParams } from "react-router-dom";
-import { Pagination } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import ComponentSpecificationUpsertModal from "./ComponentSpecificationUpsertModal/ComponentSpecificationUpsertModal";
 import unsorted from "../../../../styles/images/unsorted.png";
 import sortedUp from "../../../../styles/images/sort-up.png";
@@ -552,14 +552,65 @@ export default function ComponentSpecification() {
           refreshAllSpecifications={refreshAllSpecifications}
         />
         {totalPages > 1 && (
-              <Pagination
-              className="pagination-ui"
-              count={totalPages}
-              page={currentPage}
-              onChange={handleChangePage}
-              variant="outlined"
-              shape="rounded"
-            />
+          <Pagination
+            className="pagination-ui"
+            count={totalPages}
+            page={currentPage}
+            showFirstButton
+            showLastButton
+            onChange={handleChangePage}
+            variant="outlined"
+            shape="rounded"
+            renderItem={(item) => {
+              if (item.type === "page") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`ComponentSpecification-page-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, item.page)}
+                  />
+                );
+              } else if (item.type === "previous") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="ComponentSpecification-previous-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage - 1)}
+                  />
+                );
+              } else if (item.type === "next") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="ComponentSpecification-next-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              } else if (item.type === "first") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="ComponentSpecification-first-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, 1)}
+                  />
+                );
+              } else if (item.type === "last") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="ComponentSpecification-last-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, totalPages)}
+                  />
+                );
+              }
+              return null;
+            }}
+          />
         )}
 
         <div className="d-flex justify-content-end">

@@ -851,6 +851,8 @@ const Applications = () => {
           <Pagination
             className="pagination-ui"
             count={totalPages}
+            showFirstButton
+            showLastButton
             page={currentPage}
             onChange={handleChangePage}
             variant="outlined"
@@ -881,6 +883,24 @@ const Applications = () => {
                     id="Applications-next-page-button"
                     component="button"
                     onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              } else if (item.type === "first") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Applications-first-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, 1)}
+                  />
+                );
+              } else if (item.type === "last") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Applications-last-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, totalPages)}
                   />
                 );
               }
