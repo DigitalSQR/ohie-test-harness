@@ -5,13 +5,16 @@ export const TestCaseAPI = {
   createTestCase: function (data) {
     const formData = new FormData();
     Object.keys(data).forEach((key) => {
-      if (Array.isArray(data[key]) && data[key].length > 0 && typeof data[key][0] === 'object') {
+      if (Array.isArray(data[key])){
+        if(data[key].length > 0 && typeof data[key][0] === 'object') {
           data[key].forEach((item, index) => {
               Object.keys(item).forEach((itemKey) => {
                   formData.append(`${key}[${index}].${itemKey}`, item[itemKey]);
               });
           });
-      } else {
+        }
+      }  
+      else {
           formData.append(key, data[key]);
       }
   });

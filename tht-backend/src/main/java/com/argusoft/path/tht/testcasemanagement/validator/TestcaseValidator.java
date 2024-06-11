@@ -250,21 +250,22 @@ public class TestcaseValidator {
 
         List<TestcaseVariableEntity> testcaseVariableEntities = testcaseEntity.getTestcaseVariables();
 
-        for(TestcaseVariableEntity testcaseVariableEntity : testcaseVariableEntities) {
-            //Check for Key
-            ValidationUtils
-                    .validateRequired(testcaseVariableEntity.getKey(), "key", errors);
-
-            //Check for role
-            ValidationUtils
-                    .validateRequired(testcaseVariableEntity.getRoleId(), "roleId", errors);
-            //Check for default value
-            if(ROLE_ID_TESTER.equals(testcaseVariableEntity.getRoleId())) {
+        if(testcaseVariableEntities != null && !testcaseVariableEntities.isEmpty()) {
+            for(TestcaseVariableEntity testcaseVariableEntity : testcaseVariableEntities) {
+                //Check for Key
                 ValidationUtils
-                        .validateRequired(testcaseVariableEntity.getDefaultValue(), "defaultValue", errors);
+                        .validateRequired(testcaseVariableEntity.getKey(), "key", errors);
+
+                //Check for role
+                ValidationUtils
+                        .validateRequired(testcaseVariableEntity.getRoleId(), "roleId", errors);
+                //Check for default value
+                if(ROLE_ID_TESTER.equals(testcaseVariableEntity.getRoleId())) {
+                    ValidationUtils
+                            .validateRequired(testcaseVariableEntity.getDefaultValue(), "defaultValue", errors);
+                }
             }
         }
-
         ValidationUtils.validateFileType(zipFileForAutomationTest, TestcaseEntityDocumentTypes.TESTCASE_TESTSUITE_AUTOMATION_ZIP.getAllowedFileTypes(), errors);
 
     }
@@ -323,41 +324,23 @@ public class TestcaseValidator {
     private static void validateTestcaseEntityTestcaseVariables(TestcaseEntity testcaseEntity,
                                                                   List<ValidationResultInfo> errors) {
         List<TestcaseVariableEntity> testcaseVariableEntities = testcaseEntity.getTestcaseVariables();
-        ValidationUtils.validateCollectionSize(testcaseVariableEntities, "testcaseVariables", 1, null, errors);
-
-        //loop to check length of value
-        for (TestcaseVariableEntity entity : testcaseVariableEntities) {
-            //check for key
-            ValidationUtils
-                    .validateLength(entity.getKey(),
-                            "key",
-                            0,
-                            255,
-                            errors);
-            //check for role
-            ValidationUtils
-                    .validateLength(entity.getRoleId(),
-                            "roleId",
-                            0,
-                            255,
-                            errors);
-
-            //check for default value
-                ValidationUtils
-                        .validateLength(entity.getDefaultValue(),
-                                "defaultValue",
-                                0,
-                                255,
-                                errors);
-
-            }
 
         List<String> keys = new ArrayList<>();
-        for(TestcaseVariableEntity testcaseVariableEntity : testcaseVariableEntities){
-            if(!TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_INACTIVE.equals(testcaseVariableEntity.getState())){
-                keys.add(testcaseVariableEntity.getKey());
+        if (testcaseVariableEntities != null && !testcaseVariableEntities.isEmpty()) {
+            for (TestcaseVariableEntity entity : testcaseVariableEntities) {
+                //check for key
+                ValidationUtils.validateLength(entity.getKey(), "key", 0, 255, errors);
+                //check for role
+                ValidationUtils.validateLength(entity.getRoleId(), "roleId", 0, 255, errors);
+                //check for default value
+                ValidationUtils.validateLength(entity.getDefaultValue(), "defaultValue", 0, 255, errors);
+
+                if (!TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_INACTIVE.equals(entity.getState())) {
+                    keys.add(entity.getKey());
+                }
             }
         }
+
         Set<String> uniqueKeys = new HashSet<>(keys);
         if(uniqueKeys.size() != keys.size()){
             errors

@@ -161,6 +161,8 @@ public class TestcaseEntity extends IdStateNameMetaEntity {
 
     @PrePersist
     private void changesBeforeSaveTestCase() {
-        this.getTestcaseVariables().stream().forEach(testcaseVariableEntity -> testcaseVariableEntity.setTestcaseId(this.getId()));
+        if(this.getTestcaseVariables() != null && !this.getTestcaseVariables().isEmpty()) {
+            this.getTestcaseVariables().stream().forEach(testcaseVariableEntity -> testcaseVariableEntity.setTestcaseId(this.getId()));
+        }
     }
 }

@@ -478,7 +478,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
 
         setDefaultStateForTestcaseVariable(testcaseEntity);
         List<TestcaseVariableEntity> testcaseVariables = new ArrayList<>();
-
+        if(testcaseEntity.getTestcaseVariables() != null && !testcaseEntity.getTestcaseVariables().isEmpty()){
             for(TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()){
                 try{
                     TestcaseVariableEntity originalTestcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testcaseVariableEntity.getId(), contextInfo);
@@ -493,8 +493,10 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
                 }
                 testcaseVariables.add(testcaseVariableEntity);
             }
+        }
 
-            testcaseEntity.setTestcaseVariables(testcaseVariables);
+
+        testcaseEntity.setTestcaseVariables(testcaseVariables);
 
         testcaseEntity = testcaseRepository.saveAndFlush(testcaseEntity);
 
@@ -528,12 +530,14 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     }
 
     private void setDefaultStateForTestcaseVariable(TestcaseEntity testcaseEntity) {
-        for (TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()) {
-            if(testcaseVariableEntity.getTestcaseId() == null){
-                testcaseVariableEntity.setTestcaseId(testcaseEntity.getId());
-            }
-            if(testcaseVariableEntity.getState() == null) {
-               testcaseVariableEntity.setState(TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_ACTIVE);
+        if(testcaseEntity.getTestcaseVariables() != null && !testcaseEntity.getTestcaseVariables().isEmpty()) {
+            for (TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()) {
+                if(testcaseVariableEntity.getTestcaseId() == null){
+                    testcaseVariableEntity.setTestcaseId(testcaseEntity.getId());
+                }
+                if(testcaseVariableEntity.getState() == null) {
+                    testcaseVariableEntity.setState(TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_ACTIVE);
+                }
             }
         }
     }
@@ -977,8 +981,10 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         }
         testcaseEntity.setState(TestcaseServiceConstants.TESTCASE_STATUS_ACTIVE);
 
-        for(TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()){
-            testcaseVariableEntity.setState(TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_ACTIVE);
+        if(testcaseEntity.getTestcaseVariables() != null && !testcaseEntity.getTestcaseVariables().isEmpty()){
+            for(TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()){
+                testcaseVariableEntity.setState(TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_ACTIVE);
+            }
         }
 
         TestcaseCriteriaSearchFilter searchFilter = new TestcaseCriteriaSearchFilter();
