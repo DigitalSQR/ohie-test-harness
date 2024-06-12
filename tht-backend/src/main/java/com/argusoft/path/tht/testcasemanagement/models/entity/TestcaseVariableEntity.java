@@ -3,9 +3,7 @@ package com.argusoft.path.tht.testcasemanagement.models.entity;
 import com.argusoft.path.tht.systemconfiguration.models.entity.IdStateMetaEntity;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * This model is mapped to testcaseVariablesEntity table in database.
@@ -17,8 +15,8 @@ import javax.persistence.Table;
 @Table(name = "testcase_variables")
 public class TestcaseVariableEntity extends IdStateMetaEntity {
 
-    @Column(name = "key")
-    private String key;
+    @Column(name = "testcase_variable_key")
+    private String testcaseVariableKey;
 
     @Column(name = "default_value")
     private String defaultValue;
@@ -26,8 +24,9 @@ public class TestcaseVariableEntity extends IdStateMetaEntity {
     @Column(name = "roleId")
     private String roleId;
 
-    @Column(name = "testcase_id")
-    private String testcaseId;
+    @ManyToOne
+    @JoinColumn(name = "testcase_id")
+    private TestcaseEntity testcase;
 
     public TestcaseVariableEntity(){
 
@@ -36,17 +35,17 @@ public class TestcaseVariableEntity extends IdStateMetaEntity {
     public TestcaseVariableEntity(TestcaseVariableEntity testcaseVariablesEntity) {
        super(testcaseVariablesEntity);
        this.setDefaultValue(testcaseVariablesEntity.getDefaultValue());
-       this.setKey(testcaseVariablesEntity.getKey());
+       this.setTestcaseVariableKey(testcaseVariablesEntity.getTestcaseVariableKey());
        this.setRoleId(testcaseVariablesEntity.getRoleId());
-       this.setTestcaseId(testcaseVariablesEntity.getTestcaseId());
+       this.setTestcase(testcaseVariablesEntity.getTestcase());
     }
 
-    public String getKey() {
-        return key;
+    public String getTestcaseVariableKey() {
+        return testcaseVariableKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setTestcaseVariableKey(String testcaseVariableKey) {
+        this.testcaseVariableKey = testcaseVariableKey;
     }
 
     public String getDefaultValue() {
@@ -65,12 +64,11 @@ public class TestcaseVariableEntity extends IdStateMetaEntity {
         this.roleId = roleId;
     }
 
-    public String getTestcaseId() {
-        return testcaseId;
+    public TestcaseEntity getTestcase() {
+        return testcase;
     }
 
-    public void setTestcaseId(String testcaseId) {
-        this.testcaseId = testcaseId;
+    public void setTestcase(TestcaseEntity testcase) {
+        this.testcase = testcase;
     }
-
 }

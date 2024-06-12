@@ -134,7 +134,7 @@ export default function SpecAutomatedUpsertModal(props) {
       .max(100, "Name must be of maximum 1000 characters"),
     testcaseVariables: Yup.array().of(
       Yup.object().shape({
-        key: Yup.string()
+        testcaseVariableKey: Yup.string()
           .trim()
           .required("Key is required *"),
         roleId: Yup.string()
@@ -147,7 +147,7 @@ export default function SpecAutomatedUpsertModal(props) {
     )
       .test('unique-key', 'Keys must be unique.', function (testcaseVariables) {
         if (!Array.isArray(testcaseVariables)) return true;
-        const keys = testcaseVariables.map(item => item.key);
+        const keys = testcaseVariables.map(item => item.testcaseVariableKey);
         const uniqueKeys = new Set(keys);
         return keys.length === uniqueKeys.size;
       })
@@ -282,13 +282,13 @@ export default function SpecAutomatedUpsertModal(props) {
                                 <Field
                                   type="text"
                                   id={`key-${index}`}
-                                  name={`testcaseVariables[${index}].key`}
-                                  className={`form-control input-class ${touched.testcaseVariables?.[index]?.key && errors.testcaseVariables?.[index]?.key
+                                  name={`testcaseVariables[${index}].testcaseVariableKey`}
+                                  className={`form-control input-class ${touched.testcaseVariables?.[index]?.testcaseVariableKey && errors.testcaseVariables?.[index]?.testcaseVariableKey
                                       ? "is-invalid"
                                       : ""
                                     }`}
                                   placeholder="Key"
-                                  onChange={(event) => setFieldValue(`testcaseVariables[${index}].key`, event.target.value)}
+                                  onChange={(event) => setFieldValue(`testcaseVariables[${index}].testcaseVariableKey`, event.target.value)}
                                 />
                               </div>
                               <div className="custom-input input-field mb-3 col-lg-4">
@@ -344,8 +344,8 @@ export default function SpecAutomatedUpsertModal(props) {
                             type="button"
                             className="btn cst-btn-default"
                             onClick={() => {
-                              push({ key: null, roleId: null });
-                              setTestcaseVariables(prevVariables => [...prevVariables, { key: null, roleId: null }]);
+                              push({ testcaseVariableKey: null, roleId: null });
+                              setTestcaseVariables(prevVariables => [...prevVariables, { testcaseVariableKey: null, roleId: null }]);
                             }}
                           >
                             <i className="bi bi-plus" style={{ paddingRight: "3px", fontSize: "16px" }}></i>{" "} Add Fields

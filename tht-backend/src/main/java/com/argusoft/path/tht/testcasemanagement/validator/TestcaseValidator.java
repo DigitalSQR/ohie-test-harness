@@ -254,7 +254,7 @@ public class TestcaseValidator {
             for(TestcaseVariableEntity testcaseVariableEntity : testcaseVariableEntities) {
                 //Check for Key
                 ValidationUtils
-                        .validateRequired(testcaseVariableEntity.getKey(), "key", errors);
+                        .validateRequired(testcaseVariableEntity.getTestcaseVariableKey(), "key", errors);
 
                 //Check for role
                 ValidationUtils
@@ -329,14 +329,14 @@ public class TestcaseValidator {
         if (testcaseVariableEntities != null && !testcaseVariableEntities.isEmpty()) {
             for (TestcaseVariableEntity entity : testcaseVariableEntities) {
                 //check for key
-                ValidationUtils.validateLength(entity.getKey(), "key", 0, 255, errors);
+                ValidationUtils.validateLength(entity.getTestcaseVariableKey(), "key", 0, 255, errors);
                 //check for role
                 ValidationUtils.validateLength(entity.getRoleId(), "roleId", 0, 255, errors);
                 //check for default value
                 ValidationUtils.validateLength(entity.getDefaultValue(), "defaultValue", 0, 255, errors);
 
                 if (!TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_INACTIVE.equals(entity.getState())) {
-                    keys.add(entity.getKey());
+                    keys.add(entity.getTestcaseVariableKey());
                 }
             }
         }

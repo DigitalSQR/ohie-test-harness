@@ -295,7 +295,7 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
         List<TestRequestValueEntity> testRequestValueEntities = new ArrayList<>();
         for(TestRequestValueEntity testRequestValueEntity : testRequestEntity.getTestRequestValues()) {
             TestcaseVariableEntity testcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testRequestValueEntity.getTestcaseVariableId(), contextInfo);
-            TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseVariableEntity.getTestcaseId(), contextInfo);
+            TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseVariableEntity.getTestcase().getId(), contextInfo);
             if((Boolean.TRUE.equals(isManual) && testcaseEntity.getManual()) || (Boolean.TRUE.equals(isAutomated) && !testcaseEntity.getManual())){
                 testRequestValueEntities.add(testRequestValueEntity);
             }

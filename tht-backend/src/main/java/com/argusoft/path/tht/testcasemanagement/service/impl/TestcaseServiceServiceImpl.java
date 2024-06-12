@@ -482,7 +482,7 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
             for(TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()){
                 try{
                     TestcaseVariableEntity originalTestcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testcaseVariableEntity.getId(), contextInfo);
-                    originalTestcaseVariableEntity.setKey(testcaseVariableEntity.getKey());
+                    originalTestcaseVariableEntity.setTestcaseVariableKey(testcaseVariableEntity.getTestcaseVariableKey());
                     originalTestcaseVariableEntity.setDefaultValue(testcaseVariableEntity.getDefaultValue());
                     originalTestcaseVariableEntity.setRoleId(testcaseVariableEntity.getRoleId());
                     originalTestcaseVariableEntity.setState(testcaseVariableEntity.getState());
@@ -532,8 +532,8 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
     private void setDefaultStateForTestcaseVariable(TestcaseEntity testcaseEntity) {
         if(testcaseEntity.getTestcaseVariables() != null && !testcaseEntity.getTestcaseVariables().isEmpty()) {
             for (TestcaseVariableEntity testcaseVariableEntity : testcaseEntity.getTestcaseVariables()) {
-                if(testcaseVariableEntity.getTestcaseId() == null){
-                    testcaseVariableEntity.setTestcaseId(testcaseEntity.getId());
+                if(testcaseVariableEntity.getTestcase() == null){
+                    testcaseVariableEntity.setTestcase(testcaseEntity);
                 }
                 if(testcaseVariableEntity.getState() == null) {
                     testcaseVariableEntity.setState(TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_ACTIVE);

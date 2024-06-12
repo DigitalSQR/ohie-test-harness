@@ -281,7 +281,7 @@ const RegisterApplication = () => {
                   })
                   .then(({ testcaseVariableRes, testCaseRes, specificationRes }) => {
                     newTestRequestValues.push({
-                      key: testcaseVariableRes.key,
+                      key: testcaseVariableRes.testcaseVariableKey,
                       testcaseVariableId: testcaseVariableRes.id,
                       value: testcaseVariableRes.defaultValue,
                       testcaseName: testCaseRes.name,
@@ -377,7 +377,7 @@ const RegisterApplication = () => {
             })
             .then(({ testcaseVariableRes, testCaseRes, specificationRes }) => {
               prevSelectedComponents.set(trv.testcaseVariableId, {
-                key: testcaseVariableRes.key,
+                key: testcaseVariableRes.testcaseVariableKey,
                 testcaseVariableId: trv.testcaseVariableId,
                 value: trv.value || testcaseVariableRes.defaultValue,
                 id: trv.id,

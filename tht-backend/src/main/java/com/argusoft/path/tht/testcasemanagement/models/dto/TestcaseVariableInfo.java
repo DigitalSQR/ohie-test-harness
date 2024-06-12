@@ -15,10 +15,10 @@ public class TestcaseVariableInfo extends IdStateMetaInfo {
 
     @ApiModelProperty(notes = "The key for test case variable",
             allowEmptyValue = false,
-            example = "key",
+            example = "testcaseVariableKey",
             dataType = "String",
             required = true)
-    private String key;
+    private String testcaseVariableKey;
 
     @ApiModelProperty(notes = "The default value for test case variable",
             allowEmptyValue = false,
@@ -45,21 +45,20 @@ public class TestcaseVariableInfo extends IdStateMetaInfo {
         super();
     }
 
-    public TestcaseVariableInfo(String key, String defaultValue, String roleId, String testcaseId, String state, String id, MetaInfo metaInfo) {
+    public TestcaseVariableInfo(String testcaseVariableKey, String defaultValue, String roleId, String testcaseId, String state, String id, MetaInfo metaInfo) {
         super(id, state, metaInfo);
-        this.key = key;
+        this.testcaseVariableKey = testcaseVariableKey;
         this.defaultValue = defaultValue;
         this.roleId = roleId;
         this.testcaseId = testcaseId;
     }
 
-
-    public String getKey() {
-        return key;
+    public String getTestcaseVariableKey() {
+        return testcaseVariableKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setTestcaseVariableKey(String testcaseVariableKey) {
+        this.testcaseVariableKey = testcaseVariableKey;
     }
 
     public String getDefaultValue() {

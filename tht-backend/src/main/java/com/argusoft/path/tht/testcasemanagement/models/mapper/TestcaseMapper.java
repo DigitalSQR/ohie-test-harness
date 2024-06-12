@@ -6,6 +6,7 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseVariableInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseVariableEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -59,10 +60,10 @@ public interface TestcaseMapper extends ModelDtoMapper<TestcaseEntity, TestcaseI
         }
         return testcaseEntity.getTestcaseVariables().stream()
                 .map(testcaseVariable -> {
-                    return new TestcaseVariableInfo(testcaseVariable.getKey(),
+                    return new TestcaseVariableInfo(testcaseVariable.getTestcaseVariableKey(),
                             testcaseVariable.getDefaultValue(),
                             testcaseVariable.getRoleId(),
-                            testcaseVariable.getTestcaseId(),
+                            setToTestcaseId(testcaseVariable.getTestcase()),
                             testcaseVariable.getState(),
                             testcaseVariable.getId(),
                             testcaseVariable.getMeta());
@@ -78,16 +79,29 @@ public interface TestcaseMapper extends ModelDtoMapper<TestcaseEntity, TestcaseI
                 .map(testcaseVariable -> {
                     TestcaseVariableEntity testcaseVariableEntity = new TestcaseVariableEntity();
                     testcaseVariableEntity.setId(testcaseVariable.getId());
-                    testcaseVariableEntity.setTestcaseId(testcaseInfo.getId());
-                    testcaseVariableEntity.setKey(testcaseVariable.getKey());
+                    testcaseVariableEntity.setTestcase(setToTestcase(testcaseVariable.getTestcaseId()));
+                    testcaseVariableEntity.setTestcaseVariableKey(testcaseVariable.getTestcaseVariableKey());
                     testcaseVariableEntity.setRoleId(testcaseVariable.getRoleId());
-                    testcaseVariableEntity.setTestcaseId(testcaseVariable.getTestcaseId());
                     testcaseVariableEntity.setState(testcaseVariable.getState());
                     testcaseVariableEntity.setDefaultValue(testcaseVariable.getDefaultValue());
 
                     return testcaseVariableEntity;
                 })
                 .collect(Collectors.toList());
+    }
+
+    default String setToTestcaseId(TestcaseEntity testcaseEntity) {
+        if (testcaseEntity == null) return null;
+        return testcaseEntity.getId();
+    }
+
+    default TestcaseEntity setToTestcase(String testcaseId) {
+        if (!StringUtils.hasLength(testcaseId)) {
+            return null;
+        }
+        TestcaseEntity testcaseEntity = new TestcaseEntity();
+        testcaseEntity.setId(testcaseId);
+        return testcaseEntity;
     }
 
 

@@ -142,7 +142,7 @@ export default function TesterAutomatedModal(props) {
                   })
                   .then(({ testcaseVariableRes, testCaseRes, specificationRes, componentRes }) => {
                     newTestRequestValues.push({
-                      key: testcaseVariableRes.key,
+                      key: testcaseVariableRes.testcaseVariableKey,
                       testcaseVariableId: testcaseVariableRes.id,
                       value: testcaseVariableRes.defaultValue,
                       testcaseName: testCaseRes.name,

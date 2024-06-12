@@ -126,7 +126,7 @@ public class ExecutionStrategyFactory {
             List<TestRequestValueEntity> testRequestValueEntitiesForTestcase = testRequestValues.stream().filter(testRequestValueEntity -> {
                 try {
                     TestcaseVariableEntity testcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testRequestValueEntity.getTestcaseVariableId(), contextInfo);
-                    TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseVariableEntity.getTestcaseId(), contextInfo);
+                    TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseVariableEntity.getTestcase().getId(), contextInfo);
                     return testcaseEntity.getId().equals(testcaseResultById.getTestcase().getId());
                 } catch (DoesNotExistException | InvalidParameterException | OperationFailedException e) {
                     LOGGER.error("Caught Exception while getting input params", e);
@@ -137,7 +137,7 @@ public class ExecutionStrategyFactory {
             if(!testRequestValueEntitiesForTestcase.isEmpty()) {
                 for (TestRequestValueEntity testRequestValueEntity : testRequestValueEntitiesForTestcase) {
                     TestcaseVariableEntity testcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testRequestValueEntity.getTestcaseVariableId(), contextInfo);
-                    inputParameters.put(testcaseVariableEntity.getKey(), testRequestValueEntity.getValue());
+                    inputParameters.put(testcaseVariableEntity.getTestcaseVariableKey(), testRequestValueEntity.getValue());
                 }
             }
         }

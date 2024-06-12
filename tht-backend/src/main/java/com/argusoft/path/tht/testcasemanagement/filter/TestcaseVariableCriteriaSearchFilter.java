@@ -31,7 +31,7 @@ public class TestcaseVariableCriteriaSearchFilter extends AbstractCriteriaSearch
     @ApiParam(
             value = "key of the testcase variable"
     )
-    private String key;
+    private String testcaseVariableKey;
 
 
     private Root<TestcaseVariableEntity> testcaseVariablesEntityRoot;
@@ -56,8 +56,8 @@ public class TestcaseVariableCriteriaSearchFilter extends AbstractCriteriaSearch
             predicates.add(criteriaBuilder.equal(getTestcaseVariablesEntityRoot().get("state"), getState()));
         }
 
-        if (getKey() != null) {
-            predicates.add(criteriaBuilder.equal(getTestcaseVariablesEntityRoot().get("key"), getKey()));
+        if (getTestcaseVariableKey() != null) {
+            predicates.add(criteriaBuilder.equal(getTestcaseVariablesEntityRoot().get("testcaseVariableKey"), getTestcaseVariableKey()));
         }
 
         return predicates;
@@ -76,12 +76,12 @@ public class TestcaseVariableCriteriaSearchFilter extends AbstractCriteriaSearch
         this.state = state;
     }
 
-    public String getKey() {
-        return key;
+    public String getTestcaseVariableKey() {
+        return testcaseVariableKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setTestcaseVariableKey(String testcaseVariableKey) {
+        this.testcaseVariableKey = testcaseVariableKey;
     }
 
     private Root<TestcaseVariableEntity> getTestcaseVariablesEntityRoot() {
