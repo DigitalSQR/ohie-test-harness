@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>THT</groupId>
+  <artifactId>Test</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <name>My Awesome Application</name>
+
+  <parent>
+    <groupId>org.actframework</groupId>
+    <artifactId>act-starter-parent</artifactId>
+    <version>1.9.2.0</version>
+  </parent>
+
+  <properties>
+    <app.entry>THT.AppEntry</app.entry>
+
+    <!-- tune your JVM arguments here
+    <vmargs.heap.init>256M</vmargs.heap.init>
+    <vmargs.heap.max>2G</vmargs.heap.max>
+    <vmargs.extended />
+    -->
+
+    <!-- Add docker deployment support
+    Note it require you have already logged into your docker hub
+    account to deploy your docker images.
+    <docker.repo>org.actframework/archetype-quickstart</docker.repo>
+    <docker.profile>prod</docker.profile>
+    <docker.group>default</docker.group>
+    <docker.http.port>5460</docker.http.port>
+    <docker.cli.port>5461</docker.cli.port>
+    -->
+
+    <!-- uncomment to add lombok support
+    <act.lombok>/path/to/lombok.jar</act.lombok>
+    -->
+  </properties>
+
+  <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>3.141.59</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.testng/testng -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.8.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-java -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>7.13.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-junit -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>7.13.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-core -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-core</artifactId>
+            <version>7.13.0</version>
+        </dependency>
+       <!-- https://mvnrepository.com/artifact/com.itextpdf/itext7-core -->
+		<dependency>
+		    <groupId>com.itextpdf</groupId>
+		    <artifactId>itext7-core</artifactId>
+		    <version>7.2.3</version>
+		    <type>pom</type>
+		</dependency>
+
+    </dependencies>
+
+</project>
