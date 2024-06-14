@@ -10,9 +10,6 @@ import question_img_logo from "../../../styles/images/question-img.png";
 import "./manual-testing.scss";
 import { Breadcrumb, Tabs, notification } from "antd";
 import { Select } from "antd";
-import { Option } from "antd/es/mentions";
-import TestCase from "../TestCase/TestCase";
-import TestcaseVertical from "../TestcaseVertical/TestcaseVertical";
 import WebSocketService from "../../../api/WebSocketService";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useLoader } from "../../loader/LoaderContext";
@@ -23,6 +20,7 @@ import { RefObjUriConstants } from "../../../constants/refObjUri_constants";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
 import { set_header } from "../../../reducers/homeReducer";
 import TestCaseVerticalView from "../TestCaseVerticalView/TestCaseVerticalView";
+import { TestRequestStateConstantNames, TestRequestStateConstants } from "../../../constants/test_requests_constants";
 
 /* 
   Manual Testing Page. 
@@ -32,7 +30,7 @@ import TestCaseVerticalView from "../TestCaseVerticalView/TestCaseVerticalView";
   encounters. 
 */
 export default function ManualTesting() {
-  const { testRequestId } = useParams();
+  const { testRequestId,viewOnly } = useParams();
   const [currentComponentIndex, setCurrentComponentIndex] = useState();
   const [currentSpecificationIndex, setCurrentSpecificationIndex] = useState();
   const [currentTestcaseIndex, setCurrentTestcaseIndex] = useState();
@@ -51,7 +49,7 @@ export default function ManualTesting() {
   const { showLoader, hideLoader } = useLoader();
   const dispatch = useDispatch();
   const { Item } = Tabs;
-  const [testcaseName, setTestCaseName] = useState();
+  const [testRequestInfo, setTestRequestInfo] = useState();
   const navigate = useNavigate();
   const [optionsArray,setOptionsArray] = useState([]);
   const [unsavedNotes,setUnSavedNotes] = useState([]);
@@ -97,14 +95,12 @@ export default function ManualTesting() {
         webSocketConnect();
       }
     } catch (error) {
-      console.log(error);
     }
   };
 
   // UseEffect which is fired on the initial component render, fetches testcase data and disconnects to 
   // web-socket if the component is unmounted.
   useEffect(() => {
-    dispatch(set_header("Manual Verification"));
     showLoader();
     fetchTestCaseResultDataAndStartWebSocket();
     testCaseInfo();
@@ -197,7 +193,11 @@ export default function ManualTesting() {
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
-        setTestCaseName(res.name);
+        setTestRequestInfo(res);
+        if(res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ||
+           res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED){
+            dispatch(set_header("Manual Verification - View Responses"))
+           }
       }).catch(() => {
 
       });
@@ -336,7 +336,6 @@ export default function ManualTesting() {
     }else{
       if (testcaseIndex > -1) {
         const idn = testcaseResults[componentIndex].childTestcaseResults[specificationIndex].childTestcaseResults[testcaseIndex].id;
-        console.log(idn);
         document.getElementById(idn).scrollIntoView({
           behavior: "smooth"
         });
@@ -437,7 +436,7 @@ export default function ManualTesting() {
       <Breadcrumb.Item>
       {unsavedNotes.length === 0 && optionsArray.length === 0 ? (
         <Link to={`/choose-test/${testRequestId}`} className="breadcrumb-item" id="unblockedNavToChooseTest">
-          {testcaseName}
+          {testRequestInfo?.name}
         </Link>
       ) : (
         <span className="breadcrumb-item"
@@ -450,7 +449,7 @@ export default function ManualTesting() {
             placement:"bottomRight"
           })
         }}>
-          {testcaseName}
+          {testRequestInfo?.name}
         </span>
       )}
       </Breadcrumb.Item>
@@ -507,17 +506,6 @@ export default function ManualTesting() {
                 ))}
               </Select>
             </div>
-            {/* Below is the button code which is currently commented out */}
-            {/* <div className="col-md-6 text-end">
-              <div className="layout-buttons">
-                <button className={`${isHorizontal ? 'btn btn-outline-secondary   ' : 'btn btn-outline-secondary  '}`} onClick={handleHorizontalClick}>
-                  Horizontal
-                </button>
-                <button className={`${isHorizontal ? 'btn btn-outline-secondary ' : 'btn btn-outline-secondary    '}`} onClick={handleVerticalClick}>
-                  Vertical
-                </button>
-              </div>
-            </div> */}
           </div>
 
 
@@ -627,15 +615,13 @@ export default function ManualTesting() {
                     unsavedNotes={unsavedNotes}
                     setUnSavedNotes={setUnSavedNotes}
                     dynamicDescription={dynamicDescription}
+                    testRequestInfo={testRequestInfo}
                     ></TestCaseVerticalView>
                 </Item>
               ))}
             </Tabs>
           )}
         </div>
-        {/* {!isHorizontal &&
-
-} */}
       </div>
 
    

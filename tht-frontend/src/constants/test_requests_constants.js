@@ -1,7 +1,6 @@
 // state_constants.js
 
 export const TestRequestStateConstants = {
-    TEST_REQUEST_STATUS_DRAFT: "test.request.status.draft",
     TEST_REQUEST_STATUS_PENDING: "test.request.status.pending",
     TEST_REQUEST_STATUS_ACCEPTED: "test.request.status.accepted",
     TEST_REQUEST_STATUS_REJECTED: "test.request.status.rejected",
@@ -11,7 +10,6 @@ export const TestRequestStateConstants = {
 };
 
 export const TestRequestStateConstantNames = {
-    "test.request.status.draft": "DRAFT",
     "test.request.status.pending": "Request Pending",
     "test.request.status.accepted": "Ready For Testing",
     "test.request.status.rejected": "Request Declined",
@@ -22,7 +20,6 @@ export const TestRequestStateConstantNames = {
   };
 
 export const StateBadgeClasses = {
-    "test.request.status.draft": "badges-orange",
     "test.request.status.pending": "badges-orange bg-warning",
     "test.request.status.accepted": "badges-green-dark bg-success",
     "test.request.status.rejected": "badges-orange bg-danger",

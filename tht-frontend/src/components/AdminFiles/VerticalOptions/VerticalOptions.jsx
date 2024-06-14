@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { TestResultAPI } from "../../../api/TestResultAPI";
 import "./verticalOptions.scss";
 import { useLoader } from "../../loader/LoaderContext";
@@ -19,6 +19,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { useDispatch } from "react-redux";
 import { set_blocker, set_dynamic_description } from "../../../reducers/blockedReducer";
+import { TestRequestStateConstants } from "../../../constants/test_requests_constants";
 
 
 /* 
@@ -46,7 +47,8 @@ export default function VerticalOptions(props) {
     index,
     setUnSavedNotes,
     dynamicDescription,
-    optionsArray
+    optionsArray,
+    testRequestInfo
   } = props;
   const [options, setOptions] = useState([]);
   const [currentOptions, setCurrentOptions] = useState([]);
@@ -59,6 +61,8 @@ export default function VerticalOptions(props) {
   const [editMode, setEditMode] = useState(false);
   const [noteMessage, setNoteMessage] = useState("");
   const [questionAndDocument, setQuestionAndDocument] = useState([]);
+  const [viewOnlyMode,setViewOnlyMode] = useState(false);
+  const [previewDoc,setPreviewDoc] = useState([]);
   const dispatch = useDispatch();
 
   const handleOnChangeForNote = (e,testcaseResultInfo,index) => {
@@ -179,6 +183,14 @@ export default function VerticalOptions(props) {
 
   // This useEffect fetches all the concerned options for a specific testcase.
   useEffect(() => {
+    if(testRequestInfo?.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED 
+      || testRequestInfo?.state === TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED){
+       setViewOnlyMode(true);
+      }
+      else{
+        setViewOnlyMode(false);
+      }
+
     getReferenceImages();
     showLoader();
     TestResultRelationAPI.getTestcaseResultRelatedObject(
@@ -415,7 +427,6 @@ export default function VerticalOptions(props) {
     DocumentAPI.downloadDocument(file.id, file.name).catch((err) => {});
   };
 
-  useEffect(() => {}, [uploadedFiles]);
 
   const deleteFile = (file, index) => {
     if (file) {
@@ -530,7 +541,6 @@ export default function VerticalOptions(props) {
   };
 
   useEffect(() => {
-    const id = testcaseResultInfo.refId;
     if (testcaseResultInfo) {
       DocumentAPI.getDocumentsByRefObjUriAndRefId(
         RefObjUriConstants.TESTCASE_RESULT_REFOBJURI,
@@ -544,7 +554,7 @@ export default function VerticalOptions(props) {
     }
   }, [testcaseResultInfo]);
   return (
-    <div id="options">
+    <div id="options" >
       <div className="col-12 px-0 question-list" style={{ display: "flex" }}>
         <div className="col-9" style={{ flexGrow: 1 }}>
           <h2>
@@ -569,6 +579,7 @@ export default function VerticalOptions(props) {
                       : "field-box"
                   }
                   key={option.id}
+                  style={{pointerEvents:viewOnlyMode ? "none" : "all"}}
                 >
                   <div className="option-item">
                     <input
@@ -617,6 +628,7 @@ export default function VerticalOptions(props) {
                 >
                   <i className="bi bi-cloud-download"></i>
                 </span>
+                { !viewOnlyMode && 
                 <span
                  id={`VerticalOptions-3-${file.id}-DeleteFile`}
                   type="button"
@@ -626,10 +638,21 @@ export default function VerticalOptions(props) {
                 >
                   <i className="bi bi-trash3"></i>
                 </span>
+                }
               </div>
             ))}
+         
           </div>
-          {showNote && (
+          { //show previously added notes for answered questions
+            !!viewOnlyMode && noteMessage !== null && 
+            <div className=" m-3 position-relative flex"
+             id={`viewOnlyMode-note-textarea-${index}`} 
+             >
+              <span><b>Note:</b></span>
+             <p>{noteMessage}</p>
+            </div>
+          }
+          {!viewOnlyMode && showNote && (
             <div className="text-end m-3 position-relative" id="note-textarea">
               <textarea
                 style={{borderColor : noteMessage?.length > 2000 ? "red" : ""}}
@@ -679,6 +702,7 @@ export default function VerticalOptions(props) {
               {noteMessage?.length > 2000 && <p style={{color:"red",textAlign:"left"}}>The note can't be longer than 2000 characters.</p>}
             </div>
           )}
+          {!viewOnlyMode && 
           <div className="text-end mb-3">
             <div
               className="cst-btn-group btn-group margin"
@@ -729,6 +753,7 @@ export default function VerticalOptions(props) {
               </button>
             </div>
           </div>
+          }
         </div>
 
         { !!questionAndDocument &&
@@ -757,7 +782,7 @@ export default function VerticalOptions(props) {
             </>
           </div>
         </div>
-}
+}       
       </div>
     </div>
   );

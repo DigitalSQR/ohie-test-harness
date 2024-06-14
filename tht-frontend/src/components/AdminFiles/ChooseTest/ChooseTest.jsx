@@ -26,7 +26,7 @@ import { TestcaseVariableAPI } from "../../../api/TestcaseVariableAPI.js";
 export default function ChooseTest() {
   const { testRequestId } = useParams();
   const { TESTCASE_REFOBJURI, TESTREQUEST_REFOBJURI } = RefObjUriConstants;
-  const [testcaseName, setTestCaseName] = useState();
+  const [testRequestInfo, setTestRequestInfo] = useState();
   const [totalManualTestcaseResults, setTotalManualTestcaseResults] = useState(0);
   const [totalAutomatedTestcaseResults, setTotalAutomatedTestcaseResults] = useState(0);
   const [totalFinishedManual, setTotalFinishedManual] = useState(0);
@@ -41,7 +41,7 @@ export default function ChooseTest() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
-
+  const [ isViewMode,setIsViewMode] = useState(true);;
   /* 
   This useEffect fetches all the testcases, both manual and automated.
   And based on the data recieved, the progress is tracked.
@@ -182,11 +182,15 @@ export default function ChooseTest() {
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
-        if(res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED){
-          navigate("/applications")
+        setTestRequestInfo(res);
+        if(res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED || 
+          res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED
+        ){
+          setIsViewMode(true);
+          dispatch(set_header(`${res.name} - View Only`));
         }
         else{
-        setTestCaseName(res.name);
+          setIsViewMode(false);
         dispatch(set_header(res.name));
         }
       }).catch((error) => {
@@ -291,12 +295,13 @@ const handleOpenModal = () => {
               Applications
             </Link>
           </Breadcrumb.Item>
-            <Breadcrumb.Item className="breadcrumb-item">{testcaseName}</Breadcrumb.Item>
+            <Breadcrumb.Item className="breadcrumb-item">{testRequestInfo?.name}</Breadcrumb.Item>
           </Breadcrumb>
           <hr className="hr-light"/>
-          <h5 className="mt-3">Choose Verification Type</h5>
+          <h5 className="mt-3">{isViewMode ? "View your responses." : "Choose Verification Type"}</h5>
           <p className="text-gray">
-            Select the type to start verifying application with OpenHIE.{" "}
+            {isViewMode ? "View your responses to manual testcases or view your results for automated testcases."
+            : "Select the type to start verifying application with OpenHIE."}
           </p>
           <div className="d-flex flex-wrap">
             {!!testcaseResults && totalAllManual !==0 
@@ -379,6 +384,7 @@ const handleOpenModal = () => {
                     onClick={() => navigate(`/manual-testing/${testRequestId}`)}
                   >
                     {
+                      isViewMode ? "Show Results" : 
                       totalAllManual === totalFinishedManual ?
                         "Modify" :
                         "Resume"
@@ -513,7 +519,7 @@ const handleOpenModal = () => {
             }
           </div>
         </div>
-          {!!submitButtonFlag && totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
+          {!isViewMode && !!submitButtonFlag && totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
           <div className="message-grid">
             <p>Verification has been successfully completed. Please click the button below to submit the results.</p>
             <button className="submit-btn cst-btn-group btn" id="chooseTest-Submit" onClick={submitHandler}>Submit</button>

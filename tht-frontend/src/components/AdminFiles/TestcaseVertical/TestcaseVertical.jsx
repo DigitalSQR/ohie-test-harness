@@ -37,7 +37,9 @@ export default function TestcaseVertical(props) {
     setOptionsArray,
     unsavedNotes,
     setUnSavedNotes,
-    dynamicDescription
+    dynamicDescription,
+    testRequestInfo
+
   } = props;
   const { showLoader, hideLoader } = useLoader();
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -340,6 +342,7 @@ export default function TestcaseVertical(props) {
                         setUnSavedNotes={setUnSavedNotes}
                         dynamicDescription={dynamicDescription}
                         optionsArray={optionsArray}
+                        testRequestInfo={testRequestInfo}
                       ></VerticalOptions>
                   </div>
                 )}

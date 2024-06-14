@@ -13,8 +13,6 @@ import { TestRequestAPI } from "../../../api/TestRequestAPI.js";
 import { Empty, notification, Modal, Switch } from "antd";
 import { Pagination, PaginationItem } from "@mui/material";
 import { useLoader } from "../../loader/LoaderContext";
-import { useDispatch } from "react-redux";
-import { set_header } from "../../../reducers/homeReducer.jsx";
 import { UserAPI } from "../../../api/UserAPI";
 import { USER_ROLES } from "../../../constants/role_constants.js";
 import unsorted from "../../../styles/images/unsorted.png";
@@ -56,7 +54,6 @@ const Applications = () => {
   const [currentIndex, setCurrentIndex] = useState();
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const hasMounted = useRef(false);
   const pageSize = 10;
 
@@ -669,7 +666,7 @@ const Applications = () => {
                               </div>
                             </div>
                           ) : null}
-                          <div className="d-flex align-items-center">
+                          <div className="d-flex align-items-center flex-wrap">
                             {testRequest.state !==
                               TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING &&
                             testRequest.state !==
@@ -713,6 +710,7 @@ const Applications = () => {
                                 testRequest.state ===
                                   TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED) && (
                                 <button
+                                  style={{marginRight:"4px",marginBottom:"4px"}}
                                   id={`applications-viewReport-${index}`}
                                   className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
                                   onClick={() => viewReport(testRequest.id)}
@@ -720,14 +718,23 @@ const Applications = () => {
                                   <i className="bi bi-file-text font-size-16"></i>{" "}
                                   REPORT{" "}
                                 </button>
+                                
                               )
                             )}
+                            {(testRequest.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ||
+                             testRequest.state === TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED) &&
+                            <button className="cursor-pointer glossy-button glossy-button--blue d-flex align-items-center" id={`applications-viewOnly-${index}`}
+                            style={{display:"inline-flex",marginRight:"4px",marginBottom:"4px"}}
+                            onClick={()=>{navigate(`/choose-test/${testRequest.id}`)}}>
+                                <i class="bi bi-eye"></i>{" "}VIEW ONLY</button>
+                            }
                             {userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER) ? (
-                              <div style={{ marginLeft: "2rem" }}>
+                              <div>
                                 <span className="cursor-pointer text-success font-size-12 fw-bold">
                                   <i className={`bi  font-size-16`}></i>
                                   <Switch
-                                    id="Applications-switch-publishStatus"
+                                  style={{fontWeight:"600"}}
+                                    id={`Applications-switch-publishStatus-${index}`}
                                     checked={
                                       testRequest?.state ===
                                       TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED
