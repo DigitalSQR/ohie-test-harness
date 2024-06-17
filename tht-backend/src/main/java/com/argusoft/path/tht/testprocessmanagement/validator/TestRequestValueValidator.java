@@ -97,7 +97,7 @@ public class TestRequestValueValidator {
         for (TestRequestValueEntity entity : testRequestValueEntities) {
             //check for value
             ValidationUtils
-                    .validateLength(entity.getValue(),
+                    .validateLength(entity.getTestRequestValueInput(),
                             "value",
                             0,
                             255,
@@ -108,8 +108,8 @@ public class TestRequestValueValidator {
     //trim all TestRequest field
     private static void trimTestRequestValues(List<TestRequestValueEntity> testRequestValueEntities) {
         for(TestRequestValueEntity testRequestValueEntity : testRequestValueEntities){
-            if (testRequestValueEntity.getValue() != null) {
-                testRequestValueEntity.setValue(testRequestValueEntity.getValue().trim());
+            if (testRequestValueEntity.getTestRequestValueInput() != null) {
+                testRequestValueEntity.setTestRequestValueInput(testRequestValueEntity.getTestRequestValueInput().trim());
             }
         }
     }

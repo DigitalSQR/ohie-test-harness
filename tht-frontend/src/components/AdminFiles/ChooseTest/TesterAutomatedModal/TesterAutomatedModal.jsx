@@ -58,7 +58,7 @@ export default function TesterAutomatedModal(props) {
   const validationSchema = Yup.object().shape({
     testRequestValues: Yup.array().of(
       Yup.object().shape({
-        value: Yup.string()
+        testRequestValueInput: Yup.string()
           .trim()
           .test(
             'custom-required',
@@ -67,7 +67,7 @@ export default function TesterAutomatedModal(props) {
               if (!value) {
                 return this.createError({
                   message: `${key} is required`,
-                  path: `testRequestValues[${this.options.index}].value`,
+                  path: `testRequestValues[${this.options.index}].testRequestValueInput`,
                 });
               }
               return true;
@@ -96,14 +96,14 @@ export default function TesterAutomatedModal(props) {
   useEffect(() => {
     if (currentTestRequestId) {
       const newTestRequestValues = [];
-      
+
       TestRequestAPI.getTestRequestsById(currentTestRequestId)
         .then((res) => {
           setTestRequest(res);
           const componentPromises = res.testRequestUrls.map(testRequestUrl => {
             return ComponentAPI.getComponentById(testRequestUrl.componentId);
           });
-  
+
           // Wait for all component promises to resolve
           return Promise.all(componentPromises)
             .then(components => {
@@ -144,7 +144,7 @@ export default function TesterAutomatedModal(props) {
                     newTestRequestValues.push({
                       key: testcaseVariableRes.testcaseVariableKey,
                       testcaseVariableId: testcaseVariableRes.id,
-                      value: testcaseVariableRes.defaultValue,
+                      testRequestValueInput: testcaseVariableRes.defaultValue,
                       testcaseName: testCaseRes.name,
                       specificationName: specificationRes.name,
                       componentName: componentRes.name,
@@ -153,12 +153,12 @@ export default function TesterAutomatedModal(props) {
                   })
                   .catch((error) => {
                   });
-  
+
                 promises.push(promise);
               }
             });
           });
-  
+
           return Promise.all(promises);
         })
         .then(() => {
@@ -176,7 +176,7 @@ export default function TesterAutomatedModal(props) {
         });
     }
   }, [isTesterModalOpen, currentTestRequestId]);
-  
+
   return (
     <Fragment>
       <Modal
@@ -208,72 +208,88 @@ export default function TesterAutomatedModal(props) {
                               {componentName}
                             </label>
                             {testRequestValues.map((testRequestValue, index) => (
-                              <div className="row ">
-                                <div className="col-12 ">
+                              <div className="row">
+                                <div className="col-12">
                                   <div className="custom-input mt-3">
-                                    <label
-                                      htmlFor={testRequestValue.value.key}
-                                      className="form-label"
-                                    >
-                                      {testRequestValue.value.key}:{" "}
-                                      <span style={{ color: "red" }}>*</span>
-                                      <Popover
-                                        placement="topLeft"
-                                        title={
-                                          <div
-                                            style={{
-                                              maxWidth: "450px",
-                                              fontWeight: "normal",
-                                            }}
+                                    <div className="row">
+                                      <div className="col-12">
+                                        <label
+                                          htmlFor={testRequestValue.value.key}
+                                          className="form-label"
+                                        >
+                                          {testRequestValue.value.key}:{" "}
+                                          <span style={{ color: "red" }}>*</span>
+                                          <Popover
+                                            placement="topLeft"
+                                            title={
+                                              <div
+                                                style={{
+                                                  maxWidth: "450px",
+                                                  fontWeight: "normal",
+                                                }}
+                                              >
+                                                Please provide the value for testcase {testRequestValue.value.testcaseName} of specification {testRequestValue.value.specificationName}
+                                              </div>
+                                            }
                                           >
-                                            {" "}
-                                            Please provide the value for testcase {testRequestValue.value.testcaseName} of specification {testRequestValue.value.specificationName}
+                                            <InfoCircleOutlined
+                                              style={{
+                                                marginLeft: "0.5rem",
+                                                marginTop: "0.7rem",
+                                              }}
+                                            />
+                                          </Popover>
+                                        </label>
+                                      </div>
+                                    </div>
+                                    <div className="row">
+                                      <div className="col-11">
+                                        <input
+                                          id={
+                                            "testRequestValues[" +
+                                            testRequestValue.originalIndex +
+                                            "].testRequestValueInput"
+                                          }
+                                          name={
+                                            "testRequestValues[" +
+                                            testRequestValue.originalIndex +
+                                            "].testRequestValueInput"
+                                          }
+                                          type="text"
+                                          className={`form-control ${touched.testRequestValues && touched.testRequestValues[testRequestValue.originalIndex] && touched.testRequestValues[testRequestValue.originalIndex].testRequestValueInput && errors.testRequestValues && errors.testRequestValues[testRequestValue.originalIndex] && errors.testRequestValues[testRequestValue.originalIndex].testRequestValueInput
+                                            ? "is-invalid"
+                                            : ""
+                                            }`}
+                                          placeholder={testRequestValue.value.key}
+                                          value={values.testRequestValues[testRequestValue.originalIndex]?.testRequestValueInput || ""}
+                                          onChange={(event) => setFieldValue(`testRequestValues[${testRequestValue.originalIndex}].testRequestValueInput`, event.target.value)}
+                                          onBlur={
+                                            () => {
+                                              setFieldTouched(`testRequestValues[${testRequestValue.originalIndex}].testRequestValueInput`, true)
+                                              if (setAsDefault) {
+                                                setSetAsDefault(!setAsDefault);
+                                              }
+                                            }
+                                          }
+                                          autoComplete="off"
+                                        />
+                                        {touched.testRequestValues && touched.testRequestValues[testRequestValue.originalIndex] && touched.testRequestValues[testRequestValue.originalIndex].testRequestValueInput && errors.testRequestValues && errors.testRequestValues[testRequestValue.originalIndex] &&
+                                          <div className="error-message">
+                                            {errors.testRequestValues[testRequestValue.originalIndex].testRequestValueInput}
                                           </div>
                                         }
-                                      >
-                                        <InfoCircleOutlined
-                                          style={{
-                                            marginLeft: "0.5rem",
-                                            marginTop: "0.7rem",
-                                          }}
-                                        />
-                                      </Popover>
-                                    </label>
-                                    <input
-                                      id={
-                                        "testRequestValues[" +
-                                        testRequestValue.originalIndex +
-                                        "].value"
-                                      }
-                                      name={
-                                        "testRequestValues[" +
-                                        testRequestValue.originalIndex +
-                                        "].value"
-                                      }
-                                      type="text"
-                                      className={`form-control ${touched.testRequestValues && touched.testRequestValues[testRequestValue.originalIndex] && touched.testRequestValues[testRequestValue.originalIndex].value && errors.testRequestValues && errors.testRequestValues[testRequestValue.originalIndex] && errors.testRequestValues[testRequestValue.originalIndex].value
-                                        ? "is-invalid"
-                                        : ""
-                                        }`}
-                                      placeholder={testRequestValue.value.key}
-                                      value={values.testRequestValues[testRequestValue.originalIndex]?.value || ""}
-                                      onChange={(event) => setFieldValue(`testRequestValues[${testRequestValue.originalIndex}].value`, event.target.value)}
-                                      onBlur={
-                                        () => {
-                                          setFieldTouched(`testRequestValues[${testRequestValue.originalIndex}].value`, true)
-                                          if (setAsDefault) {
-                                            setSetAsDefault(!setAsDefault);
-                                          }
-                                        }
-                                      }
-                                      autoComplete="off"
-                                    />
-                                    {
-                                      touched.testRequestValues && touched.testRequestValues[testRequestValue.originalIndex] && touched.testRequestValues[testRequestValue.originalIndex].value && errors.testRequestValues && errors.testRequestValues[testRequestValue.originalIndex] &&
-                                      <div className="error-message">
-                                        {errors.testRequestValues[testRequestValue.originalIndex].value}
                                       </div>
-                                    }
+                                      <div className="col-1 refresh-icon" onClick={() => {
+                                        defaultTestRequestValues.forEach((defaultValue, index) => {
+                                          if (defaultValue.key === testRequestValue.value.key) {
+                                            setFieldValue(`testRequestValues[${testRequestValue.originalIndex}].testRequestValueInput`, defaultValue.testRequestValueInput);
+                                            }
+                                        })
+                                        setGroupedValues(groupByComponent(values.testRequestValues));
+                                      }}>
+                                        <i className="bi bi-arrow-repeat"></i>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -282,37 +298,22 @@ export default function TesterAutomatedModal(props) {
                           </div>
                         ))
                       }
-                      <div className="option-item">
-                        <input
-                          key="default"
-                          type="checkbox"
-                          id="default.id"
-                          name="default.id"
-                          value=""
-                          checked={setAsDefault}
-                          autoComplete="off"
-                          onChange={() => {
-                            if (!setAsDefault) {
-                              defaultTestRequestValues.forEach((defaultValue, index) => {
-                                setFieldValue(`testRequestValues[${index}].value`, defaultValue.value);
-                                setTouched({});
-                              })
-                              setGroupedValues(groupByComponent(values.testRequestValues));
-                              setSetAsDefault(!setAsDefault);
-                            }
-                            else {
-                              defaultTestRequestValues.forEach((defaultValue, index) => {
-                                setFieldValue(`testRequestValues[${index}].value`, '');
-                                setTouched({});
-                                setGroupedValues(groupByComponent(values.testRequestValues));
-                                setSetAsDefault(!setAsDefault);
-                              })
-                            }
-                          }
-
-                          }
-                        />
-                        <label className="mt-4 set-default">Reset</label>
+                      <div className="my-3 cst-btn-group margin mb-3">
+                        <button
+                          id="specAutomatedUpserModal-reset"
+                          type="button"
+                          className="btn cst-btn-default"
+                          onClick={() => {
+                            defaultTestRequestValues.forEach((defaultValue, index) => {
+                              setFieldValue(`testRequestValues[${index}].testRequestValueInput`, defaultValue.testRequestValueInput);
+                              setTouched({});
+                            })
+                            setGroupedValues(groupByComponent(values.testRequestValues));
+                            setSetAsDefault(true);
+                          }}
+                        >
+                          Reset All
+                        </button>
                       </div>
                       <div className="my-4 text-end">
                         <button

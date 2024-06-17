@@ -86,19 +86,19 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
                 .collect(Collectors.toSet());
     }
 
-    default List<TestRequestValueInfo> setToTestRequestValues(TestRequestEntity testRequestEntity) {
+    default Set<TestRequestValueInfo> setToTestRequestValues(TestRequestEntity testRequestEntity) {
         if (testRequestEntity.getTestRequestValues() == null) {
             return null;
         }
         return testRequestEntity.getTestRequestValues().stream()
                 .map(testRequestValue -> {
-                    return new TestRequestValueInfo(testRequestValue.getId(), testRequestValue.getValue(), testRequestValue.getTestcaseVariableId(), setToTestRequestId(testRequestEntity));
+                    return new TestRequestValueInfo(testRequestValue.getId(), testRequestValue.getTestRequestValueInput(), testRequestValue.getTestcaseVariableId(), setToTestRequestId(testRequestEntity));
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
 
-    default List<TestRequestValueEntity> setToTestRequestValues(TestRequestInfo testRequestInfo) {
+    default Set<TestRequestValueEntity> setToTestRequestValues(TestRequestInfo testRequestInfo) {
         if (testRequestInfo.getTestRequestValues() == null) {
             return null;
         }
@@ -107,12 +107,12 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
                     TestRequestValueEntity testRequestValueEntity = new TestRequestValueEntity();
                     testRequestValueEntity.setId(testRequestValue.getId());
                     testRequestValueEntity.setTestRequest(setToTestRequest(testRequestValue.getTestRequestId()));
-                    testRequestValueEntity.setValue(testRequestValue.getValue());
+                    testRequestValueEntity.setTestRequestValueInput(testRequestValue.getTestRequestValueInput());
                     testRequestValueEntity.setTestcaseVariableId(testRequestValue.getTestcaseVariableId());
 
                     return testRequestValueEntity;
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     @Named("setToApproverId")

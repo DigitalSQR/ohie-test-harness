@@ -31,6 +31,7 @@ const RegisterApplication = () => {
   const { testRequestId } = useParams();
   const dispatch = useDispatch();
   const [selectedComponents, setSelectedComponents] = useState({});
+  const [defaultSelectedComponents, setDefaultSelectedComponents] = useState({});
   const [testRequestValues, setTestRequestValues] = useState([]);
 
   // A custom validation function. This must return an object
@@ -88,12 +89,12 @@ const RegisterApplication = () => {
       }
 
       values.testRequestValues.forEach((testRequestValue, index) => {
-        if (testRequestValue.value == null || !testRequestValue.value.trim()) {
-          errors[`testRequestValues[${index}].value`] =
+        if (testRequestValue.testRequestValueInput == null || !testRequestValue.testRequestValueInput.trim()) {
+          errors[`testRequestValues[${index}].testRequestValueInput`] =
             testRequestValue.key + " is required";
         }
-        if (testRequestValue.value && testRequestValue.value.length > 255) {
-          errors[`testRequestValues[${index}].value`] =
+        if (testRequestValue.testRequestValueInput && testRequestValue.testRequestValueInput.length > 255) {
+          errors[`testRequestValues[${index}].testRequestValueInput`] =
             testRequestValue.key + " must have less than 255 characters";
         }
 
@@ -191,6 +192,12 @@ const RegisterApplication = () => {
       tvalues.setValue([...formik.values.testRequestValues, ...newTestRequestValues]);
       updatedSelectedComponents[selectedComponent.id] = newTestRequestValues;
 
+      setDefaultSelectedComponents((prevDefaultSelectedComponents) => ({
+        ...prevDefaultSelectedComponents,
+        [selectedComponent.id]: newTestRequestValues
+      }));
+
+
       const touchedFields = {};
       if (!!newTestRequestValues) {
         newTestRequestValues.forEach((trv) => {
@@ -283,7 +290,7 @@ const RegisterApplication = () => {
                     newTestRequestValues.push({
                       key: testcaseVariableRes.testcaseVariableKey,
                       testcaseVariableId: testcaseVariableRes.id,
-                      value: testcaseVariableRes.defaultValue,
+                      testRequestValueInput: testcaseVariableRes.defaultValue,
                       testcaseName: testCaseRes.name,
                       specificationName: specificationRes.name,
                     })
@@ -356,6 +363,7 @@ const RegisterApplication = () => {
 
         let promises = [];
         const prevSelectedComponents = new Map();
+        const defaultTrvs = new Map();
 
         // Create promises to fetch testcase variables and related data
         res.testRequestValues.forEach(trv => {
@@ -379,17 +387,33 @@ const RegisterApplication = () => {
               prevSelectedComponents.set(trv.testcaseVariableId, {
                 key: testcaseVariableRes.testcaseVariableKey,
                 testcaseVariableId: trv.testcaseVariableId,
-                value: trv.value || testcaseVariableRes.defaultValue,
+                testRequestValueInput: trv.testRequestValueInput || testcaseVariableRes.defaultValue,
                 id: trv.id,
                 testcaseName: testCaseRes.name,
                 specificationName: specificationRes.name,
-                testRequestId : res.id
+                testRequestId: res.id
               })
+
+
+              defaultTrvs.set(trv.testcaseVariableId, {
+                key: testcaseVariableRes.testcaseVariableKey,
+                testcaseVariableId: trv.testcaseVariableId,
+                testRequestValueInput: testcaseVariableRes.defaultValue,
+                id: trv.id,
+                testcaseName: testCaseRes.name,
+                specificationName: specificationRes.name,
+                testRequestId: res.id
+              });
+
               const componentId = specificationRes.componentId;
               if (!prevSelectedComponents.hasOwnProperty(componentId)) {
                 prevSelectedComponents[componentId] = [];
               }
+              if (!defaultTrvs.hasOwnProperty(componentId)) {
+                defaultTrvs[componentId] = [];
+              }
               prevSelectedComponents[componentId].push(prevSelectedComponents.get(trv.testcaseVariableId));
+              defaultTrvs[componentId].push(defaultTrvs.get(trv.testcaseVariableId));
             })
             .catch((error) => {
             });
@@ -401,6 +425,7 @@ const RegisterApplication = () => {
         Promise.all(promises)
           .then(() => {
             setSelectedComponents(prevSelectedComponents);
+            setDefaultSelectedComponents(defaultTrvs);
             formik.values.testRequestValues = Array.from(prevSelectedComponents.values());
           })
           .catch((error) => {
@@ -692,33 +717,32 @@ const RegisterApplication = () => {
                                         ]?.password &&
                                         formik.errors[
                                         "testRequestUrls[" +
-                                          modifiedComponentId(url.componentId) +
-                                          "].password"
-                                      ]
-                                    ) && (
-                                      <button
-                                        id="#RegisterApplication-showPassword"
-                                        className="btn btn-outline-secondary color"
-                                        type="button"
-                                        onClick={() => {
-                                          setShowPassword(!showPassword);
-                                        }}
-                                      >
-                                        <i
-                                          className={`bi ${
-                                            showPassword
-                                              ? "bi-eye-slash"
-                                              : "bi-eye"
-                                          }`}
-                                        ></i>
-                                      </button>
-                                    )}
-                                  </div>
-                                  <div>
-                                    {touched?.[
-                                      modifiedComponentId(url.componentId)
-                                    ]?.password &&
-                                      formik.errors[
+                                        modifiedComponentId(url.componentId) +
+                                        "].password"
+                                        ]
+                                      ) && (
+                                          <button
+                                            id="#RegisterApplication-showPassword"
+                                            className="btn btn-outline-secondary color"
+                                            type="button"
+                                            onClick={() => {
+                                              setShowPassword(!showPassword);
+                                            }}
+                                          >
+                                            <i
+                                              className={`bi ${showPassword
+                                                ? "bi-eye-slash"
+                                                : "bi-eye"
+                                                }`}
+                                            ></i>
+                                          </button>
+                                        )}
+                                    </div>
+                                    <div>
+                                      {touched?.[
+                                        modifiedComponentId(url.componentId)
+                                      ]?.password &&
+                                        formik.errors[
                                         "testRequestUrls[" +
                                         modifiedComponentId(url.componentId) +
                                         "].password"
@@ -937,7 +961,13 @@ const RegisterApplication = () => {
                           </Fragment>
                         );
                       })}
-
+                      {
+                        component.isSelected === true && selectedComponents[component.id]?.length > 0 && (
+                          <div className="custom-param">
+                            <label>Custom Parameters</label>
+                          </div>
+                        )
+                      }
                       {
                         formik.values.testRequestValues
                           ?.map((testRequestValue, originalIndex) =>
@@ -978,102 +1008,139 @@ const RegisterApplication = () => {
                                       />
                                     </Popover>
                                   </label>
-                                  <input
-                                    id={
-                                      "testRequestValues[" +
-                                      testRequestValueWithIndex.originalIndex +
-                                      "].value"
-                                    }
-                                    name={
-                                      "testRequestValues[" +
-                                      testRequestValueWithIndex.originalIndex +
-                                      "].value"
-                                    }
-                                    type="text"
-                                    className={`form-control ${touched?.[
-                                      modifiedComponentId(component.id)
-                                    ]?.[testRequestValueWithIndex.key] &&
-                                      formik.errors[
-                                      "testRequestValues[" +
-                                      testRequestValueWithIndex.originalIndex +
-                                      "].value"
-                                      ]
-                                      ? "is-invalid"
-                                      : ""
-                                      }`}
-                                    placeholder={
-                                      testRequestValueWithIndex.key
-                                    }
-                                    value={
-                                      formik.values.testRequestValues[testRequestValueWithIndex.originalIndex]
-                                        .value
-                                    }
-                                    onChange={handleInputChange}
-                                    onBlur={() => {
-                                      handleBlur(
-                                        testRequestValueWithIndex.key,
-                                        component.id
-                                      )
-                                    }
-                                    }
-                                    autoComplete="off"
-                                  />
-                                  {
-                                    touched?.[
-                                    modifiedComponentId(component.id)
-                                    ]?.[testRequestValueWithIndex.key] &&
-                                    formik.errors[
-                                    "testRequestValues[" +
-                                    testRequestValueWithIndex.originalIndex +
-                                    "].value"
-                                    ] && (
-                                      <div className="error-message">
-                                        {
+                                  <div className="row">
+                                    <div className="col-11">
+                                      <input
+                                        id={
+                                          "testRequestValues[" +
+                                          testRequestValueWithIndex.originalIndex +
+                                          "].testRequestValueInput"
+                                        }
+                                        name={
+                                          "testRequestValues[" +
+                                          testRequestValueWithIndex.originalIndex +
+                                          "].testRequestValueInput"
+                                        }
+                                        type="text"
+                                        className={`form-control ${touched?.[
+                                          modifiedComponentId(component.id)
+                                        ]?.[testRequestValueWithIndex.key] &&
                                           formik.errors[
                                           "testRequestValues[" +
-                                          testRequestValueWithIndex.originalIndex
-                                          +
-                                          "].value"
+                                          testRequestValueWithIndex.originalIndex +
+                                          "].testRequestValueInput"
                                           ]
+                                          ? "is-invalid"
+                                          : ""
+                                          }`}
+                                        placeholder={
+                                          testRequestValueWithIndex.key
                                         }
-                                      </div>
-                                    )
-                                  }
-
-
+                                        value={
+                                          formik.values.testRequestValues[testRequestValueWithIndex.originalIndex]
+                                            .testRequestValueInput
+                                        }
+                                        onChange={handleInputChange}
+                                        onBlur={() => {
+                                          handleBlur(
+                                            testRequestValueWithIndex.key,
+                                            component.id
+                                          )
+                                        }
+                                        }
+                                        autoComplete="off"
+                                      />
+                                      {
+                                        touched?.[
+                                        modifiedComponentId(component.id)
+                                        ]?.[testRequestValueWithIndex.key] &&
+                                        formik.errors[
+                                        "testRequestValues[" +
+                                        testRequestValueWithIndex.originalIndex +
+                                        "].testRequestValueInput"
+                                        ] && (
+                                          <div className="error-message">
+                                            {
+                                              formik.errors[
+                                              "testRequestValues[" +
+                                              testRequestValueWithIndex.originalIndex
+                                              +
+                                              "].testRequestValueInput"
+                                              ]
+                                            }
+                                          </div>
+                                        )
+                                      }
+                                    </div>
+                                    <div className="col-1 refresh-icon" onClick={() => {
+                                      defaultSelectedComponents[component.id]?.forEach((defaultValue, index) => {
+                                        if (defaultValue.key === testRequestValueWithIndex.key) {
+                                          formik.setFieldValue(`testRequestValues[${testRequestValueWithIndex.originalIndex}].testRequestValueInput`, defaultValue.testRequestValueInput);
+                                        }
+                                      })
+                                    }}>
+                                      <i className="bi bi-arrow-repeat"></i>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           ))}
-                    </div>
 
+                      {
+                        component.isSelected === true && selectedComponents[component.id]?.length > 0 && (
+
+                          <div className="my-3 cst-btn-group margin mb-3">
+                            <button
+                              id="registerApplication-reset"
+                              type="button"
+                              className="btn cst-btn-default"
+                              onClick={() => {
+                                defaultSelectedComponents[component.id]?.forEach((defaultValue) => {
+                                  const matchIndex = formik.values.testRequestValues.findIndex(
+                                    (testRequestValue) => testRequestValue.testcaseVariableId === defaultValue.testcaseVariableId
+                                  );
+
+                                  if (matchIndex !== -1) {
+                                    formik.setFieldValue(`testRequestValues[${matchIndex}].testRequestValueInput`, defaultValue.testRequestValueInput);
+                                  }
+                                });
+
+                                formik.setTouched({});
+                              }}
+                            >
+                              Reset Custom Paramaters
+                            </button>
+                          </div>
+                        )}
+                    </div>
                   </Fragment>
                 );
               })}
 
             </div>
-          <div className="text-end">
-            <button
-              className="btn btn-primary btn-white mx-2"
-              id="#RegisterApplication-cancel"
-              onClick={() => {
-                navigate("/testing-requests");
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              id="#RegisterApplication-handleSubnit"
-              disabled={!(formik.isValid && formik.dirty)}
-              type="button"
-              onClick={formik.handleSubmit}
-              className="btn btn-primary btn-blue"
-            >
-              {testRequestId ? "Update" : "Submit"}
-            </button>
+            <div className="text-end">
+              <button
+                className="btn btn-primary btn-white mx-2"
+                id="#RegisterApplication-cancel"
+                onClick={() => {
+                  navigate("/testing-requests");
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                id="#RegisterApplication-handleSubnit"
+                disabled={!(formik.isValid && formik.dirty)}
+                type="button"
+                onClick={formik.handleSubmit}
+                className="btn btn-primary btn-blue"
+              >
+                {testRequestId ? "Update" : "Submit"}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
       ) : (
         <div id="wrapper">
           <Empty description="No Components Available for Testing" width="400" className="py-5" imageStyle={{

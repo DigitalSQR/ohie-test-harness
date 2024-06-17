@@ -1,6 +1,6 @@
 #testerAutomatedModal {
   .scroll-container {
-    max-height: 400px; /* Adjust the height as needed */
+    max-height: 450px; /* Adjust the height as needed */
     overflow-y: auto;
   }
   .component-header {
@@ -9,5 +9,12 @@
   }
   .set-default {
     margin-left:5px;
+  }
+  .refresh-icon {
+    height: 50px;
+    margin-top: 10px;
+    font-size: large;
+    margin-left: -10px;
+    cursor: pointer !important;
   }
 }

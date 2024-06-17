@@ -373,11 +373,11 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
                 componentService,
                 contextInfo);
 
-        List<TestRequestValueEntity> testRequestValueEntities = new ArrayList<>();
+        Set<TestRequestValueEntity> testRequestValueEntities = new HashSet<>();
         for(TestRequestValueEntity testRequestValueEntity : testRequestEntity.getTestRequestValues()){
             try{
                 TestRequestValueEntity originalEntity = testRequestValueService.getTestRequestValueById(testRequestValueEntity.getId(), contextInfo);
-                originalEntity.setValue(testRequestValueEntity.getValue());
+                originalEntity.setTestRequestValueInput(testRequestValueEntity.getTestRequestValueInput());
                 originalEntity.setTestRequest(testRequestValueEntity.getTestRequest());
                 originalEntity.setTestcaseVariableId(testRequestValueEntity.getTestcaseVariableId());
                 testRequestValueEntity = originalEntity;
@@ -387,7 +387,7 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
                 newEntity.setId(UUID.randomUUID().toString());
                 newEntity.setTestRequest(testRequestEntity);
                 newEntity.setTestcaseVariableId(testRequestValueEntity.getTestcaseVariableId());
-                newEntity.setValue(testRequestValueEntity.getValue());
+                newEntity.setTestRequestValueInput(testRequestValueEntity.getTestRequestValueInput());
                 testRequestValueEntity = newEntity;
             }
             testRequestValueEntities.add(testRequestValueEntity);

@@ -1,3 +1,4 @@
+@import "./../../ComponentList/variables.scss";
 .cst-btn-group .cst-btn-default {
     border-radius: 6px;
     border: 1px solid #e8e8e8;
@@ -32,6 +33,7 @@
     margin-top: 10px;
     font-size: large;
     margin-left: 30px;
+    cursor: pointer;
   }
   .default-value {
     margin-left : -15px;
@@ -55,24 +57,40 @@
     margin-bottom: 10px;
     font-weight: bold;
   }
-  .user-role-select{
-  
-    .css-13cymwt-control{
-      border: 1px solid #ccdade
-    }
-    padding-top: 0px;
-    padding-bottom: 0px;
-    .css-13cymwt-control{
-      padding-top: 0px;
-      padding-bottom: 0px;
-    }
-    .css-1fdsijx-ValueContainer{
-      padding-top: 0px;
-      padding-bottom: 0px;
-    }
-    .css-qbdosj-Input{
-      margin: 0px;
-      padding-top: 0px;
-      padding-bottom: 0px;
+
+  .custom-select {
+    height: 50px;
+    border-radius: 5px;
+    border: 1px solid $color-light;
+    font-size: 14px;
+    font-weight: 400;
+    color: $color-black-50;
+    &:focus {
+      box-shadow: none;
+      border: 1px solid $color-light;
     }
   }
+
+  .custom-select-sm {
+    height: 32px;
+    font-size: 13px;
+  }
+
+ .select-role {
+    height : 50px;
+    font-size: 15px;
+ } 
+.select-role.text-muted option[value=""] {
+  color: #91949796 ;
+}
+.text-muted-select {
+  color: #91949796  !important;
+}
+
+.text-muted-select option {
+  color: black; 
+}
+.select-default {
+  color:91949796;
+  font-size: 16px;
+}

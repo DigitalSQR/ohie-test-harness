@@ -160,5 +160,17 @@
     font-weight: bold;
     margin-top: 20px;
   }
+  .refresh-icon {
+    height: 50px;
+    margin-top: 10px;
+    font-size: large;
+    margin-left: -10px;
+    cursor: pointer !important;
+  }
+  .custom-param {
+    font-weight: bold;
+    font-size: inherit;
+    margin-top:30px;
+  }
 
 }

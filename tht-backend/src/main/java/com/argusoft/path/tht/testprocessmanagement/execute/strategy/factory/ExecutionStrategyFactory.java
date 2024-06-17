@@ -122,8 +122,8 @@ public class ExecutionStrategyFactory {
             inputParameters.put("password",testRequestUrlEntity.getPassword());
         }
         if(!testcaseResultById.getTestRequest().getTestRequestValues().isEmpty()) {
-            List<TestRequestValueEntity> testRequestValues = testcaseResultById.getTestRequest().getTestRequestValues();
-            List<TestRequestValueEntity> testRequestValueEntitiesForTestcase = testRequestValues.stream().filter(testRequestValueEntity -> {
+            Set<TestRequestValueEntity> testRequestValues = testcaseResultById.getTestRequest().getTestRequestValues();
+            Set<TestRequestValueEntity> testRequestValueEntitiesForTestcase = testRequestValues.stream().filter(testRequestValueEntity -> {
                 try {
                     TestcaseVariableEntity testcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testRequestValueEntity.getTestcaseVariableId(), contextInfo);
                     TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseVariableEntity.getTestcase().getId(), contextInfo);
@@ -132,12 +132,12 @@ public class ExecutionStrategyFactory {
                     LOGGER.error("Caught Exception while getting input params", e);
                     return false;
                 }
-            }).collect(Collectors.toList());
+            }).collect(Collectors.toSet());
 
             if(!testRequestValueEntitiesForTestcase.isEmpty()) {
                 for (TestRequestValueEntity testRequestValueEntity : testRequestValueEntitiesForTestcase) {
                     TestcaseVariableEntity testcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testRequestValueEntity.getTestcaseVariableId(), contextInfo);
-                    inputParameters.put(testcaseVariableEntity.getTestcaseVariableKey(), testRequestValueEntity.getValue());
+                    inputParameters.put(testcaseVariableEntity.getTestcaseVariableKey(), testRequestValueEntity.getTestRequestValueInput());
                 }
             }
         }

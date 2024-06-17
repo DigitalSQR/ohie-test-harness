@@ -36,8 +36,8 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     @Column(name = "message")
     private String message;
 
-    @OneToMany(mappedBy = "testRequest", cascade = {CascadeType.ALL})
-    private List<TestRequestValueEntity> testRequestValues;
+    @OneToMany(mappedBy = "testRequest", cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    private Set<TestRequestValueEntity> testRequestValues;
 
     public TestRequestEntity() {
     }
@@ -57,7 +57,7 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
             this.setTestRequestUrls(testRequestEntity.getTestRequestUrls().stream().map(TestRequestUrlEntity::new).collect(Collectors.toSet()));
         }
         if (testRequestEntity.getTestRequestValues() != null) {
-            this.setTestRequestValues(testRequestEntity.getTestRequestValues().stream().map(TestRequestValueEntity::new).collect(Collectors.toList()));
+            this.setTestRequestValues(testRequestEntity.getTestRequestValues().stream().map(TestRequestValueEntity::new).collect(Collectors.toSet()));
         }
     }
 
@@ -100,14 +100,14 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
         this.testRequestUrls = testRequestUrls;
     }
 
-    public List<TestRequestValueEntity> getTestRequestValues() {
+    public Set<TestRequestValueEntity> getTestRequestValues() {
         if(testRequestValues == null){
-            testRequestValues = new ArrayList<>();
+            testRequestValues = new HashSet<>();
         }
         return testRequestValues;
     }
 
-    public void setTestRequestValues(List<TestRequestValueEntity> testRequestValues) {
+    public void setTestRequestValues(Set<TestRequestValueEntity> testRequestValues) {
         this.testRequestValues = testRequestValues;
     }
 

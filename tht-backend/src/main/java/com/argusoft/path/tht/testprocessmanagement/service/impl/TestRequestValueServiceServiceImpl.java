@@ -98,7 +98,7 @@ public class TestRequestValueServiceServiceImpl implements TestRequestValueServi
                     originalEntity = originalEntities.get(0);
                     originalEntity.setTestRequest(testRequestValueEntity.getTestRequest());
                     originalEntity.setTestcaseVariableId(testRequestValueEntity.getTestcaseVariableId());
-                    originalEntity.setValue(testRequestValueEntity.getValue());
+                    originalEntity.setTestRequestValueInput(testRequestValueEntity.getTestRequestValueInput());
                     testRequestValueEntity = originalEntity;
                 }
             }
@@ -106,7 +106,7 @@ public class TestRequestValueServiceServiceImpl implements TestRequestValueServi
                 TestRequestValueEntity newTestRequestValueEntity = new TestRequestValueEntity();
                 newTestRequestValueEntity.setTestRequest(testRequestValueEntity.getTestRequest());
                 newTestRequestValueEntity.setTestcaseVariableId(testRequestValueEntity.getTestcaseVariableId());
-                newTestRequestValueEntity.setValue(testRequestValueEntity.getValue());
+                newTestRequestValueEntity.setTestRequestValueInput(testRequestValueEntity.getTestRequestValueInput());
                 testRequestValueEntity = newTestRequestValueEntity;
             }
             updatedRequestValues.add(testRequestValueEntity);

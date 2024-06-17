@@ -49,7 +49,7 @@ public class TestRequestInfo extends IdStateNameMetaInfo {
             example = "[]",
             dataType = "List<TestRequestValueInfo>",
             required = true)
-    private List<TestRequestValueInfo> testRequestValues;
+    private Set<TestRequestValueInfo> testRequestValues;
 
     public Set<TestRequestUrlInfo> getTestRequestUrls() {
         if (testRequestUrls == null) {
@@ -86,14 +86,14 @@ public class TestRequestInfo extends IdStateNameMetaInfo {
         this.message = message;
     }
 
-    public List<TestRequestValueInfo> getTestRequestValues() {
+    public Set<TestRequestValueInfo> getTestRequestValues() {
         if (testRequestValues == null) {
-            testRequestValues = new ArrayList<>();
+            testRequestValues = new HashSet<>();
         }
         return testRequestValues;
     }
 
-    public void setTestRequestValues(List<TestRequestValueInfo> testRequestValues) {
+    public void setTestRequestValues(Set<TestRequestValueInfo> testRequestValues) {
         this.testRequestValues = testRequestValues;
     }
 }

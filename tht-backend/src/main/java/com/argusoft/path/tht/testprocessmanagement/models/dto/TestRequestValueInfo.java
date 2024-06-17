@@ -16,7 +16,7 @@ public class TestRequestValueInfo extends IdInfo {
             example = "value",
             dataType = "String",
             required = true)
-    private String value;
+    private String testRequestValueInput;
 
     @ApiModelProperty(notes = "The testcaseVariableId for test request value",
             allowEmptyValue = false,
@@ -32,9 +32,9 @@ public class TestRequestValueInfo extends IdInfo {
             required = true)
     private String testRequestId;
 
-    public TestRequestValueInfo(String id, String value, String testcaseVariableId, String testRequestId) {
+    public TestRequestValueInfo(String id, String testRequestValueInput, String testcaseVariableId, String testRequestId) {
         super(id);
-        this.value = value;
+        this.testRequestValueInput = testRequestValueInput;
         this.testcaseVariableId = testcaseVariableId;
         this.testRequestId = testRequestId;
     }
@@ -43,12 +43,12 @@ public class TestRequestValueInfo extends IdInfo {
        super();
     }
 
-    public String getValue() {
-        return value;
+    public String getTestRequestValueInput() {
+        return testRequestValueInput;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setTestRequestValueInput(String testRequestValueInput) {
+        this.testRequestValueInput = testRequestValueInput;
     }
 
     public String getTestcaseVariableId() {

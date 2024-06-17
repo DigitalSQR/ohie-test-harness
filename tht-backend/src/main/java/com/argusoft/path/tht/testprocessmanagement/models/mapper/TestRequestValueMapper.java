@@ -12,6 +12,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Mapper to covert DTO <-> Entity for the TestRequestValue.
@@ -30,9 +31,9 @@ public interface TestRequestValueMapper extends ModelDtoMapper<TestRequestValueE
     @Mapping(source = "testRequestId", target = "testRequest", qualifiedByName = "setToTestRequest")
     TestRequestValueEntity dtoToModel(TestRequestValueInfo testRequestValueInfo);
 
-    List<TestRequestValueInfo> modelToDto(List<TestRequestValueEntity> testRequestValueEntities);
+    Set<TestRequestValueInfo> modelToDto(Set<TestRequestValueEntity> testRequestValueEntities);
 
-    List<TestRequestValueEntity> dtoToModel(List<TestRequestValueInfo> testRequestValueInfos);
+    Set<TestRequestValueEntity> dtoToModel(Set<TestRequestValueInfo> testRequestValueInfos);
 
 
     @Named("setToTestRequestId")

@@ -185,7 +185,7 @@ public class TestRequestValidator {
 
     public static void validateRequiredTestRequestValues(List<TestRequestValueEntity> testRequestValueEntities) throws InvalidParameterException {
         for(TestRequestValueEntity testRequestValueEntity : testRequestValueEntities){
-            if(StringUtils.isBlank(testRequestValueEntity.getValue())){
+            if(StringUtils.isBlank(testRequestValueEntity.getTestRequestValueInput())){
                 LOGGER.error("{}{}", ValidateConstant.INVALID_PARAM_EXCEPTION, TestRequestValidator.class.getSimpleName());
                 throw new InvalidParameterException("inputData is missing");
             }
@@ -436,12 +436,12 @@ public class TestRequestValidator {
             ValidationUtils.validateRequired(entity.getFhirApiBaseUrl(), "fhirApiBaseUrl", errors);
         }
 
-        List<TestRequestValueEntity> testRequestValueEntities = testRequestEntity.getTestRequestValues();
+        Set<TestRequestValueEntity> testRequestValueEntities = testRequestEntity.getTestRequestValues();
 
         //loop to check value not null in test request values
         for (TestRequestValueEntity testRequestValueEntity : testRequestValueEntities) {
             //check for value
-            ValidationUtils.validateRequired(testRequestValueEntity.getValue(), "value", errors);
+            ValidationUtils.validateRequired(testRequestValueEntity.getTestRequestValueInput(), "value", errors);
         }
     }
 
@@ -518,13 +518,13 @@ public class TestRequestValidator {
 
     private static void validateTestRequestEntityTestRequestValue(TestRequestEntity testRequestEntity,
                                                                 List<ValidationResultInfo> errors) {
-        List<TestRequestValueEntity> testRequestValueEntities = testRequestEntity.getTestRequestValues();
+        Set<TestRequestValueEntity> testRequestValueEntities = testRequestEntity.getTestRequestValues();
 
         //loop to check length of value
         for (TestRequestValueEntity entity : testRequestValueEntities) {
             //check for value
             ValidationUtils
-                    .validateLength(entity.getValue(),
+                    .validateLength(entity.getTestRequestValueInput(),
                             "value",
                             0,
                             255,
@@ -561,8 +561,8 @@ public class TestRequestValidator {
             }
         });
         testRequestEntity.getTestRequestValues().stream().forEach(testRequestValueEntity -> {
-            if (testRequestValueEntity.getValue() != null) {
-                testRequestValueEntity.setValue(testRequestValueEntity.getValue().trim());
+            if (testRequestValueEntity.getTestRequestValueInput() != null) {
+                testRequestValueEntity.setTestRequestValueInput(testRequestValueEntity.getTestRequestValueInput().trim());
             }
         });
     }
