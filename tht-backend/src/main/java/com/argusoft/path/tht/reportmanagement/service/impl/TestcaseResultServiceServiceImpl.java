@@ -573,7 +573,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
         TestRequestEntity testRequest=testRequestService.getTestRequestById(testRequestId, contextInfo);
         String testRequestState=testRequest.getState();
 
-        if(contextInfo.isAssessee() && !testRequestState.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PUBLISHED)){
+        if((!contextInfo.isTesterOrAdminOrPublisher()) && !testRequestState.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PUBLISHED)){
               throw  new AccessDeniedException("Report can't be accessed until it is published");
         }
 
