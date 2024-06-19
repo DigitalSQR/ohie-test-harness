@@ -278,6 +278,7 @@ const ApplicationReport = () => {
                 </h2>
                 <div>
                   <button
+                  id="report-goBack"
                     onClick={() => {
                       goBackOrRedirect();
                     }}
@@ -286,6 +287,7 @@ const ApplicationReport = () => {
                     BACK
                   </button>
                   <button
+                  id="report-generatePdf"
                     className="btn btn-primary btn-blue py-2 font-size-14"
                     onClick={generatePDF}
                   >

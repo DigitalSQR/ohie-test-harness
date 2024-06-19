@@ -216,11 +216,13 @@ export default function ComponentList() {
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary me-2"
+                id="componentList-navToValidateConfig"
                 onClick={() => navigate("/validate-config")}
               ><FileSearchOutlined className="me-1" />Validate Configuration</button>
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
+                id="componentList-createComponent"
                 onClick={() => setIsModalOpen(true)}
               >
                 <i className="bi bi-plus"></i>
@@ -238,14 +240,18 @@ export default function ComponentList() {
                         {/* <th className="col-1"></th> */}
                         <th className="col-4">
                           Component Name{" "}
-                          <span className="ps-1" onClick={() => handleSort("name")}>
+                          <span className="ps-1"
+                          id="componentList-sortByName"
+                          onClick={() => handleSort("name")}>
                             {renderSortIcon("name")}
                           </span>{" "}
                         </th>
                         <th className="col-2">Status</th>
                         <th className="col-2">
                           Rank{" "}
-                          <span className="ps-1" onClick={() => handleSort("rank")}>
+                          <span className="ps-1" 
+                          id="componentList-sortByRank"
+                          onClick={() => handleSort("rank")}>
                             {renderSortIcon("rank")}
                           </span>{" "}
                         </th>
@@ -279,6 +285,7 @@ export default function ComponentList() {
                               <td>
                                 <span
                                   className="cursor-pointer font-size-12 text-blue fw-bold"
+                                  id={`componentList-editComponent-${index}`}
                                   onClick={() => {
                                     setComponentId(component.id);
                                     setIsModalOpen(true);
@@ -290,6 +297,7 @@ export default function ComponentList() {
                                 &nbsp;
                                 <span
                                   className="cursor-pointer ps-2 font-size-12 text-blue fw-bold"
+                                  id={`componentList-openSpecification-${index}`}
                                   onClick={() =>
                                     navigate(`/testcase-config/component-specification/${component.id}`)
                                   }

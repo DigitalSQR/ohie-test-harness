@@ -44,7 +44,7 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     @ApiParam(
             value = "role of the user"
     )
-    private String role;
+    private List<String> role;
 
     private Root<UserEntity> userEntityRoot;
 
@@ -98,9 +98,10 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
             predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(getUserEntityRoot().get("email")), getEmail().toLowerCase()));
         }
 
-        if (StringUtils.hasLength(getRole())) {
-            predicates.add(criteriaBuilder.equal(this.getUserEntityRoleEntityJoin().get("id"), getRole()));
+        if (!CollectionUtils.isEmpty(getRole())) {
+            predicates.add(criteriaBuilder.in(this.getUserEntityRoleEntityJoin().get("id")).value(getRole()));
         }
+
 
         return predicates;
     }
@@ -133,11 +134,11 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         return id;
     }
 
-    public String getRole() {
+    public List<String> getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(List<String> role) {
         this.role = role;
     }
 

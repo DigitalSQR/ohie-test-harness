@@ -416,11 +416,13 @@ export default function ManualTesting() {
       <Breadcrumb className="mb-3 custom-breadcrumb">
       <Breadcrumb.Item>
       {unsavedNotes.length === 0 && optionsArray.length === 0 ? (
-        <Link to="/applications" className="breadcrumb-item">
+        <Link to="/applications" className="breadcrumb-item" id="unblockedNavToApplications">
           Applications
         </Link>
       ) : (
-        <span className="breadcrumb-item" onClick={() => {
+        <span className="breadcrumb-item"
+         id="blockedNavToApplications"
+         onClick={() => {
           notification.warning({
             className:"notificationWarning",
             message:"Warning",
@@ -434,11 +436,13 @@ export default function ManualTesting() {
       </Breadcrumb.Item>
       <Breadcrumb.Item>
       {unsavedNotes.length === 0 && optionsArray.length === 0 ? (
-        <Link to={`/choose-test/${testRequestId}`} className="breadcrumb-item">
+        <Link to={`/choose-test/${testRequestId}`} className="breadcrumb-item" id="unblockedNavToChooseTest">
           {testcaseName}
         </Link>
       ) : (
-        <span className="breadcrumb-item" onClick={() => {
+        <span className="breadcrumb-item"
+        id="blockedNavToChooseTest"
+        onClick={() => {
           notification.warning({
             className:"notificationWarning",
             message:"Warning",
@@ -552,6 +556,7 @@ export default function ManualTesting() {
                             {specification.childTestcaseResults.map((testcase, index) => (
                               <span key={index}>
                                 <button
+                                id={`navToTestCase-${testcase.refId}`}
                                   onClick={() => selectParticularTestCase(outerIndex, innerIndex, index)}
                                   className={`round-span ${testcase.state === "testcase.result.status.finished" ? "round-span-success" : ""}`}
                                 >

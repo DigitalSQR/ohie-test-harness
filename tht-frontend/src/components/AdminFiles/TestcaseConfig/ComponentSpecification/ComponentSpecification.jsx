@@ -214,6 +214,7 @@ export default function ComponentSpecification() {
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary menu-like-item"
+                id="componentSpecification-createSpefication"
                 onClick={() => handleUpsert()}
               >
                 <i className="bi bi-plus"></i>
@@ -237,6 +238,7 @@ export default function ComponentSpecification() {
                       <a
                         className="ps-1"
                         href="#"
+                        id="componentSpecification-sortByName"
                         onClick={() => handleSort("name")}
                       >
                         {renderSortIcon("name")}
@@ -247,6 +249,7 @@ export default function ComponentSpecification() {
                       <a
                         className="ps-1"
                         href="#"
+                        id="componentSpecification-sortByIsFunctional"
                         onClick={() => handleSort("isFunctional")}
                       >
                         {renderSortIcon("isFunctional")}
@@ -257,6 +260,7 @@ export default function ComponentSpecification() {
                       <a
                         className="ps-1"
                         href="#"
+                        id="componentSpecification-sortByisRequired"
                         onClick={() => handleSort("isRequired")}
                       >
                         {renderSortIcon("isRequired")}
@@ -267,6 +271,7 @@ export default function ComponentSpecification() {
                       <a
                         className="ps-1"
                         href="#"
+                        id="componentSpecification-sortByRank"
                         onClick={() => handleSort("rank")}
                       >
                         {renderSortIcon("rank")}
@@ -322,6 +327,7 @@ export default function ComponentSpecification() {
                         <div className="d-flex">
                         <span
                           className="cursor-pointer text-blue font-size-12 fw-bold"
+                          id={`componentSpecification-editSpec-${index}`}
                           onClick={() => {
                             setSpecificationId(specification?.id);
                             setIsModalOpen(true);
@@ -332,6 +338,7 @@ export default function ComponentSpecification() {
                         </span>&nbsp;
                         <span
                           className="cursor-pointer ps-2 text-blue font-size-12 fw-bold"
+                          id={`componentSpecification-testcasesbySpec-${index}`}
                           onClick={() =>
                             navigate(
                               `/testcase-config/manual-testcases/${specification?.id}`
