@@ -73,7 +73,7 @@ import java.util.stream.Collectors;
  * @author Dhruv
  */
 @Service
-public class    TestRequestServiceServiceImpl implements TestRequestService {
+public class TestRequestServiceServiceImpl implements TestRequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestRequestServiceServiceImpl.class);
 
@@ -147,7 +147,7 @@ public class    TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     @Autowired
-    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
+    public void setTestcaseResultService(@Lazy TestcaseResultService testcaseResultService) {
         this.testcaseResultService = testcaseResultService;
     }
 

@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -119,7 +120,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
     @Autowired
-    public void setTestRequestService(TestRequestService testRequestService) {
+    public void setTestRequestService(@Lazy TestRequestService testRequestService) {
         this.testRequestService = testRequestService;
     }
 
