@@ -8,13 +8,12 @@ import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import io.swagger.annotations.ApiParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
 import javax.persistence.criteria.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -56,9 +55,8 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     @ApiParam(
             value = "requested date of the user"
     )
-    private String requestDate;
-
-
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private Date requestDate;
 
     private Root<UserEntity> userEntityRoot;
 
@@ -126,7 +124,7 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
     }
 
     @Override
-    protected List<Predicate> buildLikePredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) throws ParseException {
+    protected List<Predicate> buildLikePredicates(Root<UserEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo){
         setUserEntityRoot(root);
         List<Predicate> predicates = new ArrayList<>();
 
@@ -139,13 +137,22 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         }
 
         if (getRequestDate() != null) {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            formatter.setLenient(false);
+            // Truncate the time part of the requestDate
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(getRequestDate());
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            Date truncatedRequestDate = new java.sql.Date(calendar.getTime().getTime());
+
+            // Add the predicate to compare the date part only
             predicates.add(criteriaBuilder.equal(
-                    criteriaBuilder.function("DATE_TRUNC", Date.class, criteriaBuilder.literal("day"), getUserEntityRoot().get("createdAt")),
-                    formatter.parse(getRequestDate())
+                    criteriaBuilder.function("DATE", Date.class, root.get("createdAt")),
+                    truncatedRequestDate
             ));
         }
+
 
         if (!CollectionUtils.isEmpty(getState())) {
             predicates.add(criteriaBuilder.in(getUserEntityRoot().get("state")).value(getState()));
@@ -206,11 +213,11 @@ public class UserSearchCriteriaFilter extends AbstractCriteriaSearchFilter<UserE
         this.companyName = companyName;
     }
 
-    public String getRequestDate() {
+    public Date getRequestDate() {
         return requestDate;
     }
 
-    public void setRequestDate(String requestDate) {
+    public void setRequestDate(Date requestDate) {
         this.requestDate = requestDate;
     }
 

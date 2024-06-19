@@ -9,7 +9,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class TestRequestValueCriteriaSearchFilter extends AbstractCriteriaSearch
     }
 
     @Override
-    protected List<Predicate> buildLikePredicates(Root<TestRequestValueEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) throws ParseException {
+    protected List<Predicate> buildLikePredicates(Root<TestRequestValueEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo){
         return null;
     }
 

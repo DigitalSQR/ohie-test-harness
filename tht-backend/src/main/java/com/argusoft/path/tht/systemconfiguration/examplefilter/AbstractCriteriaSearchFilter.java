@@ -6,12 +6,10 @@ import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -92,11 +90,8 @@ public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchF
     protected final BiFunction<Root<T>, CriteriaBuilder, Predicate> prepareLikePredicate(ContextInfo contextInfo) {
         return (root, criteriaBuilder) -> {
             List<Predicate> predicates = null;
-            try {
+
                 predicates = buildLikePredicates(root, criteriaBuilder, contextInfo);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
             List<Predicate> authorizationPredicates = buildLikeAuthorizationPredicates(root, criteriaBuilder, contextInfo);
 
             if (!CollectionUtils.isEmpty(authorizationPredicates)) {
@@ -109,7 +104,7 @@ public abstract class AbstractCriteriaSearchFilter<T> implements CriteriaSearchF
 
     protected abstract List<Predicate> buildPredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo);
 
-    protected abstract List<Predicate> buildLikePredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) throws ParseException;
+    protected abstract List<Predicate> buildLikePredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo);
 
     protected  List<Predicate> buildAuthorizationPredicates(Root<T> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo){
         return new ArrayList<>();
