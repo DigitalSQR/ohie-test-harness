@@ -4,8 +4,10 @@ import com.argusoft.path.tht.systemconfiguration.models.mapper.ModelDtoMapper;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestUrlInfo;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestValueInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestValueEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -31,12 +33,14 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
     @Mapping(source = "approver", target = "approverId", qualifiedByName = "setToApproverId")
     @Mapping(source = "assessee", target = "assesseeId", qualifiedByName = "setToAssesseeId")
     @Mapping(source = "testRequestEntity", target = "testRequestUrls")
+    @Mapping(source = "testRequestEntity", target = "testRequestValues")
     TestRequestInfo modelToDto(TestRequestEntity testRequestEntity);
 
     @InheritInverseConfiguration
     @Mapping(source = "approverId", target = "approver", qualifiedByName = "setToApprover")
     @Mapping(source = "assesseeId", target = "assessee", qualifiedByName = "setToAssessee")
     @Mapping(source = "testRequestInfo", target = "testRequestUrls")
+    @Mapping(source = "testRequestInfo", target = "testRequestValues")
     TestRequestEntity dtoToModel(TestRequestInfo testRequestInfo);
 
     List<TestRequestInfo> modelToDto(List<TestRequestEntity> testRequestEntities);
@@ -82,6 +86,35 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
                 .collect(Collectors.toSet());
     }
 
+    default Set<TestRequestValueInfo> setToTestRequestValues(TestRequestEntity testRequestEntity) {
+        if (testRequestEntity.getTestRequestValues() == null) {
+            return null;
+        }
+        return testRequestEntity.getTestRequestValues().stream()
+                .map(testRequestValue -> {
+                    return new TestRequestValueInfo(testRequestValue.getId(), testRequestValue.getTestRequestValueInput(), testRequestValue.getTestcaseVariableId(), setToTestRequestId(testRequestEntity));
+                })
+                .collect(Collectors.toSet());
+    }
+
+
+    default Set<TestRequestValueEntity> setToTestRequestValues(TestRequestInfo testRequestInfo) {
+        if (testRequestInfo.getTestRequestValues() == null) {
+            return null;
+        }
+        return testRequestInfo.getTestRequestValues().stream()
+                .map(testRequestValue -> {
+                    TestRequestValueEntity testRequestValueEntity = new TestRequestValueEntity();
+                    testRequestValueEntity.setId(testRequestValue.getId());
+                    testRequestValueEntity.setTestRequest(setToTestRequest(testRequestValue.getTestRequestId()));
+                    testRequestValueEntity.setTestRequestValueInput(testRequestValue.getTestRequestValueInput());
+                    testRequestValueEntity.setTestcaseVariableId(testRequestValue.getTestcaseVariableId());
+
+                    return testRequestValueEntity;
+                })
+                .collect(Collectors.toSet());
+    }
+
     @Named("setToApproverId")
     default String setToApproverId(UserEntity approver) {
         if (approver == null) return null;
@@ -114,4 +147,17 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
         return userEntity;
     }
 
+    default String setToTestRequestId(TestRequestEntity testRequestEntity) {
+        if (testRequestEntity == null) return null;
+        return testRequestEntity.getId();
+    }
+
+    default TestRequestEntity setToTestRequest(String testRequestId) {
+        if (!StringUtils.hasLength(testRequestId)) {
+            return null;
+        }
+        TestRequestEntity testRequestEntity = new TestRequestEntity();
+        testRequestEntity.setId(testRequestId);
+        return testRequestEntity;
+    }
 }

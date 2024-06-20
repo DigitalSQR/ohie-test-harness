@@ -147,6 +147,22 @@ public class ComponentServiceServiceImpl implements ComponentService {
         return this.componentRepository.findAll(componentEntitySpecification);
     }
 
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public Page<ComponentEntity> searchLikeComponents(
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
+            Pageable pageable,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
+        Specification<ComponentEntity> componentEntitySpecification = componentCriteriaSearchFilter.buildLikeSpecification(contextInfo);
+        return this.componentRepository.findAll(componentEntitySpecification, pageable);
+    }
+
     /**
      * {@inheritdoc}
      *
@@ -263,5 +279,25 @@ public class ComponentServiceServiceImpl implements ComponentService {
     @Override
     public List<ComponentEntity> findAll(){
         return componentRepository.findAll();
+    }
+
+    @Override
+    public List<ComponentEntity> searchComponentsByTestRequest(String testRequestId){
+        return componentRepository.searchComponentsByTestRequest(testRequestId, ComponentServiceConstants.COMPONENT_REF_OBJ_URI);
+    }
+
+    @Override
+    public List<Object[]> searchComponentPartsByTestRequest(String testRequestId){
+        return componentRepository.searchComponentPartsByTestRequest(testRequestId, ComponentServiceConstants.COMPONENT_REF_OBJ_URI);
+    }
+
+    @Override
+    public List<Object[]> findAllIdName(){
+        return componentRepository.findAllIdName();
+    }
+
+    @Override
+    public List<String> findAllName(){
+        return componentRepository.findAllName();
     }
 }

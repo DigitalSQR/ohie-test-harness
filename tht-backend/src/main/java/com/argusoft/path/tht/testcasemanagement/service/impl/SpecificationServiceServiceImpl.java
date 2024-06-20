@@ -1,12 +1,12 @@
 package com.argusoft.path.tht.testcasemanagement.service.impl;
 
-import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
-import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
@@ -119,7 +119,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
 
 
     @Override
-    public SpecificationEntity changeRank(String specificationId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, DataValidationErrorException {
+    public SpecificationEntity changeRank(String specificationId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, DataValidationErrorException, OperationFailedException {
         List<ValidationResultInfo> errors = new ArrayList<>();
 
         SpecificationEntity specificationEntity = this.getSpecificationById(specificationId, contextInfo);
@@ -176,6 +176,17 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
     }
 
     @Override
+    public Page<SpecificationEntity> searchLikeSpecifications(
+            SpecificationCriteriaSearchFilter specificationSearchFilter,
+            Pageable pageable,
+            ContextInfo contextInfo)
+            throws InvalidParameterException {
+
+        Specification<SpecificationEntity> specificationEntitySpecification = specificationSearchFilter.buildLikeSpecification(contextInfo);
+        return specificationRepository.findAll(specificationEntitySpecification, pageable);
+    }
+
+    @Override
     public List<SpecificationEntity> searchSpecifications(
             SpecificationCriteriaSearchFilter specificationSearchFilter,
             ContextInfo contextInfo)
@@ -194,7 +205,7 @@ public class SpecificationServiceServiceImpl implements SpecificationService {
     public SpecificationEntity getSpecificationById(String specificationId,
                                                     ContextInfo contextInfo)
             throws DoesNotExistException,
-            InvalidParameterException {
+            InvalidParameterException, OperationFailedException {
         if (!StringUtils.hasLength(specificationId)) {
             throw new InvalidParameterException("SpecificationId is missing");
         }

@@ -1,5 +1,5 @@
 import api from "./configs/axiosConfigs";
-
+import { paramSerialize } from "../utils/utils";
 export const ComponentAPI = {
   createComponent: function (data) {
     return api
@@ -25,9 +25,12 @@ export const ComponentAPI = {
    
       
     const response = await api.request({
-      url: `/component`,
+      url: `/component/search`,
       method: "GET",
       params,
+      paramsSerializer: (params) => {
+        return paramSerialize(params);
+      },
     });
     return response.data;
     

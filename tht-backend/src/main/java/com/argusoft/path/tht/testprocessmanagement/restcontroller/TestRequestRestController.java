@@ -24,10 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * This TestRequestServiceRestController maps end points with standard service.
@@ -101,7 +98,7 @@ public class TestRequestRestController {
             throws OperationFailedException,
             InvalidParameterException,
             VersionMismatchException,
-            DataValidationErrorException {
+            DataValidationErrorException, DoesNotExistException {
 
         TestRequestEntity testRequestEntity = testRequestMapper.dtoToModel(testRequestInfo);
         testRequestEntity = testRequestService.updateTestRequest(testRequestEntity, contextInfo);
@@ -129,6 +126,30 @@ public class TestRequestRestController {
             InvalidParameterException, DoesNotExistException {
 
         Page<TestRequestEntity> testRequestEntities = testRequestService.searchTestRequests(testRequestSearchFilter, pageable, contextInfo);
+        return testRequestMapper.pageEntityToDto(testRequestEntities);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @ApiOperation(value = "View a page of available like filtered TestRequests", response = Page.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved page"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/search")
+    public Page<TestRequestInfo> searchLikeTestRequests(
+            TestRequestCriteriaSearchFilter testRequestSearchFilter,
+            Pageable pageable,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException, DoesNotExistException {
+
+        Page<TestRequestEntity> testRequestEntities = testRequestService.searchLikeTestRequests(testRequestSearchFilter, pageable, contextInfo);
         return testRequestMapper.pageEntityToDto(testRequestEntities);
     }
 
@@ -193,7 +214,7 @@ public class TestRequestRestController {
             @RequestParam(value = "recommended", required = false) Boolean isRecommended,
             @RequestParam(value = "workflow", required = false) Boolean isWorkflow,
             @RequestParam(value = "functional", required = false) Boolean isFunctional,
-            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException {
+            @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DataValidationErrorException, OperationFailedException, DoesNotExistException {
         testRequestService.startTestingProcess(
                 testRequestId,
                 refObjUri,
@@ -267,7 +288,7 @@ public class TestRequestRestController {
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden")
     })
     @PatchMapping("/state/{testRequestId}/{changeState}")
-    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester')")
+    @PreAuthorize(value = "hasAnyAuthority('role.admin','role.tester','role.publisher')")
     @Transactional(rollbackFor = Exception.class)
     public TestRequestInfo updateTestRequestState(@PathVariable("testRequestId") String testRequestId,
                                                   @PathVariable("changeState") String changeState,
@@ -317,5 +338,14 @@ public class TestRequestRestController {
     @GetMapping("/dashboard")
     public GraphInfo getDashBoard(@RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException {
         return testRequestService.getDashboard(contextInfo);
+    }
+
+    @GetMapping("/acceptAllRequests")
+    public void acceptTestRequest(@RequestAttribute ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException, VersionMismatchException {
+        List<String> pendingTestRequestsId = testRequestService.getPendingTestRequests();
+
+        for(String pendingTestRequestId : pendingTestRequestsId){
+            updateTestRequestState(pendingTestRequestId, TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, new HashMap<>(), contextInfo);
+        }
     }
 }

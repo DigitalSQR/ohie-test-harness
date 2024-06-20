@@ -17,4 +17,8 @@ public interface CriteriaSearchFilter<T> {
 
     Specification<T> buildSpecification(Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException;
 
+    Specification<T> buildLikeSpecification(ContextInfo contextInfo) throws InvalidParameterException;
+
+    Specification<T> buildLikeSpecification(Pageable pageable, ContextInfo contextInfo) throws InvalidParameterException;
+
 }

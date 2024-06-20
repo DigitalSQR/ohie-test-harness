@@ -24,6 +24,7 @@ public class UserServiceConstants {
     public static final String ROLE_ID_ADMIN = "role.admin";
     public static final String ROLE_ID_TESTER = "role.tester";
     public static final String ROLE_ID_ASSESSEE = "role.assessee";
+    public static final String ROLE_ID_PUBLISHER="role.publisher";
     //validation
     public static final String EMAIL_REGEX
             = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";

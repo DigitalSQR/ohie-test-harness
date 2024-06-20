@@ -1,6 +1,5 @@
 package com.argusoft.path.tht.testcasemanagement.restcontroller;
 
-import com.argusoft.path.tht.fileservice.models.dto.DocumentInfo;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
@@ -125,6 +124,32 @@ public class ComponentRestController {
             InvalidParameterException {
 
         Page<ComponentEntity> componentEntities = componentService.searchComponents(componentCriteriaSearchFilter, pageable, contextInfo);
+        return componentMapper.pageEntityToDto(componentEntities);
+
+    }
+
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @ApiOperation(value = "View a page of available filtered Components", response = Page.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved page"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/search")
+    public Page<ComponentInfo> searchLikeComponents(
+            ComponentCriteriaSearchFilter componentCriteriaSearchFilter,
+            Pageable pageable,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException {
+
+        Page<ComponentEntity> componentEntities = componentService.searchLikeComponents(componentCriteriaSearchFilter, pageable, contextInfo);
         return componentMapper.pageEntityToDto(componentEntities);
 
     }

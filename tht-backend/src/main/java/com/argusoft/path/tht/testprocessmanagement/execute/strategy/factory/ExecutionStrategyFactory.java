@@ -18,25 +18,26 @@ import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstant
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseVariableEntity;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import com.argusoft.path.tht.testcasemanagement.testbed.services.TestSessionManagementRestService;
+import com.argusoft.path.tht.testcasemanagement.service.TestcaseVariableService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.util.TestcaseExecutioner;
 import com.argusoft.path.tht.testprocessmanagement.execute.strategy.ExecutionStrategy;
 import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.EuTestBedEnvironmentStrategy;
 import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.JavaInBuiltEnvironmentStrategy;
-import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.UpdateSessionAndMarkTestcaseResultInProgress;
 import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.TestSessionStarter;
+import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.UpdateSessionAndMarkTestcaseResultInProgress;
 import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.VerifyTestcaseSessionStatusAndUpdateAccordingly;
 import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.callback.StatusCallback;
 import com.argusoft.path.tht.testprocessmanagement.execute.strategy.impl.testbed.callback.util.EuTestBedCommonUtil;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestValueEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -56,6 +57,10 @@ public class ExecutionStrategyFactory {
     private TestcaseExecutioner testcaseExecutioner;
 
     private TestSessionStarter testSessionStarter;
+
+    private TestcaseVariableService testcaseVariableService;
+
+    private TestcaseService testcaseService;
 
     /*@Value("${testbed.testsuite-id}")
     private String testsuiteId;*/
@@ -83,7 +88,7 @@ public class ExecutionStrategyFactory {
                 yield new JavaInBuiltEnvironmentStrategy(testcaseResultId, iGenericClientMap, testcaseExecutioner, contextInfo);
             }
             case TESTCASE_RUN_ENVIRONMENT_EU_TESTBED -> {
-                Map<String,String> inputParameters = getInputParametersForTestcaseResult(testcaseResultById);
+                Map<String,String> inputParameters = getInputParametersForTestcaseResult(testcaseResultById, contextInfo);
                 List<Object> testResultRelationEntitiesFromAuditMapping = testResultRelationService.getTestResultRelationEntitiesFromAuditMapping(testcaseResultId, TestcaseServiceConstants.TESTCASE_REF_OBJ_URI, contextInfo);
                 Optional<TestcaseEntity> testcaseEntityOptional = testResultRelationEntitiesFromAuditMapping.stream().findFirst().map(TestcaseEntity.class::cast);
 
@@ -105,7 +110,7 @@ public class ExecutionStrategyFactory {
         };
     }
 
-    private Map<String, String> getInputParametersForTestcaseResult(TestcaseResultEntity testcaseResultById) {
+    private Map<String, String> getInputParametersForTestcaseResult(TestcaseResultEntity testcaseResultById, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, OperationFailedException {
         Map<String,String> inputParameters = new HashMap<>();
         ComponentEntity testcaseResultRelatedComponent = testcaseResultById.getTestcase().getSpecification().getComponent();
         Set<TestRequestUrlEntity> testRequestUrls = testcaseResultById.getTestRequest().getTestRequestUrls();
@@ -116,6 +121,27 @@ public class ExecutionStrategyFactory {
             inputParameters.put("username",testRequestUrlEntity.getUsername());
             inputParameters.put("password",testRequestUrlEntity.getPassword());
         }
+        if(!testcaseResultById.getTestRequest().getTestRequestValues().isEmpty()) {
+            Set<TestRequestValueEntity> testRequestValues = testcaseResultById.getTestRequest().getTestRequestValues();
+            Set<TestRequestValueEntity> testRequestValueEntitiesForTestcase = testRequestValues.stream().filter(testRequestValueEntity -> {
+                try {
+                    TestcaseVariableEntity testcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testRequestValueEntity.getTestcaseVariableId(), contextInfo);
+                    TestcaseEntity testcaseEntity = testcaseService.getTestcaseById(testcaseVariableEntity.getTestcase().getId(), contextInfo);
+                    return testcaseEntity.getId().equals(testcaseResultById.getTestcase().getId());
+                } catch (DoesNotExistException | InvalidParameterException | OperationFailedException e) {
+                    LOGGER.error("Caught Exception while getting input params", e);
+                    return false;
+                }
+            }).collect(Collectors.toSet());
+
+            if(!testRequestValueEntitiesForTestcase.isEmpty()) {
+                for (TestRequestValueEntity testRequestValueEntity : testRequestValueEntitiesForTestcase) {
+                    TestcaseVariableEntity testcaseVariableEntity = testcaseVariableService.getTestcaseVariableById(testRequestValueEntity.getTestcaseVariableId(), contextInfo);
+                    inputParameters.put(testcaseVariableEntity.getTestcaseVariableKey(), testRequestValueEntity.getTestRequestValueInput());
+                }
+            }
+        }
+
         return inputParameters;
     }
 
@@ -232,6 +258,16 @@ public class ExecutionStrategyFactory {
     @Autowired
     public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
         this.testcaseResultService = testcaseResultService;
+    }
+
+    @Autowired
+    public void setTestcaseVariableService(TestcaseVariableService testcaseVariableService) {
+        this.testcaseVariableService = testcaseVariableService;
+    }
+
+    @Autowired
+    public void setTestcaseService(TestcaseService testcaseService) {
+        this.testcaseService = testcaseService;
     }
 
     @Autowired

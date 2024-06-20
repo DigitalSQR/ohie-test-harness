@@ -268,6 +268,29 @@ public class UserRestController {
      *
      * @return
      */
+    @ApiOperation(value = "View a page of available filtered users", response = Page.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved page"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were attempting to reach could not be found.")
+    })
+    @GetMapping("/search")
+    public Page<UserInfo> searchLikeUsers(
+            UserSearchCriteriaFilter userSearchFilter,
+            Pageable pageable,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException {
+        Page<UserEntity> userEntities = this.userService.searchLikeUsers(userSearchFilter, pageable, contextInfo);
+        return userMapper.pageEntityToDto(userEntities);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
     @ApiOperation(value = "View available user with supplied id", response = UserInfo.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved user"),

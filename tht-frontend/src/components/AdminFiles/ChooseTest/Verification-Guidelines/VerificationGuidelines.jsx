@@ -6,6 +6,7 @@ const VerificationGuidelines = (props) => {
       <div class="p-3">
         <h3>{props.title}</h3>
         <button
+        id={`chooseTest-${props.title.replace(/\s/g, "")}-closeButton`}
           type="button"
           className="btn-close text-reset closebtn"
           data-bs-dismiss="offcanvas"

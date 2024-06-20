@@ -148,6 +148,7 @@ export default function SignUp() {
                   <label
                     htmlFor="name"
                     className="form-label"
+                    id="#signUp-name"
                   >
                     Name<span style={{ color: "red" }}>*</span>
                   </label>
@@ -157,6 +158,7 @@ export default function SignUp() {
                     </span>
                     <input
                       name="name"
+                      id="signup-name"
                       value={formik.values.name}
                       type="text"
                       className={`form-control ${
@@ -181,6 +183,7 @@ export default function SignUp() {
                   <label
                     htmlFor="email"
                     className="form-label"
+                    id="#signup-email"
                   >
                     Email<span style={{ color: "red" }}>*</span>
                   </label>
@@ -190,6 +193,7 @@ export default function SignUp() {
                     </span>
                     <input
                       name="email"
+                      id="signup-email"
                       value={formik.values.email}
                       type="email"
                       className={`form-control ${
@@ -215,6 +219,7 @@ export default function SignUp() {
                   <label
                     htmlFor="companyName"
                     className="form-label"
+                    id="signup-company"
                   >
                     Company<span style={{ color: "red" }}>*</span>
                   </label>
@@ -225,6 +230,7 @@ export default function SignUp() {
                     <input
                       name="companyName"
                       value={formik.values.companyName}
+                      id="signUp-companyName"
                       type="text"
                       className={`
                       form-control ${
@@ -250,6 +256,7 @@ export default function SignUp() {
                   <label
                     htmlFor="password"
                     className="form-label"
+                    id="signup-password"
                   >
                     Password<span style={{ color: "red" }}>*</span>
                   </label>
@@ -259,6 +266,7 @@ export default function SignUp() {
                     </span>
                     <input
                       name="password"
+                      id="signup-password"
                       value={formik.values.password}
                       type={showPassword ? "text" : "password"}
                       className={`form-control ${
@@ -277,7 +285,7 @@ export default function SignUp() {
                       className="btn btn-outline-secondary signup-password"
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      id="#signup-1"
+                      id="#signup-showPassword"
                     >
                       <i
                         className={`bi ${
@@ -303,6 +311,7 @@ export default function SignUp() {
                     </span>
                     <input
                       name="confirmPassword"
+                      id="signup-confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       className={`form-control ${
                         formik.touched.confirmPassword &&
@@ -322,7 +331,7 @@ export default function SignUp() {
                     <button
                       className="btn btn-outline-secondary signup-password"
                       type="button"
-                      id="#signup-2"
+                      id="#signup-confirmPassword"
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
                       }
@@ -343,6 +352,7 @@ export default function SignUp() {
                 <Captcha getCaptcha={getCaptcha} />
                 <div className="my-3">
                   <button
+                    id="signUp-btn"
                     disabled={!(formik.isValid && formik.dirty)}
                     className="btn btn-primary btn-blue w-100 mt-2 signup-button"
                   >
@@ -353,6 +363,7 @@ export default function SignUp() {
                 <div className="text-center mb-5 bottom-margin-btn" >
                   Already have an account?{" "}
                   <a
+                    id="signIn-btn"
                     onMouseDown={ClickHandler}
                     className="font-weight-500 ps-2 text-blue"
                     href="#"

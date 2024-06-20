@@ -19,8 +19,8 @@ export default function WaitingPage() {
           We'll get back to you soon.
         </h6>
       
-        <button onClick={ClickHandler} style={{marginLeft:'650px',border:'black'}} id="#waitingPage-1">Return</button>
-        <button onClick={()=>{navigate('/user')}} style={{marginLeft:'650px',border:'black'}} id="#waitingPage-2"> Users</button>
+        <button onClick={ClickHandler} style={{marginLeft:'650px',border:'black'}} id="#waitingPage-return">Return</button>
+        <button onClick={()=>{navigate('/user')}} style={{marginLeft:'650px',border:'black'}} id="#waitingPage-users"> Users</button>
 
       </div>
     </Fragment>

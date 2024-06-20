@@ -114,7 +114,7 @@ export default function UpdatePassword() {
                     type="password"
                     className="form-control border-start-0 ps-0"
                     name="newPassword"
-                    id="Password"
+                    id="#UpdatePassword-Password"
                     autoComplete="off"
                     value={formik.values.newPassword}
                     onChange={formik.handleChange}
@@ -140,7 +140,7 @@ export default function UpdatePassword() {
                     type="password"
                     className="form-control border-start-0 ps-0"
                     name="confirmPassword"
-                    id="confirmPassword"
+                    id="#updatePassword-confirmPassword"
                     autoComplete="off"
                     value={confirmPassword}
                     onChange={handleConfirmPassword}
@@ -155,13 +155,13 @@ export default function UpdatePassword() {
                 disabled={!(formik.isValid && formik.dirty && passwordMatch)}
                   onClick={formik.handleSubmit}
                   className="btn btn-primary"
-                  id="#UpdatePassword-1"
+                  id="#UpdatePassword-continue"
                 >
                   <span>Continue</span>
                   <span id="loader"></span>
                 </button>
                 <button
-                  id="submitButton #UpdatePassword-2"
+                  id="#UpdatePassord-BackToLogin"
                   onClick={backToLogin}
                   className=" mx-2 btn btn-primary"
                 >

@@ -9,10 +9,6 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseInfo;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseMapper;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.request.StartRequest;
-import com.argusoft.path.tht.testcasemanagement.testbed.dto.start.response.StartResponse;
-import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.request.StatusRequest;
-import com.argusoft.path.tht.testcasemanagement.testbed.dto.status.response.StatusResponse;
 import com.argusoft.path.tht.testcasemanagement.testbed.services.TestSessionManagementRestService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This TestcaseServiceRestController maps end points with standard service.
@@ -142,6 +137,31 @@ public class TestcaseRestController {
             InvalidParameterException {
 
         Page<TestcaseEntity> testcaseEntities = testcaseService.searchTestcases(testcaseCriteriaSearchFilter, pageable, contextInfo);
+        return testcaseMapper.pageEntityToDto(testcaseEntities);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @ApiOperation(value = "View a page of available filtered Testcases", response = Page.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved page"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("/search")
+    public Page<TestcaseInfo> searchLikeTestcases(
+            TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter,
+            Pageable pageable,
+            @RequestAttribute("contextInfo") ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException {
+
+        Page<TestcaseEntity> testcaseEntities = testcaseService.searchLikeTestcases(testcaseCriteriaSearchFilter, pageable, contextInfo);
         return testcaseMapper.pageEntityToDto(testcaseEntities);
     }
 
@@ -273,6 +293,12 @@ public class TestcaseRestController {
     public List<String> getStatusMapping(@RequestParam("sourceStatus") String sourceStatus) {
         Collection<String> strings = TestcaseServiceConstants.TESTCASE_STATUS_MAP.get(sourceStatus);
         return strings.parallelStream().toList();
+    }
+
+    @PostMapping("/upload")
+    @Transactional(rollbackFor = Exception.class)
+    public void bulkTestcaseUpload(@ModelAttribute("file") MultipartFile file, @RequestAttribute("contextInfo") ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException, DataValidationErrorException, OperationFailedException {
+        testcaseService.bulkTestcaseUpload(file, contextInfo);
     }
 
 
