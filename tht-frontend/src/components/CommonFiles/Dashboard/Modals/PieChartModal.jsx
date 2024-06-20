@@ -35,6 +35,8 @@ const PieChartModal = ({ isModalOpen, setIsModalOpen, clickedValue }) => {
   return (
     <div id="pieChart">
       <Modal
+        cancelButtonProps={{id:"piechart-cancelButton"}}
+        okButtonProps={{id:"piechart-okButton"}}
         open={isModalOpen}
         footer={null}
         onCancel={handleCancel}

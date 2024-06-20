@@ -108,6 +108,26 @@ public interface UserService {
             throws OperationFailedException,
             InvalidParameterException;
 
+
+    /**
+     * Retrieves a list of Users corresponding to the given User Name.The
+     * returned list may be in any order with unique set.
+     *
+     * @param userSearchFilter
+     * @param pageable         Contains Index number of the Page, Max size of the single
+     *                         page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo      information containing the principalId and locale
+     *                         information about the caller of service operation
+     * @return a list of Username start with given UserName found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     */
+    public Page<UserEntity> searchLikeUsers(UserSearchCriteriaFilter userSearchFilter,
+                                        Pageable pageable,
+                                        ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException;
+
     /**
      * Retrieves a list of Users corresponding to the given User Name.The
      * returned list may be in any order with unique set.
@@ -342,4 +362,6 @@ public interface UserService {
      * @throws DoesNotExistException
      */
     public List<UserEntity> getUsersByRole(String role, ContextInfo contextInfo) throws InvalidParameterException, DoesNotExistException;
+
+    public int searchActiveAssessees();
 }

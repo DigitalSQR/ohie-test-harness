@@ -212,7 +212,7 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
     }
 
     @Test
-    void testGetSpecification() throws InvalidParameterException, DoesNotExistException {
+    void testGetSpecification() throws InvalidParameterException, DoesNotExistException, OperationFailedException {
 
         // Test case 1: Passing specification id as null
         assertThrows(InvalidParameterException.class, () -> {

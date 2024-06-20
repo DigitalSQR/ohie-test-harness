@@ -30,27 +30,12 @@ export const UserAPI = {
     });
     return response;
   },
-  getUserByState: async function (
-    sortFieldName,
-    sortDirection,
-    pageNumber = 1,
-    pageSize = 10,
-    state,
-    role
+
+  getUserByFilter: async function (
+    params
   ) {
-   
-      const params = {};
-
-      if (!!sortFieldName) {
-        params.sort = `${sortFieldName},${sortDirection}`;
-      }
-
-      if (pageNumber) params.page = pageNumber;
-      if (pageSize) params.size = pageSize;
-      if (state) params.state = state;
-      if (role) params.role = role;
       const response = await api.request({
-        url: `/user`,
+        url: `/user/search`,
         method: "GET",
         params,
         paramsSerializer: (params) => {
@@ -60,6 +45,8 @@ export const UserAPI = {
       return response.data;
    
   },
+
+
   getUserById: async function (userId) {
    
       const response = await api.request({

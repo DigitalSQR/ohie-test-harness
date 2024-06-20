@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This interface provides contract for Testcase API.
@@ -75,6 +74,25 @@ public interface TestcaseService {
      * @throws OperationFailedException  unable to complete request
      */
     public Page<TestcaseEntity> searchTestcases(TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter,
+                                                Pageable pageable,
+                                                ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException;
+
+    /**
+     * Retrieves a list of Testcases corresponding to the given Testcase
+     * Name.The returned list may be in any order with unique set.
+     *
+     * @param testcaseCriteriaSearchFilter
+     * @param pageable                     Contains Index number of the Page, Max size of the single
+     *                                     page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo                  information containing the principalId and locale
+     *                                     information about the caller of service operation
+     * @return a list of Testcase name start with given TestcaseName found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     */
+    public Page<TestcaseEntity> searchLikeTestcases(TestcaseCriteriaSearchFilter testcaseCriteriaSearchFilter,
                                                 Pageable pageable,
                                                 ContextInfo contextInfo)
             throws OperationFailedException,
@@ -167,5 +185,22 @@ public interface TestcaseService {
      *                                      was attempted on an out of date version
      */
     public TestcaseEntity changeRank(String testcaseId, Integer rank, ContextInfo contextInfo) throws DoesNotExistException, DataValidationErrorException, InvalidParameterException, OperationFailedException, VersionMismatchException;
+
+    /**
+     * Read the file and create new testcases based on the data.
+     *
+     * @param file  file with the csv or xlsx type to import testcases
+     * @param contextInfo information containing the principalId and locale
+     *                    information about the caller of service operation
+     *
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws OperationFailedException     unable to complete request
+
+     */
+    public void bulkTestcaseUpload(MultipartFile file, ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException,
+            DataValidationErrorException, DoesNotExistException;
 
 }

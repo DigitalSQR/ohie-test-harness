@@ -38,4 +38,14 @@ public class IdStateMetaInfo extends HasMetaInfo {
     public void setState(String state) {
         this.state = state;
     }
+
+    public IdStateMetaInfo(String id, String state, MetaInfo metaInfo) {
+        super(metaInfo);
+        this.id = id;
+        this.state = state;
+    }
+
+    public IdStateMetaInfo() {
+        super();
+    }
 }

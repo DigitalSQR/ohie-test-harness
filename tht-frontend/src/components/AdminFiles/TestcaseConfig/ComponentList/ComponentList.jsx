@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import "./componentList.scss";
-import { EditFilled, EyeOutlined } from "@ant-design/icons";
 import { ComponentAPI } from "../../../../api/ComponentAPI";
 import { Switch, Modal, Empty } from "antd";
 import { useLoader } from "../../../loader/LoaderContext";
 import ComponentUpsertModal from "./ComponentUpsertModal/ComponentUpsertModal";
 import { ComponentsActionStateLabels } from "../../../../constants/components_constants";
 import { set_header } from "../../../../reducers/homeReducer";
-import { Pagination } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FileSearchOutlined } from "@ant-design/icons";
+import { FileSearchOutlined, FileAddOutlined, SearchOutlined } from "@ant-design/icons";
 import unsorted from "../../../../styles/images/unsorted.png";
 import sortedUp from "../../../../styles/images/sort-up.png";
 import sortedDown from "../../../../styles/images/sort-down.png";
 import ValidateConfigFacts from "../ValidateConfigFacts/ValidateConfigFacts.jsx";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import BulkUploadModal from "./BulkUploadModal/BulkUploadModal";
 
 export default function ComponentList() {
   const navigate = useNavigate();
@@ -27,12 +27,34 @@ export default function ComponentList() {
   const [totalPages, setTotalPages] = useState(1);
   const [components, setComponents] = useState([]);
   const { showLoader, hideLoader } = useLoader();
-  const [filterState, setFilterState] = useState("");
   const [componentId, setComponentId] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bulkUploadModalOpen, setBulkUploadModalOpen]=useState(false);
   const [totalElements, setTotalElements] = useState();
   const [pageSize, setPageSize] = useState(10);
   const dispatch = useDispatch();
+
+  const initialState = ComponentsActionStateLabels.find(
+    (item) => item.label === "All"
+  ).value;
+
+  const [componentSearchFilter, setComponentSearchFilter] = useState({
+    name: "",
+    state: initialState,
+    rank: "",
+  });
+
+  const updateFilter = (field, value) => {
+    setComponentSearchFilter((prevFilter) => ({
+      ...prevFilter,
+      [field]: value,
+    }));
+  };
+
+  const handleComponentSearch = () => {
+    setCurrentPage(1);
+    getAllComponents(sortFieldName, sortDirection[sortFieldName], 1, pageSize);
+  };
 
   const handleSort = (newSortFieldName) => {
     setSortFieldName(newSortFieldName);
@@ -44,8 +66,7 @@ export default function ComponentList() {
       newSortFieldName,
       newSortDirection[newSortFieldName],
       currentPage,
-      pageSize,
-      filterState
+      pageSize
     );
   };
 
@@ -55,15 +76,17 @@ export default function ComponentList() {
         <img
           className="cursor-pointer"
           style={{ width: "8px" }}
-          src={
-            sortDirection[fieldName] === "asc"
-              ? sortedUp
-              : sortedDown
-          }
+          src={sortDirection[fieldName] === "asc" ? sortedUp : sortedDown}
         ></img>
       );
     }
-    return <img className="cursor-pointer" style={{ width: "10px" }} src={unsorted} />;
+    return (
+      <img
+        className="cursor-pointer"
+        style={{ width: "10px" }}
+        src={unsorted}
+      />
+    );
   };
 
   const handleChangePage = (event, newPage) => {
@@ -72,29 +95,40 @@ export default function ComponentList() {
       sortFieldName,
       sortDirection[sortFieldName],
       newPage,
-      pageSize,
-      filterState
+      pageSize
     );
   };
 
   useEffect(() => {
     dispatch(set_header("Components"));
     refreshAllComponents();
-  }, [filterState]);
+  }, []);
 
   const getAllComponents = (
     sortFieldName,
     sortDirection,
     currentPage,
-    pageSize,
-    filterState
+    pageSize
   ) => {
-    const params = {};
+    showLoader();
+    let params = {};
     params.sort = `${sortFieldName},${sortDirection}`;
     params.page = currentPage - 1;
     params.size = pageSize;
-    params.state = filterState;
-    showLoader();
+
+    const filteredComponentSearchFilter = Object.keys(componentSearchFilter)
+      .filter((key) => {
+        const value = componentSearchFilter[key];
+        return typeof value === "string" ? value.trim() !== "" : !!value;
+      })
+      .reduce((acc, key) => {
+        if (typeof componentSearchFilter[key] === "string")
+          acc[key] = componentSearchFilter[key].trim();
+        else acc[key] = componentSearchFilter[key];
+        return acc;
+      }, {});
+    params = { ...params, ...filteredComponentSearchFilter };
+
     ComponentAPI.getComponents(params)
       .then((res) => {
         hideLoader();
@@ -108,7 +142,12 @@ export default function ComponentList() {
   };
 
   const refreshAllComponents = () => {
-    getAllComponents(sortFieldName, sortDirection[sortFieldName], currentPage, pageSize, filterState);
+    getAllComponents(
+      sortFieldName,
+      sortDirection[sortFieldName],
+      currentPage,
+      pageSize
+    );
   };
 
   const componentRequestStates = [
@@ -124,6 +163,10 @@ export default function ComponentList() {
 
     const confirmStateChange = () => {
       Modal.confirm({
+        cancelButtonProps: {
+          id: "componentList-deactivateComponent-cancelButton",
+        },
+        okButtonProps: { id: "componentList-deactivateComponent-okButton" },
         title: "State Change",
         content: "Are you sure about changing state to Inactive ?",
         okText: "Save",
@@ -138,13 +181,6 @@ export default function ComponentList() {
       ComponentAPI.changeState(componentId, newState)
         .then((res) => {
           hideLoader();
-          let temp = components;
-          const idx = temp.findIndex((t) => t.id === componentId);
-          temp[idx] = res.data;
-          if (filterState) {
-            temp = temp.filter((t) => t.id !== componentId);
-          }
-          setComponents(temp);
           refreshAllComponents();
         })
         .catch((error) => {
@@ -189,30 +225,17 @@ export default function ComponentList() {
     <div id="componentList">
       <div id="wrapper">
         <div className="col-12">
-          <div className="d-flex justify-content-between">
-            <div className="d-flex align-items-baseline">
-              <span className="pe-3 text-nowrap">Status :</span>
-              <div className="mb-4">
-                <select
-                  onChange={(e) => {
-                    setFilterState(e.target.value);
-                  }}
-                  value={filterState}
-                  className="form-select custom-select custom-select-sm"
-                  aria-label="Default select example"
-                >
-                  {componentRequestStates.map((componentRequestState) => (
-                    <option
-                      value={componentRequestState.value}
-                      key={componentRequestState.value}
-                    >
-                      {componentRequestState.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+          <div className="d-flex justify-content-between mb-3">
+            <div></div>
             <div className="d-flex align-items-baseline justify-content-end">
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary me-2"
+                id="componentList-bulkUpload"
+                onClick={() => setBulkUploadModalOpen(true)}
+              >
+               <FileAddOutlined className="me-1" /> Bulk Upload
+              </button>
               <button
                 type="button"
                 className="btn btn-sm btn-outline-secondary me-2"
@@ -234,28 +257,96 @@ export default function ComponentList() {
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId={components?JSON.stringify(components):""}>
                 {(provided) => (
-                  <table className="data-table capitalize-words" {...provided.droppableProps} ref={provided.innerRef}>
+                  <table
+                    className="data-table capitalize-words"
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                  >
                     <thead>
                       <tr>
                         {/* <th className="col-1"></th> */}
                         <th className="col-4">
                           Component Name{" "}
-                          <span className="ps-1"
-                          id="componentList-sortByName"
-                          onClick={() => handleSort("name")}>
+                          <span
+                            className="ps-1"
+                            id="componentList-sortByName"
+                            onClick={() => handleSort("name")}
+                          >
                             {renderSortIcon("name")}
                           </span>{" "}
+                          <div className="filter-box">
+                            <input
+                              id="ComponentNameSearchFilter"
+                              type="text"
+                              placeholder="Search by Component"
+                              className="form-control filter-input"
+                              value={componentSearchFilter.name}
+                              onChange={(e) =>
+                                updateFilter("name", e.target.value)
+                              }
+                            />
+                          </div>
                         </th>
-                        <th className="col-2">Status</th>
+                        <th className="col-2">
+                          Status{" "}
+                          <div className="filter-box">
+                            <select
+                              id="ComponentStatusSearchFilter"
+                              className="form-select custom-select custom-select-sm filter-input"
+                              aria-label="Default select example"
+                              value={componentSearchFilter.state}
+                              onChange={(e) => {
+                                updateFilter("state", e.target.value);
+                              }}
+                            >
+                              {ComponentsActionStateLabels.map(
+                                (componentState) => (
+                                  <option
+                                    value={componentState.value}
+                                    key={componentState.value}
+                                  >
+                                    {componentState.label}
+                                  </option>
+                                )
+                              )}
+                            </select>
+                          </div>
+                        </th>
                         <th className="col-2">
                           Rank{" "}
-                          <span className="ps-1" 
-                          id="componentList-sortByRank"
-                          onClick={() => handleSort("rank")}>
+                          <span
+                            className="ps-1"
+                            id="componentList-sortByRank"
+                            onClick={() => handleSort("rank")}
+                          >
                             {renderSortIcon("rank")}
                           </span>{" "}
+                          <div className="filter-box">
+                            <input
+                              id="ComponentRankSearchFilter"
+                              type="number"
+                              placeholder="Search by Rank"
+                              className="form-control filter-input"
+                              value={componentSearchFilter.rank}
+                              onChange={(e) =>
+                                updateFilter("rank", e.target.value)
+                              }
+                            />
+                          </div>
                         </th>
-                        <th className="col-4">Actions</th>
+                        <th className="col-4">
+                          Actions{" "}
+                          <div className="filter-box">
+                            <button
+                              className="search-button"
+                              onClick={handleComponentSearch}
+                              id="handleComponentSearch"
+                            >
+                              <SearchOutlined />
+                              Search
+                            </button>
+                          </div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -275,6 +366,7 @@ export default function ComponentList() {
                               <td className="fw-bold">{component.name}</td>
                               <td>
                                 <Switch
+                                  id="componentList-switch-componentStatus"
                                   checked={component.state === "component.status.active"}
                                   onChange={() => changeComponentState(component.id, component.state)}
                                   checkedChildren="ACTIVE"
@@ -322,7 +414,6 @@ export default function ComponentList() {
                 )}
               </Droppable>
             </DragDropContext>
-
           </div>
         </div>
         <div>
@@ -334,20 +425,76 @@ export default function ComponentList() {
             refreshAllComponents={refreshAllComponents}
           />
         </div>
+        <div>
+          <BulkUploadModal
+            isModalOpen={bulkUploadModalOpen}
+            setIsModalOpen={setBulkUploadModalOpen}
+            refreshAllComponents={refreshAllComponents}
+          />
+        </div>
         <div className="row mt-4">
           <div className="col-md-6 text-end">
-
-        
-        {totalPages > 1 && (
-          <Pagination
-            className="pagination-ui mt-0 justify-content-end"
-            count={totalPages}
-            page={currentPage}
-            onChange={handleChangePage}
-            variant="outlined"
-            shape="rounded"
-          />
-        )}
+            {totalPages > 1 && (
+              <Pagination
+                className="pagination-ui mt-0 justify-content-end"
+                count={totalPages}
+                showFirstButton
+                showLastButton
+                page={currentPage}
+                onChange={handleChangePage}
+                variant="outlined"
+                shape="rounded"
+                renderItem={(item) => {
+                  if (item.type === "page") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id={`ComponentPage-page-${item.page}`}
+                        component="button"
+                        onClick={() => handleChangePage(null, item.page)}
+                      />
+                    );
+                  } else if (item.type === "previous") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id="ComponentPage-previous-page-button"
+                        component="button"
+                        onClick={() => handleChangePage(null, currentPage - 1)}
+                      />
+                    );
+                  } else if (item.type === "next") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id="ComponentPage-next-page-button"
+                        component="button"
+                        onClick={() => handleChangePage(null, currentPage + 1)}
+                      />
+                    );
+                  } else if (item.type === "first") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id="ComponentPage-first-page-button"
+                        component="button"
+                        onClick={() => handleChangePage(null, 1)}
+                      />
+                    );
+                  } else if (item.type === "last") {
+                    return (
+                      <PaginationItem
+                        {...item}
+                        id="ComponentPage-last-page-button"
+                        component="button"
+                        onClick={() => handleChangePage(null, totalPages)}
+                      />
+                    );
+                  }
+                  return null;
+                }}
+              />
+            )}
           </div>
         <div className="col-md-6 text-end justify-content-end ">
         {totalElements > 10 && (
@@ -363,8 +510,7 @@ export default function ComponentList() {
                   sortFieldName,
                   sortDirection[sortFieldName],
                   1,
-                  e.target.value,
-                  filterState
+                  e.target.value,        
                 );
               }}
             >

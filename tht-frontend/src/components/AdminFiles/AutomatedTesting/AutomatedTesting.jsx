@@ -22,6 +22,7 @@ import {
   InfoCircleOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
+import { TestRequestStateConstants } from "../../../constants/test_requests_constants";
 
 /*
   AutomatedTesting Component 
@@ -30,7 +31,7 @@ import {
 */
 export default function AutomatedTesting() {
   const { testRequestId } = useParams();
-  const [testcaseName, setTestCaseName] = useState();
+  const [testRequestInfo, setTestRequestInfo] = useState();
   const [testcaseRequestResult, setTestcaseRequestResult] = useState();
   const { showLoader, hideLoader } = useLoader();
   const [expandedIndexes, setExpandedIndexes] = useState([]);
@@ -211,14 +212,20 @@ export default function AutomatedTesting() {
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
-        setTestCaseName(res.name);
+        setTestRequestInfo(res);
+        if(res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED || 
+          res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED
+        ){
+          dispatch(set_header("Automated Verification - View Results"));
+        }else{
+          dispatch(set_header("Automated Verification"));
+        }
       })
       .catch((error) => {});
   };
 
   // Use Effect which fetches testcase info and initiates web WebSocketService.
   useEffect(() => {
-    dispatch(set_header("Automated Verification"));
     fetchTestCaseResultDataAndStartWebSocket();
     testCaseInfo();
     return () => {
@@ -299,24 +306,26 @@ export default function AutomatedTesting() {
             <div className="d-flex justify-content-between">
               <Breadcrumb className="custom-breadcrumb mb-3">
                 <Breadcrumb.Item>
-                  <Link to="/applications" className="breadcrumb-item">
+                  <Link to="/applications" className="breadcrumb-item" id="automatedTesting-navToApplicationd">
                     Applications
                   </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
                   <Link
+                  id="automatedTesting-navToChooseTest"
                     to={`/choose-test/${testRequestId}`}
                     className="breadcrumb-item"
                   >
-                    {testcaseName}
+                    {testRequestInfo?.name}
                   </Link>
                 </Breadcrumb.Item>
                 <Breadcrumb.Item className="breadcrumb-item">
                   Automated Verification
                 </Breadcrumb.Item>
               </Breadcrumb>
-              
-                <div className="d-flex gap-2">
+
+                { testRequestInfo?.state === TestRequestStateConstants.TEST_REQUEST_STATUS_INPROGRESS && 
+                  <div className="d-flex gap-2">
                   <>
                     {" "}
                     {testcaseRequestResult?.state ===
@@ -398,7 +407,7 @@ export default function AutomatedTesting() {
                         </>
                       )}
                   </>
-                </div>
+                </div>}
               
             </div>
             <div class="col-12 test-wrapper">
@@ -421,7 +430,7 @@ export default function AutomatedTesting() {
                         onClick={() =>
                           toggleComponentAccordian(component?.id, index)
                         }
-                        id={`header-${component?.id}`}
+                        id={`automatedTesting-toggleComponent-${index}`}
                       >
                         {component?.name}{" "}
                         <TestcaseResultRow

@@ -7,7 +7,7 @@ import { AdminUserAPI } from "../../../../api/AdminUserAPI";
 import { useLoader } from "../../../loader/LoaderContext";
 
 import CustomSelect from "../CustomSelect";
-import { ROLE_ID_ADMIN, ROLE_ID_TESTER } from "../../../../constants/role_constants";
+import { ROLE_ID_ADMIN, ROLE_ID_TESTER, ROLE_ID_PUBLISHER } from "../../../../constants/role_constants";
 
 //Component that provides the functionality to update the user details
 const UpdateAdminUser = ({
@@ -26,6 +26,10 @@ const UpdateAdminUser = ({
     {
       label: "Tester",
       value: ROLE_ID_TESTER
+    },
+    {
+      label: "Publisher",
+      value: ROLE_ID_PUBLISHER
     }
   ];
   const { showLoader, hideLoader } = useLoader();
@@ -124,7 +128,8 @@ const UpdateAdminUser = ({
   };
 
   return (
-    <Modal open={isModalOpen} closable={false} keyboard={false} footer={null}>
+    <Modal     cancelButtonProps={{id:"updateAdminUser-cancelButton"}}
+    okButtonProps={{id:"updateAdminUser-okButton"}}  open={isModalOpen} closable={false} keyboard={false} footer={null}>
       <div id="updateAdminUser">
             <h4 className="mb-4">
              Update User Detail

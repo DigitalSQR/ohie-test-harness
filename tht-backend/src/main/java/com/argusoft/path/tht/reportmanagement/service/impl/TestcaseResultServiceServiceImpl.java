@@ -14,6 +14,7 @@ import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.reportmanagement.validator.TestcaseResultValidator;
 import com.argusoft.path.tht.systemconfiguration.audit.service.AuditService;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
+import com.argusoft.path.tht.systemconfiguration.constant.ErrorLevel;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
@@ -46,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +56,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -117,7 +120,7 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     }
 
     @Autowired
-    public void setTestRequestService(TestRequestService testRequestService) {
+    public void setTestRequestService(@Lazy TestRequestService testRequestService) {
         this.testRequestService = testRequestService;
     }
 
@@ -563,9 +566,16 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
             Boolean isFunctional,
             ContextInfo contextInfo)
             throws
-            InvalidParameterException, OperationFailedException, DoesNotExistException {
-        if (!StringUtils.hasLength(testRequestId)) {
+            InvalidParameterException, OperationFailedException, DoesNotExistException, AccessDeniedException {
+        if (!StringUtils.hasLength(testRequestId)){
             throw new InvalidParameterException("TestcaseRequestId is missing");
+        }
+
+        TestRequestEntity testRequest=testRequestService.getTestRequestById(testRequestId, contextInfo);
+        String testRequestState=testRequest.getState();
+
+        if((!contextInfo.isTesterOrAdminOrPublisher()) && !testRequestState.equals(TestRequestServiceConstants.TEST_REQUEST_STATUS_PUBLISHED)){
+              throw  new AccessDeniedException("Report can't be accessed until it is published");
         }
 
         TestcaseResultEntity testcaseResultEntity = new TestcaseResultEntity();
@@ -875,5 +885,20 @@ public class TestcaseResultServiceServiceImpl implements TestcaseResultService {
     @Autowired
     public void setStatusCallback(StatusCallbackLoggerHandler statusCallback) {
         this.statusCallback = statusCallback;
+    }
+
+    @Override
+    public List<Object[]> complianceAndNonComplianceOfAllTestRequestResults(){
+        return testcaseResultRepository.complianceAndNonComplianceOfAllTestRequestResults(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
+    }
+
+    @Override
+    public List<Object[]> getFinishedSkippedAndAllTestRequestResults(){
+        return testcaseResultRepository.getFinishedSkippedAndAllTestRequestResults(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_FINISHED, TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_SKIP);
+    }
+
+    @Override
+    public int countTestcaseResultsOfTestRequest(){
+        return testcaseResultRepository.countTestcaseResultsOfTestRequest(TestRequestServiceConstants.TEST_REQUEST_REF_OBJ_URI);
     }
 }

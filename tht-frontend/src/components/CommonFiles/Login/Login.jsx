@@ -225,7 +225,7 @@ export default function Login() {
                       onKeyDown={handleKeyPress}
                     />
                     <button
-                      id="#Login-1"
+                      id="#Login-showPassword"
                       className="btn btn-outline-secondary login"
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
@@ -255,7 +255,7 @@ export default function Login() {
                     <span className="checkmark"></span>
                   </label>
                   <a
-                    id="#Login-2"
+                    id="#Login-forgotPassword"
                     href=""
                     className="text-blue"
                     onClick={() => {
@@ -268,7 +268,7 @@ export default function Login() {
 
                 <div className="mt-4">
                   <button
-                    id="#Login-3"
+                    id="#Login-login"
                     disabled={!(formik.isValid && formik.dirty)}
                     type="submit"
                     onClick={formik.handleSubmit}
@@ -279,6 +279,7 @@ export default function Login() {
                   <h6 className="m-2 align">OR</h6>
                   <h4 className="align">
                     <a
+                      id="LoginWithGoogle"
                       href="/api/oauth2/authorization/google"
                       className="login-google"
                     >
@@ -289,7 +290,7 @@ export default function Login() {
                 </div>
                 <div className="text-center mb-3">
                   <a
-                     id="#Login-4"
+                     id="#Login-redirectSignup"
                     href=""
                     onClick={redirectToSignUp}
                     className="font-weight-500 ps-2 pt-2 d-block text-blue"

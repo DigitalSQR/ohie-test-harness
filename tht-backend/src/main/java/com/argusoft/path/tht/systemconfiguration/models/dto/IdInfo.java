@@ -23,4 +23,13 @@ public class IdInfo {
     public void setId(String id) {
         this.id = id;
     }
+
+    public IdInfo(String id) {
+        this.id = id;
+    }
+    public IdInfo(){
+
+    }
+
+
 }

@@ -1,10 +1,14 @@
 import api from "./configs/axiosConfigs";
+import { paramSerialize } from "../utils/utils";
 export const SpecificationAPI = {
   getSpecificationsByComponentId: async function (params) {
     const response = await api.request({
-      url: `/specification`,
+      url: `/specification/search`,
       method: "GET",
       params,
+      paramsSerializer: (params) => {
+        return paramSerialize(params);
+      },
     });
     return response.data;
   },
@@ -46,12 +50,10 @@ export const SpecificationAPI = {
   },
 
   changeRank: async function (specificationId, changeRank) {
-   
     const response = await api.request({
       url: `/specification/rank/${specificationId}/${changeRank}`,
       method: "PATCH",
     });
     return response;
-    
   },
 };

@@ -380,6 +380,22 @@ public class UserServiceServiceImpl implements UserService {
         return this.userRepository.findAll(userEntitySpecification, CommonUtil.getPageable(pageable));
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @return
+     */
+    @Override
+    public Page<UserEntity> searchLikeUsers(
+            UserSearchCriteriaFilter userSearchFilter,
+            Pageable pageable,
+            ContextInfo contextInfo)
+            throws
+            InvalidParameterException {
+        Specification<UserEntity> userEntitySpecification = userSearchFilter.buildLikeSpecification(pageable, contextInfo);
+        return this.userRepository.findAll(userEntitySpecification, CommonUtil.getPageable(pageable));
+    }
+
     @Override
     public List<UserEntity> searchUsers(
             UserSearchCriteriaFilter userSearchFilter,
@@ -591,6 +607,24 @@ public class UserServiceServiceImpl implements UserService {
             applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
 
+    }
+
+    @Override
+    public int searchActiveAssessees(){
+
+        Set<RoleEntity> roles = new HashSet<>();
+
+        RoleEntity role = roleRepository.findById(UserServiceConstants.ROLE_ID_ASSESSEE).get();
+
+        roles.add(role);
+//
+//        UserSearchCriteriaFilter searchCriteriaFilter = new UserSearchCriteriaFilter();
+//        searchCriteriaFilter.setRole(UserServiceConstants.ROLE_ID_ASSESSEE);
+//        searchCriteriaFilter.setState(new ArrayList<>(Arrays.asList(UserServiceConstants.USER_STATUS_ACTIVE)));
+
+        return userRepository.countByRolesInAndState(roles, UserServiceConstants.USER_STATUS_ACTIVE);
+
+        //return userRepository.searchActiveAssessees(roles, UserServiceConstants.USER_STATUS_ACTIVE);
     }
 
 }

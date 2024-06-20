@@ -67,7 +67,7 @@ export default function EmailVerified() {
 
                 <button
                   className="btn btn-primary"
-                  id="#EmailVerfied-1"
+                  id="#EmailVerfied-backToLogin"
                   onClick={() => {
                     navigate("/login");
                   }}

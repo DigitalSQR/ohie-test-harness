@@ -34,3 +34,21 @@ export const userStatusActionLabels = [
     value: "user.status.approval.pending",
   },
 ];
+
+export const UserManagementStateActionLabels = [
+  {
+    label: "All",
+    value: [
+      "user.status.active",
+      "user.status.inactive",
+    ],
+  },
+  {
+    label: "Active",
+    value: "user.status.active",
+  },
+  {
+    label: "Inactive",
+    value: "user.status.inactive",
+  }
+];

@@ -117,6 +117,11 @@ public class DocumentCriteriaSearchFilter extends AbstractCriteriaSearchFilter<D
     }
 
     @Override
+    protected List<Predicate> buildLikePredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        return null;
+    }
+
+    @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<DocumentEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
         List<Predicate> predicates = new ArrayList<>();
 

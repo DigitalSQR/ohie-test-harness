@@ -30,7 +30,7 @@ const UpsertModal = ({
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
     console.log(values);
-    if (Object.values(initialValues).some((value) => !value.trim())) {
+    if (!componentId) {
       //create component
       ComponentAPI.createComponent(values)
         .then(() => {
@@ -55,13 +55,16 @@ const UpsertModal = ({
       };
       ComponentAPI.updateComponent(data)
         .then(() => {
+          setInitialValues({ name: "", description: "" });
+          setUpdateResponse(null);
+          setIsModalOpen(false);
+          setComponentId(null);
           notification.success({
             className:"notificationSuccess",
             placement: "top",
             message:"Component updated successfully!",
           });
           refreshAllComponents();
-          setIsModalOpen(false);
         })
         .catch((error) => {});
     }
@@ -99,7 +102,9 @@ const UpsertModal = ({
   }, [isModalOpen, componentId]);
   return (
     <div>
-      <Modal open={isModalOpen} onCancel={handleCancel} footer={null}>
+      <Modal  open={isModalOpen} onCancel={handleCancel} footer={null} closable={false} 
+          okButtonProps={{id:"componentUpsertModal-okButton"}}
+      cancelButtonProps={{id:`componentUpsertModal-cancelButton`}}>
         <h4 className="mb-4">
           {!!updateResponse ? "Update Component" : "Create Component"}
         </h4>
@@ -167,6 +172,7 @@ const UpsertModal = ({
                 </button>
 
                 <button
+                id="componentUpsertModal-submitButton"
                   type="submit"
                   className={`btn btn-primary btn-blue btn-submit py-1 mx-2 font-size-10`}
                   disabled={!isValid || !dirty}

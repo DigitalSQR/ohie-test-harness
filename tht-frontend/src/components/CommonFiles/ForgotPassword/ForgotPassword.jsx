@@ -107,7 +107,7 @@ export default function ForgotPassword() {
               <div className="buttonWrapper">
                 <button
                   disabled={!(formik.isValid && formik.dirty)}
-                  id="submitButton #ForgotPassword-1"
+                  id="#ForgotPassword-continue"
                   onClick={VerifyEmail}
                   className="btn btn-blue forgot-button"
                 >
@@ -117,7 +117,7 @@ export default function ForgotPassword() {
               </div>
               <div className="text-center mt-4">
                 <a
-                    id="#ForgotPassword-2"
+                    id="#ForgotPassword-BackToLogin"
                     onClick={backToLogin}
                     className=" mx-2 back-button"
                   >

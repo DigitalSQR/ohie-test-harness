@@ -12,6 +12,7 @@ import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Set;
 
@@ -65,8 +66,7 @@ public interface TestcaseResultService {
     /**
      * Submit TestcaseResult for the manual testing.
      *
-     * @param testcaseResultId
-     * @param selectedTestcaseOptionIds
+     * @param testcaseResultAnswerInfos
      * @param contextInfo               information containing the principalId and locale
      *                                  information about the caller of service operation
      * @return TestcaseResultInfo the details of TestcaseResult just updated
@@ -233,7 +233,7 @@ public interface TestcaseResultService {
             Boolean isFunctional,
             ContextInfo contextInfo)
             throws DoesNotExistException,
-            InvalidParameterException, OperationFailedException;
+            InvalidParameterException, OperationFailedException, AccessDeniedException;
 
     /**
      * Retrieves classes extending Test case class
@@ -249,4 +249,10 @@ public interface TestcaseResultService {
     public List<TestcaseResultEntity> findBestOfEachComponent(List<ComponentEntity> allComponents);
 
     public List<Object[]> findBestFiveTestcaseResultPerComponent(String componentId);
+
+    public List<Object[]> complianceAndNonComplianceOfAllTestRequestResults();
+
+    public List<Object[]> getFinishedSkippedAndAllTestRequestResults();
+
+    public int countTestcaseResultsOfTestRequest();
 }

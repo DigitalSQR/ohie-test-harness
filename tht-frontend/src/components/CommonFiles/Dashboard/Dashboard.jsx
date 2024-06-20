@@ -218,8 +218,8 @@ export default function Dashboard() {
         statsGraph(
           responseData.totalApplications,
           responseData.assesseeRegistered,
-          Math.round(responseData.complianceRate),
-          Math.round(responseData.testingRate)
+          Number(responseData.complianceRate.toFixed(2)),
+          Number(responseData.testingRate.toFixed(2))          
         );
 
         //Function being called to display the pieChart
@@ -294,6 +294,7 @@ export default function Dashboard() {
                       <a
                         className="text-blue font-weight-500"
                         target="_blank"
+                        id="dashboard-viewOpenHieComponentSpecifications"
                         href="https://guides.ohie.org/arch-spec/openhie-component-specifications-1"
                       >
                         View OpenHIE Component Specifications
@@ -305,7 +306,7 @@ export default function Dashboard() {
                       <div className="my-4">
                         <button
                           className="btn btn-primary mt-2 theme-blue-color"
-                          id="#Dashboard-1"
+                          id="#Dashboard-registerTestRequest"
                           onClick={() => navigate("/register-application")}
                         >
                           <i className="bi bi-pencil-square"></i> Register Test
@@ -340,6 +341,7 @@ export default function Dashboard() {
                     {applicationRequestsByMonth[year]?.dataArray.length > 0 ? (
                       <div className="dropdown-container">
                         <select
+                          id="Dashboard-handleYearChange"
                           value={year}
                           onChange={handleYearChange}
                           className="form-select"

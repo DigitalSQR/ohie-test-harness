@@ -2,8 +2,9 @@ import React, { Fragment, useEffect, useState } from "react";
 import "./assessee.scss";
 import { UserAPI } from "../../../api/UserAPI";
 import { Empty, Modal, notification } from "antd";
-import moment from 'moment'
-import { Pagination } from "@mui/material";
+import moment from "moment";
+import { SearchOutlined } from "@ant-design/icons";
+import { Pagination, PaginationItem } from "@mui/material";
 import {
   userBadgeClasses,
   userStateConstantNames,
@@ -15,13 +16,14 @@ import {
   ROLE_ID_ASSESSEE,
   USER_ROLES,
 } from "../../../constants/role_constants";
+
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
 import { store } from "../../../store/store";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { Popover } from "antd";
-
+import { DatePicker } from "antd";
 /**
  * Assessee Component:
  * This component displays a table of assessee users along with their details like name, email, requested date, company, and status.
@@ -34,21 +36,19 @@ const Assessee = () => {
   const initialState = userStatusActionLabels.find(
     (item) => item.label === "All"
   ).value;
-  const [state, setState] = useState(initialState);
   const obj = {
     name: "desc",
     email: "desc",
     createdAt: "desc",
     companyName: "desc",
     state: "desc",
-    default: "asc",
   };
   const [sortDirection, setSortDirection] = useState(obj);
 
   const userStates = [...userStatusActionLabels];
   const [userRoles, setUserRoles] = useState([]);
 
-  const [sortFieldName, setSortFieldName] = useState("default");
+  const [sortFieldName, setSortFieldName] = useState("name");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [reasonForRejection, setReasonForRejection] = useState();
@@ -56,6 +56,21 @@ const Assessee = () => {
   const [currentAssesseeId, setCurrentAssesseeId] = useState();
   const [currentIndex, setCurrentIndex] = useState();
   const [newState, setNewState] = useState();
+
+  const [userSearchFilter, setUserSearchFilter] = useState({
+    name: "",
+    email: "",
+    companyName: "",
+    state: initialState,
+    requestDate: "",
+  });
+
+  const updateFilter = (field, value) => {
+    setUserSearchFilter((prevFilter) => ({
+      ...prevFilter,
+      [field]: value,
+    }));
+  };
 
   //This is the default table header width according to tester/role.
   const [thPercentage, setThPercentage] = useState({
@@ -69,22 +84,45 @@ const Assessee = () => {
   const role = ROLE_ID_ASSESSEE;
   const { showLoader, hideLoader } = useLoader();
   const pageSize = 10;
-  const fetchUserByState = (
+
+  const [filterDate, setFilterDate] = useState();
+
+  const handleUserSearch = () => {
+    setCurrentPage(1);
+    fetchUserByFilter(
+      sortFieldName,
+      sortDirection[sortFieldName],
+      1
+    );
+  };
+
+  const fetchUserByFilter = (
     sortFieldName,
     sortDirection,
     currentPage,
-    pageSize
   ) => {
     showLoader();
 
-    UserAPI.getUserByState(
-      sortFieldName,
-      sortDirection,
-      currentPage - 1,
-      pageSize,
-      state,
-      role
-    )
+    let params = {};
+    params.sort = `${sortFieldName},${sortDirection}`;
+    params.page = currentPage - 1;
+    params.size = pageSize;
+    params.role = role;
+
+    const filteredUserSearchFilter = Object.keys(userSearchFilter)
+      .filter((key) => {
+        const value = userSearchFilter[key];
+        return typeof value === "string" ? value.trim() !== "" : !!value;
+      })
+      .reduce((acc, key) => {
+        if (typeof userSearchFilter[key] === "string")
+          acc[key] = userSearchFilter[key].trim();
+        else acc[key] = userSearchFilter[key];
+        return acc;
+      }, {});
+    params = { ...params, ...filteredUserSearchFilter };
+
+    UserAPI.getUserByFilter(params)
       .then((res) => {
         hideLoader();
         setAvailableUsers(res.content);
@@ -121,11 +159,10 @@ const Assessee = () => {
     newSortDirection[newSortFieldName] =
       sortDirection[newSortFieldName] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
-    fetchUserByState(
+    fetchUserByFilter(
       newSortFieldName,
       newSortDirection[newSortFieldName],
       currentPage,
-      pageSize
     );
   };
 
@@ -161,7 +198,7 @@ const Assessee = () => {
         notification.success({
           className: "notificationSuccess",
           placement: "top",
-          message:  `Assessee ${
+          message: `Assessee ${
             newState === "active" || newState === "inactive" ? "" : "request "
           }has been ${
             newState === "active"
@@ -186,131 +223,199 @@ const Assessee = () => {
   //Function to handle the page change in pagination
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
-    fetchUserByState(
+    fetchUserByFilter(
       sortFieldName,
       sortDirection[sortFieldName],
       newPage,
-      pageSize
     );
   };
 
   //useEffect to fetch the users by state when the component initially loads or when we want to fetch the users based upon a certain state
   useEffect(() => {
-    fetchUserByState(
+    fetchUserByFilter(
       sortFieldName,
       sortDirection[sortFieldName],
       currentPage,
-      pageSize,
-      state
     );
-  }, [state]);
+  }, []);
 
   return (
     <div id="assessee">
       <div id="wrapper">
         <div className="col-12">
-          <div className="row mb-4 justify-content-between">
-            <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
-              <div className="d-flex align-items-baseline ">
-                <span className="pe-3 text-nowrap ">Status : </span>
-                <div className="">
-                  <select
-                    className="form-select custom-select custom-select-sm"
-                    aria-label="Default select example"
-                    value={state}
-                    onChange={(e) => {
-                      if (e.target.value.includes(",")) {
-                        setState(e.target.value.split(","));
-                      } else {
-                        setState(e.target.value);
-                      }
-                    }}
-                  >
-                    {userStates.map(
-                      (userState) => (
-                        console.log(userState.value),
-                        (
-                          <option value={userState.value} key={userState.value}>
-                            {userState.label}
-                          </option>
-                        )
-                      )
-                    )}
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
           <div className="table-responsive">
             <table className=" data-table capitalize-words">
               <thead>
                 <tr>
                   <th style={{ width: thPercentage.name }}>
-                    NAME
-                    <span
-                      id="assessee-sortByName"
-                      className="ps-1 "
-                      href="#"
-                      onClick={() => handleSort("name")}
-                    >
-                      {renderSortIcon("name")}
-                    </span>
+                    <div className="header-cell">
+                      <div className="header-title">
+                        NAME
+                        <span
+                          id="assessee-sortByName"
+                          className="ps-1"
+                          href="#"
+                          onClick={() => handleSort("name")}
+                        >
+                          {renderSortIcon("name")}
+                        </span>
+                      </div>
+                      <div className="filter-box">
+                        <input
+                          id="AssesseeNameSearchFilter"
+                          type="text"
+                          placeholder="Search by Name"
+                          className="form-control filter-input"
+                          value={userSearchFilter.name}
+                          onChange={(e) => updateFilter("name", e.target.value)}
+                        />
+                      </div>
+                    </div>
                   </th>
                   <th style={{ width: thPercentage.company }}>
-                    Company
-                    <span
-                      id="assessee-sortBycompanyName"
-                      className="ps-1"
-                      href="# "
-                      onClick={() => handleSort("companyName")}
-                    >
-                      {renderSortIcon("companyName")}
-                    </span>
+                    <div className="header-cell">
+                      <div className="header-title">
+                        Company
+                        <span
+                          id="assessee-sortBycompanyName"
+                          className="ps-1"
+                          href="#"
+                          onClick={() => handleSort("companyName")}
+                        >
+                          {renderSortIcon("companyName")}
+                        </span>
+                      </div>
+                      <div className="filter-box">
+                        <input
+                          id="AssesseeCompanyNameSearchFilter"
+                          type="text"
+                          placeholder="Search by Company"
+                          className="form-control filter-input"
+                          value={userSearchFilter.companyName}
+                          onChange={(e) =>
+                            updateFilter("companyName", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
                   </th>
                   <th style={{ width: thPercentage.email }}>
-                    Email
-                    <span
-                    id="assessee-sortByEmail"
-                      className="ps-1"
-                      href="# "
-                      onClick={() => handleSort("email")}
-                    >
-                      {renderSortIcon("email")}
-                    </span>
+                    <div className="header-cell">
+                      <div className="header-title">
+                        Email
+                        <span
+                          id="assessee-sortByEmail"
+                          className="ps-1"
+                          href="#"
+                          onClick={() => handleSort("email")}
+                        >
+                          {renderSortIcon("email")}
+                        </span>
+                      </div>
+                      <div className="filter-box">
+                        <input
+                          id="AssesseeEmailSearchFilter"
+                          type="text"
+                          placeholder="Search by Email"
+                          className="form-control filter-input"
+                          value={userSearchFilter.email}
+                          onChange={(e) =>
+                            updateFilter("email", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
                   </th>
                   <th style={{ width: thPercentage.requestedDate }}>
-                    request date
-                    <span
-                      id="assessee-sortBycreatedAt"
-                      className="ps-1"
-                      href="# "
-                      onClick={() => handleSort("createdAt")}
-                    >
-                      {renderSortIcon("createdAt")}
-                    </span>
+                    <div className="header-cell">
+                      <div className="header-title">
+                        Request Date
+                        <span
+                          id="assessee-sortBycreatedAt"
+                          className="ps-1"
+                          href="#"
+                          onClick={() => handleSort("createdAt")}
+                        >
+                          {renderSortIcon("createdAt")}
+                        </span>
+                      </div>
+                      <div className="filter-box">
+                        <DatePicker
+                          id="AssesseeDateSearchFilter"
+                          className="form-control filter-input"
+                          placeholder="Select Date"
+                          value={filterDate}
+                          onChange={(date) => {
+                            setFilterDate(date);
+                            updateFilter(
+                              "requestDate",
+                              date ? date.format("YYYY-MM-DD") : null
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>
                   </th>
                   <th style={{ width: thPercentage.status }}>
-                    Status
-                    <span
-                    id="assessee-sortByState"
-                      className="ps-1"
-                      href="# "
-                      onClick={() => handleSort("state")}
-                    >
-                      {renderSortIcon("state")}
-                    </span>
+                    <div className="header-cell">
+                      <div className="header-title">
+                        Status
+                        <span
+                          id="assessee-sortByState"
+                          className="ps-1"
+                          href="#"
+                          onClick={() => handleSort("state")}
+                        >
+                          {renderSortIcon("state")}
+                        </span>
+                      </div>
+                      <div className="filter-box">
+                        <select
+                          id="AssesseeStatusSearchFilter"
+                          className="form-select custom-select custom-select-sm filter-input"
+                          aria-label="Default select example"
+                          value={userSearchFilter.state}
+                          onChange={(e) => {
+                            updateFilter("state", e.target.value);
+                          }}
+                        >
+                          {userStates.map((userState) => (
+                            <option
+                              value={userState.value}
+                              key={userState.value}
+                            >
+                              {userState.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
                   </th>
                   {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && (
                     <th style={{ width: thPercentage.action }}>
-                      ACTIONS
-                      <span
-                      id="assessee-sortByActions"
-                        className="ps-1"
-                        href="# "
-                        onClick={() => handleSort("default")}
-                      >
-                        {renderSortIcon("default")}
-                      </span>
+                      <div className="header-cell">
+                        <div className="header-title">
+                          ACTIONS
+                          <span
+                            id="assessee-sortByActions"
+                            className="ps-1"
+                            href="#"
+                            onClick={() => handleSort("default")}
+                          >
+                            {renderSortIcon("default")}
+                          </span>
+                        </div>
+                        <div className="filter-box">
+                          <button
+                            className="search-button"
+                            onClick={handleUserSearch}
+                            id="handleUserSearch"
+                          >
+                            <SearchOutlined />
+                            Search
+                          </button>
+                        </div>
+                      </div>
                     </th>
                   )}
                 </tr>
@@ -324,7 +429,9 @@ const Assessee = () => {
                   </tr>
                 ) : null}
                 {availableUsers.map((user, index) => {
-                  const formattedDate = moment(user.meta.createdAt).format("Do MMMM, YYYY");
+                  const formattedDate = moment(user.meta.createdAt).format(
+                    "Do MMMM, YYYY"
+                  );
 
                   let currentStatus = userStateConstantNames[user.state];
                   return (
@@ -340,19 +447,23 @@ const Assessee = () => {
                         <td>{formattedDate}</td>
                         <td>
                           <Fragment>
-                          <span
-                            className={"status " + userBadgeClasses[user.state]}
-                          >
-                            {currentStatus.toLowerCase()}
-                          </span>
-                          {
-                            user.state === "user.status.inactive" && 
-                          <Popover
-                                title={<div>{user?.message}</div>}
-                              >
-                                <InfoCircleOutlined style={{marginLeft:"0.5rem", marginTop:"0.7rem"}}/>
+                            <span
+                              className={
+                                "status " + userBadgeClasses[user.state]
+                              }
+                            >
+                              {currentStatus.toLowerCase()}
+                            </span>
+                            {user.state === "user.status.inactive" && (
+                              <Popover title={<div>{user?.message}</div>}>
+                                <InfoCircleOutlined
+                                  style={{
+                                    marginLeft: "0.5rem",
+                                    marginTop: "0.7rem",
+                                  }}
+                                />
                               </Popover>
-                          }
+                            )}
                           </Fragment>
                         </td>
                         {userRoles.includes(USER_ROLES.ROLE_ID_ADMIN) && (
@@ -392,12 +503,9 @@ const Assessee = () => {
                                   }}
                                 >
                                   <i className="bi bi-check-circle-fill  font-size-16"></i>
-                                  <span className="ps-1">
-                                    
-                                    APPROVE
-                                  </span>
+                                  <span className="ps-1">APPROVE</span>
                                 </span>
-                               
+
                                 <span
                                   className="ps-3 cursor-pointer text-danger font-size-12 fw-bold"
                                   id={`assessee-decline-${index}`}
@@ -415,7 +523,7 @@ const Assessee = () => {
                             )}
                             {user.state === "user.status.inactive" && (
                               <span
-                              id={`assessee-enable-${index}`}
+                                id={`assessee-enable-${index}`}
                                 className="cursor-pointer text-success font-size-12 fw-bold"
                                 onClick={() => {
                                   changeState(
@@ -447,13 +555,67 @@ const Assessee = () => {
             className="pagination-ui"
             count={totalPages}
             page={currentPage}
+            showFirstButton
+            showLastButton
             onChange={handleChangePage}
             variant="outlined"
             shape="rounded"
+            renderItem={(item) => {
+              if (item.type === "page") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`Assessee-page-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, item.page)}
+                  />
+                );
+              } else if (item.type === "previous") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Assessee-previous-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage - 1)}
+                  />
+                );
+              } else if (item.type === "next") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Assessee-next-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              } else if (item.type === "first") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Assessee-first-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, 1)}
+                  />
+                );
+              } else if (item.type === "last") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="Assessee-last-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, totalPages)}
+                  />
+                );
+              }
+              return null;
+            }}
           />
         )}
       </div>
       <Modal
+        okButtonProps={{ id: "assessee-disable-okButton" }}
+        cancelButtonProps={{ id: "assessee-disable-cancelButton" }}
+        closable={false}
         open={isReasonModalOpen}
         onCancel={() => {
           setIsReasonModalOpen(false);

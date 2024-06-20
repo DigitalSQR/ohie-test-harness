@@ -54,6 +54,11 @@ public class RoleSearchCriteriaFilter extends AbstractCriteriaSearchFilter<RoleE
         return predicates;
     }
 
+    @Override
+    protected List<Predicate> buildLikePredicates(Root<RoleEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        return null;
+    }
+
     public String getName() {
         return name;
     }

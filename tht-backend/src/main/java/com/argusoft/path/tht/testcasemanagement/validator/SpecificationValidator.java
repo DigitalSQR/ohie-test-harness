@@ -197,7 +197,7 @@ public class SpecificationValidator {
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.ALREADY_EXIST));
-            } catch (DoesNotExistException | InvalidParameterException ex) {
+            } catch (DoesNotExistException | InvalidParameterException | OperationFailedException ex) {
                 // This is ok because created id should be unique
             }
         }

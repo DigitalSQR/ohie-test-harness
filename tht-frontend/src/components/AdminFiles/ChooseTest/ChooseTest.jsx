@@ -9,7 +9,6 @@ import { notification, Progress, Button, Breadcrumb } from "antd";
 import { CheckCircleFilled, SyncOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import { TestcaseResultStateConstants } from "../../../constants/testcaseResult_constants";
-import { handleErrorResponse } from "../../../utils/utils";
 import { TestRequestAPI } from "../../../api/TestRequestAPI";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../reducers/homeReducer";
@@ -17,6 +16,8 @@ import WebSocketService from "../../../api/WebSocketService";
 import VerificationGuidelines from "./Verification-Guidelines/VerificationGuidelines";
 import { AutomatedVerificationGuidelines, ManualVerificationGuidelines } from "../../../constants/guidelines_constants";
 import {  TestRequestStateConstants } from "../../../constants/test_requests_constants";
+import TesterAutomatedModal from "./TesterAutomatedModal/TesterAutomatedModal.jsx"
+import { TestcaseVariableAPI } from "../../../api/TestcaseVariableAPI.js";
 /* 
   Choose Test page
 
@@ -25,7 +26,7 @@ import {  TestRequestStateConstants } from "../../../constants/test_requests_con
 export default function ChooseTest() {
   const { testRequestId } = useParams();
   const { TESTCASE_REFOBJURI, TESTREQUEST_REFOBJURI } = RefObjUriConstants;
-  const [testcaseName, setTestCaseName] = useState();
+  const [testRequestInfo, setTestRequestInfo] = useState();
   const [totalManualTestcaseResults, setTotalManualTestcaseResults] = useState(0);
   const [totalAutomatedTestcaseResults, setTotalAutomatedTestcaseResults] = useState(0);
   const [totalFinishedManual, setTotalFinishedManual] = useState(0);
@@ -36,10 +37,11 @@ export default function ChooseTest() {
   const [testcaseResults, setTestCaseResults] = useState([]);
   const [submitButtonFlag, setSubmitButtonFlag]=useState(false);
   const [resultFlag, setResultFlag]=useState(false);
+  const [isTesterModalOpen, setIsTesterModalOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { stompClient, webSocketConnect, webSocketDisconnect } = WebSocketService();
-
+  const [ isViewMode,setIsViewMode] = useState(true);;
   /* 
   This useEffect fetches all the testcases, both manual and automated.
   And based on the data recieved, the progress is tracked.
@@ -180,17 +182,50 @@ export default function ChooseTest() {
   const testCaseInfo = () => {
     TestRequestAPI.getTestRequestsById(testRequestId)
       .then((res) => {
-        if(res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED){
-          navigate("/applications")
+        setTestRequestInfo(res);
+        if(res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED || 
+          res.state === TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED
+        ){
+          setIsViewMode(true);
+          dispatch(set_header(`${res.name} - View Only`));
         }
         else{
-        setTestCaseName(res.name);
+          setIsViewMode(false);
         dispatch(set_header(res.name));
         }
       }).catch((error) => {
 
       });
   };
+
+
+const handleOpenModal = () => {
+  TestRequestAPI.getTestRequestsById(testRequestId)
+    .then((res) => {
+      const selectedComponentsIds = res.testRequestUrls.map(testRequestUrl => testRequestUrl.componentId);
+
+      const testcaseVariablesPromises = selectedComponentsIds.map(selectedComponentId => 
+        TestcaseVariableAPI.getTestcaseVariablesByComponentId(selectedComponentId)
+      );
+
+      return Promise.all(testcaseVariablesPromises);
+    })
+    .then((allTestcaseVariables) => {
+      const tcvForTester = allTestcaseVariables.flat().filter(testcaseVariable => 
+        testcaseVariable.roleId === "role.tester"
+      );
+
+      if (tcvForTester.length > 0) {
+        setIsTesterModalOpen(true);
+      }
+      else{
+        handleStartTesting(false, true);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
 
   // This useEffect keeps tracks of testcases being completed behind the scenes, and updates the UI.
   useEffect(() => {
@@ -256,16 +291,17 @@ export default function ChooseTest() {
         <div className="col-12 pt-3">
           <Breadcrumb className="custom-breadcrumb">
           <Breadcrumb.Item>
-            <Link to="/applications" className="breadcrumb-item">
+            <Link to="/applications" className="breadcrumb-item" id="chooseTest-navtoApplications">
               Applications
             </Link>
           </Breadcrumb.Item>
-            <Breadcrumb.Item className="breadcrumb-item">{testcaseName}</Breadcrumb.Item>
+            <Breadcrumb.Item className="breadcrumb-item">{testRequestInfo?.name}</Breadcrumb.Item>
           </Breadcrumb>
           <hr className="hr-light"/>
-          <h5 className="mt-3">Choose Verification Type</h5>
+          <h5 className="mt-3">{isViewMode ? "View your responses." : "Choose Verification Type"}</h5>
           <p className="text-gray">
-            Select the type to start verifying application with OpenHIE.{" "}
+            {isViewMode ? "View your responses to manual testcases or view your results for automated testcases."
+            : "Select the type to start verifying application with OpenHIE."}
           </p>
           <div className="d-flex flex-wrap">
             {!!testcaseResults && totalAllManual !==0 
@@ -348,6 +384,7 @@ export default function ChooseTest() {
                     onClick={() => navigate(`/manual-testing/${testRequestId}`)}
                   >
                     {
+                      isViewMode ? "Show Results" : 
                       totalAllManual === totalFinishedManual ?
                         "Modify" :
                         "Resume"
@@ -391,9 +428,7 @@ export default function ChooseTest() {
                   <button
                   id="chooseTest-startAutomatedVerification"
                     className="btn btn-primary small btn-sm mt-4 "
-                    onClick={() => {
-                      handleStartTesting(null, true);
-                    }}
+                    onClick={handleOpenModal}
                     disabled={!resultFlag}
                   >
                     Start Verification
@@ -484,13 +519,21 @@ export default function ChooseTest() {
             }
           </div>
         </div>
-          {!!submitButtonFlag && totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
+          {!isViewMode && !!submitButtonFlag && totalAllManual===totalFinishedManual && totalAllAutomated===totalFinishedAutomated?
           <div className="message-grid">
             <p>Verification has been successfully completed. Please click the button below to submit the results.</p>
             <button className="submit-btn cst-btn-group btn" id="chooseTest-Submit" onClick={submitHandler}>Submit</button>
           </div>  
           :
           <></>}
+        <div>
+          <TesterAutomatedModal
+            isTesterModalOpen={isTesterModalOpen}
+            setIsTesterModalOpen={setIsTesterModalOpen}
+            currentTestRequestId={testRequestId}
+            handleStartTesting={handleStartTesting}
+          ></TesterAutomatedModal>
+        </div>
       </div>
     </div>
   );
