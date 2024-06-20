@@ -200,7 +200,7 @@ If you want to access the repository anonymously or if you don't have SSH keys s
     git clone https://argusgit.argusoft.com/path/testing-harness-tool.git
     ```
 
-### [Setting Up Logging Service](#logging-service)
+### [Setting Up Logging Service And Required Directory for the Automation Test Script](#logging-service)
 #### Step 1: Create Directories
 1. Open a terminal window.
 2. Navigate to the `/srv` directory:
@@ -219,6 +219,10 @@ If you want to access the repository anonymously or if you don't have SSH keys s
     -   files where DocumentService related files will be stored.
         ```
         mkdir tht/files
+        ```
+    -   files where Automation Test Script related files will be stored.
+        ```
+        mkdir tht/test
         ```
 #### Step 2: Set Permissions
 Run this command for permission update:
