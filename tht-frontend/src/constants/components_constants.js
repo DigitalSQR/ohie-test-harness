@@ -1,4 +1,11 @@
 export const ComponentsActionStateLabels = [
-  {label: "Active", value: "component.status.active"},
-  {label: "Inactive", value: "component.status.inactive"},
+  {
+    label: "All",
+    value: [
+      "component.status.active",
+      "component.status.inactive",
+    ],
+  },
+  { label: "Active", value: "component.status.active" },
+  { label: "Inactive", value: "component.status.inactive" },
 ];

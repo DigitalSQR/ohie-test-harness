@@ -33,6 +33,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Collection;
 import java.util.List;
 
@@ -285,7 +286,7 @@ public class TestcaseResultRestController {
             @RequestParam(value = "functional", required = false) Boolean isFunctional,
             @RequestAttribute("contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
-            InvalidParameterException, OperationFailedException {
+            InvalidParameterException, OperationFailedException, AccessDeniedException {
 
         List<TestcaseResultEntity> testcaseResults = testcaseResultService.getMultipleTestcaseResultStatus(
                 testRequestId,

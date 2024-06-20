@@ -1,8 +1,8 @@
 package com.argusoft.path.tht.testcasemanagement.filter;
 
 import com.argusoft.path.tht.systemconfiguration.examplefilter.AbstractCriteriaSearchFilter;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
@@ -39,6 +39,11 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
     private String componentId;
 
     @ApiParam(
+            value = "specification type of the specification"
+    )
+    private List<Boolean> specificationType;
+
+    @ApiParam(
             value = "isManual of the testcase"
     )
     private Boolean isManual;
@@ -53,6 +58,16 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
             value = "max rank of the specification"
     )
     private Integer maxRank;
+
+    @ApiParam(
+            value = "rank of the specification"
+    )
+    private Integer rank;
+
+    @ApiParam(
+            value = "isRequired of the specification"
+    )
+    private List<Boolean> isRequired;
 
 
     private Root<SpecificationEntity> specificationEntityRoot;
@@ -112,6 +127,44 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
         return predicates;
     }
 
+
+
+    @Override
+    protected List<Predicate> buildLikePredicates(Root<SpecificationEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        this.setSpecificationEntityRoot(root);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (StringUtils.hasLength(getName())) {
+            predicates.add(criteriaBuilder.like(criteriaBuilder.lower(getSpecificationEntityRoot().get("name")),  "%" + name.toLowerCase() + "%"));
+        }
+
+        if (!CollectionUtils.isEmpty(getState())) {
+            predicates.add(criteriaBuilder.in(this.getSpecificationEntityRoot().get("state")).value(getState()));
+        }
+
+        if (getRank() != null) {
+            predicates.add(criteriaBuilder.like(getSpecificationEntityRoot().get("rank").as(String.class), "%"+ rank + "%"));
+        }
+
+        if (getComponentId() != null) {
+            predicates.add(criteriaBuilder.equal(this.getSpecificationEntityComponentEntityJoin().get("id"), getComponentId()));
+        }
+
+        if(!CollectionUtils.isEmpty(getSpecificationType())) {
+            predicates.add(criteriaBuilder.in(getSpecificationEntityRoot().get("isFunctional")).value(getSpecificationType()));
+        }
+
+        if(!CollectionUtils.isEmpty(getRequired())) {
+            predicates.add(criteriaBuilder.in(getSpecificationEntityRoot().get("isRequired")).value(getRequired()));
+        }
+
+        return predicates;
+    }
+
+
+
+
     public String getName() {
         return name;
     }
@@ -164,6 +217,29 @@ public class SpecificationCriteriaSearchFilter extends AbstractCriteriaSearchFil
         this.maxRank = maxRank;
     }
 
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public List<Boolean> getRequired() {
+        return isRequired;
+    }
+
+    public void setRequired(List<Boolean> isRequired) {
+        this.isRequired = isRequired;
+    }
+
+    public List<Boolean> getSpecificationType() {
+        return specificationType;
+    }
+
+    public void setSpecificationType(List<Boolean> specificationType) {
+        this.specificationType = specificationType;
+    }
 
     private Root<SpecificationEntity> getSpecificationEntityRoot() {
         return specificationEntityRoot;

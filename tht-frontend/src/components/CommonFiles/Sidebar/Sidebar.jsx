@@ -70,7 +70,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
         className={isSidebarOpen ? "sidebar-wrapper" : "sidebar-wrapper shrink"}
         id="mySidenav"
       >
-        <div className="close-sidemenu-icon" onClick={toggleSidebar} id="#Sidebar-1">
+        <div className="close-sidemenu-icon" onClick={toggleSidebar} id="#Sidebar-toggleSideBar">
           <i className="bi bi-filter-left"></i>
         </div>
         <div className="logo-white">
@@ -79,7 +79,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
         <ul className="side-menu">
           <li>
             <a
-            id="#Sidebar-2"
+            id="#Sidebar-dashboard"
               className={
                 activeMenuItem === "/dashboard"
                   ? "active menu-like-item"
@@ -97,12 +97,12 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               <span> Dashboard </span>
             </a>
           </li>
-          {(user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
-            user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)) && (
-            <>
+          <>
+            {(user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+              user?.roleIds?.includes(USER_ROLES.ROLE_ID_TESTER)) && (
               <li>
                 <a
-                id="#Sidebar-3"
+                id="#Sidebar-assessee"
                   className={
                     activeMenuItem === "/assessee"
                       ? "active menu-like-item"
@@ -120,13 +120,20 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   <span> Assessees </span>
                 </a>
               </li>
-              
-            
+            )}
+
+            {(user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) ||
+              user?.roleIds?.includes(USER_ROLES.ROLE_ID_PUBLISHER) || user?.roleIds.includes(USER_ROLES.ROLE_ID_TESTER)) && (
               <li>
                 <a
-                id="#Sidebar-4"
+                  id="#Sidebar-applications"
                   className={
-                    ["/applications", "/choose-test","/manual-testing","/automated-testing"].some(item => activeMenuItem.includes(item))
+                    [
+                      "/applications",
+                      "/choose-test",
+                      "/manual-testing",
+                      "/automated-testing",
+                    ].some((item) => activeMenuItem.includes(item))
                       ? "active menu-like-item"
                       : "menu-like-item"
                   }
@@ -142,10 +149,11 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
                   <span> Applications </span>
                 </a>
               </li>
-              {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
-                <li>
-                  <a
-                  id="#Sidebar-5"
+            )}
+            {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
+              <li>
+                <a
+                  id="#Sidebar-testcaseConfig"
                     className={
                       ["/testcase-config", "/validate-config"].some(item => activeMenuItem.includes(item))
                         ? "active menu-like-item"
@@ -167,33 +175,34 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }) {
               {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ADMIN) && (
                 <li>
                   <a
-                  id="#Sidebar-6"
-                    className={
-                      ["/user-management", "/create-user"].some(item => activeMenuItem.includes(item))
-                        ? "active menu-like-item"
-                        : "menu-like-item"
-                    }
-                    onClick={() => {
-                      handleMenuItemClick("/user-management");
-                    }}
-                  >
-                    <i
-                      aria-label="User Management"
-                      title="User Management"
-                      className="bi bi-person-gear menu-left-icon"
-                    ></i>
-                    <span> User Management </span>
-                  </a>
-                </li>
-              )}
-            </>
-          )}
+                  id="#Sidebar-UserManagement"
+                  className={
+                    ["/user-management", "/create-user"].some((item) =>
+                      activeMenuItem.includes(item)
+                    )
+                      ? "active menu-like-item"
+                      : "menu-like-item"
+                  }
+                  onClick={() => {
+                    handleMenuItemClick("/user-management");
+                  }}
+                >
+                  <i
+                    aria-label="User Management"
+                    title="User Management"
+                    className="bi bi-person-gear menu-left-icon"
+                  ></i>
+                  <span> User Management </span>
+                </a>
+              </li>
+            )}
+          </>
           {user?.roleIds?.includes(USER_ROLES.ROLE_ID_ASSESSEE) && (
               <Fragment>
                 {" "}
                 <li>
                   <a
-                  id="#Sidebar-7"
+                  id="#Sidebar-testingRequests"
                     className={
                       ["/testing-requests", "/register-application"].some(item => activeMenuItem.includes(item))
                         ? "active menu-like-item"

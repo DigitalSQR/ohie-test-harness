@@ -10,6 +10,7 @@ import moment from "moment";
 import {
   ROLE_ID_ADMIN,
   ROLE_ID_ASSESSEE,
+  ROLE_ID_PUBLISHER,
   ROLE_ID_TESTER,
 } from "../constants/role_constants";
 export const formatDate = (dateString) => {
@@ -81,7 +82,9 @@ export const getHighestPriorityRole = (user) => {
     return "ADMIN";
   } else if (user.roleIds.includes(ROLE_ID_TESTER)) {
     return "TESTER";
-  } else {
+  } else if(user.roleIds.includes(ROLE_ID_PUBLISHER)){
+    return "PUBLISHER";
+  }else{
     return "ASSESSEE";
   }
 };
@@ -95,8 +98,18 @@ export function objectToFormData(obj, formData = null, parentKey = '') {
       if (Object.hasOwnProperty.call(obj, key)) {
           const value = obj[key];
           const finalKey = parentKey ? `${parentKey}.${key}` : key;
-
-          if (typeof value === 'string' && moment(value, moment.ISO_8601, true).isValid()) {
+          if (Array.isArray(value)) {
+            value.forEach((item, index) => {
+                const arrayKey = `${finalKey}[${index}]`;
+                if (typeof item === 'string' && moment(item, moment.ISO_8601, true).isValid()) {
+                    formData.append(arrayKey, new Date(item));
+                } else if (typeof item === 'object' && !(item instanceof File)) {
+                    objectToFormData(item, formData, arrayKey);
+                } else {
+                    formData.append(arrayKey, item);
+                }
+            });
+        } else if (typeof value === 'string' && moment(value, moment.ISO_8601, true).isValid()) {
               formData.append(finalKey, new Date(value));
           } else if (typeof value === 'object' && !(value instanceof File)) {
               objectToFormData(value, formData, finalKey);

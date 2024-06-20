@@ -186,6 +186,11 @@ public class TestcaseResultCriteriaSearchFilter extends AbstractCriteriaSearchFi
     }
 
     @Override
+    protected List<Predicate> buildLikePredicates(Root<TestcaseResultEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
+        return null;
+    }
+
+    @Override
     protected List<Predicate> buildAuthorizationPredicates(Root<TestcaseResultEntity> root, CriteriaBuilder criteriaBuilder, ContextInfo contextInfo) {
 
         List<Predicate> predicates = new ArrayList<>();

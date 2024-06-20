@@ -28,22 +28,9 @@ export const TestRequestAPI = {
     });
     return response.data;
   },
-  getTestRequestsByState: async function (
-    state,
-    sortFieldName,
-    sortDirection,
-    currentPage,
-    pageSize
-  ) {
-    const params = {};
-    if (!!sortFieldName) {
-      params.sort = `${sortFieldName},${sortDirection}`;
-    }
-    if (state) params.state = state;
-    if (currentPage) params.page = currentPage;
-    if (pageSize) params.size = pageSize;
+  getTestRequestsByFilter: async function (params) {
     const response = await api.request({
-      url: `/test-request`,
+      url: `/test-request/search`,
       method: "GET",
       params,
       paramsSerializer: (params) => {
@@ -72,11 +59,11 @@ export const TestRequestAPI = {
     });
     return response.data;
   },
-  updateTestRequest:async function(data){
+  updateTestRequest: async function (data) {
     const response = await api.request({
-      url:"/test-request",
-      method:"PUT",
-      data
-    })
-  }
+      url: "/test-request",
+      method: "PUT",
+      data,
+    });
+  },
 };

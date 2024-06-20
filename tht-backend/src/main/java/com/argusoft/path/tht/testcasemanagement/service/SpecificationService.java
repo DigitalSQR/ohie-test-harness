@@ -77,6 +77,27 @@ public interface SpecificationService {
             throws OperationFailedException,
             InvalidParameterException;
 
+
+    /**
+     * Retrieves a list of Specifications corresponding to the given
+     * Specification Name.The returned list may be in any order with unique set.
+     *
+     * @param specificationSearchFilter
+     * @param pageable                  Contains Index number of the Page, Max size of the single
+     *                                  page,Name of the field for sorting and sortDirection sorting direction
+     * @param contextInfo               information containing the principalId and locale
+     *                                  information about the caller of service operation
+     * @return a list of Specification name start with given SpecificationName
+     * found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws OperationFailedException  unable to complete request
+     */
+    public Page<SpecificationEntity> searchLikeSpecifications(SpecificationCriteriaSearchFilter specificationSearchFilter,
+                                                          Pageable pageable,
+                                                          ContextInfo contextInfo)
+            throws OperationFailedException,
+            InvalidParameterException;
+
     /**
      * Retrieves a list of Specifications corresponding to the given
      * Specification Name.The returned list may be in any order with unique set.
@@ -129,7 +150,7 @@ public interface SpecificationService {
     public SpecificationEntity getSpecificationById(String specificationId,
                                                     ContextInfo contextInfo)
             throws DoesNotExistException,
-            InvalidParameterException;
+            InvalidParameterException, OperationFailedException;
 
     /**
      * Change the state of specification

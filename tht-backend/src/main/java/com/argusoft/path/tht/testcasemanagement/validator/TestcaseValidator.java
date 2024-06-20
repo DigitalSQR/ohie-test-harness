@@ -15,6 +15,7 @@ import com.argusoft.path.tht.systemconfiguration.utils.ValidationUtils;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseVariableEntity;
 import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import org.slf4j.Logger;
@@ -24,9 +25,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
+
+import static com.argusoft.path.tht.usermanagement.constant.UserServiceConstants.ROLE_ID_TESTER;
 
 
 public class TestcaseValidator {
@@ -132,6 +135,9 @@ public class TestcaseValidator {
                 errors);
         //For : failureMessage
         validateTestcaseEntityFailureMessage(testcaseEntity,
+                errors);
+        //For : testcaseVariables
+        validateTestcaseEntityTestcaseVariables(testcaseEntity,
                 errors);
 
         return errors;
@@ -241,8 +247,29 @@ public class TestcaseValidator {
         ValidationUtils
                 .validateRequired(testcaseEntity.getDescription(), "description", errors);
 
+
+        List<TestcaseVariableEntity> testcaseVariableEntities = testcaseEntity.getTestcaseVariables();
+
+        if(testcaseVariableEntities != null && !testcaseVariableEntities.isEmpty()) {
+            for(TestcaseVariableEntity testcaseVariableEntity : testcaseVariableEntities) {
+                //Check for Key
+                ValidationUtils
+                        .validateRequired(testcaseVariableEntity.getTestcaseVariableKey(), "key", errors);
+
+                //Check for role
+                ValidationUtils
+                        .validateRequired(testcaseVariableEntity.getRoleId(), "roleId", errors);
+                //Check for default value
+                if(ROLE_ID_TESTER.equals(testcaseVariableEntity.getRoleId())) {
+                    ValidationUtils
+                            .validateRequired(testcaseVariableEntity.getDefaultValue(), "defaultValue", errors);
+                }
+            }
+        }
         ValidationUtils.validateFileType(zipFileForAutomationTest, TestcaseEntityDocumentTypes.TESTCASE_TESTSUITE_AUTOMATION_ZIP.getAllowedFileTypes(), errors);
+
     }
+
 
     //validate not update
     private static void validateNotUpdatable(List<ValidationResultInfo> errors,
@@ -292,6 +319,35 @@ public class TestcaseValidator {
                 0,
                 2000,
                 errors);
+    }
+
+    private static void validateTestcaseEntityTestcaseVariables(TestcaseEntity testcaseEntity,
+                                                                  List<ValidationResultInfo> errors) {
+        List<TestcaseVariableEntity> testcaseVariableEntities = testcaseEntity.getTestcaseVariables();
+
+        List<String> keys = new ArrayList<>();
+        if (testcaseVariableEntities != null && !testcaseVariableEntities.isEmpty()) {
+            for (TestcaseVariableEntity entity : testcaseVariableEntities) {
+                //check for key
+                ValidationUtils.validateLength(entity.getTestcaseVariableKey(), "key", 0, 255, errors);
+                //check for role
+                ValidationUtils.validateLength(entity.getRoleId(), "roleId", 0, 255, errors);
+                //check for default value
+                ValidationUtils.validateLength(entity.getDefaultValue(), "defaultValue", 0, 255, errors);
+
+                if (!TestcaseServiceConstants.TESTCASE_VARIABLE_STATUS_INACTIVE.equals(entity.getState())) {
+                    keys.add(entity.getTestcaseVariableKey());
+                }
+            }
+        }
+
+        Set<String> uniqueKeys = new HashSet<>(keys);
+        if(uniqueKeys.size() != keys.size()){
+            errors
+                    .add(new ValidationResultInfo("key",
+                            ErrorLevel.ERROR, "Key must be unique"));
+        }
+
     }
 
     //Validation For :BeanName
@@ -384,6 +440,8 @@ public class TestcaseValidator {
                         new ValidationResultInfo(fieldName,
                                 ErrorLevel.ERROR,
                                 ValidateConstant.ID_SUPPLIED + fieldName + ValidateConstant.DOES_NOT_EXIST));
+            } catch (OperationFailedException e) {
+                throw new RuntimeException(e);
             }
         }
     }

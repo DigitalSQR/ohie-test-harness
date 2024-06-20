@@ -37,7 +37,9 @@ export default function TestcaseVertical(props) {
     setOptionsArray,
     unsavedNotes,
     setUnSavedNotes,
-    dynamicDescription
+    dynamicDescription,
+    testRequestInfo
+
   } = props;
   const { showLoader, hideLoader } = useLoader();
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -103,6 +105,8 @@ export default function TestcaseVertical(props) {
         title:"Warning!",
         content:`You have unsaved notes in testcases ${testcaseNos} . Do you wish to save and proceed?`,
         okText:"Save and Proceed",
+        okButtonProps:{id:`testcaseVertical-unsavedNotes-okButton`},
+        cancelButtonProps:{id:`testcaseVertical-unsavedNotes-cancelButton`},
         onOk:async()=>{
           showLoader();
           for (const notes of unsavedNotes) {
@@ -338,6 +342,7 @@ export default function TestcaseVertical(props) {
                         setUnSavedNotes={setUnSavedNotes}
                         dynamicDescription={dynamicDescription}
                         optionsArray={optionsArray}
+                        testRequestInfo={testRequestInfo}
                       ></VerticalOptions>
                   </div>
                 )}
@@ -348,7 +353,7 @@ export default function TestcaseVertical(props) {
       )}
       <div className="row">
         <div className="col-12 pe-0 text-end">
-          <button className="cst-btn-group btn btn-blue save-and-next" onClick={handleSaveandNext} id="#TestcaseVertical-1">
+          <button className="cst-btn-group btn btn-blue save-and-next" onClick={handleSaveandNext} id="#TestcaseVertical-handleSaveAndNext">
 
           {isLastSpecification()
                       ? optionsArray.length == 0 ? "Next" : "Save"

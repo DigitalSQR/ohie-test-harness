@@ -44,6 +44,8 @@ public class ContextInfo extends User implements Serializable {
 
     private Boolean isAdmin = false;
 
+    private Boolean isPublisher=false;
+
     private Module module;
 
     public ContextInfo() {
@@ -70,6 +72,7 @@ public class ContextInfo extends User implements Serializable {
         setIsAssessee();
         setIsAdmin();
         setIsTester();
+        setIsPublisher();
     }
 
     public Module getModule() {
@@ -122,6 +125,10 @@ public class ContextInfo extends User implements Serializable {
         this.isTester = this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().contains(UserServiceConstants.ROLE_ID_TESTER));
     }
 
+    private void setIsPublisher(){
+        this.isPublisher = this.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().contains(UserServiceConstants.ROLE_ID_PUBLISHER));
+    }
+
     public boolean isAssessee() {
         return isAssessee;
     }
@@ -133,5 +140,11 @@ public class ContextInfo extends User implements Serializable {
     public boolean isAdmin() {
         return isAdmin;
     }
+
+    public boolean isPublisher(){
+        return isPublisher;
+    }
+
+    public boolean isTesterOrAdminOrPublisher(){return isPublisher || isTester || isAdmin;}
 
 }

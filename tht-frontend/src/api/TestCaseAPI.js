@@ -3,10 +3,21 @@ import api from "./configs/axiosConfigs";
 export const TestCaseAPI = {
 
   createTestCase: function (data) {
-    const formData=new FormData();
-    Object.keys(data).forEach((key)=>{
-      formData.append(key, data[key]);
-    })
+    const formData = new FormData();
+    Object.keys(data).forEach((key) => {
+      if (Array.isArray(data[key])){
+        if(data[key].length > 0 && typeof data[key][0] === 'object') {
+          data[key].forEach((item, index) => {
+              Object.keys(item).forEach((itemKey) => {
+                  formData.append(`${key}[${index}].${itemKey}`, item[itemKey]);
+              });
+          });
+        }
+      }  
+      else {
+          formData.append(key, data[key]);
+      }
+  });
     return api
       .request({
         url: `/testcase`,
@@ -75,6 +86,17 @@ export const TestCaseAPI = {
         data:formData
       })
       .then((response) => response.data);
-  }
-  
+  },
+
+  bulkUpload: function (file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return api
+      .request({
+        url: "/testcase/upload",
+        method: "POST",
+        data: formData,
+      })
+      .then((response) => response.data);
+  },
 };

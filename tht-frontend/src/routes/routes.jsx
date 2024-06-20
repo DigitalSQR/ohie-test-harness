@@ -143,7 +143,6 @@ const routesConfig = [
       },
       {
         path: "choose-test/:testRequestId",
-        name: "Choose Test",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
@@ -153,7 +152,6 @@ const routesConfig = [
       },
       {
         path: "manual-testing/:testRequestId",
-        name: "Manual Testing",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
@@ -163,7 +161,6 @@ const routesConfig = [
       },
       {
         path: "automated-testing/:testRequestId",
-        name: "Automated Testing",
         element: (
           <PrivateRoute
             roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}

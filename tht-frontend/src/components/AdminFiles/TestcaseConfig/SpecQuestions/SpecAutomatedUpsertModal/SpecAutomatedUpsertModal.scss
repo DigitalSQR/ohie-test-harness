@@ -1,3 +1,4 @@
+@import "./../../ComponentList/variables.scss";
 .cst-btn-group .cst-btn-default {
     border-radius: 6px;
     border: 1px solid #e8e8e8;
@@ -6,7 +7,6 @@
     font-size: 12px;
     font-weight: 500;
     line-height: 24px;
-    display: flex;
     align-items: center;
     // width: 150px;
     white-space: nowrap;
@@ -14,7 +14,83 @@
     padding: 4px 16px;
   }
 
+  .cst-btn-group .cst-btn-default:focus {
+    box-shadow: none;
+    border:none;
+  }
+
+  .cst-btn-group .cst-btn-default:not(:focus) {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
   .visibility {
     visibility: hidden;
     width: 0;
   }
+  .cancel-icon {
+    height: 50px;
+    margin-top: 10px;
+    font-size: large;
+    margin-left: 30px;
+    cursor: pointer;
+  }
+  .default-value {
+    margin-left : -15px;
+  }
+  .input-class {
+    width: 118px !important;
+  }
+  .dropdown-class {
+    width: 134px !important;
+  }
+  .scroll-container {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto;
+  }
+  .input-field {
+    margin-left: 10px;
+  }
+  .info-msg{
+    color: #817b7b;;
+    font-size:12px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  .custom-select {
+    height: 50px;
+    border-radius: 5px;
+    border: 1px solid $color-light;
+    font-size: 14px;
+    font-weight: 400;
+    color: $color-black-50;
+    &:focus {
+      box-shadow: none;
+      border: 1px solid $color-light;
+    }
+  }
+
+  .custom-select-sm {
+    height: 32px;
+    font-size: 13px;
+  }
+
+ .select-role {
+    height : 50px;
+    font-size: 15px;
+ } 
+.select-role.text-muted option[value=""] {
+  color: #91949796 ;
+}
+.text-muted-select {
+  color: #91949796  !important;
+}
+
+.text-muted-select option {
+  color: black; 
+}
+.select-default {
+  color:91949796;
+  font-size: 16px;
+}

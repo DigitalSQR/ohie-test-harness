@@ -1,0 +1,20 @@
+#testerAutomatedModal {
+  .scroll-container {
+    max-height: 450px; /* Adjust the height as needed */
+    overflow-y: auto;
+  }
+  .component-header {
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  .set-default {
+    margin-left:5px;
+  }
+  .refresh-icon {
+    height: 50px;
+    margin-top: 10px;
+    font-size: large;
+    margin-left: -10px;
+    cursor: pointer !important;
+  }
+}

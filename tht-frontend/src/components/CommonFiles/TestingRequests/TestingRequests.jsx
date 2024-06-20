@@ -14,12 +14,15 @@ import { notification, Modal, Empty } from "antd";
 import { formatDate } from "../../../utils/utils.js";
 import { useNavigate } from "react-router-dom";
 import { store } from "../../../store/store.js";
-import { Pagination } from "@mui/material";
+import { Pagination, PaginationItem } from "@mui/material";
 import unsorted from "../../../styles/images/unsorted.png";
 import sortedUp from "../../../styles/images/sort-up.png";
 import sortedDown from "../../../styles/images/sort-down.png";
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { Popover } from "antd";
+import { DatePicker } from "antd";
+
 import moment from "moment";
 const TestingRequests = () => {
   const testRequestStates = [
@@ -44,22 +47,50 @@ const TestingRequests = () => {
   const [sortFieldName, setSortFieldName] = useState("default");
   const handleChangePage = (event, newPage) => {
     setCurrentPage(newPage);
-    fetchTestRequests(filterState, sortFieldName, sortDirection, newPage);
+    fetchTestRequests(sortFieldName, sortDirection, newPage);
   };
-  const fetchTestRequests = (
-    filterState,
-    sortFieldName,
-    sortDirection,
-    newPage
-  ) => {
+
+  const [testRequestSearchFilter, setTestRequestSearchFilter] = useState({
+    name: "",
+    requestDate: "",
+    state: "",
+  });
+
+  const updateFilter = (field, value) => {
+    setTestRequestSearchFilter((prevFilter) => ({
+      ...prevFilter,
+      [field]: value,
+    }));
+  };
+
+  const handleTestRequestSearch = () => {
+    setCurrentPage(1);
+    fetchTestRequests(sortFieldName, sortDirection, 1);
+  };
+
+  const [filterDate, setFilterDate] = useState();
+
+  const fetchTestRequests = (sortFieldName, sortDirection, newPage) => {
+    let params = {};
+    params.page = newPage - 1;
+    params.sort = `${sortFieldName},${sortDirection[sortFieldName]}`;
+    params.size = pageSize;
+
+    const filteredTestRequestSearchFilter = Object.keys(testRequestSearchFilter)
+      .filter((key) => {
+        const value = testRequestSearchFilter[key];
+        return typeof value === "string" ? value.trim() !== "" : !!value;
+      })
+      .reduce((acc, key) => {
+        if (typeof testRequestSearchFilter[key] === "string")
+          acc[key] = testRequestSearchFilter[key].trim();
+        else acc[key] = testRequestSearchFilter[key];
+        return acc;
+      }, {});
+    params = { ...params, ...filteredTestRequestSearchFilter };
+
     showLoader();
-    TestRequestAPI.getTestRequestsByState(
-      filterState,
-      sortFieldName,
-      !!sortFieldName ? sortDirection[sortFieldName] : null,
-      newPage - 1,
-      pageSize
-    )
+    TestRequestAPI.getTestRequestsByFilter(params)
       .then((res) => {
         hideLoader();
         setTestRequests(res.content);
@@ -81,7 +112,7 @@ const TestingRequests = () => {
   useEffect(() => {
     const userInfo = store.getState().userInfoSlice;
     setUserRoles(userInfo.roleIds);
-    fetchTestRequests(filterState, sortFieldName, sortDirection, currentPage);
+    fetchTestRequests(sortFieldName, sortDirection, currentPage);
   }, [filterState]);
 
   const handleSort = (field) => {
@@ -89,7 +120,7 @@ const TestingRequests = () => {
     const newSortDirection = { ...sortDirection };
     newSortDirection[field] = sortDirection[field] === "asc" ? "desc" : "asc";
     setSortDirection(newSortDirection);
-    fetchTestRequests(filterState, field, newSortDirection, currentPage);
+    fetchTestRequests(field, newSortDirection, currentPage);
   };
 
   const renderSortIcon = (fieldName) => {
@@ -137,6 +168,8 @@ const TestingRequests = () => {
         } else if (!!warnings.length && !proceedAnyways) {
           hideLoader();
           Modal.confirm({
+            okButtonProps:{id:`editQuestion-testRequestStatusUpdate-okButton`},
+            cancelButtonProps:{id:`editQuestion-testRequestStatusUpdate-cancelButton`},
             title: "Test Request Status Update",
             content: (
               <div>
@@ -199,28 +232,7 @@ const TestingRequests = () => {
           <div className="row mb-2 justify-content-between">
             <div className="col-lg-4 col-md-4 col-sm-5 col-xxl-2 col-xl-3 col-12">
               <div className="custom-input custom-input-sm">
-                <div className="d-flex align-items-baseline">
-                  <span className="pe-3 text-nowrap ">Status :</span>
-                  <div className="mb-3">
-                    <select
-                      onChange={(e) => {
-                        setFilterState(e.target.value);
-                      }}
-                      value={filterState}
-                      className="form-select custom-select custom-select-sm"
-                      aria-label="Default select example"
-                    >
-                      {testRequestStates.map((testRequestState) => (
-                        <option
-                          value={testRequestState.value}
-                          key={testRequestState.value}
-                        >
-                          {testRequestState.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+                
               </div>
             </div>
 
@@ -228,7 +240,7 @@ const TestingRequests = () => {
               <div className="col-lg-4 col-md-6 col-sm-7 col-xl-3 col-12">
                 <div className="d-flex align-items-baseline justify-content-end">
                   <button
-                    id="#TestingRequests-1"
+                    id="#TestingRequests-registerTestRequest"
                     onClick={() => {
                       navigate("/register-application");
                     }}
@@ -253,10 +265,20 @@ const TestingRequests = () => {
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("name")}
-                      id="#TestingRequests-2"
+                      id="#TestingRequests-sortName"
                     >
                       {renderSortIcon("name")}
                     </span>
+                    <div className="filter-box">
+                      <input
+                        id="TestingRequestNameSearchFilter"
+                        type="text"
+                        placeholder="Search by Name"
+                        className="form-control filter-input"
+                        value={testRequestSearchFilter.name}
+                        onChange={(e) => updateFilter("name", e.target.value)}
+                      />
+                    </div>
                   </th>
                   <th className="date-column">
                     REQUEST DATE{" "}
@@ -264,13 +286,47 @@ const TestingRequests = () => {
                       className="ps-1"
                       href="#"
                       onClick={() => handleSort("createdAt")}
-                      id="#TestingRequests-3"
+                      id="#TestingRequests-sortCreatedAt"
                     >
                       {renderSortIcon("createdAt")}
                     </span>
+                    <div className="filter-box">
+                      <DatePicker
+                        id="TestRequestDateSearchFilter"
+                        className="form-control filter-input"
+                        placeholder="Select Date"
+                        value={filterDate}
+                        onChange={(date) => {
+                          setFilterDate(date);
+                          updateFilter(
+                            "requestDate",
+                            date ? date.format("YYYY-MM-DD") : null
+                          );
+                        }}
+                      />
+                    </div>
                   </th>
 
-                  <th className="status-column">STATUS</th>
+                  <th className="status-column">
+                    STATUS{" "}
+                    <div className="filter-box">
+                      <select
+                        id="TestRequestStatusSearchFilter"
+                        className="form-select custom-select custom-select-sm filter-input"
+                        aria-label="Default select example"
+                        value={testRequestSearchFilter.state}
+                        onChange={(e) => {
+                          updateFilter("state", e.target.value);
+                        }}
+                      >
+                        {testRequestStates.map((state) => (
+                          <option value={state.value} key={state.value}>
+                            {state.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </th>
                   <th className="actions-column">
                     <span
                       className={
@@ -284,10 +340,20 @@ const TestingRequests = () => {
                         className="ps-1"
                         href="#"
                         onClick={() => handleSort("default")}
-                        id="#TestingRequests-4"
+                        id="#TestingRequests-sortDefault"
                       >
                         {renderSortIcon("default")}
                       </span>
+                      <div className="filter-box">
+                        <button
+                          className="search-button"
+                          onClick={handleTestRequestSearch}
+                          id="handleTestRequestSearch"
+                        >
+                          <SearchOutlined />
+                          Search
+                        </button>
+                      </div>
                     </span>
                   </th>
                   <th className="empty"></th>
@@ -354,7 +420,7 @@ const TestingRequests = () => {
                           TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING ? (
                           <>
                             <span
-                             id={`TestingRequests-${index}-5`}
+                             id={`TestingRequests-${index}-approve`}
                             className="cursor-pointer"
                               onClick={() => {
                                 changeState(
@@ -369,7 +435,7 @@ const TestingRequests = () => {
                             </span>
                             <span
                               className="cursor-pointer ps-3"
-                              id={`TestingRequests-${index}-6`}
+                              id={`TestingRequests-${index}-reject`}
                               onClick={() => {
                                 changeState(
                                   testRequest.id,
@@ -385,10 +451,10 @@ const TestingRequests = () => {
                         ) : null}
                         {
                           testRequest.state ==
-                          TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED 
+                          TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED 
                           && 
                           <button
-                          id={`TestingRequests-${index}-7`}
+                          id={`TestingRequests-${index}-report`}
                               className="cursor-pointer glossy-button glossy-button--gold d-flex align-items-center"
                               onClick={() => {navigate(`/application-report/${testRequest.id}`)}}
                             >
@@ -399,7 +465,7 @@ const TestingRequests = () => {
                            {testRequest.state ===
                             TestRequestStateConstants.TEST_REQUEST_STATUS_PENDING && (
                             <span
-                            id={`TestingRequests-${index}-8`}
+                            id={`TestingRequests-${index}-edit`}
                               className="cursor-pointer font-size-12 text-blue fw-bold"
                               onClick={() => {
                                 navigate(
@@ -414,7 +480,7 @@ const TestingRequests = () => {
                         </td>
                         <td>
                           <span
-                           id={`TestingRequests-${index}-9`}
+                           id={`TestingRequests-${index}-toggleRow`}
                             onClick={() => toggleRow(testRequest.id)}
                             type="button"
                             className="approval-action-button float-end my-auto display"
@@ -476,7 +542,7 @@ const TestingRequests = () => {
                                           </td>
                                           <td>
                                             <i
-                                             id={`TestingRequests-${index}-10`}
+                                             id={`TestingRequests-${index}-togglePasswordVisibility`}
                                               className={`bi ${
                                                 testUrls.showPass
                                                   ? "bi-eye-fill"
@@ -509,10 +575,61 @@ const TestingRequests = () => {
           <Pagination
             className="pagination-ui"
             count={totalPages}
+            showFirstButton
+            showLastButton
             page={currentPage}
             onChange={handleChangePage}
             variant="outlined"
             shape="rounded"
+            renderItem={(item) => {
+              if (item.type === "page") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`testingRequests-page-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, item.page)}
+                  />
+                );
+              } else if (item.type === "previous") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`testingRequests-previous-page-button-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage - 1)}
+                  />
+                );
+              } else if (item.type === "next") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id={`testingRequests-next-page-button-${item.page}`}
+                    component="button"
+                    onClick={() => handleChangePage(null, currentPage + 1)}
+                  />
+                );
+              } else if (item.type === "first") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="testingRequests-first-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, 1)}
+                  />
+                );
+              } else if (item.type === "last") {
+                return (
+                  <PaginationItem
+                    {...item}
+                    id="testingRequests-last-page-button"
+                    component="button"
+                    onClick={() => handleChangePage(null, totalPages)}
+                  />
+                );
+              }
+              return null;
+            }}
           />
         )}
       </div>

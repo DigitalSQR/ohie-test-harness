@@ -614,6 +614,8 @@ export default function TestCase(props) {
           className="pagination"
           count={currentSpecification.childTestcaseResults.length}
           page={currentTestcaseIndex + 1}
+		  showFirstButton
+		  showLastButton
           onChange={handlePageChange}
           renderItem={(item) => (
             <PaginationItem

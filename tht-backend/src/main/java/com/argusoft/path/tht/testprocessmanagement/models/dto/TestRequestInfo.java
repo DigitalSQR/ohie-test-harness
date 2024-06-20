@@ -3,7 +3,9 @@ package com.argusoft.path.tht.testprocessmanagement.models.dto;
 import com.argusoft.path.tht.systemconfiguration.models.dto.IdStateNameMetaInfo;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -42,6 +44,13 @@ public class TestRequestInfo extends IdStateNameMetaInfo {
             required = false)
     private String message;
 
+    @ApiModelProperty(notes = "The test request value",
+            allowEmptyValue = false,
+            example = "[]",
+            dataType = "List<TestRequestValueInfo>",
+            required = true)
+    private Set<TestRequestValueInfo> testRequestValues;
+
     public Set<TestRequestUrlInfo> getTestRequestUrls() {
         if (testRequestUrls == null) {
             testRequestUrls = new HashSet<>();
@@ -75,5 +84,16 @@ public class TestRequestInfo extends IdStateNameMetaInfo {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Set<TestRequestValueInfo> getTestRequestValues() {
+        if (testRequestValues == null) {
+            testRequestValues = new HashSet<>();
+        }
+        return testRequestValues;
+    }
+
+    public void setTestRequestValues(Set<TestRequestValueInfo> testRequestValues) {
+        this.testRequestValues = testRequestValues;
     }
 }

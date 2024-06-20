@@ -38,7 +38,7 @@ public interface TestcaseResultRepository
 
     @Query("SELECT e FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri " +
             "ORDER BY CASE WHEN e.nonCompliant = 0 THEN e.compliant " +
-            "ELSE (e.compliant/e.nonCompliant) END DESC")
+            "ELSE ((e.compliant * 1.0)/e.nonCompliant) END DESC")
     Page<TestcaseResultEntity> findTopFiveTestRequestsResult(String refObjUri, Pageable pageable);
 
     @Query("SELECT e FROM TestcaseResultEntity e WHERE e.refId = :refId")
@@ -51,4 +51,30 @@ public interface TestcaseResultRepository
     @Query("SELECT e.compliant, e.nonCompliant, e.testRequest FROM TestcaseResultEntity e WHERE e.refId = :componentId AND e.state = :state ORDER BY CASE WHEN e.nonCompliant = 0 THEN e.compliant ELSE (e.compliant/e.nonCompliant) END DESC")
     Page<Object[]> findBestFiveTestcaseResultPerComponent(Pageable pageable, String componentId, String state);
 
+    @Query("SELECT MAX(updatedAt),MIN(updatedAt) FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri")
+    List<Object[]> maxMinDate(@Param("refObjUri") String refObjUri);
+
+    @Query("SELECT MAX(updatedAt) FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri")
+    Date maxDate(@Param("refObjUri") String refObjUri);
+
+    @Query("SELECT MIN(updatedAt) FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri")
+    Date minDate(@Param("refObjUri") String refObjUri);
+
+    @Query("SELECT e FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri AND EXTRACT(YEAR FROM e.updatedAt) = :year")
+    List<TestcaseResultEntity> findResultsByUpdatedAt(@Param("refObjUri") String refObjUri,@Param("year") int year);
+
+    @Query("SELECT COUNT(e) FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri AND EXTRACT(YEAR FROM e.updatedAt) = :year AND EXTRACT(MONTH FROM e.updatedAt) = :month")
+    int findResultsPerMonthCount(@Param("refObjUri")String refObjUri,@Param("year") int year,@Param("month") int month);
+
+    @Query("SELECT COUNT(e) FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri AND EXTRACT(YEAR FROM e.updatedAt) = :year AND EXTRACT(MONTH FROM e.updatedAt) = :month AND e.isSuccess = true")
+    int findResultsPerMonthBySuccess(@Param("refObjUri")String refObjUri,@Param("year") int year,@Param("month") int month);
+
+    @Query("SELECT SUM(e.compliant), SUM(e.nonCompliant) FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri")
+    List<Object[]> complianceAndNonComplianceOfAllTestRequestResults(@Param("refObjUri") String refObjUri);
+
+    @Query("SELECT (SELECT COUNT(e) FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri AND ( e.state = :stateFinished OR e.state = :stateSkip)), COUNT(e) FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri")
+    List<Object[]> getFinishedSkippedAndAllTestRequestResults(@Param("refObjUri") String refObjUri, @Param("stateFinished") String stateFinished, @Param("stateSkip") String stateSkip);
+
+    @Query("SELECT COUNT(e) FROM TestcaseResultEntity e WHERE e.refObjUri = :refObjUri")
+    int countTestcaseResultsOfTestRequest(@Param("refObjUri") String refObjUri);
 }

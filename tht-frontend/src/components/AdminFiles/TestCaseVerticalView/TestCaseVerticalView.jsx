@@ -14,9 +14,9 @@ export default function TestCaseVerticalView(props) {
     setOptionsArray,
     unsavedNotes,
     setUnSavedNotes,
-    dynamicDescription
+    dynamicDescription,
+    testRequestInfo
   } = props;
-  console.log(currentSpecification);
   return (
     <div className="vertical-layout">
       <div className="question-header">
@@ -40,7 +40,8 @@ export default function TestCaseVerticalView(props) {
         unsavedNotes={unsavedNotes}
         setUnSavedNotes={setUnSavedNotes}
         dynamicDescription={dynamicDescription}
-      ></TestcaseVertical>
+        testRequestInfo={testRequestInfo}
+        ></TestcaseVertical>
     </div>
   );
 }
