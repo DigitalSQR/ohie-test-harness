@@ -3,6 +3,7 @@ import { notification } from "antd";
 import {
   refreshTokenSuccess,
   refreshTokenFailure,
+  log_out
 } from "../../reducers/authReducer";
 import { persistor, store } from "../../store/store";
 const api = axios.create({
@@ -104,6 +105,8 @@ api.interceptors.response.use(
         message: response.data.error_description? response.data.error_description:(response.data.message ? response.data.message:response.data.error),   
         placement: "bottomRight",
       });
+    }else if(response.status==403){
+      store.dispatch(log_out());
     }else if(response.status >= 400){
       if(response.data.length && response.data.length > 0){
         response.data.forEach((error, index) => {
