@@ -149,10 +149,12 @@ message-configuration:
     reject:
       mail: true
       notification: true
-    finish:
+    publish:
       mail: true
       notification: true
-
+    unpublish:
+      mail: true
+      notification: true
 
 testbed:
   testsuite-management:
