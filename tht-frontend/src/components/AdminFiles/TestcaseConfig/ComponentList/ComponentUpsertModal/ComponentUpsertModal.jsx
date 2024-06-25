@@ -29,8 +29,8 @@ const UpsertModal = ({
   });
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    console.log(values);
-    if (!componentId) {
+
+    if (!componentId && Object.values(initialValues).some((value) => !value.trim())) {
       //create component
       ComponentAPI.createComponent(values)
         .then(() => {
