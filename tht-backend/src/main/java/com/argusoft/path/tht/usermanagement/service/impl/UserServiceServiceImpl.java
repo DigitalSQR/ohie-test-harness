@@ -10,6 +10,7 @@ import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
+import com.argusoft.path.tht.systemconfiguration.security.repository.CustomCsrfTokenRepository;
 import com.argusoft.path.tht.systemconfiguration.security.service.AuthenticationService;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonUtil;
@@ -38,7 +39,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -65,6 +65,7 @@ public class UserServiceServiceImpl implements UserService {
     ApplicationEventPublisher applicationEventPublisher;
     private TokenVerificationService tokenVerificationService;
     private EmailService emailService;
+    private CustomCsrfTokenRepository csrfTokenRepository;
 
     @Value("${message-configuration.account.approve.mail}")
     private boolean accountApproveMail;
@@ -138,8 +139,8 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Autowired
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+    public void setCsrfTokenRepository(CustomCsrfTokenRepository csrfTokenRepository) {
+        this.csrfTokenRepository = csrfTokenRepository;
     }
 
     /**

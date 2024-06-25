@@ -7,6 +7,7 @@ export const UserAPI = {
       const response = await api.request({
         url: `/user/principal`,
         method: "GET",
+        withCredentials: true
       });
       return response.data;
    

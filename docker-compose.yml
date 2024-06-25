@@ -110,6 +110,7 @@ services:
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       - testbed_url=http://gitb-ui:9000/
       - base-url=${BASE_URL}
+      - spring-security-cors-url=${CORS_URL}
   tht-frontend:
     build:
       context: ./tht-frontend
