@@ -128,11 +128,20 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     @Value("${message-configuration.test-request.reject.notification}")
     private boolean testRequestRejectNotification;
 
-    @Value("${message-configuration.test-request.finish.mail}")
-    private boolean testRequestFinishMail;
+    @Value("${message-configuration.test-request.publish.mail}")
+    private boolean testRequestPublishMail;
 
-    @Value("${message-configuration.test-request.finish.notification}")
-    private boolean testRequestFinishNotification;
+    @Value("${message-configuration.test-request.publish.notification}")
+    private boolean testRequestPublishNotification;
+
+    @Value("${message-configuration.test-request.unpublish.mail}")
+    private boolean testRequestUnpublishMail;
+
+    @Value("${message-configuration.test-request.unpublish.notification}")
+    private boolean testRequestUnpublishNotification;
+
+
+
     private GradeEvaluator gradeEvaluator;
 
 
@@ -662,8 +671,10 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
             messageAssesseeIfTestRequestAccepted(requestingUser, testRequestName, contextInfo);
         } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_PENDING.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_REJECTED.equals(newState)) {
             messageAssesseeIfTestRequestRejected(requestingUser, message, testRequestName, contextInfo);
-        } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(newState)) {
-            messageAssesseeIfTestRequestFinished(requestingUser, testRequestName, baseUrl + "/application-report/" + testRequestId, contextInfo);
+        } else if (TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_PUBLISHED.equals(newState)) {
+            messageAssesseeIfTestRequestPublished(requestingUser, testRequestName, baseUrl + "/application-report/" + testRequestId, contextInfo);
+        }else if(TestRequestServiceConstants.TEST_REQUEST_STATUS_PUBLISHED.equals(oldState) && TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED.equals(newState)){
+            messageAssesseeIfTestRequestUnPublished(requestingUser, testRequestName, baseUrl + "/application-report/" + testRequestId, contextInfo);
         }
     }
 
@@ -1173,15 +1184,26 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         }
     }
 
-    private void messageAssesseeIfTestRequestFinished(UserEntity requestingUser, String testRequestName, String reportLink, ContextInfo contextInfo) {
-        if(testRequestFinishMail) {
-            emailService.testRequestFinishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName, reportLink);
+    private void messageAssesseeIfTestRequestPublished(UserEntity requestingUser, String testRequestName, String reportLink, ContextInfo contextInfo) {
+        if(testRequestPublishMail) {
+            emailService.testRequestPublishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName, reportLink);
         }
-        if(testRequestFinishNotification) {
-            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been finished.",requestingUser);
+        if(testRequestPublishNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been Published.",requestingUser);
             applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
     }
+
+    private void messageAssesseeIfTestRequestUnPublished(UserEntity requestingUser, String testRequestName, String reportLink, ContextInfo contextInfo){
+        if(testRequestUnpublishMail) {
+            emailService.testRequestUnpublishedMessage(requestingUser.getEmail(), requestingUser.getName(), testRequestName, reportLink);
+        }
+        if(testRequestUnpublishNotification) {
+            NotificationEntity notificationEntity = new NotificationEntity("Your Test Request with name "+testRequestName+" has been Unpublished.",requestingUser);
+            applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
+        }
+    }
+
     private static String getMessage(String x, TestcaseResultEntity testcaseResultEntity, String x1, List<String> failedSpecificationTestcaseResultName) {
         StringBuilder message = new StringBuilder(x + testcaseResultEntity.getName() + x1);
         for (int i = 0; i < (failedSpecificationTestcaseResultName.size() - 1); i++) {

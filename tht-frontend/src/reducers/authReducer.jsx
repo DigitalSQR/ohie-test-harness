@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import Cookies from "js-cookie";
 const initialState = {
   token: null,
   error: null,
@@ -7,7 +8,7 @@ const initialState = {
   refresh_token: null,
   scope: null,
   token_type: null,
-  isKeepLogin: null
+  isKeepLogin: null,
 };
 
 const authSlice = createSlice({
@@ -32,6 +33,8 @@ const authSlice = createSlice({
       state.refresh_token = null;
       state.scope = null;
       state.token_type = null;
+      const cookieName = "XSRF-TOKEN";
+      if (Cookies.get(cookieName)) Cookies.remove(cookieName);
     },
     refreshTokenSuccess: (state, action) => {
       const payload = action.payload;
@@ -50,11 +53,18 @@ const authSlice = createSlice({
       state.scope = null;
       state.token_type = null;
     },
-    setIsKeepLoginState:(state,action) => {
+    setIsKeepLoginState: (state, action) => {
       state.isKeepLogin = action.payload;
-    }
+    },
   },
 });
 const authreducers = authSlice.reducer;
 export default authreducers;
-export const { login_success, login_failure, log_out,refreshTokenSuccess,refreshTokenFailure,setIsKeepLoginState } = authSlice.actions;
+export const {
+  login_success,
+  login_failure,
+  log_out,
+  refreshTokenSuccess,
+  refreshTokenFailure,
+  setIsKeepLoginState,
+} = authSlice.actions;
