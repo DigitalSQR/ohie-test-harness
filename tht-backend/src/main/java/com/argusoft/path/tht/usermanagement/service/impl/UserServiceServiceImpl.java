@@ -124,6 +124,11 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Autowired
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    @Autowired
     public void setTokenStore(TokenStore tokenStore) {
         this.tokenStore = tokenStore;
     }
