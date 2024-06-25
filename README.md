@@ -1,31 +1,6 @@
 # Testing-harness-tool
 Testing harness tool is a complete test framework that will facilitate testing how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines.
 
-## Index
-- [Prerequisite](#prerequisite)
-- [Project Setup](#project-setup)
-- [Docker Configuration](#docker-configuration)
-
-## [Prerequisite](#prerequisites)
-1. [Git Installed](#git-installation)
-2. [Node Installed](#node-installation)
-3. [JDK Installed](#jdk-installation)
-4. [Postgress Installed](#postgress-installation)
-5. [Maven Installed](#maven-installation)
-
-## [Git Installation](#git-installation)
-
-1. Open a terminal window.
-2. Update the package index and install Git using apt:
-    ```
-    sudo apt update
-    sudo apt install git
-    ```
-3. Verify Git installation by running:
-    ```
-    git --version
-    ```
-
 ## [Docker Configuration](#docker-configuration)
 1. [Docker Installed](#docker-installation)
 2. [Docker Setup](#docker-setup)
