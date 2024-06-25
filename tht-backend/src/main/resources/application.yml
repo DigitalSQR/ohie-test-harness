@@ -47,6 +47,8 @@ spring:
     out-of-order: true
     locations: classpath:db/migration
   security:
+    cors:
+      url: http://localhost:8080
     oauth2:
       client:
         registration:
