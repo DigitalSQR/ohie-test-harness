@@ -1,16 +1,14 @@
 package com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.event.listener;
 
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
-import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultAttributesEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultAttributesService;
 import com.argusoft.path.tht.reportmanagement.service.TestcaseResultService;
 import com.argusoft.path.tht.systemconfiguration.constant.ValidateConstant;
-import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.DoesNotExistException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.InvalidParameterException;
+import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.OperationFailedException;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.event.TestcaseExecutionStartEvent;
 import com.argusoft.path.tht.testprocessmanagement.automationtestcaseexecutionar.event.stopper.AutomationTestingProcessStopper;
@@ -19,15 +17,12 @@ import com.argusoft.path.tht.testprocessmanagement.execute.strategy.ExecutionStr
 import com.argusoft.path.tht.testprocessmanagement.execute.strategy.factory.ExecutionStrategyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * TestcaseExecutionerStarterListener
@@ -44,28 +39,15 @@ public class TestcaseExecutionStarterListener {
     private TestcaseResultService testcaseResultService;
     private TestcaseService testcaseService;
     private ExecutionStrategyFactory executionStrategyFactory;
-
-    @Autowired
     private AutomationTestingProcessStopper automationTestingProcessStopper;
 
-    @Autowired
-    public void setTestcaseExecutioner(TestcaseExecutioner testcaseExecutioner) {
+    public TestcaseExecutionStarterListener(TestcaseExecutioner testcaseExecutioner, TestcaseResultAttributesService testcaseResultAttributesService, TestcaseResultService testcaseResultService, TestcaseService testcaseService, ExecutionStrategyFactory executionStrategyFactory, AutomationTestingProcessStopper automationTestingProcessStopper) {
         this.testcaseExecutioner = testcaseExecutioner;
-    }
-
-    @Autowired
-    public void setTestcaseResultAttributesService(TestcaseResultAttributesService testcaseResultAttributesService) {
         this.testcaseResultAttributesService = testcaseResultAttributesService;
-    }
-
-    @Autowired
-    public void setTestcaseResultService(TestcaseResultService testcaseResultService) {
         this.testcaseResultService = testcaseResultService;
-    }
-
-    @Autowired
-    public void setExecutionStrategyFactory(ExecutionStrategyFactory executionStrategyFactory) {
+        this.testcaseService = testcaseService;
         this.executionStrategyFactory = executionStrategyFactory;
+        this.automationTestingProcessStopper = automationTestingProcessStopper;
     }
 
     @Async
