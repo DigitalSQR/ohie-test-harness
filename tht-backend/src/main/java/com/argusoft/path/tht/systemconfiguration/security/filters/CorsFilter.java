@@ -21,7 +21,7 @@ import java.io.IOException;
 @WebFilter("/*")
 public class CorsFilter implements Filter {
 
-    @Value("${spring.security.cors.url}")
+    @Value("${base-url}")
     private String corsUrl;
 
     private CorsFilter() {

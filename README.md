@@ -6,6 +6,7 @@ Testing harness tool is a complete test framework that will facilitate testing h
 2. [Docker Setup](#docker-setup)
 
 ### [Docker Installation](#docker-installation)
+- One can refer the official Docker website at https://docs.docker.com/engine/install/ubuntu/ or visit DigitalOcean's documentation for instructions on installing Docker on Ubuntu 20.04. The steps outlined are sourced from DigitalOcean's guide available at https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04.
 #### Linux(Ubuntu)
 1. Update existing list of packages:
     ```
