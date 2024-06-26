@@ -75,7 +75,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
         http.addFilterBefore(corsFilter, SessionManagementFilter.class);
         http.csrf().csrfTokenRepository(new CustomCsrfTokenRepository())
-                .ignoringAntMatchers("/user/register");
+                .ignoringAntMatchers("/user/register")
+                .ignoringAntMatchers("/user/verify/**")
+                .ignoringAntMatchers("/user/update/password/");
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
