@@ -1,7 +1,7 @@
 # ===============================
 # ALL PROFILES
 # ===============================
-base-url: https://tht.argusservices.in
+base-url: https://testing-harness.digitalsquare.org
 spring:
   cache:
     jcache:
