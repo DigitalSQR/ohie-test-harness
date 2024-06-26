@@ -98,8 +98,8 @@ Testing harness tool is a complete test framework that will facilitate testing h
 #### Step 2: Launch Docker-Compose
 1. Navigate to the project directory.
 2. Run the following command:
-    ```
+   ```
     sudo docker compose up
     ```
-3. The `.env` file is available to configure ports and other settings. If needed, make changes there.
-4. Attempt to access `http://localhost:8080/` to reach the testing-harness-tool's login page.
+3. The `tht.env` file is available to configure ports and other settings. If needed, make changes there.
+4. Attempt to access `http://localhost:3000/` to reach the testing-harness-tool's login page.
