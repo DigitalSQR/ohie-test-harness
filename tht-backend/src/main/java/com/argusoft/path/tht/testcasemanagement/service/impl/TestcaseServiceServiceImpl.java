@@ -16,21 +16,13 @@ import com.argusoft.path.tht.testcasemanagement.constant.ComponentServiceConstan
 import com.argusoft.path.tht.testcasemanagement.constant.SpecificationServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
-import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.filter.ComponentCriteriaSearchFilter;
+import com.argusoft.path.tht.testcasemanagement.filter.SpecificationCriteriaSearchFilter;
 import com.argusoft.path.tht.testcasemanagement.filter.TestcaseCriteriaSearchFilter;
-import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseVariableEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.*;
 import com.argusoft.path.tht.testcasemanagement.repository.TestcaseRepository;
-import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
 import com.argusoft.path.tht.testcasemanagement.repository.TestcaseVariableRepository;
-import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
-import com.argusoft.path.tht.testcasemanagement.service.SpecificationService;
-import com.argusoft.path.tht.testcasemanagement.service.TestcaseOptionService;
-import com.argusoft.path.tht.testcasemanagement.service.TestcaseService;
-import com.argusoft.path.tht.testcasemanagement.service.TestcaseVariableService;
+import com.argusoft.path.tht.testcasemanagement.service.*;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.conformance.create.response.ConformanceResponse;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.conformance.create.restresponse.ConformanceStatementCreateRecord;
 import com.argusoft.path.tht.testcasemanagement.testbed.dto.deploy.request.DeployRequest;
@@ -47,7 +39,10 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.IOUtils;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,9 +226,12 @@ public class TestcaseServiceServiceImpl implements TestcaseService {
         }
     }
 
-    private String getSutActorApiKey(String sutActorId, DeployResponse deployResponse) {
+    private String getSutActorApiKey(String sutActorId, DeployResponse deployResponse) throws DoesNotExistException {
         List<Actor> actors = deployResponse.getIdentifiers().getSpecifications().get(0).getActors();
         Optional<Actor> sutActor = actors.stream().filter(actor -> actor.getName().equals(sutActorId)).findFirst();
+        if (sutActor.isEmpty()) {
+            throw new DoesNotExistException("SUT Actor does not exists with actor name :" + sutActorId);
+        }
         String sutActorApiKey = sutActor.get().getIdentifier();
         return sutActorApiKey;
     }
