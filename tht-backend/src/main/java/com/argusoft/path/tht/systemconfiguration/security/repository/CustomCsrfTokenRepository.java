@@ -26,7 +26,7 @@ public class CustomCsrfTokenRepository implements CsrfTokenRepository {
     public void saveToken(CsrfToken token, HttpServletRequest request, HttpServletResponse response) {
         String requestUri = request.getRequestURI();
         // Checking if the request is for the specific URL
-        if (requestUri.equals("/api/user/principal")) {
+        if (requestUri.equals("/api/user/principal") || requestUri.startsWith("/api/user/verify") || requestUri.startsWith("/api/user/update/password")) {
             // Save the CSRF token in a cookie
             Cookie cookie = new Cookie(CSRF_TOKEN_ATTR_NAME, token.getToken());
             cookie.setPath("/");
