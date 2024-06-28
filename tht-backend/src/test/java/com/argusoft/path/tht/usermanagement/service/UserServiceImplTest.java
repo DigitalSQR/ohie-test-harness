@@ -11,7 +11,10 @@ import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.filter.RoleSearchCriteriaFilter;
 import com.argusoft.path.tht.usermanagement.mock.UserServiceMockImpl;
 import com.argusoft.path.tht.usermanagement.models.entity.RoleEntity;
+import com.argusoft.path.tht.usermanagement.models.entity.UserActivityEntity;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
+import com.argusoft.path.tht.usermanagement.models.mapper.UserActivityMapper;
+import com.argusoft.path.tht.usermanagement.models.mapper.UserMapper;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
@@ -26,10 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
@@ -46,6 +50,12 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     @Autowired
     ComponentServiceMockImpl componentServiceMock;
+
+    @Autowired
+    private UserActivityMapper userActivityMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
 
     @BeforeEach
@@ -137,6 +147,39 @@ public class UserServiceImplTest extends TestingHarnessToolTestConfiguration {
         //Test 5: with null entity
         Assert.assertThrows(InvalidParameterException.class, () -> {
             this.userService.createUser(null, contextInfo);
+        });
+
+        assertDoesNotThrow(() -> {
+            UserActivityEntity userActivityEntity = new UserActivityEntity();
+
+            userActivityEntity.setAccessTime(new Date());
+            userActivityEntity.setUserId("user.06");
+            userActivityEntity.setApiUrl("URL");
+            userActivityEntity.setScope("Scope");
+            userActivityEntity.setId("Id");
+            userActivityEntity.getAccessTime();
+            userActivityEntity.getUserId();
+            userActivityEntity.getApiUrl();
+            userActivityEntity.getScope();
+            userActivityEntity.getId();
+
+            UserActivityEntity copyUserActivityEntity = new UserActivityEntity(userActivityEntity);
+
+            userActivityEntity.toString();
+
+            userActivityMapper.dtoToModel(userActivityMapper.modelToDto(userActivityEntity));
+
+            List<UserActivityEntity> userActivityEntities = new ArrayList<>();
+            userActivityEntities.add(userActivityEntity);
+
+            userActivityMapper.dtoToModel(userActivityMapper.modelToDto(userActivityEntities));
+
+            UserEntity userEntity1 = userRepository.getReferenceById("user.01");
+
+            userMapper.dtoToModel(userMapper.modelToDto(userEntity1));
+
+
+
         });
     }
 

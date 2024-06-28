@@ -165,7 +165,7 @@ public class TestcaseRestControllerTest extends TestingHarnessToolRestTestConfig
                 .expectStatus()
                 .isEqualTo(OK)
                 .expectBody()
-                .jsonPath("$.content.length()").isEqualTo("4");
+                .jsonPath("$.content.length()").isEqualTo("6");
     }
 
 

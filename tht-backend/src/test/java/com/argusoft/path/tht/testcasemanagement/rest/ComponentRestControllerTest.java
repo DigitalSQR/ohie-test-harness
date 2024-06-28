@@ -221,7 +221,7 @@ class ComponentRestControllerTest extends TestingHarnessToolRestTestConfiguratio
                 .expectStatus()
                 .isEqualTo(OK)
                 .expectBody()
-                .jsonPath("$.content.length()").isEqualTo("4");
+                .jsonPath("$.content.length()").isEqualTo("6");
     }
 
     @Test

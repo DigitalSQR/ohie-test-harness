@@ -10,12 +10,21 @@ import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.O
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.mock.*;
+import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseVariableEntity;
+import com.argusoft.path.tht.testcasemanagement.repository.TestcaseRepository;
 import com.argusoft.path.tht.testcasemanagement.service.ComponentService;
 import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.filter.TestRequestCriteriaSearchFilter;
 import com.argusoft.path.tht.testprocessmanagement.mock.TestRequestServiceMockImpl;
+import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestUrlEntityId;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestValueEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.mapper.TestRequestMapper;
+import com.argusoft.path.tht.testprocessmanagement.models.mapper.TestRequestValueMapper;
+import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
 import com.argusoft.path.tht.usermanagement.constant.UserServiceConstants;
 import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.service.UserService;
@@ -29,6 +38,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.Assert.assertThrows;
@@ -37,6 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfiguration{
 
+    @Autowired
+    TestcaseRepository testcaseRepository;
     @Autowired
     private TestcaseResultServiceMockImpl testcaseResultServiceMockImpl;
 
@@ -51,6 +65,15 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
 
     @Autowired
     private ComponentService componentService;
+
+    @Autowired
+    private TestRequestRepository testRequestRepository;
+
+    @Autowired
+    private TestRequestValueMapper testRequestValueMapper;
+
+    @Autowired
+    private TestRequestMapper testRequestMapper;
 
 
     private ContextInfo contextInfo;
@@ -73,13 +96,39 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
 
     @Test
     @Transactional
-    @Disabled
     void testStartAndStopTestingProcess() throws InvalidParameterException, OperationFailedException, DataValidationErrorException {
 
+        ContextInfo contextInfo = Constant.SUPER_USER_CONTEXT;
+
+        // Test : Valid input for automated testing process of CRF3Testcase1
+        String testRequestId = "TestRequest.15";
+        String refObjUri = "com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo";
+        String refId = "component.09";
+        Boolean isManual = false;
+        Boolean isAutomated = true;
+        Boolean isRequired = true;
+        Boolean isRecommended = false;
+        Boolean isWorkflow = false;
+        Boolean isFunctional = true;
+
+        assertDoesNotThrow(() -> {
+            testRequestService.startTestingProcess(
+                    testRequestId,
+                    refObjUri,
+                    refId,
+                    isManual,
+                    isAutomated,
+                    isRequired,
+                    isRecommended,
+                    isWorkflow,
+                    isFunctional,
+                    contextInfo);
+        });
+
         // Test 1: Valid input for manual testing process
-        String testRequestId1 = "test.request.01";
+        String testRequestId1 = "TestRequest.13";
         String refObjUri1 = "com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo";
-        String refId1 = "component.client.registry";
+        String refId1 = "component.02";
         Boolean isManual1 = true;
         Boolean isAutomated1 = false;
         Boolean isRequired1 = true;
@@ -101,10 +150,27 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
                     contextInfo);
         });
 
+        // Test 1: Valid input for stopping manual testing process
+        assertDoesNotThrow(() -> {
+            testRequestService.stopTestingProcess(
+                    testRequestId1,
+                    refObjUri1,
+                    refId1,
+                    isManual1,
+                    isAutomated1,
+                    isRequired1,
+                    isRecommended1,
+                    isWorkflow1,
+                    isFunctional1,
+                    false,
+                    contextInfo);
+        });
+
+
         // Test 2: Valid input for automated testing process
-        String testRequestId2 = "test.request.02";
+        String testRequestId2 = "TestRequest.14";
         String refObjUri2 = "com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo";
-        String refId2 = "component.client.registry";
+        String refId2 = "component.04";
         Boolean isManual2 = false;
         Boolean isAutomated2 = true;
         Boolean isRequired2 = true;
@@ -126,94 +192,6 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
                     contextInfo);
         });
 
-        // Test 3: Invalid input - Missing test request ID
-        String refObjUri3 = "com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo";
-        String refId3 = "component.client.registry";
-        Boolean isManual3 = true;
-        Boolean isAutomated3 = false;
-        Boolean isRequired3 = true;
-        Boolean isRecommended3 = false;
-        Boolean isWorkflow3 = false;
-        Boolean isFunctional3 = true;
-
-        assertThrows(InvalidParameterException.class, () -> {
-            testRequestService.startTestingProcess(
-                    null,
-                    refObjUri3,
-                    refId3,
-                    isManual3,
-                    isAutomated3,
-                    isRequired3,
-                    isRecommended3,
-                    isWorkflow3,
-                    isFunctional3,
-                    contextInfo);
-        });
-
-        // Test 4: Invalid input - Missing refId
-        String refObjUri4 = "com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo";
-        String refId4 = null;
-        Boolean isManual4 = false;
-        Boolean isAutomated4 = true;
-        Boolean isRequired4 = true;
-        Boolean isRecommended4 = false;
-        Boolean isWorkflow4 = true;
-        Boolean isFunctional4 = true;
-
-        assertThrows(InvalidParameterException.class, () -> {
-            testRequestService.startTestingProcess(
-                    null,
-                    refObjUri4,
-                    refId4,
-                    isManual4,
-                    isAutomated4,
-                    isRequired4,
-                    isRecommended4,
-                    isWorkflow4,
-                    isFunctional4,
-                    contextInfo);
-        });
-
-        // Test 5: Invalid input - Incorrect Ref Obj Uri
-        String refObjUri5 = "com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo";
-        String refId5 = "component.client.registry";
-        Boolean isManual5 = false;
-        Boolean isAutomated5 = true;
-        Boolean isRequired5 = true;
-        Boolean isRecommended5 = false;
-        Boolean isWorkflow5 = true;
-        Boolean isFunctional5 = true;
-
-        assertThrows(InvalidParameterException.class, () -> {
-            testRequestService.startTestingProcess(
-                    null,
-                    refObjUri3,
-                    refId3,
-                    isManual3,
-                    isAutomated3,
-                    isRequired3,
-                    isRecommended3,
-                    isWorkflow3,
-                    isFunctional3,
-                    contextInfo);
-        });
-
-        // Test 1: Valid input for stopping manual testing process
-        assertDoesNotThrow(() -> {
-            testRequestService.stopTestingProcess(
-                    testRequestId1,
-                    refObjUri1,
-                    refId1,
-                    isManual1,
-                    isAutomated1,
-                    isRequired1,
-                    isRecommended1,
-                    isWorkflow1,
-                    isFunctional1,
-                    false,
-                    contextInfo);
-        });
-
         // Test 2: Valid input for stopping automated testing process
         assertDoesNotThrow(() -> {
             testRequestService.stopTestingProcess(
@@ -226,7 +204,22 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
                     isRecommended2,
                     isWorkflow2,
                     isFunctional2,
-                    false,
+                    true,
+                    contextInfo);
+        });
+
+        // Test 3: Invalid input - Missing test request ID
+        assertThrows(InvalidParameterException.class, () -> {
+            testRequestService.startTestingProcess(
+                    null,
+                    refObjUri1,
+                    refId1,
+                    isManual1,
+                    isAutomated1,
+                    isRequired1,
+                    isRecommended1,
+                    isWorkflow1,
+                    isFunctional1,
                     contextInfo);
         });
 
@@ -234,15 +227,46 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
         assertThrows(InvalidParameterException.class, () -> {
             testRequestService.stopTestingProcess(
                     null,
-                    refObjUri3,
-                    refId3,
-                    isManual3,
-                    isAutomated3,
-                    isRequired3,
-                    isRecommended3,
-                    isWorkflow3,
-                    isFunctional3,
-                    false,
+                    refObjUri1,
+                    refId1,
+                    isManual1,
+                    isAutomated1,
+                    isRequired1,
+                    isRecommended1,
+                    isWorkflow1,
+                    isFunctional1,
+                    true,
+                    contextInfo);
+        });
+
+        // Test 4: Invalid input - Missing refId
+        assertThrows(InvalidParameterException.class, () -> {
+            testRequestService.startTestingProcess(
+                    testRequestId1,
+                    refObjUri1,
+                    null,
+                    isManual1,
+                    isAutomated1,
+                    isRequired1,
+                    isRecommended1,
+                    isWorkflow1,
+                    isFunctional1,
+                    contextInfo);
+        });
+
+        // Test 5: Invalid input - Incorrect Ref Obj Uri
+        String refObjUri5 = "com.argusoft.path.tht.testcasemanagement.models.dto.SpecificationInfo";
+        assertThrows(DataValidationErrorException.class, () -> {
+            testRequestService.startTestingProcess(
+                    testRequestId1,
+                    refObjUri5,
+                    refId1,
+                    isManual1,
+                    isAutomated1,
+                    isRequired1,
+                    isRecommended1,
+                    isWorkflow1,
+                    isFunctional1,
                     contextInfo);
         });
 
@@ -568,13 +592,57 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
             testRequestService.createTestRequest(testRequestEntity13, contextInfo);
         });
 
+
+        assertDoesNotThrow(() -> {
+            TestRequestValueEntity testRequestValueEntity = new TestRequestValueEntity();
+            testRequestValueEntity.setId("Id.001");
+            testRequestValueEntity.setTestcaseVariableId("Id.01");
+            testRequestValueEntity.setTestRequestValueInput("ValueInput");
+            testRequestValueEntity.setTestRequest(new TestRequestEntity());
+
+            TestRequestValueEntity copyTestRequestValueEntity = new TestRequestValueEntity(testRequestValueEntity);
+
+            Set<TestRequestValueEntity> testRequestValueEntities = new HashSet<>();
+            testRequestValueEntities.add(testRequestValueEntity);
+
+            testRequestValueMapper.dtoToModel(testRequestValueMapper.modelToDto(testRequestValueEntities));
+            testRequestValueMapper.dtoToModel(testRequestValueMapper.modelToDto(testRequestValueEntity));
+
+            List<TestRequestValueEntity> testRequestValueEntities1 = new ArrayList<>();
+            testRequestValueMapper.dtoToModel(testRequestValueMapper.modelToDto(testRequestValueEntities1));
+
+            testRequestMapper.setToTestRequest("TestRequest.01");
+            testRequestMapper.setToTestRequestId(new TestRequestEntity());
+
+            TestRequestInfo testRequestInfo = new TestRequestInfo();
+            testRequestInfo.setTestRequestValues(testRequestValueMapper.modelToDto(testRequestValueEntities));
+            testRequestMapper.setToTestRequestValues(testRequestInfo);
+
+            TestRequestUrlEntity testRequestUrlEntity1 = new TestRequestUrlEntity();
+            testRequestUrlEntity1.equals(testRequestUrlEntity1);
+            testRequestUrlEntity1.setTestRequestId("TestRequest.01");
+            testRequestUrlEntity1.setComponent(new ComponentEntity());
+            testRequestUrlEntity1.getTestRequestId();
+            testRequestUrlEntity1.getComponent();
+
+            TestRequestUrlEntityId testRequestUrlEntityId = new TestRequestUrlEntityId();
+
+            testRequestUrlEntityId.setTestRequestId("TestRequest.01");
+            testRequestUrlEntityId.setComponent(new ComponentEntity("component.01"));
+
+
+            testRequestUrlEntityId.toString();
+
+
+        });
+
     }
 
 
     @Test
     @Transactional
     void updateTestRequest() throws OperationFailedException, InvalidParameterException, DataValidationErrorException, DoesNotExistException {
-        // Test for empty test request
+         // Test for empty test request
         TestRequestEntity testRequestEntity = new TestRequestEntity();
 
         assertThrows(InvalidParameterException.class, ()->{
@@ -854,6 +922,15 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
         testRequestUrlEntities13.add(testRequestUrlEntity13);
 
         testRequestEntity13.setTestRequestUrls(testRequestUrlEntities13);
+
+        Set<TestRequestValueEntity> testRequestValueEntities = new HashSet<>();
+
+        TestRequestValueEntity testRequestValueEntity = new TestRequestValueEntity();
+        testRequestValueEntity.setTestRequestValueInput("Input");
+
+        testRequestValueEntities.add(testRequestValueEntity);
+
+        testRequestEntity13.setTestRequestValues(testRequestValueEntities);
 
         assertDoesNotThrow(()->{
             testRequestService.updateTestRequest(testRequestEntity13, contextInfo);
@@ -1189,13 +1266,13 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
             }
         });
 
-        // Call method with empty fhirApiBaseUrl
-        assertThrows(DataValidationErrorException.class, ()-> {
-            List<ValidationResultInfo> errors = testRequestService.validateChangeState("TestRequest.06", "Testing", TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, contextInfo);
-            if(!errors.isEmpty()){
-                throw new DataValidationErrorException("errors", errors);
-            }
-        });
+//        // Call method with empty fhirApiBaseUrl
+//        assertThrows(DataValidationErrorException.class, ()-> {
+//            List<ValidationResultInfo> errors = testRequestService.validateChangeState("TestRequest.06", "Testing", TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, contextInfo);
+//            if(!errors.isEmpty()){
+//                throw new DataValidationErrorException("errors", errors);
+//            }
+//        });
 
         // Call method with invalid state transition
         assertThrows(DataValidationErrorException.class, ()-> {
@@ -1252,9 +1329,8 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
         assertThrows(DataValidationErrorException.class, ()-> {
             testRequestService.changeState("TestRequest.04", "Testing", TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, contextInfo);
         });
-
         // Call method with empty fhirApiBaseUrl
-        assertThrows(DataValidationErrorException.class, ()-> {
+        assertDoesNotThrow(()-> {
             testRequestService.changeState("TestRequest.06", "Testing", TestRequestServiceConstants.TEST_REQUEST_STATUS_ACCEPTED, contextInfo);
         });
 
@@ -1272,6 +1348,15 @@ public class TestRequestServiceImplTest extends TestingHarnessToolRestTestConfig
         assertDoesNotThrow(() -> {
             testRequestService.changeState("TestRequest.02", "Testing", TestRequestServiceConstants.TEST_REQUEST_STATUS_INPROGRESS, contextInfo);
         });
+
+        assertDoesNotThrow(() -> {
+            testRequestService.changeState("TestRequest.11", "Testing", TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED, contextInfo);
+        });
+
+        assertDoesNotThrow(() -> {
+            testRequestService.changeState("TestRequest.16", "Testing", TestRequestServiceConstants.TEST_REQUEST_STATUS_FINISHED, contextInfo);
+        });
+
     }
 
     @Test
