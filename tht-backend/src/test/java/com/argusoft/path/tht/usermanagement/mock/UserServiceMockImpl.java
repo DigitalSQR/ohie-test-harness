@@ -29,7 +29,7 @@ public class UserServiceMockImpl {
     NotificationServiceMockImpl notificationServiceMock;
 
     public void init() {
-        createUser("user.01", "Dummy User1", "dummyuser1@testmail.com", "$2a$10$9Z2hq91BCBxqodRc82UedO.BaxXch2U6nmtyz2KkHmTZhlDTbjjWe",UserServiceConstants.ROLE_ID_ASSESSEE);
+        createUser("user.01","Dummy User1", "dummyuser1@testmail.com", "$2a$10$9Z2hq91BCBxqodRc82UedO.BaxXch2U6nmtyz2KkHmTZhlDTbjjWe",UserServiceConstants.ROLE_ID_ASSESSEE);
         createUser("user.02","Dummy User2", "dummyuser2@testmail.com", "$2a$10$9Z2hq91BCBxqodRc82UedO.BaxXch2U6nmtyz2KkHmTZhlDTbjjWe",UserServiceConstants.ROLE_ID_ASSESSEE);
         createUser("user.03","Dummy User3", "dummyuser3@testmail.com", "$2a$10$9Z2hq91BCBxqodRc82UedO.BaxXch2U6nmtyz2KkHmTZhlDTbjjWe",UserServiceConstants.ROLE_ID_ASSESSEE);
         createUser("user.04","Dummy User4", "dummyuser4@testmail.com", "$2a$10$9Z2hq91BCBxqodRc82UedO.BaxXch2U6nmtyz2KkHmTZhlDTbjjWe",UserServiceConstants.ROLE_ID_ASSESSEE);

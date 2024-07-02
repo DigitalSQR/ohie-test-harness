@@ -24,6 +24,8 @@ public class ComponentServiceMockImpl {
         createComponent("component.06", "Compo-Test 6", "Compo-Test 6", 1, "component.status.inactive");
         createComponent("component.07", "Component 7", "Component 7", 12, "component.status.draft");
         createComponent("component.08", "Component 8", "Component 8", 13, "component.status.active");
+        createComponent("component.09", "Component 9", "Component 9", 14, "component.status.active");
+        createComponent("component.10", "Component 10", "Component 10", 15, "component.status.active");
     }
 
     public ComponentInfo createComponent(String id, String name, String description, int rank, String state) {

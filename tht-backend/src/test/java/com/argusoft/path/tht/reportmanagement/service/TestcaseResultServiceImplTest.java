@@ -4,9 +4,13 @@ import com.argusoft.path.tht.TestingHarnessToolTestConfiguration;
 import com.argusoft.path.tht.reportmanagement.constant.TestcaseResultServiceConstants;
 import com.argusoft.path.tht.reportmanagement.filter.TestcaseResultCriteriaSearchFilter;
 import com.argusoft.path.tht.reportmanagement.models.dto.TestcaseResultAnswerInfo;
+import com.argusoft.path.tht.reportmanagement.models.entity.GradeEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestResultRelationEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultAttributesEntity;
 import com.argusoft.path.tht.reportmanagement.models.entity.TestcaseResultEntity;
+import com.argusoft.path.tht.reportmanagement.models.mapper.GradeMapper;
+import com.argusoft.path.tht.reportmanagement.models.mapper.TestResultRelationMapper;
+import com.argusoft.path.tht.reportmanagement.models.mapper.TestcaseResultMapper;
 import com.argusoft.path.tht.reportmanagement.repository.TestResultRelationRepository;
 import com.argusoft.path.tht.reportmanagement.repository.TestcaseResultRepository;
 import com.argusoft.path.tht.systemconfiguration.constant.Constant;
@@ -16,7 +20,11 @@ import com.argusoft.path.tht.testcasemanagement.constant.TestcaseOptionServiceCo
 import com.argusoft.path.tht.testcasemanagement.constant.TestcaseServiceConstants;
 import com.argusoft.path.tht.testcasemanagement.mock.TestcaseOptionServiceMockImpl;
 import com.argusoft.path.tht.reportmanagement.mock.TestcaseResultServiceMockImpl;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
+import com.argusoft.path.tht.testprocessmanagement.models.entity.TestRequestEntity;
 import com.argusoft.path.tht.testprocessmanagement.repository.TestRequestRepository;
+import com.argusoft.path.tht.usermanagement.models.entity.UserEntity;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,8 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestcaseResultServiceImplTest extends TestingHarnessToolTestConfiguration {
     ContextInfo contextInfo;
@@ -51,6 +58,15 @@ public class TestcaseResultServiceImplTest extends TestingHarnessToolTestConfigu
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TestcaseResultMapper testcaseResultMapper;
+
+    @Autowired
+    private TestResultRelationMapper testResultRelationMapper;
+
+    @Autowired
+    private GradeMapper gradeMapper;
 
 
     @BeforeEach
@@ -128,10 +144,91 @@ public class TestcaseResultServiceImplTest extends TestingHarnessToolTestConfigu
             testcaseResultService.createTestcaseResult(testcaseResultEntity1, contextInfo);
         });
 
+        assertDoesNotThrow(()-> {
+            TestcaseResultEntity testcaseResult = new TestcaseResultEntity();
+            testcaseResult.setRank(123);
+            testcaseResult.setTester(new UserEntity());
+            testcaseResult.setParentTestcaseResult(new TestcaseResultEntity());
+            Set<TestcaseResultAttributesEntity> testcaseResultAttributesEntities1 = new HashSet<>();
+            testcaseResultAttributesEntities1.add(new TestcaseResultAttributesEntity());
+            testcaseResult.setTestcaseResultAttributesEntities(testcaseResultAttributesEntities1);
+            testcaseResult.setRefObjUri("RefObjUri");
+            testcaseResult.setRefId("RefId");
+            testcaseResult.setMessage("Message");
+            testcaseResult.setFailureMessage("Failed Test");
+            testcaseResult.setTestRequest(new TestRequestEntity());
+            testcaseResult.setTestcase(new TestcaseEntity());
+            testcaseResult.setHasSystemError(Boolean.FALSE);
+            testcaseResult.setManual(Boolean.TRUE);
+            testcaseResult.setAutomated(Boolean.FALSE);
+            testcaseResult.setRequired(Boolean.TRUE);
+            testcaseResult.setRecommended(Boolean.FALSE);
+            testcaseResult.setWorkflow(Boolean.FALSE);
+            testcaseResult.setFunctional(Boolean.TRUE);
+            testcaseResult.setSuccess(Boolean.TRUE);
+            testcaseResult.setDuration(456L);
+            testcaseResult.setGrade("A");
+            testcaseResult.setCompliant(13);
+            testcaseResult.setNonCompliant(45);
+            testcaseResult.setTestSessionId("100");
+
+            testcaseResultMapper.dtoToModel(testcaseResultMapper.modelToDto(testcaseResult));
+
+            List<TestcaseResultEntity> testcaseResultEntities = new ArrayList<>();
+            testcaseResultEntities.add(testcaseResult);
+
+            testcaseResultMapper.dtoToModel(testcaseResultMapper.modelToDto(testcaseResultEntities));
+
+            testcaseResultMapper.setToTestcaseResultAttributes(testcaseResult);
+            testcaseResultMapper.setToTester("Tester.01");
+            testcaseResultMapper.setToTestcaseOption("Option.01");
+            testcaseResultMapper.setToParentTestcaseResult("Parent");
+            testcaseResultMapper.setToTestRequest("TestRequest.01");
+            testcaseResultMapper.setToTestcaseOptionId(new TestcaseOptionEntity());
+
+
+            TestResultRelationEntity testResultRelationEntity = new TestResultRelationEntity();
+            testResultRelationEntity.setRefObjUri("RefObjUri");
+            testResultRelationEntity.setRefId("RefId");
+            testResultRelationEntity.setSelected(Boolean.TRUE);
+            testResultRelationEntity.setVersionOfRefEntity(1L);
+            testResultRelationEntity.setTestcaseResultEntity(new TestcaseResultEntity());
+
+            testResultRelationMapper.dtoToModel(testResultRelationMapper.modelToDto(testResultRelationEntity));
+
+            List<TestResultRelationEntity> testResultRelationEntities = new ArrayList<>();
+            testResultRelationEntities.add(testResultRelationEntity);
+
+            testResultRelationMapper.dtoToModel(testResultRelationMapper.modelToDto(testResultRelationEntities));
+
+            testResultRelationMapper.modelToDto(testcaseResult);
+
+            GradeEntity gradeEntity = new GradeEntity();
+            gradeEntity.setPercentage(90);
+            gradeEntity.setGrade("A");
+
+            gradeEntity.setId("123");
+            gradeEntity.setCreatedAt(new Date());
+            gradeEntity.setCreatedBy("ABC");
+            gradeEntity.setUpdatedAt(new Date());
+            gradeEntity.setUpdatedBy("ABC");
+
+            gradeMapper.dtoToModel(gradeMapper.modelToDto(gradeEntity));
+
+            List<GradeEntity> gradeEntities = new ArrayList<>();
+            gradeEntities.add(gradeEntity);
+
+            gradeMapper.dtoToModel(gradeMapper.modelToDto(gradeEntities));
+
+
+
+
+
+        });
+
     }
 
     @Test
-    @Disabled
     @Transactional
     void testUpdateTestcaseResult()
             throws OperationFailedException,
@@ -240,7 +337,7 @@ void  testChangeState() throws InvalidParameterException, DoesNotExistException,
 
 //        Test case 1 : Change state of testcaseResult
 
-    String testcaseResultId = "TestcaseResult.06";
+    String testcaseResultId = "TestcaseResult.16";
     testcaseResultService.changeState(testcaseResultId,TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS,contextInfo);
     TestcaseResultEntity resultantTestcaseResultEntity = testcaseResultService.getTestcaseResultById(testcaseResultId,contextInfo);
     assertEquals(resultantTestcaseResultEntity.getState(),TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS);
@@ -259,6 +356,34 @@ void  testChangeState() throws InvalidParameterException, DoesNotExistException,
         testcaseResultService.changeState(testcaseResultId1,TestcaseResultServiceConstants.TESTCASE_RESULT_STATUS_INPROGRESS,contextInfo);
     });
 
+}
+
+@Test
+void getTestcaseResultStatus(){
+        assertDoesNotThrow(() -> {
+            testcaseResultService.getTestcaseResultStatus(
+                    "TestcaseResult.32",
+                    true,
+                    false,
+                    true,
+                    false,
+                    false,
+                    true,
+                    contextInfo
+            );
+        });
+    assertDoesNotThrow(() -> {
+        testcaseResultService.getTestcaseResultStatus(
+                "TestcaseResult.30",
+                true,
+                false,
+                true,
+                false,
+                false,
+                true,
+                contextInfo
+        );
+    });
 }
 
 @Test
@@ -289,6 +414,7 @@ void testGetMultipleTestcaseResultStatus() throws InvalidParameterException, Doe
 //       testcaseResultService.getMultipleTestcaseResultStatus("TestRequest.100",false,true,true,false,true,false,contextInfo);
 //
 //   });
+
 
 
   }

@@ -6,16 +6,18 @@ import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
 import com.argusoft.path.tht.testcasemanagement.mock.TestcaseOptionServiceMockImpl;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseOptionEntity;
+import com.argusoft.path.tht.testcasemanagement.models.mapper.TestcaseOptionMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestcaseOptionServiceImplTest extends TestingHarnessToolTestConfiguration {
     ContextInfo contextInfo;
@@ -27,6 +29,9 @@ public class TestcaseOptionServiceImplTest extends TestingHarnessToolTestConfigu
 
     @Autowired
     private TestcaseOptionServiceMockImpl testcaseOptionServiceMock;
+
+    @Autowired
+    private TestcaseOptionMapper testcaseOptionMapper;
 
     @BeforeEach
     @Override
@@ -98,6 +103,20 @@ public class TestcaseOptionServiceImplTest extends TestingHarnessToolTestConfigu
 
         assertThrows(DataValidationErrorException.class, () -> {
             testcaseOptionService.createTestcaseOption(testcaseOptionEntity1, contextInfo);
+        });
+
+        assertDoesNotThrow(()-> {
+            TestcaseOptionEntity testcaseOptionEntity3 = new TestcaseOptionEntity();
+            testcaseOptionEntity3.setRank(123);
+            testcaseOptionEntity3.setSuccess(Boolean.TRUE);
+            testcaseOptionEntity3.setTestcase(new TestcaseEntity());
+
+            TestcaseOptionEntity copyTestcaseOptionEntity = new TestcaseOptionEntity(testcaseOptionEntity3);
+
+            List<TestcaseOptionEntity> testcaseOptionEntities = new ArrayList<>();
+            testcaseOptionEntities.add(testcaseOptionEntity3);
+
+            testcaseOptionMapper.dtoToModel(testcaseOptionMapper.modelToDto(testcaseOptionEntities));
         });
     }
 

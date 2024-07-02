@@ -684,7 +684,7 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
     }
 
     private void createDraftTestcaseResultsByTestRequestAndProcessKey(TestRequestEntity testRequestEntity, ContextInfo contextInfo) throws InvalidParameterException, OperationFailedException, DataValidationErrorException, DoesNotExistException, VersionMismatchException {
-        List<ComponentEntity> activeComponents = fetchActiveComponents(contextInfo)
+            List<ComponentEntity> activeComponents = fetchActiveComponents(contextInfo)
                 .stream().filter(componentEntity ->
                         testRequestEntity.getTestRequestUrls().stream().anyMatch(testRequestUrlEntity -> testRequestUrlEntity.getComponent().getId().equals(componentEntity.getId()))
                                 && componentEntity.getSpecifications().stream().anyMatch(
@@ -1098,6 +1098,9 @@ public class TestRequestServiceServiceImpl implements TestRequestService {
         TestcaseResultCriteriaSearchFilter searchFilter = new TestcaseResultCriteriaSearchFilter();
         searchFilter.setRefObjUri(refObjUri);
         searchFilter.setRefId(refId);
+
+
+
         searchFilter.setTestRequestId(testRequestId);
         searchFilter.setManual(isManual);
 

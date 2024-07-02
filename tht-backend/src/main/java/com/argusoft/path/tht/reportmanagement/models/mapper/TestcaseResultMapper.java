@@ -43,11 +43,11 @@ public interface TestcaseResultMapper extends ModelDtoMapper<TestcaseResultEntit
         if (testcaseResultEntity.getTestcaseResultAttributesEntities() == null) {
             return null;
         }
-        return (Set<TestcaseResultAttributesInfo>) testcaseResultEntity.getTestcaseResultAttributesEntities().stream()
+        return testcaseResultEntity.getTestcaseResultAttributesEntities().stream()
                 .map(testcaseResultAttributesEntity -> {
                     return new TestcaseResultAttributesInfo(testcaseResultAttributesEntity.getKey(), testcaseResultAttributesEntity.getValue()
                     );
-                }).collect(Collectors.toList());
+                }).collect(Collectors.toSet());
     }
 
     default String setToTesterId(UserEntity userEntity) {
