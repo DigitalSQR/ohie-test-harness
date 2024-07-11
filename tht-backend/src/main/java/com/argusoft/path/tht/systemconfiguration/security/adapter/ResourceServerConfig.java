@@ -5,7 +5,7 @@ import com.argusoft.path.tht.systemconfiguration.security.exceptionhandler.Custo
 import com.argusoft.path.tht.systemconfiguration.security.exceptionhandler.CustomAuthenticationEntryPoint;
 import com.argusoft.path.tht.systemconfiguration.security.filters.CorsFilter;
 import com.argusoft.path.tht.systemconfiguration.security.handler.OnSsoAuthenticationSuccessHandler;
-//import com.argusoft.path.tht.systemconfiguration.security.repository.CustomCsrfTokenRepository;
+import com.argusoft.path.tht.systemconfiguration.security.repository.CustomCsrfTokenRepository;
 import com.argusoft.path.tht.usermanagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
