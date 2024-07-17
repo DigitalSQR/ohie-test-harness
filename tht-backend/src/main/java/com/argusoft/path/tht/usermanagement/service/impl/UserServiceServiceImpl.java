@@ -606,7 +606,7 @@ public class UserServiceServiceImpl implements UserService {
             NotificationEntity notificationEntity = new NotificationEntity("Congratulations. Your account has been created!", userEntity);
             applicationEventPublisher.publishEvent(new NotificationCreationEvent(notificationEntity, contextInfo));
         }
-
+        //change something
     }
 
     @Override
