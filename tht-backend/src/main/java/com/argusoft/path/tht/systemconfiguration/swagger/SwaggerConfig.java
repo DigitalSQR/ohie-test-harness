@@ -25,7 +25,7 @@ import java.util.Collections;
 public class SwaggerConfig {
 
     private static final Contact DEFAULT_CONTACT = new Contact(
-            "Argusoft India Ltd & Path", "https://www.path.org/", "noreplytestharnesstool@gmail.com");
+            "Argusoft India Ltd & Path", "https://www.path.org/", "digitalsquare@path.org");
 
     @Value("${info.app.version}")
     private String appVersion;

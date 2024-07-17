@@ -17,7 +17,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/testing_harness_tool
     username: postgres
-    password: argusadmin
+    password: admin
   jpa:
     properties:
       org.hibernate.envers.default_revision_entity_name: "CustomRevisionEntity"
