@@ -125,7 +125,7 @@ Run this command for permission update:
     sudo chmod -R 777 /srv/tht
     ```
 
-### Step 2: Launch Docker-Compose
+#### Step 2: Launch Docker-Compose
 1. Navigate to the project directory.
 2. Run the following command:
    ```
