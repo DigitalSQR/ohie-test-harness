@@ -44,6 +44,8 @@ spring:
             scope:
               - email
               - profile
+    cors:
+      url: http://localhost:8080
   servlet:
     multipart:
       max-file-size: 10MB
@@ -132,6 +134,12 @@ message-configuration:
     finish:
       mail: true
       notification: false
+    publish:
+      mail: true
+      notification: true
+    unpublish:
+      mail: true
+      notification: true
 
 
 testbed:

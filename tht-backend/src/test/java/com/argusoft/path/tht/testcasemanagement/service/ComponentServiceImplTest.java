@@ -12,6 +12,8 @@ import com.argusoft.path.tht.testcasemanagement.models.dto.TestcaseValidationRes
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.mapper.ComponentMapper;
+import com.argusoft.path.tht.testcasemanagement.repository.ComponentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,10 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
+
+    @Autowired
+    private ComponentRepository componentRepository;
 
     @Autowired
     private ComponentService componentService;
@@ -44,6 +50,9 @@ class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
 
     @Autowired
     private TestcaseServiceMockImpl testcaseServiceMock;
+
+    @Autowired
+    private ComponentMapper componentMapper;
 
     private ContextInfo contextInfo;
 
@@ -109,6 +118,21 @@ class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
 
         Assertions.assertThrows(DataValidationErrorException.class, () -> {
             componentService.createComponent(componentEntity5, contextInfo);
+        });
+
+        assertDoesNotThrow(() -> {
+            ComponentEntity componentEntity = new ComponentEntity();
+            componentEntity.setRank(123);
+            Set<SpecificationEntity> specificationEntities = new HashSet<>();
+            specificationEntities.add(new SpecificationEntity());
+            componentEntity.setSpecifications(specificationEntities);
+
+            ComponentEntity copyComponentEntity = new ComponentEntity(componentEntity);
+
+            List<ComponentEntity> componentEntities = new ArrayList<>();
+            componentEntities.add(componentEntity);
+
+            componentMapper.dtoToModel(componentMapper.modelToDto(componentEntities));
         });
 
     }
@@ -339,12 +363,12 @@ class ComponentServiceImplTest extends TestingHarnessToolTestConfiguration {
 
         //Testcase 5: validate wrong refobj uri
         List<TestcaseValidationResultInfo> validateRefobjuri = this.componentService.validateTestCaseConfiguration("", "no.uri", contextInfo);
-        assertEquals(8, validateRefobjuri.size());
+        assertEquals(10, validateRefobjuri.size());
 
         //Testcase 6: validate inactive specification
         testcaseEntity.setState("testcase.status.inactive");
         List<TestcaseValidationResultInfo> validateInactiveSpecification = this.componentService.validateTestCaseConfiguration("com.argusoft.path.tht.testcasemanagement.models.dto.ComponentInfo", "component.02", contextInfo);
-        assertEquals(8, validateRefobjuri.size());
+        assertEquals(10, validateRefobjuri.size());
 
 
     }

@@ -143,10 +143,6 @@ public class UserServiceServiceImpl implements UserService {
         this.emailService = emailService;
     }
 
-    @Autowired
-    public void setCsrfTokenRepository(CustomCsrfTokenRepository csrfTokenRepository) {
-        this.csrfTokenRepository = csrfTokenRepository;
-    }
 
     /**
      * {@inheritdoc}
@@ -616,21 +612,22 @@ public class UserServiceServiceImpl implements UserService {
     }
 
     @Override
-    public int searchActiveAssessees(){
+    public int searchActiveAssessees() {
 
         Set<RoleEntity> roles = new HashSet<>();
 
-        RoleEntity role = roleRepository.findById(UserServiceConstants.ROLE_ID_ASSESSEE).get();
+        Optional<RoleEntity> roleOptional = roleRepository.findById(UserServiceConstants.ROLE_ID_ASSESSEE);
+
+        if (roleOptional.isEmpty()) {
+            return 0;
+        }
+
+        RoleEntity role = roleOptional.get();
 
         roles.add(role);
-//
-//        UserSearchCriteriaFilter searchCriteriaFilter = new UserSearchCriteriaFilter();
-//        searchCriteriaFilter.setRole(UserServiceConstants.ROLE_ID_ASSESSEE);
-//        searchCriteriaFilter.setState(new ArrayList<>(Arrays.asList(UserServiceConstants.USER_STATUS_ACTIVE)));
 
         return userRepository.countByRolesInAndState(roles, UserServiceConstants.USER_STATUS_ACTIVE);
 
-        //return userRepository.searchActiveAssessees(roles, UserServiceConstants.USER_STATUS_ACTIVE);
     }
 
 }

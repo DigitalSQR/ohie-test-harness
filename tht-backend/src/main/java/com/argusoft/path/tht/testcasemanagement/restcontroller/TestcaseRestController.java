@@ -20,7 +20,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -45,17 +44,12 @@ public class TestcaseRestController {
     private TestcaseService testcaseService;
     private TestcaseMapper testcaseMapper;
 
-    @Autowired
     private TestSessionManagementRestService testSessionManagementRestService;
 
-    @Autowired
-    public void setTestcaseService(TestcaseService testcaseService) {
+    public TestcaseRestController(TestcaseService testcaseService, TestcaseMapper testcaseMapper, TestSessionManagementRestService testSessionManagementRestService) {
         this.testcaseService = testcaseService;
-    }
-
-    @Autowired
-    public void setTestcaseMapper(TestcaseMapper testcaseMapper) {
         this.testcaseMapper = testcaseMapper;
+        this.testSessionManagementRestService = testSessionManagementRestService;
     }
 
     /**

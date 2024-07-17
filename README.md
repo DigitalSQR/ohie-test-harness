@@ -1,11 +1,42 @@
 # Testing-harness-tool
 Testing harness tool is a complete test framework that will facilitate testing how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines.
 
+## [Setting Up File System](#logging-service)
+### Step 1: Create Directories
+1. Open a terminal window.
+2. Navigate to the `/srv` directory:
+   ```
+   cd /srv
+   ```
+3. Create a directory named tht:
+    ```
+    mkdir tht
+    ```
+4. Inside the tht directory, create three more directories:
+    -   error-logs to store error logs based on dates.
+        ```
+        mkdir tht/error-logs
+        ```
+    -   files where DocumentService related files will be stored.
+        ```
+        mkdir tht/files
+        ```
+    -   files where database backup related files will be stored.
+        ```
+        mkdir tht/backup
+        ```
+### Step 2: Set Permissions
+Run this command for permission update:
+    ```
+    sudo chmod -R a+rwx /srv/tht
+    ```
 ## [Docker Configuration](#docker-configuration)
 1. [Docker Installed](#docker-installation)
 2. [Docker Setup](#docker-setup)
+3. [Docker Guide](#docker-guide)
 
 ### [Docker Installation](#docker-installation)
+- One can refer the official Docker website at https://docs.docker.com/engine/install/ubuntu/ or visit DigitalOcean's documentation for instructions on installing Docker on Ubuntu 20.04. The steps outlined are sourced from DigitalOcean's guide available at https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04.
 #### Linux(Ubuntu)
 1. Update existing list of packages:
     ```
@@ -94,11 +125,61 @@ Testing harness tool is a complete test framework that will facilitate testing h
     sudo chmod -R 777 /srv/tht
     ```
 
-#### Step 2: Launch Docker-Compose
+### Step 2: Launch Docker-Compose
 1. Navigate to the project directory.
 2. Run the following command:
-    ```
+   ```
     sudo docker compose up
     ```
-3. The `.env` file is available to configure ports and other settings. If needed, make changes there.
-4. Attempt to access `http://localhost:8080/` to reach the testing-harness-tool's login page.
+3. The `tht.env` file is available to configure ports and other settings. If needed, make changes there.
+4. Attempt to access `http://localhost:3000/` to reach the testing-harness-tool's login page.
+
+### [Docker Guide](#docker-guide)
+#### 1: Docker Commands
+1. Navigate to the project directory.
+2. Run the following command to build the docker:
+   ```
+    sudo docker-compose --env-file tht.env build
+    ```
+3. Run the following command to run docker:
+   ```
+    sudo docker-compose --env-file tht.env up
+    ```
+4. Run the following command docker down
+   ```
+    sudo docker-compose down
+    ```
+5. Run the following command docker down/ Along with database refresh
+   ```
+    sudo docker-compose down -v
+    ```
+#### 2: Schedule Database Backup
+1. Navigate to the project directory.
+2. Run the following command:
+   ```
+    crontab -e
+    ```
+3. Write following line and replace ProjectDirectoryPath while writing and save it.
+   ```
+    * 2 * * * {ProjectDirectoryPath}/backup.sh
+    ```
+4. Now everyday at 2:00 a.m. database backup will get stored in `/srv/tht/backup` directory and latest 2 copy will be available.
+#### 3: Restore Database Backup
+1. Navigate to the project directory.
+2. Using following command to stop docker: 
+   ```
+    sudo docker compose down
+    ```
+3. Now run following command to restore database:
+    To restore latest backup
+   ```
+    sudo sh restoreLatest.sh
+    ```
+    To restore second latest backup
+   ```
+    sudo sh restoreSecondLatest.sh
+    ```
+4. Using following command to up docker: 
+   ```
+    sudo docker compose up
+    ```

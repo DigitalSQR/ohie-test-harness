@@ -322,7 +322,7 @@ public class TestRequestRestControllerTest extends TestingHarnessToolRestTestCon
                 .getResponseBody();
 
         assert result != null;
-        assertEquals(7, result.size());
+        assertEquals(13, result.size());
 
     }
 

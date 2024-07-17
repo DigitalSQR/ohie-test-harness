@@ -25,7 +25,7 @@ import java.util.Collections;
 public class SwaggerConfig {
 
     private static final Contact DEFAULT_CONTACT = new Contact(
-            "Argusoft India Ltd.", "https://www.argusoft.com", "info@argusoft.com");
+            "Argusoft India Ltd & Path", "https://www.path.org/", "digitalsquare@path.org");
 
     @Value("${info.app.version}")
     private String appVersion;
@@ -42,7 +42,7 @@ public class SwaggerConfig {
     public ApiInfo apiInfo() {
 
         return new ApiInfo(
-                "TA User Management API",//User App Info
+                "Testing Harness Tool API Documentation",//User App Info
                 "Application programming Interface [ API ]  is at the core of enabling interoperability."
                         + " It’s a connective tissue that facilitates data sharing and enables digital THT Management experiences. "
                         + "It helps to expose the actions that the devloper needs.\n\n"

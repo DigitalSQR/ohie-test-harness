@@ -10,6 +10,8 @@ import com.argusoft.path.tht.testcasemanagement.mock.TestcaseServiceMockImpl;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.SpecificationEntity;
 import com.argusoft.path.tht.testcasemanagement.models.entity.TestcaseEntity;
+import com.argusoft.path.tht.testcasemanagement.models.mapper.SpecificationMapper;
+import com.argusoft.path.tht.testcasemanagement.testbed.dto.deploy.response.Specification;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
 
@@ -35,6 +36,9 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
     private TestcaseService testcaseService;
     @Autowired
     private TestcaseServiceMockImpl testcaseServiceMock;
+
+    @Autowired
+    private SpecificationMapper specificationMapper;
 
     @BeforeEach
     @Override
@@ -129,6 +133,26 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
 
         assertThrows(DataValidationErrorException.class, () -> {
             specificationService.createSpecification(specificationEntity6, contextInfo);
+        });
+
+        assertDoesNotThrow(() -> {
+            SpecificationEntity specification = new SpecificationEntity();
+            specification.setRank(123);
+            specification.setFunctional(Boolean.TRUE);
+            specification.setComponent(new ComponentEntity());
+            Set<TestcaseEntity> testcaseEntities = new HashSet<>();
+            testcaseEntities.add(new TestcaseEntity());
+            specification.setTestcases(testcaseEntities);
+            specification.setRequired(Boolean.TRUE);
+
+            SpecificationEntity copySpecificationEntity = new SpecificationEntity(specification);
+            SpecificationEntity copySpecificationEntityId = new SpecificationEntity("specification.01");
+
+            List<SpecificationEntity> specificationEntities = new ArrayList<>();
+            specificationEntities.add(specification);
+
+            specificationMapper.dtoToModel(specificationMapper.modelToDto(specificationEntities));
+
         });
 
     }
@@ -326,7 +350,7 @@ class SpecificationServiceImplTest extends TestingHarnessToolTestConfiguration {
         SpecificationCriteriaSearchFilter specificationSearchFilter8 = new SpecificationCriteriaSearchFilter();
         specificationSearchFilter8.setManual(false);
         List<SpecificationEntity> specificationEntities8 = specificationService.searchSpecifications(specificationSearchFilter8, contextInfo);
-        assertEquals(1, specificationEntities8.size());
+        assertEquals(2, specificationEntities8.size());
 
         // Test case 9: Search specification by id
 

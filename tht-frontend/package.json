@@ -50,7 +50,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "build:dev": "env-cmd -f ./.env.development npm run-script build",
-    "build:testbed": "env-cmd -f ./.env.testbed npm run-script build",
+    "build:qa": "env-cmd -f ./.env.qa npm run-script build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "serve -l 3000 -s build",
