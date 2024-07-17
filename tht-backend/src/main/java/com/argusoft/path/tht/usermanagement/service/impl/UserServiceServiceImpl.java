@@ -10,7 +10,6 @@ import com.argusoft.path.tht.systemconfiguration.email.service.EmailService;
 import com.argusoft.path.tht.systemconfiguration.exceptioncontroller.exception.*;
 import com.argusoft.path.tht.systemconfiguration.models.dto.ValidationResultInfo;
 import com.argusoft.path.tht.systemconfiguration.security.model.dto.ContextInfo;
-import com.argusoft.path.tht.systemconfiguration.security.repository.CustomCsrfTokenRepository;
 import com.argusoft.path.tht.systemconfiguration.security.service.AuthenticationService;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonStateChangeValidator;
 import com.argusoft.path.tht.systemconfiguration.utils.CommonUtil;
@@ -65,7 +64,6 @@ public class UserServiceServiceImpl implements UserService {
     ApplicationEventPublisher applicationEventPublisher;
     private TokenVerificationService tokenVerificationService;
     private EmailService emailService;
-    private CustomCsrfTokenRepository csrfTokenRepository;
 
     @Value("${message-configuration.account.approve.mail}")
     private boolean accountApproveMail;
