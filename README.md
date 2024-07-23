@@ -114,7 +114,7 @@ Run this command for permission update:
 ### [Docker Setup](#docker-setup)
 
 #### Step 1: Directory Modifications and Initial Zip File Movement
-1. Go to the project directory.
+1. Go to the project directory.(The extracted folder of the GitHub zip file)
 2. Execute the following command:
     ```
     sudo bash ./copy_zips.sh files
@@ -126,7 +126,7 @@ Run this command for permission update:
     ```
 
 #### Step 2: Launch Docker-Compose
-1. Navigate to the project directory.
+1. Navigate to the project directory.(The extracted folder of the GitHub zip file)
 2. Run the following command:
    ```
     sudo docker compose up
@@ -135,26 +135,43 @@ Run this command for permission update:
 4. Attempt to access `http://localhost:3000/` to reach the testing-harness-tool's login page.
 
 ### [Docker Guide](#docker-guide)
-#### 1: Docker Commands
-1. Navigate to the project directory.
+#### 1: Docker Commands For Initial Setup
+1. Navigate to the project directory.(The extracted folder of the GitHub zip file)
 2. Run the following command to build the docker:
    ```
-    sudo docker-compose --env-file tht.env build
+    sudo docker-compose --env-file tht-prod.env build
     ```
 3. Run the following command to run docker:
    ```
-    sudo docker-compose --env-file tht.env up
+    sudo docker-compose --env-file tht-prod.env up
     ```
-4. Run the following command docker down
+4. **NOTE:** Replace docker-compose with docker compose if the Ubuntu version is newer then 20.04.2 LTS
+#### 2: Docker Rerun Commands
+1. Navigate to the project directory.(The extracted folder of the GitHub zip file)
+2. Run the following command docker down
    ```
     sudo docker-compose down
     ```
-5. Run the following command docker down/ Along with database refresh
+   OR
+   Run the following command docker down Along with database refresh
    ```
     sudo docker-compose down -v
     ```
-#### 2: Schedule Database Backup
-1. Navigate to the project directory.
+3. Run the following command to fetch the new code:
+   ```
+    git pull
+    ```
+4. Run the following command to build the docker:
+   ```
+    sudo docker-compose --env-file tht-prod.env build
+    ```
+5. Run the following command to run docker:
+   ```
+    sudo docker-compose --env-file tht-prod.env up
+    ```
+6. **NOTE:** Replace docker-compose with docker compose if the Ubuntu version is newer then 20.04.2 LTS
+#### 3: Schedule Database Backup
+1. Navigate to the project directory.(The extracted folder of the GitHub zip file)
 2. Run the following command:
    ```
     crontab -e
@@ -164,11 +181,11 @@ Run this command for permission update:
     * 2 * * * {ProjectDirectoryPath}/backup.sh
     ```
 4. Now everyday at 2:00 a.m. database backup will get stored in `/srv/tht/backup` directory and latest 2 copy will be available.
-#### 3: Restore Database Backup
-1. Navigate to the project directory.
+#### 4: Restore Database Backup
+1. Navigate to the project directory.(The extracted folder of the GitHub zip file)
 2. Using following command to stop docker: 
    ```
-    sudo docker compose down
+    sudo docker-compose down
     ```
 3. Now run following command to restore database:
     To restore latest backup
@@ -181,5 +198,6 @@ Run this command for permission update:
     ```
 4. Using following command to up docker: 
    ```
-    sudo docker compose up
+    sudo docker-compose up
     ```
+5. **NOTE:** Replace docker-compose with docker compose if the Ubuntu version is newer then 20.04.2 LTS
