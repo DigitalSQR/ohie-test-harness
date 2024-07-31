@@ -355,6 +355,7 @@ const RegisterApplication = () => {
 
   useEffect(() => {
     if (testRequestId) {
+      showLoader();
       dispatch(set_header("Update Application"));
       TestRequestAPI.getTestRequestsById(testRequestId).then((res) => {
         formik.values.name = res.name;
@@ -434,8 +435,8 @@ const RegisterApplication = () => {
       });
     } else {
       dispatch(set_header("Register Application"));
+      showLoader();
     }
-    console.log(formik.values);
 
     const userInfo = store.getState().userInfoSlice;
     setUserId(userInfo.id);
@@ -494,38 +495,6 @@ const RegisterApplication = () => {
                   </div>
                 </div>
               </div>
-              {/*  <div className="row">
-              <div className="col-12">
-                <div className="custom-input mb-3">
-                  <label htmlFor="description" className="form-label">
-                    Application Description
-                    <span style={{ color: "red" }}>*</span>
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    className={`form-control ${
-                      formik.touched.description && formik.errors.description
-                        ? "is-invalid"
-                        : ""
-                    }`}
-                    rows="3"
-                    placeholder="Application Description"
-                    value={formik.values.description}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    autoComplete="off"
-                    required
-                  ></textarea>
-                  {formik.touched.description && formik.errors.description && (
-                    <div className="error-message">
-                      {formik.errors.description}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-           */}
               {formik.errors.testRequestUrls ? (
                 <div className="error-message">
                   {formik.errors.testRequestUrls}

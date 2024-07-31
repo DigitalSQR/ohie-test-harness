@@ -40,17 +40,28 @@ export default function EditQuestion() {
   const [specification, setSpecification] = useState();
 
   const [changesMade, setChangesMade] = useState(false);
+  const [changesMadeInPictures,setChangesMadeInPictures] = useState(false);
   const [changesMadeToEditOption, setChangesMadeToEditOption] = useState(false);
 
   const [initialTestcaseOptions, setInitialTestcaseOptions] = useState([]);
   const [editedTestcaseOptions, setEditedTestcaseOptions] = useState([]);
-  const [fileList, setFileList] = useState();
+  const [fileList, setFileList] = useState([]);
 
   const handleCancel = () => setPreviewOpen(false);
-  const handlePreview = (file) => {
-    return file.url;
-  };
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+
+  useEffect(()=>{
+    console.log(fileList);
+    if(fileList.length === 0){setChangesMadeInPictures(false)}},[fileList]);
+
+
+
+  const getBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
 
   const fetchData = () => {
     TestCaseAPI.getTestCasesById(testcaseId)
@@ -67,7 +78,6 @@ export default function EditQuestion() {
     TestCaseOptionsAPI.getTestCaseOptionsByTestcaseId(testcaseId)
       .then((res) => {
         if (res.content && res.content.length > 0) {
-          console.log("----", res.content);
           setInitialTestcaseOptions(res.content);
           setEditedTestcaseOptions(res.content);
         } else {
@@ -100,9 +110,9 @@ export default function EditQuestion() {
                 status: "done",
                 url: base64Image,
                 documentId: relatedDoc.id,
+                isSaved:true
               };
             } catch (error) {
-              console.error(error);
               return {
                 name: relatedDoc.name,
                 status: "error",
@@ -140,9 +150,9 @@ export default function EditQuestion() {
     fetchCompSpecDetails();
   }, [testcaseId]);
 
-  const handleUpload = (file) => {
+  const handleUpload = async(file) => {
     const formData = new FormData();
-    formData.append(`file`, file);
+    formData.append(`file`, file.file);
     formData.append(`fileName`, file.name);
     formData.append("refId", currentTestcase.id);
     formData.append("refObjUri", RefObjUriConstants.TESTCASE_REFOBJURI);
@@ -155,6 +165,11 @@ export default function EditQuestion() {
   };
 
   const makeDocumentInactive = (file) => {
+    if(file.isSaved === false){
+      const updatedFileList = fileList.filter(prevFiles=>prevFiles.id !== file.id);
+      setFileList(updatedFileList);
+    }
+    if (file.isSaved === true) {
     DocumentAPI.changeDocumentState(file.documentId, DOCUMENT_STATE_INACTIVE)
       .then((res) => {
         notification.success({
@@ -169,6 +184,7 @@ export default function EditQuestion() {
       })
       .catch((err) => {
       });
+    }
   };
 
   const confirmDocumentChangeToInactive = (file) => {
@@ -187,11 +203,10 @@ export default function EditQuestion() {
 
   const props = {
     onRemove: (file) => {
-      if (file) {
         confirmDocumentChangeToInactive(file);
-      }
     },
-    beforeUpload: (file) => {
+    beforeUpload: async(file) => {
+      setChangesMadeInPictures(true);
       const isImage =
         file.type === "image/png" ||
         file.type === "image/jpeg" ||
@@ -205,27 +220,16 @@ export default function EditQuestion() {
         });
         return false;
       }
+
+      if(isImage){
+        const base64url = await getBase64(file);
+        const newImage = {name:file.name,id:file.uid,url:base64url,isSaved:false,file:file};
+        setFileList([...fileList,newImage]);
+      }
+      
+      
     },
     customRequest: (options) => {
-      if (options.file) {
-        handleUpload(options.file).then(async (response) => {
-          const base64Image = await DocumentAPI.base64Document(
-            response.id,
-            response.name
-          );
-          let imageData = {
-            name: response.name,
-            status: "done",
-            url: base64Image,
-            documentId: response.id,
-          };
-          const updatedFileList = [...fileList];
-          updatedFileList.push(imageData);
-          setFileList(updatedFileList);
-        }).catch((error)=>{
-
-        });
-      }
     },
     onDrop(event) {
       console.log(event);
@@ -262,28 +266,65 @@ export default function EditQuestion() {
   }, [editedQuestionType, editedQuestion]);
 
   const handleSaveQuestion = async () => {
-    try {
-      showLoader();
-      var patch = [
-        { op: "replace", path: "/name", value: editedQuestion },
-        { op: "replace", path: "/questionType", value: editedQuestionType },
-      ];
-
-      TestCaseAPI.patchTestcase(testcaseId, patch)
-        .then((res) => {
-          setInitialQuestion(res.name);
-          setInitialQuestionType(res.questionType);
-          setChangesMade(false);
-          notification.success({
-            className:"notificationSuccess",
-            placement: "top",
-            message:"Testcase question updated successfully!",
+    if(changesMadeInPictures){
+      for (const [index, options] of fileList.entries()) {
+        if (options.isSaved === false) {
+          try {
+            const response = await handleUpload(options);
+            notification.success({
+              className: "notificationSuccess",
+              placement: "top",
+              message: `Image ${response.name} uploaded successfully!`,
+            });
+      
+            setFileList((prevFileList) =>
+              prevFileList.map((item, idx) =>
+                idx === index
+                  ? { ...item, isSaved: true, documentId : response.id }
+                  : item
+              )
+            );
+          } catch (error) {
+            notification.error({
+              className: "notificationError",
+              message: `Error while uploading ${options.name}`,
+              placement: "bottomRight",
+            });
+      
+            setFileList((prevFiles) =>
+              prevFiles.filter((file) => file.id !== options.id)
+            );
+          }
+        }
+      }
+      
+      setChangesMadeInPictures(false);
+    }
+    
+    if(changesMade){
+      try {
+        showLoader();
+        var patch = [
+          { op: "replace", path: "/name", value: editedQuestion },
+          { op: "replace", path: "/questionType", value: editedQuestionType },
+        ];
+  
+        TestCaseAPI.patchTestcase(testcaseId, patch)
+          .then((res) => {
+            setInitialQuestion(res.name);
+            setInitialQuestionType(res.questionType);
+            setChangesMade(false);
+            notification.success({
+              className:"notificationSuccess",
+              placement: "top",
+              message:"Testcase question updated successfully!",
+            });
+          })
+          .catch((error) => {
           });
-        })
-        .catch((error) => {
-        });
-    } finally {
-      hideLoader();
+      } finally {
+        hideLoader();
+      }
     }
   };
 
@@ -296,7 +337,6 @@ export default function EditQuestion() {
   };
 
   const handleSelectAccordionItem = (index) => {
-    console.log(index + " ");
     if (currentAccordionIndex) {
       const updatedOptions = [...initialTestcaseOptions];
       updatedOptions[currentAccordionIndex] =
@@ -467,7 +507,7 @@ export default function EditQuestion() {
                   </div>
                   <button
                   id={`editQuestion-updateQuestion`}
-                    disabled={!changesMade}
+                    disabled={(!changesMade && !changesMadeInPictures)}
                     onClick={handleSaveQuestion}
                     type="button"
                     className="btn btn-sm btn-primary mt-3"
