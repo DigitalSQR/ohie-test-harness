@@ -10,15 +10,13 @@ import sortedDown from "../../../../styles/images/sort-down.png";
 import unsorted from "../../../../styles/images/unsorted.png";
 
 import {
-  EditFilled,
   LeftOutlined,
   RightOutlined,
   LoadingOutlined,
-  FileImageOutlined,
 } from "@ant-design/icons";
 import { TestCaseOptionsAPI } from "../../../../api/TestCaseOptionsAPI";
 import "./SpecQuestions.scss";
-import { Switch, Tabs, Carousel, notification, Image, Modal } from "antd";
+import { Switch, Tabs, Carousel, Image, Modal } from "antd";
 import { useDispatch } from "react-redux";
 import { set_header } from "../../../../reducers/homeReducer";
 import { ManualQuestionTypeConstants } from "../../../../constants/testcase_constants";
@@ -27,11 +25,8 @@ import TabPane from "antd/es/tabs/TabPane";
 import { DocumentAPI } from "../../../../api/DocumentAPI";
 import { RefObjUriConstants } from "../../../../constants/refObjUri_constants";
 import {
-  DOCUMENT_STATE_ACTIVE,
-  DOCUMENT_STATE_INACTIVE,
-  DOCUMENT_TYPE_FOR_TEST_CASES,
+  DOCUMENT_STATE_ACTIVE
 } from "../../../../constants/document_constants";
-import { TestResultAPI } from "../../../../api/TestResultAPI";
 import SpecAutomatedUpsertModal from "./SpecAutomatedUpsertModal/SpecAutomatedUpsertModal";
 import { fileTypeIcon } from "../../../../utils/utils";
 import { Pagination } from "@mui/material";
@@ -57,7 +52,6 @@ export default function ManualTestCases() {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
 
-
   const obj = {
     name: "desc",
     rank: "asc",
@@ -72,6 +66,7 @@ export default function ManualTestCases() {
           className="cursor-pointer"
           style={{ width: "8px" }}
           src={sortDirection[fieldName] === "asc" ? sortedUp : sortedDown}
+          alt="Sort-Icon"
         ></img>
       );
     }
@@ -80,6 +75,7 @@ export default function ManualTestCases() {
         className="cursor-pointer"
         style={{ width: "10px" }}
         src={unsorted}
+        alt="Sort-Icon"
       />
     );
   };
@@ -228,9 +224,6 @@ export default function ManualTestCases() {
     }
   };
 
-  const handleClick = (path) => {
-    navigate(path);
-  };
 
   const fetchTestCaseOptions = async (testcaseId) => {
     const optionsResp = await TestCaseOptionsAPI.getTestCaseOptionsByTestcaseId(
@@ -245,7 +238,7 @@ export default function ManualTestCases() {
 
   useEffect(() => {
     if(activeTab === '1'){
-      if(activeKey === "1"){
+      if(activeKey){
         let key;
         if (activeKey) {
           key = activeKey - 1;
@@ -280,7 +273,6 @@ export default function ManualTestCases() {
                         documentId: relatedDoc.id,
                       };
                     } catch (error) {
-                      console.log('cuiesgcbivkebrygvsinehb')
                       console.error(error);
                       return {
                         name: relatedDoc.name,
@@ -370,9 +362,6 @@ export default function ManualTestCases() {
     DocumentAPI.downloadDocument(zipFile.id, zipFile.name).catch((err) => {});
   };
 
-  useEffect(() => {
-    console.log(uploadedFiles);
-  }, [uploadedFiles]);
 
   const handleChangePage = (event,newPage) => {
     console.log(newPage);
@@ -401,7 +390,8 @@ export default function ManualTestCases() {
             Testcase Configuration
           </Breadcrumb.Item>
         </Breadcrumb>
-
+        <div className="current-specification" style={{marginTop:"1rem"}}>{`Specification - `}
+          <span style={{ fontWeight: 'bold'}}>{specificationDetails?.name}</span></div>
         <div className="d-flex justify-content-between align-items-center">
           <Tabs
             className="mt-3"
@@ -678,7 +668,7 @@ export default function ManualTestCases() {
                                   type="button"
                                   key={files.id}
                                 >
-                                  <img src={fileTypeIcon(files.fileType)} />
+                                  <img src={fileTypeIcon(files.fileType)} alt="File-Type"/>
                                   <span>{files.name}</span>
                                   <span
                                   id={`specQuestions-downloadFile-${index}`}

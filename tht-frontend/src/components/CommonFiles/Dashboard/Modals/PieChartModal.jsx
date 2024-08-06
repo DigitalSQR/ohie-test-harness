@@ -9,19 +9,16 @@ import {
     StateBadgeClasses,
     TestRequestStateConstantNames,
   } from "../../../../constants/test_requests_constants";
-const PieChartModal = ({ isModalOpen, setIsModalOpen, clickedValue }) => {
+const PieChartModal = ({ isModalOpen, setIsModalOpen, state }) => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
   const [gridData, setGridData] = useState([]);
   const getTestRequestsByClickedValue = () => {
-    TestRequestAPI.getTestRequestsByState()
+    TestRequestAPI.getTestRequestsByFilter({state})
       .then((response) => {
-        const data = response.content.filter(
-          (item) => item.state === clickedValue
-        );
-        setGridData(data);
+        setGridData(response.content);
       })
       .catch((err) => {});
   };

@@ -19,7 +19,7 @@ const BulkUploadModal = ({
           refreshAllComponents();
           notification.success({
             placement: "top",
-            message:"Testcase configuration has been updated successfully",
+            message: "Testcase configuration has been updated successfully",
           });
         })
         .catch((error) => {});
@@ -51,7 +51,7 @@ const BulkUploadModal = ({
   );
 
   return (
-    <div>
+    <div id="bulkUploadModal">
       <Modal
         open={isModalOpen}
         onCancel={handleCancel}
@@ -79,6 +79,39 @@ const BulkUploadModal = ({
             <i className="bi bi-info-circle-fill document-tooltip-info"></i>
           </OverlayTrigger>
         </p>
+
+        <div style={{ marginBottom: "1rem" }}>
+          <span className="doc-badge cursor-pointer">
+            <a
+            href="/Excel_Format.xlsx"
+            download="Excel_Format_for_Bulk_Upload.xlsx"
+            style={{ marginRight: "3px",
+              textDecoration: "none",
+              color: "inherit"}}
+          >
+            Download Excel format
+            </a>
+            <i
+              className="bi bi-arrow-down-circle"
+              style={{paddingTop:"3px"}}
+            ></i>
+            </span>
+
+            <span className="doc-badge cursor-pointer">
+          <a
+            href="/Csv_Format.csv"
+            download="CSV_Formatfor_Bulk_Upload.csv"
+            style={{ marginRight: "3px",
+              textDecoration: "none",
+              color: "inherit"}}
+          >
+            Download CSV format
+          </a>
+            <i className="bi bi-arrow-down-circle" 
+            style={{paddingTop:"3px"}}></i>
+            </span>
+
+        </div>
 
         {!selectedFile && (
           <div>

@@ -1,0 +1,26 @@
+import ImageViewer from "../../custom/Image.js";
+import Report1 from './img/report1.png';
+import Report2 from './img/report2.png';
+import Report3 from './img/report3.png';
+import Report4 from './img/report4.png';
+
+
+
+# Report
+
+Reports are generated automatically after the testing process is completed. There are two types of results generated based on the specifications:
+
+1. **Compliance**: If the test for the Required specification passes then it is considered in the Compliance section.
+2. **Conformance**: If the test for the Recommended specification passes then it is considered in the Conformance section.
+
+<ImageViewer src={Report1}/>
+
+- Once the testing process gets completed a report is generated. To view the report click on the **Report** button in the action menu in the application list.
+
+<ImageViewer src={Report2}/>
+<ImageViewer src={Report3}/>
+<ImageViewer src={Report4}/>
+
+- The report will show all the components and their specifications which are being tested. There are two sections: Compliance and Conformance. The specifications which are Required by nature are listed in the Compliance section and the specifications which are Recommended by nature are listed in the Conformance section.
+- The Report will also show the overall grade for each section as well as the combined.
+- There is also an option to download the report. Click on the **Download** button present in the top right corner of the report.

@@ -230,6 +230,15 @@ export default function ComponentList() {
             <div className="d-flex align-items-baseline justify-content-end">
               <button
                 type="button"
+                className="btn btn-sm btn-outline-secondary menu-like-item me-2"
+                id="componentList-createComponent"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <i className="bi bi-plus"></i>
+                Create Component
+              </button>
+              <button
+                type="button"
                 className="btn btn-sm btn-outline-secondary me-2"
                 id="componentList-bulkUpload"
                 onClick={() => setBulkUploadModalOpen(true)}
@@ -238,19 +247,10 @@ export default function ComponentList() {
               </button>
               <button
                 type="button"
-                className="btn btn-sm btn-outline-secondary me-2"
+                className="btn btn-sm btn-outline-secondary"
                 id="componentList-navToValidateConfig"
                 onClick={() => navigate("/validate-config")}
               ><FileSearchOutlined className="me-1" />Validate Configuration</button>
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-secondary menu-like-item"
-                id="componentList-createComponent"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <i className="bi bi-plus"></i>
-                Create Component
-              </button>
             </div>
           </div>
           <div className="table-responsive">
