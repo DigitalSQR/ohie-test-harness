@@ -1,9 +1,0 @@
-{
-    "resourceType" : "MedicationRequest",
-    "medicationReference" : {
-      "id" : "1234"
-    },
-    "subject" : {
-      "reference" : "4567"
-    }
-  }
