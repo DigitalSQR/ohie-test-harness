@@ -1,0 +1,64 @@
+
+import ImageViewer from "../../custom/Image.js";
+import Application1 from './img/application1.png';
+import Testing1 from './img/testing1.png';
+import Testing2 from './img/testing2.png';
+import Testing3 from './img/testing3.png';
+import Testing4 from './img/testing4.png';
+import Automatic1 from './img/automatic1.png';
+import Automatic2 from './img/automatic2.png';
+import Automatic3 from './img/automatic3.png';
+
+# Applications and Testing Process
+
+
+<ImageViewer src={Application1}/>
+
+- As soon as the admin/ tester clicks on the **Application** section, there is a list of all the testing applications along with their status whether in a pending state or yet to be started or completed.
+- Click on the **Start** button to start the testing process.
+
+<ImageViewer src={Testing1}/>
+
+## [Types of Testing Process](#Types-of-Testing-Process)
+
+1. **Manual Verification**
+2. **Automated Verification**
+
+### [Manual Verification](#Manual-Verification)
+
+The manual verification method contains a set of different questions for which the user has to verify in the system. The questions also have supporting references given for the same.
+
+<ImageViewer src={Testing2}/>
+
+- To start the verification click on the **Start Assessment** button as shown in the above image.
+
+<ImageViewer src={Testing3}/>
+
+- The tester will be able to see different sets of questions for different components. The tester has to mark the appropriate answer for each question.
+- The tester can also choose the component to start testing with by selecting the particular component from the list present on the top left corner of the page.
+- There is also an option to add any attachments if the tester wants to add any media proof. To add attachments click on the **Add Attachments** button.
+
+<ImageViewer src={Testing4}/>
+
+- The attachments can be images, videos, pdf, or documents. The maximum size of the attachments can be 10 MB.
+- The tester can also add any note for the particular component. To add the note click on the **Add Note** button.
+- Once all the questions are answered click on the **Submit** button to submit the manual question of the system.
+
+### [Automatic Verification](#Automatic-Verification)
+
+The automated verification method contains pre-defined test cases that will automatically run and will show the results whether passed or failed.
+
+<ImageViewer src={Automatic1}/>
+
+- To start the verification click on the **Start Assessment** button as shown in the above image.
+
+<ImageViewer src={Automatic2}/>
+
+- As soon as the tester clicks on the **Start Assessment** button the system will start running test cases as shown above.
+- One by one all of the test cases will be executed along with the status of the test case whether passed or failed.
+
+<ImageViewer src={Automatic3}/>
+
+- The system also displays the reason for test case failure. The passed test cases will be marked in green and the failed test cases will be marked in red.
+- The system will also show the time taken to execute the test cases. Once all the test cases are completed the system will show the total time taken to complete the entire process of evaluation.
+- The tester can also pause the testing process anytime and can resume back again. The tester also has an option to restart.
