@@ -20,6 +20,7 @@ import {
   NOTIFICATION_STATUS_UNREAD,
 } from "../../../constants/notification_constants";
 import { notification } from "antd";
+import { AuthenticationAPI } from "../../../api/AuthenticationAPI";
 
 /**
  * Header Component
@@ -320,8 +321,19 @@ export default function Header({ headerContent, isSidebarOpen }) {
                       })
                       return;
                     } else {
-                    navigate("/login");
-                    dispatch(log_out());
+                      AuthenticationAPI.doLogout().then((res)=>{
+                        if(res === true){
+                          dispatch(log_out());
+                          navigate("/login");
+                        }
+                        if(res === false){
+                          notification.error({
+                            className: "notificationError",
+                            message: "Unable to logout! Please try again.",
+                            placement: "bottomRight",
+                          });
+                        }
+                      }).catch(()=>{});
                   }}}
                 >
                   <a className="dropdown-item" href="#" id="Header-logout">

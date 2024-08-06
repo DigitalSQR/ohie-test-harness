@@ -35,7 +35,7 @@ export default function EditQuestion() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
-
+  const [filesTobeDeleted,setFilesTobeDeleted] = useState([]);
   const [component, setComponent] = useState();
   const [specification, setSpecification] = useState();
 
@@ -49,10 +49,7 @@ export default function EditQuestion() {
 
   const handleCancel = () => setPreviewOpen(false);
 
-  useEffect(()=>{
-    console.log(fileList);
-    if(fileList.length === 0){setChangesMadeInPictures(false)}},[fileList]);
-
+  useEffect(()=>{console.log(fileList);},[fileList])
 
 
   const getBase64 = (file) =>
@@ -110,7 +107,7 @@ export default function EditQuestion() {
                 status: "done",
                 url: base64Image,
                 documentId: relatedDoc.id,
-                isSaved:true
+                current_state:"saved"
               };
             } catch (error) {
               return {
@@ -164,28 +161,7 @@ export default function EditQuestion() {
     return DocumentAPI.uploadDocument(formData);
   };
 
-  const makeDocumentInactive = (file) => {
-    if(file.isSaved === false){
-      const updatedFileList = fileList.filter(prevFiles=>prevFiles.id !== file.id);
-      setFileList(updatedFileList);
-    }
-    if (file.isSaved === true) {
-    DocumentAPI.changeDocumentState(file.documentId, DOCUMENT_STATE_INACTIVE)
-      .then((res) => {
-        notification.success({
-          className:"notificationSuccess",
-          placement: "top",
-          message:"Document removed successfully!",
-        });
-        const index = fileList.indexOf(file);
-        const newFileList = fileList.slice();
-        newFileList.splice(index, 1);
-        setFileList(newFileList);
-      })
-      .catch((err) => {
-      });
-    }
-  };
+    
 
   const confirmDocumentChangeToInactive = (file) => {
     Modal.confirm({
@@ -196,7 +172,12 @@ export default function EditQuestion() {
       okText: "Yes",
       cancelText: "Cancel",
       onOk() {
-        makeDocumentInactive(file);
+        if(file.current_state === "saved"){
+          setFilesTobeDeleted([...filesTobeDeleted,file]);
+        }
+        const updatedFileList = fileList.filter(prevFiles => prevFiles.documentId !== file.documentId);
+        setFileList(updatedFileList);
+        setChangesMadeInPictures(true);
       },
     });
   };
@@ -223,7 +204,7 @@ export default function EditQuestion() {
 
       if(isImage){
         const base64url = await getBase64(file);
-        const newImage = {name:file.name,id:file.uid,url:base64url,isSaved:false,file:file};
+        const newImage = {name:file.name,documentId:file.uid,url:base64url,current_state:"unsaved",file:file};
         setFileList([...fileList,newImage]);
       }
       
@@ -268,7 +249,8 @@ export default function EditQuestion() {
   const handleSaveQuestion = async () => {
     if(changesMadeInPictures){
       for (const [index, options] of fileList.entries()) {
-        if (options.isSaved === false) {
+        //uploading unsaved images
+        if (options.current_state === "unsaved") {
           try {
             const response = await handleUpload(options);
             notification.success({
@@ -280,7 +262,7 @@ export default function EditQuestion() {
             setFileList((prevFileList) =>
               prevFileList.map((item, idx) =>
                 idx === index
-                  ? { ...item, isSaved: true, documentId : response.id }
+                  ? { ...item, current_state: "saved", documentId : response.id }
                   : item
               )
             );
@@ -292,13 +274,33 @@ export default function EditQuestion() {
             });
       
             setFileList((prevFiles) =>
-              prevFiles.filter((file) => file.id !== options.id)
+              prevFiles.filter((file) => file.documentId !== options.documentId)
             );
           }
         }
       }
-      
-      setChangesMadeInPictures(false);
+      for (const file of filesTobeDeleted) {
+        //deleting saved images 
+        try {
+          const response = await DocumentAPI.changeDocumentState(
+            file.documentId,
+            DOCUMENT_STATE_INACTIVE
+          );
+          notification.success({
+            className: "notificationSuccess",
+            message: `Successfully deleted ${file.name}`,
+            placement: "bottomRight",
+          });} 
+          catch (error) {
+          notification.error({
+            className: "notificationError",
+            message: `Error while deleting ${file.name}`,
+            placement: "bottomRight",
+          });
+          setFileList([...fileList,file]);
+        }
+      }
+      setFilesTobeDeleted([]);
     }
     
     if(changesMade){
@@ -326,6 +328,7 @@ export default function EditQuestion() {
         hideLoader();
       }
     }
+    setChangesMadeInPictures(false);
   };
 
   const toggleOption = (index) => {

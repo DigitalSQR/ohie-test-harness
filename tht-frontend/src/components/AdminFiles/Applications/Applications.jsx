@@ -52,7 +52,14 @@ const Applications = () => {
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
   const [currentTestRequestId, setCurrentTestRequestId] = useState();
   const [currentIndex, setCurrentIndex] = useState();
-
+  const {
+    TEST_REQUEST_STATUS_ACCEPTED,
+    TEST_REQUEST_STATUS_FINISHED,
+    TEST_REQUEST_STATUS_INPROGRESS,
+    TEST_REQUEST_STATUS_PENDING,
+    TEST_REQUEST_STATUS_PUBLISHED,
+    TEST_REQUEST_STATUS_REJECTED,
+  } = TestRequestStateConstants;
   const navigate = useNavigate();
   const hasMounted = useRef(false);
   const pageSize = 10;
@@ -144,6 +151,7 @@ const Applications = () => {
     params.sort = `${sortFieldName},${sortDirection[sortFieldName]}`;
     params.page = newPage - 1;
     params.size = pageSize;
+    params.state = [];
 
     const filteredApplicationSearchFilter = Object.keys(applicationSearchFilter)
       .filter((key) => {
@@ -158,11 +166,22 @@ const Applications = () => {
       }, {});
     params = { ...params, ...filteredApplicationSearchFilter };
 
-    if (!params.state && userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER))
+    if (userRole.includes(USER_ROLES.ROLE_ID_ADMIN || USER_ROLES.ROLE_ID_TESTER))
       params.state = [
-        "test.request.status.finished",
-        "test.request.status.published",
+        ...params.state,
+        TEST_REQUEST_STATUS_ACCEPTED,
+        TEST_REQUEST_STATUS_FINISHED,
+        TEST_REQUEST_STATUS_INPROGRESS,
+        TEST_REQUEST_STATUS_PENDING,
+        TEST_REQUEST_STATUS_REJECTED,
       ];
+      
+      if (userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER))
+        params.state = [
+          ...params.state,
+        TEST_REQUEST_STATUS_PUBLISHED,
+        TEST_REQUEST_STATUS_FINISHED
+        ];
 
     TestRequestAPI.getTestRequestsByFilter(params)
       .then((res) => {
@@ -721,39 +740,53 @@ const Applications = () => {
                                 
                               )
                             )}
-                            {(testRequest.state === TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ||
-                             testRequest.state === TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED) &&
-                            <button className="cursor-pointer glossy-button glossy-button--blue d-flex align-items-center" id={`applications-viewOnly-${index}`}
-                            style={{display:"inline-flex",marginRight:"4px",marginBottom:"4px"}}
-                            onClick={()=>{navigate(`/choose-test/${testRequest.id}`)}}>
-                                <i class="bi bi-eye"></i>{" "}VIEW ONLY</button>
-                            }
-                            {userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER) ? (
-                              <div>
-                                <span className="cursor-pointer text-success font-size-12 fw-bold">
-                                  <i className={`bi  font-size-16`}></i>
-                                  <Switch
-                                  style={{fontWeight:"600"}}
-                                    id={`Applications-switch-publishStatus-${index}`}
-                                    checked={
-                                      testRequest?.state ===
-                                      TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED
-                                    }
-                                    onChange={() =>
-                                      toggleTestRequestStateForPublisher(
-                                        testRequest?.id,
-                                        testRequest?.state,
-                                        index
-                                      )
-                                    }
-                                    checkedChildren="UNPUBLISH"
-                                    unCheckedChildren="PUBLISH"
-                                  />
-                                </span>
-                              </div>
-                            ) : (
-                              <></>
+                            {(testRequest.state ===
+                              TestRequestStateConstants.TEST_REQUEST_STATUS_FINISHED ||
+                              testRequest.state ===
+                                TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED) && (
+                              <button
+                                className="cursor-pointer glossy-button glossy-button--blue d-flex align-items-center"
+                                id={`applications-viewOnly-${index}`}
+                                style={{
+                                  display: "inline-flex",
+                                  marginRight: "4px",
+                                  marginBottom: "4px",
+                                }}
+                                onClick={() => {
+                                  navigate(`/choose-test/${testRequest.id}`);
+                                }}
+                              >
+                                <i class="bi bi-eye"></i> VIEW ONLY
+                              </button>
                             )}
+                            {userRole.includes(USER_ROLES.ROLE_ID_PUBLISHER) &&
+                              (testRequest?.state ===
+                                TEST_REQUEST_STATUS_FINISHED ||
+                              testRequest?.state ===
+                                TEST_REQUEST_STATUS_PUBLISHED) && (
+                                <div>
+                                  <span className="cursor-pointer text-success font-size-12 fw-bold">
+                                    <i className={`bi  font-size-16`}></i>
+                                    <Switch
+                                  style={{fontWeight:"600"}}
+                                      id={`Applications-switch-publishStatus-${index}`}
+                                      checked={
+                                        testRequest?.state ===
+                                        TestRequestStateConstants.TEST_REQUEST_STATUS_PUBLISHED
+                                      }
+                                      onChange={() =>
+                                        toggleTestRequestStateForPublisher(
+                                          testRequest?.id,
+                                          testRequest?.state,
+                                          index
+                                        )
+                                      }
+                                      checkedChildren="UNPUBLISH"
+                                      unCheckedChildren="PUBLISH"
+                                    />
+                                  </span>
+                                </div>
+                              )}
                           </div>
                         </td>
                         <td>

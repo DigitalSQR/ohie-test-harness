@@ -153,7 +153,7 @@ const PieChart = (props) => {
         <PieChartModal
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
-          clickedValue={clickedValue}
+          state={clickedValue}
         />
       </div>
     </div>
