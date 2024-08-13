@@ -84,9 +84,9 @@ services:
     volumes:
       - tht-postgressql-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: testing_harness_tool
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: {Database-Name}
+      POSTGRES_USER: {Database-User}
+      POSTGRES_PASSWORD: {Database-Password}
     ports:
       - ${POSTGRES_PORT}:5432
   tht-backend:
@@ -104,9 +104,9 @@ services:
       - ${FILES_PATH}:/srv/tht/files:rw
     environment:
       - SERVER_PORT=8081 
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://tht-postgressql:5432/testing_harness_tool
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://tht-postgressql:5432/{Database-Name}
+      - SPRING_DATASOURCE_USERNAME={Database-User}
+      - SPRING_DATASOURCE_PASSWORD={Database-Password}
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       - testbed_url=http://gitb-ui:9000/
       - base-url=${BASE_URL}

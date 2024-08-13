@@ -1,7 +1,7 @@
 # ===============================
 # ALL PROFILES
 # ===============================
-base-url: https://testing-harness.digitalsquare.org
+base-url: {Base-Url}
 spring:
   cache:
     jcache:
@@ -15,9 +15,9 @@ spring:
   main:
     allow-circular-references: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/testing_harness_tool
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://localhost:5432/{Database-Name}
+    username: {Database-User}
+    password: {Database-Password}
   jpa:
     properties:
       org.hibernate.envers.default_revision_entity_name: "CustomRevisionEntity"
