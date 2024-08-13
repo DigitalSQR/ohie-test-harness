@@ -6,7 +6,7 @@ title: Installation And Production Deployment
 # Installation
 Testing harness tool is a complete test framework that will facilitate testing how well technologies align to the OpenHIE Architecture specification and health and data content, as specified by WHO SMART Guidelines.
 
-## Setting Up File System
+## [Setting Up File System](#logging-service)
 ### Step 1: Create Directories
 1. Open a terminal window.
 2. Navigate to the `/srv` directory:
@@ -35,12 +35,11 @@ Run this command for permission update:
     ```
     sudo chmod -R a+rwx /srv/tht
     ```
-## Docker Configuration
+## [Docker Configuration](#docker-configuration)
 1. [Docker Installed](#docker-installation)
-2. [Docker Setup](#docker-setup)
-3. [Docker Guide](#docker-guide)
+2. [Docker Guide](#docker-guide)
 
-### Docker Installation
+### [Docker Installation](#docker-installation)
 - One can refer the official Docker website at https://docs.docker.com/engine/install/ubuntu/ or visit DigitalOcean's documentation for instructions on installing Docker on Ubuntu 20.04. The steps outlined are sourced from DigitalOcean's guide available at https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04.
 #### Linux(Ubuntu)
 1. Update existing list of packages:
@@ -116,7 +115,9 @@ Run this command for permission update:
         CGroup: /system.slice/docker.service
                 └─24321 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
     ```
-### Docker Setup
+
+
+### [Docker Guide](#docker-guide)
 
 #### Step 1: Directory Modifications and Initial Zip File Movement
 1. Go to the project directory.(The extracted folder of the GitHub zip file)
@@ -131,26 +132,93 @@ Run this command for permission update:
     ```
 
 #### Step 2: Launch Docker-Compose
-1. Navigate to the project directory.(The extracted folder of the GitHub zip file)
-2. Run the following command:
-   ```
-    sudo docker compose up
-    ```
-3. The `tht.env` file is available to configure ports and other settings. If needed, make changes there.
-4. Attempt to access `http://localhost:3000/` to reach the testing-harness-tool's login page.
 
-### Docker Guide
-#### 1: Docker Commands For Initial Setup
-1. Navigate to the project directory.(The extracted folder of the GitHub zip file)
-2. Run the following command to build the docker:
-   ```
-    sudo docker-compose --env-file tht-prod.env build
+1. Navigate to the project directory (the extracted folder of the GitHub zip file).
+
+2. Update `ohie-test-harness/.env`
+
+	- Open the `ohie-test-harness/.env` file.
+	- Add or update the following lines:
     ```
-3. Run the following command to run docker:
-   ```
-    sudo docker-compose --env-file tht-prod.env up
+	BASE_URL={Base-Url}
+	WS_BASE_URL={WS-Base-Url}
+	```
+	- Replace `{Base-Url}` with the provided base URL. For example:
     ```
-4. **NOTE:** Replace docker-compose with docker compose if the Ubuntu version is newer then 20.04.2 LTS
+	BASE_URL=https://example.org
+	```
+	- Replace `{WS-Base-Url}` with the provided WebSocket base URL. For example:
+    ```
+	WS_BASE_URL=wss://example.org
+	```
+
+3. Update `ohie-test-harness/docker-compose.yml`
+	
+	- Open the `ohie-test-harness/docker-compose.yml` file.
+	- Under the `tht-postgressql` section, add the environment variables:
+    ```yaml
+	tht-postgressql:
+	    environment:
+	      POSTGRES_DB: {Database-Name}
+	      POSTGRES_USER: {Database-User}
+	      POSTGRES_PASSWORD: {Database-Password}
+    ```      
+	- Replace `{Database-Name}`, `{Database-User}`, and `{Database-Password}` with the provided credentials.
+	
+	- Under the `tht-backend` section, add the environment variables:
+    ```yaml
+	tht-backend:
+	    environment:
+	      - SPRING_DATASOURCE_URL=jdbc:postgresql://tht-postgressql:5432/{Database-Name}
+	      - SPRING_DATASOURCE_USERNAME={Database-User}
+	      - SPRING_DATASOURCE_PASSWORD={Database-Password}
+    ```      
+	- Replace `{Database-Name}`, `{Database-User}`, and `{Database-Password}` with the provided credentials.
+
+4. Update `ohie-test-harness/tht-backend/src/main/resources/application.yml`
+	
+	- Open the `ohie-test-harness/tht-backend/src/main/resources/application.yml` file.
+	- Update the `datasource` section as follows:
+    ```
+	base-url: {Base-Url}
+
+	datasource:
+	    url: jdbc:postgresql://localhost:5432/{Database-Name}
+	    username: {Database-User}
+	    password: {Database-Password}
+    ```	    
+	- Replace `{Base-Url}` with the provided base URL. For example:
+    ```
+	BASE_URL=https://example.org
+	```
+	- Replace `{Database-Name}`, `{Database-User}`, and `{Database-Password}` with the provided credentials.
+      
+5. Update `ohie-test-harness/tht-frontend/.env.production`
+
+	- Open the `ohie-test-harness/tht-frontend/.env.production` file.
+	- Add or update the following lines:
+    ```
+	REACT_APP_HOST={Base-Url}
+	REACT_APP_WEB_SOCKET_URL={WS-Base-Url}
+    ```    
+	- Replace `{Base-Url}` with the provided React app host URL. For example:
+    ```
+	  BASE_URL=https://example.org
+	```
+	- Replace `{WS-Base-Url}` with the provided React app WebSocket URL. For example:
+    ```
+	  WS_BASE_URL=wss://example.org
+	```
+
+6. Run the following command to build the docker:
+   ```
+    sudo docker-compose build
+    ```
+7. Run the following command to run docker:
+   ```
+    sudo docker-compose up
+    ```
+8. **NOTE:** Replace docker-compose with docker compose if the Ubuntu version is newer then 20.04.2 LTS
 #### 2: Docker Rerun Commands
 1. Navigate to the project directory.(The extracted folder of the GitHub zip file)
 2. Run the following command docker down
@@ -168,11 +236,11 @@ Run this command for permission update:
     ```
 4. Run the following command to build the docker:
    ```
-    sudo docker-compose --env-file tht-prod.env build
+    sudo docker-compose build
     ```
 5. Run the following command to run docker:
    ```
-    sudo docker-compose --env-file tht-prod.env up
+    sudo docker-compose up
     ```
 6. **NOTE:** Replace docker-compose with docker compose if the Ubuntu version is newer then 20.04.2 LTS
 #### 3: Schedule Database Backup
@@ -206,3 +274,53 @@ Run this command for permission update:
     sudo docker-compose up
     ```
 5. **NOTE:** Replace docker-compose with docker compose if the Ubuntu version is newer then 20.04.2 LTS
+
+## [Steps to Run THT-DOC locally](#RUN-THT-DOC-LOCALLY)
+
+1. Install Nodejs and npm using following commands (if not present):
+
+```
+   sudo apt update
+```
+```
+   sudo apt install nodejs
+```
+```
+   sudo apt install npm
+```
+
+2. Navigate to the Project Directory using the following command:
+```
+    cd tht-doc
+```
+3. Install Dependencies using the following command:
+```
+    npm i --legacy-peer-deps
+```
+4. Start the Development Server using the following command:
+```
+    npm start
+```
+5. Once the development server is started, you can access the doc site locally by navigating to [http://localhost:3000/ohie-test-harness/](http://localhost:3000/ohie-test-harness/) in your web browser.
+
+
+## [Steps to deploy THT-DOC site using Github Pages](#DEPLOY-THT-DOC-SITE)
+
+1. Commit your changes.
+```
+git add .
+```
+```
+git commit -m "Configure deployment"
+```
+2. Push the changes to your GitHub repository.
+```
+git push origin master
+```
+3. Run the build and deploy scripts.
+```
+npm run build
+```
+```
+npm run deploy
+```
