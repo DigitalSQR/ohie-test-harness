@@ -327,8 +327,10 @@ Run this command for permission update:
     ```
     - To generate a password hash, use the [bcrypt online tool](https://bcrypt.online/?plain_text=password&cost_factor=10). 
 - Save the `V1619588874192__create_super_user.sql` file after making the updates.
-
-
+ - **Warning:** If the application was previously built and running,  <span style={{ color: 'red' }}>to change the default username/password database refresh is required.</span> Run the following command to clean the database:
+   ```bash
+   sudo docker-compose down -v
+   ```
 
 9. Run the following command to build the docker:
    ```
