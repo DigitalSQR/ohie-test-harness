@@ -202,16 +202,136 @@ Run this command for permission update:
     ```
 	  WS_BASE_URL=wss://example.org
 	```
+6. For updating Google OAuth2 Credentials
+    - Open the configuration file this file is located in project directory under `src/main/resources/application.yml`.
+     - Find and replace the section in the configuration file that looks like this:
 
-6. Run the following command to build the docker:
+     ```yaml
+     security:
+       oauth2:
+         client:
+           registration:
+             google:
+               clientId: {Your-Client-Id}
+               clientSecret: {Your-Client-Secret}
+     ```
+     - For example If your new `clientId` is `1234567890-abcxyz.apps.googleusercontent.com` and your new `clientSecret` is `abcdefg1234567`, you would update it as follows:
+      ```yaml
+     security:
+       oauth2:
+         client:
+           registration:
+             google:
+               clientId: 1234567890-abcxyz.apps.googleusercontent.com
+               clientSecret: abcdefg1234567
+     ```
+     - Ensure you save your changes to the configuration file and close it.
+7. For configuring Mail Sender Credentials
+- Open the configuration file this file is located in project directory under `src/main/resources/application.yml`.
+- Find and replace the section in the configuration file that looks like this:
+     ```yaml
+     mailSender:
+       username: {Your-Username}
+       password: {Your-Password}
+       host: "smtp.gmail.com"
+       port: 587
+     ```
+- For example If your new `username` is `user@example.com` and your new `password` is `newpassword123`, you would update it as follows:
+    ```yaml
+    mailSender:
+    username: "user@example.com"
+    password: "newpassword123"
+    host: "smtp.gmail.com"
+    port: 587
+    ```
+- Ensure you save your changes to the configuration file and close it.
+
+8. Updating Email and Password in SQL Migration File
+- Open the `V1619588874192__create_super_user.sql` file. This file is located in the `resources/db.migration` directory of your project.
+- For `tht_user` table locate the following lines where the email and password are defined:
+     ```sql
+       INSERT INTO tht_user (id,
+                             email,
+                             name,
+                             company_name,
+                             state,
+                             password,
+                             created_by,
+                             updated_by,
+                             created_at,
+                             updated_at,
+                             version)
+       VALUES ('SYSTEM_USER',
+               {Your-Email},  -- Line X
+               'Testing Harness Tool',
+               'Argusoft.Path',
+               'user.status.active',
+               {Your-Hash-Password},  -- Line Y
+               'SYSTEM_USER',
+               'SYSTEM_USER',
+               Now(),
+               Now(),
+               0);
+    ```
+    - Replace `{Your-Email}` (Line X) with your new email address.  For Example:
+    ```sql
+       'your.email@example.com'
+    ```
+    - Replace `{Your-Password}` (Line Y) with your new password hash. For example:
+    ```sql
+       '$2a$10$abcdefghij1234567890klmnopqrstuvwxYz0123456789ABCDE'
+    ```
+    - To generate a password hash, use the [bcrypt online tool](https://bcrypt.online/?plain_text=password&cost_factor=10). 
+
+- For `tht_user_aud` table locate the following lines where the email and password are defined:
+    ```sql
+       INSERT INTO tht_user_aud(id,
+                                rev,
+                                revtype,
+                                email,
+                                name,
+                                state,
+                                password,
+                                created_by,
+                                updated_by,
+                                created_at,
+                                updated_at,
+                                version)
+       VALUES ('SYSTEM_USER',
+               1,
+               0,
+               '{Your-Email}',  -- Line Z
+               'Testing Harness Tool',
+               'user.status.active',
+               '{Your-Hash-Password}',  -- Line A
+               'SYSTEM_USER',
+               'SYSTEM_USER',
+               Now(),
+               Now(),
+               0);
+    ```
+    - Replace `{Your-Email}` (Line Z) with your new email address. For example:
+    ```sql
+       'your.email@example.com'
+    ```
+     - Replace `{Your-Password}` (Line A) with your new password hash. For example:
+     ```sql
+       '$2a$10$abcdefghij1234567890klmnopqrstuvwxYOUR_HASH'
+    ```
+    - To generate a password hash, use the [bcrypt online tool](https://bcrypt.online/?plain_text=password&cost_factor=10). 
+- Save the `V1619588874192__create_super_user.sql` file after making the updates.
+
+
+
+9. Run the following command to build the docker:
    ```
     sudo docker-compose build
     ```
-7. Run the following command to run docker:
-   ```
+10. Run the following command to run docker:
+```
     sudo docker-compose up
-    ```
-8. **NOTE:** Replace docker-compose with docker compose if the Ubuntu version is newer then 20.04.2 LTS
+```
+11. **NOTE:** Replace docker-compose with docker compose if the Ubuntu version is newer then 20.04.2 LTS
 #### 2: Docker Rerun Commands
 1. Navigate to the project directory.(The extracted folder of the GitHub zip file)
 2. Run the following command docker down
