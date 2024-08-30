@@ -36,8 +36,8 @@ public class CaptchaServiceImpl implements CaptchaService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CaptchaServiceImpl.class);
 
-    @Value("${encryption.key}")
-    private String key;
+//    @Value("${encryption.key}")
+    private String key = "3a985da74fe225d6c9a29e5a9e4c1b93";
 
     @Override
     public CaptchaInfo createCaptcha(ContextInfo contextInfo) throws Exception {

@@ -1,0 +1,128 @@
+version: '3.9'
+
+# These volumes record all persistent data for the Test Bed instance.
+volumes:
+  gitb-repo:
+  gitb-dbdata:
+  tht-postgressql-data:
+
+services:
+  #
+  # Test Bed core components - START.
+  #
+  gitb-redis:
+    # Internal component used to store users' UI sessions.
+    image: redis:7.0.14
+    restart: unless-stopped
+  gitb-mysql:
+    # The Test Bed's DB. 
+    image: isaitb/gitb-mysql:latest
+    restart: unless-stopped
+    volumes:
+      - gitb-dbdata:/var/lib/mysql
+    # We use a healthcheck to make sure the DB is up and running before we try to connect to it (this could
+    # take a few seconds after the container is up and running). 
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --execute \"SHOW DATABASES;\""
+      interval: 3s
+      retries: 10
+  gitb-srv:
+    # The test engine that executes the test sessions.
+    # Note that this (and the gitb-ui container) point to the "nightly" tag which receives updates based on our
+    # development branch. In production this would be "latest" or a fixed release tag.
+    image: isaitb/gitb-srv:nightly
+    restart: unless-stopped
+    environment:
+      # This is used to define how external services (the fhir-test-services component) will make callbacks on the 
+      # test engine. The address here must be what the fhir-test-services component should use for the calls.
+      # If you deploy the fhir-test-services outside the docker-compose service you would need to adapt this. For
+      # example you would add a port mapping for port 8080 (this is currently not mapped to the host) and then
+      # refer to an address such as "localhost".
+      - gitb.messaging.callbackURL=http://gitb-srv:8080/itbsrv/MessagingClient
+  gitb-ui:
+    # The Test Bed's UI.
+    image: isaitb/gitb-ui:nightly
+    restart: unless-stopped
+    # This is the only Test Bed component for which we currently add a host port mapping. If port 9000 on your
+    # host is taken just replace "9000:9000" with say "9001:9000".
+    ports:
+      - ${GITB_UI_PORT}:9000
+    environment:
+      # This is the key to decrypt the initialisation data archive (see below).
+      - DATA_ARCHIVE_KEY=fhir
+      # Flag to enable the Test Bed's REST API. This can be very useful for efficient test case development.
+      - AUTOMATION_API_ENABLED=true
+      # Activate the generic GITB theme.
+      - THEME=fhir
+    volumes:
+      - gitb-repo:/gitb-repository
+      # This points to the folder from which the initialisation data archive specific to the PoC will be loaded from.
+      - ./config/data/:/gitb-repository/data/in/:rw      
+    depends_on:
+      gitb-redis:
+        condition: service_started
+      gitb-mysql:
+        condition: service_healthy
+      gitb-srv:
+        condition: service_started
+  #
+  # Test Bed core components - END.
+  #
+  fhir-test-services:
+    # The fhir-test-services component are the extension services supporting our test cases. Note how we have a "build" definition
+    # here as we will build the component from the sources provided in directory "./fhir-test-services".
+    # For the endpoints exposed by this service check thge project's README.
+    build:
+      context: ./gitb-prerequisite/fhir-test-services
+    restart: unless-stopped
+    ports:
+      - ${HANDLER_PORT}:8181
+  tht-postgressql:
+    # The Test Bed's DB. 
+    image: postgres
+    restart: unless-stopped
+    volumes:
+      - tht-postgressql-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ExampleName
+      POSTGRES_USER: ExampleUser
+      POSTGRES_PASSWORD: ExamplePassword
+    ports:
+      - ${POSTGRES_PORT}:5432
+  tht-backend:
+    build:
+      context: ./tht-backend
+      args:
+        PROFILE: ${BACKEND_PROFILE}
+    restart: unless-stopped
+    ports:
+      - ${BACKEND_PORT}:8081
+    depends_on:
+      tht-postgressql:
+        condition: service_started
+    volumes:
+      - ${FILES_PATH}:/srv/tht/files:rw
+    environment:
+      - SERVER_PORT=8081 
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://tht-postgressql:5432/ExampleName
+      - SPRING_DATASOURCE_USERNAME=ExampleUser
+      - SPRING_DATASOURCE_PASSWORD=ExamplePassword
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      - testbed_url=http://gitb-ui:9000/
+      - base-url=${BASE_URL}
+  tht-frontend:
+    build:
+      context: ./tht-frontend
+      args:
+        REACT_APP_HOST: ${BASE_URL}/api
+        REACT_APP_WEB_SOCKET_URL: ${WS_BASE_URL}/api/socket
+    restart: unless-stopped
+    ports:
+      - ${UI_PORT}:3000
+  nginx:
+    image: nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/nginx-tht.conf:ro
+    ports:
+      - ${NGINX_PORT}:8080

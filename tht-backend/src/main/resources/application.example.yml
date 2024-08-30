@@ -1,7 +1,7 @@
 # ===============================
 # ALL PROFILES
 # ===============================
-base-url: {Base-Url}
+base-url: https://example.org
 spring:
   cache:
     jcache:
@@ -15,9 +15,9 @@ spring:
   main:
     allow-circular-references: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/{Database-Name}
-    username: {Database-User}
-    password: {Database-Password}
+    url: jdbc:postgresql://localhost:5432/ExampleDBname
+    username: ExampleUsername
+    password: ExamplePassword
   jpa:
     properties:
       org.hibernate.envers.default_revision_entity_name: "CustomRevisionEntity"
@@ -96,8 +96,8 @@ frontend:
   google.success: /google/success
 
 mailSender:
-  username: "example@gmail.com"
-  password: "password"
+  username: "user@example.com"
+  password: "newpassword123"
   host: "smtp.gmail.com"
   port: 587
 
