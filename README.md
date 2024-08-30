@@ -110,6 +110,8 @@ Run this command for permission update:
         CGroup: /system.slice/docker.service
                 └─24321 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
     ```
+
+
 ### [Docker Guide](#docker-guide)
 
 #### Step 1: Directory Modifications and Initial Zip File Movement
@@ -128,7 +130,8 @@ Run this command for permission update:
 
 1. Navigate to the project directory (the extracted folder of the GitHub zip file).
 
-2. Update `ohie-test-harness/.env`
+2. Update `ohie-test-harness/.env`, you can refer to this two files: `ohie-test-harness/template.env` and `ohie-test-harness/example.env`.
+    You can use the `template.env` file to make changes to the `.env` file, and check how it should look by referencing the `example.env` file. Otherwise, you can follow the below steps:
 
 	- Open the `ohie-test-harness/.env` file.
 	- Add or update the following lines:
@@ -145,7 +148,9 @@ Run this command for permission update:
 	WS_BASE_URL=wss://example.org
 	```
 
-3. Update `ohie-test-harness/docker-compose.yml`
+3. Update `ohie-test-harness/docker-compose.yml`, you can refer to this two files: `ohie-test-harness/docker-compose-template.yml` and `ohie-test-harness/docker-compose-example.yml`.
+    You can use the `docker-compose-template.yml` file to make changes to the `docker-compose.yml` file, and check how it should look by referencing the `docker-compose-example.yml` file. Otherwise, you can follow the below steps:
+
 	
 	- Open the `ohie-test-harness/docker-compose.yml` file.
 	- Under the `tht-postgressql` section, add the environment variables:
@@ -167,8 +172,9 @@ Run this command for permission update:
 	      - SPRING_DATASOURCE_PASSWORD={Database-Password}
     ```      
 	- Replace `{Database-Name}`, `{Database-User}`, and `{Database-Password}` with the provided credentials.
-
-4. Update `ohie-test-harness/tht-backend/src/main/resources/application.yml`
+   
+4. Update `ohie-test-harness/tht-backend/src/main/resources/application.yml`, , you can refer to this two files: `ohie-test-harness/tht-backend/src/main/resources/application.template.yml` and `ohie-test-harness/ohie-test-harness/tht-backend/src/main/resources/application.example.yml`.
+    You can use the `application.template.yml` file to make changes to the `docker-compose.yml` file, and check how it should look by referencing the `application.example.yml` file. Oherwise, you can follow the below steps:
 	
 	- Open the `ohie-test-harness/tht-backend/src/main/resources/application.yml` file.
 	- Update the `datasource` section as follows:
@@ -185,24 +191,10 @@ Run this command for permission update:
 	BASE_URL=https://example.org
 	```
 	- Replace `{Database-Name}`, `{Database-User}`, and `{Database-Password}` with the provided credentials.
-      
-5. Update `ohie-test-harness/tht-frontend/.env.production`
+    
+5. For updating Google OAuth2 Credentials, you can refer to this two files: `ohie-test-harness/tht-backend/src/main/resources/application.template.yml` and `ohie-test-harness/ohie-test-harness/tht-backend/src/main/resources/application.example.yml`.
+    You can use the `application.template.yml` file to make changes to the `docker-compose.yml` file, and check how it should look by referencing the `application.example.yml` file. Ohterwise you can follow the below steps:
 
-	- Open the `ohie-test-harness/tht-frontend/.env.production` file.
-	- Add or update the following lines:
-    ```
-	REACT_APP_HOST={Base-Url}
-	REACT_APP_WEB_SOCKET_URL={WS-Base-Url}
-    ```    
-	- Replace `{Base-Url}` with the provided React app host URL. For example:
-    ```
-	  BASE_URL=https://example.org
-	```
-	- Replace `{WS-Base-Url}` with the provided React app WebSocket URL. For example:
-    ```
-	  WS_BASE_URL=wss://example.org
-	```
-6. For updating Google OAuth2 Credentials
     - Open the configuration file this file is located in project directory under `src/main/resources/application.yml`.
      - Find and replace the section in the configuration file that looks like this:
 
@@ -216,6 +208,7 @@ Run this command for permission update:
                clientSecret: {Your-Client-Secret}
      ```
      - For example If your new `clientId` is `1234567890-abcxyz.apps.googleusercontent.com` and your new `clientSecret` is `abcdefg1234567`, you would update it as follows:
+      - To set up Google OAuth2 credentials, follow the official [Google OAuth 2.0 setup guide](https://support.google.com/cloud/answer/6158849?hl=en).
       ```yaml
      security:
        oauth2:
@@ -226,7 +219,10 @@ Run this command for permission update:
                clientSecret: abcdefg1234567
      ```
      - Ensure you save your changes to the configuration file and close it.
-7. For configuring Mail Sender Credentials
+    
+6. For configuring Mail Sender Credentials, you can refer to this two files: `ohie-test-harness/tht-backend/src/main/resources/application.template.yml` and `ohie-test-harness/ohie-test-harness/tht-backend/src/main/resources/application.example.yml`.
+    You can use the `application.template.yml` file to make changes to the `docker-compose.yml` file, and check how it should look by referencing the `application.example.yml` file. Otherwise, you can follow the below steps:
+
 - Open the configuration file this file is located in project directory under `src/main/resources/application.yml`.
 - Find and replace the section in the configuration file that looks like this:
      ```yaml
@@ -246,6 +242,24 @@ Run this command for permission update:
     ```
 - Ensure you save your changes to the configuration file and close it.
 
+7. Update `ohie-test-harness/tht-frontend/.env.production` you can refer to this two files: `ohie-test-harness/tht-frontend/.env.template.production` and `ohie-test-harness/tht-frontend/.env.example.production`.
+    You can use the `.env.template.production` file to make changes to the `.env.production` file, and check how it should look by referencing the `.env.example.production` file. Otherwise, you can follow the below steps:
+
+
+	- Open the `ohie-test-harness/tht-frontend/.env.production` file.
+	- Add or update the following lines:
+    ```
+	REACT_APP_HOST= {Base-Url}/api
+	REACT_APP_WEB_SOCKET_URL= {WS-Base-Url}/api/socket
+    ```    
+	- Replace `{Base-Url}` with the provided React app host URL. For example:
+    ```
+	  REACT_APP_HOST= https://example.org/api
+	```
+	- Replace `{WS-Base-Url}` with the provided React app WebSocket URL. For example:
+    ```
+	  REACT_APP_WEB_SOCKET_URL= wss://example.org/api/socket
+	```
 8. Updating Email and Password in SQL Migration File
 - Open the `V1619588874192__create_super_user.sql` file. This file is located in the `resources/db.migration` directory of your project.
 - For `tht_user` table locate the following lines where the email and password are defined:
@@ -320,13 +334,10 @@ Run this command for permission update:
     ```
     - To generate a password hash, use the [bcrypt online tool](https://bcrypt.online/?plain_text=password&cost_factor=10). 
 - Save the `V1619588874192__create_super_user.sql` file after making the updates.
-- Run the database migration tool to apply the changes.
-
- **Warning:** If the application was previously built and running,  <span style="color:red;">to change the default username/password database refresh is required.</span> Run the following command to clean the database:
+ - **Warning:** If the application was previously built and running,  <span style={{ color: 'red' }}>to change the default username/password database refresh is required.</span> Run the following command to clean the database:
    ```bash
    sudo docker-compose down -v
    ```
-
 
 9. Run the following command to build the docker:
    ```
