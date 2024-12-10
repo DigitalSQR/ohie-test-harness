@@ -1,8 +1,10 @@
+import { compose } from "redux";
 import { paramSerialize } from "../utils/utils";
 import api from "./configs/axiosConfigs";
 
 export const TestRequestAPI = {
   createTestRequest: async function (data) {
+    console.log(data);
     const response = await api.request({
       url: `/test-request`,
       method: "POST",

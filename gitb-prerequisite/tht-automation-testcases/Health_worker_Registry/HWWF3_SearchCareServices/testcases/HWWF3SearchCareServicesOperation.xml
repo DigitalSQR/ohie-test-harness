@@ -21,6 +21,10 @@
         <var name="componentURI" type="string"/>
         <var name="username" type="string"/>
         <var name="password" type="string"/>
+        <var name="loginUrl" type="string"/>
+        <var name="loginType" type="string"/>
+        <var name="clientSecret" type="string"/>
+        <var name="clientId" type="string"/>
     </variables>
     <actors>
         <gitb:actor id="ITB" name="ITB" role="SUT"/>
@@ -37,6 +41,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitionerToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -53,6 +61,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitionerToCreate{convertedBody}</input>
         </send>
@@ -77,6 +89,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"getById"</input>
             <input name="fhirResourceType">"Practitioner"</input>
             <input name="fhirResourceId">$practitionerId</input>
@@ -98,6 +114,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"search"</input>
             <input name="fhirResourceType">$resourceType</input>
             <input name="parameters">"_id=" || $createdPractitioner{response}{body}{id}</input>
@@ -127,6 +147,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$locationToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -143,6 +167,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$locationToCreate{convertedBody}</input>
         </send>
@@ -161,6 +189,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"getById"</input>
             <input name="fhirResourceType">"Location"</input>
             <input name="fhirResourceId">$locationId</input>
@@ -181,6 +213,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"search"</input>
             <input name="fhirResourceType">"Location"</input>
             <input name="parameters">"_id=" || $createdLocation{response}{body}{id}</input>
@@ -210,6 +246,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$healthcareServiceToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -226,6 +266,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$healthcareServiceToCreate{convertedBody}</input>
         </send>
@@ -244,6 +288,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"getById"</input>
             <input name="fhirResourceType">"HealthcareService"</input>
             <input name="fhirResourceId">$healthcareServiceId</input>
@@ -264,6 +312,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"search"</input>
             <input name="fhirResourceType">"HealthcareService"</input>
             <input name="parameters">"_id=" || $createdHealthcareService{response}{body}{id}</input>
@@ -294,6 +346,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitionerRoleToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -323,6 +379,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitionerRoleWithPractitioner{convertedBody}</input>
         </send>
@@ -346,6 +406,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"getById"</input>
             <input name="fhirResourceType">"PractitionerRole"</input>
             <input name="fhirResourceId">$createdPractitionerRole{response}{body}{id}</input>
@@ -363,6 +427,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"search"</input>
             <input name="fhirResourceType">"PractitionerRole"</input>
             <input name="parameters">"_id="||$createdPractitionerRole{response}{body}{id}</input>

@@ -17,6 +17,10 @@
         <var name="componentURI" type="string"/>
         <var name="username" type="string"/>
         <var name="password" type="string"/>
+        <var name="loginUrl" type="string"/>
+        <var name="loginType" type="string"/>
+        <var name="clientSecret" type="string"/>
+        <var name="clientId" type="string"/>
     </variables>
     <actors>
 		<gitb:actor id="ITB" name="ITB" role="SUT"/>
@@ -154,6 +158,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$patientToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -170,6 +178,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$patientToCreate{convertedBody}</input>
         </send>
@@ -192,6 +204,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitionerToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -208,6 +224,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitionerToCreate{convertedBody}</input>
         </send>
@@ -230,6 +250,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$organizationToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -246,6 +270,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$organizationToCreate{convertedBody}</input>
         </send>
@@ -268,6 +296,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$compositionToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -288,6 +320,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$compositionToCreate{convertedBody}</input>
         </send>
@@ -310,6 +346,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"search"</input>
             <input name="fhirResourceType">'Composition'</input>
             <input name="parameters">"_id=" || $createdComposition{response}{body}{id}</input>

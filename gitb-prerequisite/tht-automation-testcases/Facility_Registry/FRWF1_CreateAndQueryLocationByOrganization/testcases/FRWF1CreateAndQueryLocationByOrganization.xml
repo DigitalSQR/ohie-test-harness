@@ -15,6 +15,10 @@
         <var name="componentURI" type="string"/>
         <var name="username" type="string"/>
         <var name="password" type="string"/>
+        <var name="loginUrl" type="string"/>
+        <var name="loginType" type="string"/>
+        <var name="clientSecret" type="string"/>
+        <var name="clientId" type="string"/>
     </variables>
     <actors>
 		<gitb:actor id="ITB" name="ITB" role="SUT"/>
@@ -31,6 +35,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$organizationToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -47,6 +55,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$organizationToCreate{convertedBody}</input>
         </send>
@@ -68,6 +80,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$locationToCreateInJsonString</input>
              <input name="id">$createdOrganization{response}{body}{id}</input>
@@ -88,6 +104,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$locationToCreate{convertedBody}</input>
         </send>
@@ -115,6 +135,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"search"</input>
             <input name="fhirResourceType">$resourceType</input>
             <input name="parameters">"name=Health%20Level%20Seven%20International&amp;_id=" || $createdOrganization{response}{body}{id}</input>
@@ -140,6 +164,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"search"</input>
             <input name="fhirResourceType">$resourceType2</input>
             <input name="parameters">"name=South%20Wing,%20second%20floor&amp;_id=" || $createdLocation{response}{body}{id}</input>

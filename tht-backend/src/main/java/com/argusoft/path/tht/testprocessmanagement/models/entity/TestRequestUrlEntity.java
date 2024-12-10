@@ -28,12 +28,24 @@ public class TestRequestUrlEntity {
     @Column(name = "fhir_api_base_url")
     private String fhirApiBaseUrl;
 
+    //TODO:Add LoginType String column (Basic username passowrd, OAuth2)
+    //username password -> username, password
+    //OAuth2 -> username, password, clientSecret, clientId, Login URL
+
+    @Column(name = "loginType")
+    private String loginType;
     @Column(name = "username")
     private String username;
-
     @Column(name = "password")
     private String password;
 
+    @Column(name = "clientId")
+    private String clientId;
+    @Column(name = "clientSecret")
+    private String clientSecret;
+
+    @Column(name = "loginUrl")
+    private String loginUrl;
     @Column(name = "fhir_version")
     private String fhirVersion;
 
@@ -50,8 +62,12 @@ public class TestRequestUrlEntity {
                 "testRequestId='" + testRequestId + '\'' +
                 ", component=" + component +
                 ", fhirApiBaseUrl='" + fhirApiBaseUrl + '\'' +
+                ", loginType='" + loginType + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", clientSecret='" + clientSecret + '\'' +
+                ", loginUrl='" + loginUrl + '\'' +
                 ", fhirVersion='" + fhirVersion + '\'' +
                 ", websiteUIBaseUrl='" + websiteUIBaseUrl + '\'' +
                 '}';
@@ -67,6 +83,10 @@ public class TestRequestUrlEntity {
         this.setPassword(testRequestUrlEntity.getPassword());
         this.setFhirVersion(testRequestUrlEntity.getFhirVersion());
         this.setWebsiteUIBaseUrl(testRequestUrlEntity.getWebsiteUIBaseUrl());
+        this.setClientId(testRequestUrlEntity.getClientId());
+        this.setClientSecret(testRequestUrlEntity.getClientSecret());
+        this.setLoginUrl(testRequestUrlEntity.getLoginUrl());
+        this.setLoginType(testRequestUrlEntity.getLoginType());
     }
 
     public String getTestRequestId() {
@@ -97,6 +117,14 @@ public class TestRequestUrlEntity {
         return username;
     }
 
+    public String getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(String loginType) {
+        this.loginType = loginType;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -123,5 +151,29 @@ public class TestRequestUrlEntity {
 
     public void setWebsiteUIBaseUrl(String websiteUIBaseUrl) {
         this.websiteUIBaseUrl = websiteUIBaseUrl;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
     }
 }
