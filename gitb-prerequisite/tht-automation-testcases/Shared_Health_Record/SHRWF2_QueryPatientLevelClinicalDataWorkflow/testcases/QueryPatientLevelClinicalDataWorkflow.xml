@@ -432,7 +432,7 @@
 
                         <send id="searchedDocumentReferenceById" desc="search for document reference based on Id" from="ITB" to="FhirHandler"
                             handler="$DOMAIN{fhirContextServiceAddress}">
-                            <input name="fhirServerBaseUrl">$componentURI<input>
+                            <input name="fhirServerBaseUrl">$componentURI</input>
                                         <input name="username">$username</input>
             <input name="password">$password</input>
             <input name="loginUrl">$loginUrl</input>
@@ -440,7 +440,7 @@
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
                             <input name="operationType">"search"</input>
-                            <input  name="fhirResourceType">'DocumentReference'<input>
+                            <input  name="fhirResourceType">'DocumentReference'</input>
                             <input name="parameters">'_id='||$searchedDocumentReference{response}{body}{entry}{$index}{resource}{id} </input>
                         </send>
 

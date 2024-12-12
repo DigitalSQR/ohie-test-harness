@@ -19,7 +19,6 @@
         <var name="clientSecret" type="string"/>
         <var name="clientId" type="string"/>
     </variables>
-    </variables>
     <actors>
 		<gitb:actor id="ITB" name="ITB" role="SUT"/>
 		<gitb:actor id="FhirHandler" name="FhirHandlers" role="SIMULATED"/>
