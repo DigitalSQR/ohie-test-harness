@@ -148,7 +148,7 @@ public class FhirContextServiceImpl implements MessagingService {
 
         if(loginType.equals(LoginTypesConstants.BASIC_AUTHENTICATION)){
             //IF basic username password
-            var userName = utils.getRequiredString(sendRequest.getInput(), "userName");
+            var userName = utils.getRequiredString(sendRequest.getInput(), "username");
 
             var password = utils.getRequiredString(sendRequest.getInput(), "password");
 
@@ -156,7 +156,7 @@ public class FhirContextServiceImpl implements MessagingService {
         }
         else if(loginType.equals(LoginTypesConstants.O_AUTHENTICATION)) {
             //IF OAUTH2 username password
-            var userName = utils.getRequiredString(sendRequest.getInput(), "userName");
+            var userName = utils.getRequiredString(sendRequest.getInput(), "username");
 
             var password = utils.getRequiredString(sendRequest.getInput(), "password");
 
