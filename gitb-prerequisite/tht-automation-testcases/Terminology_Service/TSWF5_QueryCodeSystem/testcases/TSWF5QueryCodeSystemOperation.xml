@@ -15,6 +15,10 @@
         <var name="componentURI" type="string"/>
         <var name="username" type="string"/>
         <var name="password" type="string"/>
+        <var name="loginUrl" type="string"/>
+        <var name="loginType" type="string"/>
+        <var name="clientSecret" type="string"/>
+        <var name="clientId" type="string"/>
     </variables>
     <actors>
 		<gitb:actor id="ITB" name="ITB" role="SUT"/>
@@ -30,6 +34,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$codeSystemToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -45,6 +53,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$codeSystemToCreate{convertedBody}</input>
         </send>
@@ -66,6 +78,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$codeSystem2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -81,6 +97,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"create"</input>
             <input name="body">$codeSystem2ToCreate{convertedBody}</input>
         </send>
@@ -103,6 +123,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="fhirResourceType">'CodeSystem'</input>
             <input name="operationType">"search"</input>
             <input name="parameters">"publisher=HL7%20International%20%2F%20Terminology%20Infrastructure"</input>
@@ -152,6 +176,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"getById"</input>
             <input name="fhirResourceType">$resourceType</input>
             <input name="fhirResourceId">$createdCodeSystem2{response}{body}{id}</input>
@@ -175,6 +203,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="fhirResourceType">'CodeSystem'</input>
             <input name="operationType">"search"</input>
             <input name="parameters">"code=chol-mmol&amp;_id=" || $createdCodeSystem2{response}{body}{id}</input>
@@ -197,6 +229,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"delete"</input>
             <input name="fhirResourceType">$resourceType</input>
             <input name="fhirResourceId">$createdCodeSystem{response}{body}{id}</input>
@@ -211,6 +247,10 @@
             <input name="fhirServerBaseUrl">$componentURI</input>
             <input name="username">$username</input>
             <input name="password">$password</input>
+            <input name="loginUrl">$loginUrl</input>
+            <input name="loginType">$loginType</input>
+            <input name="clientSecret">$clientSecret</input>
+            <input name="clientId">$clientId</input>
             <input name="operationType">"delete"</input>
             <input name="fhirResourceType">$resourceType</input>
             <input name="fhirResourceId">$createdCodeSystem2{response}{body}{id}</input>

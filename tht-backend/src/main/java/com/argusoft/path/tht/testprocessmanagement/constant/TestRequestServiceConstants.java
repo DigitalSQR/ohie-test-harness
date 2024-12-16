@@ -22,6 +22,8 @@ public class TestRequestServiceConstants {
     public static final String TEST_REQUEST_STATUS_FINISHED = "test.request.status.finished";
     public static final String TEST_REQUEST_STATUS_SKIPPED = "test.request.status.skipped";
     public static final String TEST_REQUEST_STATUS_PUBLISHED= "test.request.status.published";
+    public static final String BASIC_AUTHENTICATION = "auth.BasicAuth";
+    public static final String O_AUTHENTICATION = "auth.OAuth";
     public static final Multimap<String, String> TEST_REQUEST_STATUS_MAP = ArrayListMultimap.create();
     public static final List<String> TEST_REQUEST_STATUS = List.of(
             TEST_REQUEST_STATUS_PENDING,
