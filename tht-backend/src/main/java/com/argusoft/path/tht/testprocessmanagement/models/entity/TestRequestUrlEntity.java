@@ -52,6 +52,12 @@ public class TestRequestUrlEntity {
     @Column(name = "website_ui_base_url")
     private String websiteUIBaseUrl;
 
+    @Column(name = "request_param_name")
+    private String headerParamName;
+
+    @Column(name = "request_param_value")
+    private String headerParamValue;
+
     public TestRequestUrlEntity() {
 
     }
@@ -70,6 +76,8 @@ public class TestRequestUrlEntity {
                 ", loginUrl='" + loginUrl + '\'' +
                 ", fhirVersion='" + fhirVersion + '\'' +
                 ", websiteUIBaseUrl='" + websiteUIBaseUrl + '\'' +
+                ", headerParamName='" + headerParamName + '\'' +
+                ", headerParamValue='" + headerParamValue + '\'' +
                 '}';
     }
 
@@ -87,6 +95,14 @@ public class TestRequestUrlEntity {
         this.setClientSecret(testRequestUrlEntity.getClientSecret());
         this.setLoginUrl(testRequestUrlEntity.getLoginUrl());
         this.setLoginType(testRequestUrlEntity.getLoginType());
+
+        if(testRequestUrlEntity.getHeaderParamName() != null){
+            this.setHeaderParamName(testRequestUrlEntity.getHeaderParamName());
+        }
+
+        if(testRequestUrlEntity.getHeaderParamValue() != null){
+            this.setHeaderParamValue(testRequestUrlEntity.getHeaderParamValue());
+        }
     }
 
     public String getTestRequestId() {
@@ -175,5 +191,21 @@ public class TestRequestUrlEntity {
 
     public void setLoginUrl(String loginUrl) {
         this.loginUrl = loginUrl;
+    }
+
+    public String getHeaderParamName() {
+        return headerParamName;
+    }
+
+    public void setHeaderParamName(String headerParamName) {
+        this.headerParamName = headerParamName;
+    }
+
+    public String getHeaderParamValue() {
+        return headerParamValue;
+    }
+
+    public void setHeaderParamValue(String headerParamValue) {
+        this.headerParamValue = headerParamValue;
     }
 }

@@ -24,6 +24,7 @@ public class TestRequestServiceConstants {
     public static final String TEST_REQUEST_STATUS_PUBLISHED= "test.request.status.published";
     public static final String BASIC_AUTHENTICATION = "auth.BasicAuth";
     public static final String O_AUTHENTICATION = "auth.OAuth";
+    public static final String HEADER_PARAM_AUTHENTICATION = "auth.HeaderParamAuth";
     public static final Multimap<String, String> TEST_REQUEST_STATUS_MAP = ArrayListMultimap.create();
     public static final List<String> TEST_REQUEST_STATUS = List.of(
             TEST_REQUEST_STATUS_PENDING,

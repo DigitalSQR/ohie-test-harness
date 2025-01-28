@@ -29,6 +29,8 @@
         <var name="loginType" type="string"/>
         <var name="clientSecret" type="string"/>
         <var name="clientId" type="string"/>
+        <var name="headerParamName" type="string"/>
+        <var name="headerParamValue" type="string"/>
     </variables>
     <actors>
 		<gitb:actor id="ITB" name="ITB" role="SUT"/>
@@ -169,6 +171,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$patientToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -189,6 +193,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$patientToCreate{convertedBody}</input>
         </send>
@@ -215,6 +221,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitioner1ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -235,6 +243,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitioner1ToCreate{convertedBody}</input>
         </send>
@@ -261,6 +271,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitioner2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -281,6 +293,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitioner2ToCreate{convertedBody}</input>
         </send>
@@ -307,6 +321,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$organization1ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -327,6 +343,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$organization1ToCreate{convertedBody}</input>
         </send>
@@ -353,6 +371,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$organization2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -373,6 +393,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$organization2ToCreate{convertedBody}</input>
         </send>
@@ -405,6 +427,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$admissionNote1ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -426,6 +450,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$admissionNote1ToCreate{convertedBody}</input>
         </send>
@@ -446,6 +472,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReferenceAdmissionNote1ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -464,6 +492,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReferenceAdmissionNote1ToCreate{convertedBody}</input>
         </send>
@@ -484,6 +514,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$admissionNote2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -505,6 +537,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$admissionNote2ToCreate{convertedBody}</input>
         </send>
@@ -526,6 +560,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReferenceAdmissionNote2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -546,6 +582,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReferenceAdmissionNote2ToCreate{convertedBody}</input>
         </send>
@@ -567,6 +605,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$operativeNote1ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -588,6 +628,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$operativeNote1ToCreate{convertedBody}</input>
         </send>
@@ -609,6 +651,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReferenceOperativeNote1ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -629,6 +673,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReferenceOperativeNote1ToCreate{convertedBody}</input>
         </send>
@@ -650,6 +696,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$operativeNote2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -671,6 +719,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$operativeNote2ToCreate{convertedBody}</input>
         </send>
@@ -692,6 +742,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReferenceOperativeNote2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -712,6 +764,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReferenceOperativeNote2ToCreate{convertedBody}</input>
         </send>
@@ -735,6 +789,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"summary"</input>
             <input name="fhirResourceType">'Patient'</input>
             <input name="fhirResourceId">$createdPatient{response}{body}{id}</input>

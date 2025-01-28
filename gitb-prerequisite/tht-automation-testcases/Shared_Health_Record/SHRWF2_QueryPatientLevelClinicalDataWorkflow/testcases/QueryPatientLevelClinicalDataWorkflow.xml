@@ -22,6 +22,8 @@
         <var name="loginType" type="string"/>
         <var name="clientSecret" type="string"/>
         <var name="clientId" type="string"/>
+        <var name="headerParamName" type="string"/>
+        <var name="headerParamValue" type="string"/>
     </variables>
     <actors>
 		<gitb:actor id="ITB" name="ITB" role="SUT"/>
@@ -160,7 +162,9 @@
             <input name="loginUrl">$loginUrl</input>
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
-            <input name="clientId">$clientId</input> 
+            <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input> 
             <input name="operationType">"create"</input>
             <input name="body">$patientToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -181,6 +185,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$patientToCreate{convertedBody}</input>
         </send>
@@ -207,6 +213,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitioner1ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -229,6 +237,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitioner1ToCreate{convertedBody}</input>
         </send>
@@ -256,6 +266,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitioner2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -279,6 +291,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$practitioner2ToCreate{convertedBody}</input>
         </send>
@@ -306,6 +320,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReference1ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -331,6 +347,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReference1ToCreate{convertedBody}</input>
         </send>
@@ -358,6 +376,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReference2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -383,6 +403,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$documentReference2ToCreate{convertedBody}</input>
         </send>
@@ -411,6 +433,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"search"</input>
             <input name="fhirResourceType">'DocumentReference'</input>
             <input name="parameters">'patient=' ||$createdPatient{response}{body}{id} </input>
@@ -439,6 +463,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
                             <input name="operationType">"search"</input>
                             <input  name="fhirResourceType">'DocumentReference'</input>
                             <input name="parameters">'_id='||$searchedDocumentReference{response}{body}{entry}{$index}{resource}{id} </input>

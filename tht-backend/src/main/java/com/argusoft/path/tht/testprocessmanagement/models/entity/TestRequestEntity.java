@@ -123,6 +123,7 @@ public class TestRequestEntity extends IdStateNameMetaEntity {
     public String toString() {
         return "TestRequestEntity{" +
                 "id=" + getId() +
+                "testRequestUrls= " + testRequestUrls.toString() +
                 '}';
     }
 }

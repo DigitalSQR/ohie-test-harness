@@ -75,10 +75,24 @@ public class TestRequestUrlInfo {
             required = true)
     private String fhirVersion;
 
+    @ApiModelProperty(notes = "The name of the header to be added in the test request url",
+            allowEmptyValue = true,
+            example = "header1",
+            dataType = "String",
+            required = false)
+    private String headerParamName;
+
+    @ApiModelProperty(notes = "The value of the header to be added in the test request url",
+            allowEmptyValue = true,
+            example = "value1",
+            dataType = "String",
+            required = false)
+    private String headerParamValue;
+
     public TestRequestUrlInfo() {
     }
 
-    public TestRequestUrlInfo(String componentId, String loginType, String username, String password, String clientId, String clientSecret, String loginUrl, String fhirApiBaseUrl, String websiteUIBaseUrl, String fhirVersion) {
+    public TestRequestUrlInfo(String componentId, String loginType, String username, String password, String clientId, String clientSecret, String loginUrl, String fhirApiBaseUrl, String websiteUIBaseUrl, String fhirVersion, String headerParamName, String headerParamValue) {
         this.componentId = componentId;
         this.loginType = loginType;
         this.username = username;
@@ -89,6 +103,12 @@ public class TestRequestUrlInfo {
         this.fhirApiBaseUrl = fhirApiBaseUrl;
         this.websiteUIBaseUrl = websiteUIBaseUrl;
         this.fhirVersion = fhirVersion;
+        if(headerParamName != null){
+            this.headerParamName = headerParamName;
+        }
+        if(headerParamValue != null) {
+            this.headerParamValue = headerParamValue;
+        }
     }
 
     public String getComponentId() {
@@ -169,5 +189,39 @@ public class TestRequestUrlInfo {
 
     public void setFhirVersion(String fhirVersion) {
         this.fhirVersion = fhirVersion;
+    }
+
+    public String getHeaderParamName() {
+        return headerParamName;
+    }
+
+    public void setHeaderParamName(String headerParamName) {
+        this.headerParamName = headerParamName;
+    }
+
+    public String getHeaderParamValue() {
+        return headerParamValue;
+    }
+
+    public void setHeaderParamValue(String headerParamValue) {
+        this.headerParamValue = headerParamValue;
+    }
+
+    @Override
+    public String toString() {
+        return "TestRequestUrlInfo{" +
+                "componentId='" + componentId + '\'' +
+                ", loginType='" + loginType + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", clientSecret='" + clientSecret + '\'' +
+                ", loginUrl='" + loginUrl + '\'' +
+                ", fhirApiBaseUrl='" + fhirApiBaseUrl + '\'' +
+                ", websiteUIBaseUrl='" + websiteUIBaseUrl + '\'' +
+                ", fhirVersion='" + fhirVersion + '\'' +
+                ", headerParamName='" + headerParamName + '\'' +
+                ", headerParamValue='" + headerParamValue + '\'' +
+                '}';
     }
 }

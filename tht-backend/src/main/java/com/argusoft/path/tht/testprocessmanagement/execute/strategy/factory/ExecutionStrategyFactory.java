@@ -124,6 +124,8 @@ public class ExecutionStrategyFactory {
             inputParameters.put("loginType",testRequestUrlEntity.getLoginType());
             inputParameters.put("clientId",testRequestUrlEntity.getClientId());
             inputParameters.put("clientSecret",testRequestUrlEntity.getClientSecret());
+            inputParameters.put("headerParamName",testRequestUrlEntity.getHeaderParamName());
+            inputParameters.put("headerParamValue",testRequestUrlEntity.getHeaderParamValue());
         }
         if(!testcaseResultById.getTestRequest().getTestRequestValues().isEmpty()) {
             Set<TestRequestValueEntity> testRequestValues = testcaseResultById.getTestRequest().getTestRequestValues();

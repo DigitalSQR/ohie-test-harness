@@ -146,15 +146,14 @@ public class FhirContextServiceImpl implements MessagingService {
         //Create IGenericClient based on context for the serverBaseURL
         IGenericClient client = context.newRestfulGenericClient(serverBaseURL);
 
-        if(loginType.equals(LoginTypesConstants.BASIC_AUTHENTICATION)){
+        if (loginType.equals(LoginTypesConstants.BASIC_AUTHENTICATION)) {
             //IF basic username password
             var userName = utils.getRequiredString(sendRequest.getInput(), "username");
 
             var password = utils.getRequiredString(sendRequest.getInput(), "password");
 
             client.registerInterceptor(new BasicAuthInterceptor(userName, password));
-        }
-        else if(loginType.equals(LoginTypesConstants.O_AUTHENTICATION)) {
+        } else if (loginType.equals(LoginTypesConstants.O_AUTHENTICATION)) {
             //IF OAUTH2 username password
             var userName = utils.getRequiredString(sendRequest.getInput(), "username");
 
@@ -173,11 +172,27 @@ public class FhirContextServiceImpl implements MessagingService {
                 throw new IllegalArgumentException("Not able to login via given credentials.");
             }
 
+        } else if (loginType.equals(LoginTypesConstants.HEADER_PARAM_AUTHENTICATION)) {
+
+//            var userName = utils.getRequiredString(sendRequest.getInput(), "username");
+//
+//            var password = utils.getRequiredString(sendRequest.getInput(), "password");
+
+            var headerParamName = utils.getRequiredString(sendRequest.getInput(), "headerParamName");
+
+            var headerParamValue = utils.getRequiredString(sendRequest.getInput(), "headerParamValue");
+
+            try {
+                client.registerInterceptor(new CustomHeaderInterceptor(headerParamName, headerParamValue));
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Not able to login via given credentials.");
+            }
+
         }
 
 
         //Adding interceptor to Log details of HTTP requests and responses made by the FHIR client
-        client.registerInterceptor(new LoggingInterceptor());
+        client.registerInterceptor(new LoggingInterceptor(true));
 
         SendResponse response = new SendResponse();
         switch (type) {

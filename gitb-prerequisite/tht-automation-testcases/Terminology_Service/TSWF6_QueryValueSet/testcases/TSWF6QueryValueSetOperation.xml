@@ -19,6 +19,8 @@
         <var name="loginType" type="string"/>
         <var name="clientSecret" type="string"/>
         <var name="clientId" type="string"/>
+        <var name="headerParamName" type="string"/>
+        <var name="headerParamValue" type="string"/>
     </variables>
     <actors>
 		<gitb:actor id="ITB" name="ITB" role="SUT"/>
@@ -39,6 +41,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$valueSetToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -58,6 +62,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$valueSetToCreate{convertedBody}</input>
         </send>
@@ -85,6 +91,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$valueSet2ToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -104,6 +112,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$valueSet2ToCreate{convertedBody}</input>
         </send>
@@ -130,6 +140,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="fhirResourceType">'ValueSet'</input>
             <input name="operationType">"search"</input>
             <input name="parameters">"publisher=Healthcare%20Standards%20Organization"</input>
@@ -183,6 +195,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"getById"</input>
             <input name="fhirResourceType">'ValueSet'</input>
             <input name="fhirResourceId">$createdValueSet2{response}{body}{id}</input>
@@ -210,6 +224,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="fhirResourceType">'ValueSet'</input>
             <input name="operationType">"search"</input>
             <input name="parameters">"code=12345&amp;_id=" || $createdValueSet{response}{body}{id}</input>
@@ -237,6 +253,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"delete"</input>
             <input name="fhirResourceType">'ValueSet'</input>
             <input name="fhirResourceId">$createdValueSet{response}{body}{id}</input>
@@ -255,6 +273,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"delete"</input>
             <input name="fhirResourceType">'ValueSet'</input>
             <input name="fhirResourceId">$createdValueSet2{response}{body}{id}</input>

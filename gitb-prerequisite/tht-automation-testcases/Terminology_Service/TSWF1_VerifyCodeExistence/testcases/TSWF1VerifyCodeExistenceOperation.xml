@@ -18,6 +18,8 @@
         <var name="loginType" type="string"/>
         <var name="clientSecret" type="string"/>
         <var name="clientId" type="string"/>
+        <var name="headerParamName" type="string"/>
+        <var name="headerParamValue" type="string"/>
     </variables>
     <actors>
 		<gitb:actor id="ITB" name="ITB" role="SUT"/>
@@ -38,6 +40,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$codeSystemToCreateInJsonString</input>
             <input name="bodyType">"jsonString"</input>
@@ -57,6 +61,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"create"</input>
             <input name="body">$codeSystemToConvert{convertedBody}</input>
         </send>
@@ -83,6 +89,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="fhirResourceType">$resourceType</input>
             <input name="operationType">"validate-code"</input>
             <input name="parameters.url">$createdCodeSystem{response}{body}{url}</input>
@@ -113,6 +121,8 @@
             <input name="loginType">$loginType</input>
             <input name="clientSecret">$clientSecret</input>
             <input name="clientId">$clientId</input>
+            <input name="headerParamName">$headerParamName</input>
+            <input name="headerParamValue">$headerParamValue</input>
             <input name="operationType">"delete"</input>
             <input name="fhirResourceType">$resourceType</input>
             <input name="fhirResourceId">$createdCodeSystem{response}{body}{id}</input>

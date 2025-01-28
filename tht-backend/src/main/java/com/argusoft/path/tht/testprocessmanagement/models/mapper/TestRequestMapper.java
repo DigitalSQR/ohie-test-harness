@@ -63,7 +63,9 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
                             testRequestUrl.getLoginUrl(),
                             testRequestUrl.getFhirApiBaseUrl(),
                             testRequestUrl.getWebsiteUIBaseUrl(),
-                            testRequestUrl.getFhirVersion());
+                            testRequestUrl.getFhirVersion(),
+                            testRequestUrl.getHeaderParamName(),
+                            testRequestUrl.getHeaderParamValue());
                 })
                 .collect(Collectors.toSet());
     }
@@ -103,6 +105,16 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
                         testRequestUrlEntity.setClientId(testRequestUrl.getClientId());
                         testRequestUrlEntity.setClientSecret(testRequestUrl.getClientSecret());
                         testRequestUrlEntity.setLoginUrl(testRequestUrl.getLoginUrl());
+                    }
+
+                    if(TestRequestServiceConstants.HEADER_PARAM_AUTHENTICATION.equals(testRequestUrl.getLoginType())) {
+                        if(testRequestUrl.getHeaderParamName() == null || testRequestUrl.getHeaderParamValue() == null){
+                            throw new IllegalArgumentException(
+                                    "Header Parameter Name and Header Parameter Value are required for Header Parameter Authentication"
+                            );
+                        }
+                        testRequestUrlEntity.setHeaderParamName(testRequestUrl.getHeaderParamName());
+                        testRequestUrlEntity.setHeaderParamValue(testRequestUrl.getHeaderParamValue());
                     }
 
                     testRequestUrlEntity.setWebsiteUIBaseUrl(testRequestUrl.getWebsiteUIBaseUrl());
