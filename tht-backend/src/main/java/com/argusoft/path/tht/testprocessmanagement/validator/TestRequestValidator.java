@@ -433,15 +433,22 @@ public class TestRequestValidator {
 
             if(!StringUtils.isEmpty(entity.getLoginType())) {
                 if(TestRequestServiceConstants.HEADER_PARAM_AUTHENTICATION.equals(entity.getLoginType())){
+                    //check for header parameter name
                     ValidationUtils.validateRequired(entity.getHeaderParamName(), "headerParamName", errors);
+                    //check for header parameter value
                     ValidationUtils.validateRequired(entity.getHeaderParamValue(), "headerParamValue", errors);
                 }
                 else {
+                    if(TestRequestServiceConstants.O_AUTHENTICATION.equals(entity.getLoginType())){
+                        //check for client Id
+                        ValidationUtils.validateRequired(entity.getClientId(), "clientId", errors);
+                        //check for client secret
+                        ValidationUtils.validateRequired(entity.getClientSecret(), "clientSecret", errors);
+                    }
                     //check for username
                     ValidationUtils.validateRequired(entity.getUsername(), "username", errors);
                     //check for password
-                    ValidationUtils.validateRequired(entity.getPassword(), "password", errors);
-                }
+                    ValidationUtils.validateRequired(entity.getPassword(), "password", errors);}
             }
 
             //check for baseurl
@@ -512,6 +519,22 @@ public class TestRequestValidator {
                                 255,
                                 errors);
             } else {
+                if(TestRequestServiceConstants.O_AUTHENTICATION.equals(entity.getLoginType())) {
+                    //check for client Id
+                    ValidationUtils
+                            .validateLength(entity.getClientId(),
+                                    "clientId",
+                                    0,
+                                    255,
+                                    errors);
+                    //check for client Secret
+                    ValidationUtils
+                            .validateLength(entity.getClientSecret(),
+                                    "clientSecret",
+                                    0,
+                                    255,
+                                    errors);
+                }
                 //check for username
                 ValidationUtils
                         .validateLength(entity.getUsername(),
