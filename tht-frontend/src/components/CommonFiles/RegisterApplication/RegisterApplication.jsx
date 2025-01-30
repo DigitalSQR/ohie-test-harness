@@ -318,6 +318,8 @@ const RegisterApplication = () => {
           password: false,
           fhirApiBaseUrl: false,
           websiteUIBaseUrl: false,
+          headerParamName: false,
+          headerParamValue: false,
           ...touchedFields,
         },
       }));
@@ -332,6 +334,8 @@ const RegisterApplication = () => {
           password: "",
           fhirApiBaseUrl: "",
           websiteUIBaseUrl: "",
+          headerParamName: "",
+          headerParamValue: "",
           componentId: selectedComponent.id,
         },
       ]);

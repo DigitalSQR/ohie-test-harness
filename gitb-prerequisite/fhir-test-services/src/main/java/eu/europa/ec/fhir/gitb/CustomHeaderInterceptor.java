@@ -7,7 +7,6 @@ import ca.uhn.fhir.rest.client.api.IHttpResponse;
 
 import java.io.IOException;
 
-@Interceptor
 public class CustomHeaderInterceptor implements IClientInterceptor {
     private String headerName;
     private String headerValue;
@@ -24,6 +23,5 @@ public class CustomHeaderInterceptor implements IClientInterceptor {
 
     @Override
     public void interceptResponse(IHttpResponse iHttpResponse) throws IOException {
-
     }
 }
