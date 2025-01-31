@@ -41,6 +41,7 @@ const RegisterApplication = () => {
     {}
   );
   const [testRequestValues, setTestRequestValues] = useState([]);
+  const [selectedLoginTypes, setSelectedLoginTypes] = useState([]);
   const [selectedLoginType, setSelectedLoginType] = useState("");
 
   // A custom validation function. This must return an object
@@ -66,7 +67,7 @@ const RegisterApplication = () => {
     values.testRequestUrls.forEach((url, index) => {
       const componentId = modifiedComponentId(url.componentId);
 
-      if (selectedLoginType !== "auth.HeaderParamAuth") {
+      if (selectedLoginTypes[index] !== "auth.HeaderParamAuth") {
         if (!url.username.trim()) {
           errors[`testRequestUrls[${componentId}].username`] =
             "Username is required";
@@ -86,7 +87,7 @@ const RegisterApplication = () => {
 
       //for clientId
 
-      if (!url.clientId.trim() && selectedLoginType == "auth.OAuth") {
+      if (!url.clientId.trim() && selectedLoginTypes[index] == "auth.OAuth") {
         errors[`testRequestUrls[${componentId}].clientId`] =
           "ClientId is required";
       } else if (url.clientId.trim().length > 255) {
@@ -94,7 +95,7 @@ const RegisterApplication = () => {
           "ClientID must have less than 255 characters";
       }
 
-      if (!url.clientSecret.trim() && selectedLoginType == "auth.OAuth") {
+      if (!url.clientSecret.trim() && selectedLoginTypes[index] == "auth.OAuth") {
         errors[`testRequestUrls[${componentId}].clientSecret`] =
           "clientSecret is required";
       } else if (url.clientSecret.trim().length > 255) {
@@ -102,7 +103,7 @@ const RegisterApplication = () => {
           "clientSecret must have less than 255 characters";
       }
 
-      if (!url.loginUrl.trim() && selectedLoginType == "auth.OAuth") {
+      if (!url.loginUrl.trim() && selectedLoginTypes[index] == "auth.OAuth") {
         errors[`testRequestUrls[${componentId}].loginUrl`] =
           "Login URL is required";
       } else if (url.loginUrl.trim().length > 255) {
@@ -121,7 +122,7 @@ const RegisterApplication = () => {
           "fhirApiBaseUrl must have less than 255 characters";
       }
 
-      if (!url.headerParamName.trim() && selectedLoginType == "auth.HeaderParamAuth") {
+      if (!url.headerParamName.trim() && selectedLoginTypes[index] == "auth.HeaderParamAuth") {
         errors[`testRequestUrls[${componentId}].headerParamName`] =
           "Header Parameter Name is required";
       } else if (url.headerParamName.trim().length > 255) {
@@ -129,7 +130,7 @@ const RegisterApplication = () => {
           "Header Parameter Name must have less than 255 characters";
       }
 
-      if (!url.headerParamValue.trim() && selectedLoginType == "auth.HeaderParamAuth") {
+      if (!url.headerParamValue.trim() && selectedLoginTypes[index] == "auth.HeaderParamAuth") {
         errors[`testRequestUrls[${componentId}].headerParamValue`] =
           "Header Parameter Value is required";
       } else if (url.headerParamValue.trim().length > 255) {
@@ -182,38 +183,31 @@ const RegisterApplication = () => {
     validate,
     onSubmit: (initialValues) => {
       let updatedValues;
-      console.log(initialValues);
 
-      if (selectedLoginType === "auth.BasicAuth") {
         updatedValues = {
           ...initialValues,
           assesseeId: userId,
           testRequestUrls: initialValues.testRequestUrls.map(
             (testRequestUrl) => {
-              // Destructure properties to exclude clientId and clientSecret if they exist
-              const { clientId, clientSecret, ...rest } = testRequestUrl;
+              if(testRequestUrl.selectedLoginType === "auth.BasicAuth"){
+                // Destructure properties to exclude clientId and clientSecret if they exist
+                const { clientId, clientSecret, ...rest } = testRequestUrl;
 
-              return {
-                ...rest, // Spread remaining properties
-                ...(clientId && clientSecret ? {} : { clientId, clientSecret }), // Keep clientId & clientSecret if they don't exist together
-                loginType: selectedLoginType, // Add or update loginType property
-              };
+                return {
+                  ...rest, // Spread remaining properties
+                  ...(clientId && clientSecret ? {} : { clientId, clientSecret }), // Keep clientId & clientSecret if they don't exist together
+                  loginType: testRequestUrl.selectedLoginType, // Add or update loginType property
+                };
+              } else {
+                return {
+                  ...testRequestUrl, // Spread existing properties
+                  loginType: testRequestUrl.selectedLoginType, // Add or update the loginType property
+                }
+              }
             }
           ),
         };
-      } else {
-        updatedValues = {
-          ...initialValues,
-          assesseeId: userId,
-          testRequestUrls: initialValues.testRequestUrls.map(
-            (testRequestUrl) => ({
-              ...testRequestUrl, // Spread existing properties
-              loginType: selectedLoginType, // Add or update the loginType property
-            })
-          ),
-        };
-      }
-      console.log(updatedValues);
+      
       // formik.values.assesseeId = userId;
       if (testRequestId) {
         const data = { ...updatedValues, id: testRequestId, meta: meta };
@@ -480,6 +474,16 @@ const RegisterApplication = () => {
       [name]: value,
     }));
   };
+  const updateLoginTypeAtIndex = (index, newValue) => {
+    setSelectedLoginTypes((prev) => {
+      const updatedArray = [...prev]; // Create a new array copy
+      updatedArray[index] = newValue; // Modify the specific index
+      return updatedArray; // Set the new state
+    });
+  };
+  const setLoginType = (url, value) => {
+    url.selectedLoginType = value;
+  }
 
   useEffect(() => {
     if (testRequestId) {
@@ -692,11 +696,12 @@ const RegisterApplication = () => {
                                 <FormControl className="col-12">
                                   <InputLabel>Login Type</InputLabel>
                                   <Select
-                                    value={selectedLoginType}
+                                    // value={selectedLoginType}
+                                    value={selectedLoginTypes[index]}
                                     label="Login Type"
                                     onChange={(e) => {
-                                      setSelectedLoginType(e.target.value);
-                                      console.log(e.target.value);
+                                      updateLoginTypeAtIndex(index, e.target.value);
+                                      setLoginType(url, e.target.value);
                                     }}
                                   >
                                     <MenuItem value={"auth.BasicAuth"}>
@@ -716,10 +721,10 @@ const RegisterApplication = () => {
                                       <></>
                                     )}
                                   </div> */}
-                                {selectedLoginType !== "" && (
+                                {selectedLoginTypes[index] !== "" && (
                                   <div className="row">
                                     <Fragment>
-                                      {selectedLoginType !== "auth.HeaderParamAuth" && (
+                                      {selectedLoginTypes[index] !== "auth.HeaderParamAuth" && (
                                         <Fragment>
                                           <div className="col-12">
                                             {" "}
@@ -939,7 +944,7 @@ const RegisterApplication = () => {
                                           </div>
                                         </Fragment>
                                       )}
-                                      {selectedLoginType === "auth.OAuth" && (
+                                      {selectedLoginTypes[index] === "auth.OAuth" && (
                                         <Fragment>
                                           <div className="col-12">
                                             {" "}
@@ -1261,7 +1266,7 @@ const RegisterApplication = () => {
                                           </div>
                                         </Fragment>
                                       )}
-                                      {selectedLoginType === "auth.HeaderParamAuth" && (
+                                      {selectedLoginTypes[index] === "auth.HeaderParamAuth" && (
                                         <Fragment>
                                           <div className="col-12">
                                             {" "}
