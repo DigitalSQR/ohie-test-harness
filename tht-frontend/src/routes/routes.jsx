@@ -136,7 +136,7 @@ const routesConfig = [
         name: "Applications",
         element: (
           <PrivateRoute
-            roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER, USER_ROLES.ROLE_ID_ASSESSEE]}
+            roles={[USER_ROLES.ROLE_ID_ADMIN, USER_ROLES.ROLE_ID_TESTER]}
             element={Applications}
           />
         ),

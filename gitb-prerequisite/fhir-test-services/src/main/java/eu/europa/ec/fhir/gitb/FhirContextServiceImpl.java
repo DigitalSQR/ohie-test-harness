@@ -6,19 +6,33 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.LoggingInterceptor;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gitb.core.AnyContent;
 import com.gitb.ms.Void;
 import com.gitb.ms.*;
 import com.gitb.tr.TestResultType;
+import eu.europa.ec.fhir.constant.LoginTypesConstants;
 import eu.europa.ec.fhir.state.StateManager;
 import eu.europa.ec.fhir.utils.FhirRESTUtils;
 import eu.europa.ec.fhir.utils.Utils;
 import jakarta.annotation.Resource;
 import jakarta.xml.ws.WebServiceContext;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of the GITB FhirContext API to handle IGeneric client related operations.
@@ -127,27 +141,58 @@ public class FhirContextServiceImpl implements MessagingService {
         }
         context.getRestfulClientFactory().setSocketTimeout(socketTimeout);
 
-        // Get UserName of the operation
-        var userNameOptional = utils.getOptionalString(sendRequest.getInput(), "userName");
-
-        // Get URL of the operation
-        var passwordOptional = utils.getOptionalString(sendRequest.getInput(), "password");
-
-        // Get URL of the operation
-        var tokenOptional = utils.getOptionalString(sendRequest.getInput(), "token");
+        var loginType = utils.getRequiredString(sendRequest.getInput(), "loginType");
 
         //Create IGenericClient based on context for the serverBaseURL
         IGenericClient client = context.newRestfulGenericClient(serverBaseURL);
 
-        //Handle security for the FHIR server
-        if (userNameOptional.isPresent() && passwordOptional.isPresent()) {
-            client.registerInterceptor(new BasicAuthInterceptor(userNameOptional.get(), passwordOptional.get()));
-        } else if (tokenOptional.isPresent()) {
-            client.registerInterceptor(new BearerTokenAuthInterceptor(tokenOptional.get()));
+        if (loginType.equals(LoginTypesConstants.BASIC_AUTHENTICATION)) {
+            //IF basic username password
+            var userName = utils.getRequiredString(sendRequest.getInput(), "username");
+
+            var password = utils.getRequiredString(sendRequest.getInput(), "password");
+
+            client.registerInterceptor(new BasicAuthInterceptor(userName, password));
+        } else if (loginType.equals(LoginTypesConstants.O_AUTHENTICATION)) {
+            //IF OAUTH2 username password
+            var userName = utils.getRequiredString(sendRequest.getInput(), "username");
+
+            var password = utils.getRequiredString(sendRequest.getInput(), "password");
+
+            var clientSecret = utils.getRequiredString(sendRequest.getInput(), "clientSecret");
+
+            var clientId = utils.getRequiredString(sendRequest.getInput(), "clientId");
+
+            var loginUrl = utils.getRequiredString(sendRequest.getInput(), "loginUrl");
+
+            try {
+                var token = fetchOAuth2Token(clientId, clientSecret, userName, password, loginUrl);
+                client.registerInterceptor(new BearerTokenAuthInterceptor(token));
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Not able to login via given credentials.");
+            }
+
+        } else if (loginType.equals(LoginTypesConstants.HEADER_PARAM_AUTHENTICATION)) {
+
+//            var userName = utils.getRequiredString(sendRequest.getInput(), "username");
+//
+//            var password = utils.getRequiredString(sendRequest.getInput(), "password");
+
+            var headerParamName = utils.getRequiredString(sendRequest.getInput(), "headerParamName");
+
+            var headerParamValue = utils.getRequiredString(sendRequest.getInput(), "headerParamValue");
+
+            try {
+                client.registerInterceptor(new CustomHeaderInterceptor(headerParamName, headerParamValue));
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Not able to login via given credentials.");
+            }
+
         }
 
+
         //Adding interceptor to Log details of HTTP requests and responses made by the FHIR client
-        client.registerInterceptor(new LoggingInterceptor());
+        client.registerInterceptor(new LoggingInterceptor(true));
 
         SendResponse response = new SendResponse();
         switch (type) {
@@ -551,5 +596,33 @@ public class FhirContextServiceImpl implements MessagingService {
         stateManager.destroySession(finalizeRequest.getSessionId());
         return new Void();
     }
+
+    private String fetchOAuth2Token(String clientId, String clientSecret, String username, String password, String loginUrl) throws Exception {
+
+        HttpClient client = HttpClients.createDefault();
+        HttpPost post = new HttpPost(loginUrl);
+
+        List<NameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("grant_type", "client_credentials"));
+        params.add(new BasicNameValuePair("client_id", clientId));
+        params.add(new BasicNameValuePair("client_secret", clientSecret));
+
+        params.add(new BasicNameValuePair("grant_type", "password"));
+        params.add(new BasicNameValuePair("username", username));
+        params.add(new BasicNameValuePair("password", password));
+
+        post.setEntity(new UrlEncodedFormEntity(params));
+
+        HttpResponse response = client.execute(post);
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200) {
+            throw new RuntimeException("Failed to fetch OAuth2 token, status code: " + statusCode);
+        }
+
+        String responseBody = EntityUtils.toString(response.getEntity());
+        JsonNode jsonResponse = new ObjectMapper().readTree(responseBody);
+        return jsonResponse.get("access_token").asText();
+    }
+
 
 }

@@ -28,17 +28,35 @@ public class TestRequestUrlEntity {
     @Column(name = "fhir_api_base_url")
     private String fhirApiBaseUrl;
 
+    //TODO:Add LoginType String column (Basic username passowrd, OAuth2)
+    //username password -> username, password
+    //OAuth2 -> username, password, clientSecret, clientId, Login URL
+
+    @Column(name = "loginType")
+    private String loginType;
     @Column(name = "username")
     private String username;
-
     @Column(name = "password")
     private String password;
 
+    @Column(name = "clientId")
+    private String clientId;
+    @Column(name = "clientSecret")
+    private String clientSecret;
+
+    @Column(name = "loginUrl")
+    private String loginUrl;
     @Column(name = "fhir_version")
     private String fhirVersion;
 
     @Column(name = "website_ui_base_url")
     private String websiteUIBaseUrl;
+
+    @Column(name = "request_param_name")
+    private String headerParamName;
+
+    @Column(name = "request_param_value")
+    private String headerParamValue;
 
     public TestRequestUrlEntity() {
 
@@ -50,10 +68,16 @@ public class TestRequestUrlEntity {
                 "testRequestId='" + testRequestId + '\'' +
                 ", component=" + component +
                 ", fhirApiBaseUrl='" + fhirApiBaseUrl + '\'' +
+                ", loginType='" + loginType + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", clientId='" + clientId + '\'' +
+                ", clientSecret='" + clientSecret + '\'' +
+                ", loginUrl='" + loginUrl + '\'' +
                 ", fhirVersion='" + fhirVersion + '\'' +
                 ", websiteUIBaseUrl='" + websiteUIBaseUrl + '\'' +
+                ", headerParamName='" + headerParamName + '\'' +
+                ", headerParamValue='" + headerParamValue + '\'' +
                 '}';
     }
 
@@ -67,6 +91,18 @@ public class TestRequestUrlEntity {
         this.setPassword(testRequestUrlEntity.getPassword());
         this.setFhirVersion(testRequestUrlEntity.getFhirVersion());
         this.setWebsiteUIBaseUrl(testRequestUrlEntity.getWebsiteUIBaseUrl());
+        this.setClientId(testRequestUrlEntity.getClientId());
+        this.setClientSecret(testRequestUrlEntity.getClientSecret());
+        this.setLoginUrl(testRequestUrlEntity.getLoginUrl());
+        this.setLoginType(testRequestUrlEntity.getLoginType());
+
+        if(testRequestUrlEntity.getHeaderParamName() != null){
+            this.setHeaderParamName(testRequestUrlEntity.getHeaderParamName());
+        }
+
+        if(testRequestUrlEntity.getHeaderParamValue() != null){
+            this.setHeaderParamValue(testRequestUrlEntity.getHeaderParamValue());
+        }
     }
 
     public String getTestRequestId() {
@@ -97,6 +133,14 @@ public class TestRequestUrlEntity {
         return username;
     }
 
+    public String getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(String loginType) {
+        this.loginType = loginType;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -123,5 +167,45 @@ public class TestRequestUrlEntity {
 
     public void setWebsiteUIBaseUrl(String websiteUIBaseUrl) {
         this.websiteUIBaseUrl = websiteUIBaseUrl;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
+
+    public String getHeaderParamName() {
+        return headerParamName;
+    }
+
+    public void setHeaderParamName(String headerParamName) {
+        this.headerParamName = headerParamName;
+    }
+
+    public String getHeaderParamValue() {
+        return headerParamValue;
+    }
+
+    public void setHeaderParamValue(String headerParamValue) {
+        this.headerParamValue = headerParamValue;
     }
 }

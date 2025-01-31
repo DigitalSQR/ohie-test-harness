@@ -2,6 +2,7 @@ package com.argusoft.path.tht.testprocessmanagement.models.mapper;
 
 import com.argusoft.path.tht.systemconfiguration.models.mapper.ModelDtoMapper;
 import com.argusoft.path.tht.testcasemanagement.models.entity.ComponentEntity;
+import com.argusoft.path.tht.testprocessmanagement.constant.TestRequestServiceConstants;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestUrlInfo;
 import com.argusoft.path.tht.testprocessmanagement.models.dto.TestRequestValueInfo;
@@ -54,11 +55,17 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
         return testRequestEntity.getTestRequestUrls().stream()
                 .map(testRequestUrl -> {
                     return new TestRequestUrlInfo(testRequestUrl.getComponent().getId(),
-                            testRequestUrl.getFhirApiBaseUrl(),
+                            testRequestUrl.getLoginType(),
                             testRequestUrl.getUsername(),
                             testRequestUrl.getPassword(),
+                            testRequestUrl.getClientId(),
+                            testRequestUrl.getClientSecret(),
+                            testRequestUrl.getLoginUrl(),
+                            testRequestUrl.getFhirApiBaseUrl(),
+                            testRequestUrl.getWebsiteUIBaseUrl(),
                             testRequestUrl.getFhirVersion(),
-                            testRequestUrl.getWebsiteUIBaseUrl());
+                            testRequestUrl.getHeaderParamName(),
+                            testRequestUrl.getHeaderParamValue());
                 })
                 .collect(Collectors.toSet());
     }
@@ -72,8 +79,44 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
                     TestRequestUrlEntity testRequestUrlEntity = new TestRequestUrlEntity();
                     testRequestUrlEntity.setTestRequestId(testRequestInfo.getId());
                     testRequestUrlEntity.setFhirApiBaseUrl(testRequestUrl.getFhirApiBaseUrl());
-                    testRequestUrlEntity.setUsername(testRequestUrl.getUsername());
-                    testRequestUrlEntity.setPassword(testRequestUrl.getPassword());
+                    testRequestUrlEntity.setLoginType(testRequestUrl.getLoginType());
+
+
+                    if (TestRequestServiceConstants.BASIC_AUTHENTICATION.equals(testRequestUrl.getLoginType())) {
+                        if (testRequestUrl.getUsername() == null || testRequestUrl.getPassword() == null) {
+                            throw new IllegalArgumentException(
+                                    "Username and Password are required for BASIC Authentication.");
+                        }
+                        testRequestUrlEntity.setUsername(testRequestUrl.getUsername());
+                        testRequestUrlEntity.setPassword(testRequestUrl.getPassword());
+                    }
+
+                    if (TestRequestServiceConstants.O_AUTHENTICATION.equals(testRequestUrl.getLoginType())) {
+                        if (testRequestUrl.getUsername() == null ||
+                                testRequestUrl.getPassword() == null ||
+                                testRequestUrl.getClientId() == null ||
+                                testRequestUrl.getClientSecret() == null ||
+                                testRequestUrl.getLoginUrl() == null) {
+                            throw new IllegalArgumentException(
+                                    "Username, Password, ClientId, ClientSecret, and LoginUrl are required for OAUTH Authentication.");
+                        }
+                        testRequestUrlEntity.setUsername(testRequestUrl.getUsername());
+                        testRequestUrlEntity.setPassword(testRequestUrl.getPassword());
+                        testRequestUrlEntity.setClientId(testRequestUrl.getClientId());
+                        testRequestUrlEntity.setClientSecret(testRequestUrl.getClientSecret());
+                        testRequestUrlEntity.setLoginUrl(testRequestUrl.getLoginUrl());
+                    }
+
+                    if(TestRequestServiceConstants.HEADER_PARAM_AUTHENTICATION.equals(testRequestUrl.getLoginType())) {
+                        if(testRequestUrl.getHeaderParamName() == null || testRequestUrl.getHeaderParamValue() == null){
+                            throw new IllegalArgumentException(
+                                    "Header Parameter Name and Header Parameter Value are required for Header Parameter Authentication"
+                            );
+                        }
+                        testRequestUrlEntity.setHeaderParamName(testRequestUrl.getHeaderParamName());
+                        testRequestUrlEntity.setHeaderParamValue(testRequestUrl.getHeaderParamValue());
+                    }
+
                     testRequestUrlEntity.setWebsiteUIBaseUrl(testRequestUrl.getWebsiteUIBaseUrl());
                     testRequestUrlEntity.setFhirVersion(testRequestUrl.getFhirVersion());
 
@@ -85,6 +128,7 @@ public interface TestRequestMapper extends ModelDtoMapper<TestRequestEntity, Tes
                 })
                 .collect(Collectors.toSet());
     }
+
 
     default Set<TestRequestValueInfo> setToTestRequestValues(TestRequestEntity testRequestEntity) {
         if (testRequestEntity.getTestRequestValues() == null) {

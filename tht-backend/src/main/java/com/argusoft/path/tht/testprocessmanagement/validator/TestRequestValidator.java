@@ -429,9 +429,28 @@ public class TestRequestValidator {
         //loop to check email and password not null in testrequest url
         for (TestRequestUrlEntity entity : urlEntitySet) {
             //check for username
-            ValidationUtils.validateRequired(entity.getUsername(), "username", errors);
-            //check for password
-            ValidationUtils.validateRequired(entity.getPassword(), "password", errors);
+            ValidationUtils.validateRequired(entity.getLoginType(), "loginType", errors);
+
+            if(!StringUtils.isEmpty(entity.getLoginType())) {
+                if(TestRequestServiceConstants.HEADER_PARAM_AUTHENTICATION.equals(entity.getLoginType())){
+                    //check for header parameter name
+                    ValidationUtils.validateRequired(entity.getHeaderParamName(), "headerParamName", errors);
+                    //check for header parameter value
+                    ValidationUtils.validateRequired(entity.getHeaderParamValue(), "headerParamValue", errors);
+                }
+                else {
+                    if(TestRequestServiceConstants.O_AUTHENTICATION.equals(entity.getLoginType())){
+                        //check for client Id
+                        ValidationUtils.validateRequired(entity.getClientId(), "clientId", errors);
+                        //check for client secret
+                        ValidationUtils.validateRequired(entity.getClientSecret(), "clientSecret", errors);
+                    }
+                    //check for username
+                    ValidationUtils.validateRequired(entity.getUsername(), "username", errors);
+                    //check for password
+                    ValidationUtils.validateRequired(entity.getPassword(), "password", errors);}
+            }
+
             //check for baseurl
             ValidationUtils.validateRequired(entity.getFhirApiBaseUrl(), "fhirApiBaseUrl", errors);
         }
@@ -484,20 +503,53 @@ public class TestRequestValidator {
 
         //loop to check length of email , password, baseUrl in testrequest url
         for (TestRequestUrlEntity entity : urlEntitySet) {
-            //check for username
-            ValidationUtils
-                    .validateLength(entity.getUsername(),
-                            "username",
-                            0,
-                            255,
-                            errors);
-            //check for password
-            ValidationUtils
-                    .validateLength(entity.getPassword(),
-                            "password",
-                            0,
-                            255,
-                            errors);
+            if(TestRequestServiceConstants.HEADER_PARAM_AUTHENTICATION.equals(entity.getLoginType())){
+                //check for header parameter name
+                ValidationUtils
+                        .validateLength(entity.getHeaderParamName(),
+                                "headerParamName",
+                                0,
+                                255,
+                                errors);
+                //check for header parameter value
+                ValidationUtils
+                        .validateLength(entity.getHeaderParamValue(),
+                                "headerParamValue",
+                                0,
+                                255,
+                                errors);
+            } else {
+                if(TestRequestServiceConstants.O_AUTHENTICATION.equals(entity.getLoginType())) {
+                    //check for client Id
+                    ValidationUtils
+                            .validateLength(entity.getClientId(),
+                                    "clientId",
+                                    0,
+                                    255,
+                                    errors);
+                    //check for client Secret
+                    ValidationUtils
+                            .validateLength(entity.getClientSecret(),
+                                    "clientSecret",
+                                    0,
+                                    255,
+                                    errors);
+                }
+                //check for username
+                ValidationUtils
+                        .validateLength(entity.getUsername(),
+                                "username",
+                                0,
+                                255,
+                                errors);
+                //check for password
+                ValidationUtils
+                        .validateLength(entity.getPassword(),
+                                "password",
+                                0,
+                                255,
+                                errors);
+            }
             //check for baseurl
             ValidationUtils
                     .validateLength(entity.getFhirApiBaseUrl(),

@@ -96,4 +96,15 @@ public class TestRequestInfo extends IdStateNameMetaInfo {
     public void setTestRequestValues(Set<TestRequestValueInfo> testRequestValues) {
         this.testRequestValues = testRequestValues;
     }
+
+    @Override
+    public String toString() {
+        return "TestRequestInfo{" +
+                "assesseeId='" + assesseeId + '\'' +
+                ", approverId='" + approverId + '\'' +
+                ", testRequestUrls=" + testRequestUrls.toString() +
+                ", message='" + message + '\'' +
+                ", testRequestValues=" + testRequestValues.toString() +
+                '}';
+    }
 }
