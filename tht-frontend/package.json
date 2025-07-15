@@ -21,7 +21,7 @@
     "css-loader": "^6.8.1",
     "formik": "^2.4.5",
     "html2canvas": "^1.4.1",
-    "html2pdf.js": "^0.10.1",
+    "html2pdf.js": "^0.10.3",
     "js-cookie": "^3.0.5",
     "jspdf": "^2.5.1",
     "moment": "^2.30.1",
